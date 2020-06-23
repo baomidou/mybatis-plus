@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author miemie
  * @since 2020-06-22
  */
-public class IllegalSQLQiuQiu extends JsqlParserSupport implements QiuQiu {
+public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     /**
      * 缓存验证结果，提高性能

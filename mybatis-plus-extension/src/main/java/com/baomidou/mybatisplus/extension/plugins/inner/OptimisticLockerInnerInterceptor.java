@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2020-06-21
  */
 @SuppressWarnings({"unchecked"})
-public class OptimisticLockerQiuQiu implements QiuQiu {
+public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
 
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
 

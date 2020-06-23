@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @since 2020-06-16
  */
 @SuppressWarnings({"rawtypes"})
-public interface QiuQiu {
+public interface InnerInterceptor {
 
     /**
      * @param executor      Executor(可能是代理对象)

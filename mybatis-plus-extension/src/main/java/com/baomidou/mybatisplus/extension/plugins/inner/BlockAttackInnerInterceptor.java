@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
@@ -16,7 +16,7 @@ import java.sql.Connection;
  * @author miemie
  * @since 2020-06-22
  */
-public class BlockAttackQiuQiu extends JsqlParserSupport implements QiuQiu {
+public class BlockAttackInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     @Override
     public void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {

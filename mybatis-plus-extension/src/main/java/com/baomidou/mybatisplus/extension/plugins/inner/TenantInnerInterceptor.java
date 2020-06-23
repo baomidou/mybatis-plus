@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
@@ -42,7 +42,7 @@ import java.util.List;
 @Accessors(chain = true)
 @RequiredArgsConstructor
 @SuppressWarnings({"rawtypes"})
-public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
+public class TenantInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     private final TenantHandler tenantHandler;
 

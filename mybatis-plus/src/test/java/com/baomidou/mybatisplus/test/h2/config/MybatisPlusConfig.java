@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFi
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.chain.PageQiuQiu;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
@@ -78,7 +78,7 @@ public class MybatisPlusConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addQiuQiu(new PageQiuQiu().setCountSqlParser(new JsqlParserCountOptimize(true)));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor().setCountSqlParser(new JsqlParserCountOptimize(true)));
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
         sqlParserList.add(new AbstractJsqlParser() {

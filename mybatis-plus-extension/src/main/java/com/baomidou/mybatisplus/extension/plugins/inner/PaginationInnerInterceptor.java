@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.chain;
+package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Data
 @Accessors(chain = true)
 @SuppressWarnings({"rawtypes"})
-public class PageQiuQiu implements QiuQiu {
+public class PaginationInnerInterceptor implements InnerInterceptor {
 
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());

@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.extension.plugins.chain.QiuQiu;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -31,7 +31,7 @@ import java.util.List;
 )
 public class MybatisPlusInterceptor implements Interceptor {
 
-    private final List<QiuQiu> qiuQius = new ArrayList<>();
+    private final List<InnerInterceptor> interceptors = new ArrayList<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -52,7 +52,7 @@ public class MybatisPlusInterceptor implements Interceptor {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
-                for (QiuQiu query : qiuQius) {
+                for (InnerInterceptor query : interceptors) {
                     if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
                         return Collections.emptyList();
                     }
@@ -61,7 +61,7 @@ public class MybatisPlusInterceptor implements Interceptor {
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
                 return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
             } else if (isUpdate) {
-                for (QiuQiu query : qiuQius) {
+                for (InnerInterceptor query : interceptors) {
                     query.update(executor, ms, parameter);
                 }
             }
@@ -70,8 +70,8 @@ public class MybatisPlusInterceptor implements Interceptor {
             final StatementHandler sh = (StatementHandler) target;
             Connection connections = (Connection) args[0];
             Integer transactionTimeout = (Integer) args[1];
-            for (QiuQiu qiuQiu : qiuQius) {
-                qiuQiu.prepare(sh, connections, transactionTimeout);
+            for (InnerInterceptor innerInterceptor : interceptors) {
+                innerInterceptor.prepare(sh, connections, transactionTimeout);
             }
         }
         return invocation.proceed();
@@ -85,7 +85,7 @@ public class MybatisPlusInterceptor implements Interceptor {
         return target;
     }
 
-    public void addQiuQiu(QiuQiu qiuQiu) {
-        qiuQius.add(qiuQiu);
+    public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
+        interceptors.add(innerInterceptor);
     }
 }
