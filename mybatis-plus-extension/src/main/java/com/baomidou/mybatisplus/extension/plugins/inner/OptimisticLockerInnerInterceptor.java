@@ -1,5 +1,21 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
@@ -8,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -20,8 +37,24 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * @author miemie
- * @since 2020-06-21
+ * Optimistic Lock Light version
+ * <p>Intercept on {@link Executor}.update;</p>
+ * <p>Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp</p>
+ * <p>For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.</p>
+ * <br>
+ * <p>How to use?</p>
+ * <p>(1) Define an Entity and add {@link Version} annotation on one entity field.</p>
+ * <p>(2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.</p>
+ * <br>
+ * <p>How to work?</p>
+ * <p>if update entity with version column=1:</p>
+ * <p>(1) no {@link OptimisticLockerInterceptor}:</p>
+ * <p>SQL: update tbl_test set name='abc' where id=100001;</p>
+ * <p>(2) add {@link OptimisticLockerInterceptor}:</p>
+ * <p>SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;</p>
+ *
+ * @author yuxiaobin
+ * @since 2020-06-24
  */
 @SuppressWarnings({"unchecked"})
 public class OptimisticLockerInnerInterceptor implements InnerInterceptor {

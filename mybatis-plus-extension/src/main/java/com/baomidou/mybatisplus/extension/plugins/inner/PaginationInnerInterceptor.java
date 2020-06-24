@@ -1,10 +1,23 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
@@ -14,8 +27,14 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Alias;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
@@ -25,7 +44,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -36,7 +54,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * @author miemie
+ * 分页拦截器
+ * <p>
+ * 默认对 left join 进行优化
+ *
+ * @author hubin
  * @since 2020-06-16
  */
 @Data
@@ -44,13 +66,21 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
 
+    private static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
-     * COUNT SQL 解析
+     * 获取jsqlparser中count的SelectItem
      */
-    protected ISqlParser countSqlParser;
+    private static SelectItem defaultCountSelectItem() {
+        Function function = new Function();
+        ExpressionList expressionList = new ExpressionList(Collections.singletonList(new LongValue(1)));
+        function.setName("COUNT");
+        function.setParameters(expressionList);
+        return new SelectExpressionItem(function);
+    }
+
     /**
      * 溢出总页数后是否进行处理
      */
@@ -89,10 +119,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             countSql = countMs.getBoundSql(parameter);
         } else {
             countMs = buildAutoCountMappedStatement(ms);
-            SqlInfo countSqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser,
-                boundSql.getSql(), SystemMetaObject.forObject(parameter));
+            String countSqlStr = autoCountSql(page.optimizeCountSql(), boundSql.getSql());
             PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
-            countSql = new BoundSql(countMs.getConfiguration(), countSqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
+            countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
             PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
         }
 
@@ -169,6 +198,63 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             builder.useCache(ms.isUseCache());
             return builder.build();
         });
+    }
+
+    protected String autoCountSql(boolean optimizeCountSql, String sql) {
+        if (!optimizeCountSql) {
+            return SqlParserUtils.getOriginalCountSql(sql);
+        }
+        try {
+            Select select = (Select) CCJSqlParserUtil.parse(sql);
+            PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
+            Distinct distinct = plainSelect.getDistinct();
+            GroupByElement groupBy = plainSelect.getGroupBy();
+            List<OrderByElement> orderBy = plainSelect.getOrderByElements();
+
+            // 添加包含groupBy 不去除orderBy
+            if (null == groupBy && CollectionUtils.isNotEmpty(orderBy)) {
+                plainSelect.setOrderByElements(null);
+            }
+            //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
+            for (SelectItem item : plainSelect.getSelectItems()) {
+                if (item.toString().contains(StringPool.QUESTION_MARK)) {
+                    return SqlParserUtils.getOriginalCountSql(select.toString());
+                }
+            }
+            // 包含 distinct、groupBy不优化
+            if (distinct != null || null != groupBy) {
+                return SqlParserUtils.getOriginalCountSql(select.toString());
+            }
+            // 包含 join 连表,进行判断是否移除 join 连表
+            List<Join> joins = plainSelect.getJoins();
+            if (CollectionUtils.isNotEmpty(joins)) {
+                boolean canRemoveJoin = true;
+                String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
+                for (Join join : joins) {
+                    if (!join.isLeft()) {
+                        canRemoveJoin = false;
+                        break;
+                    }
+                    Table table = (Table) join.getRightItem();
+                    String str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                    String onExpressionS = join.getOnExpression().toString();
+                    /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
+                    if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {
+                        canRemoveJoin = false;
+                        break;
+                    }
+                }
+                if (canRemoveJoin) {
+                    plainSelect.setJoins(null);
+                }
+            }
+            // 优化 SQL
+            plainSelect.setSelectItems(COUNT_SELECT_ITEM);
+            return select.toString();
+        } catch (Throwable e) {
+            // 无法优化使用原 SQL
+            return SqlParserUtils.getOriginalCountSql(sql);
+        }
     }
 
     /**
