@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.test.tenant;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.TenantInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
@@ -47,12 +47,39 @@ public class TenantTest extends BaseDbTest<EntityMapper> {
             assertThat(entity.getTenantId()).as("有租户信息").isEqualTo(1);
         });
         assertThat(cache.getSize()).as("依然只有一条缓存,命中了缓存").isEqualTo(1);
+
+
+        doTestAutoCommit(m -> {
+            int delete = m.deleteById(id);
+            assertThat(delete).as("删除成功").isEqualTo(1);
+        });
+        assertThat(cache.getSize()).as("update操作清空了缓存").isEqualTo(0);
+
+
+        doTestAutoCommit(m -> {
+            int insert = m.insert(new Entity().setId(id).setTenantId(2));
+            assertThat(insert).as("故意插入一个其他租户的信息,插入成功").isEqualTo(1);
+        });
+
+
+        doTest(m -> {
+            Entity entity = m.selectById(id);
+            assertThat(entity).as("搜索不到数据").isNull();
+        });
+        assertThat(cache.getSize()).as("缓存了个寂寞").isEqualTo(1);
+
+
+        doTest(m -> {
+            Entity entity = m.selectById(id);
+            assertThat(entity).as("搜索不到数据").isNull();
+        });
+        assertThat(cache.getSize()).as("依然缓存了个寂寞,说明命中的缓存").isEqualTo(1);
     }
 
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new TenantInnerInterceptor(select -> new LongValue(1)));
+        interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(() -> new LongValue(1)));
         return Collections.singletonList(interceptor);
     }
 

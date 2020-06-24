@@ -5,14 +5,11 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
-import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
-import lombok.Data;
+import com.baomidou.mybatisplus.extension.plugins.tenant.TenantLineHandler;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
-import net.sf.jsqlparser.expression.ValueListExpression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
@@ -38,13 +35,11 @@ import java.util.List;
  * @author miemie
  * @since 2020-06-20
  */
-@Data
-@Accessors(chain = true)
 @RequiredArgsConstructor
 @SuppressWarnings({"rawtypes"})
-public class TenantInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
+public class TenantLineInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
-    private final TenantHandler tenantHandler;
+    private final TenantLineHandler tenantLineHandler;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -92,20 +87,25 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
 
     @Override
     protected void processInsert(Insert insert, int index, Object obj) {
-        if (tenantHandler.doTableFilter(insert.getTable().getName())) {
+        if (tenantLineHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
             return;
         }
-        insert.getColumns().add(new Column(tenantHandler.getTenantIdColumn()));
+        List<Column> columns = insert.getColumns();
+        String tenantIdColumn = tenantLineHandler.getTenantIdColumn();
+        if (columns.stream().map(Column::getColumnName).anyMatch(i -> i.equals(tenantIdColumn))) {
+            return;
+        }
+        columns.add(new Column(tenantLineHandler.getTenantIdColumn()));
         if (insert.getSelect() != null) {
             processPlainSelect((PlainSelect) insert.getSelect().getSelectBody(), true);
         } else if (insert.getItemsList() != null) {
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
             if (itemsList instanceof MultiExpressionList) {
-                ((MultiExpressionList) itemsList).getExprList().forEach(el -> el.getExpressions().add(tenantHandler.getTenantId(false)));
+                ((MultiExpressionList) itemsList).getExprList().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
             } else {
-                ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId(false));
+                ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantLineHandler.getTenantId());
             }
         } else {
             throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
@@ -118,7 +118,7 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
     @Override
     protected void processUpdate(Update update, int index, Object obj) {
         final Table table = update.getTable();
-        if (tenantHandler.doTableFilter(table.getName())) {
+        if (tenantLineHandler.doTableFilter(table.getName())) {
             // 过滤退出执行
             return;
         }
@@ -130,7 +130,7 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
      */
     @Override
     protected void processDelete(Delete delete, int index, Object obj) {
-        if (tenantHandler.doTableFilter(delete.getTable().getName())) {
+        if (tenantLineHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
             return;
         }
@@ -144,7 +144,7 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
         //获得where条件表达式
         EqualsTo equalsTo = new EqualsTo();
         equalsTo.setLeftExpression(this.getAliasColumn(table));
-        equalsTo.setRightExpression(tenantHandler.getTenantId(false));
+        equalsTo.setRightExpression(tenantLineHandler.getTenantId());
         if (null != where) {
             if (where instanceof OrExpression) {
                 return new AndExpression(equalsTo, new Parenthesis(where));
@@ -172,11 +172,11 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
         FromItem fromItem = plainSelect.getFromItem();
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
-            if (!tenantHandler.doTableFilter(fromTable.getName())) {
+            if (!tenantLineHandler.doTableFilter(fromTable.getName())) {
                 //#1186 github
                 plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
                 if (addColumn) {
-                    plainSelect.getSelectItems().add(new SelectExpressionItem(new Column(tenantHandler.getTenantIdColumn())));
+                    plainSelect.getSelectItems().add(new SelectExpressionItem(new Column(tenantLineHandler.getTenantIdColumn())));
                 }
             }
         } else {
@@ -227,7 +227,7 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
     protected void processJoin(Join join) {
         if (join.getRightItem() instanceof Table) {
             Table fromTable = (Table) join.getRightItem();
-            if (this.tenantHandler.doTableFilter(fromTable.getName())) {
+            if (this.tenantLineHandler.doTableFilter(fromTable.getName())) {
                 // 过滤退出执行
                 return;
             }
@@ -236,12 +236,10 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
     }
 
     /**
-     * 处理条件:
-     * 支持 getTenantHandler().getTenantId()是一个完整的表达式：tenant in (1,2)
-     * 默认tenantId的表达式： LongValue(1)这种依旧支持
+     * 处理条件
      */
     protected Expression builderExpression(Expression currentExpression, Table table) {
-        final Expression tenantExpression = tenantHandler.getTenantId(true);
+        final Expression tenantExpression = tenantLineHandler.getTenantId();
         Expression appendExpression = this.processTableAlias4CustomizedTenantIdExpression(tenantExpression, table);
         if (currentExpression == null) {
             return appendExpression;
@@ -277,29 +275,13 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
     }
 
     /**
-     * 目前: 针对自定义的tenantId的条件表达式[tenant_id in (1,2,3)]，无法处理多租户的字段加上表别名
-     * select a.id, b.name
-     * from a
-     * join b on b.aid = a.id and [b.]tenant_id in (1,2) --别名[b.]无法加上 TODO
      *
-     * @param expression
-     * @param table
-     * @return 加上别名的多租户字段表达式
      */
     protected Expression processTableAlias4CustomizedTenantIdExpression(Expression expression, Table table) {
-        Expression target;
-        if (expression instanceof ValueListExpression) {
-            InExpression inExpression = new InExpression();
-            inExpression.setLeftExpression(this.getAliasColumn(table));
-            inExpression.setRightItemsList(((ValueListExpression) expression).getExpressionList());
-            target = inExpression;
-        } else {
-            EqualsTo equalsTo = new EqualsTo();
-            equalsTo.setLeftExpression(this.getAliasColumn(table));
-            equalsTo.setRightExpression(expression);
-            target = equalsTo;
-        }
-        return target;
+        EqualsTo equalsTo = new EqualsTo();
+        equalsTo.setLeftExpression(this.getAliasColumn(table));
+        equalsTo.setRightExpression(expression);
+        return equalsTo;
     }
 
     /**
@@ -314,7 +296,7 @@ public class TenantInnerInterceptor extends JsqlParserSupport implements InnerIn
         if (table.getAlias() != null) {
             column.append(table.getAlias().getName()).append(StringPool.DOT);
         }
-        column.append(tenantHandler.getTenantIdColumn());
+        column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
     }
 }
