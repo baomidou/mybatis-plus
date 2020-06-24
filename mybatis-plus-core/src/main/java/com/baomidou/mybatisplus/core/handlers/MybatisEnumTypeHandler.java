@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author hubin
  * @since 2017-10-11
  */
-public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
+public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
     private static final Map<String, String> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
     private static ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
@@ -109,7 +109,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
+    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
         throws SQLException {
         if (jdbcType == null) {
             ps.setObject(i, this.getValue(parameter));

@@ -40,16 +40,24 @@ public interface TenantHandler {
 
     /**
      * 获取租户字段名
+     * <p>
+     * 默认字段名叫: tenant_id
      *
      * @return 租户字段名
      */
-    String getTenantIdColumn();
+    default String getTenantIdColumn() {
+        return "tenant_id";
+    }
 
     /**
      * 根据表名判断是否进行过滤
+     * <p>
+     * 默认都要进行解析
      *
      * @param tableName 表名
      * @return 是否进行过滤, true:表示忽略，false:需要解析多租户字段
      */
-    boolean doTableFilter(String tableName);
+    default boolean doTableFilter(String tableName) {
+        return false;
+    }
 }
