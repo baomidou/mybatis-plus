@@ -200,7 +200,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         });
     }
 
-    protected String autoCountSql(boolean optimizeCountSql, String sql) {
+    public String autoCountSql(boolean optimizeCountSql, String sql) {
         if (!optimizeCountSql) {
             return SqlParserUtils.getOriginalCountSql(sql);
         }
