@@ -43,7 +43,7 @@ public class PaginationTest extends BaseDbTest<EntityMapper> {
             assertThat(result.getTotal()).isEqualTo(2L);
             assertThat(result.getRecords().size()).isEqualTo(2);
         });
-        assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
+        assertThat(cache.getSize()).as("因为命中缓存了所以还是2条").isEqualTo(2);
 
 
         doTestAutoCommit(m -> m.insert(new Entity()));
