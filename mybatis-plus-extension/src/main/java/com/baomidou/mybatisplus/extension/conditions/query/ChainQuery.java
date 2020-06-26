@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.extension.conditions.query;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,8 @@ import java.util.Optional;
  * @since 2018-12-19
  */
 public interface ChainQuery<T> extends ChainWrapper<T> {
-
+    Log log = LogFactory.getLog(ChainQuery.class);
+    
     /**
      * 获取集合
      *
@@ -45,7 +48,20 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * @return 单个
      */
     default T one() {
-        return getBaseMapper().selectOne(getWrapper());
+        return one(true);
+    }
+
+    /**
+     * 获取单个
+     *
+     * @param throwEx 有多个 result 是否抛出异常
+     * @return 单个
+     */
+    default T one(boolean throwEx) {
+        if (throwEx) {
+            return getBaseMapper().selectOne(getWrapper());
+        }
+        return SqlHelper.getObject(log, list());
     }
 
     /**
@@ -55,7 +71,21 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * @since 3.3.0
      */
     default Optional<T> oneOpt() {
-        return Optional.ofNullable(one());
+        return oneOpt(true);
+    }
+
+    /**
+     * 获取单个
+     *
+     * @param throwEx 有多个 result 是否抛出异常
+     * @return 单个
+     * @since 3.3.0
+     */
+    default Optional<T> oneOpt(boolean throwEx) {
+        if (throwEx) {
+            return Optional.ofNullable(one(true));
+        }
+        return Optional.ofNullable(SqlHelper.getObject(log, list()));
     }
 
     /**
