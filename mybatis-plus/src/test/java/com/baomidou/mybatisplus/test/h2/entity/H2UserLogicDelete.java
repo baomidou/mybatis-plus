@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.test.h2.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -57,7 +56,7 @@ public class H2UserLogicDelete {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(strategy = FieldStrategy.IGNORED)
+    @TableField
     private Integer testType;
 
     /**

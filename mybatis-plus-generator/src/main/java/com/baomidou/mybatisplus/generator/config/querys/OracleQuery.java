@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * Oracle 表数据查询
  *
@@ -24,13 +22,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  * @since 2018-01-16
  */
 public class OracleQuery extends AbstractDbQuery {
-
-
-    @Override
-    public DbType dbType() {
-        return DbType.ORACLE;
-    }
-
 
     @Override
     public String tablesSql() {

@@ -16,7 +16,9 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
@@ -71,5 +73,15 @@ class SqlRunnerTest {
             List<H2Student> list = studentService.list(new QueryWrapper<H2Student>().like("name", "sqlRunnerTx"));
             Assertions.assertTrue(CollectionUtils.isEmpty(list));
         }
+    }
+
+    @Test
+    void testSelectPage() {
+        IPage page1 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student");
+        Assertions.assertEquals(page1.getRecords().size(), 3);
+        IPage page2 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student where id >= {0}", 0);
+        Assertions.assertEquals(page2.getRecords().size(), 3);
+        IPage page3 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student where id = {0}", 10086);
+        Assertions.assertEquals(page3.getRecords().size(), 0);
     }
 }

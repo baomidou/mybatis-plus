@@ -16,13 +16,12 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,12 +39,12 @@ public final class LambdaUtils {
     /**
      * 字段映射
      */
-    private static final Map<String, Map<String, ColumnCache>> LAMBDA_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, ColumnCache>> COLUMN_CACHE_MAP = new ConcurrentHashMap<>();
 
     /**
      * SerializedLambda 反序列化缓存
      */
-    private static final Map<Class<?>, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction)} 中的方法，在此基础上加了缓存。
@@ -58,11 +57,12 @@ public final class LambdaUtils {
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
-        return Optional.ofNullable(FUNC_CACHE.get(clazz))
+        String canonicalName = clazz.getCanonicalName();
+        return Optional.ofNullable(FUNC_CACHE.get(canonicalName))
             .map(WeakReference::get)
             .orElseGet(() -> {
                 SerializedLambda lambda = SerializedLambda.resolve(func);
-                FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
+                FUNC_CACHE.put(canonicalName, new WeakReference<>(lambda));
                 return lambda;
             });
     }
@@ -87,7 +87,7 @@ public final class LambdaUtils {
      * @param tableInfo 表信息
      */
     public static void installCache(TableInfo tableInfo) {
-        LAMBDA_MAP.put(tableInfo.getEntityType().getName(), createColumnCacheMap(tableInfo));
+        COLUMN_CACHE_MAP.put(tableInfo.getEntityType().getName(), createColumnCacheMap(tableInfo));
     }
 
     /**
@@ -97,11 +97,13 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-        Map<String, ColumnCache> map = new HashMap<>();
+        Map<String, ColumnCache> map;
 
-        String kp = info.getKeyProperty();
-        if (StringUtils.isNotEmpty(kp)) {
-            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        if (info.havePK()) {
+            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
+            map.put(formatKey(info.getKeyProperty()), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        } else {
+            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size());
         }
 
         info.getFieldList().forEach(i ->
@@ -117,6 +119,10 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     public static Map<String, ColumnCache> getColumnMap(Class<?> clazz) {
-        return LAMBDA_MAP.getOrDefault(clazz.getName(), Collections.emptyMap());
+        return COLUMN_CACHE_MAP.computeIfAbsent(clazz.getName(), key -> {
+            TableInfo info = TableInfoHelper.getTableInfo(clazz);
+            return info == null ? null : createColumnCacheMap(info);
+        });
     }
+
 }

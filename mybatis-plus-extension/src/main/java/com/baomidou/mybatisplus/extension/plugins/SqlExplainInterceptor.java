@@ -15,52 +15,47 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.util.Properties;
+import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
-import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-// TODO 苗神来改个名
 /**
  * 防止全表更新与删除
  *
  * @author hubin
  * @since 2016-08-16
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
     @SuppressWarnings("unused")
-	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
-
-    private Properties properties;
+    private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
-        Object parameter = args[1];
-        Configuration configuration = ms.getConfiguration();
-        Object target = invocation.getTarget();
-        StatementHandler handler = configuration.newStatementHandler((Executor) target, ms, parameter, RowBounds.DEFAULT, null, null);
-        this.sqlParser(SystemMetaObject.forObject(handler));
+        if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+            Object parameter = args[1];
+            Configuration configuration = ms.getConfiguration();
+            Object target = invocation.getTarget();
+            StatementHandler handler = configuration.newStatementHandler((Executor) target, ms, parameter, RowBounds.DEFAULT, null, null);
+            this.sqlParser(SystemMetaObject.forObject(handler));
+        }
         return invocation.proceed();
     }
 
@@ -70,10 +65,5 @@ public class SqlExplainInterceptor extends AbstractSqlParserHandler implements I
             return Plugin.wrap(target, this);
         }
         return target;
-    }
-
-    @Override
-    public void setProperties(Properties prop) {
-        this.properties = prop;
     }
 }

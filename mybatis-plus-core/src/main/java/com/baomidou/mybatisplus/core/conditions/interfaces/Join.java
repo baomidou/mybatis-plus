@@ -97,6 +97,23 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
+    default Children first(String firstSql) {
+        return first(true, firstSql);
+    }
+
+    /**
+     * sql 起始句（会拼接在SQL语句的起始处）
+     *
+     * @param condition 执行条件
+     * @param firstSql  起始语句
+     * @return children
+     * @since 3.3.1
+     */
+    Children first(boolean condition, String firstSql);
+
+    /**
+     * ignore
+     */
     default Children exists(String existsSql) {
         return exists(true, existsSql);
     }

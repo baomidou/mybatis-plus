@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import org.apache.ibatis.session.Configuration;
 
 /**
  * Callback interface that can be customized a {@link MybatisConfiguration} object generated on auto-configuration.
@@ -31,5 +32,5 @@ public interface ConfigurationCustomizer {
      *
      * @param configuration the configuration object to customize
      */
-    void customize(MybatisConfiguration configuration);
+    void customize(Configuration configuration);
 }

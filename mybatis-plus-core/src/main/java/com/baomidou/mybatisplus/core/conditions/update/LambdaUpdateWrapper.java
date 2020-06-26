@@ -48,7 +48,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      */
     public LambdaUpdateWrapper() {
         // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
-        this(null);
+        this((T) null);
     }
 
     /**
@@ -61,18 +61,29 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     /**
+     * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
+     */
+    public LambdaUpdateWrapper(Class<T> entityClass) {
+        super.setEntityClass(entityClass);
+        super.initNeed();
+        this.sqlSet = new ArrayList<>();
+    }
+
+    /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(...)
      */
-    LambdaUpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
+    LambdaUpdateWrapper(T entity, Class<T> entityClass, List<String> sqlSet, AtomicInteger paramNameSeq,
                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
-                        SharedString lastSql, SharedString sqlComment) {
+                        SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
+        super.setEntityClass(entityClass);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
+        this.sqlFirst = sqlFirst;
     }
 
     @Override
@@ -85,7 +96,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     public LambdaUpdateWrapper<T> setSql(boolean condition, String sql) {
-        if (condition && StringUtils.isNotEmpty(sql)) {
+        if (condition && StringUtils.isNotBlank(sql)) {
             sqlSet.add(sql);
         }
         return typedThis;
@@ -101,7 +112,13 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     protected LambdaUpdateWrapper<T> instance() {
-        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            SharedString.emptyString(), SharedString.emptyString());
+        return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), null, paramNameSeq, paramNameValuePairs,
+            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        sqlSet.clear();
     }
 }

@@ -15,19 +15,15 @@
  */
 package com.baomidou.mybatisplus.extension.parsers;
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.apache.ibatis.reflection.MetaObject;
-
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.reflection.MetaObject;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * 动态表名 SQL 解析器
@@ -38,28 +34,30 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class DynamicTableNameParser implements ISqlParser {
-
     private Map<String, ITableNameHandler> tableNameHandlerMap;
 
+    /**
+     * 进行 SQL 表名名替换
+     *
+     * @param metaObject 元对象
+     * @param sql        SQL 语句
+     * @return 返回解析后的 SQL 信息
+     */
     @Override
     public SqlInfo parser(MetaObject metaObject, String sql) {
-        Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlerMap), "tableNameHandlerMap is empty.");
+        // fix-issue:https://gitee.com/baomidou/mybatis-plus/issues/I1K7Q1
+        // Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlerMap), "tableNameHandlerMap is empty.");
         if (allowProcess(metaObject)) {
             Collection<String> tables = new TableNameParser(sql).tables();
-            if (CollectionUtils.isNotEmpty(tables)) {
-                boolean sqlParsed = false;
-                String parsedSql = sql;
-                for (final String table : tables) {
-                    ITableNameHandler tableNameHandler = tableNameHandlerMap.get(table);
-                    if (null != tableNameHandler) {
-                        parsedSql = tableNameHandler.process(metaObject, parsedSql, table);
-                        sqlParsed = true;
-                    }
-                }
-                if (sqlParsed) {
-                    return SqlInfo.newInstance().setSql(parsedSql);
+
+            for (String table : tables) {
+                ITableNameHandler handler = tableNameHandlerMap.get(table);
+                if (null != handler) {
+                    sql = handler.process(metaObject, sql, table);
                 }
             }
+
+            return SqlInfo.of(sql);
         }
         return null;
     }
@@ -75,4 +73,5 @@ public class DynamicTableNameParser implements ISqlParser {
     public boolean allowProcess(MetaObject metaObject) {
         return true;
     }
+
 }

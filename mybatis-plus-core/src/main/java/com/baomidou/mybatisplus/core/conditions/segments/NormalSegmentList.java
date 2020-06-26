@@ -40,7 +40,7 @@ public class NormalSegmentList extends AbstractISegmentList {
     }
 
     @Override
-    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment) {
         if (list.size() == 1) {
             /* 只有 and() 以及 or() 以及 not() 会进入 */
             if (!MatchSegment.NOT.match(firstSegment)) {
@@ -71,11 +71,14 @@ public class NormalSegmentList extends AbstractISegmentList {
                 list.add(MatchSegment.EXISTS.match(firstSegment) ? 0 : 1, SqlKeyword.NOT);
                 executeNot = true;
             }
-            if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
-                add(SqlKeyword.AND);
-            }
             if (MatchSegment.APPLY.match(firstSegment)) {
                 list.remove(0);
+            }
+            if (MatchSegment.BRACKET.match(firstSegment)) {
+                list.remove(0);
+            }
+            if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
+                add(SqlKeyword.AND);
             }
         }
         return true;
@@ -86,6 +89,14 @@ public class NormalSegmentList extends AbstractISegmentList {
         if (MatchSegment.AND_OR.match(lastValue)) {
             removeAndFlushLast();
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(SPACE));
+        final String str = this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(SPACE));
+        return (LEFT_BRACKET + str + RIGHT_BRACKET);
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        flushLastValue = true;
+        executeNot = true;
     }
 }

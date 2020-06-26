@@ -41,7 +41,7 @@ public class PackageConfig {
     /**
      * 父包模块名
      */
-    private String moduleName = null;
+    private String moduleName = "";
     /**
      * Entity包名
      */
@@ -75,7 +75,7 @@ public class PackageConfig {
      * 父包名
      */
     public String getParent() {
-        if (StringUtils.isNotEmpty(moduleName)) {
+        if (StringUtils.isNotBlank(moduleName)) {
             return parent + StringPool.DOT + moduleName;
         }
         return parent;

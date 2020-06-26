@@ -98,7 +98,7 @@ public class Sequence {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
-        if (StringUtils.isNotEmpty(name)) {
+        if (StringUtils.isNotBlank(name)) {
             /*
              * GET jvmPid
              */
@@ -123,7 +123,7 @@ public class Sequence {
             } else {
                 byte[] mac = network.getHardwareAddress();
                 if (null != mac) {
-                    id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                    id = ((0x000000FF & (long) mac[mac.length - 2]) | (0x0000FF00 & (((long) mac[mac.length - 1]) << 8))) >> 6;
                     id = id % (maxDatacenterId + 1);
                 }
             }

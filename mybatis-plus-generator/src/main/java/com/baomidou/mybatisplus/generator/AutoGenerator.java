@@ -15,13 +15,16 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 生成文件
@@ -145,12 +149,12 @@ public class AutoGenerator {
                 // 逻辑删除注解
                 tableInfo.setImportPackages(TableLogic.class.getCanonicalName());
             }
-            if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
+            if (StringUtils.isNotBlank(config.getStrategyConfig().getVersionFieldName())) {
                 // 乐观锁注解
                 tableInfo.setImportPackages(Version.class.getCanonicalName());
             }
             boolean importSerializable = true;
-            if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
+            if (StringUtils.isNotBlank(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
                 importSerializable = false;
@@ -162,13 +166,20 @@ public class AutoGenerator {
                 tableInfo.setImportPackages(Serializable.class.getCanonicalName());
             }
             // Boolean类型is前缀处理
-            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
-                tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
-                    .filter(field -> field.getPropertyName().startsWith("is"))
-                    .forEach(field -> {
-                        field.setConvert(true);
-                        field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
-                    });
+            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()
+                && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
+                List<TableField> tableFields = tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
+                    .filter(field -> field.getPropertyName().startsWith("is")).collect(Collectors.toList());
+                tableFields.forEach(field -> {
+                    //主键为is的情况基本上是不存在的.
+                    if (field.isKeyFlag()) {
+                        tableInfo.setImportPackages(TableId.class.getCanonicalName());
+                    } else {
+                        tableInfo.setImportPackages(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                    }
+                    field.setConvert(true);
+                    field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
+                });
             }
         }
         return config.setTableInfoList(tableList);

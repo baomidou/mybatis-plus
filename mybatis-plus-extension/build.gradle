@@ -1,29 +1,20 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    api(project(":mybatis-plus-core"))
-    api("${lib["mybatis-spring"]}")
+    api project(":mybatis-plus-core")
+    api "${lib."mybatis-spring"}"
 
-    implementation("${lib["kotlin-stdlib-jdk8"]}")
-    implementation("${lib["kotlin-reflect"]}")
-    implementation("${lib["spring-context-support"]}")
-    implementation("${lib["spring-jdbc"]}")
-    implementation("${lib["slf4j-api"]}")
-    implementation("${lib["p6spy"]}")
-
-    testImplementation("${lib["spring-web"]}")
-    testImplementation("${lib["javax.servlet-api"]}")
-    testImplementation("${lib["fastjson"]}")
-
-    testImplementation("${lib["hikaricp"]}")
-    testImplementation("${lib["commons-dbcp2"]}")
-    testImplementation("${lib["druid"]}")
-    testImplementation("${lib["tomcatjdbc"]}")
-
-    testImplementation("${lib["h2"]}")
-    testImplementation("${lib["sqlserver"]}")
-    testImplementation("${lib["postgresql"]}")
-    testImplementation(lib["oracle"] as ConfigurableFileTree)
-    testImplementation("${lib["mysql"]}")
-    testImplementation("${lib["logback-classic"]}")
+    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-reflect"}"
+    implementation "${lib."spring-context-support"}"
+    implementation "${lib."spring-jdbc"}"
+    implementation "${lib."slf4j-api"}"
+    implementation "${lib."p6spy"}"
+    implementation "${lib."jackson"}"
+    implementation "${lib."fastjson"}"
+    implementation "${lib."gson"}"
+    implementation "${lib['mybatis-thymeleaf']}"
+    implementation "${lib.'mybatis-velocity'}"
+    implementation "${lib.'mybatis-freemarker'}"
+    testImplementation "com.github.pagehelper:pagehelper:5.1.11"
 }

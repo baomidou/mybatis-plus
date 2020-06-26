@@ -19,10 +19,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.test.base.entity.CommonData;
-import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
-import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
-import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonData;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonDataMapper;
+import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonLogicDataMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.annotation.DirtiesContext;
@@ -48,7 +48,10 @@ class SelectCountDistinctTest {
     void testCountDistinct() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
-        distinct.eq("test_int", 25).or().eq("test_str", "test");
+        distinct.eq("test_int", 25)
+                .or()
+                .eq("test_str", "test")
+                .first("/*Force Master*/");
         int count = commonDataMapper.selectCount(distinct);
         Assertions.assertEquals(1, count);
     }

@@ -20,69 +20,68 @@ import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 
+import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
+import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+
 /**
  * PostgreSQL 字段类型转换
  *
- * @author hubin
+ * @author hubin, hanchunlin
  * @since 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {
+    public static final PostgreSqlTypeConvert INSTANCE = new PostgreSqlTypeConvert();
 
+    /**
+     * @inheritDoc
+     */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
-        String t = fieldType.toLowerCase();
-        if (t.contains("char")) {
-            return DbColumnType.STRING;
-        } else if (t.contains("bigint")) {
-            return DbColumnType.LONG;
-        } else if (t.contains("int")) {
-            return DbColumnType.INTEGER;
-        } else if (t.contains("date") || t.contains("time")) {
-            switch (globalConfig.getDateType()) {
-                case ONLY_DATE:
-                    return DbColumnType.DATE;
-                case SQL_PACK:
-                    switch (t) {
-                        case "date":
-                            return DbColumnType.DATE_SQL;
-                        case "time":
-                            return DbColumnType.TIME;
-                        default:
-                            return DbColumnType.TIMESTAMP;
-                    }
-                case TIME_PACK:
-                    switch (t) {
-                        case "date":
-                            return DbColumnType.LOCAL_DATE;
-                        case "time":
-                            return DbColumnType.LOCAL_TIME;
-                        default:
-                            return DbColumnType.LOCAL_DATE_TIME;
-                    }
-                default:
-                    return DbColumnType.DATE;
-            }
-        } else if (t.contains("text")) {
-            return DbColumnType.STRING;
-        } else if (t.contains("bit")) {
-            return DbColumnType.BOOLEAN;
-        } else if (t.contains("decimal")) {
-            return DbColumnType.BIG_DECIMAL;
-        } else if (t.contains("clob")) {
-            return DbColumnType.CLOB;
-        } else if (t.contains("blob")) {
-            return DbColumnType.BYTE_ARRAY;
-        } else if (t.contains("float")) {
-            return DbColumnType.FLOAT;
-        } else if (t.contains("double")) {
-            return DbColumnType.DOUBLE;
-        } else if (t.contains("json") || t.contains("enum")) {
-            return DbColumnType.STRING;
-        } else if (t.contains("boolean")) {
-            return DbColumnType.BOOLEAN;
-        } else if (t.contains("numeric")) {
-            return DbColumnType.BIG_DECIMAL;
+    public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
+        return TypeConverts.use(fieldType)
+            .test(containsAny("char", "text", "json", "enum").then(STRING))
+            .test(contains("bigint").then(LONG))
+            .test(contains("int").then(INTEGER))
+            .test(containsAny("date", "time").then(t -> toDateType(config, t)))
+            .test(contains("bit").then(BOOLEAN))
+            .test(containsAny("decimal", "numeric").then(BIG_DECIMAL))
+            .test(contains("clob").then(CLOB))
+            .test(contains("blob").then(BYTE_ARRAY))
+            .test(contains("float").then(FLOAT))
+            .test(contains("double").then(DOUBLE))
+            .test(contains("boolean").then(BOOLEAN))
+            .or(STRING);
+    }
+
+    /**
+     * 转换为日期类型
+     *
+     * @param config 配置信息
+     * @param type   类型
+     * @return 返回对应的列类型
+     */
+    public static IColumnType toDateType(GlobalConfig config, String type) {
+        switch (config.getDateType()) {
+            case SQL_PACK:
+                switch (type) {
+                    case "date":
+                        return DbColumnType.DATE_SQL;
+                    case "time":
+                        return DbColumnType.TIME;
+                    default:
+                        return DbColumnType.TIMESTAMP;
+                }
+            case TIME_PACK:
+                switch (type) {
+                    case "date":
+                        return DbColumnType.LOCAL_DATE;
+                    case "time":
+                        return DbColumnType.LOCAL_TIME;
+                    default:
+                        return DbColumnType.LOCAL_DATE_TIME;
+                }
+            default:
+                return DbColumnType.DATE;
         }
-        return DbColumnType.STRING;
     }
 }

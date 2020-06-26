@@ -22,19 +22,17 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
-import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
-import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
-import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
+import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
+import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
+import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
-
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
@@ -42,10 +40,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.sql.DataSource;
 
 /**
  * Mybatis Plus Config
@@ -54,7 +51,7 @@ import javax.sql.DataSource;
  * @since 2017/4/1
  */
 @Configuration
-@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.children", "com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.mysql.mapper"})
+@MapperScan("com.baomidou.mybatisplus.test.mysql.mapper")
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
@@ -64,7 +61,7 @@ public class MybatisPlusConfig {
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* 枚举扫描 */
-        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.base.enums");
+        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.mysql.enums");
         /* xml扫描 */
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
             .getResources("classpath:/mapper/*.xml"));
@@ -121,8 +118,9 @@ public class MybatisPlusConfig {
         List<ISqlParser> sqlParserList = new ArrayList<>();
         TenantSqlParser tenantSqlParser = new TenantSqlParser();
         tenantSqlParser.setTenantHandler(new TenantHandler() {
+
             @Override
-            public Expression getTenantId() {
+            public Expression getTenantId(boolean select) {
                 return new LongValue(1L);
             }
 

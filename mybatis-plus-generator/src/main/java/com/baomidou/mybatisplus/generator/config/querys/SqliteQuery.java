@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * Sqlite 表数据查询
  *
@@ -24,13 +22,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  * @since 2019-05-08
  */
 public class SqliteQuery extends AbstractDbQuery {
-
-
-    @Override
-    public DbType dbType() {
-        return DbType.SQLITE;
-    }
-
 
     @Override
     public String tablesSql() {

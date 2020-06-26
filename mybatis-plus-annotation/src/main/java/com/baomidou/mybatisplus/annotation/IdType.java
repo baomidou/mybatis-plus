@@ -30,7 +30,7 @@ public enum IdType {
      */
     AUTO(0),
     /**
-     * 该类型为未设置主键类型(将跟随全局)
+     * 该类型为未设置主键类型(注解里等于跟随全局,全局里约等于 INPUT)
      */
     NONE(1),
     /**
@@ -41,17 +41,32 @@ public enum IdType {
 
     /* 以下3种类型、只有当插入对象ID 为空，才自动填充。 */
     /**
-     * 全局唯一ID (idWorker)
+     * 分配ID (主键类型为number或string）,
+     * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(雪花算法)
+     *
+     * @since 3.3.0
      */
+    ASSIGN_ID(3),
+    /**
+     * 分配UUID (主键类型为 string)
+     * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(UUID.replace("-",""))
+     */
+    ASSIGN_UUID(4),
+    /**
+     * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
+     */
+    @Deprecated
     ID_WORKER(3),
     /**
-     * 全局唯一ID (UUID)
+     * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
      */
-    UUID(4),
+    @Deprecated
+    ID_WORKER_STR(3),
     /**
-     * 字符串全局唯一ID (idWorker 的字符串表示)
+     * @deprecated 3.3.0 please use {@link #ASSIGN_UUID}
      */
-    ID_WORKER_STR(5);
+    @Deprecated
+    UUID(4);
 
     private final int key;
 

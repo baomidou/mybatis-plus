@@ -80,7 +80,7 @@ public final class Assert {
      * @param message 消息
      */
     public static void notEmpty(String value, String message, Object... params) {
-        isTrue(StringUtils.isNotEmpty(value), message, params);
+        isTrue(StringUtils.isNotBlank(value), message, params);
     }
 
     /**

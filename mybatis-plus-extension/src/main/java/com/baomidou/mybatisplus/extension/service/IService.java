@@ -18,20 +18,24 @@ package com.baomidou.mybatisplus.extension.service;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 顶级 Service
@@ -42,11 +46,18 @@ import java.util.function.Function;
 public interface IService<T> {
 
     /**
+     * 默认批次提交数量
+     */
+    int DEFAULT_BATCH_SIZE = 1000;
+
+    /**
      * 插入一条记录（选择字段，策略插入）
      *
      * @param entity 实体对象
      */
-    boolean save(T entity);
+    default boolean save(T entity) {
+        return SqlHelper.retBool(getBaseMapper().insert(entity));
+    }
 
     /**
      * 插入（批量）
@@ -55,7 +66,7 @@ public interface IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, 1000);
+        return saveBatch(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -73,7 +84,7 @@ public interface IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, 1000);
+        return saveOrUpdateBatch(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -89,43 +100,49 @@ public interface IService<T> {
      *
      * @param id 主键ID
      */
-    boolean removeById(Serializable id);
+    default boolean removeById(Serializable id) {
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+    }
 
     /**
      * 根据 columnMap 条件，删除记录
      *
      * @param columnMap 表字段 map 对象
      */
-    boolean removeByMap(Map<String, Object> columnMap);
+    default boolean removeByMap(Map<String, Object> columnMap) {
+        Assert.notEmpty(columnMap, "error: columnMap must not be empty");
+        return SqlHelper.retBool(getBaseMapper().deleteByMap(columnMap));
+    }
 
     /**
      * 根据 entity 条件，删除记录
      *
      * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    boolean remove(Wrapper<T> queryWrapper);
+    default boolean remove(Wrapper<T> queryWrapper) {
+        return SqlHelper.retBool(getBaseMapper().delete(queryWrapper));
+    }
 
     /**
      * 删除（根据ID 批量删除）
      *
      * @param idList 主键ID列表
      */
-    boolean removeByIds(Collection<? extends Serializable> idList);
+    default boolean removeByIds(Collection<? extends Serializable> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return false;
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(idList));
+    }
 
     /**
      * 根据 ID 选择修改
      *
      * @param entity 实体对象
      */
-    boolean updateById(T entity);
-
-    /**
-     * 根据 whereEntity 条件，更新记录
-     *
-     * @param entity        实体对象
-     * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
-     */
-    boolean update(T entity, Wrapper<T> updateWrapper);
+    default boolean updateById(T entity) {
+        return SqlHelper.retBool(getBaseMapper().updateById(entity));
+    }
 
     /**
      * 根据 UpdateWrapper 条件，更新记录 需要设置sqlset
@@ -137,13 +154,23 @@ public interface IService<T> {
     }
 
     /**
+     * 根据 whereEntity 条件，更新记录
+     *
+     * @param entity        实体对象
+     * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
+     */
+    default boolean update(T entity, Wrapper<T> updateWrapper) {
+        return SqlHelper.retBool(getBaseMapper().update(entity, updateWrapper));
+    }
+
+    /**
      * 根据ID 批量更新
      *
      * @param entityList 实体对象集合
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, 1000);
+        return updateBatchById(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -166,21 +193,27 @@ public interface IService<T> {
      *
      * @param id 主键ID
      */
-    T getById(Serializable id);
+    default T getById(Serializable id) {
+        return getBaseMapper().selectById(id);
+    }
 
     /**
      * 查询（根据ID 批量查询）
      *
      * @param idList 主键ID列表
      */
-    Collection<T> listByIds(Collection<? extends Serializable> idList);
+    default List<T> listByIds(Collection<? extends Serializable> idList) {
+        return getBaseMapper().selectBatchIds(idList);
+    }
 
     /**
      * 查询（根据 columnMap 条件）
      *
      * @param columnMap 表字段 map 对象
      */
-    Collection<T> listByMap(Map<String, Object> columnMap);
+    default List<T> listByMap(Map<String, Object> columnMap) {
+        return getBaseMapper().selectByMap(columnMap);
+    }
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
@@ -216,13 +249,6 @@ public interface IService<T> {
     <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
     /**
-     * 根据 Wrapper 条件，查询总记录数
-     *
-     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     */
-    int count(Wrapper<T> queryWrapper);
-
-    /**
      * 查询总记录数
      *
      * @see Wrappers#emptyWrapper()
@@ -232,11 +258,22 @@ public interface IService<T> {
     }
 
     /**
+     * 根据 Wrapper 条件，查询总记录数
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     */
+    default int count(Wrapper<T> queryWrapper) {
+        return SqlHelper.retCount(getBaseMapper().selectCount(queryWrapper));
+    }
+
+    /**
      * 查询列表
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<T> list(Wrapper<T> queryWrapper);
+    default List<T> list(Wrapper<T> queryWrapper) {
+        return getBaseMapper().selectList(queryWrapper);
+    }
 
     /**
      * 查询所有
@@ -253,7 +290,9 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper);
+    default <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper) {
+        return getBaseMapper().selectPage(page, queryWrapper);
+    }
 
     /**
      * 无条件翻页查询
@@ -261,7 +300,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<T> page(IPage<T> page) {
+    default <E extends IPage<T>> E page(E page) {
         return page(page, Wrappers.emptyWrapper());
     }
 
@@ -270,7 +309,9 @@ public interface IService<T> {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper);
+    default List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper) {
+        return getBaseMapper().selectMaps(queryWrapper);
+    }
 
     /**
      * 查询所有列表
@@ -312,7 +353,9 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @param mapper       转换函数
      */
-    <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
+    default <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return getBaseMapper().selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper).collect(Collectors.toList());
+    }
 
     /**
      * 翻页查询
@@ -320,7 +363,9 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
+    default <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper) {
+        return getBaseMapper().selectMapsPage(page, queryWrapper);
+    }
 
     /**
      * 无条件翻页查询
@@ -328,7 +373,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+    default <E extends IPage<Map<String, Object>>> E pageMaps(E page) {
         return pageMaps(page, Wrappers.emptyWrapper());
     }
 
@@ -362,7 +407,7 @@ public interface IService<T> {
      * @return QueryWrapper 的包装类
      */
     default QueryChainWrapper<T> query() {
-        return new QueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.queryChain(getBaseMapper());
     }
 
     /**
@@ -372,7 +417,7 @@ public interface IService<T> {
      * @return LambdaQueryWrapper 的包装类
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
-        return new LambdaQueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.lambdaQueryChain(getBaseMapper());
     }
 
     /**
@@ -381,7 +426,7 @@ public interface IService<T> {
      * @return UpdateWrapper 的包装类
      */
     default UpdateChainWrapper<T> update() {
-        return new UpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.updateChain(getBaseMapper());
     }
 
     /**
@@ -391,7 +436,7 @@ public interface IService<T> {
      * @return LambdaUpdateWrapper 的包装类
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
-        return new LambdaUpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.lambdaUpdateChain(getBaseMapper());
     }
 
     /**
@@ -405,5 +450,4 @@ public interface IService<T> {
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
-
 }

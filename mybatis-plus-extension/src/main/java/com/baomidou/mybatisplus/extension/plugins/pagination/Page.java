@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import org.jetbrains.annotations.Nullable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,35 +41,46 @@ public class Page<T> implements IPage<T> {
     /**
      * 查询数据列表
      */
-    private List<T> records = Collections.emptyList();
+    protected List<T> records = Collections.emptyList();
 
     /**
      * 总数
      */
-    private long total = 0;
+    protected long total = 0;
     /**
      * 每页显示条数，默认 10
      */
-    private long size = 10;
+    protected long size = 10;
 
     /**
      * 当前页
      */
-    private long current = 1;
+    protected long current = 1;
 
     /**
      * 排序字段信息
      */
-    private List<OrderItem> orders = new ArrayList<>();
+    protected List<OrderItem> orders = new ArrayList<>();
 
     /**
      * 自动优化 COUNT SQL
      */
-    private boolean optimizeCountSql = true;
+    protected boolean optimizeCountSql = true;
     /**
      * 是否进行 count 查询
      */
-    private boolean isSearchCount = true;
+    protected boolean isSearchCount = true;
+    /**
+     * 是否命中count缓存
+     */
+    protected boolean hitCount = false;
+    /**
+     * countId
+     */
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    protected String countId;
 
     public Page() {
     }
@@ -161,20 +174,9 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    /**
-     * 获取当前正序排列的字段集合
-     * <p>
-     * 为了兼容，将在不久后废弃
-     *
-     * @return 正序排列的字段集合
-     * @see #getOrders()
-     * @deprecated 3.1.2.2-SNAPSHOT
-     */
     @Override
-    @Nullable
-    @Deprecated
-    public String[] ascs() {
-        return CollectionUtils.isNotEmpty(orders) ? mapOrderToArray(OrderItem::isAsc) : null;
+    public String countId() {
+        return getCountId();
     }
 
     /**
@@ -218,13 +220,24 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
+     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#build(String, boolean)}
+     *
+     * @param items 条件
+     * @return 返回分页参数本身
+     */
+    public Page<T> addOrder(List<OrderItem> items) {
+        orders.addAll(items);
+        return this;
+    }
+
+    /**
      * 设置需要进行正序排序的字段
      * <p>
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param ascs 字段
      * @return 返回自身
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setAscs(List<String> ascs) {
@@ -237,7 +250,7 @@ public class Page<T> implements IPage<T> {
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param ascs 多个升序字段
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setAsc(String... ascs) {
@@ -250,25 +263,11 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * 获取需简要倒序排列的字段数组
-     * <p>
-     *
-     * @return 倒序排列的字段数组
-     * @see #getOrders()
-     * @deprecated 3.1.2.2-SNAPSHOT
-     */
-    @Override
-    @Deprecated
-    public String[] descs() {
-        return mapOrderToArray(i -> !i.isAsc());
-    }
-
-    /**
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param descs 需要倒序排列的字段
      * @return 自身
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setDescs(List<String> descs) {
@@ -288,7 +287,7 @@ public class Page<T> implements IPage<T> {
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param descs 多个降序字段
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setDesc(String... descs) {
@@ -314,6 +313,10 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
+    public boolean isOptimizeCountSql() {
+        return optimizeCountSql();
+    }
+
     @Override
     public boolean isSearchCount() {
         if (total < 0) {
@@ -332,4 +335,17 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
+    @Override
+    public void hitCount(boolean hit) {
+        this.hitCount = hit;
+    }
+
+    public void setHitCount(boolean hit) {
+        this.hitCount = hit;
+    }
+
+    @Override
+    public boolean isHitCount() {
+        return hitCount;
+    }
 }

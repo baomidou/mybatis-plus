@@ -56,7 +56,7 @@ public class SQLServer2005Dialect implements IDialect {
         pagingBuilder.append(sqlPartString);
 
         // if no ORDER BY is specified use fake ORDER BY field to avoid errors
-        if (StringUtils.isEmpty(orderby)) {
+        if (StringUtils.isBlank(orderby)) {
             orderby = "ORDER BY CURRENT_TIMESTAMP";
         }
         long firstParam = offset + 1;

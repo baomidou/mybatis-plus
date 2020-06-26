@@ -31,12 +31,14 @@ public interface ITableNameHandler {
      * @param metaObject 元对象
      * @param sql        当前执行 SQL
      * @param tableName  表名
-     * @return
+     * @return 返回处理后的 SQL 语句
      */
     default String process(MetaObject metaObject, String sql, String tableName) {
         String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
         if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
-            return sql.replaceAll(tableName, dynamicTableName);
+            // 直接替换字符串对于 SQL 操作是不那么好做，这里修复只能尽可能的保证处理没问题
+            String regex = "(?<=\\b)\\Q" + tableName + "\\E(?=\\b)";
+            return sql.replaceAll(regex, dynamicTableName);
         }
         return sql;
     }

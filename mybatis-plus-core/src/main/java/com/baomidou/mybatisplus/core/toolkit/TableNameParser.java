@@ -89,11 +89,9 @@ public final class TableNameParser {
                 if (isFromToken(currentToken)) {
                     processFromToken(tokens, index);
                 } else if (shouldProcess(currentToken)) {
-                    String nextToken = tokens[index++];
-                    considerInclusion(nextToken);
-
                     if (moreTokens(tokens, index)) {
-                        nextToken = tokens[index++];
+                        String nextToken = tokens[index++];
+                        considerInclusion(nextToken);
                     }
                 }
             }

@@ -28,11 +28,15 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public interface IDbQuery {
 
-
     /**
      * 数据库类型
+     *
+     * @deprecated 3.3.1 {@link DataSourceConfig#setDbType(DbType)}
      */
-    DbType dbType();
+    @Deprecated
+    default DbType dbType() {
+        return null;
+    }
 
 
     /**
@@ -84,7 +88,7 @@ public interface IDbQuery {
 
 
     /**
-     * 判断主键是否为identity，目前仅对mysql进行检查
+     * 判断主键是否为identity
      *
      * @param results ResultSet
      * @return 主键是否为identity

@@ -55,7 +55,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.1.2</version>
+            <version>3.2.0</version>
         </dependency>
         ```
     -   Gradle

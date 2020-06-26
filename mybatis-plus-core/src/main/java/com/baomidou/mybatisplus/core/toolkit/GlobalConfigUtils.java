@@ -15,20 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mybatis全局缓存工具类
@@ -39,6 +39,11 @@ import java.util.Set;
 public class GlobalConfigUtils {
 
     /**
+     * 缓存全局信息
+     */
+    private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
+
+    /**
      * 获取当前的SqlSessionFactory
      *
      * @param clazz 实体类
@@ -46,15 +51,28 @@ public class GlobalConfigUtils {
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
-        return tableInfo.getConfiguration().getGlobalConfig().getSqlSessionFactory();
+        return getGlobalConfig(tableInfo.getConfiguration()).getSqlSessionFactory();
     }
 
     /**
      * 获取默认 MybatisGlobalConfig
-     * <p>FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定</p>
      */
     public static GlobalConfig defaults() {
         return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+    }
+
+    /**
+     * <p>
+     * 设置全局设置(以configuration地址值作为Key)
+     * <p/>
+     *
+     * @param configuration Mybatis 容器配置对象
+     * @param globalConfig  全局配置
+     */
+    public static void setGlobalConfig(Configuration configuration, GlobalConfig globalConfig) {
+        Assert.isTrue(configuration != null && globalConfig != null, "Error: Could not setGlobalConfig");
+        // 设置全局设置
+        GLOBAL_CONFIG.putIfAbsent(Integer.toHexString(configuration.hashCode()), globalConfig);
     }
 
     /**
@@ -64,11 +82,8 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        return ((MybatisConfiguration) configuration).getGlobalConfig();
-    }
-
-    public static DbType getDbType(Configuration configuration) {
-        return getGlobalConfig(configuration).getDbConfig().getDbType();
+        final String key = Integer.toHexString(configuration.hashCode());
+        return GLOBAL_CONFIG.computeIfAbsent(key, k -> defaults());
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {
@@ -80,18 +95,11 @@ public class GlobalConfigUtils {
     }
 
     public static ISqlInjector getSqlInjector(Configuration configuration) {
-        // fix #140
-        GlobalConfig globalConfiguration = getGlobalConfig(configuration);
-        ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
-        if (sqlInjector == null) {
-            sqlInjector = new DefaultSqlInjector();
-            globalConfiguration.setSqlInjector(sqlInjector);
-        }
-        return sqlInjector;
+        return getGlobalConfig(configuration).getSqlInjector();
     }
 
-    public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {
-        return getGlobalConfig(configuration).getMetaObjectHandler();
+    public static Optional<MetaObjectHandler> getMetaObjectHandler(Configuration configuration) {
+        return Optional.ofNullable(getGlobalConfig(configuration).getMetaObjectHandler());
     }
 
     public static Class<?> getSuperMapperClass(Configuration configuration) {

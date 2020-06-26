@@ -195,7 +195,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    IPage<T> selectPage(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    <E extends IPage<T>> E selectPage(E page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
@@ -203,5 +203,5 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
      */
-    IPage<Map<String, Object>> selectMapsPage(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    <E extends IPage<Map<String, Object>>> E selectMapsPage(E page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 }

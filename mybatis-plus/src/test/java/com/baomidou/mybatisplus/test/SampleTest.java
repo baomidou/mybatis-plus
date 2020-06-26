@@ -15,12 +15,14 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.test.base.entity.CommonData;
-import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonData;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonLogicData;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,7 @@ class SampleTest {
 
     @Test
     void testTableInfoHelper2() {
-        TableInfo info = TableInfoHelper.initTableInfo(null, CommonLogicData.class);
+        TableInfo info = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), CommonLogicData.class);
 //        System.out.println("----------- AllInsertSqlColumn -----------");
 //        System.out.println(info.getAllInsertSqlColumn());
 //        System.out.println("----------- AllInsertSqlProperty -----------");

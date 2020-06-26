@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.baomidou.mybatisplus.test" level="DEBUG" additivity="false">
+    <logger name="com.baomidou.mybatisplus.test" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

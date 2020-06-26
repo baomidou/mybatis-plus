@@ -84,6 +84,18 @@ public final class Wrappers {
     }
 
     /**
+     * 获取 LambdaQueryWrapper&lt;T&gt;
+     *
+     * @param entityClass 实体类class
+     * @param <T>         实体类泛型
+     * @return LambdaQueryWrapper&lt;T&gt;
+     * @since 3.3.1
+     */
+    public static <T> LambdaQueryWrapper<T> lambdaQuery(Class<T> entityClass) {
+        return new LambdaQueryWrapper<>(entityClass);
+    }
+
+    /**
      * 获取 UpdateWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
@@ -126,6 +138,18 @@ public final class Wrappers {
     }
 
     /**
+     * 获取 LambdaUpdateWrapper&lt;T&gt;
+     *
+     * @param entityClass 实体类class
+     * @param <T>         实体类泛型
+     * @return LambdaUpdateWrapper&lt;T&gt;
+     * @since 3.3.1
+     */
+    public static <T> LambdaUpdateWrapper<T> lambdaUpdate(Class<T> entityClass) {
+        return new LambdaUpdateWrapper<>(entityClass);
+    }
+
+    /**
      * 获取 EmptyWrapper&lt;T&gt;
      *
      * @param <T> 任意泛型
@@ -155,6 +179,16 @@ public final class Wrappers {
         @Override
         public EmptyWrapper<T> setEntity(T entity) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public QueryWrapper<T> setEntityClass(Class<T> entityClass) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected Class<T> getEntityClass() {
+            return null;
         }
 
         @Override
@@ -188,12 +222,7 @@ public final class Wrappers {
         }
 
         @Override
-        protected void initEntityClass() {
-        }
-
-        @Override
-        protected Class<T> getCheckEntityClass() {
-            throw new UnsupportedOperationException();
+        protected void initNeed() {
         }
 
         @Override
@@ -228,6 +257,11 @@ public final class Wrappers {
 
         @Override
         protected EmptyWrapper<T> instance() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear() {
             throw new UnsupportedOperationException();
         }
     }

@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
 
@@ -292,4 +293,20 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      */
     Children having(boolean condition, String sqlHaving, Object... params);
+
+    /**
+     * ignore
+     */
+    default Children func(Consumer<Children> consumer) {
+        return func(true, consumer);
+    }
+
+    /**
+     * 消费函数
+     *
+     * @param consumer 消费函数
+     * @return children
+     * @since 3.3.1
+     */
+    Children func(boolean condition, Consumer<Children> consumer);
 }

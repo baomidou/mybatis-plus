@@ -41,6 +41,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class DBConfig {
 
+    private String locationPattern = "classpath:/h2/*.sql";
+
     @Bean
     public DataSource dataSource(){
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
@@ -69,7 +71,7 @@ public class DBConfig {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.setContinueOnError(false);
         resourceDatabasePopulator.addScripts(
-            new PathMatchingResourcePatternResolver().getResources("classpath:/h2/*.sql")
+            new PathMatchingResourcePatternResolver().getResources(locationPattern)
         );
         return resourceDatabasePopulator;
     }
@@ -79,4 +81,11 @@ public class DBConfig {
         return new JdbcTemplate(ds);
     }
 
+    public String getLocationPattern() {
+        return locationPattern;
+    }
+
+    public void setLocationPattern(String locationPattern) {
+        this.locationPattern = locationPattern;
+    }
 }
