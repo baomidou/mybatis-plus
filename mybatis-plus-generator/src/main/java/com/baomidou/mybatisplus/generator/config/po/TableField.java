@@ -115,7 +115,7 @@ public class TableField {
             return propertyName.toUpperCase();
         }
         if (Character.isLowerCase(propertyName.charAt(1))) {
-            return Character.toLowerCase(propertyName.charAt(0)) + propertyName.substring(1);
+            return Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
         }
         return propertyName;
     }
