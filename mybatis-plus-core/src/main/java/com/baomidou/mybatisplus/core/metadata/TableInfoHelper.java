@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.impl.TableFieldImp;
+import com.baomidou.mybatisplus.annotation.impl.TableIdImp;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -32,7 +34,10 @@ import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.session.Configuration;
 
+import javax.persistence.*;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -156,33 +161,55 @@ public class TableInfoHelper {
     private static String[] initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        TableName table = clazz.getAnnotation(TableName.class);
+        /**
+         * JPA 注解
+         */
+        final Table jpaTableAnnotation = clazz.getAnnotation(Table.class);
+        /**
+         * MP 注解
+         */
+        final TableName mpTableAnnotation = clazz.getAnnotation(TableName.class);
 
         String tableName = clazz.getSimpleName();
         String tablePrefix = dbConfig.getTablePrefix();
         String schema = dbConfig.getSchema();
         boolean tablePrefixEffect = true;
         String[] excludeProperty = null;
-
-        if (table != null) {
-            if (StringUtils.isNotBlank(table.value())) {
-                tableName = table.value();
-                if (StringUtils.isNotBlank(tablePrefix) && !table.keepGlobalPrefix()) {
-                    tablePrefixEffect = false;
-                }
+        /**
+         * JPA 注解优先加载，后期 MP 可以覆盖
+         */
+        if (Objects.nonNull(jpaTableAnnotation)) {
+            if (StringUtils.isNotBlank(jpaTableAnnotation.name())) {
+                tableName = jpaTableAnnotation.name();
             } else {
                 tableName = initTableNameWithDbConfig(tableName, dbConfig);
             }
-            if (StringUtils.isNotBlank(table.schema())) {
-                schema = table.schema();
+            if (StringUtils.isNotBlank(jpaTableAnnotation.schema())) {
+                schema = jpaTableAnnotation.schema();
+            }
+        }
+        /**
+         * MP table 注解
+         */
+        if (mpTableAnnotation != null) {
+            if (StringUtils.isNotBlank(mpTableAnnotation.value())) {
+                tableName = mpTableAnnotation.value();
+                if (StringUtils.isNotBlank(tablePrefix) && !mpTableAnnotation.keepGlobalPrefix()) {
+                    tablePrefixEffect = false;
+                }
+            } else if (Objects.isNull(jpaTableAnnotation)) {
+                tableName = initTableNameWithDbConfig(tableName, dbConfig);
+            }
+            if (StringUtils.isNotBlank(mpTableAnnotation.schema())) {
+                schema = mpTableAnnotation.schema();
             }
             /* 表结果集映射 */
-            if (StringUtils.isNotBlank(table.resultMap())) {
-                tableInfo.setResultMap(table.resultMap());
+            if (StringUtils.isNotBlank(mpTableAnnotation.resultMap())) {
+                tableInfo.setResultMap(mpTableAnnotation.resultMap());
             }
-            tableInfo.setAutoInitResultMap(table.autoResultMap());
-            excludeProperty = table.excludeProperty();
-        } else {
+            tableInfo.setAutoInitResultMap(mpTableAnnotation.autoResultMap());
+            excludeProperty = mpTableAnnotation.excludeProperty();
+        } else if (Objects.isNull(jpaTableAnnotation)) {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
 
@@ -244,22 +271,51 @@ public class TableInfoHelper {
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
+        /**
+         * 使用JPA 初始化
+         */
+        boolean jpaReadPK = false;
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
-            if (excludeProperty.contains(field.getName())) {
+            /**
+             * 手动排除或者使用 transient注解的 排除
+             */
+            final boolean exclude = excludeProperty.contains(field.getName());
+            final boolean transientField = Objects.nonNull(field.getAnnotation(Transient.class));
+            if (exclude || transientField) {
                 continue;
             }
 
             /* 主键ID 初始化 */
             if (existTableId) {
+                Id id = field.getAnnotation(Id.class);
                 TableId tableId = field.getAnnotation(TableId.class);
-                if (tableId != null) {
+                if (tableId != null || id != null) {
                     if (isReadPK) {
-                        throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
+                        if (jpaReadPK) {
+                            throw ExceptionUtils.mpe("JPA @Id has been Init: \"%s\".", clazz.getName());
+                        } else {
+                            throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
+                        }
                     } else {
+                        if (Objects.isNull(tableId)) {
+                            TableIdImp tableIdImp = new TableIdImp();
+                            Column column = field.getAnnotation(Column.class);
+                            if (Objects.nonNull(column)) {
+                                tableIdImp.setValue(column.name());
+                            }
+                            GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
+                            if (Objects.nonNull(generatedValue)) {
+                                tableIdImp.setType(IdType.ASSIGN_ID);
+                                logger.warn("JPA compatible mode, []com.baomidou.mybatisplus.annotation.IdType.ASSIGN_ID] is the only way to generate primary key");
+                            }
+                            tableId = tableIdImp;
+                            jpaReadPK = true;
+
+                        }
                         initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
                         isReadPK = true;
                         continue;
@@ -271,12 +327,21 @@ public class TableInfoHelper {
                     continue;
                 }
             }
-            final TableField tableField = field.getAnnotation(TableField.class);
+            TableField tableField = field.getAnnotation(TableField.class);
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
                 fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector));
                 continue;
+            } else {
+                final Column column = field.getAnnotation(Column.class);
+                if (Objects.nonNull(column)) {
+                    TableFieldImp tableFieldImp = new TableFieldImp();
+                    tableFieldImp.setValue(column.name());
+                    tableField = tableFieldImp;
+                    fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector));
+                    continue;
+                }
             }
 
             /* 无 @TableField 注解的字段初始化 */
@@ -305,7 +370,9 @@ public class TableInfoHelper {
      * @return true 为存在 @TableId 注解;
      */
     public static boolean isExistTableId(List<Field> list) {
-        return list.stream().anyMatch(field -> field.isAnnotationPresent(TableId.class));
+        return list.stream().anyMatch(field ->
+            field.isAnnotationPresent(TableId.class) ||
+                field.isAnnotationPresent(Id.class));
     }
 
     /**

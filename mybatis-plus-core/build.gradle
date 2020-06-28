@@ -5,6 +5,7 @@ dependencies {
     api "${lib.'jsqlparser'}"
     api "${lib.mybatis}"
 
+    implementation "${lib.'javax.persistence'}"
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
     implementation "${lib.'mybatis-ehcache'}"
