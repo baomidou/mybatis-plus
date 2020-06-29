@@ -18,13 +18,23 @@ package com.baomidou.mybatisplus.core;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * replace default Configuration class
@@ -39,6 +49,21 @@ public class MybatisConfiguration extends Configuration {
      * Mapper 注册
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
+
+    protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+    protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+    protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+    protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
+    protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
+    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
+        .conflictMessageProducer((savedValue, targetValue) ->
+            ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+    /**
+     * 是否生成短key缓存
+     *
+     * @since 3.3.3
+     */
+    private boolean useGeneratedShortKey = true;
 
     public MybatisConfiguration(Environment environment) {
         this();
@@ -89,7 +114,7 @@ public class MybatisConfiguration extends Configuration {
             logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
             return;
         }
-        super.addMappedStatement(ms);
+        mappedStatements.put(ms.getId(), ms);
     }
 
     /**
@@ -154,4 +179,234 @@ public class MybatisConfiguration extends Configuration {
         getLanguageRegistry().setDefaultDriverClass(driver);
     }
 
+    public void addKeyGenerator(String id, KeyGenerator keyGenerator) {
+        keyGenerators.put(id, keyGenerator);
+    }
+
+    public Collection<String> getKeyGeneratorNames() {
+        return keyGenerators.keySet();
+    }
+
+    public Collection<KeyGenerator> getKeyGenerators() {
+        return keyGenerators.values();
+    }
+
+    public KeyGenerator getKeyGenerator(String id) {
+        return keyGenerators.get(id);
+    }
+
+    public boolean hasKeyGenerator(String id) {
+        return keyGenerators.containsKey(id);
+    }
+
+    public void addCache(Cache cache) {
+        caches.put(cache.getId(), cache);
+    }
+
+    public Collection<String> getCacheNames() {
+        return caches.keySet();
+    }
+
+    public Collection<Cache> getCaches() {
+        return caches.values();
+    }
+
+    public Cache getCache(String id) {
+        return caches.get(id);
+    }
+
+    public boolean hasCache(String id) {
+        return caches.containsKey(id);
+    }
+
+    public void addResultMap(ResultMap rm) {
+        resultMaps.put(rm.getId(), rm);
+        checkLocallyForDiscriminatedNestedResultMaps(rm);
+        checkGloballyForDiscriminatedNestedResultMaps(rm);
+    }
+
+    public Collection<String> getResultMapNames() {
+        return resultMaps.keySet();
+    }
+
+    public Collection<ResultMap> getResultMaps() {
+        return resultMaps.values();
+    }
+
+    public ResultMap getResultMap(String id) {
+        return resultMaps.get(id);
+    }
+
+    public boolean hasResultMap(String id) {
+        return resultMaps.containsKey(id);
+    }
+
+    public void addParameterMap(ParameterMap pm) {
+        parameterMaps.put(pm.getId(), pm);
+    }
+
+    public Collection<String> getParameterMapNames() {
+        return parameterMaps.keySet();
+    }
+
+    public Collection<ParameterMap> getParameterMaps() {
+        return parameterMaps.values();
+    }
+
+    public ParameterMap getParameterMap(String id) {
+        return parameterMaps.get(id);
+    }
+
+    public boolean hasParameterMap(String id) {
+        return parameterMaps.containsKey(id);
+    }
+
+    public Map<String, XNode> getSqlFragments() {
+        return sqlFragments;
+    }
+
+    public Collection<String> getMappedStatementNames() {
+        buildAllStatements();
+        return mappedStatements.keySet();
+    }
+
+    public Collection<MappedStatement> getMappedStatements() {
+        buildAllStatements();
+        return mappedStatements.values();
+    }
+
+    public MappedStatement getMappedStatement(String id) {
+        return this.getMappedStatement(id, true);
+    }
+
+    public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
+        if (validateIncompleteStatements) {
+            buildAllStatements();
+        }
+        return mappedStatements.get(id);
+    }
+
+    public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
+        if (validateIncompleteStatements) {
+            buildAllStatements();
+        }
+        return mappedStatements.containsKey(statementName);
+    }
+
+
+    // Slow but a one time cost. A better solution is welcome.
+    protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
+        if (rm.hasNestedResultMaps()) {
+            for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
+                Object value = entry.getValue();
+                if (value instanceof ResultMap) {
+                    ResultMap entryResultMap = (ResultMap) value;
+                    if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
+                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator().getDiscriminatorMap().values();
+                        if (discriminatedResultMapNames.contains(rm.getId())) {
+                            entryResultMap.forceNestedResultMaps();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Slow but a one time cost. A better solution is welcome.
+    protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
+        if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
+            for (Map.Entry<String, String> entry : rm.getDiscriminator().getDiscriminatorMap().entrySet()) {
+                String discriminatedResultMapName = entry.getValue();
+                if (hasResultMap(discriminatedResultMapName)) {
+                    ResultMap discriminatedResultMap = resultMaps.get(discriminatedResultMapName);
+                    if (discriminatedResultMap.hasNestedResultMaps()) {
+                        rm.forceNestedResultMaps();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isUseGeneratedShortKey() {
+        return useGeneratedShortKey;
+    }
+
+    public void setUseGeneratedShortKey(boolean useGeneratedShortKey) {
+        this.useGeneratedShortKey = useGeneratedShortKey;
+    }
+
+    protected class StrictMap<V> extends HashMap<String, V> {
+
+        private static final long serialVersionUID = -4950446264854982944L;
+        private final String name;
+        private BiFunction<V, V, String> conflictMessageProducer;
+
+        public StrictMap(String name) {
+            super();
+            this.name = name;
+        }
+        /**
+         * Assign a function for producing a conflict error message when contains value with the same key.
+         * <p>
+         * function arguments are 1st is saved value and 2nd is target value.
+         * @param conflictMessageProducer A function for producing a conflict error message
+         * @return a conflict error message
+         * @since 3.5.0
+         */
+        public StrictMap<V> conflictMessageProducer(BiFunction<V, V, String> conflictMessageProducer) {
+            this.conflictMessageProducer = conflictMessageProducer;
+            return this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public V put(String key, V value) {
+            if (containsKey(key)) {
+                throw new IllegalArgumentException(name + " already contains value for " + key
+                    + (conflictMessageProducer == null ? "" : conflictMessageProducer.apply(super.get(key), value)));
+            }
+            if (useGeneratedShortKey) {
+                if (key.contains(".")) {
+                    final String shortKey = getShortName(key);
+                    if (super.get(shortKey) == null) {
+                        super.put(shortKey, value);
+                    } else {
+                        super.put(shortKey, (V) new StrictMap.Ambiguity(shortKey));
+                    }
+                }
+            }
+            return super.put(key, value);
+        }
+
+        @Override
+        public V get(Object key) {
+            V value = super.get(key);
+            if (value == null) {
+                throw new IllegalArgumentException(name + " does not contain value for " + key);
+            }
+            if (useGeneratedShortKey && value instanceof StrictMap.Ambiguity) {
+                throw new IllegalArgumentException(((StrictMap.Ambiguity) value).getSubject() + " is ambiguous in " + name
+                    + " (try using the full name including the namespace, or rename one of the entries)");
+            }
+            return value;
+        }
+
+        protected class Ambiguity {
+            private final String subject;
+
+            public Ambiguity(String subject) {
+                this.subject = subject;
+            }
+
+            public String getSubject() {
+                return subject;
+            }
+        }
+
+        private String getShortName(String key) {
+            final String[] keyParts = key.split("\\.");
+            return keyParts[keyParts.length - 1];
+        }
+    }
 }

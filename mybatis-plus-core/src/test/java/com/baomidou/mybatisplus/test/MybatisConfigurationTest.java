@@ -18,8 +18,13 @@ package com.baomidou.mybatisplus.test;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
+import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.AutoMappingBehavior;
 import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
 import org.apache.ibatis.session.Configuration;
@@ -105,5 +110,29 @@ class MybatisConfigurationTest {
         Assertions.assertNull(configuration.getVfsImpl());
         Assertions.assertTrue(configuration.isUseActualParamName());
         Assertions.assertNull(configuration.getConfigurationFactory());
+    }
+
+    @Test
+    void testUseGeneratedShortKey(){
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.setUseGeneratedShortKey(true);
+        addMappedStatement(configuration, 200);
+        Assertions.assertEquals(400, configuration.getMappedStatements().size());
+
+        configuration = new MybatisConfiguration();
+        configuration.setUseGeneratedShortKey(false);
+        addMappedStatement(configuration, 200);
+        Assertions.assertEquals(200, configuration.getMappedStatements().size());
+    }
+
+    private void addMappedStatement(Configuration configuration, int size) {
+        for (int i = 0; i < size; i++) {
+            configuration.addMappedStatement(
+                new MappedStatement.Builder(configuration, "com.baomidou.test.method" + i,
+                    new StaticSqlSource(configuration, "select * from test"), SqlCommandType.SELECT)
+                    .statementType(StatementType.STATEMENT).resource("xxxxxx").useCache(true).keyGenerator(NoKeyGenerator.INSTANCE)
+                    .build()
+            );
+        }
     }
 }
