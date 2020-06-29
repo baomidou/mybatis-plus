@@ -31,7 +31,7 @@ import java.util.List;
 )
 public class MybatisPlusInterceptor implements Interceptor {
 
-    private final List<InnerInterceptor> interceptors = new ArrayList<>();
+    private List<InnerInterceptor> interceptors = new ArrayList<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -86,6 +86,10 @@ public class MybatisPlusInterceptor implements Interceptor {
     }
 
     public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
-        interceptors.add(innerInterceptor);
+        this.interceptors.add(innerInterceptor);
+    }
+
+    public void setInnerInterceptors(List<InnerInterceptor> innerInterceptors) {
+        this.interceptors = innerInterceptors;
     }
 }

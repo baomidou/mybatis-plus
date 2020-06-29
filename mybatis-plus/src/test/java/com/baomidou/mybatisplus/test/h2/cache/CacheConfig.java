@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.test.h2.cache;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -46,7 +45,7 @@ public class CacheConfig {
         configuration.setCacheEnabled(true);
         sqlSessionFactory.setConfiguration(configuration);
         MybatisPlusInterceptor pagination = new MybatisPlusInterceptor();
-        pagination.addInnerInterceptor(new PaginationInnerInterceptor().setCountSqlParser(new JsqlParserCountOptimize(true)));
+        pagination.addInnerInterceptor(new PaginationInnerInterceptor());
 
         sqlSessionFactory.setPlugins(pagination);
         return sqlSessionFactory.getObject();
