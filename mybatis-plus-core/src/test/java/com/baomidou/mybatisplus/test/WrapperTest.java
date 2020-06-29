@@ -166,6 +166,10 @@ class WrapperTest {
         logSqlSegment("not exists", new QueryWrapper<User>()
                 .notExists("select"),
             "(NOT EXISTS (select))");
+
+        logSqlSegment("not", new QueryWrapper<User>()
+                .not(i -> i.eq("id", 1)),
+            "(NOT (id = ?))");
     }
 
     @Test
