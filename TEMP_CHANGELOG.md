@@ -4,3 +4,4 @@
 - feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
 - feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
 - feat: 分页方言加入 gbase,clickhouse 支持
+- feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
