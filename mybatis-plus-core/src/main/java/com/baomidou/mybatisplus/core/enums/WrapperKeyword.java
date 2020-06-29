@@ -27,8 +27,7 @@ public enum WrapperKeyword implements ISqlSegment {
     /**
      * 只用作于辨识,不用于其他
      */
-    APPLY(null),
-    BRACKET(null);
+    APPLY(null);
 
     private final String keyword;
 

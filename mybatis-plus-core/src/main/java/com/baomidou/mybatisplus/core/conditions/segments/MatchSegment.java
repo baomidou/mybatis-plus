@@ -36,8 +36,7 @@ public enum MatchSegment {
     AND_OR(i -> i == SqlKeyword.AND || i == SqlKeyword.OR),
     EXISTS(i -> i == SqlKeyword.EXISTS),
     HAVING(i -> i == SqlKeyword.HAVING),
-    APPLY(i -> i == WrapperKeyword.APPLY),
-    BRACKET(i -> i == WrapperKeyword.BRACKET);
+    APPLY(i -> i == WrapperKeyword.APPLY);
 
     private final Predicate<ISqlSegment> predicate;
 

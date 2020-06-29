@@ -36,7 +36,6 @@ import java.util.function.Consumer;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.BRACKET;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -371,7 +370,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         if (condition) {
             final Children instance = instance();
             consumer.accept(instance);
-            return doIt(true, BRACKET, instance);
+            return doIt(true, APPLY, instance);
         }
         return typedThis;
     }

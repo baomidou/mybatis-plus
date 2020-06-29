@@ -150,26 +150,6 @@ class WrapperTest {
         logSqlSegment("只存在 group by", new QueryWrapper<User>()
                 .groupBy("id", "name", "sex").groupBy("id", "name"),
             "GROUP BY id,name,sex,id,name");
-
-        /* not 系列 */
-        logSqlSegment("not in", new QueryWrapper<User>()
-                .notIn("id", 1),
-            "(id NOT IN (?))");
-        logSqlSegment("not in sql", new QueryWrapper<User>()
-                .notInSql("id", "select"),
-            "(id NOT IN (select))");
-
-        logSqlSegment("not like", new QueryWrapper<User>()
-                .notLike("id", 1),
-            "(id NOT LIKE ?)");
-
-        logSqlSegment("not exists", new QueryWrapper<User>()
-                .notExists("select"),
-            "(NOT EXISTS (select))");
-
-        logSqlSegment("not", new QueryWrapper<User>()
-                .not(i -> i.eq("id", 1)),
-            "(NOT (id = ?))");
     }
 
     @Test
@@ -217,8 +197,9 @@ class WrapperTest {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2)))
             .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
-            .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
-        logSqlSegment("测试 Nested 下的方法", queryWrapper, "((id = ? AND (id <> ?)) OR (id = ? AND (id <> ?)) AND (id = ? OR (id <> ?)))");
+            .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)))
+            .not(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
+        logSqlSegment("测试 Nested 下的方法", queryWrapper, "((id = ? AND (id <> ?)) OR (id = ? AND (id <> ?)) AND (id = ? OR (id <> ?)) AND NOT (id = ? OR (id <> ?)))");
         logParams(queryWrapper);
     }
 
