@@ -132,8 +132,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children notExists(String notExistsSql) {
-        return notExists(true, notExistsSql);
+    default Children notExists(String existsSql) {
+        return notExists(true, existsSql);
     }
 
     /**
@@ -141,9 +141,9 @@ public interface Join<Children> extends Serializable {
      * <p>!! sql 注入方法 !!</p>
      * <p>例: notExists("select id from table where age = 1")</p>
      *
-     * @param condition    执行条件
-     * @param notExistsSql sql语句
+     * @param condition 执行条件
+     * @param existsSql sql语句
      * @return children
      */
-    Children notExists(boolean condition, String notExistsSql);
+    Children notExists(boolean condition, String existsSql);
 }

@@ -68,7 +68,7 @@ public class NormalSegmentList extends AbstractISegmentList {
             }
         } else {
             if (!executeNot) {
-                list.add(MatchSegment.EXISTS.match(firstSegment) ? 0 : 1, SqlKeyword.NOT);
+                list.add(0, SqlKeyword.NOT);
                 executeNot = true;
             }
             if (MatchSegment.APPLY.match(firstSegment)) {

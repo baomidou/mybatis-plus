@@ -150,6 +150,22 @@ class WrapperTest {
         logSqlSegment("只存在 group by", new QueryWrapper<User>()
                 .groupBy("id", "name", "sex").groupBy("id", "name"),
             "GROUP BY id,name,sex,id,name");
+
+        /* not 系列 */
+        logSqlSegment("not in", new QueryWrapper<User>()
+                .notIn("id", 1),
+            "(id NOT IN (?))");
+        logSqlSegment("not in sql", new QueryWrapper<User>()
+                .notInSql("id", "select"),
+            "(id NOT IN (select))");
+
+        logSqlSegment("not like", new QueryWrapper<User>()
+                .notLike("id", 1),
+            "(id NOT LIKE ?)");
+
+        logSqlSegment("not exists", new QueryWrapper<User>()
+                .notExists("select"),
+            "(NOT EXISTS (select))");
     }
 
     @Test

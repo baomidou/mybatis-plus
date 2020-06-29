@@ -84,4 +84,23 @@ public interface Nested<Param, Children> extends Serializable {
      * @return children
      */
     Children nested(boolean condition, Consumer<Param> consumer);
+
+    /**
+     * ignore
+     */
+    default Children not(Consumer<Param> consumer) {
+        return not(true, consumer);
+    }
+
+    /**
+     * not嵌套
+     * <p>
+     * 例: not(i -&gt; i.eq("name", "李白").ne("status", "活着"))
+     * </p>
+     *
+     * @param condition 执行条件
+     * @param consumer  消费函数
+     * @return children
+     */
+    Children not(boolean condition, Consumer<Param> consumer);
 }
