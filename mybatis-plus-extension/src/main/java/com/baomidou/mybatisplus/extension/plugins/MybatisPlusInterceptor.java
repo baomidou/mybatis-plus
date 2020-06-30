@@ -95,6 +95,18 @@ public class MybatisPlusInterceptor implements Interceptor {
         return Collections.unmodifiableList(interceptors);
     }
 
+    /**
+     * 使用内部规则,拿分页插件举个栗子:
+     * <p>
+     * - key: "inner:page" ,value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor"
+     * - key: "page:limit" ,value: "100"
+     * <p>
+     * 解读1: key 以 "inner:" 开头定义了这是一个需要组装的 `InnerInterceptor`, 以 "page" 结尾表示别名
+     * value 是 `InnerInterceptor` 的具体的 class 全名
+     * 解读2: key 以上面定义的 "别名 + ':'" 开头指这个 `value` 是定义的该 `InnerInterceptor` 属性需要设置的值
+     * <p>
+     * 如果这个 `InnerInterceptor` 不需要配置属性也要加别名
+     */
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper pm = PropertyMapper.newInstance(properties);
