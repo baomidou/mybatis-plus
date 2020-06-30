@@ -21,6 +21,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,156 +36,156 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TableNameParserTest {
 
     private static final String SQL_SELECT_SUB_QUERY = "SELECT /*+ materialize*/ strategy_id"
-        + "FROM"
-        + " ( SELECT  strat.cf_strategy_id "
-        + "   FROM strategy strt,"
-        + "        doc_sect_ver prodGrp"
-        + "  WHERE  strat.src_id               = prodGrp.struct_doc_sect_id"
-        + "           AND strat.module_type   IN ('sdfdsf','assdf')"
-        + ")";
+            + "FROM"
+            + " ( SELECT  strat.cf_strategy_id "
+            + "   FROM strategy strt,"
+            + "        doc_sect_ver prodGrp"
+            + "  WHERE  strat.src_id               = prodGrp.struct_doc_sect_id"
+            + "           AND strat.module_type   IN ('sdfdsf','assdf')"
+            + ")";
 
 
     private static final String SQL_SELECT_THREE_JOIN_WITH_ALIASE = "select c.name, s.name, s.id, r.result"
-        + " from colleges c "
-        + " join students s"
-        + "   on c.id = s.college_id"
-        + " join results r"
-        + "   on s.id = r.student_id"
-        + "where c.id = 3"
-        + "  and r.dt =  to_date('22-09-2005','dd-mm-yyyy')";
+            + " from colleges c "
+            + " join students s"
+            + "   on c.id = s.college_id"
+            + " join results r"
+            + "   on s.id = r.student_id"
+            + "where c.id = 3"
+            + "  and r.dt =  to_date('22-09-2005','dd-mm-yyyy')";
 
     private static final String SQL_COMPLEX_ONE = "INSERT INTO static_product"
-        + "  ("
-        + "   DISCOUNT_ID,"
-        + "    CATEGORY_ID,"
-        + "    PRODUCT_ID"
-        + "   )"
-        + "  ( SELECT DISTINCT ALLNDC11.BUNDLE_DISCOUNT_ID,"
-        + "     ALLNDC11.PRODUCT_ID,"
-        + "     ALLNDC11.NDC11"
-        + "  FROM ITEM ITEM"
-        + " INNER JOIN"
-        + "   (SELECT NODE.SOURCE_ID NDC11,"
-        + "    PR.PRODUCT_ID,"
-        + "     BD1.BUNDLE_DISCOUNT_ID"
-        + "    FROM DR_BUNDLE B,"
-        + "      DR_BUNDLE_DISCOUNT BD1,"
-        + "        DR_BD_PRODUCT PR,"
-        + "       map_edge_ver node"
-        + "     WHERE B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
-        + "     AND B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
-        + "      AND B.BUNDLE_ID             =BD1.BUNDLE_ID"
-        + "    AND B.BUNDLE_STATUS         =3"
-        + "    AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
-        + "     AND BD1.IS_DYNAMIC_CATEGORY!= 1"
-        + "     AND NODE.EDGE_TYPE          = 1"
-        + "      START WITH"
-        + "      ("
-        + "        NODE.DEST_ID              = PR.PRODUCT_ID"
-        + "      AND B.BUNDLE_ID             =BD1.BUNDLE_ID"
-        + "      AND B.BUNDLE_STATUS         =3"
-        + "      AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
-        + "     AND BD1.IS_DYNAMIC_CATEGORY!= 1"
-        + "      AND NODE.EDGE_TYPE          = 1"
-        + "      AND B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
-        + "      AND B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
-        + "     )"
-        + "       CONNECT BY ( PRIOR NODE.SOURCE_ID=NODE.DEST_ID"
-        + "    AND PRIOR NODE.EDGE_TYPE           = 1"
-        + "    AND PRIOR B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
-        + "   AND PRIOR B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
-        + "    AND prior bd1.bundle_discount_id= bd1.bundle_discount_id)"
-        + "    ) ALLNDC11"
-        + "  ON (ALLNDC11.NDC11 = ITEM.CAT_MAP_ID)"
-        + "  UNION"
-        + "   ( SELECT BD1.BUNDLE_DISCOUNT_ID,"
-        + "      PR.PRODUCT_ID,"
-        + "     ITEM.CAT_MAP_ID"
-        + "    FROM DR_BUNDLE B,"
-        + "      DR_BUNDLE_DISCOUNT BD1,"
-        + "     DR_BD_PRODUCT PR,"
-        + "    ITEM ITEM"
-        + "    WHERE B.BUNDLE_ID           =BD1.BUNDLE_ID"
-        + "   AND B.BUNDLE_STATUS         =3"
-        + "   AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
-        + "    AND BD1.IS_DYNAMIC_CATEGORY!= 1"
-        + "   AND item.cat_map_id         =pr.product_id"
-        + "    )";
+            + "  ("
+            + "   DISCOUNT_ID,"
+            + "    CATEGORY_ID,"
+            + "    PRODUCT_ID"
+            + "   )"
+            + "  ( SELECT DISTINCT ALLNDC11.BUNDLE_DISCOUNT_ID,"
+            + "     ALLNDC11.PRODUCT_ID,"
+            + "     ALLNDC11.NDC11"
+            + "  FROM ITEM ITEM"
+            + " INNER JOIN"
+            + "   (SELECT NODE.SOURCE_ID NDC11,"
+            + "    PR.PRODUCT_ID,"
+            + "     BD1.BUNDLE_DISCOUNT_ID"
+            + "    FROM DR_BUNDLE B,"
+            + "      DR_BUNDLE_DISCOUNT BD1,"
+            + "        DR_BD_PRODUCT PR,"
+            + "       map_edge_ver node"
+            + "     WHERE B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
+            + "     AND B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
+            + "      AND B.BUNDLE_ID             =BD1.BUNDLE_ID"
+            + "    AND B.BUNDLE_STATUS         =3"
+            + "    AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
+            + "     AND BD1.IS_DYNAMIC_CATEGORY!= 1"
+            + "     AND NODE.EDGE_TYPE          = 1"
+            + "      START WITH"
+            + "      ("
+            + "        NODE.DEST_ID              = PR.PRODUCT_ID"
+            + "      AND B.BUNDLE_ID             =BD1.BUNDLE_ID"
+            + "      AND B.BUNDLE_STATUS         =3"
+            + "      AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
+            + "     AND BD1.IS_DYNAMIC_CATEGORY!= 1"
+            + "      AND NODE.EDGE_TYPE          = 1"
+            + "      AND B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
+            + "      AND B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
+            + "     )"
+            + "       CONNECT BY ( PRIOR NODE.SOURCE_ID=NODE.DEST_ID"
+            + "    AND PRIOR NODE.EDGE_TYPE           = 1"
+            + "    AND PRIOR B.DATE_ACTIVATED BETWEEN NODE.EFF_START_DATE AND NODE.EFF_END_DATE"
+            + "   AND PRIOR B.DATE_ACTIVATED BETWEEN NODE.VER_START_DATE AND NODE.VER_END_DATE"
+            + "    AND prior bd1.bundle_discount_id= bd1.bundle_discount_id)"
+            + "    ) ALLNDC11"
+            + "  ON (ALLNDC11.NDC11 = ITEM.CAT_MAP_ID)"
+            + "  UNION"
+            + "   ( SELECT BD1.BUNDLE_DISCOUNT_ID,"
+            + "      PR.PRODUCT_ID,"
+            + "     ITEM.CAT_MAP_ID"
+            + "    FROM DR_BUNDLE B,"
+            + "      DR_BUNDLE_DISCOUNT BD1,"
+            + "     DR_BD_PRODUCT PR,"
+            + "    ITEM ITEM"
+            + "    WHERE B.BUNDLE_ID           =BD1.BUNDLE_ID"
+            + "   AND B.BUNDLE_STATUS         =3"
+            + "   AND PR.BUNDLE_DISCOUNT_ID   =BD1.BUNDLE_DISCOUNT_ID"
+            + "    AND BD1.IS_DYNAMIC_CATEGORY!= 1"
+            + "   AND item.cat_map_id         =pr.product_id"
+            + "    )";
 
     private static final String SQL_MERGE_COMPLEX = "MERGE INTO  cf_procedure proc USING"
-        + " ("
-        + " WITH NON_STRATEGY_DETAILS AS"
-        + "   ("
-        + "   SELECT /*+ materialize*/ cf_strategy_id"
-        + "    FROM"
-        + "     ( SELECT  strat.cf_strategy_id"
-        + "        FROM cf_strategy strat,"
-        + "             struct_doc_Sect_ver prodGrp"
-        + "        WHERE  strat.src_id               = prodGrp.struct_doc_sect_id"
-        + "                 AND strat.src_mgr_id     = prodGrp.mgr_id"
-        + "                 AND strat.src_ver_num    = prodGrp.ver_num"
-        + "                 AND strat.module_type   IN ('COMPL','PRCMSTR')"
-        + "   )  ),"
-        + "   NON_STRATEGY_COMPS AS"
-        + "   ("
-        + "   SELECT /*+ materialize*/ cf_component_id"
-        + "   FROM"
-        + "   ("
-        + "     SELECT comp.cf_component_id AS cf_component_id"
-        + "     FROM   cf_component comp,"
-        + "            tier_basis_ver tb"
-        + "     WHERE  comp.bucket_src_id   = tb.tier_basis_id"
-        + "             AND comp.bucket_src_mgr_id  = tb.mgr_id"
-        + "             AND comp.bucket_src_ver_num = tb.ver_num"
-        + "             AND comp.module_type       IN ('COMPL','PRCMSTR')"
-        + "   )"
-        + "   ) ,"
-        + " NON_STRAT_PERIODS AS ("
-        + "   SELECT /*+ materialize*/ cf_period_id"
-        + "   FROM"
-        + "         cf_period per,"
-        + "         struct_doc_sect_ver prodGrp"
-        + "   WHERE  per.src_id            = prodGrp.struct_doc_sect_id"
-        + "         AND per.src_mgr_id     = prodGrp.mgr_id"
-        + "         AND per.src_ver_num    = prodGrp.ver_num"
-        + "         AND per.module_type    IN ('COMPL','PRCMSTR')"
-        + "         AND per.pmt_status NOT IN ('TERM','REV')"
+            + " ("
+            + " WITH NON_STRATEGY_DETAILS AS"
+            + "   ("
+            + "   SELECT /*+ materialize*/ cf_strategy_id"
+            + "    FROM"
+            + "     ( SELECT  strat.cf_strategy_id"
+            + "        FROM cf_strategy strat,"
+            + "             struct_doc_Sect_ver prodGrp"
+            + "        WHERE  strat.src_id               = prodGrp.struct_doc_sect_id"
+            + "                 AND strat.src_mgr_id     = prodGrp.mgr_id"
+            + "                 AND strat.src_ver_num    = prodGrp.ver_num"
+            + "                 AND strat.module_type   IN ('COMPL','PRCMSTR')"
+            + "   )  ),"
+            + "   NON_STRATEGY_COMPS AS"
+            + "   ("
+            + "   SELECT /*+ materialize*/ cf_component_id"
+            + "   FROM"
+            + "   ("
+            + "     SELECT comp.cf_component_id AS cf_component_id"
+            + "     FROM   cf_component comp,"
+            + "            tier_basis_ver tb"
+            + "     WHERE  comp.bucket_src_id   = tb.tier_basis_id"
+            + "             AND comp.bucket_src_mgr_id  = tb.mgr_id"
+            + "             AND comp.bucket_src_ver_num = tb.ver_num"
+            + "             AND comp.module_type       IN ('COMPL','PRCMSTR')"
+            + "   )"
+            + "   ) ,"
+            + " NON_STRAT_PERIODS AS ("
+            + "   SELECT /*+ materialize*/ cf_period_id"
+            + "   FROM"
+            + "         cf_period per,"
+            + "         struct_doc_sect_ver prodGrp"
+            + "   WHERE  per.src_id            = prodGrp.struct_doc_sect_id"
+            + "         AND per.src_mgr_id     = prodGrp.mgr_id"
+            + "         AND per.src_ver_num    = prodGrp.ver_num"
+            + "         AND per.module_type    IN ('COMPL','PRCMSTR')"
+            + "         AND per.pmt_status NOT IN ('TERM','REV')"
 
-        + "    SELECT DISTINCT cf_procedure_id"
-        + "   FROM"
-        + "     (SELECT /*+ LEADING(comp,proc)*/"
-        + "           proc.cf_procedure_id AS cf_procedure_id"
-        + "     FROM  non_strategy_comps comp,"
-        + "           cf_procedure proc"
-        + "     WHERE proc.variable_name          ='CALCULATION_LEVEL_RESULT'"
-        + "           AND comp.cf_component_id    = proc.cf_component_id"
-        + "    UNION ALL"
-        + "     SELECT  /*+ LEADING(strat,proc)*/"
-        + "           proc.cf_procedure_id AS cf_procedure_id"
-        + "     FROM  cf_procedure proc,"
-        + "           non_strategy_details strat"
-        + "     WHERE proc.variable_name       ='CALCULATION_LEVEL_RESULT'"
-        + "           AND strat.cf_strategy_id = proc.cf_strategy_id"
-        + "     UNION ALL"
-        + "     SELECT  /*+ LEADING(strat,proc)*/"
-        + "          proc.cf_procedure_id AS cf_procedure_id"
-        + "     FROM cf_procedure proc,"
-        + "          non_strat_periods periods"
-        + "     WHERE proc.variable_name       ='CALCULATION_LEVEL_RESULT'"
-        + "           AND periods.CF_PERIOD_ID = proc.period_id"
-        + "     )"
-        + "      )TMP ON (proc.cf_procedure_id = tmp.cf_procedure_id)"
-        + " WHEN MATCHED THEN"
-        + "   UPDATE SET proc.variable_name = 'TierResultSSName';";
+            + "    SELECT DISTINCT cf_procedure_id"
+            + "   FROM"
+            + "     (SELECT /*+ LEADING(comp,proc)*/"
+            + "           proc.cf_procedure_id AS cf_procedure_id"
+            + "     FROM  non_strategy_comps comp,"
+            + "           cf_procedure proc"
+            + "     WHERE proc.variable_name          ='CALCULATION_LEVEL_RESULT'"
+            + "           AND comp.cf_component_id    = proc.cf_component_id"
+            + "    UNION ALL"
+            + "     SELECT  /*+ LEADING(strat,proc)*/"
+            + "           proc.cf_procedure_id AS cf_procedure_id"
+            + "     FROM  cf_procedure proc,"
+            + "           non_strategy_details strat"
+            + "     WHERE proc.variable_name       ='CALCULATION_LEVEL_RESULT'"
+            + "           AND strat.cf_strategy_id = proc.cf_strategy_id"
+            + "     UNION ALL"
+            + "     SELECT  /*+ LEADING(strat,proc)*/"
+            + "          proc.cf_procedure_id AS cf_procedure_id"
+            + "     FROM cf_procedure proc,"
+            + "          non_strat_periods periods"
+            + "     WHERE proc.variable_name       ='CALCULATION_LEVEL_RESULT'"
+            + "           AND periods.CF_PERIOD_ID = proc.period_id"
+            + "     )"
+            + "      )TMP ON (proc.cf_procedure_id = tmp.cf_procedure_id)"
+            + " WHEN MATCHED THEN"
+            + "   UPDATE SET proc.variable_name = 'TierResultSSName';";
 
     private static final String SQL_MERGE_COMPLEX_TWO = " MERGE INTO cf_procedure_ver procVer USING"
-        + "   (SELECT cf_procedure_id"
-        + "    FROM cf_procedure proc"
-        + "    WHERE proc.variable_name                  = 'TierResultSSName'"
-        + "   ) proc_main ON (proc_main.cf_procedure_id = procVer.cf_procedure_id )"
-        + " WHEN MATCHED THEN"
-        + "   UPDATE SET procVer.variable_name = 'TierResultSSName'"
-        + "   WHERE procVer.variable_name <> 'TierResultSSName';";
+            + "   (SELECT cf_procedure_id"
+            + "    FROM cf_procedure proc"
+            + "    WHERE proc.variable_name                  = 'TierResultSSName'"
+            + "   ) proc_main ON (proc_main.cf_procedure_id = procVer.cf_procedure_id )"
+            + " WHEN MATCHED THEN"
+            + "   UPDATE SET procVer.variable_name = 'TierResultSSName'"
+            + "   WHERE procVer.variable_name <> 'TierResultSSName';";
 
     @Test
     public void testSelectOneTable() {
@@ -201,7 +202,7 @@ public class TableNameParserTest {
     @Test
     public void testSelectThreeTables() {
         String sql = "SELECT name, age FROM table1,table2,table3 group by xyx";
-        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2","table3"));
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2", "table3"));
     }
 
     @Test
@@ -357,7 +358,7 @@ public class TableNameParserTest {
 
     @Test
     public void testMergeComplexQuery() {
-        assertThat(new TableNameParser(SQL_MERGE_COMPLEX).tables()).isEqualTo(asSet("non_strategy_comps","cf_procedure", "struct_doc_Sect_ver", "cf_period", "cf_component", "cf_strategy", "tier_basis_ver", "non_strategy_details", "cf_procedure", "non_strat_periods"));
+        assertThat(new TableNameParser(SQL_MERGE_COMPLEX).tables()).isEqualTo(asSet("non_strategy_comps", "cf_procedure", "struct_doc_Sect_ver", "cf_period", "cf_component", "cf_strategy", "tier_basis_ver", "non_strategy_details", "cf_procedure", "non_strat_periods"));
     }
 
     @Test
@@ -392,7 +393,7 @@ public class TableNameParserTest {
     @Test
     public void testCreateView2() {
         String sql = "CREATE VIEW division1_staff AS SELECT ename, empno, job, dname FROM emp, dept WHERE emp.deptno IN (10, 30) AND emp.deptno = dept.deptno;";
-        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("dept","emp"));
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("dept", "emp"));
     }
 
     @Test
@@ -464,32 +465,30 @@ public class TableNameParserTest {
     @Test
     public void testSqlWithMultipleCommentsInTheMiddle() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n join bar b -- I also like bar \n on f.id = b.id";
-        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo","bar"));
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
 
     @Test
     public void testSqlWithMultipleCommentsAndNewlines() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n\n join bar b -- I also like bar \n on f.id = b.id";
-        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo","bar"));
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
 
     @Test
     public void testSqlWithMultipleCommentsInTheMiddleAndEnd() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n join bar b -- I also like bar \n on f.id = b.id -- comment ending with update";
-        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo","bar"));
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
-    
+
     @Test
     void testSelectForUpdate() {
-        //TODO 暂时解决不能使用的问题,当碰到for update nowait这样的,后面的nowait会被当做成表但也不是很影响苗老板的动态表过滤.
+        //TODO 暂时解决不能使用的问题,当碰到for update nowait这样的,后面的 nowait 会被当做成表但也不是很影响苗老板的动态表过滤.
         assertThat(new TableNameParser("select * from mp where id = 1 for update").tables()).isEqualTo(asSet("mp"));
     }
 
     private static Collection<String> asSet(String... a) {
-        Set<String> result = new HashSet<String>();
-        for (String item : a) {
-            result.add(item);
-        }
+        Set<String> result = new HashSet<>();
+        Collections.addAll(result, a);
         return result;
     }
 
