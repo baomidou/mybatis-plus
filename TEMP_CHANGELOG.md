@@ -5,3 +5,4 @@
 - feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
 - feat: 分页方言加入 gbase,clickhouse 支持
 - feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
+- feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
