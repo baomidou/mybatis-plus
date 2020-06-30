@@ -16,11 +16,16 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.executor.MybatisBatchExecutor;
+import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
+import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
+import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -31,7 +36,9 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.transaction.Transaction;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,6 +75,10 @@ public class MybatisConfiguration extends Configuration {
     @Setter
     @Getter
     private boolean useGeneratedShortKey = true;
+
+    @Setter
+    @Getter
+    private boolean useNewExecutor = true;
 
     public MybatisConfiguration(Environment environment) {
         this();
@@ -297,6 +308,27 @@ public class MybatisConfiguration extends Configuration {
         return mappedStatements.containsKey(statementName);
     }
 
+    @Override
+    public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+        if (useNewExecutor) {
+            executorType = executorType == null ? defaultExecutorType : executorType;
+            executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
+            Executor executor;
+            if (ExecutorType.BATCH == executorType) {
+                executor = new MybatisBatchExecutor(this, transaction);
+            } else if (ExecutorType.REUSE == executorType) {
+                executor = new MybatisReuseExecutor(this, transaction);
+            } else {
+                executor = new MybatisSimpleExecutor(this, transaction);
+            }
+            if (cacheEnabled) {
+                executor = new MybatisCachingExecutor(executor);
+            }
+            executor = (Executor) interceptorChain.pluginAll(executor);
+            return executor;
+        }
+        return super.newExecutor(transaction, executorType);
+    }
 
     // Slow but a one time cost. A better solution is welcome.
     protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
@@ -342,10 +374,12 @@ public class MybatisConfiguration extends Configuration {
             super();
             this.name = name;
         }
+
         /**
          * Assign a function for producing a conflict error message when contains value with the same key.
          * <p>
          * function arguments are 1st is saved value and 2nd is target value.
+         *
          * @param conflictMessageProducer A function for producing a conflict error message
          * @return a conflict error message
          * @since 3.5.0

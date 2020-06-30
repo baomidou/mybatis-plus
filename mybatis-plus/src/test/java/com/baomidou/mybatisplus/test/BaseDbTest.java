@@ -62,6 +62,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         MybatisSqlSessionFactoryBuilder builder = new MybatisSqlSessionFactoryBuilder();
         Environment environment = new Environment("test", new JdbcTransactionFactory(), ds);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
+        configuration.setUseNewExecutor(false);
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
         configuration.setLogImpl(Slf4jImpl.class);
         if (StringUtils.isNotBlank(mapperXml)) {
