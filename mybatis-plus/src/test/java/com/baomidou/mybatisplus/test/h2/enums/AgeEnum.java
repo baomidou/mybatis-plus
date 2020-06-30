@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2.enums;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.annotation.IEnum;
 
 /**
  * 通用枚举注入演示，注意需要实现 IEnums 也需要扫描枚举包

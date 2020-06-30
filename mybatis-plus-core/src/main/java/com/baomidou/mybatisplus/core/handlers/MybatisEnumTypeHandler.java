@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.annotation.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;

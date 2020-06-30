@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.test.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.annotation.IEnum;
 import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +37,7 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     private static final MybatisEnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(SexEnum.class);
 
     private static final MybatisEnumTypeHandler<GradeEnum> GRADE_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(GradeEnum.class);
-    
+
     private static final MybatisEnumTypeHandler<CharacterEnum> CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(CharacterEnum.class);
 
     @Getter
@@ -68,20 +68,34 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
 
         private final String desc;
     }
-    
-    @Getter
-    @AllArgsConstructor
-    enum CharacterEnum {
-        MAN('1', "男"),
-        WO_MAN('2', "女");
-        
-        @EnumValue
-        char code;
-        String desc;
+
+    @Test
+    @Override
+    public void getResultFromResultSetByColumnName() throws Exception {
+        when(resultSet.getObject("column")).thenReturn(null);
+        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn(1);
+        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn(2);
+        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+
+        when(resultSet.getObject("column")).thenReturn(null);
+        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn(1);
+        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn(2);
+        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+
+        when(resultSet.getObject("column")).thenReturn(null);
+        assertNull(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn("1");
+        assertEquals(CharacterEnum.MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        when(resultSet.getObject("column")).thenReturn("2");
+        assertEquals(CharacterEnum.WO_MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
     }
 
     @Test
-    void dealEnumType(){
+    void dealEnumType() {
         Assertions.assertFalse(MybatisEnumTypeHandler.dealEnumType(String.class).isPresent());
         Assertions.assertTrue(MybatisEnumTypeHandler.dealEnumType(GradeEnum.class).isPresent());
         Assertions.assertFalse(MybatisEnumTypeHandler.dealEnumType(SexEnum.class).isPresent());
@@ -108,29 +122,15 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         verify(preparedStatement).setNull(6, JdbcType.INTEGER.TYPE_CODE);
     }
 
-    @Test
-    @Override
-    public void getResultFromResultSetByColumnName() throws Exception {
-        when(resultSet.getObject("column")).thenReturn(null);
-        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(1);
-        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(2);
-        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+    @Getter
+    @AllArgsConstructor
+    enum CharacterEnum {
+        MAN('1', "男"),
+        WO_MAN('2', "女");
 
-        when(resultSet.getObject("column")).thenReturn(null);
-        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(1);
-        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(2);
-        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-    
-        when(resultSet.getObject("column")).thenReturn(null);
-        assertNull(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn("1");
-        assertEquals(CharacterEnum.MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn("2");
-        assertEquals(CharacterEnum.WO_MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        @EnumValue
+        char code;
+        String desc;
     }
 
     @Test
