@@ -22,7 +22,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,20 +49,32 @@ public class DynamicTableNameParser implements ISqlParser {
         // fix-issue:https://gitee.com/baomidou/mybatis-plus/issues/I1K7Q1
         // Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlerMap), "tableNameHandlerMap is empty.");
         if (allowProcess(metaObject)) {
-            Collection<String> tables = new TableNameParser(sql).tables();
-
-            for (String table : tables) {
-                ITableNameHandler handler = tableNameHandlerMap.get(table);
-                if (null != handler) {
-                    sql = handler.process(metaObject, sql, table);
+            TableNameParser parser = new TableNameParser(sql);
+            List<TableNameParser.SqlToken> names = new ArrayList<>();
+            parser.accept(names::add);
+            StringBuilder builder = new StringBuilder();
+            int last = 0;
+            for (TableNameParser.SqlToken name : names) {
+                int start = name.getStart();
+                if (start != last) {
+                    builder.append(sql, last, start);
+                    String value = name.getValue();
+                    ITableNameHandler handler = tableNameHandlerMap.get(value);
+                    if (handler != null) {
+                        builder.append(handler.dynamicTableName(metaObject, sql, value));
+                    } else {
+                        builder.append(value);
+                    }
                 }
+                last = name.getEnd();
             }
-
-            return SqlInfo.of(sql);
+            if (last != sql.length()) {
+                builder.append(sql.substring(last));
+            }
+            return SqlInfo.of(builder.toString());
         }
         return null;
     }
-
 
     /**
      * 判断是否允许执行

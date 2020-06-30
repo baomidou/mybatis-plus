@@ -256,7 +256,7 @@ public final class TableNameParser {
     /**
      * SQL 词
      */
-    public static class SqlToken {
+    public static class SqlToken implements Comparable<SqlToken> {
         private final int start;
         private final int end;
         private final String value;
@@ -277,6 +277,11 @@ public final class TableNameParser {
 
         public String getValue() {
             return value;
+        }
+
+        @Override
+        public int compareTo(SqlToken o) {
+            return Integer.compare(start, o.start);
         }
 
         @Override
