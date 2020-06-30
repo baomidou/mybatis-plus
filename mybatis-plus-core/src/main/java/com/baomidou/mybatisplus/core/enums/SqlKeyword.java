@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.enums;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.AllArgsConstructor;
 
 /**
  * SQL 保留关键字枚举
@@ -25,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  * @author hubin
  * @since 2018-05-28
  */
+@AllArgsConstructor
 public enum SqlKeyword implements ISqlSegment {
     AND("AND"),
     OR("OR"),
@@ -52,10 +54,6 @@ public enum SqlKeyword implements ISqlSegment {
     DESC("DESC");
 
     private final String keyword;
-
-    SqlKeyword(final String keyword) {
-        this.keyword = keyword;
-    }
 
     @Override
     public String getSqlSegment() {
