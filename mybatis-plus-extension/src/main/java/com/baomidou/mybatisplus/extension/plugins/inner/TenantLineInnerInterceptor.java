@@ -16,11 +16,13 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -45,6 +47,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author hubin
@@ -317,6 +320,12 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         }
         column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        PropertyMapper.newInstance(properties)
+            .whenNotBlack("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 

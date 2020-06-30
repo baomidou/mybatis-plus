@@ -26,7 +26,6 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
-import lombok.experimental.Accessors;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
@@ -63,7 +62,6 @@ import java.util.stream.Collectors;
  * @since 2020-06-16
  */
 @Data
-@Accessors(chain = true)
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
 
