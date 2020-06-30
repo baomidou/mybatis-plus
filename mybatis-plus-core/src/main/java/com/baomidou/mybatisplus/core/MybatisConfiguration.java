@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -63,6 +65,8 @@ public class MybatisConfiguration extends Configuration {
      *
      * @since 3.3.3
      */
+    @Setter
+    @Getter
     private boolean useGeneratedShortKey = true;
 
     public MybatisConfiguration(Environment environment) {
@@ -326,14 +330,6 @@ public class MybatisConfiguration extends Configuration {
                 }
             }
         }
-    }
-
-    public boolean isUseGeneratedShortKey() {
-        return useGeneratedShortKey;
-    }
-
-    public void setUseGeneratedShortKey(boolean useGeneratedShortKey) {
-        this.useGeneratedShortKey = useGeneratedShortKey;
     }
 
     protected class StrictMap<V> extends HashMap<String, V> {
