@@ -15,13 +15,20 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Maps;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author miemie
@@ -33,6 +40,10 @@ public class PropertyMapper {
 
     public static PropertyMapper newInstance(Properties properties) {
         return new PropertyMapper(properties);
+    }
+
+    public Set<String> keys() {
+        return delegate.stringPropertyNames();
     }
 
     public PropertyMapper whenNotBlack(String key, Consumer<String> consumer) {
@@ -49,5 +60,27 @@ public class PropertyMapper {
             consumer.accept(function.apply(value));
         }
         return this;
+    }
+
+    /**
+     * mp 内部规则分组
+     *
+     * @return 分组
+     */
+    public Map<String, Properties> group() {
+        final Set<String> keys = keys();
+        Set<String> inner = keys.stream().filter(i -> i.startsWith("inner:")).collect(Collectors.toSet());
+        if (CollectionUtils.isEmpty(inner)) {
+            return Collections.emptyMap();
+        }
+        Map<String, Properties> map = Maps.newHashMap();
+        inner.forEach(i -> {
+            Properties p = new Properties();
+            String key = i.substring(6) + StringPool.COLON;
+            int keyIndex = key.length();
+            keys.stream().filter(j -> j.startsWith(key)).forEach(j -> p.setProperty(j.substring(keyIndex), delegate.getProperty(j)));
+            map.put(delegate.getProperty(i), p);
+        });
+        return map;
     }
 }

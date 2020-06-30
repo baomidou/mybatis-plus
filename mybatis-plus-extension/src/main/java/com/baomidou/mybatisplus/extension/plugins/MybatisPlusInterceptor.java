@@ -1,6 +1,9 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
+import lombok.Setter;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -12,9 +15,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author miemie
@@ -31,6 +32,7 @@ import java.util.List;
 )
 public class MybatisPlusInterceptor implements Interceptor {
 
+    @Setter
     private List<InnerInterceptor> interceptors = new ArrayList<>();
 
     @Override
@@ -89,7 +91,18 @@ public class MybatisPlusInterceptor implements Interceptor {
         this.interceptors.add(innerInterceptor);
     }
 
-    public void setInnerInterceptors(List<InnerInterceptor> innerInterceptors) {
-        this.interceptors = innerInterceptors;
+    public List<InnerInterceptor> getInterceptors() {
+        return Collections.unmodifiableList(interceptors);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        PropertyMapper pm = PropertyMapper.newInstance(properties);
+        Map<String, Properties> group = pm.group();
+        group.forEach((k, v) -> {
+            InnerInterceptor innerInterceptor = ClassUtils.newInstance(k);
+            innerInterceptor.setProperties(v);
+            addInnerInterceptor(innerInterceptor);
+        });
     }
 }

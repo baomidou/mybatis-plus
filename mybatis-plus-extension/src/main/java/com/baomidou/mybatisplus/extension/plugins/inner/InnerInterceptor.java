@@ -24,6 +24,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * @author miemie
@@ -71,5 +72,9 @@ public interface InnerInterceptor {
      */
     default void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         // do nothing
+    }
+
+    default void setProperties(Properties properties) {
+        // NOP
     }
 }

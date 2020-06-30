@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantLineHandler;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
@@ -50,11 +50,15 @@ import java.util.List;
  * @author hubin
  * @since 2020-06-20
  */
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings({"rawtypes"})
 public class TenantLineInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
-    private final TenantLineHandler tenantLineHandler;
+    private TenantLineHandler tenantLineHandler;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -315,3 +319,5 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         return new Column(column.toString());
     }
 }
+
+

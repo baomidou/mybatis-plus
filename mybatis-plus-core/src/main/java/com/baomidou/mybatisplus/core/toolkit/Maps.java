@@ -25,6 +25,10 @@ public final class Maps {
     private static final int MAX_POWER_OF_TWO = 1 << (Integer.SIZE - 2);
 
 
+    public static <K, V> HashMap<K, V> newHashMap() {
+        return new HashMap<>();
+    }
+
     public static <K, V> HashMap<K, V> newHashMapWithExpectedSize(int expectedSize) {
         return new HashMap<>(capacity(expectedSize));
     }

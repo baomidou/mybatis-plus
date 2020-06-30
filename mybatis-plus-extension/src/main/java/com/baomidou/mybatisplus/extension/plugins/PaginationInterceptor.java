@@ -299,6 +299,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
             .whenNotBlack("dialectType", this::setDialectType)
             .whenNotBlack("dialectClazz", this::setDialectClazz)
+            .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
+            .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
             .whenNotBlack("limit", Long::parseLong, this::setLimit);
     }
 

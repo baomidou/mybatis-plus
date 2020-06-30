@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -348,5 +349,14 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected void handlerOverflow(IPage<?> page) {
         page.setCurrent(1);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        PropertyMapper.newInstance(properties)
+            .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
+            .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
+            .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
+            .whenNotBlack("limit", Long::parseLong, this::setLimit);
     }
 }
