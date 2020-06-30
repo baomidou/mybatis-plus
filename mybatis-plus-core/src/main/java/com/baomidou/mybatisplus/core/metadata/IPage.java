@@ -44,7 +44,9 @@ public interface IPage<T> extends Serializable {
      * KEY/VALUE 条件
      *
      * @return ignore
+     * @deprecated 3.3.3 @2020-06-30
      */
+    @Deprecated
     default Map<Object, Object> condition() {
         return null;
     }
@@ -102,7 +104,9 @@ public interface IPage<T> extends Serializable {
      *
      * @param hit 是否命中
      * @since 3.3.1
+     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
      */
+    @Deprecated
     default void hitCount(boolean hit) {
 
     }
@@ -112,6 +116,7 @@ public interface IPage<T> extends Serializable {
      *
      * @return 是否命中count缓存
      * @since 3.3.1
+     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
      */
     @Deprecated
     default boolean isHitCount() {
@@ -194,7 +199,9 @@ public interface IPage<T> extends Serializable {
      *
      * @return 缓存key值
      * @since 3.3.2
+     * @deprecated 3.3.3 @2020-06-30
      */
+    @Deprecated
     default String cacheKey() {
         StringBuilder key = new StringBuilder();
         key.append(offset()).append(StringPool.COLON).append(getSize());
