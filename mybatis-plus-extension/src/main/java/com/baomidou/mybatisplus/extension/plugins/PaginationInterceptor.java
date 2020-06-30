@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -56,8 +57,10 @@ import java.util.stream.Collectors;
  *
  * @author hubin
  * @since 2016-01-23
+ * @deprecated 3.3.3 @2020-06-30 use {@link MybatisPlusInterceptor} {@link PaginationInnerInterceptor}
  */
 @Setter
+@Deprecated
 @Accessors(chain = true)
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends AbstractSqlParserHandler implements Interceptor {

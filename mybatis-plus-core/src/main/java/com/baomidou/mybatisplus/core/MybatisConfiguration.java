@@ -76,6 +76,10 @@ public class MybatisConfiguration extends Configuration {
     @Getter
     private boolean useGeneratedShortKey = true;
 
+    /**
+     * @deprecated 该属性将会随着 com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor 插件的移除而移除
+     */
+    @Deprecated
     @Setter
     @Getter
     private boolean useNewExecutor = true;
