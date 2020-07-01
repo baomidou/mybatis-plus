@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * com.google.common.collect.Maps
@@ -31,6 +34,27 @@ public final class Maps {
 
     public static <K, V> HashMap<K, V> newHashMapWithExpectedSize(int expectedSize) {
         return new HashMap<>(capacity(expectedSize));
+    }
+
+    /**
+     * 用来过渡下Jdk1.8下ConcurrentHashMap的性能bug
+     * https://bugs.openjdk.java.net/browse/JDK-8161372
+     *
+     * @param concurrentHashMap
+     * @param key
+     * @param mappingFunction
+     * @param <K>
+     * @param <V>
+     * @since 3.3.3
+     * @return V
+     */
+    public static <K, V> V computeIfAbsent(Map<K, V> concurrentHashMap, K key, Function<? super K, ? extends V> mappingFunction) {
+        Objects.requireNonNull(concurrentHashMap);
+        V v = concurrentHashMap.get(key);
+        if (v != null) {
+            return v;
+        }
+        return concurrentHashMap.computeIfAbsent(key, mappingFunction);
     }
 
     /**

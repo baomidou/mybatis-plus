@@ -172,7 +172,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             final Configuration configuration = ms.getConfiguration();
             try {
-                return countMsCache.computeIfAbsent(countId, key -> configuration.getMappedStatement(key, false));
+                return Maps.computeIfAbsent(countMsCache, countId, key -> configuration.getMappedStatement(key, false));
             } catch (Exception e) {
                 logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
             }
@@ -183,7 +183,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     protected MappedStatement buildAutoCountMappedStatement(MappedStatement ms) {
         final String countId = ms.getId() + "_mpCount";
         final Configuration configuration = ms.getConfiguration();
-        return countMsCache.computeIfAbsent(countId, key -> {
+        return Maps.computeIfAbsent(countMsCache, countId, key -> {
             MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(), ms.getSqlCommandType());
             builder.resource(ms.getResource());
             builder.fetchSize(ms.getFetchSize());

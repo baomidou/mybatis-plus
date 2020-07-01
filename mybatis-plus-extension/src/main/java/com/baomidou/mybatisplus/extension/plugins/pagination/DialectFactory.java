@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.Maps;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -71,7 +72,7 @@ public class DialectFactory {
     @Deprecated
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
         //这里需要注意一下，就的版本是把dbType和dialectClazz同时传进来的，所以会存在dbType是一定会有值，dialectClazz可能为空的情况，兼容需要先判断dialectClazz
-        return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : DIALECT_CACHE.computeIfAbsent(dialectClazz, ClassUtils::newInstance);
+        return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : Maps.computeIfAbsent(DIALECT_CACHE, dialectClazz, ClassUtils::newInstance);
     }
 
     /**
@@ -82,7 +83,7 @@ public class DialectFactory {
      * @since 3.3.1
      */
     public static IDialect getDialect(String dialectClazz) {
-        return DIALECT_CACHE.computeIfAbsent(dialectClazz, ClassUtils::newInstance);
+        return Maps.computeIfAbsent(DIALECT_CACHE, dialectClazz, ClassUtils::newInstance);
     }
     
     public static IDialect getDialect(DbType dbType) {

@@ -83,7 +83,7 @@ public class GlobalConfigUtils {
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         final String key = Integer.toHexString(configuration.hashCode());
-        return GLOBAL_CONFIG.computeIfAbsent(key, k -> defaults());
+        return Maps.computeIfAbsent(GLOBAL_CONFIG, key, k -> defaults());
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {
