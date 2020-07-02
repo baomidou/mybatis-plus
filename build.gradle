@@ -76,7 +76,7 @@ ext {
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
         "freemarker"                 : "org.freemarker:freemarker:2.3.30",
         "beetl"                      : "com.ibeetl:beetl:3.1.8.RELEASE",
-        "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
+        "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.2",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
