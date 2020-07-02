@@ -77,6 +77,7 @@ public class CollectionUtils {
      * @param <V> V
      * @return HashMap
      * @see com.google.common.collect.Maps#newHashMap()
+     * @since 3.3.3
      */
     public static <K, V> HashMap<K, V> newHashMap() {
         return new HashMap<>();
@@ -90,6 +91,7 @@ public class CollectionUtils {
      * @param <V>          V
      * @return HashMap
      * @see com.google.common.collect.Maps#newHashMapWithExpectedSize
+     * @since 3.3.3
      */
     public static <K, V> HashMap<K, V> newHashMapWithExpectedSize(int expectedSize) {
         return new HashMap<>(capacity(expectedSize));
@@ -121,6 +123,7 @@ public class CollectionUtils {
      * default (0.75).
      *
      * @see com.google.common.collect.Maps#capacity(int)
+     * @since 3.3.3
      */
     private static int capacity(int expectedSize) {
         if (expectedSize < 3) {
