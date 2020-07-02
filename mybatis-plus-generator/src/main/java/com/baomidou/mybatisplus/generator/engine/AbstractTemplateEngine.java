@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.engine;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Maps;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -196,11 +195,11 @@ public abstract class AbstractTemplateEngine {
         Map<String, Object> objectMap;
         ConfigBuilder config = getConfigBuilder();
         if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
-            objectMap = Maps.newHashMapWithExpectedSize(33);
+            objectMap = CollectionUtils.newHashMapWithExpectedSize(33);
             objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
             objectMap.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
         } else {
-            objectMap = Maps.newHashMapWithExpectedSize(31);
+            objectMap = CollectionUtils.newHashMapWithExpectedSize(31);
         }
         objectMap.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
         objectMap.put("config", config);

@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Maps;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.AccessLevel;
@@ -73,7 +72,7 @@ public class PropertyMapper {
         if (CollectionUtils.isEmpty(inner)) {
             return Collections.emptyMap();
         }
-        Map<String, Properties> map = Maps.newHashMap();
+        Map<String, Properties> map = CollectionUtils.newHashMap();
         inner.forEach(i -> {
             Properties p = new Properties();
             String key = i.substring(6) + StringPool.COLON;

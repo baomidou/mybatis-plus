@@ -17,8 +17,8 @@ package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.Maps;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -108,7 +108,7 @@ public class SqlRunner implements ISqlRunner {
      * @return ignore
      */
     private Map<String, String> sqlMap(String sql, Object... args) {
-        Map<String, String> sqlMap = Maps.newHashMapWithExpectedSize(1);
+        Map<String, String> sqlMap = CollectionUtils.newHashMapWithExpectedSize(1);
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;
     }
@@ -122,7 +122,7 @@ public class SqlRunner implements ISqlRunner {
      * @return ignore
      */
     private Map<String, Object> sqlMap(String sql, IPage page, Object... args) {
-        Map<String, Object> sqlMap = Maps.newHashMapWithExpectedSize(2);
+        Map<String, Object> sqlMap = CollectionUtils.newHashMapWithExpectedSize(2);
         sqlMap.put(PAGE, page);
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;

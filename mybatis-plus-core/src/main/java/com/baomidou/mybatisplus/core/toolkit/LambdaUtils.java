@@ -100,10 +100,10 @@ public final class LambdaUtils {
         Map<String, ColumnCache> map;
 
         if (info.havePK()) {
-            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
+            map = CollectionUtils.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
             map.put(formatKey(info.getKeyProperty()), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         } else {
-            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size());
+            map = CollectionUtils.newHashMapWithExpectedSize(info.getFieldList().size());
         }
 
         info.getFieldList().forEach(i ->
@@ -119,7 +119,7 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     public static Map<String, ColumnCache> getColumnMap(Class<?> clazz) {
-        return Maps.computeIfAbsent(COLUMN_CACHE_MAP, clazz.getName(), key -> {
+        return CollectionUtils.computeIfAbsent(COLUMN_CACHE_MAP, clazz.getName(), key -> {
             TableInfo info = TableInfoHelper.getTableInfo(clazz);
             return info == null ? null : createColumnCacheMap(info);
         });

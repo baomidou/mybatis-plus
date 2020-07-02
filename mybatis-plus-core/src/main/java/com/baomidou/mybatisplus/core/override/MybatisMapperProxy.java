@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
-import com.baomidou.mybatisplus.core.toolkit.Maps;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
@@ -98,7 +98,7 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     private MybatisMapperMethod cachedMapperMethod(Method method) {
-        return Maps.computeIfAbsent(methodCache, method,
+        return CollectionUtils.computeIfAbsent(methodCache, method,
             k -> new MybatisMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
     }
 

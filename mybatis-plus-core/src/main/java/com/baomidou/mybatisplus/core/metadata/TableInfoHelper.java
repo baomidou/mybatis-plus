@@ -112,7 +112,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        return Maps.computeIfAbsent(TABLE_INFO_CACHE, clazz, (key) -> {
+        return CollectionUtils.computeIfAbsent(TABLE_INFO_CACHE, clazz, (key) -> {
             /* 没有获取到缓存信息,则初始化 */
             TableInfo tableInfo = new TableInfo(key);
             GlobalConfig globalConfig;

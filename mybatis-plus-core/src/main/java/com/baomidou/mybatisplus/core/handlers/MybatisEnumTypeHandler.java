@@ -17,8 +17,8 @@ package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Maps;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
@@ -87,7 +87,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     public static Optional<String> findEnumValueFieldName(Class<?> clazz) {
         if (clazz != null && clazz.isEnum()) {
             String className = clazz.getName();
-            return Optional.ofNullable(Maps.computeIfAbsent(TABLE_METHOD_OF_ENUM_TYPES, className, key -> {
+            return Optional.ofNullable(CollectionUtils.computeIfAbsent(TABLE_METHOD_OF_ENUM_TYPES, className, key -> {
                 Optional<Field> optional = Arrays.stream(clazz.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(EnumValue.class))
                     .findFirst();

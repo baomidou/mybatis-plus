@@ -214,7 +214,7 @@ public final class ReflectionKit {
         if (Objects.isNull(clazz)) {
             return Collections.emptyList();
         }
-        return Maps.computeIfAbsent(CLASS_FIELD_CACHE, clazz, k -> {
+        return CollectionUtils.computeIfAbsent(CLASS_FIELD_CACHE, clazz, k -> {
             Field[] fields = k.getDeclaredFields();
             List<Field> superFields = new ArrayList<>();
             Class<?> currentClass = k.getSuperclass();
