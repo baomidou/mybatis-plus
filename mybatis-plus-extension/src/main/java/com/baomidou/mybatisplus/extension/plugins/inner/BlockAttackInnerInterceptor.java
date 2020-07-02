@@ -36,7 +36,7 @@ import java.sql.Connection;
 public class BlockAttackInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     @Override
-    public void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+    public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         PluginUtils.MPStatementHandler handler = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = handler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();

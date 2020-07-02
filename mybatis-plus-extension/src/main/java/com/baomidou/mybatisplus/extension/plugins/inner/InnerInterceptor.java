@@ -63,18 +63,29 @@ public interface InnerInterceptor {
      * @param ms        MappedStatement
      * @param parameter parameter
      */
-    default void update(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+    default boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+        return true;
+    }
+
+    /**
+     * @param executor  Executor(可能是代理对象)
+     * @param ms        MappedStatement
+     * @param parameter parameter
+     */
+    default void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
         // do nothing
     }
 
     /**
-     *
+     * @param sh                 StatementHandler(可能是代理对象)
+     * @param connection         Connection
+     * @param transactionTimeout transactionTimeout
      */
-    default void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+    default void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         // do nothing
     }
 
     default void setProperties(Properties properties) {
-        // NOP
+        // do nothing
     }
 }

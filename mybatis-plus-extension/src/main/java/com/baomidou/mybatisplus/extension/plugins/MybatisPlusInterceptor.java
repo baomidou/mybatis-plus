@@ -63,8 +63,11 @@ public class MybatisPlusInterceptor implements Interceptor {
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
                 return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
             } else if (isUpdate) {
-                for (InnerInterceptor query : interceptors) {
-                    query.update(executor, ms, parameter);
+                for (InnerInterceptor update : interceptors) {
+                    if (!update.willDoUpdate(executor, ms, parameter)) {
+                        return 0;
+                    }
+                    update.beforeUpdate(executor, ms, parameter);
                 }
             }
         } else {
@@ -73,7 +76,7 @@ public class MybatisPlusInterceptor implements Interceptor {
             Connection connections = (Connection) args[0];
             Integer transactionTimeout = (Integer) args[1];
             for (InnerInterceptor innerInterceptor : interceptors) {
-                innerInterceptor.prepare(sh, connections, transactionTimeout);
+                innerInterceptor.beforePrepare(sh, connections, transactionTimeout);
             }
         }
         return invocation.proceed();

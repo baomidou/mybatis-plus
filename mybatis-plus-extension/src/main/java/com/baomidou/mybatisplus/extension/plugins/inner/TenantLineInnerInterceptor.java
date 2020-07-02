@@ -73,7 +73,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    public void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+    public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpSh.mappedStatement();
         if (SqlParserHelper.getSqlParserInfo(ms)) {

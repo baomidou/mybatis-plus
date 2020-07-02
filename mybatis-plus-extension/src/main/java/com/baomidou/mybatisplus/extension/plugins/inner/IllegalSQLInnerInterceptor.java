@@ -88,7 +88,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     private static final Map<String, List<IndexInfo>> indexInfoMap = new ConcurrentHashMap<>();
 
     @Override
-    public void prepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+    public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         PluginUtils.MPStatementHandler mpStatementHandler = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpStatementHandler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();

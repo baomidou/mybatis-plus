@@ -62,7 +62,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
 
     @Override
-    public void update(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+    public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
         if (SqlCommandType.UPDATE != ms.getSqlCommandType()) {
             return;
         }
