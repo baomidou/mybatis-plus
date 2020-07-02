@@ -126,7 +126,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
 
         CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
         Object result = executor.query(countMs, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
-        page.setTotal(Long.parseLong(result.toString()));
+        page.setTotal(result == null ? 0L : Long.parseLong(result.toString()));
         return continueLimit(page);
     }
 
