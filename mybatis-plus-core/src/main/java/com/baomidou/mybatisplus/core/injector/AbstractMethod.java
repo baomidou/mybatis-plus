@@ -173,7 +173,7 @@ public abstract class AbstractMethod implements Constants {
      * SQL map 查询条件
      */
     protected String sqlWhereByMap(TableInfo table) {
-        if (table.isLogicDelete()) {
+        if (table.isWithLogicDelete()) {
             // 逻辑删除
             String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
                 " ${k} = #{v} ");
@@ -201,7 +201,7 @@ public abstract class AbstractMethod implements Constants {
      * @return String
      */
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
-        if (table.isLogicDelete()) {
+        if (table.isWithLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_DOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
                 true);

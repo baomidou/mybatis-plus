@@ -131,7 +131,7 @@ class TableInfoHelperTest {
         config.getDbConfig().setLogicDeleteField("logic");
         GlobalConfigUtils.setGlobalConfig(configuration, config);
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Logic.class);
-        assertThat(tableInfo.isLogicDelete()).isTrue();
+        assertThat(tableInfo.isWithLogicDelete()).isTrue();
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         List<TableFieldInfo> logic = fieldList.stream().filter(TableFieldInfo::isLogicDelete).collect(Collectors.toList());
         assertThat(logic.size()).isEqualTo(1);

@@ -34,7 +34,7 @@ public class DeleteBatchByIds extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
-        if (tableInfo.isLogicDelete()) {
+        if (tableInfo.isWithLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),

@@ -104,11 +104,6 @@ public class TableInfo implements Constants {
     @Getter
     private Configuration configuration;
     /**
-     * 是否开启逻辑删除
-     */
-    @Setter(AccessLevel.NONE)
-    private boolean logicDelete;
-    /**
      * 是否开启下划线转驼峰
      * <p>
      * 未注解指定字段名的情况下,用于自动从 property 推算 column 的命名
@@ -143,6 +138,22 @@ public class TableInfo implements Constants {
     @Setter(AccessLevel.NONE)
     private boolean withUpdateFill;
     /**
+     * 表字段是否启用了逻辑删除
+     *
+     * @since 3.3.3
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean withLogicDelete;
+    /**
+     * 逻辑删除字段
+     *
+     * @since 3.3.3
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private TableFieldInfo logicDeleteFieldInfo;
+    /**
      * 表字段是否启用了乐观锁
      *
      * @since 3.3.1
@@ -158,14 +169,6 @@ public class TableInfo implements Constants {
     @Getter
     @Setter(AccessLevel.NONE)
     private TableFieldInfo versionFieldInfo;
-    /**
-     * 逻辑删除字段
-     *
-     * @since 3.3.3
-     */
-    @Getter
-    @Setter(AccessLevel.NONE)
-    private TableFieldInfo logicFieldInfo;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -328,7 +331,7 @@ public class TableInfo implements Constants {
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
-                    return !(isLogicDelete() && i.isLogicDelete());
+                    return !(isWithLogicDelete() && i.isLogicDelete());
                 }
                 return true;
             })
@@ -354,7 +357,7 @@ public class TableInfo implements Constants {
         return fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
-                    return !(isLogicDelete() && i.isLogicDelete());
+                    return !(isWithLogicDelete() && i.isLogicDelete());
                 }
                 return true;
             }).map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
@@ -368,7 +371,7 @@ public class TableInfo implements Constants {
      * @return sql 脚本
      */
     public String getLogicDeleteSql(boolean startWithAnd, boolean isWhere) {
-        if (logicDelete) {
+        if (withLogicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
             String logicDeleteSql = formatLogicDeleteSql(field, isWhere);
@@ -432,8 +435,8 @@ public class TableInfo implements Constants {
         AtomicInteger version = new AtomicInteger();
         fieldList.forEach(i -> {
             if (i.isLogicDelete()) {
-                this.logicDelete = true;
-                this.logicFieldInfo = i;
+                this.withLogicDelete = true;
+                this.logicDeleteFieldInfo = i;
                 logicDeleted.getAndAdd(1);
             }
             if (i.isWithInsertFill()) {
@@ -455,5 +458,10 @@ public class TableInfo implements Constants {
 
     public List<TableFieldInfo> getFieldList() {
         return Collections.unmodifiableList(fieldList);
+    }
+
+    @Deprecated
+    public boolean isLogicDelete() {
+        return withLogicDelete;
     }
 }
