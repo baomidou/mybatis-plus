@@ -17,7 +17,10 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -372,9 +375,7 @@ public class TableInfo implements Constants {
      */
     public String getLogicDeleteSql(boolean startWithAnd, boolean isWhere) {
         if (withLogicDelete) {
-            TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
-                .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
-            String logicDeleteSql = formatLogicDeleteSql(field, isWhere);
+            String logicDeleteSql = formatLogicDeleteSql(isWhere);
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
@@ -387,24 +388,23 @@ public class TableInfo implements Constants {
      * format logic delete SQL, can be overrided by subclass
      * github #1386
      *
-     * @param field   TableFieldInfo
      * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return sql
      */
-    private String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
-        final String value = isWhere ? field.getLogicNotDeleteValue() : field.getLogicDeleteValue();
+    private String formatLogicDeleteSql(boolean isWhere) {
+        final String value = isWhere ? logicDeleteFieldInfo.getLogicNotDeleteValue() : logicDeleteFieldInfo.getLogicDeleteValue();
         if (isWhere) {
             if (NULL.equalsIgnoreCase(value)) {
-                return field.getColumn() + " IS NULL";
+                return logicDeleteFieldInfo.getColumn() + " IS NULL";
             } else {
-                return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+                return logicDeleteFieldInfo.getColumn() + EQUALS + String.format(logicDeleteFieldInfo.isCharSequence() ? "'%s'" : "%s", value);
             }
         }
-        final String targetStr = field.getColumn() + EQUALS;
+        final String targetStr = logicDeleteFieldInfo.getColumn() + EQUALS;
         if (NULL.equalsIgnoreCase(value)) {
             return targetStr + NULL;
         } else {
-            return targetStr + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+            return targetStr + String.format(logicDeleteFieldInfo.isCharSequence() ? "'%s'" : "%s", value);
         }
     }
 
