@@ -112,35 +112,50 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        return CollectionUtils.computeIfAbsent(TABLE_INFO_CACHE, clazz, (key) -> {
-            /* 没有获取到缓存信息,则初始化 */
-            TableInfo tableInfo = new TableInfo(key);
-            GlobalConfig globalConfig;
-            if (null != builderAssistant) {
-                tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-                tableInfo.setConfiguration(builderAssistant.getConfiguration());
-                globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
-            } else {
-                // 兼容测试场景
-                globalConfig = GlobalConfigUtils.defaults();
+        TableInfo targetTableInfo = TABLE_INFO_CACHE.get(clazz);
+        final Configuration configuration = builderAssistant.getConfiguration();
+        if (targetTableInfo != null) {
+            Configuration oldConfiguration = targetTableInfo.getConfiguration();
+            if (!oldConfiguration.equals(configuration)) {
+                // 不是同一个 Configuration,进行重新初始化
+                targetTableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
+                TABLE_INFO_CACHE.put(clazz, targetTableInfo);
             }
+            return targetTableInfo;
+        }
+        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key));
+    }
 
-            /* 初始化表名相关 */
-            final String[] excludeProperty = initTableName(key, globalConfig, tableInfo);
+    /**
+     * <p>
+     * 实体类反射获取表信息【初始化】
+     * </p>
+     *
+     * @param clazz 反射实体类
+     * @return 数据库表反射信息
+     */
+    private synchronized static TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
+        /* 没有获取到缓存信息,则初始化 */
+        TableInfo tableInfo = new TableInfo(clazz);
+        tableInfo.setCurrentNamespace(currentNamespace);
+        tableInfo.setConfiguration(configuration);
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
 
-            List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
+        /* 初始化表名相关 */
+        final String[] excludeProperty = initTableName(clazz, globalConfig, tableInfo);
 
-            /* 初始化字段相关 */
-            initTableFields(key, globalConfig, tableInfo, excludePropertyList);
+        List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
 
-            /* 缓存 lambda */
-            LambdaUtils.installCache(tableInfo);
+        /* 初始化字段相关 */
+        initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
 
-            /* 自动构建 resultMap */
-            tableInfo.initResultMapIfNeed();
+        /* 缓存 lambda */
+        LambdaUtils.installCache(tableInfo);
 
-            return tableInfo;
-        });
+        /* 自动构建 resultMap */
+        tableInfo.initResultMapIfNeed();
+
+        return tableInfo;
     }
 
     /**
@@ -235,7 +250,7 @@ public class TableInfoHelper {
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
-    public static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
+    private static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
