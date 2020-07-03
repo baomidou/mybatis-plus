@@ -141,7 +141,7 @@ public class GlobalConfig implements Serializable {
          */
         private IKeyGenerator keyGenerator;
         /**
-         * 逻辑删除全局字段
+         * 逻辑删除全局属性名
          */
         private String logicDeleteField;
         /**
