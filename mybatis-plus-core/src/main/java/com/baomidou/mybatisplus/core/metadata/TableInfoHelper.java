@@ -246,6 +246,8 @@ public class TableInfoHelper {
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
+        // 是否存在 @TableLogic 注解
+        boolean existTableLogic = isExistTableLogic(list);
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
@@ -275,20 +277,16 @@ public class TableInfoHelper {
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector));
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic));
                 continue;
             }
 
             /* 无 @TableField 注解的字段初始化 */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector));
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic));
         }
 
-        /* 检查逻辑删除字段只能有最多一个 */
-        Assert.isTrue(fieldList.parallelStream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
-            String.format("@TableLogic can't more than one in Class: \"%s\".", clazz.getName()));
-
-        /* 字段列表,不可变集合 */
-        tableInfo.setFieldList(Collections.unmodifiableList(fieldList));
+        /* 字段列表 */
+        tableInfo.setFieldList(fieldList);
 
         /* 未发现主键注解，提示警告信息 */
         if (!isReadPK) {
@@ -306,6 +304,18 @@ public class TableInfoHelper {
      */
     public static boolean isExistTableId(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(TableId.class));
+    }
+
+    /**
+     * <p>
+     * 判断逻辑删除注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return true 为存在 @TableId 注解;
+     */
+    public static boolean isExistTableLogic(List<Field> list) {
+        return list.stream().anyMatch(field -> field.isAnnotationPresent(TableLogic.class));
     }
 
     /**

@@ -105,6 +105,10 @@ public class TableFieldInfo implements Constants {
      */
     private boolean select = true;
     /**
+     * 是否是逻辑删除字段
+     */
+    private boolean logicDelete = false;
+    /**
      * 逻辑删除值
      */
     private String logicDeleteValue;
@@ -159,7 +163,7 @@ public class TableFieldInfo implements Constants {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
-                          Reflector reflector) {
+                          Reflector reflector, boolean existTableLogic) {
         field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
@@ -187,7 +191,7 @@ public class TableFieldInfo implements Constants {
             el += (COMMA + "numericScale=" + numericScale);
         }
         this.el = el;
-        this.initLogicDelete(dbConfig, field);
+        this.initLogicDelete(dbConfig, field, existTableLogic);
 
         String column = tableField.value();
         if (StringUtils.isBlank(column)) {
@@ -242,7 +246,8 @@ public class TableFieldInfo implements Constants {
     /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector) {
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
+                          boolean existTableLogic) {
         field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
@@ -254,7 +259,7 @@ public class TableFieldInfo implements Constants {
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
         this.whereStrategy = dbConfig.getSelectStrategy();
-        this.initLogicDelete(dbConfig, field);
+        this.initLogicDelete(dbConfig, field, existTableLogic);
 
         String column = this.property;
         if (tableInfo.isUnderCamel()) {
@@ -291,7 +296,7 @@ public class TableFieldInfo implements Constants {
      * @param dbConfig 数据库全局配置
      * @param field    字段属性对象
      */
-    private void initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field) {
+    private void initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field, boolean existTableLogic) {
         /* 获取注解属性，逻辑处理字段 */
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         if (null != tableLogic) {
@@ -305,20 +310,15 @@ public class TableFieldInfo implements Constants {
             } else {
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
             }
-        } else {
-            String globalLogicDeleteField = dbConfig.getLogicDeleteField();
-            if (StringUtils.isNotBlank(globalLogicDeleteField) && globalLogicDeleteField.equalsIgnoreCase(field.getName())) {
+            this.logicDelete = true;
+        } else if (!existTableLogic) {
+            String deleteField = dbConfig.getLogicDeleteField();
+            if (StringUtils.isNotBlank(deleteField) && this.property.equals(deleteField)) {
                 this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
+                this.logicDelete = true;
             }
         }
-    }
-
-    /**
-     * 是否启用了逻辑删除
-     */
-    public boolean isLogicDelete() {
-        return StringUtils.isNotBlank(logicDeleteValue) && StringUtils.isNotBlank(logicNotDeleteValue);
     }
 
     /**

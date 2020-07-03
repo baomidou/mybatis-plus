@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.joining;
@@ -157,6 +158,14 @@ public class TableInfo implements Constants {
     @Getter
     @Setter(AccessLevel.NONE)
     private TableFieldInfo versionFieldInfo;
+    /**
+     * 逻辑删除字段
+     *
+     * @since 3.3.3
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private TableFieldInfo logicFieldInfo;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -419,9 +428,13 @@ public class TableInfo implements Constants {
 
     void setFieldList(List<TableFieldInfo> fieldList) {
         this.fieldList = fieldList;
+        AtomicInteger logicDeleted = new AtomicInteger();
+        AtomicInteger version = new AtomicInteger();
         fieldList.forEach(i -> {
             if (i.isLogicDelete()) {
                 this.logicDelete = true;
+                this.logicFieldInfo = i;
+                logicDeleted.getAndAdd(1);
             }
             if (i.isWithInsertFill()) {
                 this.withInsertFill = true;
@@ -432,8 +445,12 @@ public class TableInfo implements Constants {
             if (i.isVersion()) {
                 this.withVersion = true;
                 this.versionFieldInfo = i;
+                version.getAndAdd(1);
             }
         });
+        /* 校验字段合法性 */
+        Assert.isTrue(logicDeleted.get() <= 1, "@TableLogic not support more than one in Class: \"%s\"", entityType.getName());
+        Assert.isTrue(version.get() <= 1, "@Version not support more than one in Class: \"%s\"", entityType.getName());
     }
 
     public List<TableFieldInfo> getFieldList() {
