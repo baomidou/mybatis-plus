@@ -183,6 +183,19 @@ public interface IPage<T> extends Serializable {
         List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
         return ((IPage<R>) this).setRecords(collect);
     }
+    
+    /**
+     * IPage 的泛型转换 - 并行
+     *
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
+     * @return 转换泛型后的 IPage
+     */
+    @SuppressWarnings("unchecked")
+    default <R> IPage<R> parallelConvert(Function<? super T, ? extends R> mapper) {
+        List<R> collect = this.getRecords().parallelStream().map(mapper).collect(toList());
+        return ((IPage<R>) this).setRecords(collect);
+    }
 
     /**
      * 老分页插件不支持
