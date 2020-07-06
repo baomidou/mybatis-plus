@@ -120,7 +120,7 @@ public class GlobalConfig implements Serializable {
          */
         private String columnFormat;
         /**
-         * entity字段 format,
+         * entity 的字段(property)的 format,
          * 只有在 column as property 这种情况下生效
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
@@ -129,7 +129,7 @@ public class GlobalConfig implements Serializable {
          */
         private String propertyFormat;
         /**
-         * 表名是否使用下划线命名,只对表名生效
+         * 表名是否使用驼峰转下划线命名,只对表名生效
          */
         private boolean tableUnderline = true;
         /**
