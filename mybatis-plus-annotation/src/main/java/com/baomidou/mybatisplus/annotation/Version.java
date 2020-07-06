@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.annotation;
 import java.lang.annotation.*;
 
 /**
- * 乐观锁注解、标记 @Verison 在字段上
+ * 乐观锁注解
  * <p>
  * 支持的字段类型:
  * long,
