@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Sequence;
  * 默认生成器
  *
  * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
- * @date 2019-10-15
+ * @since 2019-10-15
  * @since 3.3.0
  */
 public class DefaultIdentifierGenerator implements IdentifierGenerator {
