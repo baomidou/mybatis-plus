@@ -39,7 +39,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ）
@@ -234,8 +233,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      *
      * @param list      数据集合
      * @param batchSize 批量大小
-     * @param predicate 新增条件 notnull
-     * @param function  更新条件 notnull
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
      * @return 操作结果
      * @since 3.3.3
      */
@@ -254,8 +253,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 批量更新或新增
      *
      * @param list           数据集合
-     * @param predicate      新增条件
-     * @param updateFunction 更新条件
+     * @param predicate      新增条件 notNull
+     * @param updateFunction 更新条件 notNull
      * @return 操作结果
      * @since 3.3.3
      */

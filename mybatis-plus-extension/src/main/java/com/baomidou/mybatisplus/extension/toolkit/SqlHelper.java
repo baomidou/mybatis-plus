@@ -227,8 +227,8 @@ public final class SqlHelper {
      * @param log         日志对象
      * @param list        数据集合
      * @param batchSize   批次大小
-     * @param predicate   predicate(新增条件)
-     * @param consumer    consumer（更新处理）
+     * @param predicate   predicate(新增条件) notNull
+     * @param consumer    consumer（更新处理） notNull
      * @param <E>         E
      * @return 操作结果
      * @since 3.3.3
