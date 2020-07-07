@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.h2.cache.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,6 +20,16 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
     private void removeBatchById(Collection<Long> idList) {
         String sqlStatement = sqlStatement(SqlMethod.DELETE_BY_ID);
         executeBatch(idList, (sqlSession, id) -> sqlSession.delete(sqlStatement, id));
+    }
+
+    @Override
+    @Transactional
+    public boolean testCustomSaveOrUpdateBatch() {
+        CacheModel model1 = new CacheModel();
+        CacheModel model2 = new CacheModel("旺仔");
+        //name为空写入，不为空按条件更新
+        boolean result = saveOrUpdateBatch(Arrays.asList(model1, model2), entity -> entity.getName() == null, (entity) -> new QueryWrapper<CacheModel>().lambda().eq(CacheModel::getName, entity.getName()));
+        return model1.getId() != null && model2.getId() == null && result;
     }
 
     @Override

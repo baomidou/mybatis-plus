@@ -15,20 +15,29 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * SQL 辅助类
@@ -140,5 +149,98 @@ public final class SqlHelper {
             SqlSession sqlSession = sqlSessionHolder.getSqlSession();
             sqlSession.clearCache();
         }
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param entityClass 实体
+     * @param log         日志对象
+     * @param consumer    consumer
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
+        if (sqlSessionHolder != null) {
+            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
+            //原生无法支持执行器切换，当存在批量操作时，会嵌套两个session的，优先commit上一个session
+            //按道理来说，这里的值应该一直为false。
+            sqlSession.commit(!transaction);
+        }
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        if (!transaction) {
+            log.warn("SqlSession [" + sqlSession + "] was not registered for synchronization because DataSource is not transactional");
+        }
+        try {
+            consumer.accept(sqlSession);
+            //非事物情况下，强制commit。
+            sqlSession.commit(!transaction);
+            return true;
+        } catch (Throwable t) {
+            sqlSession.rollback();
+            Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
+            if (unwrapped instanceof RuntimeException) {
+                MyBatisExceptionTranslator myBatisExceptionTranslator
+                    = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
+                throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
+            }
+            throw ExceptionUtils.mpe(unwrapped);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param entityClass 实体类
+     * @param log         日志对象
+     * @param list        数据集合
+     * @param batchSize   批次大小
+     * @param consumer    consumer
+     * @param <E>         T
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
+        return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
+            int size = list.size();
+            int i = 1;
+            for (E element : list) {
+                consumer.accept(sqlSession, element);
+                if ((i % batchSize == 0) || i == size) {
+                    sqlSession.flushStatements();
+                }
+                i++;
+            }
+        });
+    }
+
+    /**
+     * 批量更新或保存
+     *
+     * @param entityClass 实体
+     * @param log         日志对象
+     * @param list        数据集合
+     * @param batchSize   批次大小
+     * @param predicate   predicate(新增条件)
+     * @param consumer    consumer（更新处理）
+     * @param <E>         E
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, Predicate<E> predicate, BiConsumer<SqlSession, E> consumer) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
+            if (predicate.test(entity)) {
+                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
+            } else {
+                consumer.accept(sqlSession, entity);
+            }
+        });
     }
 }
