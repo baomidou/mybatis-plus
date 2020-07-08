@@ -138,6 +138,19 @@ class TableInfoHelperTest {
         assertThat(logic.get(0).getProperty()).isEqualTo("deleted");
     }
 
+    @Test
+    void testColumnFormat() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        GlobalConfig config = GlobalConfigUtils.defaults();
+        config.getDbConfig().setColumnFormat("pxx_%s");
+        GlobalConfigUtils.setGlobalConfig(configuration, config);
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Logic.class);
+        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+        fieldList.forEach(i -> {
+            assertThat(i.getColumn()).startsWith("pxx_");
+        });
+    }
+
     @Data
     private static class ModelFive {
 
