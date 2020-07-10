@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +97,34 @@ public interface IService<T> {
      * @param batchSize  每次的数量
      */
     boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize);
+    
+    /**
+     * 批量更新或新增
+     *
+     * @param list      数据集合
+     * @param batchSize 批量大小
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    default boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * 批量更新或新增
+     *
+     * @param list      数据集合
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean saveOrUpdateBatch(Collection<T> list, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        return saveOrUpdateBatch(list, DEFAULT_BATCH_SIZE, predicate, function);
+    }
 
     /**
      * 根据 ID 删除

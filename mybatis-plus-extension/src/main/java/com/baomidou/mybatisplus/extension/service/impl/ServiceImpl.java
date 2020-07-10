@@ -227,18 +227,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
-
-    /**
-     * 批量更新或新增
-     *
-     * @param list      数据集合
-     * @param batchSize 批量大小
-     * @param predicate 新增条件 notNull
-     * @param function  更新条件 notNull
-     * @return 操作结果
-     * @since 3.3.3
-     */
-    protected boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+    
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, list, batchSize, predicate, ((sqlSession, entity) -> {
             String sqlStatement = tableInfo.getSqlStatement(SqlMethod.UPDATE.getMethod());
@@ -248,17 +240,5 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             sqlSession.update(sqlStatement, param);
         }));
     }
-
-    /**
-     * 批量更新或新增
-     *
-     * @param list           数据集合
-     * @param predicate      新增条件 notNull
-     * @param updateFunction 更新条件 notNull
-     * @return 操作结果
-     * @since 3.3.3
-     */
-    protected boolean saveOrUpdateBatch(Collection<T> list, Predicate<T> predicate, Function<T,Wrapper<T>> updateFunction) {
-        return saveOrUpdateBatch(list, DEFAULT_BATCH_SIZE, predicate, updateFunction);
-    }
+    
 }
