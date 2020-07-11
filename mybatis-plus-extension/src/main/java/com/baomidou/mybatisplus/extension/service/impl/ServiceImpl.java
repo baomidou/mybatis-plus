@@ -235,8 +235,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, list, batchSize, predicate, ((sqlSession, entity) -> {
             String sqlStatement = tableInfo.getSqlStatement(SqlMethod.UPDATE.getMethod());
             MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
+            Wrapper<T> wrapper = function.apply(entity);
             param.put(Constants.ENTITY, entity);
-            param.put(Constants.WRAPPER, function.apply(entity));
+            param.put(Constants.WRAPPER, wrapper);
             sqlSession.update(sqlStatement, param);
         }));
     }
