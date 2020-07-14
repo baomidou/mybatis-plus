@@ -25,14 +25,14 @@ import lombok.experimental.Accessors;
  */
 #if(${entityLombokModel})
 @Data
-  #if(${superEntityClass})
+#if(${superEntityClass})
 @EqualsAndHashCode(callSuper = true)
-  #else
+#else
 @EqualsAndHashCode(callSuper = false)
-  #end
-  #if(${chainModel})
+#end
+#if(${chainModel})
 @Accessors(chain = true)
-  #end
+#end
 #end
 #if(${table.convert})
 @TableName("${table.name}")
