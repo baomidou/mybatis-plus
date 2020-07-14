@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
@@ -49,6 +50,9 @@ public class BeetlTemplateEngine extends AbstractTemplateEngine {
 
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
+        if (StringUtils.isBlank(templatePath)) {
+            return;
+        }
         Template template = groupTemplate.getTemplate(templatePath);
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
             template.binding(objectMap);
