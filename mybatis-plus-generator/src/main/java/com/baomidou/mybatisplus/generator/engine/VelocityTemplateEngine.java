@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.engine;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import org.apache.velocity.Template;
@@ -59,9 +58,6 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
 
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
-        if (StringUtils.isBlank(templatePath)) {
-            return;
-        }
         Template template = velocityEngine.getTemplate(templatePath, ConstVal.UTF8);
         try (FileOutputStream fos = new FileOutputStream(outputFile);
              OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);

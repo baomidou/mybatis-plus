@@ -78,7 +78,7 @@ public abstract class AbstractTemplateEngine {
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
                             if (isCreate(FileType.OTHER, foc.outputFile(tableInfo))) {
-                                writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                                writerFile(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
                             }
                         }
                     }
@@ -88,42 +88,42 @@ public abstract class AbstractTemplateEngine {
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
                     String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.ENTITY, entityFile)) {
-                        writer(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
+                        writerFile(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
                 }
                 // MpMapper.java
                 if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
                     String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.MAPPER, mapperFile)) {
-                        writer(objectMap, templateFilePath(template.getMapper()), mapperFile);
+                        writerFile(objectMap, templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
                 if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
                     if (isCreate(FileType.XML, xmlFile)) {
-                        writer(objectMap, templateFilePath(template.getXml()), xmlFile);
+                        writerFile(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
                 if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
                     String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.SERVICE, serviceFile)) {
-                        writer(objectMap, templateFilePath(template.getService()), serviceFile);
+                        writerFile(objectMap, templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
                 if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
                     String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.SERVICE_IMPL, implFile)) {
-                        writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
+                        writerFile(objectMap, templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
                 if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.CONTROLLER, controllerFile)) {
-                        writer(objectMap, templateFilePath(template.getController()), controllerFile);
+                        writerFile(objectMap, templateFilePath(template.getController()), controllerFile);
                     }
                 }
             }
@@ -132,7 +132,10 @@ public abstract class AbstractTemplateEngine {
         }
         return this;
     }
-
+    
+    protected void writerFile(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
+        if (StringUtils.isNotBlank(templatePath)) this.writer(objectMap, templatePath, outputFile);
+    }
 
     /**
      * 将模板转化成为文件
