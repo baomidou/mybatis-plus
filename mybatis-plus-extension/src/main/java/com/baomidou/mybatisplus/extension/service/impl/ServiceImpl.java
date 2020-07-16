@@ -132,8 +132,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {
-            Class<?> cls = entity.getClass();
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
             Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");

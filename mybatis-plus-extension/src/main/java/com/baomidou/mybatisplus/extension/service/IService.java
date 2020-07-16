@@ -218,6 +218,25 @@ public interface IService<T> {
      * @param entity 实体对象
      */
     boolean saveOrUpdate(T entity);
+    
+    /**
+     * 更新或保存
+     *
+     * @param entity    实体
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean saveOrUpdate(T entity, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        if (predicate.test(entity)) {
+            return save(entity);
+        } else {
+            Wrapper<T> wrapper = function.apply(entity);
+            return update(entity, wrapper);
+        }
+    }
 
     /**
      * 根据 ID 查询
