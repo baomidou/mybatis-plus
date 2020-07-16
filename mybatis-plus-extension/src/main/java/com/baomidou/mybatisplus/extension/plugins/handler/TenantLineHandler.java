@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.tenant;
+package com.baomidou.mybatisplus.extension.plugins.handler;
 
 import net.sf.jsqlparser.expression.Expression;
 
