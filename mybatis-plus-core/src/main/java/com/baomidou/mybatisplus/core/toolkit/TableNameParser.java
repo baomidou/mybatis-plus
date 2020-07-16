@@ -60,7 +60,7 @@ public final class TableNameParser {
      * 4、使用 /* * / 注释的信息
      * 5、把 ,() 也要分出来
      */
-    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern.compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].+?[*]/)"
+    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern.compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)"
             + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))"
     );
 
