@@ -71,7 +71,7 @@ ext {
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.21",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3.1",
         //code generator
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
         "freemarker"                 : "org.freemarker:freemarker:2.3.30",
