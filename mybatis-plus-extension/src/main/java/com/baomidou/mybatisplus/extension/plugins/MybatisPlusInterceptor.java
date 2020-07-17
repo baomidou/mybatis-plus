@@ -113,7 +113,7 @@ public class MybatisPlusInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper pm = PropertyMapper.newInstance(properties);
-        Map<String, Properties> group = pm.group();
+        Map<String, Properties> group = pm.group("@");
         group.forEach((k, v) -> {
             InnerInterceptor innerInterceptor = ClassUtils.newInstance(k);
             innerInterceptor.setProperties(v);

@@ -66,16 +66,16 @@ public class PropertyMapper {
      *
      * @return 分组
      */
-    public Map<String, Properties> group() {
+    public Map<String, Properties> group(String group) {
         final Set<String> keys = keys();
-        Set<String> inner = keys.stream().filter(i -> i.startsWith("@")).collect(Collectors.toSet());
+        Set<String> inner = keys.stream().filter(i -> i.startsWith(group)).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(inner)) {
             return Collections.emptyMap();
         }
         Map<String, Properties> map = CollectionUtils.newHashMap();
         inner.forEach(i -> {
             Properties p = new Properties();
-            String key = i.substring(1) + StringPool.COLON;
+            String key = i.substring(group.length()) + StringPool.COLON;
             int keyIndex = key.length();
             keys.stream().filter(j -> j.startsWith(key)).forEach(j -> p.setProperty(j.substring(keyIndex), delegate.getProperty(j)));
             map.put(delegate.getProperty(i), p);
