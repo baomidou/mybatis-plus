@@ -68,14 +68,14 @@ public class PropertyMapper {
      */
     public Map<String, Properties> group() {
         final Set<String> keys = keys();
-        Set<String> inner = keys.stream().filter(i -> i.startsWith("inner:")).collect(Collectors.toSet());
+        Set<String> inner = keys.stream().filter(i -> i.startsWith("@")).collect(Collectors.toSet());
         if (CollectionUtils.isEmpty(inner)) {
             return Collections.emptyMap();
         }
         Map<String, Properties> map = CollectionUtils.newHashMap();
         inner.forEach(i -> {
             Properties p = new Properties();
-            String key = i.substring(6) + StringPool.COLON;
+            String key = i.substring(1) + StringPool.COLON;
             int keyIndex = key.length();
             keys.stream().filter(j -> j.startsWith(key)).forEach(j -> p.setProperty(j.substring(keyIndex), delegate.getProperty(j)));
             map.put(delegate.getProperty(i), p);

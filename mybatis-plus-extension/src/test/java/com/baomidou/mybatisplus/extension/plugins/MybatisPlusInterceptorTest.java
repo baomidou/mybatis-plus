@@ -18,8 +18,8 @@ class MybatisPlusInterceptorTest {
     @Test
     void setProperties() {
         Properties properties = new Properties();
-        properties.setProperty("inner:page", "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor");
-        properties.setProperty("page:limit", "10");
+        properties.setProperty("@page", "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor");
+        properties.setProperty("page:maxLimit", "10");
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.setProperties(properties);
         List<InnerInterceptor> interceptors = interceptor.getInterceptors();
@@ -31,6 +31,6 @@ class MybatisPlusInterceptorTest {
         assertThat(page).isInstanceOf(PaginationInnerInterceptor.class);
 
         PaginationInnerInterceptor pii = (PaginationInnerInterceptor) page;
-        assertThat(pii.getLimit()).isEqualTo(10);
+        assertThat(pii.getMaxLimit()).isEqualTo(10);
     }
 }
