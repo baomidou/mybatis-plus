@@ -272,7 +272,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
         configuration.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
         // TODO MybatisConfiguration 独有的属性
-        ((MybatisConfiguration) configuration).setUseNewExecutor(booleanValueOf(props.getProperty("useNewExecutor"), true));
+        ((MybatisConfiguration) configuration).setUseDeprecatedExecutor(booleanValueOf(props.getProperty("useNewExecutor"), true));
         ((MybatisConfiguration) configuration).setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
     }
 

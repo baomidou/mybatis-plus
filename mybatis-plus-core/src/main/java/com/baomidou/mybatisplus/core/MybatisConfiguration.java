@@ -82,7 +82,7 @@ public class MybatisConfiguration extends Configuration {
     @Deprecated
     @Setter
     @Getter
-    private boolean useNewExecutor = true;
+    private boolean useDeprecatedExecutor = true;
 
     public MybatisConfiguration(Environment environment) {
         this();
@@ -314,7 +314,7 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
-        if (useNewExecutor) {
+        if (useDeprecatedExecutor) {
             executorType = executorType == null ? defaultExecutorType : executorType;
             executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
             Executor executor;
