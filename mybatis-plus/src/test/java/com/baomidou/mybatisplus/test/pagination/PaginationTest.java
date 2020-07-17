@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.pagination;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -45,6 +46,16 @@ public class PaginationTest extends BaseDbTest<EntityMapper> {
         });
         assertThat(cache.getSize()).as("因为命中缓存了所以还是2条").isEqualTo(2);
 
+        doTestAutoCommit(m -> {
+            Page<Entity> page = new Page<>(1, 5);
+            page.addOrder(OrderItem.asc("id"));
+            IPage<Entity> result = m.selectPage(page, null);
+            assertThat(page).isEqualTo(result);
+            assertThat(result.getTotal()).isEqualTo(2L);
+            assertThat(result.getRecords().size()).isEqualTo(2);
+        });
+        assertThat(cache.getSize()).as("条件不一样了,缓存变为3条").isEqualTo(3);
+
 
         doTestAutoCommit(m -> m.insert(new Entity()));
         assertThat(cache.getSize()).as("update 操作清除了所有缓存").isEqualTo(0);
@@ -69,17 +80,14 @@ public class PaginationTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1');\n" +
-            "insert into entity(id,name) values(2,'2');";
+        return "insert into entity(id,name) values(1,'1'),(2,'2');";
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
+            "id BIGINT NOT NULL," +
+            "name VARCHAR(30) NULL DEFAULT NULL," +
+            "PRIMARY KEY (id))");
     }
 }
