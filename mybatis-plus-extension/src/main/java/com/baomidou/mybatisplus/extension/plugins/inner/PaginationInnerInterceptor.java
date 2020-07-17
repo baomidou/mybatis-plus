@@ -83,21 +83,21 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 溢出总页数后是否进行处理
      */
-    protected boolean overflow = false;
+    protected boolean overflow;
     /**
-     * 单页限制 500 条，小于 0 如 -1 不受限制
+     * 单页分页条数限制
      */
-    protected long limit = 500L;
+    protected Long maxLimit;
     /**
      * 数据库类型
-     *
-     * @since 3.3.1
+     * <p>
+     * 查看 {@link #findIDialect(Executor)} 逻辑
      */
     private DbType dbType;
     /**
      * 方言实现类
-     *
-     * @since 3.3.1
+     * <p>
+     * 查看 {@link #findIDialect(Executor)} 逻辑
      */
     private IDialect dialect;
 
@@ -127,7 +127,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
         Object result = executor.query(countMs, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
         page.setTotal(result == null ? 0L : Long.parseLong(result.toString()));
-        return continueLimit(page);
+        return continuePage(page);
     }
 
     @Override
@@ -141,14 +141,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             return;
         }
 
-        if (this.limit > 0 && this.limit <= page.getSize()) {
-            //处理单页条数限制
-            handlerLimit(page);
-        }
+        handlerLimit(page);
 
-        DbType dbType = this.dbType == null ? JdbcUtils.getDbType(executor) : this.dbType;
-        IDialect dialect = Optional.ofNullable(this.dialect).orElseGet(() -> DialectFactory.getDialect(dbType));
-
+        IDialect dialect = findIDialect(executor);
         String originalSql = boundSql.getSql();
         String buildSql = this.concatOrderBy(originalSql, page);
 
@@ -161,6 +156,17 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         model.consumers(mappings, configuration, additionalParameter);
         mpBoundSql.sql(model.getDialectSql());
         mpBoundSql.parameterMappings(mappings);
+    }
+
+    protected IDialect findIDialect(Executor executor) {
+        if (dialect != null) {
+            return dialect;
+        }
+        if (dbType != null) {
+            dialect = DialectFactory.getDialect(dbType);
+            return dialect;
+        }
+        return DialectFactory.getDialect(JdbcUtils.getDbType(executor));
     }
 
     protected MappedStatement buildCountMappedStatement(MappedStatement ms, IPage<?> page) {
@@ -199,9 +205,16 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         });
     }
 
+    /**
+     * 获取自动优化的 countSql
+     *
+     * @param optimizeCountSql 是否进行优化
+     * @param sql              sql
+     * @return countSql
+     */
     protected String autoCountSql(boolean optimizeCountSql, String sql) {
         if (!optimizeCountSql) {
-            return SqlParserUtils.getOriginalCountSql(sql);
+            return lowLevelCountSql(sql);
         }
         try {
             Select select = (Select) CCJSqlParserUtil.parse(sql);
@@ -216,12 +229,14 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                     // 包含groupBy 不去除orderBy
                     canClean = false;
                 }
-                for (OrderByElement order : orderBy) {
-                    // order by 里带参数,不去除order by
-                    Expression expression = order.getExpression();
-                    if (!(expression instanceof Column) && expression.toString().contains(StringPool.QUESTION_MARK)) {
-                        canClean = false;
-                        break;
+                if (canClean) {
+                    for (OrderByElement order : orderBy) {
+                        // order by 里带参数,不去除order by
+                        Expression expression = order.getExpression();
+                        if (!(expression instanceof Column) && expression.toString().contains(StringPool.QUESTION_MARK)) {
+                            canClean = false;
+                            break;
+                        }
                     }
                 }
                 if (canClean) {
@@ -231,12 +246,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
                 if (item.toString().contains(StringPool.QUESTION_MARK)) {
-                    return SqlParserUtils.getOriginalCountSql(select.toString());
+                    return lowLevelCountSql(select.toString());
                 }
             }
             // 包含 distinct、groupBy不优化
             if (distinct != null || null != groupBy) {
-                return SqlParserUtils.getOriginalCountSql(select.toString());
+                return lowLevelCountSql(select.toString());
             }
             // 包含 join 连表,进行判断是否移除 join 连表
             List<Join> joins = plainSelect.getJoins();
@@ -266,8 +281,18 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             return select.toString();
         } catch (Throwable e) {
             // 无法优化使用原 SQL
-            return SqlParserUtils.getOriginalCountSql(sql);
+            return lowLevelCountSql(sql);
         }
+    }
+
+    /**
+     * 无法进行count优化时,降级使用此方法
+     *
+     * @param originalSql 原始sql
+     * @return countSql
+     */
+    protected String lowLevelCountSql(String originalSql) {
+        return SqlParserUtils.getOriginalCountSql(originalSql);
     }
 
     /**
@@ -324,17 +349,17 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     }
 
     /**
-     * 判断是否继续执行 Limit 逻辑
+     * count 查询之后,是否继续执行分页
      *
      * @param page 分页对象
      * @return 是否
      */
-    protected boolean continueLimit(IPage<?> page) {
+    protected boolean continuePage(IPage<?> page) {
         if (page.getTotal() <= 0) {
             return false;
         }
         if (page.getCurrent() > page.getPages()) {
-            if (this.overflow) {
+            if (overflow) {
                 //溢出总页数处理
                 handlerOverflow(page);
             } else {
@@ -351,7 +376,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * @param page IPage
      */
     protected void handlerLimit(IPage<?> page) {
-        page.setSize(this.limit);
+        final long size = page.getSize();
+        Long pageMaxLimit = page.maxLimit();
+        Long limit = pageMaxLimit != null ? pageMaxLimit : maxLimit;
+        if (limit != null && size > limit) {
+            page.setSize(limit);
+        }
     }
 
     /**
@@ -369,6 +399,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
             .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
             .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
-            .whenNotBlack("limit", Long::parseLong, this::setLimit);
+            .whenNotBlack("maxLimit", Long::parseLong, this::setMaxLimit);
     }
 }

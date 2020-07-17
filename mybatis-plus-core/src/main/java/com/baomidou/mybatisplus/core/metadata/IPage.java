@@ -77,6 +77,15 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * 最大每页分页数限制,优先级高于分页插件内的 maxLimit
+     *
+     * @since 3.3.3 @2020-07-17
+     */
+    default Long maxLimit() {
+        return null;
+    }
+
+    /**
      * 当前分页总页数
      */
     default long getPages() {

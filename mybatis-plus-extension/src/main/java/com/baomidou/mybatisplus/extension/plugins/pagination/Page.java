@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,8 +78,13 @@ public class Page<T> implements IPage<T> {
      */
     @Getter
     @Setter
-    @Accessors(chain = true)
     protected String countId;
+    /**
+     * countId
+     */
+    @Getter
+    @Setter
+    protected Long maxLimit;
 
     public Page() {
     }
@@ -177,6 +181,11 @@ public class Page<T> implements IPage<T> {
     @Override
     public String countId() {
         return getCountId();
+    }
+
+    @Override
+    public Long maxLimit() {
+        return getMaxLimit();
     }
 
     /**
