@@ -210,9 +210,23 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             GroupByElement groupBy = plainSelect.getGroupBy();
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
 
-            // 添加包含groupBy 不去除orderBy
-            if (null == groupBy && CollectionUtils.isNotEmpty(orderBy)) {
-                plainSelect.setOrderByElements(null);
+            if (CollectionUtils.isNotEmpty(orderBy)) {
+                boolean canClean = true;
+                if (groupBy != null) {
+                    // 包含groupBy 不去除orderBy
+                    canClean = false;
+                }
+                for (OrderByElement order : orderBy) {
+                    // order by 里带参数,不去除order by
+                    Expression expression = order.getExpression();
+                    if (!(expression instanceof Column) && expression.toString().contains(StringPool.QUESTION_MARK)) {
+                        canClean = false;
+                        break;
+                    }
+                }
+                if (canClean) {
+                    plainSelect.setOrderByElements(null);
+                }
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
