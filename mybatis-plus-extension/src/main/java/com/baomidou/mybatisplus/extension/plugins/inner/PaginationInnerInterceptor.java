@@ -158,6 +158,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         mpBoundSql.parameterMappings(mappings);
     }
 
+    /**
+     * 获取分页方言类的逻辑
+     *
+     * @param executor Executor
+     * @return 分页方言类
+     */
     protected IDialect findIDialect(Executor executor) {
         if (dialect != null) {
             return dialect;
