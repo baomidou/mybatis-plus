@@ -331,9 +331,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 } else {
                     return originalSql;
                 }
-
             } catch (JSQLParserException e) {
-                logger.warn("failed to concat orderBy from IPage, exception=" + e.getMessage());
+                logger.warn("failed to concat orderBy from IPage, exception:\n" + e.getCause());
             }
         }
         return originalSql;
