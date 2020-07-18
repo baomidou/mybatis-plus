@@ -312,20 +312,21 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         if (CollectionUtils.isNotEmpty(page.orders())) {
             try {
                 List<OrderItem> orderList = page.orders();
-                Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
-                if (selectStatement.getSelectBody() instanceof PlainSelect) {
-                    PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
+                Select select = (Select) CCJSqlParserUtil.parse(originalSql);
+                SelectBody selectBody = select.getSelectBody();
+                if (selectBody instanceof PlainSelect) {
+                    PlainSelect plainSelect = (PlainSelect) selectBody;
                     List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
                     List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
                     plainSelect.setOrderByElements(orderByElementsReturn);
-                    return plainSelect.toString();
-                } else if (selectStatement.getSelectBody() instanceof SetOperationList) {
-                    SetOperationList setOperationList = (SetOperationList) selectStatement.getSelectBody();
+                    return select.toString();
+                } else if (selectBody instanceof SetOperationList) {
+                    SetOperationList setOperationList = (SetOperationList) selectBody;
                     List<OrderByElement> orderByElements = setOperationList.getOrderByElements();
                     List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
                     setOperationList.setOrderByElements(orderByElementsReturn);
-                    return setOperationList.toString();
-                } else if (selectStatement.getSelectBody() instanceof WithItem) {
+                    return select.toString();
+                } else if (selectBody instanceof WithItem) {
                     // todo: don't known how to resole
                     return originalSql;
                 } else {
