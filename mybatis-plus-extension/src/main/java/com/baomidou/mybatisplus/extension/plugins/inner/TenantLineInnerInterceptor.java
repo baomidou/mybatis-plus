@@ -109,7 +109,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     protected void processInsert(Insert insert, int index, Object obj) {
-        if (tenantLineHandler.doTableFilter(insert.getTable().getName())) {
+        if (tenantLineHandler.ignoreTable(insert.getTable().getName())) {
             // 过滤退出执行
             return;
         }
@@ -140,7 +140,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     protected void processUpdate(Update update, int index, Object obj) {
         final Table table = update.getTable();
-        if (tenantLineHandler.doTableFilter(table.getName())) {
+        if (tenantLineHandler.ignoreTable(table.getName())) {
             // 过滤退出执行
             return;
         }
@@ -152,7 +152,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     @Override
     protected void processDelete(Delete delete, int index, Object obj) {
-        if (tenantLineHandler.doTableFilter(delete.getTable().getName())) {
+        if (tenantLineHandler.ignoreTable(delete.getTable().getName())) {
             // 过滤退出执行
             return;
         }
@@ -194,7 +194,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         FromItem fromItem = plainSelect.getFromItem();
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
-            if (!tenantLineHandler.doTableFilter(fromTable.getName())) {
+            if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
                 //#1186 github
                 plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
                 if (addColumn) {
@@ -249,7 +249,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     protected void processJoin(Join join) {
         if (join.getRightItem() instanceof Table) {
             Table fromTable = (Table) join.getRightItem();
-            if (this.tenantLineHandler.doTableFilter(fromTable.getName())) {
+            if (this.tenantLineHandler.ignoreTable(fromTable.getName())) {
                 // 过滤退出执行
                 return;
             }

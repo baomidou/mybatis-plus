@@ -29,16 +29,4 @@ public interface TableNameHandler {
      * @return String
      */
     String dynamicTableName(String sql, String tableName);
-
-    /**
-     * 根据表名判断是否进行过滤
-     * <p>
-     * 默认都要进行解析
-     *
-     * @param tableName 表名
-     * @return 是否进行过滤, true:表示忽略，false:需要解析
-     */
-    default boolean doTableFilter(String tableName) {
-        return false;
-    }
 }

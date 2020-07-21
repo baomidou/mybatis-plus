@@ -45,14 +45,14 @@ public interface TenantLineHandler {
     }
 
     /**
-     * 根据表名判断是否进行过滤
+     * 根据表名判断是否忽略拼接多租户条件
      * <p>
-     * 默认都要进行解析
+     * 默认都要进行解析并拼接多租户条件
      *
      * @param tableName 表名
-     * @return 是否进行过滤, true:表示忽略，false:需要解析多租户字段
+     * @return 是否忽略, true:表示忽略，false:需要解析并拼接多租户条件
      */
-    default boolean doTableFilter(String tableName) {
+    default boolean ignoreTable(String tableName) {
         return false;
     }
 }
