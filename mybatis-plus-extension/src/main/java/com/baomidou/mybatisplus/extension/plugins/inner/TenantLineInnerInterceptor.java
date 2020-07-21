@@ -249,7 +249,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     protected void processJoin(Join join) {
         if (join.getRightItem() instanceof Table) {
             Table fromTable = (Table) join.getRightItem();
-            if (this.tenantLineHandler.ignoreTable(fromTable.getName())) {
+            if (tenantLineHandler.ignoreTable(fromTable.getName())) {
                 // 过滤退出执行
                 return;
             }
