@@ -190,6 +190,9 @@ public class TableFieldInfo implements Constants {
         if (StringUtils.isNotBlank(numericScale)) {
             el += (COMMA + "numericScale=" + numericScale);
         }
+        if (propertyType != null && propertyType.isEnum()) {
+            el += (COMMA + "javaType=" + propertyType.getCanonicalName());
+        }
         this.el = el;
         this.initLogicDelete(dbConfig, field, existTableLogic);
 
