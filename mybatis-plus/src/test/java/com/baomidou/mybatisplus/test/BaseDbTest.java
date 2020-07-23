@@ -63,6 +63,9 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         Environment environment = new Environment("test", new JdbcTransactionFactory(), ds);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
         configuration.setUseDeprecatedExecutor(false);
+        if (consumer != null) {
+            consumer.accept(configuration);
+        }
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
         configuration.setLogImpl(Slf4jImpl.class);
         if (StringUtils.isNotBlank(mapperXml)) {
@@ -78,9 +81,6 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         configuration.addMapper(mapper);
         if (CollectionUtils.isNotEmpty(interceptors)) {
             interceptors.forEach(configuration::addInterceptor);
-        }
-        if (consumer != null) {
-            consumer.accept(configuration);
         }
         sqlSessionFactory = builder.build(configuration);
     }
