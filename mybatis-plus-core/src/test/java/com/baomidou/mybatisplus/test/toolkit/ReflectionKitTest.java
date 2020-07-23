@@ -63,47 +63,47 @@ class ReflectionKitTest {
         private String sex;
 
     }
-    
+
     @Data
     private static class EntityByLombok {
-        
+
         private Long id;
-        
+
         private String pId;
-        
+
         private String parentId;
-        
+
     }
-    
+
     private static class Entity {
-        
+
         private Long id;
-        
+
         private String pId;
-        
+
         private String parentId;
-    
-    
+
+
         public Long getId() {
             return id;
         }
-    
+
         public void setId(Long id) {
             this.id = id;
         }
-    
+
         public String getpId() {
             return pId;
         }
-    
+
         public void setpId(String pId) {
             this.pId = pId;
         }
-    
+
         public String getParentId() {
             return parentId;
         }
-    
+
         public void setParentId(String parentId) {
             this.parentId = parentId;
         }
@@ -125,19 +125,6 @@ class ReflectionKitTest {
     }
 
     @Test
-    void testGetMethodCapitalize() throws NoSuchFieldException {
-        Field field = C.class.getDeclaredField("sex");
-        String getMethod = ReflectionKit.getMethodCapitalize(field, "sex");
-        Assertions.assertEquals("getSex", getMethod);
-        field = A.class.getDeclaredField("testWrap");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testWrap");
-        Assertions.assertEquals("getTestWrap", getMethod);
-        field = A.class.getDeclaredField("testSimple");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testSimple");
-        Assertions.assertEquals("isTestSimple", getMethod);
-    }
-    
-    @Test
     void testGetFieldValue() {
         C c = new C();
         c.setSex("女");
@@ -145,13 +132,13 @@ class ReflectionKitTest {
         c.setAge(18);
         Assertions.assertEquals(c.getSex(), ReflectionKit.getFieldValue(c, "sex"));
         Assertions.assertEquals(c.getAge(), ReflectionKit.getFieldValue(c, "age"));
-        
+
         EntityByLombok entityByLombok = new EntityByLombok();
         entityByLombok.setPId("6666");
         entityByLombok.setParentId("123");
         Assertions.assertEquals(entityByLombok.getPId(), ReflectionKit.getFieldValue(entityByLombok, "pId"));
         Assertions.assertEquals(entityByLombok.getParentId(), ReflectionKit.getFieldValue(entityByLombok, "parentId"));
-        
+
         Entity entity = new Entity();
         entity.setpId("6666");
         entity.setParentId("123");

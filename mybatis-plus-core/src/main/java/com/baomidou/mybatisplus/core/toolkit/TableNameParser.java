@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
  * SQL 表名解析
  * <p>
  * https://github.com/mnadeem/sql-table-name-parser
+ * <p>
  * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well.
  * USE: new TableNameParser(sql).tables()
  *
@@ -243,7 +244,6 @@ public final class TableNameParser {
      * @return table names extracted out of sql
      * @see #accept(TableNameVisitor)
      */
-    @Deprecated
     public Collection<String> tables() {
         Map<String, String> tableMap = new HashMap<>();
         accept(token -> {

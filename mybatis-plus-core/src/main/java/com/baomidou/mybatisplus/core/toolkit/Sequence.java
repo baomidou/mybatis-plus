@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
- * 分布式高效有序ID生产黑科技(sequence)
+ * 分布式高效有序 ID 生产黑科技(sequence)
+ *
  * <p>优化开源项目：https://gitee.com/yu120/sequence</p>
  *
  * @author hubin
@@ -84,9 +85,9 @@ public class Sequence {
      */
     public Sequence(long workerId, long datacenterId) {
         Assert.isFalse(workerId > maxWorkerId || workerId < 0,
-            String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+                String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         Assert.isFalse(datacenterId > maxDatacenterId || datacenterId < 0,
-            String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
@@ -174,9 +175,9 @@ public class Sequence {
 
         // 时间戳部分 | 数据中心部分 | 机器标识部分 | 序列号部分
         return ((timestamp - twepoch) << timestampLeftShift)
-            | (datacenterId << datacenterIdShift)
-            | (workerId << workerIdShift)
-            | sequence;
+                | (datacenterId << datacenterIdShift)
+                | (workerId << workerIdShift)
+                | sequence;
     }
 
     protected long tilNextMillis(long lastTimestamp) {

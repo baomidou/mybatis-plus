@@ -33,20 +33,11 @@ class StringUtilsTest {
     }
 
     @Test
-    void isCapitalModeTest(){
+    void isCapitalModeTest() {
         Assertions.assertFalse(StringUtils.isCapitalMode("test"));
         Assertions.assertFalse(StringUtils.isCapitalMode("Test"));
         Assertions.assertFalse(StringUtils.isCapitalMode("teSt"));
         Assertions.assertTrue(StringUtils.isCapitalMode("TEST"));
     }
 
-    @Test
-    void testGuessGetterName(){
-        Assertions.assertEquals("getSex",StringUtils.guessGetterName("sex",String.class));
-        Assertions.assertEquals("getIsSex",StringUtils.guessGetterName("isSex",String.class));
-        Assertions.assertEquals("getTestWrap",StringUtils.guessGetterName("testWrap",Boolean.class));
-        Assertions.assertEquals("getIsTestWrap",StringUtils.guessGetterName("isTestWrap",Boolean.class));
-        Assertions.assertEquals("isTestSimple",StringUtils.guessGetterName("testSimple",boolean.class));
-        Assertions.assertEquals("isTestSimple",StringUtils.guessGetterName("isTestSimple",boolean.class));
-    }
 }
