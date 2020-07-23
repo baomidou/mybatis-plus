@@ -64,6 +64,12 @@ class PaginationInnerInterceptorTest {
             OrderItem.asc("column"));
     }
 
+    @Test
+    void groupByCount() {
+        assertsCountSql("SELECT * FROM record_1 WHERE id = ? GROUP BY date(date_time)",
+            "SELECT COUNT(1) FROM (SELECT * FROM record_1 WHERE id = ? GROUP BY date(date_time)) TOTAL");
+    }
+
     void assertsCountSql(String sql, String targetSql) {
         assertThat(interceptor.autoCountSql(true, sql)).isEqualTo(targetSql);
     }

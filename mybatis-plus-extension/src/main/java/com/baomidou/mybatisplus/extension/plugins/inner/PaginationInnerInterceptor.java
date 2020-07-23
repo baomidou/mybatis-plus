@@ -287,6 +287,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             return select.toString();
         } catch (Throwable e) {
             // 无法优化使用原 SQL
+            logger.warn("optimize this sql to a count sql has exception, sql:\"" + sql + "\", exception:\n" + e.getCause());
             return lowLevelCountSql(sql);
         }
     }
