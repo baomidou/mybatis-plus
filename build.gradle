@@ -43,7 +43,7 @@ ext {
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
         "spring-web"                 : "org.springframework:spring-web:${springVersion}",
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
-        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.5",
+        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
         "cglib"                      : "cglib:cglib:3.3.0",
         "lombok"                     : "org.projectlombok:lombok:1.18.12",
 
