@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -24,6 +25,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -34,6 +36,10 @@ import java.util.Properties;
 public interface InnerInterceptor {
 
     /**
+     * 判断是否执行 {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
+     * <p>
+     * 如果不执行query操作,则返回 {@link Collections#emptyList()}
+     *
      * @param executor      Executor(可能是代理对象)
      * @param ms            MappedStatement
      * @param parameter     parameter
@@ -47,6 +53,10 @@ public interface InnerInterceptor {
     }
 
     /**
+     * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
      * @param executor      Executor(可能是代理对象)
      * @param ms            MappedStatement
      * @param parameter     parameter
@@ -59,6 +69,10 @@ public interface InnerInterceptor {
     }
 
     /**
+     * 判断是否执行 {@link Executor#update(MappedStatement, Object)}
+     * <p>
+     * 如果不执行update操作,则影响行数的值为 -1
+     *
      * @param executor  Executor(可能是代理对象)
      * @param ms        MappedStatement
      * @param parameter parameter
@@ -68,6 +82,10 @@ public interface InnerInterceptor {
     }
 
     /**
+     * {@link Executor#update(MappedStatement, Object)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
      * @param executor  Executor(可能是代理对象)
      * @param ms        MappedStatement
      * @param parameter parameter
@@ -77,6 +95,10 @@ public interface InnerInterceptor {
     }
 
     /**
+     * {@link StatementHandler#prepare(Connection, Integer)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
      * @param sh                 StatementHandler(可能是代理对象)
      * @param connection         Connection
      * @param transactionTimeout transactionTimeout

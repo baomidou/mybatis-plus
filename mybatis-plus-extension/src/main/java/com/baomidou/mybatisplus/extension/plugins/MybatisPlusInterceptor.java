@@ -65,7 +65,7 @@ public class MybatisPlusInterceptor implements Interceptor {
             } else if (isUpdate) {
                 for (InnerInterceptor update : interceptors) {
                     if (!update.willDoUpdate(executor, ms, parameter)) {
-                        return 0;
+                        return -1;
                     }
                     update.beforeUpdate(executor, ms, parameter);
                 }
