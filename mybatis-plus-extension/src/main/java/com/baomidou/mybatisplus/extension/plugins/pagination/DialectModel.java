@@ -15,17 +15,15 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import lombok.Getter;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.session.Configuration;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-
-import lombok.Getter;
 
 /**
  * 分页参数动态化所需 model
@@ -74,6 +72,10 @@ public class DialectModel {
      * 提供 第二个值
      */
     private final long secondParam;
+
+    public DialectModel(String dialectSql) {
+        this(dialectSql, 0, 0);
+    }
 
     public DialectModel(String dialectSql, long firstParam, long secondParam) {
         this.dialectSql = dialectSql;
