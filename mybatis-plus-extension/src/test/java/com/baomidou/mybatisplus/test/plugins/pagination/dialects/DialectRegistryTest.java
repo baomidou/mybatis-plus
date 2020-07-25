@@ -1,7 +1,6 @@
-package com.baomidou.mybatisplus.test.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ class DialectRegistryTest {
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.KINGBASE_ES).getClass(), KingbaseDialect.class);
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.PHOENIX).getClass(), PhoenixDialect.class);
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.GAUSS).getClass(), GaussDialect.class);
-        Assertions.assertEquals(dialectRegistry.getDialect(DbType.CLICKHOUSE).getClass(), ClickhouseDialect.class);
+        Assertions.assertEquals(dialectRegistry.getDialect(DbType.OSCAR).getClass(), OscarDialect.class);
         Assertions.assertNull(dialectRegistry.getDialect(DbType.OTHER));
     }
 
