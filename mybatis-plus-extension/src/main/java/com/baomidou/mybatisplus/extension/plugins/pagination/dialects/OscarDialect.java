@@ -15,19 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-
 /**
  * 神通数据分页方言
  *
  * @author wangheli
  * @since 2020-07-25 9:13
  */
-public class OscarDialect implements IDialect {
-
-    @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " LIMIT " + FIRST_MARK + " OFFSET " + SECOND_MARK;
-        return new DialectModel(sql, offset, limit).setConsumerChain();
-    }
+public class OscarDialect extends MySqlDialect {
 }
