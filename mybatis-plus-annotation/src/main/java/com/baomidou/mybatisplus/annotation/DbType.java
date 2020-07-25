@@ -109,7 +109,7 @@ public enum DbType {
     /**
      * Oscar
      */
-    OSCAR("oscar", "神通数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OscarDialect"),
+    OSCAR("oscar", "神通数据库"),
 
     /**
      * UNKONWN DB
