@@ -23,9 +23,10 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
+ * 数据库方言注入
+ *
  * @author nieqiuqiu
- * @date 2020-01-09
- * @since 3.3.1
+ * @since 2020-01-09
  */
 public class DialectRegistry {
 
