@@ -92,6 +92,8 @@ public class JdbcUtils {
             return DbType.GAUSS;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICKHOUSE;
+        } else if (jdbcUrl.contains(":oscar:")) {
+            return DbType.OSCAR;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
