@@ -99,7 +99,11 @@ public enum DbType {
     /**
      * GBase
      */
-    GBASE("gbase", "南大通用数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBaseDialect"),
+    GBASE("gbase", "南大通用数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBaseDialect"),/**
+
+     * Oscar
+     */
+    OSCAR("oscar", "神通数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OscarDialect"),
 
     /**
      * UNKONWN DB
