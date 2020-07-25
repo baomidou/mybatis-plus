@@ -90,6 +90,8 @@ public class JdbcUtils {
             return DbType.PHOENIX;
         } else if (jdbcUrl.contains(":zenith:")) {
             return DbType.GAUSS;
+        } else if (jdbcUrl.contains(":gbase:")) {
+            return DbType.GBASE;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICKHOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {

@@ -16,10 +16,10 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -85,10 +85,9 @@ public class DialectFactory {
     public static IDialect getDialect(String dialectClazz) {
         return CollectionUtils.computeIfAbsent(DIALECT_CACHE, dialectClazz, ClassUtils::newInstance);
     }
-    
+
     public static IDialect getDialect(DbType dbType) {
         return Optional.ofNullable(DIALECT_REGISTRY.getDialect(dbType))
-            .orElseThrow(() -> new MybatisPlusException(String.format("%s database not supported.", dbType.getDb())));
+            .orElseThrow(() -> ExceptionUtils.mpe("%s database not supported.", dbType.getDb()));
     }
-    
 }
