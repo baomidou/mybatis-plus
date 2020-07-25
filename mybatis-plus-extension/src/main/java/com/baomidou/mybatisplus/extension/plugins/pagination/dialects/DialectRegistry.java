@@ -33,25 +33,29 @@ public class DialectRegistry {
     private final Map<DbType, IDialect> dialect_enum_map = new EnumMap<>(DbType.class);
 
     public DialectRegistry() {
+        // mysql and children
         dialect_enum_map.put(DbType.MYSQL, new MySqlDialect());
-        dialect_enum_map.put(DbType.MARIADB, new MariaDBDialect());
+        dialect_enum_map.put(DbType.MARIADB, new MySqlDialect());
+        dialect_enum_map.put(DbType.GBASE, new MySqlDialect());
+        dialect_enum_map.put(DbType.OSCAR, new MySqlDialect());
+        dialect_enum_map.put(DbType.XU_GU, new MySqlDialect());
+        dialect_enum_map.put(DbType.CLICKHOUSE, new MySqlDialect());
+        // postgresql and children
+        dialect_enum_map.put(DbType.POSTGRE_SQL, new PostgreDialect());
+        dialect_enum_map.put(DbType.H2, new PostgreDialect());
+        dialect_enum_map.put(DbType.SQLITE, new PostgreDialect());
+        dialect_enum_map.put(DbType.HSQL, new PostgreDialect());
+        dialect_enum_map.put(DbType.KINGBASE_ES, new PostgreDialect());
+        dialect_enum_map.put(DbType.PHOENIX, new PostgreDialect());
+        // oracle and children
         dialect_enum_map.put(DbType.ORACLE, new OracleDialect());
+        dialect_enum_map.put(DbType.DM, new OracleDialect());
+        dialect_enum_map.put(DbType.GAUSS, new OracleDialect());
+        // other
         dialect_enum_map.put(DbType.ORACLE_12C, new Oracle12cDialect());
         dialect_enum_map.put(DbType.DB2, new DB2Dialect());
-        dialect_enum_map.put(DbType.H2, new H2Dialect());
-        dialect_enum_map.put(DbType.HSQL, new HSQLDialect());
-        dialect_enum_map.put(DbType.SQLITE, new SQLiteDialect());
-        dialect_enum_map.put(DbType.POSTGRE_SQL, new PostgreDialect());
         dialect_enum_map.put(DbType.SQL_SERVER2005, new SQLServer2005Dialect());
         dialect_enum_map.put(DbType.SQL_SERVER, new SQLServerDialect());
-        dialect_enum_map.put(DbType.DM, new DmDialect());
-        dialect_enum_map.put(DbType.XU_GU, new XuGuDialect());
-        dialect_enum_map.put(DbType.KINGBASE_ES, new KingbaseDialect());
-        dialect_enum_map.put(DbType.PHOENIX, new PhoenixDialect());
-        dialect_enum_map.put(DbType.GAUSS, new GaussDialect());
-        dialect_enum_map.put(DbType.CLICKHOUSE, new ClickhouseDialect());
-        dialect_enum_map.put(DbType.GBASE, new GBaseDialect());
-        dialect_enum_map.put(DbType.OSCAR, new OscarDialect());
     }
 
     public IDialect getDialect(DbType dbType) {
