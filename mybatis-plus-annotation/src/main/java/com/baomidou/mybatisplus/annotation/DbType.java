@@ -107,6 +107,11 @@ public enum DbType {
     GBASE("gbase", "南大通用数据库"),
 
     /**
+     * Oscar
+     */
+    OSCAR("oscar", "神通数据库"),
+
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
