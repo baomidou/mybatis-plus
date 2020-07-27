@@ -13,7 +13,4 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-/**
- * 代码生成器，类型转换相关类
- */
 package com.baomidou.mybatisplus.generator.config.converts;

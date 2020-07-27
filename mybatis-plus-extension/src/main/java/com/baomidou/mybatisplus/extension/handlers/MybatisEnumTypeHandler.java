@@ -16,7 +16,8 @@
 package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.annotation.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
@@ -42,7 +43,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2017-10-11
+ * @deprecated 3.3.3 @2020-06-23 use {@link com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler}
  */
+@Deprecated
 public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
 
     private static ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
@@ -124,7 +127,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
     public static Optional<String> findEnumValueFieldName(Class<?> clazz) {
         if (clazz != null && clazz.isEnum()) {
             String className = clazz.getName();
-            return Optional.ofNullable(TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(className, key -> {
+            return Optional.ofNullable(CollectionUtils.computeIfAbsent(TABLE_METHOD_OF_ENUM_TYPES, className, key -> {
                 Optional<Field> optional = Arrays.stream(clazz.getDeclaredFields())
                     .filter(field -> field.isAnnotationPresent(EnumValue.class))
                     .findFirst();

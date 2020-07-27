@@ -49,6 +49,7 @@ public class TableInfo {
     private String serviceImplName;
     private String controllerName;
     private List<TableField> fields;
+    private boolean havePrimaryKey;
     /**
      * 公共字段
      */
@@ -92,8 +93,8 @@ public class TableInfo {
     }
 
     public TableInfo setFields(List<TableField> fields) {
+        this.fields = fields;
         if (CollectionUtils.isNotEmpty(fields)) {
-            this.fields = fields;
             // 收集导入包信息
             for (TableField field : fields) {
                 if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
@@ -157,4 +158,5 @@ public class TableInfo {
         }
         return fieldNames;
     }
+
 }

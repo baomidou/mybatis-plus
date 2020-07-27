@@ -34,28 +34,6 @@ import static java.util.stream.Collectors.toList;
 public interface IPage<T> extends Serializable {
 
     /**
-     * 降序字段数组
-     *
-     * @return order by desc 的字段数组
-     * @see #orders()
-     */
-    @Deprecated
-    default String[] descs() {
-        return null;
-    }
-
-    /**
-     * 升序字段数组
-     *
-     * @return order by asc 的字段数组
-     * @see #orders()
-     */
-    @Deprecated
-    default String[] ascs() {
-        return null;
-    }
-
-    /**
      * 获取排序信息，排序的字段和正反序
      *
      * @return 排序信息
@@ -66,7 +44,9 @@ public interface IPage<T> extends Serializable {
      * KEY/VALUE 条件
      *
      * @return ignore
+     * @deprecated 3.3.3 @2020-06-30
      */
+    @Deprecated
     default Map<Object, Object> condition() {
         return null;
     }
@@ -97,6 +77,15 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * 最大每页分页数限制,优先级高于分页插件内的 maxLimit
+     *
+     * @since 3.3.3 @2020-07-17
+     */
+    default Long maxLimit() {
+        return null;
+    }
+
+    /**
      * 当前分页总页数
      */
     default long getPages() {
@@ -124,7 +113,9 @@ public interface IPage<T> extends Serializable {
      *
      * @param hit 是否命中
      * @since 3.3.1
+     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
      */
+    @Deprecated
     default void hitCount(boolean hit) {
 
     }
@@ -134,7 +125,9 @@ public interface IPage<T> extends Serializable {
      *
      * @return 是否命中count缓存
      * @since 3.3.1
+     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
      */
+    @Deprecated
     default boolean isHitCount() {
         return false;
     }
@@ -176,7 +169,7 @@ public interface IPage<T> extends Serializable {
     IPage<T> setSize(long size);
 
     /**
-     * 当前页，默认 1
+     * 当前页
      *
      * @return 当前页
      */
@@ -201,11 +194,23 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * 老分页插件不支持
+     *
+     * @return count的method
+     * @since 3.3.3 @2020-06-19
+     */
+    default String countId() {
+        return null;
+    }
+
+    /**
      * 生成缓存key值
      *
      * @return 缓存key值
      * @since 3.3.2
+     * @deprecated 3.3.3 @2020-06-30
      */
+    @Deprecated
     default String cacheKey() {
         StringBuilder key = new StringBuilder();
         key.append(offset()).append(StringPool.COLON).append(getSize());

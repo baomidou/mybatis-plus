@@ -15,36 +15,23 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * SQL 表名解析
+ * <p>
  * https://github.com/mnadeem/sql-table-name-parser
+ * <p>
  * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well.
  * USE: new TableNameParser(sql).tables()
  *
- * @author Nadeem Mohammad
+ * @author Nadeem Mohammad, hcl
  * @since 2019-04-22
  */
 public final class TableNameParser {
-
-    private static final int NO_INDEX = -1;
-    private static final String SPACE = " ";
-    private static final String REGEX_SPACE = "\\s+";
-
-    private static final String TOKEN_ORACLE_HINT_START = "/*+";
-    private static final String TOKEN_ORACLE_HINT_END = "*/";
-    private static final String TOKEN_SINGLE_LINE_COMMENT = "--";
-    private static String TOKEN_NEWLINE = "\\r\\n|\\r|\\n|\\n\\r";
-    private static final String TOKEN_SEMI_COLON = ";";
-    private static final String TOKEN_PARAN_START = "(";
+    private static final String TOKEN_GROUP_START = "(";
     private static final String TOKEN_COMMA = ",";
     private static final String TOKEN_SET = "set";
     private static final String TOKEN_OF = "of";
@@ -52,7 +39,7 @@ public final class TableNameParser {
     private static final String TOKEN_DELETE = "delete";
     private static final String TOKEN_CREATE = "create";
     private static final String TOKEN_INDEX = "index";
-    private static final String TOKEN_ASTERICK = "*";
+    private static final String TOKEN_ALL = "*";
 
     private static final String KEYWORD_JOIN = "join";
     private static final String KEYWORD_INTO = "into";
@@ -62,197 +49,192 @@ public final class TableNameParser {
     private static final String KEYWORD_UPDATE = "update";
 
     private static final List<String> concerned = Arrays.asList(KEYWORD_TABLE, KEYWORD_INTO, KEYWORD_JOIN, KEYWORD_USING, KEYWORD_UPDATE);
-    private static final List<String> ignored = Arrays.asList(TOKEN_PARAN_START, TOKEN_SET, TOKEN_OF, TOKEN_DUAL);
-
-    private Map<String, String> tables = new HashMap<>();
+    private static final List<String> ignored = Arrays.asList(TOKEN_GROUP_START, TOKEN_SET, TOKEN_OF, TOKEN_DUAL);
 
     /**
-     * Extracts table names out of SQL
-     * @param sql
+     * 该表达式会匹配 SQL 中不是 SQL TOKEN 的部分，比如换行符，注释信息，结尾的 {@code ;} 等。
+     * <p>
+     * 排除的项目包括：
+     * 1、以 -- 开头的注释信息
+     * 2、;
+     * 3、空白字符
+     * 4、使用 /* * / 注释的信息
+     * 5、把 ,() 也要分出来
      */
-    public TableNameParser(final String sql) {
-        String noComments = removeComments(sql);
-        String normalized = normalized(noComments);
-        String cleansed = clean(normalized);
-        String[] tokens = cleansed.split(REGEX_SPACE);
+    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern.compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)"
+            + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))"
+    );
+
+    private final List<SqlToken> tokens;
+
+    /**
+     * 从 SQL 中提取表名称
+     *
+     * @param sql 需要解析的 SQL 语句
+     */
+    public TableNameParser(String sql) {
+        tokens = fetchAllTokens(sql);
+    }
+
+    /**
+     * 接受一个新的访问者，并访问当前 SQL 的表名称
+     * <p>
+     * 现在我们改成了访问者模式，不在对以前的 SQL 做改动
+     * 同时，你可以方便的获得表名位置的索引
+     *
+     * @param visitor 访问者
+     */
+    public void accept(TableNameVisitor visitor) {
         int index = 0;
-
-        String firstToken = tokens[index];
-        if (isOracleSpecialDelete(firstToken, tokens, index)) {
-            handleSpecialOracleSpecialDelete(firstToken, tokens, index);
-        } else if (isCreateIndex(firstToken, tokens, index)) {
-            handleCreateIndex(firstToken, tokens, index);
+        String first = tokens.get(index).getValue();
+        if (isOracleSpecialDelete(first, tokens, index)) {
+            visitNameToken(tokens.get(index + 1), visitor);
+        } else if (isCreateIndex(first, tokens, index)) {
+            visitNameToken(tokens.get(index + 4), visitor);
         } else {
-            while (moreTokens(tokens, index)) {
-                String currentToken = tokens[index++];
-
-                if (isFromToken(currentToken)) {
-                    processFromToken(tokens, index);
-                } else if (shouldProcess(currentToken)) {
-                    if (moreTokens(tokens, index)) {
-                        String nextToken = tokens[index++];
-                        considerInclusion(nextToken);
+            while (hasMoreTokens(tokens, index)) {
+                String current = tokens.get(index++).getValue();
+                if (isFromToken(current)) {
+                    processFromToken(tokens, index, visitor);
+                } else if (concerned.contains(current.toLowerCase())) {
+                    if (hasMoreTokens(tokens, index)) {
+                        SqlToken next = tokens.get(index++);
+                        visitNameToken(next, visitor);
                     }
                 }
             }
         }
     }
 
-    private String removeComments(final String sql) {
-        StringBuilder sb = new StringBuilder(sql);
-        int nextCommentPosition = sb.indexOf(TOKEN_SINGLE_LINE_COMMENT);
-        while (nextCommentPosition > -1) {
-            int end = indexOfRegex(TOKEN_NEWLINE, sb.substring(nextCommentPosition));
-            if (end == -1) {
-                return sb.substring(0, nextCommentPosition);
-            } else {
-                sb.replace(nextCommentPosition, end + nextCommentPosition, "");
+    /**
+     * 表名访问器
+     */
+    public interface TableNameVisitor {
+        /**
+         * @param name 表示表名称的 token
+         */
+        void visit(SqlToken name);
+    }
+
+    /**
+     * 从 SQL 语句中提取出 所有的 SQL Token
+     *
+     * @param sql SQL
+     * @return 语句
+     */
+    protected List<SqlToken> fetchAllTokens(String sql) {
+        List<SqlToken> tokens = new ArrayList<>();
+        Matcher matcher = NON_SQL_TOKEN_PATTERN.matcher(sql);
+        int last = 0;
+        while (matcher.find()) {
+            int start = matcher.start();
+            if (start != last) {
+                tokens.add(new SqlToken(last, start, sql.substring(last, start)));
             }
-            nextCommentPosition = sb.indexOf(TOKEN_SINGLE_LINE_COMMENT);
+            last = matcher.end();
         }
-        return sb.toString();
-    }
-
-    private int indexOfRegex(String regex, String string) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(string);
-        return matcher.find() ? matcher.start() : -1;
-    }
-
-    private String normalized(final String sql) {
-        String normalized = sql.trim().replaceAll(TOKEN_NEWLINE, SPACE).replaceAll(TOKEN_COMMA, " , ")
-            .replaceAll("\\(", " ( ").replaceAll("\\)", " ) ");
-        if (normalized.endsWith(TOKEN_SEMI_COLON)) {
-            normalized = normalized.substring(0, normalized.length() - 1);
+        if (last != sql.length()) {
+            tokens.add(new SqlToken(last, sql.length(), sql.substring(last)));
         }
-        return normalized;
+        return tokens;
     }
 
-    private String clean(final String normalized) {
-        int start = normalized.indexOf(TOKEN_ORACLE_HINT_START);
-        int end;
-        if (start != NO_INDEX) {
-            end = normalized.indexOf(TOKEN_ORACLE_HINT_END);
-            if (end != NO_INDEX) {
-                String firstHalf = normalized.substring(0, start);
-                String secondHalf = normalized.substring(end + 2, normalized.length());
-                return firstHalf.trim() + SPACE + secondHalf.trim();
-            }
-        }
-        return normalized;
-    }
-
-    private boolean isOracleSpecialDelete(final String currentToken, final String[] tokens, int index) {
-        index++;// Point to next token
-        if (TOKEN_DELETE.equals(currentToken)) {
-            if (moreTokens(tokens, index)) {
-                String nextToken = tokens[index++];
-                if (!KEYWORD_FROM.equals(nextToken) && !TOKEN_ASTERICK.equals(nextToken)) {
-                    return true;
-                }
+    /**
+     * 如果是 DELETE 后面紧跟的不是 FROM 或者 * ,则 返回 true
+     *
+     * @param current 当前的 token
+     * @param tokens  token 列表
+     * @param index   索引
+     * @return 判断是不是 Oracle 特殊的删除手法
+     */
+    private static boolean isOracleSpecialDelete(String current, List<SqlToken> tokens, int index) {
+        if (TOKEN_DELETE.equals(current)) {
+            if (hasMoreTokens(tokens, index++)) {
+                String next = tokens.get(index).getValue();
+                return !KEYWORD_FROM.equals(next) && !TOKEN_ALL.equals(next);
             }
         }
         return false;
     }
 
-    private void handleSpecialOracleSpecialDelete(final String currentToken, final String[] tokens, int index) {
-        String tableName = tokens[index + 1];
-        considerInclusion(tableName);
-    }
-
-    private boolean isCreateIndex(String currentToken, String[] tokens, int index) {
+    private boolean isCreateIndex(String current, List<SqlToken> tokens, int index) {
         index++; // Point to next token
-        if (TOKEN_CREATE.equals(currentToken.toLowerCase()) && hasIthToken(tokens, index, 3)) {
-            String nextToken = tokens[index++];
-            if (TOKEN_INDEX.equals(nextToken.toLowerCase())) {
-                return true;
-            }
-
+        if (TOKEN_CREATE.equals(current.toLowerCase()) && hasIthToken(tokens, index)) {
+            String next = tokens.get(index).getValue();
+            return TOKEN_INDEX.equals(next.toLowerCase());
         }
         return false;
     }
 
-    private void handleCreateIndex(String currentToken, String[] tokens, int index) {
-        String tableName = tokens[index + 4];
-        considerInclusion(tableName);
+    private static boolean hasIthToken(List<SqlToken> tokens, int currentIndex) {
+        return hasMoreTokens(tokens, currentIndex) && tokens.size() > currentIndex + 3;
     }
 
-    private boolean hasIthToken(String[] tokens, int currentIndex, int tokenNumber) {
-        if (moreTokens(tokens, currentIndex) && tokens.length > currentIndex + tokenNumber) {
-            return true;
-        }
-        return false;
-    }
-
-    private boolean shouldProcess(final String currentToken) {
-        return concerned.contains(currentToken.toLowerCase());
-    }
-
-    private boolean isFromToken(final String currentToken) {
+    private static boolean isFromToken(String currentToken) {
         return KEYWORD_FROM.equals(currentToken.toLowerCase());
     }
 
-    private void processFromToken(final String[] tokens, int index) {
-        String currentToken = tokens[index++];
-        considerInclusion(currentToken);
+    private static void processFromToken(List<SqlToken> tokens, int index, TableNameVisitor visitor) {
+        SqlToken sqlToken = tokens.get(index++);
+        visitNameToken(sqlToken, visitor);
 
-        String nextToken = null;
-        if (moreTokens(tokens, index)) {
-            nextToken = tokens[index++];
+        String next = null;
+        if (hasMoreTokens(tokens, index)) {
+            next = tokens.get(index++).getValue();
         }
 
-        if (shouldProcessMultipleTables(nextToken)) {
-            processNonAliasedMultiTables(tokens, index, nextToken);
+        if (shouldProcessMultipleTables(next)) {
+            processNonAliasedMultiTables(tokens, index, next, visitor);
         } else {
-            processAliasedMultiTables(tokens, index, currentToken);
+            processAliasedMultiTables(tokens, index, sqlToken, visitor);
         }
     }
 
-    private void processNonAliasedMultiTables(final String[] tokens, int index, String nextToken) {
+    private static void processNonAliasedMultiTables(List<SqlToken> tokens, int index, String nextToken, TableNameVisitor visitor) {
         while (nextToken.equals(TOKEN_COMMA)) {
-            String currentToken = tokens[index++];
-            considerInclusion(currentToken);
-            if (moreTokens(tokens, index)) {
-                nextToken = tokens[index++];
+            visitNameToken(tokens.get(index++), visitor);
+            if (hasMoreTokens(tokens, index)) {
+                nextToken = tokens.get(index++).getValue();
             } else {
                 break;
             }
         }
     }
 
-    private void processAliasedMultiTables(final String[] tokens, int index, String currentToken) {
+    private static void processAliasedMultiTables(List<SqlToken> tokens, int index, SqlToken current, TableNameVisitor visitor) {
         String nextNextToken = null;
-        if (moreTokens(tokens, index)) {
-            nextNextToken = tokens[index++];
+        if (hasMoreTokens(tokens, index)) {
+            nextNextToken = tokens.get(index++).getValue();
         }
 
         if (shouldProcessMultipleTables(nextNextToken)) {
-            while (moreTokens(tokens, index) && nextNextToken.equals(TOKEN_COMMA)) {
-                if (moreTokens(tokens, index)) {
-                    currentToken = tokens[index++];
+            while (hasMoreTokens(tokens, index) && nextNextToken.equals(TOKEN_COMMA)) {
+                if (hasMoreTokens(tokens, index)) {
+                    current = tokens.get(index++);
                 }
-                if (moreTokens(tokens, index)) {
+                if (hasMoreTokens(tokens, index)) {
                     index++;
                 }
-                if (moreTokens(tokens, index)) {
-                    nextNextToken = tokens[index++];
+                if (hasMoreTokens(tokens, index)) {
+                    nextNextToken = tokens.get(index++).getValue();
                 }
-                considerInclusion(currentToken);
+                visitNameToken(current, visitor);
             }
         }
     }
 
-    private boolean shouldProcessMultipleTables(final String nextToken) {
+    private static boolean shouldProcessMultipleTables(final String nextToken) {
         return nextToken != null && nextToken.equals(TOKEN_COMMA);
     }
 
-    private boolean moreTokens(final String[] tokens, int index) {
-        return index < tokens.length;
+    private static boolean hasMoreTokens(List<SqlToken> tokens, int index) {
+        return index < tokens.size();
     }
 
-    private void considerInclusion(final String token) {
-        if (!ignored.contains(token.toLowerCase()) && !this.tables.containsKey(token.toLowerCase())) {
-            this.tables.put(token.toLowerCase(), token);
+    private static void visitNameToken(SqlToken token, TableNameVisitor visitor) {
+        String value = token.getValue().toLowerCase();
+        if (!ignored.contains(value)) {
+            visitor.visit(token);
         }
     }
 
@@ -260,8 +242,53 @@ public final class TableNameParser {
      * parser tables
      *
      * @return table names extracted out of sql
+     * @see #accept(TableNameVisitor)
      */
     public Collection<String> tables() {
-        return new HashSet<>(this.tables.values());
+        Map<String, String> tableMap = new HashMap<>();
+        accept(token -> {
+            String name = token.getValue();
+            tableMap.putIfAbsent(name.toLowerCase(), name);
+        });
+        return new HashSet<>(tableMap.values());
     }
+
+    /**
+     * SQL 词
+     */
+    public static class SqlToken implements Comparable<SqlToken> {
+        private final int start;
+        private final int end;
+        private final String value;
+
+        private SqlToken(int start, int end, String value) {
+            this.start = start;
+            this.end = end;
+            this.value = value;
+        }
+
+        public int getStart() {
+            return start;
+        }
+
+        public int getEnd() {
+            return end;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public int compareTo(SqlToken o) {
+            return Integer.compare(start, o.start);
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+
+    }
+
 }

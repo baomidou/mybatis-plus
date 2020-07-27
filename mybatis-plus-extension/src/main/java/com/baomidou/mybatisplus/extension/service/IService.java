@@ -21,8 +21,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -94,6 +97,34 @@ public interface IService<T> {
      * @param batchSize  每次的数量
      */
     boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize);
+    
+    /**
+     * 批量更新或新增
+     *
+     * @param list      数据集合
+     * @param batchSize 批量大小
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    default boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        throw new UnsupportedOperationException();
+    }
+    
+    /**
+     * 批量更新或新增
+     *
+     * @param list      数据集合
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean saveOrUpdateBatch(Collection<T> list, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        return saveOrUpdateBatch(list, DEFAULT_BATCH_SIZE, predicate, function);
+    }
 
     /**
      * 根据 ID 删除
@@ -187,6 +218,25 @@ public interface IService<T> {
      * @param entity 实体对象
      */
     boolean saveOrUpdate(T entity);
+    
+    /**
+     * 更新或保存
+     *
+     * @param entity    实体
+     * @param predicate 新增条件 notNull
+     * @param function  更新条件 notNull
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean saveOrUpdate(T entity, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
+        if (predicate.test(entity)) {
+            return save(entity);
+        } else {
+            Wrapper<T> wrapper = function.apply(entity);
+            return update(entity, wrapper);
+        }
+    }
 
     /**
      * 根据 ID 查询
@@ -390,8 +440,8 @@ public interface IService<T> {
      * 一. 名称介绍
      * 1. 方法名带有 query 的为对数据的查询操作, 方法名带有 update 的为对数据的修改操作
      * 2. 方法名带有 lambda 的为内部方法入参 column 支持函数式的
-     *
      * 二. 支持介绍
+     *
      * 1. 方法名带有 query 的支持以 {@link ChainQuery} 内部的方法名结尾进行数据查询操作
      * 2. 方法名带有 update 的支持以 {@link ChainUpdate} 内部的方法名为结尾进行数据修改操作
      *

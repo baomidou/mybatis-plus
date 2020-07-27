@@ -66,6 +66,6 @@ public class SQLServer2005Dialect implements IDialect {
             ") SELECT * FROM selectTemp WHERE __row_number__ BETWEEN " +
             //FIX#299：原因：mysql中limit 10(offset,size) 是从第10开始（不包含10）,；而这里用的BETWEEN是两边都包含，所以改为offset+1
             firstParam + " AND " + secondParam + " ORDER BY __row_number__";
-        return new DialectModel(sql, firstParam, secondParam);
+        return new DialectModel(sql);
     }
 }

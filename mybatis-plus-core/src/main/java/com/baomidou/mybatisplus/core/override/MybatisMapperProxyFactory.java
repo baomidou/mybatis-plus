@@ -32,17 +32,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2018-06-09
  */
 public class MybatisMapperProxyFactory<T> {
-
+    
     @Getter
     private final Class<T> mapperInterface;
-    private final Map<Method, MybatisMapperMethod> methodCache = new ConcurrentHashMap<>();
-
+    @Getter
+    private final Map<Method, MybatisMapperProxy.MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
+    
     public MybatisMapperProxyFactory(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
-    }
-
-    public Map<Method, MybatisMapperMethod> getMethodCache() {
-        return methodCache;
     }
 
     @SuppressWarnings("unchecked")

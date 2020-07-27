@@ -18,7 +18,10 @@ package com.baomidou.mybatisplus.core.toolkit;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -56,22 +59,6 @@ public final class ReflectionKit {
 
     /**
      * <p>
-     * 反射 method 方法名，例如 getId
-     * </p>
-     *
-     * @param field
-     * @param str   属性字符串内容
-     * @deprecated 3.3.0 {@link #guessGetterName(Field, String)}
-     */
-    @Deprecated
-    public static String getMethodCapitalize(Field field, final String str) {
-        Class<?> fieldType = field.getType();
-        // fix #176
-        return StringUtils.guessGetterName(str, fieldType);
-    }
-
-    /**
-     * <p>
      * 反射 method 方法名，例如 setVersion
      * </p>
      *
@@ -84,34 +71,7 @@ public final class ReflectionKit {
     public static String setMethodCapitalize(Field field, final String str) {
         return StringUtils.concatCapitalize("set", str);
     }
-    
-    /**
-     * <p>
-     * 获取 public get方法的值
-     * </p>
-     *
-     * @param cls    ignore
-     * @param entity 实体
-     * @param str    属性字符串内容
-     * @return Object
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    public static Object getMethodValue(Class<?> cls, Object entity, String str) {
-        Map<String, Field> fieldMaps = getFieldMap(cls);
-        try {
-            Assert.notEmpty(fieldMaps, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str);
-            Method method = cls.getMethod(guessGetterName(fieldMaps.get(str), str));
-            return method.invoke(entity);
-        } catch (NoSuchMethodException e) {
-            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getSimpleName());
-        } catch (IllegalAccessException e) {
-            throw ExceptionUtils.mpe("Error: Cannot execute a private method. in %s.  Cause:", e, cls.getSimpleName());
-        } catch (InvocationTargetException e) {
-            throw ExceptionUtils.mpe("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
-        }
-    }
-    
+
     /**
      * 获取字段值
      *
@@ -130,36 +90,6 @@ public final class ReflectionKit {
         } catch (ReflectiveOperationException e) {
             throw ExceptionUtils.mpe("Error: Cannot read field in %s.  Cause:", e, cls.getSimpleName());
         }
-    }
-    
-    /**
-     * 猜测方法名
-     *
-     * @param field 字段
-     * @param str   属性字符串内容
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    private static String guessGetterName(Field field, final String str) {
-        return StringUtils.guessGetterName(str, field.getType());
-    }
-    
-    /**
-     * <p>
-     * 获取 public get方法的值
-     * </p>
-     *
-     * @param entity 实体
-     * @param str    属性字符串内容
-     * @return Object
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    public static Object getMethodValue(Object entity, String str) {
-        if (null == entity) {
-            return null;
-        }
-        return getMethodValue(entity.getClass(), entity, str);
     }
 
     /**
@@ -214,14 +144,29 @@ public final class ReflectionKit {
         if (Objects.isNull(clazz)) {
             return Collections.emptyList();
         }
-        List<Field> fields = CLASS_FIELD_CACHE.get(clazz);
-        if (CollectionUtils.isEmpty(fields)) {
-            synchronized (CLASS_FIELD_CACHE) {
-                fields = doGetFieldList(clazz);
-                CLASS_FIELD_CACHE.put(clazz, fields);
+        return CollectionUtils.computeIfAbsent(CLASS_FIELD_CACHE, clazz, k -> {
+            Field[] fields = k.getDeclaredFields();
+            List<Field> superFields = new ArrayList<>();
+            Class<?> currentClass = k.getSuperclass();
+            while (currentClass != null) {
+                Field[] declaredFields = currentClass.getDeclaredFields();
+                Collections.addAll(superFields, declaredFields);
+                currentClass = currentClass.getSuperclass();
             }
-        }
-        return fields;
+            /* 排除重载属性 */
+            Map<String, Field> fieldMap = excludeOverrideSuperField(fields, superFields);
+            /*
+             * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
+             * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
+             * 中间表实体重写父类属性 ` private transient Date createTime; `
+             */
+            return fieldMap.values().stream()
+                    /* 过滤静态属性 */
+                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                    /* 过滤 transient关键字修饰的属性 */
+                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                    .collect(Collectors.toList());
+        });
     }
 
     /**
@@ -230,24 +175,26 @@ public final class ReflectionKit {
      * </p>
      *
      * @param clazz 反射类
+     * @deprecated 3.3.3
      */
+    @Deprecated
     public static List<Field> doGetFieldList(Class<?> clazz) {
         if (clazz.getSuperclass() != null) {
             /* 排除重载属性 */
             Map<String, Field> fieldMap = excludeOverrideSuperField(clazz.getDeclaredFields(),
-                /* 处理父类字段 */
-                getFieldList(clazz.getSuperclass()));
+                    /* 处理父类字段 */
+                    getFieldList(clazz.getSuperclass()));
             /*
              * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
              * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
             return fieldMap.values().stream()
-                /* 过滤静态属性 */
-                .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                /* 过滤 transient关键字修饰的属性 */
-                .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                .collect(Collectors.toList());
+                    /* 过滤静态属性 */
+                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                    /* 过滤 transient关键字修饰的属性 */
+                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                    .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -271,23 +218,6 @@ public final class ReflectionKit {
         superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName()))
                 .forEach(f -> fieldMap.put(f.getName(), f));
         return fieldMap;
-    }
-    
-    /**
-     * 获取字段get方法
-     *
-     * @param cls   class
-     * @param field 字段
-     * @return Get方法
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    public static Method getMethod(Class<?> cls, Field field) {
-        try {
-            return cls.getDeclaredMethod(ReflectionKit.guessGetterName(field, field.getName()));
-        } catch (NoSuchMethodException e) {
-            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getName());
-        }
     }
 
     /**

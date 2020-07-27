@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -26,8 +25,10 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mybatis全局缓存工具类
@@ -36,6 +37,11 @@ import java.util.Set;
  * @since 2017-06-15
  */
 public class GlobalConfigUtils {
+
+    /**
+     * 缓存全局信息
+     */
+    private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
     /**
      * 获取当前的SqlSessionFactory
@@ -50,10 +56,23 @@ public class GlobalConfigUtils {
 
     /**
      * 获取默认 MybatisGlobalConfig
-     * <p>FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定</p>
      */
     public static GlobalConfig defaults() {
         return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+    }
+
+    /**
+     * <p>
+     * 设置全局设置(以configuration地址值作为Key)
+     * <p/>
+     *
+     * @param configuration Mybatis 容器配置对象
+     * @param globalConfig  全局配置
+     */
+    public static void setGlobalConfig(Configuration configuration, GlobalConfig globalConfig) {
+        Assert.isTrue(configuration != null && globalConfig != null, "Error: Could not setGlobalConfig");
+        // 设置全局设置
+        GLOBAL_CONFIG.putIfAbsent(Integer.toHexString(configuration.hashCode()), globalConfig);
     }
 
     /**
@@ -63,7 +82,8 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        return ((MybatisConfiguration) configuration).getGlobalConfig();
+        final String key = Integer.toHexString(configuration.hashCode());
+        return CollectionUtils.computeIfAbsent(GLOBAL_CONFIG, key, k -> defaults());
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {

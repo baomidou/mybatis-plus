@@ -88,7 +88,7 @@ public interface IDbQuery {
 
 
     /**
-     * 判断主键是否为identity，目前仅对mysql进行检查
+     * 判断主键是否为identity
      *
      * @param results ResultSet
      * @return 主键是否为identity

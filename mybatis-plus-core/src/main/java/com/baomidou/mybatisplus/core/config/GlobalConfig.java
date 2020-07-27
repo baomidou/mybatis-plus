@@ -79,7 +79,7 @@ public class GlobalConfig implements Serializable {
      */
     private Class<?> superMapperClass = Mapper.class;
     /**
-     * SqlSessionFactory
+     * 仅用于缓存 SqlSessionFactory(外部勿进行set,set了也没用)
      */
     private SqlSessionFactory sqlSessionFactory;
     /**
@@ -120,7 +120,7 @@ public class GlobalConfig implements Serializable {
          */
         private String columnFormat;
         /**
-         * entity字段 format,
+         * entity 的字段(property)的 format,
          * 只有在 column as property 这种情况下生效
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
@@ -129,11 +129,11 @@ public class GlobalConfig implements Serializable {
          */
         private String propertyFormat;
         /**
-         * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
+         * 表名是否使用驼峰转下划线命名,只对表名生效
          */
         private boolean tableUnderline = true;
         /**
-         * 大写命名
+         * 大写命名,对表名和字段名均生效
          */
         private boolean capitalMode = false;
         /**
@@ -141,7 +141,7 @@ public class GlobalConfig implements Serializable {
          */
         private IKeyGenerator keyGenerator;
         /**
-         * 逻辑删除全局字段 (默认无 设置会自动扫描实体字段)
+         * 逻辑删除全局属性名
          */
         private String logicDeleteField;
         /**

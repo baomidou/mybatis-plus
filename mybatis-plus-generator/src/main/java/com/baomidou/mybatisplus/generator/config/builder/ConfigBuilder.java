@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -34,10 +35,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -65,7 +66,9 @@ public class ConfigBuilder {
     /**
      * SQL语句类型
      */
+    @Deprecated
     private IDbQuery dbQuery;
+    @Deprecated
     private DbType dbType;
     private String superEntityClass;
     private String superMapperClass;
@@ -102,6 +105,7 @@ public class ConfigBuilder {
     /**
      * 是否支持注释
      */
+    @Deprecated
     private boolean commentSupported;
     /**
      * 过滤正则
@@ -120,17 +124,9 @@ public class ConfigBuilder {
     public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
                          TemplateConfig template, GlobalConfig globalConfig) {
         // 全局配置
-        if (null == globalConfig) {
-            this.globalConfig = new GlobalConfig();
-        } else {
-            this.globalConfig = globalConfig;
-        }
+        this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
         // 模板配置
-        if (null == template) {
-            this.template = new TemplateConfig();
-        } else {
-            this.template = template;
-        }
+        this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
         // 包配置
         if (null == packageConfig) {
             handlerPackage(this.template, this.globalConfig.getOutputDir(), new PackageConfig());
@@ -140,11 +136,7 @@ public class ConfigBuilder {
         this.dataSourceConfig = dataSourceConfig;
         handlerDataSource(dataSourceConfig);
         // 策略配置
-        if (null == strategyConfig) {
-            this.strategyConfig = new StrategyConfig();
-        } else {
-            this.strategyConfig = strategyConfig;
-        }
+        this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
         //SQLITE 数据库不支持注释获取
         commentSupported = !dataSourceConfig.getDbType().equals(DbType.SQLITE);
 
@@ -224,7 +216,7 @@ public class ConfigBuilder {
      * @return 所以模板路径配置信息
      */
     public TemplateConfig getTemplate() {
-        return template == null ? new TemplateConfig() : template;
+        return this.template;
     }
 
     // ****************************** 曝露方法 END**********************************
@@ -238,7 +230,7 @@ public class ConfigBuilder {
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
         // 包信息
-        packageInfo = new HashMap<>(10);
+        packageInfo = CollectionUtils.newHashMapWithExpectedSize(7);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -253,7 +245,7 @@ public class ConfigBuilder {
             pathInfo = configPathInfo;
         } else {
             // 生成路径信息
-            pathInfo = new HashMap<>(10);
+            pathInfo = CollectionUtils.newHashMapWithExpectedSize(6);
             setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
             setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
             setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
@@ -298,23 +290,15 @@ public class ConfigBuilder {
      * @param config 策略配置
      */
     private void processTypes(StrategyConfig config) {
-        if (StringUtils.isBlank(config.getSuperServiceClass())) {
-            superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
-        } else {
-            superServiceClass = config.getSuperServiceClass();
-        }
-        if (StringUtils.isBlank(config.getSuperServiceImplClass())) {
-            superServiceImplClass = ConstVal.SUPER_SERVICE_IMPL_CLASS;
-        } else {
-            superServiceImplClass = config.getSuperServiceImplClass();
-        }
-        if (StringUtils.isBlank(config.getSuperMapperClass())) {
-            superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
-        } else {
-            superMapperClass = config.getSuperMapperClass();
-        }
+        this.superServiceClass = getValueOrDefault(config.getSuperServiceClass(), ConstVal.SUPER_SERVICE_CLASS);
+        this.superServiceImplClass = getValueOrDefault(config.getSuperServiceImplClass(), ConstVal.SUPER_SERVICE_IMPL_CLASS);
+        this.superMapperClass = getValueOrDefault(config.getSuperMapperClass(), ConstVal.SUPER_MAPPER_CLASS);
         superEntityClass = config.getSuperEntityClass();
         superControllerClass = config.getSuperControllerClass();
+    }
+
+    private static String getValueOrDefault(String value, String defaultValue) {
+        return StringUtils.isBlank(value) ? defaultValue : value;
     }
 
     /**
@@ -398,7 +382,7 @@ public class ConfigBuilder {
             // 无父类开启 AR 模式
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
         }
-        if (null != globalConfig.getIdType() && tableInfo.getFields().stream().anyMatch(TableField::isKeyFlag)) {
+        if (null != globalConfig.getIdType() && tableInfo.isHavePrimaryKey()) {
             // 指定需要 IdType 场景
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
@@ -435,9 +419,11 @@ public class ConfigBuilder {
 
         //不存在的表名
         Set<String> notExistTables = new HashSet<>();
+        DbType dbType = this.dataSourceConfig.getDbType();
+        IDbQuery dbQuery = this.dataSourceConfig.getDbQuery();
         try {
-            String tablesSql = dbQuery.tablesSql();
-            if (DbType.POSTGRE_SQL == this.dbType) {
+            String tablesSql = dataSourceConfig.getDbQuery().tablesSql();
+            if (DbType.POSTGRE_SQL == dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //pg 默认 schema=public
@@ -445,7 +431,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.KINGBASE_ES == this.dbType) {
+            } else if (DbType.KINGBASE_ES == dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //kingbase 默认 schema=PUBLIC
@@ -453,7 +439,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.DB2 == this.dbType) {
+            } else if (DbType.DB2 == dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //db2 默认 schema=current schema
@@ -463,7 +449,7 @@ public class ConfigBuilder {
                 tablesSql = String.format(tablesSql, schema);
             }
             //oracle数据库表太多，出现最大游标错误
-            else if (DbType.ORACLE == this.dbType) {
+            else if (DbType.ORACLE == dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 //oracle 默认 schema=username
                 if (schema == null) {
@@ -495,14 +481,14 @@ public class ConfigBuilder {
                     if (StringUtils.isNotBlank(tableName)) {
                         tableInfo = new TableInfo();
                         tableInfo.setName(tableName);
-
-                        if (commentSupported) {
-                            String tableComment = results.getString(dbQuery.tableComment());
+                        String commentColumn = dbQuery.tableComment();
+                        if (StringUtils.isNotBlank(commentColumn)) {
+                            String tableComment = results.getString(commentColumn);
                             if (config.isSkipView() && "VIEW".equals(tableComment)) {
                                 // 跳过视图
                                 continue;
                             }
-                            tableInfo.setComment(tableComment);
+                            tableInfo.setComment(formatComment(tableComment));
                         }
 
                         if (isInclude) {
@@ -584,7 +570,8 @@ public class ConfigBuilder {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
-        DbType dbType = this.dbType;
+        DbType dbType = this.dataSourceConfig.getDbType();
+        IDbQuery dbQuery = dataSourceConfig.getDbQuery();
         String tableName = tableInfo.getName();
         try {
             String tableFieldsSql = dbQuery.tableFieldsSql();
@@ -636,18 +623,17 @@ public class ConfigBuilder {
 
                     // 处理ID
                     if (isId && !haveId) {
-                        field.setKeyFlag(true);
-                        if (DbType.H2 == dbType || DbType.SQLITE == dbType || dbQuery.isKeyIdentity(results)) {
-                            field.setKeyIdentityFlag(true);
-                        }
                         haveId = true;
+                        field.setKeyFlag(true);
+                        tableInfo.setHavePrimaryKey(true);
+                        field.setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
                     } else {
                         field.setKeyFlag(false);
                     }
                     // 自定义字段查询
                     String[] fcs = dbQuery.fieldCustom();
                     if (null != fcs) {
-                        Map<String, Object> customMap = new HashMap<>(fcs.length);
+                        Map<String, Object> customMap = CollectionUtils.newHashMapWithExpectedSize(fcs.length);
                         for (String fc : fcs) {
                             customMap.put(fc, results.getObject(fc));
                         }
@@ -673,8 +659,9 @@ public class ConfigBuilder {
                         field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming()));
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
-                    if (commentSupported) {
-                        field.setComment(results.getString(dbQuery.fieldComment()));
+                    String fieldCommentColumn = dbQuery.fieldComment();
+                    if (StringUtils.isNotBlank(fieldCommentColumn)) {
+                        field.setComment(formatComment(results.getString(fieldCommentColumn)));
                     }
                     // 填充逻辑判断
                     List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
@@ -727,10 +714,7 @@ public class ConfigBuilder {
      * @return 连接后的包名
      */
     private String joinPackage(String parent, String subPackage) {
-        if (StringUtils.isBlank(parent)) {
-            return subPackage;
-        }
-        return parent + StringPool.DOT + subPackage;
+        return StringUtils.isBlank(parent) ? subPackage : parent + StringPool.DOT + subPackage;
     }
 
 
@@ -753,12 +737,8 @@ public class ConfigBuilder {
      * @return 根据策略返回处理后的名称
      */
     private String processName(String name, NamingStrategy strategy, String[] prefix) {
-        boolean removePrefix = false;
-        if (prefix != null && prefix.length != 0) {
-            removePrefix = true;
-        }
         String propertyName;
-        if (removePrefix) {
+        if (ArrayUtils.isNotEmpty(prefix)) {
             if (strategy == NamingStrategy.underline_to_camel) {
                 // 删除前缀、下划线转驼峰
                 propertyName = NamingStrategy.removePrefixAndCamel(name, prefix);
@@ -808,4 +788,16 @@ public class ConfigBuilder {
         this.injectionConfig = injectionConfig;
         return this;
     }
+
+    /**
+     * 格式化数据库注释内容
+     *
+     * @param comment 注释
+     * @return 注释
+     * @since 3.3.3
+     */
+    public String formatComment(String comment) {
+        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+    }
+
 }

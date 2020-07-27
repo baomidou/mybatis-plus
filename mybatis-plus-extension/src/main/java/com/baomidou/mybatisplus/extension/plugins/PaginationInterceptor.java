@@ -16,17 +16,19 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -41,7 +43,6 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
@@ -56,8 +57,10 @@ import java.util.stream.Collectors;
  *
  * @author hubin
  * @since 2016-01-23
+ * @deprecated 3.3.3 @2020-06-30 use {@link MybatisPlusInterceptor} {@link PaginationInnerInterceptor}
  */
 @Setter
+@Deprecated
 @Accessors(chain = true)
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends AbstractSqlParserHandler implements Interceptor {
@@ -90,6 +93,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 方言类型(数据库名,全小写) <br>
      * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
+     *
      * @deprecated 3.3.1 {@link #setDbType(DbType)}
      */
     @Deprecated
@@ -97,6 +101,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 方言实现类<br>
      * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
+     *
      * @deprecated 3.3.1 {@link #setDialect(IDialect)}
      */
     @Deprecated
@@ -197,9 +202,9 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         Connection connection = (Connection) invocation.getArgs()[0];
 
         if (page.isSearchCount() && !page.isHitCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, metaObject);
             this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
-            if (page.getTotal() <= 0) {
+            if (!this.continueLimit(page)) {
                 return null;
             }
         }
@@ -214,6 +219,28 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
         metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
         return invocation.proceed();
+    }
+
+    /**
+     * 判断是否继续执行 Limit 逻辑
+     *
+     * @param page 分页对象
+     * @return
+     */
+    protected boolean continueLimit(IPage<?> page) {
+        if (page.getTotal() <= 0) {
+            return false;
+        }
+        if (page.getCurrent() > page.getPages()) {
+            if (this.overflow) {
+                //溢出总页数处理
+                handlerOverflow(page);
+            } else {
+                // 超过最大范围，未设置溢出逻辑中断 list 执行
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -233,10 +260,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param boundSql        BoundSql
      * @param page            IPage
      * @param connection      Connection
+     * @return true 继续执行 false 中断 list 执行
      */
     protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
+            MybatisParameterHandler parameterHandler = new MybatisParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
             long total = 0;
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -245,10 +273,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 }
             }
             page.setTotal(total);
-            if (this.overflow && page.getCurrent() > page.getPages()) {
-                //溢出总页数处理
-                handlerOverflow(page);
-            }
         } catch (Exception e) {
             throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
@@ -273,26 +297,16 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public void setProperties(Properties prop) {
-        String countSqlParser = prop.getProperty("countSqlParser");
-        String overflow = prop.getProperty("overflow");
-        String limit = prop.getProperty("limit");
-        String dialectType = prop.getProperty("dialectType");
-        String dialectClazz = prop.getProperty("dialectClazz");
-        setOverflow(Boolean.parseBoolean(overflow));
-        if (StringUtils.isNotBlank(countSqlParser)) {
-            setCountSqlParser(ClassUtils.newInstance(countSqlParser));
-        }
-        if (StringUtils.isNotBlank(dialectType)) {
-            setDialectType(dialectType);
-        }
-        if (StringUtils.isNotBlank(dialectClazz)) {
-            setDialectClazz(dialectClazz);
-        }
-        if (StringUtils.isNotBlank(limit)) {
-            setLimit(Long.parseLong(limit));
-        }
+        PropertyMapper.newInstance(prop)
+            .whenNotBlack("countSqlParser", ClassUtils::newInstance, this::setCountSqlParser)
+            .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
+            .whenNotBlack("dialectType", this::setDialectType)
+            .whenNotBlack("dialectClazz", this::setDialectClazz)
+            .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
+            .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
+            .whenNotBlack("limit", Long::parseLong, this::setLimit);
     }
-    
+
     /**
      * 设置方言类型
      *

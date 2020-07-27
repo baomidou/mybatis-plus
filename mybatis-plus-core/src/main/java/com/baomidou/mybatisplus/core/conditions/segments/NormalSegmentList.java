@@ -67,18 +67,15 @@ public class NormalSegmentList extends AbstractISegmentList {
                 return false;
             }
         } else {
-            if (!executeNot) {
-                list.add(MatchSegment.EXISTS.match(firstSegment) ? 0 : 1, SqlKeyword.NOT);
-                executeNot = true;
-            }
             if (MatchSegment.APPLY.match(firstSegment)) {
-                list.remove(0);
-            }
-            if (MatchSegment.BRACKET.match(firstSegment)) {
                 list.remove(0);
             }
             if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
                 add(SqlKeyword.AND);
+            }
+            if (!executeNot) {
+                list.add(0, SqlKeyword.NOT);
+                executeNot = true;
             }
         }
         return true;

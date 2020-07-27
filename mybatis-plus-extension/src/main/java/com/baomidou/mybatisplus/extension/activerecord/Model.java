@@ -28,7 +28,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -97,7 +96,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public boolean delete(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
@@ -113,7 +112,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public boolean updateById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         // updateById
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
         SqlSession sqlSession = sqlSession();
         try {
@@ -129,7 +128,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     public boolean update(Wrapper<T> updateWrapper) {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
         // update
@@ -181,7 +180,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public List<T> selectList(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
@@ -207,7 +206,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
@@ -225,7 +224,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public Integer selectCount(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {

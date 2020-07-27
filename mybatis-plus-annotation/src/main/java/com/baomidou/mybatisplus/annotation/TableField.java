@@ -140,6 +140,16 @@ public @interface TableField {
     Class<? extends TypeHandler> typeHandler() default UnknownTypeHandler.class;
 
     /**
+     * 只在使用了 {@link #typeHandler()} 时判断是否辅助追加 javaType
+     * <p>
+     * 一般情况下不推荐使用
+     * {@link ParameterMapping#javaType}
+     *
+     * @since 3.3.3 @2020-07-23
+     */
+    boolean javaType() default false;
+
+    /**
      * 指定小数点后保留的位数,
      * 只生效与 mp 自动注入的 method,
      * 建议配合 {@link TableName#autoResultMap()} 一起使用

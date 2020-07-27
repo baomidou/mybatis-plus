@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,14 +57,14 @@ public final class LambdaUtils {
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
-        String canonicalName = clazz.getCanonicalName();
-        return Optional.ofNullable(FUNC_CACHE.get(canonicalName))
-            .map(WeakReference::get)
-            .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.resolve(func);
-                FUNC_CACHE.put(canonicalName, new WeakReference<>(lambda));
-                return lambda;
-            });
+        String name = clazz.getName();
+        return Optional.ofNullable(FUNC_CACHE.get(name))
+                .map(WeakReference::get)
+                .orElseGet(() -> {
+                    SerializedLambda lambda = SerializedLambda.resolve(func);
+                    FUNC_CACHE.put(name, new WeakReference<>(lambda));
+                    return lambda;
+                });
     }
 
     /**
@@ -98,15 +97,17 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-        Map<String, ColumnCache> map = new HashMap<>();
+        Map<String, ColumnCache> map;
 
-        String kp = info.getKeyProperty();
-        if (StringUtils.isNotBlank(kp)) {
-            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        if (info.havePK()) {
+            map = CollectionUtils.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
+            map.put(formatKey(info.getKeyProperty()), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        } else {
+            map = CollectionUtils.newHashMapWithExpectedSize(info.getFieldList().size());
         }
 
         info.getFieldList().forEach(i ->
-            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
+                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
         );
         return map;
     }
@@ -118,10 +119,10 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     public static Map<String, ColumnCache> getColumnMap(Class<?> clazz) {
-        return COLUMN_CACHE_MAP.computeIfAbsent(clazz.getName(), key -> {
+        return CollectionUtils.computeIfAbsent(COLUMN_CACHE_MAP, clazz.getName(), key -> {
             TableInfo info = TableInfoHelper.getTableInfo(clazz);
             return info == null ? null : createColumnCacheMap(info);
         });
     }
-    
+
 }

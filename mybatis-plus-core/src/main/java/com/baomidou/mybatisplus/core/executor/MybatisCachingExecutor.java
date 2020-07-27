@@ -42,7 +42,9 @@ import java.util.Optional;
  * copy org.apache.ibatis.executor.CachingExecutor 主要修改了分页缓存逻辑
  *
  * @author nieqiuqiu
+ * @deprecated 3.3.3
  */
+@Deprecated
 public class MybatisCachingExecutor implements Executor {
 
     private final Executor delegate;

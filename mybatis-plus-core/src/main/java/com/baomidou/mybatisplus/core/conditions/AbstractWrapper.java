@@ -36,7 +36,6 @@ import java.util.function.Consumer;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.BRACKET;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -168,22 +167,22 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children like(boolean condition, R column, Object val) {
-        return likeValue(condition, column, val, SqlLike.DEFAULT);
+        return likeValue(condition, LIKE, column, val, SqlLike.DEFAULT);
     }
 
     @Override
     public Children notLike(boolean condition, R column, Object val) {
-        return not(condition).like(condition, column, val);
+        return likeValue(condition, NOT_LIKE, column, val, SqlLike.DEFAULT);
     }
 
     @Override
     public Children likeLeft(boolean condition, R column, Object val) {
-        return likeValue(condition, column, val, SqlLike.LEFT);
+        return likeValue(condition, LIKE, column, val, SqlLike.LEFT);
     }
 
     @Override
     public Children likeRight(boolean condition, R column, Object val) {
-        return likeValue(condition, column, val, SqlLike.RIGHT);
+        return likeValue(condition, LIKE, column, val, SqlLike.RIGHT);
     }
 
     @Override
@@ -194,7 +193,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children notBetween(boolean condition, R column, Object val1, Object val2) {
-        return not(condition).between(condition, column, val1, val2);
+        return doIt(condition, () -> columnToString(column), NOT_BETWEEN, () -> formatSql("{0}", val1), AND,
+            () -> formatSql("{0}", val2));
     }
 
     @Override
@@ -210,6 +210,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children nested(boolean condition, Consumer<Children> consumer) {
         return addNestedCondition(condition, consumer);
+    }
+
+    @Override
+    public Children not(boolean condition, Consumer<Children> consumer) {
+        return not(condition).addNestedCondition(condition, consumer);
     }
 
     @Override
@@ -252,8 +257,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children notExists(boolean condition, String notExistsSql) {
-        return not(condition).exists(condition, notExistsSql);
+    public Children notExists(boolean condition, String existsSql) {
+        return not(condition).exists(condition, existsSql);
     }
 
     @Override
@@ -273,7 +278,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
-        return not(condition).in(condition, column, coll);
+        return doIt(condition, () -> columnToString(column), NOT_IN, inExpression(coll));
     }
 
     @Override
@@ -283,7 +288,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children notInSql(boolean condition, R column, String inValue) {
-        return not(condition).inSql(condition, column, inValue);
+        return doIt(condition, () -> columnToString(column), NOT_IN, () -> String.format("(%s)", inValue));
     }
 
     @Override
@@ -340,8 +345,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 内部自用
      * <p>拼接 LIKE 以及 值</p>
      */
-    protected Children likeValue(boolean condition, R column, Object val, SqlLike sqlLike) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", SqlUtils.concatLike(val, sqlLike)));
+    protected Children likeValue(boolean condition, SqlKeyword keyword, R column, Object val, SqlLike sqlLike) {
+        return doIt(condition, () -> columnToString(column), keyword, () -> formatSql("{0}", SqlUtils.concatLike(val, sqlLike)));
     }
 
     /**
@@ -365,7 +370,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         if (condition) {
             final Children instance = instance();
             consumer.accept(instance);
-            return doIt(true, BRACKET, instance);
+            return doIt(true, APPLY, instance);
         }
         return typedThis;
     }

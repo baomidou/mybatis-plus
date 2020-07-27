@@ -249,8 +249,8 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children notExists(boolean condition, String notExistsSql) {
-        getWrapper().notExists(condition, notExistsSql);
+    public Children notExists(boolean condition, String existsSql) {
+        getWrapper().notExists(condition, existsSql);
         return typedThis;
     }
 
@@ -269,6 +269,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children nested(boolean condition, Consumer<Param> consumer) {
         getWrapper().nested(condition, consumer);
+        return typedThis;
+    }
+
+    @Override
+    public Children not(boolean condition, Consumer<Param> consumer) {
+        getWrapper().not(condition, consumer);
         return typedThis;
     }
 

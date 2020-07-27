@@ -26,7 +26,7 @@ class TenantTest {
     @Autowired
     private IStudentService studentService;
 
-    //    @Test
+    @Test
     void testSimple() {
         TenantConfig.TENANT_ID = 2L;
         Student student1 = studentService.getById(1L);
@@ -40,7 +40,7 @@ class TenantTest {
         Assertions.assertNotNull(student2);
     }
 
-    //    @Test
+    @Test
     void testPage() {
         TenantConfig.TENANT_ID = 2L;
         Page<Student> page1 = studentService.page(new Page<>(0, 10), new QueryWrapper<>());

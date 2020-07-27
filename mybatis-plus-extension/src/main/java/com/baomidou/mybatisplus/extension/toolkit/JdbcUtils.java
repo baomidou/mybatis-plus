@@ -17,9 +17,14 @@ package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * JDBC 工具类
@@ -30,6 +35,21 @@ import org.apache.ibatis.logging.LogFactory;
 public class JdbcUtils {
 
     private static final Log logger = LogFactory.getLog(JdbcUtils.class);
+
+    /**
+     * 不关闭 Connection,因为是从事务里获取的,sqlSession会负责关闭
+     *
+     * @param executor Executor
+     * @return DbType
+     */
+    public static DbType getDbType(Executor executor) {
+        try {
+            Connection conn = executor.getTransaction().getConnection();
+            return getDbType(conn.getMetaData().getURL());
+        } catch (SQLException e) {
+            throw ExceptionUtils.mpe(e);
+        }
+    }
 
     /**
      * 根据连接地址判断数据库类型
@@ -70,6 +90,12 @@ public class JdbcUtils {
             return DbType.PHOENIX;
         } else if (jdbcUrl.contains(":zenith:")) {
             return DbType.GAUSS;
+        } else if (jdbcUrl.contains(":gbase:")) {
+            return DbType.GBASE;
+        } else if (jdbcUrl.contains(":clickhouse:")) {
+            return DbType.CLICKHOUSE;
+        } else if (jdbcUrl.contains(":oscar:")) {
+            return DbType.OSCAR;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;

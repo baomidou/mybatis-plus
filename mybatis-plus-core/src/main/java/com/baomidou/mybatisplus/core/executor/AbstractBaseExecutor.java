@@ -38,7 +38,9 @@ import java.util.Optional;
  * 重写执行器 {@link org.apache.ibatis.executor.BaseExecutor}
  *
  * @author nieqiurong 2019/4/22.
+ * @deprecated 3.3.3
  */
+@Deprecated
 public abstract class AbstractBaseExecutor extends BaseExecutor {
 
     protected AbstractBaseExecutor(Configuration configuration, Transaction transaction) {

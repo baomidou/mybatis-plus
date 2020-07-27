@@ -43,7 +43,7 @@ public interface MetaObjectHandler {
     default boolean openInsertFill() {
         return true;
     }
-    
+
     /**
      * 兼容填充主键判断开关
      * 如果启用开关:当主键值为空且主键生成策略为NONE或INPUT会进入新增填充
@@ -194,49 +194,55 @@ public interface MetaObjectHandler {
 
     /**
      * @param metaObject metaObject meta object parameter
+     * @return this
      * @since 3.3.0
      */
-    default <T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Object fieldVal) {
+    default <T, E extends T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Class<T> fieldType, E fieldVal) {
         return strictInsertFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
     }
 
     /**
      * @param metaObject metaObject meta object parameter
+     * @return this
      * @since 3.3.0
      */
-    default <T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Supplier<T> fieldVal) {
-        return strictInsertFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
+    default <T, E extends T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Supplier<E> fieldVal, Class<T> fieldType) {
+        return strictInsertFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldVal, fieldType)));
     }
 
     /**
      * @param metaObject metaObject meta object parameter
+     * @return this
      * @since 3.3.0
      */
-    default MetaObjectHandler strictInsertFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+    default MetaObjectHandler strictInsertFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill<?, ?>> strictFills) {
         return strictFill(true, tableInfo, metaObject, strictFills);
     }
 
     /**
      * @param metaObject metaObject meta object parameter
+     * @return this
      * @since 3.3.0
      */
-    default <T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Supplier<T> fieldVal) {
+    default <T, E extends T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Supplier<E> fieldVal, Class<T> fieldType) {
+        return strictUpdateFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldVal, fieldType)));
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @return this
+     * @since 3.3.0
+     */
+    default <T, E extends T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Class<T> fieldType, E fieldVal) {
         return strictUpdateFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
     }
 
     /**
      * @param metaObject metaObject meta object parameter
+     * @return this
      * @since 3.3.0
      */
-    default <T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Object fieldVal) {
-        return strictUpdateFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
-    }
-
-    /**
-     * @param metaObject metaObject meta object parameter
-     * @since 3.3.0
-     */
-    default MetaObjectHandler strictUpdateFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+    default MetaObjectHandler strictUpdateFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill<?, ?>> strictFills) {
         return strictFill(false, tableInfo, metaObject, strictFills);
     }
 
@@ -250,12 +256,13 @@ public interface MetaObjectHandler {
      * @return this
      * @since 3.3.0
      */
-    default MetaObjectHandler strictFill(boolean insertFill, TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+    default MetaObjectHandler strictFill(boolean insertFill, TableInfo tableInfo, MetaObject metaObject, List<StrictFill<?, ?>> strictFills) {
         if ((insertFill && tableInfo.isWithInsertFill()) || (!insertFill && tableInfo.isWithUpdateFill())) {
             strictFills.forEach(i -> {
                 final String fieldName = i.getFieldName();
+                final Class<?> fieldType = i.getFieldType();
                 tableInfo.getFieldList().stream()
-                    .filter(j -> j.getProperty().equals(fieldName) && i.getFieldType().equals(j.getPropertyType()) &&
+                    .filter(j -> j.getProperty().equals(fieldName) && fieldType.equals(j.getPropertyType()) &&
                         ((insertFill && j.isWithInsertFill()) || (!insertFill && j.isWithUpdateFill()))).findFirst()
                     .ifPresent(j -> strictFillStrategy(metaObject, fieldName, i.getFieldVal()));
             });
@@ -269,6 +276,7 @@ public interface MetaObjectHandler {
      * @param metaObject metaObject meta object parameter
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value of Supplier
+     * @return this
      * @since 3.3.0
      */
     default MetaObjectHandler fillStrategy(MetaObject metaObject, String fieldName, Object fieldVal) {
@@ -284,9 +292,10 @@ public interface MetaObjectHandler {
      * @param metaObject metaObject meta object parameter
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value of Supplier
+     * @return this
      * @since 3.3.0
      */
-    default MetaObjectHandler strictFillStrategy(MetaObject metaObject, String fieldName, Supplier<Object> fieldVal) {
+    default MetaObjectHandler strictFillStrategy(MetaObject metaObject, String fieldName, Supplier<?> fieldVal) {
         if (metaObject.getValue(fieldName) == null) {
             Object obj = fieldVal.get();
             if (Objects.nonNull(obj)) {

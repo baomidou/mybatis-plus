@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.Collection;
@@ -33,10 +34,10 @@ import java.util.Map;
  */
 public class MybatisMapperRegistry extends MapperRegistry {
 
+    private final Configuration config;
     private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new HashMap<>();
-    private final MybatisConfiguration config;
 
-    public MybatisMapperRegistry(MybatisConfiguration config) {
+    public MybatisMapperRegistry(Configuration config) {
         super(config);
         this.config = config;
     }

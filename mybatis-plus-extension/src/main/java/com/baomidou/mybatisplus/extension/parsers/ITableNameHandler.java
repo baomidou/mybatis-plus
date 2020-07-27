@@ -26,25 +26,7 @@ import org.apache.ibatis.reflection.MetaObject;
 public interface ITableNameHandler {
 
     /**
-     * 表名 SQL 处理
-     *
-     * @param metaObject 元对象
-     * @param sql        当前执行 SQL
-     * @param tableName  表名
-     * @return
-     */
-    default String process(MetaObject metaObject, String sql, String tableName) {
-        String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
-        if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
-            // 直接替换字符串对于 SQL 操作是不那么好做，这里修复只能尽可能的保证处理没问题
-            String regex = "(?<=\\s)\\Q" + tableName + "\\E(?=\\s)";
-            return sql.replaceAll(regex, dynamicTableName);
-        }
-        return sql;
-    }
-
-    /**
-     * 生成动态表名，无改变返回 NULL
+     * 生成动态表名
      *
      * @param metaObject 元对象
      * @param sql        当前执行 SQL
@@ -52,4 +34,5 @@ public interface ITableNameHandler {
      * @return String
      */
     String dynamicTableName(MetaObject metaObject, String sql, String tableName);
+
 }

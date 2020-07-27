@@ -49,7 +49,7 @@ public class ${entity} implements Serializable {
 #end
 
 #if(${entitySerialVersionUID})
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 #end
 ## ----------  BEGIN 字段循环遍历  ----------
 #foreach($field in ${table.fields})

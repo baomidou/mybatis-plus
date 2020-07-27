@@ -63,12 +63,14 @@ public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
      * 获取自定义SQL 简化自定义XML复杂情况
-     * <p>使用方法</p>
-     * <p>`自定义sql` + ${ew.customSqlSegment}</p>
-     * <p>1.逻辑删除需要自己拼接条件 (之前自定义也同样)</p>
-     * <p>2.不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)</p>
-     * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</p>
-     * <p>4.ew是wrapper定义别名,可自行替换</p>
+     * <p>
+     * 使用方法: `select xxx from table` + ${ew.customSqlSegment}
+     * <p>
+     * 注意事项:
+     * 1. 逻辑删除需要自己拼接条件 (之前自定义也同样)
+     * 2. 不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)
+     * 3. 用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)
+     * 4. ew是wrapper定义别名,不能使用其他的替换
      */
     public String getCustomSqlSegment() {
         MergeSegments expression = getExpression();
