@@ -38,7 +38,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ）
@@ -225,20 +224,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
-    }
-    
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, list, batchSize, predicate, ((sqlSession, entity) -> {
-            String sqlStatement = tableInfo.getSqlStatement(SqlMethod.UPDATE.getMethod());
-            MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
-            Wrapper<T> wrapper = function.apply(entity);
-            param.put(Constants.ENTITY, entity);
-            param.put(Constants.WRAPPER, wrapper);
-            sqlSession.update(sqlStatement, param);
-        }));
     }
     
 }
