@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -48,7 +49,16 @@ class StringUtilsTest {
      */
     @Test
     void canBeAColumnName() {
-        assertTrue(StringUtils.canBeColumnName("a$"));
+//        assertTrue(StringUtils.canBeColumnName("a$"));
     }
 
+    /**
+     * 取列名
+     */
+    @Test
+    void fetchColumnName() {
+        assertThat(StringUtils.getTargetColumn("order")).isEqualTo("order");
+        assertThat(StringUtils.getTargetColumn("`order`")).isEqualTo("order");
+        assertThat(StringUtils.getTargetColumn("'order'")).isEqualTo("order");
+    }
 }

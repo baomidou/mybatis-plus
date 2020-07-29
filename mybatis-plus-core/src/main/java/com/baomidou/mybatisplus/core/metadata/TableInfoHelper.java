@@ -433,7 +433,7 @@ public class TableInfoHelper {
      * @return related
      */
     public static boolean checkRelated(boolean underCamel, String property, String column) {
-        column = StringUtils.fetchColumnName(column);
+        column = StringUtils.getTargetColumn(column);
         String propertyUpper = property.toUpperCase(Locale.ENGLISH);
         String columnUpper = column.toUpperCase(Locale.ENGLISH);
         if (underCamel) {

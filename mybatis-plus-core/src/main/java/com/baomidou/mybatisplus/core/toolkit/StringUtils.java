@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
@@ -42,11 +41,18 @@ public final class StringUtils {
      * 字符串 is
      */
     public static final String IS = "is";
-
+    /**
+     * 下划线字符
+     */
+    public static final char UNDERLINE = '_';
     /**
      * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
      */
     public final static Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
+    /**
+     * 验证字符串是否是数据库字段
+     */
+    private static final Pattern P_IS_COLUMN = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
     /**
      * 是否为大写命名
@@ -55,15 +61,6 @@ public final class StringUtils {
 
     /**
      * 判断字符串中是否全是空白字符
-     * <p>
-     * null 被认为是空白字符串
-     * <p>
-     * <pre>
-     *     assertTrue(isBlank(null));
-     *     assertTrue(isBlank(""));
-     *     assertTrue(isBlank("    "));
-     *     assertFalse(isBlank("  123  "));
-     * </pre>
      *
      * @param cs 需要判断的字符串
      * @return 如果字符串序列是 null 或者全是空白，返回 true
@@ -81,9 +78,6 @@ public final class StringUtils {
     }
 
     /**
-     * null 被认为是空白字符串
-     *
-     * @return 如果含有任意的非空白字符，则返回 true
      * @see #isBlank(CharSequence)
      */
     public static boolean isNotBlank(CharSequence cs) {
@@ -91,7 +85,7 @@ public final class StringUtils {
     }
 
     /**
-     * 判断字符串是不是满足驼峰命名
+     * 判断字符串是不是驼峰命名
      *
      * <li> 包含 '_' 不算 </li>
      * <li> 首字母大写的不算 </li>
@@ -100,40 +94,30 @@ public final class StringUtils {
      * @return 结果
      */
     public static boolean isCamel(String str) {
-        return !str.isEmpty() && Character.isLowerCase(str.charAt(0)) && str.indexOf('_') == -1;
+        return Character.isLowerCase(str.charAt(0)) && !str.contains(StringPool.UNDERSCORE);
     }
 
     /**
-     * 数据库列名标识符，支持匹配受限标识符
-     */
-    public static final Pattern COLUMN_NAME_PATTERN = Pattern.compile("^\"?(?<name>\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*)\"?$");
-
-    /**
-     * 判断字符串是否符合数据库字段的命名标准
-     * <p>
-     * 按照 SQL 标准
-     * <li> SQL标识符必须以一个字母（a-z，也可以是带变音符的字母和非拉丁字母）或一个下划线（_）开始 </li>
-     * <li> 后续字符可以是字母、下划线（_）、数字（0-9）或美元符号（$） </li>
+     * 判断字符串是否符合数据库字段的命名
      *
      * @param str 字符串
      * @return 判断结果
      */
-    public static boolean canBeColumnName(String str) {
-        return COLUMN_NAME_PATTERN.matcher(str).matches();
+    public static boolean isNotColumnName(String str) {
+        return !P_IS_COLUMN.matcher(str).matches();
     }
 
     /**
-     * 获取传入字符串对应的列名，这里传入的可能是受限标识符（被双引号修饰的标识符）
+     * 获取真正的字段名
      *
-     * @param origin 字段名
+     * @param column 字段名
      * @return 字段名
      */
-    public static String fetchColumnName(CharSequence origin) {
-        Matcher matcher = COLUMN_NAME_PATTERN.matcher(origin);
-        if (matcher.find()) {
-            return matcher.group("name");
+    public static String getTargetColumn(String column) {
+        if (isNotColumnName(column)) {
+            return column.substring(1, column.length() - 1);
         }
-        throw new MybatisPlusException("Unable to identify the available column names from the given string: " + origin);
+        return column;
     }
 
     /**
@@ -143,45 +127,37 @@ public final class StringUtils {
      * @return 转换好的字符串
      */
     public static String camelToUnderline(String param) {
+        if (isBlank(param)) {
+            return EMPTY;
+        }
         int len = param.length();
         StringBuilder sb = new StringBuilder(len);
-        sb.append(Character.toLowerCase(param.charAt(0)));
-        for (int i = 1; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             char c = param.charAt(i);
-            if (Character.isUpperCase(c)) {
-                sb.append('_');
-                sb.append(Character.toLowerCase(c));
-            } else {
-                sb.append(c);
+            if (Character.isUpperCase(c) && i > 0) {
+                sb.append(UNDERLINE);
             }
+            sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
     }
 
     /**
-     * 将下划线转换为小驼峰格式的字符串
+     * 字符串下划线转驼峰格式
      *
-     * @param param 参数问题
-     * @return 返回驼峰格式的字符串
-     */
-    public static String underlineToCamel(String param) {
-        return underlineToCamel(param, false);
-    }
-
-    /**
-     * 字符串下划线转驼峰格式，可以选择大驼峰还是小驼峰格式
-     *
-     * @param temp     需要转换的字符串
-     * @param bigCamel 是否大驼峰
+     * @param param 需要转换的字符串
      * @return 转换好的字符串
      */
-    public static String underlineToCamel(String temp, boolean bigCamel) {
+    public static String underlineToCamel(String param) {
+        if (isBlank(param)) {
+            return EMPTY;
+        }
+        String temp = param.toLowerCase();
         int len = temp.length();
         StringBuilder sb = new StringBuilder(len);
-        sb.append(bigCamel ? Character.toUpperCase(temp.charAt(0)) : temp.charAt(0));
-        for (int i = 1; i < len; i++) {
+        for (int i = 0; i < len; i++) {
             char c = temp.charAt(i);
-            if (c == '_') {
+            if (c == UNDERLINE) {
                 if (++i < len) {
                     sb.append(Character.toUpperCase(temp.charAt(i)));
                 }
@@ -199,6 +175,9 @@ public final class StringUtils {
      * @return 转换好的字符串
      */
     public static String firstToLowerCase(String param) {
+        if (isBlank(param)) {
+            return EMPTY;
+        }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
     }
 
@@ -300,7 +279,7 @@ public final class StringUtils {
      */
     public static String quotaMarkList(Collection<?> coll) {
         return coll.stream().map(StringUtils::quotaMark)
-                .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -518,8 +497,8 @@ public final class StringUtils {
         char lastChar = 'a';
         for (char c : s.toCharArray()) {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                    && ('-' != c) && (buf.length() > 0)
-                    && (buf.charAt(buf.length() - 1) != '-')) {
+                && ('-' != c) && (buf.length() > 0)
+                && (buf.charAt(buf.length() - 1) != '-')) {
                 buf.append(StringPool.DASH);
             }
             if ('_' == c) {
