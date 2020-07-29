@@ -461,7 +461,7 @@ public class TableFieldInfo implements Constants {
      */
     ResultMapping getResultMapping(final Configuration configuration) {
         ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-            StringUtils.getTargetColumn(column), propertyType);
+            StringUtils.fetchColumnName(column), propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
         if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
             builder.jdbcType(jdbcType);
