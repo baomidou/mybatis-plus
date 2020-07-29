@@ -56,7 +56,7 @@ class StringUtilsTest {
      * 取列名
      */
     @Test
-    void fetchColumnName() {
+    void getTargetColumn() {
         assertThat(StringUtils.getTargetColumn("order")).isEqualTo("order");
         assertThat(StringUtils.getTargetColumn("`order`")).isEqualTo("order");
         assertThat(StringUtils.getTargetColumn("'order'")).isEqualTo("order");
