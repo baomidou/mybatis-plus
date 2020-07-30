@@ -7,3 +7,4 @@
 - feat: 分页方言加入 gbase,clickhouse,oscar 支持
 - feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
 - feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
+- feat: 新分页插件优化 size<0 时继续拼接 orderBy

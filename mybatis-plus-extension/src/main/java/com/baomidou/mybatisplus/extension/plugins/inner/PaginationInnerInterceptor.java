@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
@@ -62,6 +63,7 @@ import java.util.stream.Collectors;
  * @since 2020-06-16
  */
 @Data
+@NoArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
 
@@ -83,7 +85,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 溢出总页数后是否进行处理
      */
-    protected boolean overflow = true;
+    protected boolean overflow;
     /**
      * 单页分页条数限制
      */
@@ -100,6 +102,14 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 查看 {@link #findIDialect(Executor)} 逻辑
      */
     private IDialect dialect;
+
+    public PaginationInnerInterceptor(DbType dbType) {
+        this.dbType = dbType;
+    }
+
+    public PaginationInnerInterceptor(IDialect dialect) {
+        this.dialect = dialect;
+    }
 
     /**
      * 这里进行count,如果count为0这返回false(就是不再执行sql了)
