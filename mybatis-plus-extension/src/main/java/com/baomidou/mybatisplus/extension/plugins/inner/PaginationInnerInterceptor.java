@@ -83,7 +83,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 溢出总页数后是否进行处理
      */
-    protected boolean overflow;
+    protected boolean overflow = true;
     /**
      * 单页分页条数限制
      */
@@ -106,7 +106,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     @Override
     public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        // 判断参数里是否有page对象
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         if (page == null || page.getSize() < 0 || !page.isSearchCount()) {
             return true;
@@ -132,20 +131,30 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        // 判断参数里是否有page对象
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
-        /*
-         * 不需要分页的场合，如果 size 小于 0 返回结果集
-         */
-        if (null == page || page.getSize() < 0) {
+        if (null == page) {
+            return;
+        }
+
+        // 处理 orderBy 拼接
+        boolean addOrdered = false;
+        String buildSql = boundSql.getSql();
+        List<OrderItem> orders = page.orders();
+        if (!CollectionUtils.isEmpty(orders)) {
+            addOrdered = true;
+            buildSql = this.concatOrderBy(buildSql, orders);
+        }
+
+        // size 小于 0 不构造分页sql
+        if (page.getSize() < 0) {
+            if (addOrdered) {
+                PluginUtils.mpBoundSql(boundSql).sql(buildSql);
+            }
             return;
         }
 
         handlerLimit(page);
-
         IDialect dialect = findIDialect(executor);
-        String originalSql = boundSql.getSql();
-        String buildSql = this.concatOrderBy(originalSql, page);
 
         final Configuration configuration = ms.getConfiguration();
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
@@ -306,38 +315,34 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 查询SQL拼接Order By
      *
      * @param originalSql 需要拼接的SQL
-     * @param page        page对象
      * @return ignore
      */
-    protected String concatOrderBy(String originalSql, IPage<?> page) {
-        if (CollectionUtils.isNotEmpty(page.orders())) {
-            try {
-                List<OrderItem> orderList = page.orders();
-                Select select = (Select) CCJSqlParserUtil.parse(originalSql);
-                SelectBody selectBody = select.getSelectBody();
-                if (selectBody instanceof PlainSelect) {
-                    PlainSelect plainSelect = (PlainSelect) selectBody;
-                    List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
-                    List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
-                    plainSelect.setOrderByElements(orderByElementsReturn);
-                    return select.toString();
-                } else if (selectBody instanceof SetOperationList) {
-                    SetOperationList setOperationList = (SetOperationList) selectBody;
-                    List<OrderByElement> orderByElements = setOperationList.getOrderByElements();
-                    List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
-                    setOperationList.setOrderByElements(orderByElementsReturn);
-                    return select.toString();
-                } else if (selectBody instanceof WithItem) {
-                    // todo: don't known how to resole
-                    return originalSql;
-                } else {
-                    return originalSql;
-                }
-            } catch (JSQLParserException e) {
-                logger.warn("failed to concat orderBy from IPage, exception:\n" + e.getCause());
+    protected String concatOrderBy(String originalSql, List<OrderItem> orderList) {
+        try {
+            Select select = (Select) CCJSqlParserUtil.parse(originalSql);
+            SelectBody selectBody = select.getSelectBody();
+            if (selectBody instanceof PlainSelect) {
+                PlainSelect plainSelect = (PlainSelect) selectBody;
+                List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
+                List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
+                plainSelect.setOrderByElements(orderByElementsReturn);
+                return select.toString();
+            } else if (selectBody instanceof SetOperationList) {
+                SetOperationList setOperationList = (SetOperationList) selectBody;
+                List<OrderByElement> orderByElements = setOperationList.getOrderByElements();
+                List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
+                setOperationList.setOrderByElements(orderByElementsReturn);
+                return select.toString();
+            } else if (selectBody instanceof WithItem) {
+                // todo: don't known how to resole
+                return originalSql;
+            } else {
+                return originalSql;
             }
+        } catch (JSQLParserException e) {
+            logger.warn("failed to concat orderBy from IPage, exception:\n" + e.getCause());
+            return originalSql;
         }
-        return originalSql;
     }
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
