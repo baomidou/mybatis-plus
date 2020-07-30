@@ -89,6 +89,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     protected void processSelect(Select select, int index, Object obj) {
         processSelectBody(select.getSelectBody());
+//        List<WithItem> withItemsList = select.getWithItemsList();
+//        if (!CollectionUtils.isEmpty(withItemsList)){
+//            withItemsList.forEach(this::processSelectBody);
+//        }
     }
 
     protected void processSelectBody(SelectBody selectBody) {
@@ -261,10 +265,11 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * 处理条件
      */
     protected Expression builderExpression(Expression currentExpression, Table table) {
-        final Expression tenantExpression = tenantLineHandler.getTenantId();
-        Expression appendExpression = this.processTableAlias4CustomizedTenantIdExpression(tenantExpression, table);
+        EqualsTo equalsTo = new EqualsTo();
+        equalsTo.setLeftExpression(this.getAliasColumn(table));
+        equalsTo.setRightExpression(tenantLineHandler.getTenantId());
         if (currentExpression == null) {
-            return appendExpression;
+            return equalsTo;
         }
         if (currentExpression instanceof BinaryExpression) {
             BinaryExpression binaryExpression = (BinaryExpression) currentExpression;
@@ -278,9 +283,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             }
         }
         if (currentExpression instanceof OrExpression) {
-            return new AndExpression(new Parenthesis(currentExpression), appendExpression);
+            return new AndExpression(new Parenthesis(currentExpression), equalsTo);
         } else {
-            return new AndExpression(currentExpression, appendExpression);
+            return new AndExpression(currentExpression, equalsTo);
         }
     }
 
@@ -294,16 +299,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processSelectBody(((SubSelect) rightItems).getSelectBody());
             }
         }
-    }
-
-    /**
-     *
-     */
-    protected Expression processTableAlias4CustomizedTenantIdExpression(Expression expression, Table table) {
-        EqualsTo equalsTo = new EqualsTo();
-        equalsTo.setLeftExpression(this.getAliasColumn(table));
-        equalsTo.setRightExpression(expression);
-        return equalsTo;
     }
 
     /**
