@@ -96,6 +96,8 @@ public class JdbcUtils {
             return DbType.CLICKHOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {
             return DbType.OSCAR;
+        } else if (jdbcUrl.contains(":sybase:")) {
+            return DbType.SYBASE;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
