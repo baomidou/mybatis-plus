@@ -28,7 +28,7 @@ public class SybaseDialect implements IDialect {
     private final boolean hasTop; // sybase12.5.4以前，不支持select top
 
     public SybaseDialect() {
-        this(true);
+        this(false);
     }
 
     public SybaseDialect(boolean hasTop) {
