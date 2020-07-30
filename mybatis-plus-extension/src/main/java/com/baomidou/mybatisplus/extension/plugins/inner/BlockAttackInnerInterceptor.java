@@ -28,7 +28,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import java.sql.Connection;
 
 /**
- * 攻击 SQL 阻断解析器
+ * 攻击 SQL 阻断解析器,防止全表更新与删除
  *
  * @author hubin
  * @since 2020-06-24

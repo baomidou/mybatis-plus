@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -53,7 +54,9 @@ import java.util.Map;
  *
  * @author yuxiaobin
  * @since 2017/5/24
+ * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link OptimisticLockerInnerInterceptor}
  */
+@Deprecated
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 

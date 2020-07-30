@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,10 +36,12 @@ import org.apache.ibatis.session.RowBounds;
  *
  * @author hubin
  * @since 2016-08-16
+ * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link BlockAttackInnerInterceptor}
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
