@@ -588,6 +588,8 @@ public class ConfigBuilder {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.KINGBASE_ES == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            } else if (DbType.OSCAR == dbType) {
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
             } else if (DbType.DB2 == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.ORACLE == dbType) {
