@@ -16,10 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
@@ -89,10 +86,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     protected void processSelect(Select select, int index, Object obj) {
         processSelectBody(select.getSelectBody());
-//        List<WithItem> withItemsList = select.getWithItemsList();
-//        if (!CollectionUtils.isEmpty(withItemsList)){
-//            withItemsList.forEach(this::processSelectBody);
-//        }
+        List<WithItem> withItemsList = select.getWithItemsList();
+        if (!CollectionUtils.isEmpty(withItemsList)) {
+            withItemsList.forEach(this::processSelectBody);
+        }
     }
 
     protected void processSelectBody(SelectBody selectBody) {

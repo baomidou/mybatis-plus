@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +13,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class TenantLineInnerInterceptorTest {
 
-    private final TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(() -> new LongValue(1));
+    private final TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(new TenantLineHandler() {
+        @Override
+        public Expression getTenantId() {
+            return new LongValue(1);
+        }
+
+        @Override
+        public boolean ignoreTable(String tableName) {
+            return tableName.startsWith("with_as");
+        }
+    });
 
     @Test
     void insert() {
@@ -85,6 +97,12 @@ class TenantLineInnerInterceptorTest {
 //            "SELECT * FROM entity e " +
 //                "INNER JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
 //                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+    }
+
+    @Test
+    void selectWithAs() {
+        assertSql("with with_as_A as (select * from entity) select * from with_as_A",
+            "WITH with_as_A AS (SELECT * FROM entity WHERE tenant_id = 1) SELECT * FROM with_as_A");
     }
 
     void assertSql(String sql, String targetSql) {
