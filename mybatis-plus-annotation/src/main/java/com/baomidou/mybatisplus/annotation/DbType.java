@@ -44,7 +44,6 @@ public enum DbType {
      * oracle12c new pagination
      */
     ORACLE_12C("oracle12c", "Oracle12c+数据库"),
-
     /**
      * DB2
      */
@@ -90,27 +89,22 @@ public enum DbType {
      * Phoenix
      */
     PHOENIX("phoenix", "Phoenix HBase数据库"),
-
     /**
      * Gauss
      */
     GAUSS("zenith", "Gauss 数据库"),
-
     /**
      * clickhouse
      */
     CLICKHOUSE("clickhouse", "clickhouse 数据库"),
-
     /**
      * GBase
      */
     GBASE("gbase", "南大通用数据库"),
-
     /**
      * Oscar
      */
     OSCAR("oscar", "神通数据库"),
-
     /**
      * UNKONWN DB
      */
