@@ -27,8 +27,30 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void insert() {
+        // plain
         assertSql("insert into entity (id,name) value (?,?)",
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1)");
+        // 无 insert的列
+        assertSql("insert into entity value (?,?)",
+            "INSERT INTO entity VALUES (?, ?)");
+        // 自己加了insert的列
+        assertSql("insert into entity (id,name,tenant_id) value (?,?,?)",
+            "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, ?)");
+        // insert into select
+        assertSql("insert into entity (id,name) select id,name from entity2",
+            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM entity2 WHERE tenant_id = 1");
+
+        assertSql("insert into entity (id,name) select * from entity2",
+            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM entity2 WHERE tenant_id = 1");
+
+        assertSql("insert into entity (id,name) select id,name from (select id,name from entity3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM (SELECT id, name, tenant_id FROM entity3 WHERE tenant_id = 1) t");
+
+        assertSql("insert into entity (id,name) select * from (select id,name from entity3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM (SELECT id, name, tenant_id FROM entity3 WHERE tenant_id = 1) t");
+
+        assertSql("insert into entity (id,name) select t.* from (select id,name from entity3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT t.* FROM (SELECT id, name, tenant_id FROM entity3 WHERE tenant_id = 1) t");
     }
 
     @Test
