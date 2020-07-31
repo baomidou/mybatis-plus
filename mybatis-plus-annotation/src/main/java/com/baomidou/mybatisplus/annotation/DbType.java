@@ -93,9 +93,9 @@ public enum DbType {
      */
     GAUSS("zenith", "Gauss 数据库"),
     /**
-     * clickhouse
+     * ClickHouse
      */
-    CLICKHOUSE("clickhouse", "clickhouse 数据库"),
+    CLICK_HOUSE("clickhouse", "clickhouse 数据库"),
     /**
      * GBase
      */
@@ -108,6 +108,10 @@ public enum DbType {
      * Sybase
      */
     SYBASE("sybase", "Sybase ASE 数据库"),
+    /**
+     * OceanBase
+     */
+    OCEAN_BASE("oceanbase", "OceanBase 数据库"),
     /**
      * UNKONWN DB
      */

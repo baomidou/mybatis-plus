@@ -4,7 +4,7 @@
 - feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
 - feat: jsqlparser up to `3.2`
 - feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
-- feat: 分页方言加入 gbase,clickhouse,oscar 支持
+- feat: 分页插件加入 GBase,ClickHouse,oscar,OceanBase 数据库连接自动识别的支持
 - feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
 - feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
 - feat: 新分页插件优化 size<0 时继续拼接 orderBy

@@ -93,11 +93,13 @@ public class JdbcUtils {
         } else if (jdbcUrl.contains(":gbase:")) {
             return DbType.GBASE;
         } else if (jdbcUrl.contains(":clickhouse:")) {
-            return DbType.CLICKHOUSE;
+            return DbType.CLICK_HOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {
             return DbType.OSCAR;
         } else if (jdbcUrl.contains(":sybase:")) {
             return DbType.SYBASE;
+        } else if (jdbcUrl.contains(":oceanbase:")) {
+            return DbType.OCEAN_BASE;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
