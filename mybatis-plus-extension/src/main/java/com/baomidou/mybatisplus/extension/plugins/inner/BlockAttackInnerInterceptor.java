@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
@@ -41,6 +42,7 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         MappedStatement ms = handler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+            if (ignore(ms)) return;
             BoundSql boundSql = handler.boundSql();
             parserMulti(boundSql.getSql(), null);
         }
@@ -54,5 +56,12 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     @Override
     protected void processUpdate(Update update, int index, Object obj) {
         Assert.notNull(update.getWhere(), "Prohibition of table update operation");
+    }
+
+    public boolean ignore(MappedStatement ms) {
+        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
+            Boolean blockAttack = i.getBlockAttack();
+            return blockAttack != null && blockAttack;
+        });
     }
 }

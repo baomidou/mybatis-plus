@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
@@ -62,9 +63,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        if (SqlParserHelper.getSqlParserInfo(ms)) {
-            return;
-        }
+        if (ignore(ms)) return;
+        if (SqlParserHelper.getSqlParserInfo(ms)) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), null));
     }
@@ -73,11 +73,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpSh.mappedStatement();
-        if (SqlParserHelper.getSqlParserInfo(ms)) {
-            return;
-        }
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+            if (ignore(ms)) return;
+            if (SqlParserHelper.getSqlParserInfo(ms)) return;
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
             mpBs.sql(parserMulti(mpBs.sql(), null));
         }
@@ -341,6 +340,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         }
         column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
+    }
+
+    public boolean ignore(MappedStatement ms) {
+        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
+            Boolean tenantLine = i.getTenantLine();
+            return tenantLine != null && tenantLine;
+        });
     }
 
     @Override

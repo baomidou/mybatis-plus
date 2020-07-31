@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
@@ -52,6 +53,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
+        if (ignore(ms)) return;
         mpBs.sql(this.changeTable(mpBs.sql()));
     }
 
@@ -61,6 +63,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+            if (ignore(ms)) return;
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
             mpBs.sql(this.changeTable(mpBs.sql()));
         }
@@ -90,5 +93,12 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             builder.append(sql.substring(last));
         }
         return builder.toString();
+    }
+
+    public boolean ignore(MappedStatement ms) {
+        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
+            Boolean dynamicTableName = i.getDynamicTableName();
+            return dynamicTableName != null && dynamicTableName;
+        });
     }
 }
