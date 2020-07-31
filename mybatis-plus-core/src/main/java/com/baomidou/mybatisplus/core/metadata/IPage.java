@@ -195,8 +195,10 @@ public interface IPage<T> extends Serializable {
 
     /**
      * 老分页插件不支持
+     * <p>
+     * MappedStatement 的 id
      *
-     * @return count的method
+     * @return id
      * @since 3.3.3 @2020-06-19
      */
     default String countId() {

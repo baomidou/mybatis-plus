@@ -122,7 +122,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         }
 
         BoundSql countSql;
-        MappedStatement countMs = buildCountMappedStatement(ms, page);
+        MappedStatement countMs = buildCountMappedStatement(ms, page.countId());
         if (countMs != null) {
             countSql = countMs.getBoundSql(parameter);
         } else {
@@ -194,8 +194,14 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         return DialectFactory.getDialect(JdbcUtils.getDbType(executor));
     }
 
-    protected MappedStatement buildCountMappedStatement(MappedStatement ms, IPage<?> page) {
-        String countId = page.countId();
+    /**
+     * 获取指定的 id 的 MappedStatement
+     *
+     * @param ms      MappedStatement
+     * @param countId id
+     * @return MappedStatement
+     */
+    protected MappedStatement buildCountMappedStatement(MappedStatement ms, String countId) {
         if (StringUtils.isNotBlank(countId)) {
             final String id = ms.getId();
             if (!countId.contains(StringPool.DOT)) {
@@ -211,6 +217,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         return null;
     }
 
+    /**
+     * 构建 mp 自用自动的 MappedStatement
+     *
+     * @param ms MappedStatement
+     * @return MappedStatement
+     */
     protected MappedStatement buildAutoCountMappedStatement(MappedStatement ms) {
         final String countId = ms.getId() + "_mpCount";
         final Configuration configuration = ms.getConfiguration();
