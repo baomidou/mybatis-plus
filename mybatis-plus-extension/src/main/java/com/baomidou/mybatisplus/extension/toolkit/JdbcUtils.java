@@ -105,5 +105,4 @@ public class JdbcUtils {
             return DbType.OTHER;
         }
     }
-
 }
