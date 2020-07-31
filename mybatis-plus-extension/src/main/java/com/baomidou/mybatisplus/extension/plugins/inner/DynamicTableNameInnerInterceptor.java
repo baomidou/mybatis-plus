@@ -52,7 +52,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        mpBs.sql(doIt(mpBs.sql()));
+        mpBs.sql(this.changeTable(mpBs.sql()));
     }
 
     @Override
@@ -62,11 +62,11 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            mpBs.sql(doIt(mpBs.sql()));
+            mpBs.sql(this.changeTable(mpBs.sql()));
         }
     }
 
-    protected String doIt(String sql) {
+    protected String changeTable(String sql) {
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();
         parser.accept(names::add);
@@ -91,5 +91,4 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         }
         return builder.toString();
     }
-    
 }
