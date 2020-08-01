@@ -148,17 +148,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.executeBatch(this.entityClass, this.log, entityList, batchSize, ((sqlSession, entity) -> {
+        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = ReflectionKit.getFieldValue(entity, keyProperty);
-            if (StringUtils.checkValNull(idVal)
-                || CollectionUtils.isEmpty(sqlSession.selectList(tableInfo.getSqlStatement(SqlMethod.SELECT_BY_ID.getMethod()), entity))) {
-                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
-            } else {
-                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put(Constants.ENTITY, entity);
-                sqlSession.update(tableInfo.getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
-            }
-        }));
+            return StringUtils.checkValNull(idVal)
+                || CollectionUtils.isEmpty(sqlSession.selectList(tableInfo.getSqlStatement(SqlMethod.SELECT_BY_ID.getMethod()), entity));
+        }, (sqlSession, entity) -> {
+            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, entity);
+            sqlSession.update(tableInfo.getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
+        });
     }
 
     @Transactional(rollbackFor = Exception.class)

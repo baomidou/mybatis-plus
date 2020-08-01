@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -35,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 /**
@@ -214,6 +216,30 @@ public final class SqlHelper {
                     sqlSession.flushStatements();
                 }
                 i++;
+            }
+        });
+    }
+
+    /**
+     * 批量更新或保存
+     *
+     * @param entityClass 实体
+     * @param log         日志对象
+     * @param list        数据集合
+     * @param batchSize   批次大小
+     * @param predicate   predicate(新增条件) notNull
+     * @param consumer    consumer（更新处理） notNull
+     * @param <E>         E
+     * @return 操作结果
+     * @since 3.3.3
+     */
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
+            if (predicate.test(sqlSession, entity)) {
+                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
+            } else {
+                consumer.accept(sqlSession, entity);
             }
         });
     }
