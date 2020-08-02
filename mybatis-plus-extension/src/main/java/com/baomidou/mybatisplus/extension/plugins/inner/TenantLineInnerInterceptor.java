@@ -63,7 +63,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        if (ignore(ms)) return;
+        if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) return;
         if (SqlParserHelper.getSqlParserInfo(ms)) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), null));
@@ -75,7 +75,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (ignore(ms)) return;
+            if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) return;
             if (SqlParserHelper.getSqlParserInfo(ms)) return;
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
             mpBs.sql(parserMulti(mpBs.sql(), null));
@@ -340,13 +340,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         }
         column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
-    }
-
-    public boolean ignore(MappedStatement ms) {
-        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
-            Boolean tenantLine = i.getTenantLine();
-            return tenantLine != null && tenantLine;
-        });
     }
 
     @Override

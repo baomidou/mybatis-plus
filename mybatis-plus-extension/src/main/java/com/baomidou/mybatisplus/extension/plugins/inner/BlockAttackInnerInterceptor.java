@@ -42,7 +42,7 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         MappedStatement ms = handler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (ignore(ms)) return;
+            if (InterceptorIgnoreHelper.willIgnoreBlockAttack(ms.getId())) return;
             BoundSql boundSql = handler.boundSql();
             parserMulti(boundSql.getSql(), null);
         }
@@ -56,12 +56,5 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     @Override
     protected void processUpdate(Update update, int index, Object obj) {
         Assert.notNull(update.getWhere(), "Prohibition of table update operation");
-    }
-
-    public boolean ignore(MappedStatement ms) {
-        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
-            Boolean blockAttack = i.getBlockAttack();
-            return blockAttack != null && blockAttack;
-        });
     }
 }

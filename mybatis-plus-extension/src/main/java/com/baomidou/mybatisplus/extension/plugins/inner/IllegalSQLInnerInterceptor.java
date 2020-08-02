@@ -93,8 +93,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         PluginUtils.MPStatementHandler mpStatementHandler = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpStatementHandler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || SqlParserHelper.getSqlParserInfo(ms)) return;
-        if (ignore(ms)) return;
+        if (sct == SqlCommandType.INSERT || InterceptorIgnoreHelper.willIgnoreIllegalSql(ms.getId())
+            || SqlParserHelper.getSqlParserInfo(ms)) return;
         BoundSql boundSql = mpStatementHandler.boundSql();
         String originalSql = boundSql.getSql();
         logger.debug("检查SQL是否合规，SQL:" + originalSql);
@@ -333,13 +333,6 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
             }
         }
         return indexInfos;
-    }
-
-    public boolean ignore(MappedStatement ms) {
-        return InterceptorIgnoreHelper.willIgnore(ms.getId(), i -> {
-            Boolean illegalSql = i.getIllegalSql();
-            return illegalSql != null && illegalSql;
-        });
     }
 
     /**

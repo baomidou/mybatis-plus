@@ -8,6 +8,9 @@ import java.lang.annotation.*;
  * 支持注解在 mapper 上以及 mapper.method 上
  * 同时存在则 mapper.method 比 mapper 优先级高
  * 各属性返回 false 表示不走插件(在配置了插件的情况下)
+ * <p>
+ * 支持:
+ * true 和 false , 1 和 0 , on 和 off
  *
  * @author miemie
  * @since 2020-07-31
