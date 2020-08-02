@@ -7,10 +7,11 @@ import java.lang.annotation.*;
  * <p>
  * 支持注解在 mapper 上以及 mapper.method 上
  * 同时存在则 mapper.method 比 mapper 优先级高
- * 各属性返回 false 表示不走插件(在配置了插件的情况下)
  * <p>
  * 支持:
  * true 和 false , 1 和 0 , on 和 off
+ * <p>
+ * 各属性返回 true 表示不走插件(在配置了插件的情况下,不填则默认表示 false)
  *
  * @author miemie
  * @since 2020-07-31
@@ -39,9 +40,4 @@ public @interface InterceptorIgnore {
      * 垃圾SQL拦截 {@link com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor}
      */
     String illegalSql() default "";
-
-    /**
-     * 非mp提供的 {@link com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor}
-     */
-    String[] additional() default {};
 }

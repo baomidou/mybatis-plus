@@ -1,7 +1,6 @@
 package com.baomidou.mybatisplus.core.plugins;
 
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -9,8 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -91,7 +88,6 @@ public class InterceptorIgnoreHelper {
             .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
             .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
             .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
-            .additional(method.getAdditional())
             .build();
     }
 
@@ -102,7 +98,6 @@ public class InterceptorIgnoreHelper {
             .dynamicTableName(getBoolean(ignore.dynamicTableName()))
             .blockAttack(getBoolean(ignore.blockAttack()))
             .illegalSql(getBoolean(ignore.illegalSql()))
-            .additional(ArrayUtils.isEmpty(additional) ? null : Arrays.asList(additional))
             .build();
     }
 
@@ -136,6 +131,5 @@ public class InterceptorIgnoreHelper {
         private Boolean dynamicTableName;
         private Boolean blockAttack;
         private Boolean illegalSql;
-        private List<String> additional;
     }
 }
