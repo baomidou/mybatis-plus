@@ -22,8 +22,10 @@ import java.lang.annotation.*;
  *
  * @author hubin
  * @since 2018-01-13
+ * @deprecated 3.3.3 use {@link InterceptorIgnore}
  */
 @Documented
+@Deprecated
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface SqlParser {
