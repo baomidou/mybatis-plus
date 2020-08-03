@@ -413,7 +413,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         final long size = page.getSize();
         Long pageMaxLimit = page.maxLimit();
         Long limit = pageMaxLimit != null ? pageMaxLimit : maxLimit;
-        if (limit != null && size > limit) {
+        if (limit != null && limit > 0 && size > limit) {
             page.setSize(limit);
         }
     }
