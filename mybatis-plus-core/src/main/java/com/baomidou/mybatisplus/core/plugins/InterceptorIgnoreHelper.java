@@ -92,7 +92,6 @@ public class InterceptorIgnoreHelper {
     }
 
     private static InterceptorIgnoreCache buildInterceptorIgnoreCache(InterceptorIgnore ignore) {
-        String[] additional = ignore.additional();
         return InterceptorIgnoreCache.builder()
             .tenantLine(getBoolean(ignore.tenantLine()))
             .dynamicTableName(getBoolean(ignore.dynamicTableName()))
