@@ -78,6 +78,16 @@ public final class StringUtils {
     }
 
     /**
+     * 对象转为字符串去除左右空格
+     *
+     * @param o 带转换对象
+     * @return
+     */
+    public static String toStringTrim(Object o) {
+        return String.valueOf(o).trim();
+    }
+
+    /**
      * @see #isBlank(CharSequence)
      */
     public static boolean isNotBlank(CharSequence cs) {
