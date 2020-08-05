@@ -22,6 +22,9 @@ public class Entity implements Serializable {
 
     private Long id;
 
+    @TableField("x_name")
+    private String name;
+
     @TableField(typeHandler = GsonTypeHandler.class)
     private Gg gg;
 
