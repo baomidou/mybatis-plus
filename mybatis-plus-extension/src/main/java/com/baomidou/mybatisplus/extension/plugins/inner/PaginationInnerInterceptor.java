@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
 
-    private static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
+    protected static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
