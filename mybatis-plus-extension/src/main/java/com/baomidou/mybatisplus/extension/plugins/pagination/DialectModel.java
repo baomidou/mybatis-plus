@@ -77,6 +77,10 @@ public class DialectModel {
         this(dialectSql, 0, 0);
     }
 
+    public DialectModel(String dialectSql, long firstParam) {
+        this(dialectSql, firstParam, 0);
+    }
+
     public DialectModel(String dialectSql, long firstParam, long secondParam) {
         this.dialectSql = dialectSql;
         this.firstParam = firstParam;
