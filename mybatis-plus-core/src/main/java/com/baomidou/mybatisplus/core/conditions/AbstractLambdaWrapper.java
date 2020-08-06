@@ -78,24 +78,22 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
         Class<?> aClass = lambda.getInstantiatedType();
-        if (!initColumnMap) {
-            columnMap = LambdaUtils.getColumnMap(aClass);
-            initColumnMap = true;
-        }
-        Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", aClass.getName());
+        tryInitCache(aClass);
         ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
             fieldName, aClass.getName());
         return onlyColumn ? columnCache.getColumn() : columnCache.getColumnSelect();
     }
 
-    @Override
-    protected void initNeed() {
-        super.initNeed();
-        final Class<T> entityClass = getEntityClass();
-        if (entityClass != null) {
-            columnMap = LambdaUtils.getColumnMap(entityClass);
+    private void tryInitCache(Class<?> lambdaClass) {
+        if (!initColumnMap) {
+            final Class<T> entityClass = getEntityClass();
+            if (entityClass != null) {
+                lambdaClass = entityClass;
+            }
+            columnMap = LambdaUtils.getColumnMap(lambdaClass);
             initColumnMap = true;
         }
+        Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
     }
 }
