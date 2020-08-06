@@ -74,7 +74,7 @@ public interface IPage<T> extends Serializable {
      */
     default long offset() {
         long current = getCurrent();
-        if (current == 0L) {
+        if (current <= 1L) {
             return 0L;
         }
         return (current - 1) * getSize();
