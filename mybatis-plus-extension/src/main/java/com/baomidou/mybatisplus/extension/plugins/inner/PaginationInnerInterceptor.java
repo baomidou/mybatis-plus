@@ -205,7 +205,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         if (StringUtils.isNotBlank(countId)) {
             final String id = ms.getId();
             if (!countId.contains(StringPool.DOT)) {
-                countId = id.substring(0, id.lastIndexOf(StringPool.DOT)) + countId;
+                countId = id.substring(0, id.lastIndexOf(StringPool.DOT) + 1) + countId;
             }
             final Configuration configuration = ms.getConfiguration();
             try {
