@@ -6,7 +6,9 @@ import com.imadcn.framework.idworker.generator.CompressUUIDGenerator;
 import com.imadcn.framework.idworker.generator.SnowflakeGenerator;
 import com.imadcn.framework.idworker.register.zookeeper.ZookeeperWorkerRegister;
 import com.imadcn.framework.idworker.registry.zookeeper.ZookeeperRegistryCenter;
-import org.springframework.beans.factory.DisposableBean;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * 用 https://github.com/imadcn/idworker 的实现
@@ -14,7 +16,7 @@ import org.springframework.beans.factory.DisposableBean;
  * @author miemie
  * @since 2020-08-11
  */
-public class ImadcnIdentifierGenerator implements IdentifierGenerator, DisposableBean {
+public class ImadcnIdentifierGenerator implements IdentifierGenerator, Closeable {
 
     private final SnowflakeGenerator idGenerator;
     private final CompressUUIDGenerator uuidGenerator = new CompressUUIDGenerator();
@@ -52,7 +54,7 @@ public class ImadcnIdentifierGenerator implements IdentifierGenerator, Disposabl
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void close() throws IOException {
         idGenerator.close();
     }
 }
