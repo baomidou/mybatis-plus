@@ -19,7 +19,7 @@ public class ImadcnIdentifierGeneratorTest {
 
     @AfterAll
     static void close() throws Exception {
-        generator.destroy();
+        generator.close();
     }
 
     @Test
