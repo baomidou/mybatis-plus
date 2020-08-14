@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.logicdel;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.junit.jupiter.api.Test;
@@ -35,13 +34,6 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             assertThat(entity).isNotNull();
             assertThat(entity.getDeleted()).isTrue();
         });
-    }
-
-    @Override
-    protected GlobalConfig globalConfig() {
-        GlobalConfig config = super.globalConfig();
-        config.getDbConfig().setLogicDeleteValue("true").setLogicNotDeleteValue("false");
-        return config;
     }
 
     @Override

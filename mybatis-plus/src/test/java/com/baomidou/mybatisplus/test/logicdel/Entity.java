@@ -17,6 +17,6 @@ public class Entity implements Serializable {
 
     private String name;
 
-    @TableLogic
+    @TableLogic(delval = "true", value = "false")
     private Boolean deleted;
 }
