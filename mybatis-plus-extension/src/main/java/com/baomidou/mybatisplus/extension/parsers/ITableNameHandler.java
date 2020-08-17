@@ -25,7 +25,7 @@ import org.apache.ibatis.reflection.MetaObject;
  *
  * @author jobob
  * @since 2019-04-23
- * @deprecated 3.3.3 @2020-07-30 use {@link TableNameHandler} {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
+ * @deprecated 3.4.0 @2020-07-30 use {@link TableNameHandler} {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
  */
 @Deprecated
 public interface ITableNameHandler {

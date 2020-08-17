@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2017-10-11
- * @deprecated 3.3.3 @2020-06-23 use {@link com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler}
+ * @deprecated 3.4.0 @2020-06-23 use {@link com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler}
  */
 @Deprecated
 public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {

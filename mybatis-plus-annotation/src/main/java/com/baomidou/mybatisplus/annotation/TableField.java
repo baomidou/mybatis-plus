@@ -145,7 +145,7 @@ public @interface TableField {
      * 一般情况下不推荐使用
      * {@link ParameterMapping#javaType}
      *
-     * @since 3.3.3 @2020-07-23
+     * @since 3.4.0 @2020-07-23
      */
     boolean javaType() default false;
 

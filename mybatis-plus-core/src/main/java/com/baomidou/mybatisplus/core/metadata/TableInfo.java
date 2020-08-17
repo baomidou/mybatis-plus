@@ -143,7 +143,7 @@ public class TableInfo implements Constants {
     /**
      * 表字段是否启用了逻辑删除
      *
-     * @since 3.3.3
+     * @since 3.4.0
      */
     @Getter
     @Setter(AccessLevel.NONE)
@@ -151,7 +151,7 @@ public class TableInfo implements Constants {
     /**
      * 逻辑删除字段
      *
-     * @since 3.3.3
+     * @since 3.4.0
      */
     @Getter
     @Setter(AccessLevel.NONE)

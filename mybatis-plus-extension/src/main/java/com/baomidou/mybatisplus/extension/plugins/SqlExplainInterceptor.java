@@ -36,7 +36,7 @@ import org.apache.ibatis.session.RowBounds;
  *
  * @author hubin
  * @since 2016-08-16
- * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link BlockAttackInnerInterceptor}
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link BlockAttackInnerInterceptor}
  */
 @Data
 @Accessors(chain = true)

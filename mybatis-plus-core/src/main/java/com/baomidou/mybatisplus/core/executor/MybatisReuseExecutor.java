@@ -38,7 +38,7 @@ import java.util.Map;
  * 重写执行器 {@link org.apache.ibatis.executor.ReuseExecutor}
  *
  * @author nieqiurong 2019/4/14.
- * @deprecated 3.3.3
+ * @deprecated 3.4.0
  */
 @Deprecated
 public class MybatisReuseExecutor extends AbstractBaseExecutor {

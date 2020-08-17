@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  *
  * @author hubin
  * @since 2018-01-13
- * @deprecated 3.3.3 use {@link InterceptorIgnore}
+ * @deprecated 3.4.0 use {@link InterceptorIgnore}
  */
 @Documented
 @Deprecated

@@ -54,7 +54,7 @@ import java.util.Map;
  *
  * @author yuxiaobin
  * @since 2017/5/24
- * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link OptimisticLockerInnerInterceptor}
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link OptimisticLockerInnerInterceptor}
  */
 @Deprecated
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})

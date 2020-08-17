@@ -81,7 +81,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author willenfoo
  * @since 2018-03-22
- * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link IllegalSQLInnerInterceptor}
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link IllegalSQLInnerInterceptor}
  */
 @Deprecated
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})

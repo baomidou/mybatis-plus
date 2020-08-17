@@ -21,7 +21,7 @@ import net.sf.jsqlparser.expression.Expression;
  * 租户处理器（ TenantId 行级 ）
  *
  * @author hubin
- * @since 2017-08-31
+ * @since 3.4.0
  */
 public interface TenantLineHandler {
 

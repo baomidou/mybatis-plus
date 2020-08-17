@@ -49,7 +49,7 @@ import java.util.Properties;
 
 /**
  * @author hubin
- * @since 2020-06-20
+ * @since 3.4.0
  */
 @Data
 @NoArgsConstructor

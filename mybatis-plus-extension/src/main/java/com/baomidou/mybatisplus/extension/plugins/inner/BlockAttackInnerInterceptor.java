@@ -32,7 +32,7 @@ import java.sql.Connection;
  * 攻击 SQL 阻断解析器,防止全表更新与删除
  *
  * @author hubin
- * @since 2020-06-24
+ * @since 3.4.0
  */
 public class BlockAttackInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 

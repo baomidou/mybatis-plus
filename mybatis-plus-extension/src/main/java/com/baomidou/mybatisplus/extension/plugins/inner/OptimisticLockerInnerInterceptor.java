@@ -53,7 +53,7 @@ import java.util.Map;
  * <p>SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;</p>
  *
  * @author yuxiaobin
- * @since 2020-06-24
+ * @since 3.4.0
  */
 @SuppressWarnings({"unchecked"})
 public class OptimisticLockerInnerInterceptor implements InnerInterceptor {

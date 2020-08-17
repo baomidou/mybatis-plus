@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  * 默认对 left join 进行优化,虽然能优化count,但是加上分页的话如果1对多本身结果条数就是不正确的
  *
  * @author hubin
- * @since 2020-06-16
+ * @since 3.4.0
  */
 @Data
 @NoArgsConstructor

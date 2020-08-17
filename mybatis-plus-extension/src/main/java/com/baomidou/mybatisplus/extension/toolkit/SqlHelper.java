@@ -158,7 +158,7 @@ public final class SqlHelper {
      * @param log         日志对象
      * @param consumer    consumer
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
         SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
@@ -203,7 +203,7 @@ public final class SqlHelper {
      * @param consumer    consumer
      * @param <E>         T
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
@@ -231,7 +231,7 @@ public final class SqlHelper {
      * @param consumer    consumer（更新处理） notNull
      * @param <E>         E
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);

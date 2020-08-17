@@ -15,8 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.executor;
 
-import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.cache.Cache;
@@ -42,7 +42,7 @@ import java.util.Optional;
  * copy org.apache.ibatis.executor.CachingExecutor 主要修改了分页缓存逻辑
  *
  * @author nieqiuqiu
- * @deprecated 3.3.3
+ * @deprecated 3.4.0
  */
 @Deprecated
 public class MybatisCachingExecutor implements Executor {

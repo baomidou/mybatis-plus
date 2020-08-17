@@ -75,7 +75,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>7.where条件使用了 使用子查询</p>
  *
  * @author willenfoo
- * @since 2020-06-24
+ * @since 3.4.0
  */
 public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 

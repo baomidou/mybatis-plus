@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author jobob
  * @since 2019-04-23
- * @deprecated 3.3.3 @2020-07-30 use {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
+ * @deprecated 3.4.0 @2020-07-30 use {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
  */
 @Data
 @Accessors(chain = true)

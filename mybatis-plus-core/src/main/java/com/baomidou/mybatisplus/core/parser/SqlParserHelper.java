@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2018-07-22
- * @deprecated 3.3.3
+ * @deprecated 3.4.0
  */
 @Deprecated
 public class SqlParserHelper {
