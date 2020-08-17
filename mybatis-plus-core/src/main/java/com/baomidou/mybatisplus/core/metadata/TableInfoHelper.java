@@ -149,12 +149,11 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
 
-        /* 缓存 lambda */
-        LambdaUtils.installCache(tableInfo);
-
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
 
+        /* 缓存 lambda */
+        LambdaUtils.installCache(tableInfo);
         return tableInfo;
     }
 
