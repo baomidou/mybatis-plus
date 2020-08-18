@@ -19,6 +19,9 @@ import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -50,11 +53,28 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
 
     @Override
     protected void processDelete(Delete delete, int index, Object obj) {
-        Assert.notNull(delete.getWhere(), "Prohibition of full table deletion");
+        this.checkWhere(delete.getWhere(), "Prohibition of full table deletion");
     }
 
     @Override
     protected void processUpdate(Update update, int index, Object obj) {
-        Assert.notNull(update.getWhere(), "Prohibition of table update operation");
+        this.checkWhere(update.getWhere(), "Prohibition of table update operation");
+    }
+
+    protected void checkWhere(Expression where, String ex) {
+        Assert.notNull(where, ex);
+        if (where instanceof EqualsTo) {
+            // example: 1=1
+            EqualsTo equalsTo = (EqualsTo) where;
+            Expression leftExpression = equalsTo.getLeftExpression();
+            Expression rightExpression = equalsTo.getRightExpression();
+            Assert.isFalse(leftExpression.toString().equals(rightExpression.toString()), ex);
+        } else if (where instanceof NotEqualsTo) {
+            // example: 1 != 2
+            NotEqualsTo notEqualsTo = (NotEqualsTo) where;
+            Expression leftExpression = notEqualsTo.getLeftExpression();
+            Expression rightExpression = notEqualsTo.getRightExpression();
+            Assert.isTrue(leftExpression.toString().equals(rightExpression.toString()), ex);
+        }
     }
 }
