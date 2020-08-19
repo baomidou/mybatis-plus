@@ -15,23 +15,25 @@ class BlockAttackInnerInterceptorTest {
 
     @Test
     void update() {
-        check("update user set name = null", "null where");
-        check("update user set name = null where 1=1", "1=1");
-        check("update user set name = null where 1<>2", "1<>2");
-        check("update user set name = null where 1!=2", "1!=2");
+        checkEx("update user set name = null", "null where");
+        checkEx("update user set name = null where 1=1", "1=1");
+        checkEx("update user set name = null where 1<>2", "1<>2");
+        checkEx("update user set name = null where 1!=2", "1!=2");
 //        check("update user set name = null where 1=1 and 2=2", "1=1 and 2=2");
+
+        checkNotEx("update user set name = null where 1=?", "1=?");
     }
 
     @Test
     void delete() {
-        check("delete from user", "null where");
-        check("delete from user where 1=1", "1=1");
-        check("delete from user where 1<>2", "1<>2");
-        check("delete from user where 1!=2", "1!=2");
+        checkEx("delete from user", "null where");
+        checkEx("delete from user where 1=1", "1=1");
+        checkEx("delete from user where 1<>2", "1<>2");
+        checkEx("delete from user where 1!=2", "1!=2");
 //        check("delete from user where 1=1 and 2=2", "1=1 and 2=2");
     }
 
-    void check(String sql, String as) {
+    void checkEx(String sql, String as) {
         Exception e = null;
         try {
             interceptor.parserSingle(sql, null);
@@ -40,5 +42,15 @@ class BlockAttackInnerInterceptorTest {
         }
         assertThat(e).as(as).isNotNull();
         assertThat(e).as(as).isInstanceOf(MybatisPlusException.class);
+    }
+
+    void checkNotEx(String sql, String as) {
+        Exception e = null;
+        try {
+            interceptor.parserSingle(sql, null);
+        } catch (Exception x) {
+            e = x;
+        }
+        assertThat(e).as(as).isNull();
     }
 }
