@@ -3,9 +3,10 @@
 - fix: `MetaObjectHandler` 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
 - feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
 - feat: jsqlparser up to `3.2`
-- feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
+- feat: 新增 `MybatisParameterHandler`, 废弃 `MybatisDefaultParameterHandler`
 - feat: 分页插件加入 GBase,ClickHouse,oscar,OceanBase 数据库连接自动识别的支持
 - feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
 - feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
 - feat: 新分页插件优化 size<0 时继续拼接 orderBy
 - feat: 新增 `IdentifierGenerator` 一个实现类 `ImadcnIdentifierGenerator`
+- fix: chainWrapper#func 强转异常
