@@ -138,7 +138,10 @@ public class DataSourceConfig {
             return DbType.GAUSS;
         } else if (str.contains("oscar")) {
             return DbType.OSCAR;
-        } else {
+        } else if (str.contains("firebird")) {
+            return DbType.FIREBIRD;
+        }
+        else {
             return DbType.OTHER;
         }
     }

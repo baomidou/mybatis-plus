@@ -113,6 +113,10 @@ public enum DbType {
      */
     OCEAN_BASE("oceanbase", "OceanBase 数据库"),
     /**
+     * Firebird
+     */
+    FIREBIRD("Firebird", "Firebird 数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
