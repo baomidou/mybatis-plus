@@ -57,6 +57,8 @@ public class TypeConverts {
                 return SqliteTypeConvert.INSTANCE;
             case SQL_SERVER:
                 return SqlServerTypeConvert.INSTANCE;
+            case FIREBIRD:
+                return FirebirdTypeConvert.INSTANCE;
         }
         return null;
     }
