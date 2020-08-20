@@ -28,7 +28,7 @@ public class FirebirdQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "select rdb$relation_name as NAME " +
+        return "select trim(rdb$relation_name) as rdb$relation_name " +
             "from rdb$relations " +
             "where rdb$view_blr is null " +
             "and (rdb$system_flag is null or rdb$system_flag = 0)";
@@ -37,7 +37,8 @@ public class FirebirdQuery extends AbstractDbQuery {
 
     @Override
     public String tableFieldsSql() {
-        return "select f.rdb$relation_name AS NAME, f.rdb$field_name AS FIELD, t.rdb$type_name AS  TYPE " +
+        return "select trim(f.rdb$relation_name) AS rdb$relation_name, " +
+            "trim(f.rdb$field_name) AS FIELD, t.rdb$type_name AS  TYPE, '' AS PK " +
             "from rdb$relation_fields f " +
             "join rdb$relations r on f.rdb$relation_name = r.rdb$relation_name " +
             "JOIN rdb$fields fs ON f.rdb$field_source = fs.rdb$field_name " +
@@ -45,20 +46,20 @@ public class FirebirdQuery extends AbstractDbQuery {
             "and r.rdb$view_blr is NULL " +
             "AND t.rdb$field_name = 'RDB$FIELD_TYPE' " +
             "and (r.rdb$system_flag is null or r.rdb$system_flag = 0) " +
-            "AND f.rdb$relation_name = `%s` " +
+            "AND f.rdb$relation_name = '%s' " +
             "order by 1, f.rdb$field_position";
     }
 
 
     @Override
     public String tableName() {
-        return "NAME";
+        return "rdb$relation_name";
     }
 
 
     @Override
     public String tableComment() {
-        return "COMMENT";
+        return "";
     }
 
 
@@ -76,13 +77,13 @@ public class FirebirdQuery extends AbstractDbQuery {
 
     @Override
     public String fieldComment() {
-        return "COMMENT";
+        return "";
     }
 
 
     @Override
     public String fieldKey() {
-        return "KEY";
+        return "PK";
     }
 
 }
