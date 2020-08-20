@@ -2,12 +2,14 @@ package com.baomidou.mybatisplus.core.incrementer;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * @author miemie
  * @since 2020-08-11
  */
+@Disabled
 public class ImadcnIdentifierGeneratorTest {
 
     private static ImadcnIdentifierGenerator generator;
