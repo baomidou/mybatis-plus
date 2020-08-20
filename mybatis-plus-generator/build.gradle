@@ -13,5 +13,6 @@ dependencies {
     testImplementation "${lib.h2}"
     testImplementation "${lib.mysql}"
     testImplementation "${lib.sqlite}"
+    testImplementation "${lib.firebird}"
     testImplementation "${lib.'swagger-annotations'}"
 }
