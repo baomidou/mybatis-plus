@@ -109,7 +109,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param sqlMethod ignore
      * @return ignore
      * @see #getSqlStatement(SqlMethod)
-     * @deprecated 3.3.3
+     * @deprecated 3.4.0
      */
     @Deprecated
     protected String sqlStatement(SqlMethod sqlMethod) {
@@ -135,7 +135,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      *
      * @param sqlMethod 方法名
      * @return 命名id
-     * @since 3.3.3
+     * @since 3.4.0
      */
     protected String getSqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.getSqlStatement(mapperClass, sqlMethod);

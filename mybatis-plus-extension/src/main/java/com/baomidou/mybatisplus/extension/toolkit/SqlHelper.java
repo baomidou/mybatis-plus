@@ -250,7 +250,7 @@ public final class SqlHelper {
      *
      * @param sqlMethod 方法名
      * @return 命名id
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
         return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
