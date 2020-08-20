@@ -182,7 +182,9 @@ public class TableInfo implements Constants {
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
      * @return SQL Statement
+     * @deprecated 3.3.3 如果存在的多mapper共用一个实体的情况，这里可能会出现获取命名空间错误的情况
      */
+    @Deprecated
     public String getSqlStatement(String sqlMethod) {
         return currentNamespace + DOT + sqlMethod;
     }

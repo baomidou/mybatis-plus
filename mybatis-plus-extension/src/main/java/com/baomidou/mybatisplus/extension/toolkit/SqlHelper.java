@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
@@ -233,15 +234,26 @@ public final class SqlHelper {
      * @return 操作结果
      * @since 3.4.0
      */
-    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
+        String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
         return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
             if (predicate.test(sqlSession, entity)) {
-                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
+                sqlSession.insert(sqlStatement, entity);
             } else {
                 consumer.accept(sqlSession, entity);
             }
         });
+    }
+
+    /**
+     * 获取mapperStatementId
+     *
+     * @param sqlMethod 方法名
+     * @return 命名id
+     * @since 3.3.3
+     */
+    public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
+        return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
     }
 
 }
