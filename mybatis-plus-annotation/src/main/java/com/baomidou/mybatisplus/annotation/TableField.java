@@ -52,7 +52,7 @@ public @interface TableField {
 
     /**
      * 字段 where 实体查询比较条件
-     * 默认 `=` 等值
+     * 默认 {@link SqlCondition.EQUAL}
      */
     String condition() default "";
 
