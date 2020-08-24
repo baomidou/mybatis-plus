@@ -45,7 +45,6 @@
 - Bump mysql-connector-java from 8.0.20 to 8.0.21
 - Bump mockito-junit-jupiter from 3.3.3 to 3.4.0
 - Bump sqlite-jdbc from 3.32.3 to 3.32.3.1
-- 新分页插件优化 size<0 时继续拼接 orderBy
 - refactor: 移除方法中多余的判断，更多的优化需要等待基准测试结果
 - 修复saveOrUpdateBatch违反唯一约束bug，移除新增api方法
 - rollback 删除的分页实现类,打上 Deprecated 标识
