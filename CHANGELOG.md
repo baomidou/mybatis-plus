@@ -1,7 +1,7 @@
 ﻿# CHANGELOG
 
 
-## [v3.3.2] 2020.8.23
+## [v3.4.0] 2020.8.23
 - 新增 Oscar(神通) 数据库支持
 - 新增 clickhouse 数据库支持
 - fix: `@TableName.autoResultMap=true` 情况下, 内置的 `selectBody` 将不会进行 as ,使用了的需要注意!!!
