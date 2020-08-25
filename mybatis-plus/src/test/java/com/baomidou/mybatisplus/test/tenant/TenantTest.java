@@ -1,7 +1,10 @@
 package com.baomidou.mybatisplus.test.tenant;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
@@ -74,13 +77,24 @@ public class TenantTest extends BaseDbTest<EntityMapper> {
             assertThat(entity).as("搜索不到数据").isNull();
         });
         assertThat(cache.getSize()).as("依然缓存了个寂寞,说明命中的缓存").isEqualTo(1);
+
+        doTest(m -> {
+            Page<Entity> page = m.selectPage(new Page<>(), null);
+            assertThat(page.getTotal()).as("count 正常").isEqualTo(0);
+        });
     }
 
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new TenantLineInnerInterceptor(() -> new LongValue(1)));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
         return Collections.singletonList(interceptor);
+    }
+
+    @Override
+    protected String tableDataSql() {
+        return "insert into entity values(1111,'娇妹',3)";
     }
 
     @Override
