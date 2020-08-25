@@ -2,53 +2,22 @@
 
 
 ## [v3.4.0] 2020.8.23
-- 新增 Oscar(神通) 数据库支持
-- 新增 clickhouse 数据库支持
-- fix: `@TableName.autoResultMap=true` 情况下, 内置的 `selectBody` 将不会进行 as ,使用了的需要注意!!!
-- feat: 新增 `mybatis-plus-boot-starter-test` 模块
-- fix: `MetaObjectHandler` 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
-- feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
-- feat: jsqlparser up to `3.2`
-- feat: 新增 `MybatisParameterHandler`, 废弃 `MybatisDefaultParameterHandler`
+- fix: @TableName.autoResultMap=true 情况下, 内置的 selectBody 将不会进行 as ,使用了的需要注意!!!
+- feat: 新增 mybatis-plus-boot-starter-test 模块
+- fix: MetaObjectHandler 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
+- feat: mybatis up to 3.5.5, mybatis-spring up to 2.0.5
+- feat: jsqlparser up to 3.2
+- feat: 新增 MybatisParameterHandler, 废弃 MybatisDefaultParameterHandler
 - feat: 分页插件加入 GBase,ClickHouse,oscar,OceanBase 数据库连接自动识别的支持
-- feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
-- feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
+- feat: Wrapper 新增api not(boolean condition, Consumer consumer)
+- feat: 新增 MybatisPlusInterceptor 解决 多租户和分页 插件一级和二级缓存不正确问题
 - feat: 新分页插件优化 size<0 时继续拼接 orderBy
-- feat: 新增 `IdentifierGenerator` 一个实现类 `ImadcnIdentifierGenerator`
+- feat: 新增 IdentifierGenerator 一个实现类 ImadcnIdentifierGenerator
 - fix: chainWrapper#func 强转异常
-- 设置实体父类优先加载class，加载失败使用字符串类名。
-- 增加 Map工具类
-- MybatisDefaultParameterHandler deprecated
-- Bump springVersion from 5.2.6.RELEASE to 5.2.7.RELEASE
-- Merge pull request #2590 from baomidou/dependabot/gradle/springVersion…
-- MetaObjectHandler 修复重载错误(参数位置对调), 填充值在泛型上支持字段类型
-- Bump postgresql from 42.2.13 to 42.2.14
-- Merge pull request #2596 from baomidou/dependabot/gradle/org.postgresq…
-- 修复生成器建表不建字段的引发的空指针异常
 - fix(mybatis-plus-generator.main): 重构生成器数据库类型转换器，修复部分支条，提交选择器测试
-- 优化判断是否继续执行 Limit 逻辑
-- 优化Sql解析工具类
-- Bump springBootVersion from 2.3.0.RELEASE to 2.3.1.RELEASE
-- Bump beetl from 3.1.7.RELEASE to 3.1.8.RELEASE
-- Merge pull request #2603 from baomidou/dependabot/gradle/com.ibeetl-be…
-- Merge pull request #2602 from baomidou/dependabot/gradle/springBootVer…
-- TableInfo 构建优化
 - fix: 修复复杂情况中动态表名替换产生的问题：正则由空白检测转为单词边界检测
-- 清理 DbType.java 过时属性
-- 增加useGeneratedShortKey属性控制mybatis原生shortKey缓存生成
-- Merge pull request #2661 from baomidou/dependabot/gradle/com.alibaba-f…
-- 移除Maps，调整computeIfAbsent注释
-- jdk1.8下computeIfAbsent性能bug
 - refactor: 重构动态表名解析器，去除正则替换程序，改为按表名位置进行替换
 - refactor: 将表名解析重构为访问者模式，现在不会对原有 SQL 做改动
-- SaveOrUpdateBatch支持自定义条件
-- Bump mysql-connector-java from 8.0.20 to 8.0.21
-- Bump mockito-junit-jupiter from 3.3.3 to 3.4.0
-- Bump sqlite-jdbc from 3.32.3 to 3.32.3.1
-- refactor: 移除方法中多余的判断，更多的优化需要等待基准测试结果
-- 修复saveOrUpdateBatch违反唯一约束bug，移除新增api方法
-- rollback 删除的分页实现类,打上 Deprecated 标识
-- service使用泛型确定mapper命名空间
 
 
 ## [v3.3.2] 2020.5.26
