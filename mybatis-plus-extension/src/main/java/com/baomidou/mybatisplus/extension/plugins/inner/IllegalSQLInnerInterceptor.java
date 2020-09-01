@@ -109,7 +109,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processSelect(Select select, int index, Object obj) {
+    protected void processSelect(Select select, int index, String sql, Object obj) {
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
@@ -120,7 +120,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processUpdate(Update update, int index, Object obj) {
+    protected void processUpdate(Update update, int index, String sql, Object obj) {
         Expression where = update.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
         Table table = update.getTable();
@@ -130,7 +130,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processDelete(Delete delete, int index, Object obj) {
+    protected void processDelete(Delete delete, int index, String sql, Object obj) {
         Expression where = delete.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
         Table table = delete.getTable();

@@ -52,12 +52,12 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     }
 
     @Override
-    protected void processDelete(Delete delete, int index, Object obj) {
+    protected void processDelete(Delete delete, int index, String sql, Object obj) {
         this.checkWhere(delete.getWhere(), "Prohibition of full table deletion");
     }
 
     @Override
-    protected void processUpdate(Update update, int index, Object obj) {
+    protected void processUpdate(Update update, int index, String sql, Object obj) {
         this.checkWhere(update.getWhere(), "Prohibition of table update operation");
     }
 
