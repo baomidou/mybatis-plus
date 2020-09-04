@@ -224,11 +224,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     protected void processPlainSelect(PlainSelect plainSelect) {
         FromItem fromItem = plainSelect.getFromItem();
+        Expression where = plainSelect.getWhere();
+        processWhere(where);
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
             if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
                 //#1186 github
-                plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
+                plainSelect.setWhere(builderExpression(where, fromTable));
             }
         } else {
             processFromItem(fromItem);
@@ -239,6 +241,54 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processJoin(j);
                 processFromItem(j.getRightItem());
             });
+        }
+    }
+
+    /**
+     * 处理子查询
+     * <p>
+     * 支持如下:
+     * 1. in
+     * 2. =
+     * 3. >
+     * 4. <
+     * 5. >=
+     * 6. <=
+     * 7. <>
+     *
+     * @param where where 条件
+     */
+    protected void processWhere(Expression where) {
+        if (where == null) {
+            return;
+        }
+        if (where instanceof SubSelect) {
+            processSelectBody(((SubSelect) where).getSelectBody());
+            return;
+        }
+        if (where.toString().indexOf("SELECT") > 0) {
+            // 有子查询
+            if (where instanceof AndExpression) {
+                AndExpression expression = (AndExpression) where;
+                processWhere(expression.getLeftExpression());
+                processWhere(expression.getRightExpression());
+            } else if (where instanceof OrExpression) {
+                OrExpression expression = (OrExpression) where;
+                processWhere(expression.getLeftExpression());
+                processWhere(expression.getRightExpression());
+            } else if (where instanceof InExpression) {
+                InExpression expression = (InExpression) where;
+                processItemsList(expression.getRightItemsList());
+            } else if (where instanceof ComparisonOperator) {
+                ComparisonOperator expression = (ComparisonOperator) where;
+                processWhere(expression.getRightExpression());
+            }
+        }
+    }
+
+    protected void processItemsList(ItemsList itemsList) {
+        if (itemsList instanceof SubSelect) {
+            processSelectBody(((SubSelect) itemsList).getSelectBody());
         }
     }
 
