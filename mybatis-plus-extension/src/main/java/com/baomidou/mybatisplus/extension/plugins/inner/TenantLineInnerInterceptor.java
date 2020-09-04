@@ -93,13 +93,14 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     protected void processSelectBody(SelectBody selectBody) {
+        if (selectBody == null) {
+            return;
+        }
         if (selectBody instanceof PlainSelect) {
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
             WithItem withItem = (WithItem) selectBody;
-            if (withItem.getSelectBody() != null) {
-                processSelectBody(withItem.getSelectBody());
-            }
+            processSelectBody(withItem.getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
             if (operationList.getSelects() != null && operationList.getSelects().size() > 0) {
@@ -285,7 +286,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof InExpression) {
                 InExpression expression = (InExpression) where;
-                processItemsList(expression.getRightItemsList());
+                ItemsList itemsList = expression.getRightItemsList();
+                if (itemsList instanceof SubSelect) {
+                    processSelectBody(((SubSelect) itemsList).getSelectBody());
+                }
             } else if (where instanceof ComparisonOperator) {
                 ComparisonOperator expression = (ComparisonOperator) where;
                 processWhereSubSelect(expression.getRightExpression());
@@ -296,12 +300,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 NotExpression expression = (NotExpression) where;
                 processWhereSubSelect(expression.getExpression());
             }
-        }
-    }
-
-    protected void processItemsList(ItemsList itemsList) {
-        if (itemsList instanceof SubSelect) {
-            processSelectBody(((SubSelect) itemsList).getSelectBody());
         }
     }
 
@@ -359,33 +357,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (currentExpression == null) {
             return equalsTo;
         }
-        if (currentExpression instanceof BinaryExpression) {
-            BinaryExpression binaryExpression = (BinaryExpression) currentExpression;
-            doExpression(binaryExpression.getLeftExpression());
-            doExpression(binaryExpression.getRightExpression());
-        } else if (currentExpression instanceof InExpression) {
-            InExpression inExp = (InExpression) currentExpression;
-            ItemsList rightItems = inExp.getRightItemsList();
-            if (rightItems instanceof SubSelect) {
-                processSelectBody(((SubSelect) rightItems).getSelectBody());
-            }
-        }
         if (currentExpression instanceof OrExpression) {
             return new AndExpression(new Parenthesis(currentExpression), equalsTo);
         } else {
             return new AndExpression(currentExpression, equalsTo);
-        }
-    }
-
-    protected void doExpression(Expression expression) {
-        if (expression instanceof FromItem) {
-            processFromItem((FromItem) expression);
-        } else if (expression instanceof InExpression) {
-            InExpression inExp = (InExpression) expression;
-            ItemsList rightItems = inExp.getRightItemsList();
-            if (rightItems instanceof SubSelect) {
-                processSelectBody(((SubSelect) rightItems).getSelectBody());
-            }
         }
     }
 
