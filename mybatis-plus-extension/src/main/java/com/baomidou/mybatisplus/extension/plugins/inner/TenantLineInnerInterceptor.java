@@ -270,34 +270,34 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (where == null) {
             return;
         }
-        if (where instanceof SubSelect) {
-            processSelectBody(((SubSelect) where).getSelectBody());
+        if (where instanceof FromItem) {
+            processFromItem((FromItem) where);
             return;
         }
         if (where.toString().indexOf("SELECT") > 0) {
             // 有子查询
-            if (where instanceof AndExpression) {
-                AndExpression expression = (AndExpression) where;
-                processWhereSubSelect(expression.getLeftExpression());
-                processWhereSubSelect(expression.getRightExpression());
-            } else if (where instanceof OrExpression) {
-                OrExpression expression = (OrExpression) where;
+            if (where instanceof BinaryExpression) {
+                // 比较符号 , and , or , 等等
+                BinaryExpression expression = (BinaryExpression) where;
                 processWhereSubSelect(expression.getLeftExpression());
                 processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof InExpression) {
+                // in
                 InExpression expression = (InExpression) where;
                 ItemsList itemsList = expression.getRightItemsList();
                 if (itemsList instanceof SubSelect) {
                     processSelectBody(((SubSelect) itemsList).getSelectBody());
                 }
-            } else if (where instanceof ComparisonOperator) {
-                ComparisonOperator expression = (ComparisonOperator) where;
-                processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof ExistsExpression) {
+                // exists
                 ExistsExpression expression = (ExistsExpression) where;
                 processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof NotExpression) {
+                // not exists
                 NotExpression expression = (NotExpression) where;
+                processWhereSubSelect(expression.getExpression());
+            } else if (where instanceof Parenthesis) {
+                Parenthesis expression = (Parenthesis) where;
                 processWhereSubSelect(expression.getExpression());
             }
         }
