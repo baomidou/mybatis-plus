@@ -226,7 +226,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     protected void processPlainSelect(PlainSelect plainSelect) {
         FromItem fromItem = plainSelect.getFromItem();
         Expression where = plainSelect.getWhere();
-        processWhere(where);
+        processWhereSubSelect(where);
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
             if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
@@ -246,7 +246,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     /**
-     * 处理子查询
+     * 处理where条件内的子查询
      * <p>
      * 支持如下:
      * 1. in
@@ -265,7 +265,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      *
      * @param where where 条件
      */
-    protected void processWhere(Expression where) {
+    protected void processWhereSubSelect(Expression where) {
         if (where == null) {
             return;
         }
@@ -277,24 +277,24 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             // 有子查询
             if (where instanceof AndExpression) {
                 AndExpression expression = (AndExpression) where;
-                processWhere(expression.getLeftExpression());
-                processWhere(expression.getRightExpression());
+                processWhereSubSelect(expression.getLeftExpression());
+                processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof OrExpression) {
                 OrExpression expression = (OrExpression) where;
-                processWhere(expression.getLeftExpression());
-                processWhere(expression.getRightExpression());
+                processWhereSubSelect(expression.getLeftExpression());
+                processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof InExpression) {
                 InExpression expression = (InExpression) where;
                 processItemsList(expression.getRightItemsList());
             } else if (where instanceof ComparisonOperator) {
                 ComparisonOperator expression = (ComparisonOperator) where;
-                processWhere(expression.getRightExpression());
+                processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof ExistsExpression) {
                 ExistsExpression expression = (ExistsExpression) where;
-                processWhere(expression.getRightExpression());
+                processWhereSubSelect(expression.getRightExpression());
             } else if (where instanceof NotExpression) {
                 NotExpression expression = (NotExpression) where;
-                processWhere(expression.getExpression());
+                processWhereSubSelect(expression.getExpression());
             }
         }
     }
