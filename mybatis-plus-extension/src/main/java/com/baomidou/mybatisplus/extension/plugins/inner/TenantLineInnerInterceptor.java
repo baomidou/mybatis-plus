@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -255,6 +256,12 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * 5. >=
      * 6. <=
      * 7. <>
+     * 8. EXISTS
+     * 9. NOT EXISTS
+     * <p>
+     * 前提条件:
+     * 1. 子查询必须放在小括号中
+     * 2. 子查询一般放在比较操作符的右边
      *
      * @param where where 条件
      */
@@ -282,6 +289,12 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             } else if (where instanceof ComparisonOperator) {
                 ComparisonOperator expression = (ComparisonOperator) where;
                 processWhere(expression.getRightExpression());
+            } else if (where instanceof ExistsExpression) {
+                ExistsExpression expression = (ExistsExpression) where;
+                processWhere(expression.getRightExpression());
+            } else if (where instanceof NotExpression) {
+                NotExpression expression = (NotExpression) where;
+                processWhere(expression.getExpression());
             }
         }
     }

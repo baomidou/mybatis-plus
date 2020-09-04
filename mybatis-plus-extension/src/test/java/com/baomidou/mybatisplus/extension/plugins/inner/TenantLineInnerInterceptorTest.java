@@ -80,29 +80,40 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void selectSubSelect() {
+        // in
         assertSql("SELECT * FROM entity e WHERE e.id = ? and e.id IN " +
                 "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
             "SELECT * FROM entity e WHERE e.id = ? AND e.id IN " +
                 "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
-
+        // =
         assertSql("SELECT * FROM entity e WHERE e.id = ? and e.id = " +
                 "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
             "SELECT * FROM entity e WHERE e.id = ? AND e.id = " +
                 "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
-
+        // >=
         assertSql("SELECT * FROM entity e WHERE e.id = ? and e.id >= " +
                 "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
             "SELECT * FROM entity e WHERE e.id = ? AND e.id >= " +
                 "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
-
+        // <=
         assertSql("SELECT * FROM entity e WHERE e.id = ? and e.id <= " +
                 "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
             "SELECT * FROM entity e WHERE e.id = ? AND e.id <= " +
                 "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
-
+        // <>
         assertSql("SELECT * FROM entity e WHERE e.id = ? and e.id <> " +
                 "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
             "SELECT * FROM entity e WHERE e.id = ? AND e.id <> " +
+                "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
+        // EXISTS
+        assertSql("SELECT * FROM entity e WHERE e.id = ? and EXISTS " +
+                "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
+            "SELECT * FROM entity e WHERE e.id = ? AND EXISTS " +
+                "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
+        // NOT EXISTS
+        assertSql("SELECT * FROM entity e WHERE e.id = ? and NOT EXISTS " +
+                "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
+            "SELECT * FROM entity e WHERE e.id = ? AND NOT EXISTS " +
                 "(SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.id = ? AND e.tenant_id = 1");
     }
 
