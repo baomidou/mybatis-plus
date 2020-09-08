@@ -28,8 +28,11 @@ import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 策略配置项
@@ -80,7 +83,7 @@ public class StrategyConfig {
      * 自定义基础的Entity类，公共字段
      */
     @Setter(AccessLevel.NONE)
-    private String[] superEntityColumns;
+    private Set<String> superEntityColumns = new HashSet<>();
     /**
      * 自定义继承的Mapper类全称，带包名
      */
@@ -252,13 +255,13 @@ public class StrategyConfig {
     public boolean includeSuperEntityColumns(String fieldName) {
         if (null != superEntityColumns) {
             // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
-            return Arrays.stream(superEntityColumns).anyMatch(e -> e.equalsIgnoreCase(fieldName));
+            return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
         }
         return false;
     }
 
     public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
-        this.superEntityColumns = superEntityColumns;
+        this.superEntityColumns.addAll(Arrays.asList(superEntityColumns));
         return this;
     }
 
@@ -367,12 +370,12 @@ public class StrategyConfig {
      */
     protected void convertSuperEntityColumns(Class<?> clazz) {
         List<Field> fields = TableInfoHelper.getAllFields(clazz);
-        this.superEntityColumns = fields.stream().map(field -> {
+        this.superEntityColumns.addAll(fields.stream().map(field -> {
             if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
                 return field.getName();
             }
             return StringUtils.camelToUnderline(field.getName());
-        }).distinct().toArray(String[]::new);
+        }).collect(Collectors.toSet()));
     }
     
     
@@ -398,5 +401,8 @@ public class StrategyConfig {
     public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
         return setChainModel(entityBuilderModel);
     }
-    
+
+    public String[] getSuperEntityColumns() {
+        return superEntityColumns.toArray(new String[]{});
+    }
 }

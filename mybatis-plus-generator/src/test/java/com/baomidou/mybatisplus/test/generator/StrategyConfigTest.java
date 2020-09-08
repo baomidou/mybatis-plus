@@ -33,32 +33,40 @@ import com.baomidou.mybatisplus.test.generator.entity.SuperEntity;
  * @author hubin
  * @since 2019-02-20
  */
-public class StrategyConfigTest {
+class StrategyConfigTest {
 
     @Test
-    public void baseEntity() {
+    void baseEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
         Assertions.assertEquals(columns.length, 3);
     }
 
     @Test
-    public void baseEntityNaming() {
+    void baseEntityNaming() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
         Assertions.assertEquals(columns.length, 3);
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityColumns("aa","bb").setSuperEntityClass(BaseEntity.class,NamingStrategy.underline_to_camel);
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel).setSuperEntityColumns("aa", "bb");
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
     }
 
     @Test
-    public void superEntity() {
+    void superEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(SuperEntity.class);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
         Assertions.assertEquals(columns.length, 2);
     }
 }
