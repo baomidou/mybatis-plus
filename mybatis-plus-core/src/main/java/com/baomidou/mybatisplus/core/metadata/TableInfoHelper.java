@@ -114,16 +114,19 @@ public class TableInfoHelper {
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo targetTableInfo = TABLE_INFO_CACHE.get(clazz);
         final Configuration configuration = builderAssistant.getConfiguration();
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+        TableInfoParser<? extends TableInfo> tableInfoParser = globalConfig.getTableInfoParser();
+
         if (targetTableInfo != null) {
             Configuration oldConfiguration = targetTableInfo.getConfiguration();
             if (!oldConfiguration.equals(configuration)) {
                 // 不是同一个 Configuration,进行重新初始化
-                targetTableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
+                targetTableInfo = tableInfoParser.build(builderAssistant, clazz);
                 TABLE_INFO_CACHE.put(clazz, targetTableInfo);
             }
             return targetTableInfo;
         }
-        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key));
+        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> tableInfoParser.build(builderAssistant, clazz));
     }
 
     /**
@@ -137,6 +140,11 @@ public class TableInfoHelper {
     private synchronized static TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
         /* 没有获取到缓存信息,则初始化 */
         TableInfo tableInfo = new TableInfo(clazz);
+        initTableInfo(configuration, currentNamespace, clazz, tableInfo);
+        return tableInfo;
+    }
+
+    protected static void initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz, TableInfo tableInfo) {
         tableInfo.setCurrentNamespace(currentNamespace);
         tableInfo.setConfiguration(configuration);
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
@@ -154,7 +162,6 @@ public class TableInfoHelper {
 
         /* 缓存 lambda */
         LambdaUtils.installCache(tableInfo);
-        return tableInfo;
     }
 
     /**
@@ -224,7 +231,7 @@ public class TableInfoHelper {
      * @param dbConfig  DbConfig
      * @return 表名
      */
-    private static String initTableNameWithDbConfig(String className, GlobalConfig.DbConfig dbConfig) {
+    protected static String initTableNameWithDbConfig(String className, GlobalConfig.DbConfig dbConfig) {
         String tableName = className;
         // 开启表名下划线申明
         if (dbConfig.isTableUnderline()) {

@@ -15,6 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
@@ -23,13 +29,12 @@ import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.metadata.DefaultTableInfoParser;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoParser;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Mybatis 全局缓存
@@ -94,6 +99,10 @@ public class GlobalConfig implements Serializable {
      * 主键生成器
      */
     private IdentifierGenerator identifierGenerator;
+    /**
+     * TableInfo解析器
+     */
+    private TableInfoParser<? extends TableInfo> tableInfoParser = new DefaultTableInfoParser();
 
     @Data
     public static class DbConfig {

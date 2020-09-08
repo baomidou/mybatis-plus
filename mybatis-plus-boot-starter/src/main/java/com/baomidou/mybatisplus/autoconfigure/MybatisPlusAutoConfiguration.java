@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.core.metadata.AbstractTableInfoParser;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
@@ -213,6 +214,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         this.getBeanThen(ISqlInjector.class, globalConfig::setSqlInjector);
         // TODO 注入ID生成器
         this.getBeanThen(IdentifierGenerator.class, globalConfig::setIdentifierGenerator);
+        //TODO 注入TableInfo解析器
+        this.getBeanThen(AbstractTableInfoParser.class, globalConfig::setTableInfoParser);
         // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
