@@ -20,7 +20,7 @@ public class DefaultTableInfoParser extends AbstractTableInfoParser<TableInfo> {
     }
 
     @Override
-    protected void doScanField(TableFieldInfo fieldInfo, Configuration configuration, TableInfo tableInfo) {
+    protected void doScanField(TableFieldInfo fieldInfo, TableInfo tableInfo) {
 
     }
 }

@@ -131,41 +131,6 @@ public class TableInfoHelper {
 
     /**
      * <p>
-     * 实体类反射获取表信息【初始化】
-     * </p>
-     *
-     * @param clazz 反射实体类
-     * @return 数据库表反射信息
-     */
-    private synchronized static TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
-        /* 没有获取到缓存信息,则初始化 */
-        TableInfo tableInfo = new TableInfo(clazz);
-        initTableInfo(configuration, currentNamespace, clazz, tableInfo);
-        return tableInfo;
-    }
-
-    protected static void initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz, TableInfo tableInfo) {
-        tableInfo.setCurrentNamespace(currentNamespace);
-        tableInfo.setConfiguration(configuration);
-        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
-
-        /* 初始化表名相关 */
-        final String[] excludeProperty = initTableName(clazz, globalConfig, tableInfo);
-
-        List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
-
-        /* 初始化字段相关 */
-        initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
-
-        /* 自动构建 resultMap */
-        tableInfo.initResultMapIfNeed();
-
-        /* 缓存 lambda */
-        LambdaUtils.installCache(tableInfo);
-    }
-
-    /**
-     * <p>
      * 初始化 表数据库类型,表名,resultMap
      * </p>
      *
@@ -174,7 +139,7 @@ public class TableInfoHelper {
      * @param tableInfo    数据库表反射信息
      * @return 需要排除的字段名
      */
-    private static String[] initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
+    protected static String[] initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         TableName table = clazz.getAnnotation(TableName.class);
@@ -350,7 +315,7 @@ public class TableInfoHelper {
      * @param tableId   注解
      * @param reflector Reflector
      */
-    private static void initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+    protected static void initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                                   Field field, TableId tableId, Reflector reflector) {
         boolean underCamel = tableInfo.isUnderCamel();
         final String property = field.getName();
@@ -401,7 +366,7 @@ public class TableInfoHelper {
      * @param reflector Reflector
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+    protected static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                                         Field field, Reflector reflector) {
         final String property = field.getName();
         if (DEFAULT_ID_NAME.equalsIgnoreCase(property)) {
