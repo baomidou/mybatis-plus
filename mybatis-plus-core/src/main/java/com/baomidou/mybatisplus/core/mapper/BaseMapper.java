@@ -90,6 +90,13 @@ public interface BaseMapper<T> extends Mapper<T> {
     int insert(T entity);
 
     /**
+     * 插入一批记录
+     *
+     * @param entities 实体对象集合
+     */
+    int insertBatch(@Param("list") Collection<T> entities);
+
+    /**
      * 根据 ID 删除
      *
      * @param id 主键ID

@@ -49,7 +49,8 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             new SelectMapsPage(),
             new SelectObjs(),
             new SelectList(),
-            new SelectPage()
+            new SelectPage(),
+            new InsertBatch()
         ).collect(toList());
     }
 }
