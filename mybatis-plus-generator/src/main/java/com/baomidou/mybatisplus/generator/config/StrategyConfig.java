@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -131,7 +133,7 @@ public class StrategyConfig {
      */
     @Deprecated
     private boolean entityBuilderModel = false;
-    
+
     /**
      * 【实体】是否为链式模型（默认 false）<br>
      * -----------------------------------<br>
@@ -140,7 +142,7 @@ public class StrategyConfig {
      * @since 3.3.2
      */
     private boolean chainModel = false;
-    
+
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
@@ -208,7 +210,7 @@ public class StrategyConfig {
     public boolean isCapitalModeNaming(String word) {
         return isCapitalMode && StringUtils.isCapitalMode(word);
     }
-    
+
     /**
      * 表名称包含指定前缀
      *
@@ -225,7 +227,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     /**
      * 表名称匹配表前缀
      *
@@ -241,7 +243,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     public NamingStrategy getColumnNaming() {
         // 未指定以 naming 策略为准
         return Optional.ofNullable(columnNaming).orElse(naming);
@@ -287,11 +289,7 @@ public class StrategyConfig {
      * @return this
      */
     public StrategyConfig setSuperEntityClass(String superEntityClass) {
-        try {
-            return setSuperEntityClass(ClassUtils.toClassConfident(superEntityClass));
-        } catch (Exception e) {
-            this.superEntityClass = superEntityClass;
-        }
+        this.superEntityClass = superEntityClass;
         return this;
     }
 
@@ -309,7 +307,8 @@ public class StrategyConfig {
      * @return
      */
     public StrategyConfig setSuperEntityClass(Class<?> clazz) {
-        return setSuperEntityClass(clazz, null);
+        this.superEntityClass = clazz.getName();
+        return this;
     }
 
     /**
@@ -323,11 +322,8 @@ public class StrategyConfig {
      * @return
      */
     public StrategyConfig setSuperEntityClass(Class<?> clazz, NamingStrategy columnNaming) {
-        if (null != columnNaming) {
-            this.columnNaming = columnNaming;
-        }
+        this.columnNaming = columnNaming;
         this.superEntityClass = clazz.getName();
-        convertSuperEntityColumns(clazz);
         return this;
     }
 
@@ -340,17 +336,17 @@ public class StrategyConfig {
         this.superServiceClass = superServiceClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(Class<?> clazz) {
         this.superServiceImplClass = clazz.getName();
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
         this.superServiceImplClass = superServiceImplClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
         return this;
@@ -371,14 +367,21 @@ public class StrategyConfig {
     protected void convertSuperEntityColumns(Class<?> clazz) {
         List<Field> fields = TableInfoHelper.getAllFields(clazz);
         this.superEntityColumns.addAll(fields.stream().map(field -> {
+            TableId tableId = field.getAnnotation(TableId.class);
+            if (tableId != null && StringUtils.isNotBlank(tableId.value())) {
+                return tableId.value();
+            }
+            TableField tableField = field.getAnnotation(TableField.class);
+            if (tableField != null && StringUtils.isNotBlank(tableField.value())) {
+                return tableField.value();
+            }
             if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
                 return field.getName();
             }
             return StringUtils.camelToUnderline(field.getName());
         }).collect(Collectors.toSet()));
     }
-    
-    
+
     /**
      * 是否为构建者模型
      *
@@ -389,7 +392,7 @@ public class StrategyConfig {
     public boolean isEntityBuilderModel() {
         return isChainModel();
     }
-    
+
     /**
      * 设置是否为构建者模型
      *
@@ -403,6 +406,14 @@ public class StrategyConfig {
     }
 
     public String[] getSuperEntityColumns() {
+        if (StringUtils.isNotBlank(superEntityClass)) {
+            try {
+                Class<?> superEntity = ClassUtils.toClassConfident(superEntityClass);
+                convertSuperEntityColumns(superEntity);
+            } catch (Exception e) {
+                //当父类实体存在类加载器的时候,识别父类实体字段，不存在的情况就只有通过指定superEntityColumns属性了。
+            }
+        }
         return superEntityColumns.toArray(new String[]{});
     }
 }
