@@ -54,11 +54,21 @@ public class TableInfoHelper {
      * 储存反射类表信息
      */
     private static final Map<Class<?>, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 根据表名称缓存表信息
+     */
+    private static final Map<String, TableInfo> TABLE_INFO_BY_TABLE_NAME_CACHE = new ConcurrentHashMap<>(16);
 
     /**
      * 默认表主键名称
      */
     private static final String DEFAULT_ID_NAME = "id";
+
+    private static TableInfo cacheTableInfo(Class<?> clazz, TableInfo tableInfo){
+        TABLE_INFO_CACHE.put(clazz, tableInfo);
+        TABLE_INFO_BY_TABLE_NAME_CACHE.put(tableInfo.getTableName(), tableInfo);
+        return tableInfo;
+    }
 
     /**
      * <p>
@@ -86,7 +96,7 @@ public class TableInfoHelper {
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
         }
         if (tableInfo != null) {
-            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+            cacheTableInfo(ClassUtils.getUserClass(clazz), tableInfo);
         }
         return tableInfo;
     }
@@ -101,6 +111,15 @@ public class TableInfoHelper {
     @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
         return Collections.unmodifiableList(new ArrayList<>(TABLE_INFO_CACHE.values()));
+    }
+
+    /**
+     * 根据表名称获取表信息
+     * @param tableName 表名称
+     * @return 表信息
+     */
+    public static TableInfo getTableInfoByTableName(String tableName) {
+        return TABLE_INFO_BY_TABLE_NAME_CACHE.get(tableName);
     }
 
     /**
@@ -122,11 +141,16 @@ public class TableInfoHelper {
             if (!oldConfiguration.equals(configuration)) {
                 // 不是同一个 Configuration,进行重新初始化
                 targetTableInfo = tableInfoParser.build(builderAssistant, clazz);
-                TABLE_INFO_CACHE.put(clazz, targetTableInfo);
+                cacheTableInfo(clazz, targetTableInfo);
             }
             return targetTableInfo;
         }
-        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> tableInfoParser.build(builderAssistant, clazz));
+        if(TABLE_INFO_CACHE.get(clazz) != null){
+            return TABLE_INFO_CACHE.get(clazz);
+        }
+        TableInfo tableInfo =  tableInfoParser.build(builderAssistant, clazz);
+        cacheTableInfo(clazz, tableInfo);
+        return tableInfo;
     }
 
     /**
