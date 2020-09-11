@@ -1,6 +1,9 @@
 package com.baomidou.mybatisplus.core.metadata;
 
-import org.apache.ibatis.session.Configuration;
+import java.lang.reflect.Field;
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 
 /**
  * TableInfo 解析器的默认实现
@@ -15,12 +18,23 @@ public class DefaultTableInfoParser extends AbstractTableInfoParser<TableInfo> {
     }
 
     @Override
-    protected void doScanTable(Class<?> clazz, Configuration configuration, TableInfo tableInfo) {
+    protected void doBeforeScanTable(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<Field> fields) {
 
     }
 
     @Override
-    protected void doScanField(TableFieldInfo fieldInfo, TableInfo tableInfo) {
+    protected void doBeforeScanField(Field field, TableInfo tableInfo) {
 
     }
+
+    @Override
+    protected void doAfterScanField(TableFieldInfo fieldInfo, TableInfo tableInfo) {
+
+    }
+
+    @Override
+    protected void doAfterScanTable(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<TableFieldInfo> tableFieldInfoList) {
+
+    }
+
 }

@@ -74,10 +74,19 @@ public abstract class AbstractTableInfoParser<T extends TableInfo> implements Ta
         /* 初始化表名相关 */
         final String[] excludeProperty = TableInfoHelper.initTableName(clazz, globalConfig, tableInfo);
         List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
+        List<Field> fields = TableInfoHelper.getAllFields(clazz);
 
-        doScanTable(clazz, configuration, tableInfo);
+        doBeforeScanTable(clazz, globalConfig, tableInfo, fields);
 
-        processFields(globalConfig, clazz, configuration, excludePropertyList, tableInfo);
+        List<TableFieldInfo> tableFieldInfos;
+        if(CollectionUtils.isNotEmpty(fields)){
+            tableFieldInfos = processFields(globalConfig, clazz, configuration, excludePropertyList, tableInfo, fields);
+        }
+        else{
+            tableFieldInfos = new ArrayList<>();
+        }
+
+        doAfterScanTable(clazz, globalConfig, tableInfo, tableFieldInfos);
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
@@ -86,12 +95,7 @@ public abstract class AbstractTableInfoParser<T extends TableInfo> implements Ta
         LambdaUtils.installCache(tableInfo);
     }
 
-    private void processFields(GlobalConfig globalConfig, Class<?> clazz, Configuration configuration, List<String> excludePropertyList, T tableInfo){
-        List<Field> fields = TableInfoHelper.getAllFields(clazz);
-        if(CollectionUtils.isEmpty(fields)){
-            return;
-        }
-
+    private List<TableFieldInfo> processFields(GlobalConfig globalConfig, Class<?> clazz, Configuration configuration, List<String> excludePropertyList, T tableInfo, List<Field> fields){
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = configuration.getReflectorFactory();
         //TODO @咩咩 有空一起来撸完这反射模块.
@@ -106,6 +110,7 @@ public abstract class AbstractTableInfoParser<T extends TableInfo> implements Ta
 
         List<TableFieldInfo> fieldList = new ArrayList<>(fields.size());
         for (Field field : fields){
+            doBeforeScanField(field, tableInfo);
             if (excludePropertyList.contains(field.getName())) {
                 continue;
             }
@@ -140,15 +145,19 @@ public abstract class AbstractTableInfoParser<T extends TableInfo> implements Ta
         if (!isReadPk) {
             log.warn(String.format("Can not find table primary key in Class: \"%s\".", clazz.getName()));
         }
+        return fieldList;
     }
 
     /**
      * 扩展扫描实体类,来自定义构建TableInfo
      * @param clazz 反射实体类
-     * @param configuration mybatis配置
+     * @param globalConfig 全局配置
      * @param tableInfo 待完善的TableInfo
+     * @param fields 实体类的表反射字段集合
      */
-    protected abstract void doScanTable(Class<?> clazz, Configuration configuration, T tableInfo);
+    protected abstract void doBeforeScanTable(Class<?> clazz, GlobalConfig globalConfig, T tableInfo, List<Field> fields);
+
+
 
     /**
      * 扫描字段
@@ -160,16 +169,32 @@ public abstract class AbstractTableInfoParser<T extends TableInfo> implements Ta
                         Reflector reflector, boolean existTableLogic){
         TableFieldInfo tableInfoField = createTableFieldInfo(globalConfig, tableInfo, field, reflector, existTableLogic);
 
-        doScanField(tableInfoField, tableInfo);
+        doAfterScanField(tableInfoField, tableInfo);
         return tableInfoField;
     }
 
     /**
-     * 自定义扫描字段,以扩展字段信息
+     * 字段处理前执行
+     * @param field 字段
+     * @param tableInfo 待完善的TableInfo
+     */
+    protected abstract void doBeforeScanField(Field field, T tableInfo);
+
+    /**
+     * 字段处理后执行
      * @param fieldInfo 字段信息
      * @param tableInfo 待完善的TableInfo
      */
-    protected abstract void doScanField(TableFieldInfo fieldInfo, T tableInfo);
+    protected abstract void doAfterScanField(TableFieldInfo fieldInfo, T tableInfo);
+
+    /**
+     * 表扫描后执行
+     * @param clazz 类
+     * @param globalConfig 全局配置
+     * @param tableInfo 表信息
+     * @param tableFieldInfoList 表字段信息集合
+     */
+    protected abstract void doAfterScanTable(Class<?> clazz, GlobalConfig globalConfig, T tableInfo, List<TableFieldInfo> tableFieldInfoList);
 
     @Override
     public T build(MapperBuilderAssistant builderAssistant, Class<?> clazz){
