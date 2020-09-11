@@ -32,6 +32,8 @@ import com.baomidou.mybatisplus.extension.exceptions.ApiException;
  * @author hubin
  * @since 2018-06-05
  */
+// 使用度较低，如果使用请及时迁移本地 3.5.0 移除
+@Deprecated
 public class Assert {
 
     protected Assert() {
