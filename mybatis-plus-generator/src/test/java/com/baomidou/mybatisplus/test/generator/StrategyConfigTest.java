@@ -17,6 +17,9 @@ package com.baomidou.mybatisplus.test.generator;
 
 import java.util.Arrays;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +27,8 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.test.generator.entity.BaseEntity;
 import com.baomidou.mybatisplus.test.generator.entity.SuperEntity;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * <p>
@@ -33,32 +38,82 @@ import com.baomidou.mybatisplus.test.generator.entity.SuperEntity;
  * @author hubin
  * @since 2019-02-20
  */
-public class StrategyConfigTest {
+class StrategyConfigTest {
 
     @Test
-    public void baseEntity() {
+    void baseEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
+        assertThat(columns).containsAll(Arrays.asList("deleted", "createTime", "id"));
         Assertions.assertEquals(columns.length, 3);
     }
 
     @Test
-    public void baseEntityNaming() {
+    void baseEntityNaming() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
+        assertThat(columns).containsAll(Arrays.asList("deleted", "create_time", "id"));
         Assertions.assertEquals(columns.length, 3);
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityColumns("aa", "bb").setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel).setSuperEntityColumns("aa", "bb");
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
     }
 
     @Test
-    public void superEntity() {
+    void superEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(SuperEntity.class);
         String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(column -> System.out.println(column));
+        Arrays.stream(columns).forEach(System.out::println);
+        assertThat(columns).containsAll(Arrays.asList("deleted", "id"));
         Assertions.assertEquals(columns.length, 2);
+    }
+
+    @Test
+    void testSuperAnnotation() {
+        StrategyConfig strategyConfig;
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(SuperBean.class).setColumnNaming(NamingStrategy.no_change);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("test_id", "aa_name", "ok", "testName"));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(SuperBean.class, NamingStrategy.no_change);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("test_id", "aa_name", "ok", "testName"));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(SuperBean.class).setColumnNaming(NamingStrategy.underline_to_camel);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("test_id", "aa_name", "ok", "test_name"));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setSuperEntityClass(SuperBean.class, NamingStrategy.underline_to_camel);
+        assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("test_id", "aa_name", "ok", "test_name"));
+
+    }
+
+    @Data
+    static class SuperBean {
+
+        @TableId(value = "test_id")
+        private String id;
+
+        @TableField(value = "aa_name")
+        private String name;
+
+        private String ok;
+
+        private String testName;
+
     }
 }

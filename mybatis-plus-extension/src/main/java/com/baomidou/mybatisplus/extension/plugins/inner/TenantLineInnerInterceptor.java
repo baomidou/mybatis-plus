@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -92,13 +93,14 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     protected void processSelectBody(SelectBody selectBody) {
+        if (selectBody == null) {
+            return;
+        }
         if (selectBody instanceof PlainSelect) {
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
             WithItem withItem = (WithItem) selectBody;
-            if (withItem.getSelectBody() != null) {
-                processSelectBody(withItem.getSelectBody());
-            }
+            processSelectBody(withItem.getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
             if (operationList.getSelects() != null && operationList.getSelects().size() > 0) {
@@ -224,11 +226,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     protected void processPlainSelect(PlainSelect plainSelect) {
         FromItem fromItem = plainSelect.getFromItem();
+        Expression where = plainSelect.getWhere();
+        processWhereSubSelect(where);
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
             if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
                 //#1186 github
-                plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
+                plainSelect.setWhere(builderExpression(where, fromTable));
             }
         } else {
             processFromItem(fromItem);
@@ -239,6 +243,63 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processJoin(j);
                 processFromItem(j.getRightItem());
             });
+        }
+    }
+
+    /**
+     * 处理where条件内的子查询
+     * <p>
+     * 支持如下:
+     * 1. in
+     * 2. =
+     * 3. >
+     * 4. <
+     * 5. >=
+     * 6. <=
+     * 7. <>
+     * 8. EXISTS
+     * 9. NOT EXISTS
+     * <p>
+     * 前提条件:
+     * 1. 子查询必须放在小括号中
+     * 2. 子查询一般放在比较操作符的右边
+     *
+     * @param where where 条件
+     */
+    protected void processWhereSubSelect(Expression where) {
+        if (where == null) {
+            return;
+        }
+        if (where instanceof FromItem) {
+            processFromItem((FromItem) where);
+            return;
+        }
+        if (where.toString().indexOf("SELECT") > 0) {
+            // 有子查询
+            if (where instanceof BinaryExpression) {
+                // 比较符号 , and , or , 等等
+                BinaryExpression expression = (BinaryExpression) where;
+                processWhereSubSelect(expression.getLeftExpression());
+                processWhereSubSelect(expression.getRightExpression());
+            } else if (where instanceof InExpression) {
+                // in
+                InExpression expression = (InExpression) where;
+                ItemsList itemsList = expression.getRightItemsList();
+                if (itemsList instanceof SubSelect) {
+                    processSelectBody(((SubSelect) itemsList).getSelectBody());
+                }
+            } else if (where instanceof ExistsExpression) {
+                // exists
+                ExistsExpression expression = (ExistsExpression) where;
+                processWhereSubSelect(expression.getRightExpression());
+            } else if (where instanceof NotExpression) {
+                // not exists
+                NotExpression expression = (NotExpression) where;
+                processWhereSubSelect(expression.getExpression());
+            } else if (where instanceof Parenthesis) {
+                Parenthesis expression = (Parenthesis) where;
+                processWhereSubSelect(expression.getExpression());
+            }
         }
     }
 
@@ -296,33 +357,10 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (currentExpression == null) {
             return equalsTo;
         }
-        if (currentExpression instanceof BinaryExpression) {
-            BinaryExpression binaryExpression = (BinaryExpression) currentExpression;
-            doExpression(binaryExpression.getLeftExpression());
-            doExpression(binaryExpression.getRightExpression());
-        } else if (currentExpression instanceof InExpression) {
-            InExpression inExp = (InExpression) currentExpression;
-            ItemsList rightItems = inExp.getRightItemsList();
-            if (rightItems instanceof SubSelect) {
-                processSelectBody(((SubSelect) rightItems).getSelectBody());
-            }
-        }
         if (currentExpression instanceof OrExpression) {
             return new AndExpression(new Parenthesis(currentExpression), equalsTo);
         } else {
             return new AndExpression(currentExpression, equalsTo);
-        }
-    }
-
-    protected void doExpression(Expression expression) {
-        if (expression instanceof FromItem) {
-            processFromItem((FromItem) expression);
-        } else if (expression instanceof InExpression) {
-            InExpression inExp = (InExpression) expression;
-            ItemsList rightItems = inExp.getRightItemsList();
-            if (rightItems instanceof SubSelect) {
-                processSelectBody(((SubSelect) rightItems).getSelectBody());
-            }
         }
     }
 

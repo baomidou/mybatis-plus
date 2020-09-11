@@ -27,6 +27,7 @@ import lombok.Getter;
 public enum IdType {
     /**
      * 数据库ID自增
+     * <p>该类型请确保数据库设置了 ID自增 否则无效</p>
      */
     AUTO(0),
     /**
