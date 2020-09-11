@@ -46,6 +46,11 @@ public @interface InterceptorIgnore {
     String illegalSql() default "";
 
     /**
+     * 是否忽视所有interceptor
+     */
+    boolean ignoreAll() default false;
+
+    /**
      * 忽略interceptor集合
      */
     Class<?>[] ignores() default {};

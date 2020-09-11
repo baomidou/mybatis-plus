@@ -80,7 +80,7 @@ public class InterceptorIgnoreHelper {
 
     public static boolean willIgnore(String id, Function<InterceptorIgnoreCache, Boolean> function) {
         InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
-        if (cache != null) {
+        if (cache != null && !cache.ignoreAll) {
             return function.apply(cache);
         }
         return false;
@@ -88,7 +88,7 @@ public class InterceptorIgnoreHelper {
 
     public static boolean willIgnore(String id, Class<?> interceptor) {
         InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
-        if (cache != null) {
+        if (cache != null&& !cache.ignoreAll) {
             return cache.ignores.contains(interceptor);
         }
         return false;
@@ -112,6 +112,7 @@ public class InterceptorIgnoreHelper {
             .dynamicTableName(getBoolean(ignore.dynamicTableName()))
             .blockAttack(getBoolean(ignore.blockAttack()))
             .illegalSql(getBoolean(ignore.illegalSql()))
+            .ignoreAll(ignore.ignoreAll())
             .ignores(ignoreInterceptors)
             .build();
     }
@@ -146,6 +147,10 @@ public class InterceptorIgnoreHelper {
         private Boolean dynamicTableName;
         private Boolean blockAttack;
         private Boolean illegalSql;
+        /**
+         * 是否忽视所有插件
+         */
+        private Boolean ignoreAll;
         /**
          * 忽略的自定义interceptor集合
          */
