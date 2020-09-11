@@ -1,6 +1,10 @@
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * 内置插件的一些过滤规则
@@ -40,4 +44,9 @@ public @interface InterceptorIgnore {
      * 垃圾SQL拦截 {@link com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor}
      */
     String illegalSql() default "";
+
+    /**
+     * 忽略interceptor集合
+     */
+    Class<?>[] ignores() default {};
 }

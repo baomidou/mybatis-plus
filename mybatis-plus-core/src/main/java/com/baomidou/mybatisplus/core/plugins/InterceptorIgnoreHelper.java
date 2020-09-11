@@ -1,16 +1,20 @@
 package com.baomidou.mybatisplus.core.plugins;
 
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import lombok.Builder;
 import lombok.Data;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 /**
  * @author miemie
@@ -82,6 +86,14 @@ public class InterceptorIgnoreHelper {
         return false;
     }
 
+    public static boolean willIgnore(String id, Class<?> interceptor) {
+        InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
+        if (cache != null) {
+            return cache.ignores.contains(interceptor);
+        }
+        return false;
+    }
+
     private static InterceptorIgnoreCache chooseCache(InterceptorIgnoreCache mapper, InterceptorIgnoreCache method) {
         return InterceptorIgnoreCache.builder()
             .tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine()))
@@ -92,11 +104,15 @@ public class InterceptorIgnoreHelper {
     }
 
     private static InterceptorIgnoreCache buildInterceptorIgnoreCache(InterceptorIgnore ignore) {
+        Set<Class<?>> ignoreInterceptors = new HashSet<>();
+        Collections.addAll(ignoreInterceptors, ignore.ignores());
+
         return InterceptorIgnoreCache.builder()
             .tenantLine(getBoolean(ignore.tenantLine()))
             .dynamicTableName(getBoolean(ignore.dynamicTableName()))
             .blockAttack(getBoolean(ignore.blockAttack()))
             .illegalSql(getBoolean(ignore.illegalSql()))
+            .ignores(ignoreInterceptors)
             .build();
     }
 
@@ -130,5 +146,9 @@ public class InterceptorIgnoreHelper {
         private Boolean dynamicTableName;
         private Boolean blockAttack;
         private Boolean illegalSql;
+        /**
+         * 忽略的自定义interceptor集合
+         */
+        private Set<Class<?>> ignores;
     }
 }
