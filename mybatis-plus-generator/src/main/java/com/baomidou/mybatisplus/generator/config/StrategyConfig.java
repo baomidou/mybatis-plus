@@ -70,12 +70,12 @@ public class StrategyConfig {
      * 表前缀
      */
     @Setter(AccessLevel.NONE)
-    private String[] tablePrefix;
+    private final Set<String> tablePrefix = new HashSet<>();
     /**
      * 字段前缀
      */
     @Setter(AccessLevel.NONE)
-    private String[] fieldPrefix;
+    private final Set<String> fieldPrefix = new HashSet<>();
     /**
      * 自定义继承的Entity类全称，带包名
      */
@@ -85,7 +85,7 @@ public class StrategyConfig {
      * 自定义基础的Entity类，公共字段
      */
     @Setter(AccessLevel.NONE)
-    private Set<String> superEntityColumns = new HashSet<>();
+    private final Set<String> superEntityColumns = new HashSet<>();
     /**
      * 自定义继承的Mapper类全称，带包名
      */
@@ -107,13 +107,13 @@ public class StrategyConfig {
      * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
-    private String[] include = null;
+    private final Set<String> include = new HashSet<>();
     /**
      * 需要排除的表名，允许正则表达式<br/>
      * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
-    private String[] exclude = null;
+    private final Set<String> exclude = new HashSet<>();
     /**
      * 实体是否生成 serialVersionUID
      */
@@ -219,13 +219,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public boolean containsTablePrefix(String tableName) {
-        if (null != tableName) {
-            String[] tps = getTablePrefix();
-            if (null != tps) {
-                return Arrays.stream(tps).anyMatch(tableName::contains);
-            }
-        }
-        return false;
+        return getTablePrefix().stream().anyMatch(tableName::contains);
     }
 
     /**
@@ -235,13 +229,7 @@ public class StrategyConfig {
      * @since 3.3.2
      */
     public boolean startsWithTablePrefix(String tableName) {
-        if (null != tableName) {
-            String[] tps = getTablePrefix();
-            if (null != tps) {
-                return Arrays.stream(tps).anyMatch(tableName::startsWith);
-            }
-        }
-        return false;
+        return getTablePrefix().stream().anyMatch(tableName::startsWith);
     }
 
     public NamingStrategy getColumnNaming() {
@@ -250,16 +238,13 @@ public class StrategyConfig {
     }
 
     public StrategyConfig setTablePrefix(String... tablePrefix) {
-        this.tablePrefix = tablePrefix;
+        this.tablePrefix.addAll(Arrays.asList(tablePrefix));
         return this;
     }
 
     public boolean includeSuperEntityColumns(String fieldName) {
-        if (null != superEntityColumns) {
-            // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
-            return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
-        }
-        return false;
+        // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
+        return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
     }
 
     public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
@@ -268,17 +253,17 @@ public class StrategyConfig {
     }
 
     public StrategyConfig setInclude(String... include) {
-        this.include = include;
+        this.include.addAll(Arrays.asList(include));
         return this;
     }
 
     public StrategyConfig setExclude(String... exclude) {
-        this.exclude = exclude;
+        this.exclude.addAll(Arrays.asList(exclude));
         return this;
     }
 
     public StrategyConfig setFieldPrefix(String... fieldPrefixs) {
-        this.fieldPrefix = fieldPrefixs;
+        this.fieldPrefix.addAll(Arrays.asList(fieldPrefixs));
         return this;
     }
 
@@ -405,15 +390,15 @@ public class StrategyConfig {
         return setChainModel(entityBuilderModel);
     }
 
-    public String[] getSuperEntityColumns() {
-        if (StringUtils.isNotBlank(superEntityClass)) {
+    public Set<String> getSuperEntityColumns() {
+        if (StringUtils.isNotBlank(this.superEntityClass)) {
             try {
-                Class<?> superEntity = ClassUtils.toClassConfident(superEntityClass);
+                Class<?> superEntity = ClassUtils.toClassConfident(this.superEntityClass);
                 convertSuperEntityColumns(superEntity);
             } catch (Exception e) {
                 //当父类实体存在类加载器的时候,识别父类实体字段，不存在的情况就只有通过指定superEntityColumns属性了。
             }
         }
-        return superEntityColumns.toArray(new String[]{});
+        return this.superEntityColumns;
     }
 }

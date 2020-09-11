@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -56,14 +55,7 @@ public class ConfigBuilder {
     /**
      * SQL连接
      */
-    private Connection connection;
-    /**
-     * SQL语句类型
-     */
-    @Deprecated
-    private IDbQuery dbQuery;
-    @Deprecated
-    private DbType dbType;
+    private final Connection connection;
     private String superEntityClass;
     private String superMapperClass;
     /**
@@ -97,11 +89,6 @@ public class ConfigBuilder {
      */
     private InjectionConfig injectionConfig;
     /**
-     * 是否支持注释
-     */
-    @Deprecated
-    private boolean commentSupported;
-    /**
      * 过滤正则
      */
     private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:'\",<.>?]+");
@@ -128,11 +115,9 @@ public class ConfigBuilder {
             handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig);
         }
         this.dataSourceConfig = dataSourceConfig;
-        handlerDataSource(dataSourceConfig);
+        this.connection = dataSourceConfig.getConn();
         // 策略配置
         this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
-        //SQLITE 数据库不支持注释获取
-        commentSupported = !dataSourceConfig.getDbType().equals(DbType.SQLITE);
 
         handlerStrategy(this.strategyConfig);
     }
@@ -256,18 +241,6 @@ public class ConfigBuilder {
     }
 
     /**
-     * 处理数据源配置
-     *
-     * @param config DataSourceConfig
-     */
-    private void handlerDataSource(DataSourceConfig config) {
-        connection = config.getConn();
-        dbType = config.getDbType();
-        dbQuery = config.getDbQuery();
-    }
-
-
-    /**
      * 处理数据库表 加载数据库表、列、注释相关数据集
      *
      * @param config StrategyConfig
@@ -316,7 +289,6 @@ public class ConfigBuilder {
      * @return 补充完整信息后的表
      */
     private List<TableInfo> processTable(List<TableInfo> tableList, StrategyConfig config) {
-        String[] tablePrefix = config.getTablePrefix();
         for (TableInfo tableInfo : tableList) {
             String entityName;
             INameConvert nameConvert = strategyConfig.getNameConvert();
@@ -324,7 +296,7 @@ public class ConfigBuilder {
                 // 自定义处理实体名称
                 entityName = nameConvert.entityNameConvert(tableInfo);
             } else {
-                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), tablePrefix));
+                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), config.getTablePrefix()));
             }
             if (StringUtils.isNotBlank(globalConfig.getEntityName())) {
                 tableInfo.setConvert(true);
@@ -396,8 +368,8 @@ public class ConfigBuilder {
      * 获取所有的数据库表信息
      */
     private List<TableInfo> getTablesInfo(StrategyConfig config) {
-        boolean isInclude = (null != config.getInclude() && config.getInclude().length > 0);
-        boolean isExclude = (null != config.getExclude() && config.getExclude().length > 0);
+        boolean isInclude = config.getInclude().size() > 0;
+        boolean isExclude = config.getExclude().size() > 0;
         if (isInclude && isExclude) {
             throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
         }
@@ -461,10 +433,10 @@ public class ConfigBuilder {
                 }
                 if (isInclude) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
-                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(config.getInclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
                 } else if (isExclude) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
-                        .append(Arrays.stream(config.getExclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(config.getExclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
                 }
             }
             TableInfo tableInfo;
@@ -639,12 +611,10 @@ public class ConfigBuilder {
                     field.setName(columnName);
                     String newColumnName = columnName;
                     IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
-                    if (keyWordsHandler != null) {
-                        if (keyWordsHandler.isKeyWords(columnName)) {
-                            System.err.println(String.format("当前表[%s]存在字段[%s]为数据库关键字或保留字!", tableName, columnName));
-                            field.setKeyWords(true);
-                            newColumnName = keyWordsHandler.formatColumn(columnName);
-                        }
+                    if (keyWordsHandler != null && keyWordsHandler.isKeyWords(columnName)) {
+                        System.err.printf("当前表[%s]存在字段[%s]为数据库关键字或保留字!%n", tableName, columnName);
+                        field.setKeyWords(true);
+                        newColumnName = keyWordsHandler.formatColumn(columnName);
                     }
                     field.setColumnName(newColumnName);
                     field.setType(results.getString(dbQuery.fieldType()));
@@ -732,9 +702,9 @@ public class ConfigBuilder {
      * @param prefix   ignore
      * @return 根据策略返回处理后的名称
      */
-    private String processName(String name, NamingStrategy strategy, String[] prefix) {
+    private String processName(String name, NamingStrategy strategy, Set<String> prefix) {
         String propertyName;
-        if (ArrayUtils.isNotEmpty(prefix)) {
+        if (prefix.size() > 0) {
             if (strategy == NamingStrategy.underline_to_camel) {
                 // 删除前缀、下划线转驼峰
                 propertyName = NamingStrategy.removePrefixAndCamel(name, prefix);

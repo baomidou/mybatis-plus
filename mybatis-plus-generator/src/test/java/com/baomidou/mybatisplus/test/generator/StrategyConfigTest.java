@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test.generator;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -44,29 +45,29 @@ class StrategyConfigTest {
     void baseEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class);
-        String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(System.out::println);
+        Set<String> columns = strategyConfig.getSuperEntityColumns();
+        columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "createTime", "id"));
-        Assertions.assertEquals(columns.length, 3);
+        Assertions.assertEquals(columns.size(), 3);
     }
 
     @Test
     void baseEntityNaming() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
-        String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(System.out::println);
+        Set<String> columns = strategyConfig.getSuperEntityColumns();
+        columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "create_time", "id"));
-        Assertions.assertEquals(columns.length, 3);
+        Assertions.assertEquals(columns.size(), 3);
 
         strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityColumns("aa", "bb").setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel);
-        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().size(), 5);
         assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
 
         strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(BaseEntity.class, NamingStrategy.underline_to_camel).setSuperEntityColumns("aa", "bb");
-        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().length, 5);
+        Assertions.assertEquals(strategyConfig.getSuperEntityColumns().size(), 5);
         assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
     }
 
@@ -74,10 +75,10 @@ class StrategyConfigTest {
     void superEntity() {
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig.setSuperEntityClass(SuperEntity.class);
-        String[] columns = strategyConfig.getSuperEntityColumns();
-        Arrays.stream(columns).forEach(System.out::println);
+        Set<String> columns = strategyConfig.getSuperEntityColumns();
+        columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "id"));
-        Assertions.assertEquals(columns.length, 2);
+        Assertions.assertEquals(columns.size(), 2);
     }
 
     @Test
@@ -100,6 +101,14 @@ class StrategyConfigTest {
         strategyConfig.setSuperEntityClass(SuperBean.class, NamingStrategy.underline_to_camel);
         assertThat(strategyConfig.getSuperEntityColumns()).containsAll(Arrays.asList("test_id", "aa_name", "ok", "test_name"));
 
+    }
+
+    @Test
+    void startsWithTablePrefixTest(){
+        StrategyConfig strategyConfig = new StrategyConfig();
+        Assertions.assertFalse(strategyConfig.startsWithTablePrefix("t_name"));
+        strategyConfig.setTablePrefix("a_","t_");
+        Assertions.assertTrue(strategyConfig.startsWithTablePrefix("t_name"));
     }
 
     @Data
