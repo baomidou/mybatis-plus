@@ -440,9 +440,10 @@ public final class StringUtils {
      * @return ignore
      */
     public static String prefixToLower(String rawString, int index) {
-        String beforeChar = rawString.substring(0, index).toLowerCase();
-        String afterChar = rawString.substring(index);
-        return beforeChar + afterChar;
+        StringBuilder field = new StringBuilder();
+        field.append(rawString.substring(0, index).toLowerCase());
+        field.append(rawString.substring(index));
+        return field.toString();
     }
 
     /**
