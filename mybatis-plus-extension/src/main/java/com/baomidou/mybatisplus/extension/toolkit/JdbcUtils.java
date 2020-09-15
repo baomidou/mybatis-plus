@@ -25,6 +25,7 @@ import org.apache.ibatis.logging.LogFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 /**
  * JDBC 工具类
@@ -80,11 +81,11 @@ public class JdbcUtils {
             return DbType.SQLITE;
         } else if (url.contains(":h2:")) {
             return DbType.H2;
-        } else if (url.contains(":dm:")) {
+        } else if (regexFind(":dm\\d*:", url)) {
             return DbType.DM;
         } else if (url.contains(":xugu:")) {
             return DbType.XU_GU;
-        } else if (url.contains(":kingbase:") || url.contains(":kingbase8:")) {
+        } else if (regexFind(":kingbase\\d*:", url)) {
             return DbType.KINGBASE_ES;
         } else if (url.contains(":phoenix:")) {
             return DbType.PHOENIX;
@@ -104,5 +105,19 @@ public class JdbcUtils {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }
+    }
+
+    /**
+     * 正则匹配
+     *
+     * @param regex 正则
+     * @param input 字符串
+     * @return 验证成功返回 true，验证失败返回 false
+     */
+    public static boolean regexFind(String regex, CharSequence input) {
+        if (null == input) {
+            return false;
+        }
+        return Pattern.compile(regex).matcher(input).find();
     }
 }
