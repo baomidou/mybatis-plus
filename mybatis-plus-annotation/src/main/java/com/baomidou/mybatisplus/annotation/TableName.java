@@ -35,6 +35,8 @@ public @interface TableName {
 
     /**
      * schema
+     * <p>
+     * 配置此值将覆盖全局配置的 schema
      *
      * @since 3.1.1
      */
