@@ -15,9 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 /**
  * MySql 表数据查询
  *

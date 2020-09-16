@@ -56,14 +56,6 @@ public class ConfigBuilder {
      * SQL连接
      */
     private final Connection connection;
-    private String superEntityClass;
-    private String superMapperClass;
-    /**
-     * service超类定义
-     */
-    private String superServiceClass;
-    private String superServiceImplClass;
-    private String superControllerClass;
     /**
      * 数据库表信息
      */
@@ -118,8 +110,7 @@ public class ConfigBuilder {
         this.connection = dataSourceConfig.getConn();
         // 策略配置
         this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
-
-        handlerStrategy(this.strategyConfig);
+        this.tableInfoList = getTablesInfo(this.strategyConfig);
     }
 
     // ************************ 曝露方法 BEGIN*****************************
@@ -143,37 +134,6 @@ public class ConfigBuilder {
         return pathInfo;
     }
 
-
-    public String getSuperEntityClass() {
-        return superEntityClass;
-    }
-
-
-    public String getSuperMapperClass() {
-        return superMapperClass;
-    }
-
-
-    /**
-     * 获取超类定义
-     *
-     * @return 完整超类名称
-     */
-    public String getSuperServiceClass() {
-        return superServiceClass;
-    }
-
-
-    public String getSuperServiceImplClass() {
-        return superServiceImplClass;
-    }
-
-
-    public String getSuperControllerClass() {
-        return superControllerClass;
-    }
-
-
     /**
      * 表信息
      *
@@ -187,7 +147,6 @@ public class ConfigBuilder {
         this.tableInfoList = tableInfoList;
         return this;
     }
-
 
     /**
      * 模板路径配置信息
@@ -238,47 +197,6 @@ public class ConfigBuilder {
         if (StringUtils.isNotBlank(template)) {
             pathInfo.put(path, joinPath(outputDir, packageInfo.get(module)));
         }
-    }
-
-    /**
-     * 处理数据库表 加载数据库表、列、注释相关数据集
-     *
-     * @param config StrategyConfig
-     */
-    private void handlerStrategy(StrategyConfig config) {
-        processTypes(config);
-        tableInfoList = getTablesInfo(config);
-    }
-
-
-    /**
-     * 处理superClassName,IdClassType,IdStrategy配置
-     *
-     * @param config 策略配置
-     */
-    private void processTypes(StrategyConfig config) {
-        this.superServiceClass = getValueOrDefault(config.getSuperServiceClass(), ConstVal.SUPER_SERVICE_CLASS);
-        this.superServiceImplClass = getValueOrDefault(config.getSuperServiceImplClass(), ConstVal.SUPER_SERVICE_IMPL_CLASS);
-        this.superMapperClass = getValueOrDefault(config.getSuperMapperClass(), ConstVal.SUPER_MAPPER_CLASS);
-        superEntityClass = config.getSuperEntityClass();
-        superControllerClass = config.getSuperControllerClass();
-    }
-
-    private static String getValueOrDefault(String value, String defaultValue) {
-        return StringUtils.isBlank(value) ? defaultValue : value;
-    }
-
-    /**
-     * 处理表对应的类名称
-     *
-     * @param tableList 表名称
-     * @param config    策略配置项
-     * @return 补充完整信息后的表
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, StrategyConfig config) {
-        return processTable(tableList, config);
     }
 
     /**
@@ -546,8 +464,6 @@ public class ConfigBuilder {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.KINGBASE_ES == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
-            } else if (DbType.OSCAR == dbType) {
-                tableFieldsSql = String.format(tableFieldsSql, tableName);
             } else if (DbType.DB2 == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.ORACLE == dbType) {

@@ -154,9 +154,9 @@ public class AutoGenerator {
                 tableInfo.setImportPackages(Version.class.getCanonicalName());
             }
             boolean importSerializable = true;
-            if (StringUtils.isNotBlank(config.getSuperEntityClass())) {
+            if (StringUtils.isNotBlank(config.getStrategyConfig().getSuperEntityClass())) {
                 // 父实体
-                tableInfo.setImportPackages(config.getSuperEntityClass());
+                tableInfo.setImportPackages(config.getStrategyConfig().getSuperEntityClass());
                 importSerializable = false;
             }
             if (config.getGlobalConfig().isActiveRecord()) {

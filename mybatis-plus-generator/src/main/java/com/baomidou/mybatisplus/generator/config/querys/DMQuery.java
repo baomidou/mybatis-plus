@@ -21,8 +21,8 @@ package com.baomidou.mybatisplus.generator.config.querys;
  * @author halower
  * @since 2019-06-27
  */
-public class DMQuery  extends AbstractDbQuery{
-    
+public class DMQuery extends AbstractDbQuery {
+
     @Override
     public String tablesSql() {
         return "SELECT * FROM (SELECT DISTINCT T1.TABLE_NAME AS TABLE_NAME,T2.COMMENTS AS TABLE_COMMENT FROM USER_TAB_COLUMNS T1 " +
