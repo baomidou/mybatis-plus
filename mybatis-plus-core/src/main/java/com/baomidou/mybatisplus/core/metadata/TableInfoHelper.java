@@ -69,9 +69,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null
-            || ReflectionKit.isPrimitiveOrWrapper(clazz)
-            || clazz == String.class) {
+        if (clazz == null || ReflectionKit.isPrimitiveOrWrapper(clazz) || clazz == String.class) {
             return null;
         }
         // https://github.com/baomidou/mybatis-plus/issues/299
