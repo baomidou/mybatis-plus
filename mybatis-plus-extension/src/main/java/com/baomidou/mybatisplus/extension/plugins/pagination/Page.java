@@ -59,6 +59,8 @@ public class Page<T> implements IPage<T> {
     /**
      * 排序字段信息
      */
+    @Getter
+    @Setter
     protected List<OrderItem> orders = new ArrayList<>();
 
     /**
@@ -307,14 +309,6 @@ public class Page<T> implements IPage<T> {
     @Override
     public List<OrderItem> orders() {
         return getOrders();
-    }
-
-    public List<OrderItem> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<OrderItem> orders) {
-        this.orders = orders;
     }
 
     @Override

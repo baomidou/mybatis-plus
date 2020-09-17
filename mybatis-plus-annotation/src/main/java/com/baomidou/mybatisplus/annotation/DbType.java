@@ -44,7 +44,6 @@ public enum DbType {
      * oracle12c new pagination
      */
     ORACLE_12C("oracle12c", "Oracle12c+数据库"),
-
     /**
      * DB2
      */
@@ -85,32 +84,38 @@ public enum DbType {
      * Kingbase
      */
     KINGBASE_ES("kingbasees", "人大金仓数据库"),
-
     /**
      * Phoenix
      */
     PHOENIX("phoenix", "Phoenix HBase数据库"),
-
     /**
      * Gauss
      */
     GAUSS("zenith", "Gauss 数据库"),
-
     /**
-     * clickhouse
+     * ClickHouse
      */
-    CLICKHOUSE("clickhouse", "clickhouse 数据库"),
-
+    CLICK_HOUSE("clickhouse", "clickhouse 数据库"),
     /**
      * GBase
      */
     GBASE("gbase", "南大通用数据库"),
-
     /**
      * Oscar
      */
     OSCAR("oscar", "神通数据库"),
-
+    /**
+     * Sybase
+     */
+    SYBASE("sybase", "Sybase ASE 数据库"),
+    /**
+     * OceanBase
+     */
+    OCEAN_BASE("oceanbase", "OceanBase 数据库"),
+    /**
+     * Firebird
+     */
+    FIREBIRD("Firebird", "Firebird 数据库"),
     /**
      * UNKONWN DB
      */

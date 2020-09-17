@@ -284,10 +284,11 @@ class H2UserTest extends BaseTest {
     @Test
     @Order(21)
     void testSaveBatch() {
+        Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch0"))));
         Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"), new H2User("saveBatch4"))));
-        Assertions.assertEquals(4, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
+        Assertions.assertEquals(5, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
         Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"), new H2User("saveBatch8")), 2));
-        Assertions.assertEquals(8, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
+        Assertions.assertEquals(9, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
     }
 
     @Test

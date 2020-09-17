@@ -36,7 +36,7 @@ import java.util.List;
  * 重写执行器 {@link org.apache.ibatis.executor.SimpleExecutor}
  *
  * @author nieqiurong 2019/4/14.
- * @deprecated 3.3.3
+ * @deprecated 3.4.0
  */
 @Deprecated
 public class MybatisSimpleExecutor extends AbstractBaseExecutor {

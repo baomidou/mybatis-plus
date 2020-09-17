@@ -26,7 +26,7 @@ import net.sf.jsqlparser.expression.ValueListExpression;
  *
  * @author hubin
  * @since 2017-08-31
- * @deprecated 3.3.3 @2020-07-24 use {@link MybatisPlusInterceptor} {@link TenantLineInnerInterceptor} {@link TenantLineHandler}
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link TenantLineInnerInterceptor} {@link TenantLineHandler}
  */
 @Deprecated
 public interface TenantHandler {

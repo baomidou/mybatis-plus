@@ -263,6 +263,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param sqlMethod sqlMethod
      */
     protected String sqlStatement(String sqlMethod) {
+        //无法确定对应的mapper，只能用注入时候绑定的了。
         return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
     }
 

@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -44,17 +43,17 @@ import java.util.Map;
  * <br>
  * <p>How to use?</p>
  * <p>(1) Define an Entity and add {@link Version} annotation on one entity field.</p>
- * <p>(2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.</p>
+ * <p>(2) Add {@link OptimisticLockerInnerInterceptor} into mybatis plugin.</p>
  * <br>
  * <p>How to work?</p>
  * <p>if update entity with version column=1:</p>
- * <p>(1) no {@link OptimisticLockerInterceptor}:</p>
+ * <p>(1) no {@link OptimisticLockerInnerInterceptor}:</p>
  * <p>SQL: update tbl_test set name='abc' where id=100001;</p>
- * <p>(2) add {@link OptimisticLockerInterceptor}:</p>
+ * <p>(2) add {@link OptimisticLockerInnerInterceptor}:</p>
  * <p>SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;</p>
  *
  * @author yuxiaobin
- * @since 2020-06-24
+ * @since 3.4.0
  */
 @SuppressWarnings({"unchecked"})
 public class OptimisticLockerInnerInterceptor implements InnerInterceptor {

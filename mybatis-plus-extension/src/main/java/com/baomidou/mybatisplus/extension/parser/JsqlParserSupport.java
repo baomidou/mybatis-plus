@@ -14,6 +14,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * https://github.com/JSQLParser/JSqlParser
+ *
  * @author miemie
  * @since 2020-06-22
  */
@@ -26,11 +28,11 @@ public abstract class JsqlParserSupport {
 
     public String parserSingle(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Original SQL: " + sql);
+            logger.debug("original SQL: " + sql);
         }
         try {
             Statement statement = CCJSqlParserUtil.parse(sql);
-            return processParser(statement, 0, obj);
+            return processParser(statement, 0, sql, obj);
         } catch (JSQLParserException e) {
             throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e, sql);
         }
@@ -38,7 +40,7 @@ public abstract class JsqlParserSupport {
 
     public String parserMulti(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Original SQL: " + sql);
+            logger.debug("original SQL: " + sql);
         }
         try {
             // fixed github pull/295
@@ -49,7 +51,7 @@ public abstract class JsqlParserSupport {
                 if (i > 0) {
                     sb.append(StringPool.SEMICOLON);
                 }
-                sb.append(processParser(statement, i, obj));
+                sb.append(processParser(statement, i, sql, obj));
                 i++;
             }
             return sb.toString();
@@ -64,19 +66,22 @@ public abstract class JsqlParserSupport {
      * @param statement JsqlParser Statement
      * @return sql
      */
-    protected String processParser(Statement statement, int index, Object obj) {
-        if (statement instanceof Insert) {
-            this.processInsert((Insert) statement, index, obj);
-        } else if (statement instanceof Select) {
-            this.processSelect((Select) statement, index, obj);
-        } else if (statement instanceof Update) {
-            this.processUpdate((Update) statement, index, obj);
-        } else if (statement instanceof Delete) {
-            this.processDelete((Delete) statement, index, obj);
-        }
-        final String sql = statement.toString();
+    protected String processParser(Statement statement, int index, String sql, Object obj) {
         if (logger.isDebugEnabled()) {
-            logger.debug("parser sql: " + sql);
+            logger.debug("SQL to parse, SQL: " + sql);
+        }
+        if (statement instanceof Insert) {
+            this.processInsert((Insert) statement, index, sql, obj);
+        } else if (statement instanceof Select) {
+            this.processSelect((Select) statement, index, sql, obj);
+        } else if (statement instanceof Update) {
+            this.processUpdate((Update) statement, index, sql, obj);
+        } else if (statement instanceof Delete) {
+            this.processDelete((Delete) statement, index, sql, obj);
+        }
+        sql = statement.toString();
+        if (logger.isDebugEnabled()) {
+            logger.debug("parse the finished SQL: " + sql);
         }
         return sql;
     }
@@ -84,28 +89,28 @@ public abstract class JsqlParserSupport {
     /**
      * 新增
      */
-    protected void processInsert(Insert insert, int index, Object obj) {
+    protected void processInsert(Insert insert, int index, String sql, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 删除
      */
-    protected void processDelete(Delete delete, int index, Object obj) {
+    protected void processDelete(Delete delete, int index, String sql, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 更新
      */
-    protected void processUpdate(Update update, int index, Object obj) {
+    protected void processUpdate(Update update, int index, String sql, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 查询
      */
-    protected void processSelect(Select select, int index, Object obj) {
+    protected void processSelect(Select select, int index, String sql, Object obj) {
         throw new UnsupportedOperationException();
     }
 }

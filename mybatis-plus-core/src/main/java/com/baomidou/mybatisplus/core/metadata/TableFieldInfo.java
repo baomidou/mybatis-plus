@@ -65,7 +65,7 @@ public class TableFieldInfo implements Constants {
     /**
      * 是否是基本数据类型
      *
-     * @since 3.3.3 @2020-6-19
+     * @since 3.4.0 @2020-6-19
      */
     private final boolean isPrimitive;
     /**

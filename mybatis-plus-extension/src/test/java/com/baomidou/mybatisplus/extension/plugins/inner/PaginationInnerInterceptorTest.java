@@ -1,8 +1,9 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,8 +76,6 @@ class PaginationInnerInterceptorTest {
     }
 
     void assertsConcatOrderBy(String sql, String targetSql, OrderItem... orderItems) {
-        Page<?> page = new Page<>();
-        page.addOrder(orderItems);
-        assertThat(interceptor.concatOrderBy(sql, page)).isEqualTo(targetSql);
+        assertThat(interceptor.concatOrderBy(sql, Arrays.asList(orderItems))).isEqualTo(targetSql);
     }
 }

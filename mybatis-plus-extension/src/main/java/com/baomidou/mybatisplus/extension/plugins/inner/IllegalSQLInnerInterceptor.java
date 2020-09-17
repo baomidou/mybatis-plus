@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
@@ -74,7 +75,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>7.where条件使用了 使用子查询</p>
  *
  * @author willenfoo
- * @since 2020-06-24
+ * @since 3.4.0
  */
 public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
@@ -92,9 +93,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         PluginUtils.MPStatementHandler mpStatementHandler = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpStatementHandler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || SqlParserHelper.getSqlParserInfo(ms)) {
-            return;
-        }
+        if (sct == SqlCommandType.INSERT || InterceptorIgnoreHelper.willIgnoreIllegalSql(ms.getId())
+            || SqlParserHelper.getSqlParserInfo(ms)) return;
         BoundSql boundSql = mpStatementHandler.boundSql();
         String originalSql = boundSql.getSql();
         logger.debug("检查SQL是否合规，SQL:" + originalSql);
@@ -109,7 +109,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processSelect(Select select, int index, Object obj) {
+    protected void processSelect(Select select, int index, String sql, Object obj) {
         PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
         Expression where = plainSelect.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
@@ -120,7 +120,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processUpdate(Update update, int index, Object obj) {
+    protected void processUpdate(Update update, int index, String sql, Object obj) {
         Expression where = update.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
         Table table = update.getTable();
@@ -130,7 +130,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     @Override
-    protected void processDelete(Delete delete, int index, Object obj) {
+    protected void processDelete(Delete delete, int index, String sql, Object obj) {
         Expression where = delete.getWhere();
         Assert.notNull(where, "非法SQL，必须要有where条件");
         Table table = delete.getTable();

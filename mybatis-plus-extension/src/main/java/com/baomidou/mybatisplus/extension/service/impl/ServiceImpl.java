@@ -38,7 +38,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ）
@@ -61,6 +60,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     protected Class<?> entityClass = currentModelClass();
 
+    protected Class<?> mapperClass = currentMapperClass();
+
     /**
      * 判断数据库操作是否成功
      *
@@ -71,6 +72,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Deprecated
     protected boolean retBool(Integer result) {
         return SqlHelper.retBool(result);
+    }
+
+    protected Class<T> currentMapperClass() {
+        return (Class<T>) ReflectionKit.getSuperClassGenericType(getClass(), 0);
     }
 
     protected Class<T> currentModelClass() {
@@ -103,7 +108,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      *
      * @param sqlMethod ignore
      * @return ignore
+     * @see #getSqlStatement(SqlMethod)
+     * @deprecated 3.4.0
      */
+    @Deprecated
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(entityClass).getSqlStatement(sqlMethod.getMethod());
     }
@@ -118,8 +126,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+        String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+    }
+
+    /**
+     * 获取mapperStatementId
+     *
+     * @param sqlMethod 方法名
+     * @return 命名id
+     * @since 3.4.0
+     */
+    protected String getSqlStatement(SqlMethod sqlMethod) {
+        return SqlHelper.getSqlStatement(mapperClass, sqlMethod);
     }
 
     /**
@@ -149,20 +168,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, entityList, batchSize, entity -> {
+        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.mapperClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = ReflectionKit.getFieldValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal));
+            return StringUtils.checkValNull(idVal)
+                || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
         }, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
-            sqlSession.update(tableInfo.getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
+            sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
         });
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
-        String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
+        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
@@ -226,19 +246,5 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
-    
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean saveOrUpdateBatch(Collection<T> list, int batchSize, Predicate<T> predicate, Function<T, Wrapper<T>> function) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.log, list, batchSize, predicate, ((sqlSession, entity) -> {
-            String sqlStatement = tableInfo.getSqlStatement(SqlMethod.UPDATE.getMethod());
-            MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
-            Wrapper<T> wrapper = function.apply(entity);
-            param.put(Constants.ENTITY, entity);
-            param.put(Constants.WRAPPER, wrapper);
-            sqlSession.update(sqlStatement, param);
-        }));
-    }
-    
+
 }

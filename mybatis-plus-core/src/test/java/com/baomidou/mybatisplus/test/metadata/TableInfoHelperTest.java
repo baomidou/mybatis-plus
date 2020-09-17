@@ -185,4 +185,36 @@ class TableInfoHelperTest {
         @Version
         private Integer version2;
     }
+
+    @Test
+    void testTableNamePrefix() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        GlobalConfig config = GlobalConfigUtils.defaults();
+        config.getDbConfig().setTablePrefix("ttt_");
+        GlobalConfigUtils.setGlobalConfig(configuration, config);
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Table.class);
+        assertThat(tableInfo.getTableName()).isEqualTo("xxx");
+    }
+
+    @Data
+    @TableName("xxx")
+    private static class Table {
+
+    }
+
+    @Test
+    void testTableNamePrefix2() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        GlobalConfig config = GlobalConfigUtils.defaults();
+        config.getDbConfig().setTablePrefix("ttt_");
+        GlobalConfigUtils.setGlobalConfig(configuration, config);
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Table2.class);
+        assertThat(tableInfo.getTableName()).isEqualTo("ttt_xxx");
+    }
+
+    @Data
+    @TableName(value = "xxx", keepGlobalPrefix = true)
+    private static class Table2 {
+
+    }
 }

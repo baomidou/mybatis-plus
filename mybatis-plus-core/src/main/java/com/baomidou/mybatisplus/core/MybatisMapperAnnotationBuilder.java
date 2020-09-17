@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Getter;
 import org.apache.ibatis.annotations.*;
@@ -92,9 +93,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         if (!configuration.isResourceLoaded(resource)) {
             loadXmlResource();
             configuration.addLoadedResource(resource);
-            assistant.setCurrentNamespace(type.getName());
+            String mapperName = type.getName();
+            assistant.setCurrentNamespace(mapperName);
             parseCache();
             parseCacheRef();
+            InterceptorIgnoreHelper.InterceptorIgnoreCache cache = InterceptorIgnoreHelper.initSqlParserInfoCache(type);
             for (Method method : type.getMethods()) {
                 if (!canHaveStatement(method)) {
                     continue;
@@ -106,7 +109,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 try {
                     parseStatement(method);
                     // TODO 加入 SqlParser 注解过滤缓存
-                    SqlParserHelper.initSqlParserInfoCache(type.getName(), method);
+                    InterceptorIgnoreHelper.initSqlParserInfoCache(cache, mapperName, method);
+                    SqlParserHelper.initSqlParserInfoCache(mapperName, method);
                 } catch (IncompleteElementException e) {
                     // TODO 使用 MybatisMethodResolver 而不是 MethodResolver
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));

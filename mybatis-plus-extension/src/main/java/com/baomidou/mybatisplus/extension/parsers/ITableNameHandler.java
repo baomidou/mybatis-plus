@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.extension.parsers;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
@@ -22,7 +25,9 @@ import org.apache.ibatis.reflection.MetaObject;
  *
  * @author jobob
  * @since 2019-04-23
+ * @deprecated 3.4.0 @2020-07-30 use {@link TableNameHandler} {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
  */
+@Deprecated
 public interface ITableNameHandler {
 
     /**
@@ -34,5 +39,4 @@ public interface ITableNameHandler {
      * @return String
      */
     String dynamicTableName(MetaObject metaObject, String sql, String tableName);
-
 }

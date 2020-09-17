@@ -143,7 +143,7 @@ public class TableInfo implements Constants {
     /**
      * 表字段是否启用了逻辑删除
      *
-     * @since 3.3.3
+     * @since 3.4.0
      */
     @Getter
     @Setter(AccessLevel.NONE)
@@ -151,7 +151,7 @@ public class TableInfo implements Constants {
     /**
      * 逻辑删除字段
      *
-     * @since 3.3.3
+     * @since 3.4.0
      */
     @Getter
     @Setter(AccessLevel.NONE)
@@ -182,7 +182,9 @@ public class TableInfo implements Constants {
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
      * @return SQL Statement
+     * @deprecated 3.4.0 如果存在的多mapper共用一个实体的情况，这里可能会出现获取命名空间错误的情况
      */
+    @Deprecated
     public String getSqlStatement(String sqlMethod) {
         return currentNamespace + DOT + sqlMethod;
     }

@@ -46,6 +46,8 @@ public class TypeConverts {
                 return DmTypeConvert.INSTANCE;
             case KINGBASE_ES:
                 return KingbaseESTypeConvert.INSTANCE;
+            case OSCAR:
+                return OscarTypeConvert.INSTANCE;
             case MYSQL:
             case MARIADB:
                 return MySqlTypeConvert.INSTANCE;
@@ -55,6 +57,8 @@ public class TypeConverts {
                 return SqliteTypeConvert.INSTANCE;
             case SQL_SERVER:
                 return SqlServerTypeConvert.INSTANCE;
+            case FIREBIRD:
+                return FirebirdTypeConvert.INSTANCE;
         }
         return null;
     }

@@ -211,10 +211,10 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 2);
     }
 
-    @Test
-    void testCustomSaveOrUpdateBatch(){
-        Assertions.assertTrue(cacheService.testCustomSaveOrUpdateBatch());
-    }
+//    @Test
+//    void testCustomSaveOrUpdateBatch(){
+//        Assertions.assertTrue(cacheService.testCustomSaveOrUpdateBatch());
+//    }
     
     private Cache getCache() {
         return sqlSessionFactory.getConfiguration().getCache(CacheMapper.class.getName());

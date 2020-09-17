@@ -187,7 +187,7 @@ public final class Wrappers {
         }
 
         @Override
-        protected Class<T> getEntityClass() {
+        public Class<T> getEntityClass() {
             return null;
         }
 

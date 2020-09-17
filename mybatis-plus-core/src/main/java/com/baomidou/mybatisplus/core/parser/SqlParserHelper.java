@@ -29,7 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2018-07-22
+ * @deprecated 3.4.0
  */
+@Deprecated
 public class SqlParserHelper {
 
     public static final String DELEGATE_MAPPED_STATEMENT = "delegate.mappedStatement";

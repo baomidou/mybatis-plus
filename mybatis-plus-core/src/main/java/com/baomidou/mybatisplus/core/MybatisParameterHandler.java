@@ -44,7 +44,7 @@ import java.util.Map;
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
  *
  * @author nieqiuqiu 2020/6/5
- * @since 3.3.3
+ * @since 3.4.0
  */
 public class MybatisParameterHandler implements ParameterHandler {
 

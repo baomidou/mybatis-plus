@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  *
  * @author hubin
  * @since 2016-01-23
- * @deprecated 3.3.3 @2020-06-30 use {@link MybatisPlusInterceptor} {@link PaginationInnerInterceptor}
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link PaginationInnerInterceptor}
  */
 @Setter
 @Deprecated

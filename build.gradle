@@ -46,6 +46,7 @@ ext {
         "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
         "cglib"                      : "cglib:cglib:3.3.0",
         "lombok"                     : "org.projectlombok:lombok:1.18.12",
+        "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.6",
@@ -72,6 +73,7 @@ ext {
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.21",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3.1",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.1.java8",
         //code generator
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
         "freemarker"                 : "org.freemarker:freemarker:2.3.30",
@@ -86,7 +88,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.3.3.6-SNAPSHOT"
+    version = "3.4.0.2-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"

@@ -16,8 +16,10 @@
 package com.baomidou.mybatisplus.extension.plugins.handler;
 
 /**
+ * 动态表名处理器
+ *
  * @author miemie
- * @since 2020-07-16
+ * @since 3.4.0
  */
 public interface TableNameHandler {
 

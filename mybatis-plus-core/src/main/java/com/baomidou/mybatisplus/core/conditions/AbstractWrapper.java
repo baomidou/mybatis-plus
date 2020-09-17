@@ -87,7 +87,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return typedThis;
     }
 
-    protected Class<T> getEntityClass() {
+    public Class<T> getEntityClass() {
         if (entityClass == null && entity != null) {
             entityClass = (Class<T>) entity.getClass();
         }

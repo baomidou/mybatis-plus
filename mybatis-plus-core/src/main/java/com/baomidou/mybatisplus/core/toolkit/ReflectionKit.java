@@ -175,7 +175,7 @@ public final class ReflectionKit {
      * </p>
      *
      * @param clazz 反射类
-     * @deprecated 3.3.3
+     * @deprecated 3.4.0
      */
     @Deprecated
     public static List<Field> doGetFieldList(Class<?> clazz) {

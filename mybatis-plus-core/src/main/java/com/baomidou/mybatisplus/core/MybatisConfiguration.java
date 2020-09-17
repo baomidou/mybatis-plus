@@ -70,7 +70,7 @@ public class MybatisConfiguration extends Configuration {
     /**
      * 是否生成短key缓存
      *
-     * @since 3.3.3
+     * @since 3.4.0
      */
     @Setter
     @Getter
@@ -91,7 +91,7 @@ public class MybatisConfiguration extends Configuration {
 
     /**
      * @return GlobalConfig
-     * @deprecated 3.3.3 please use {@link GlobalConfigUtils#getGlobalConfig(Configuration)}
+     * @deprecated 3.4.0 please use {@link GlobalConfigUtils#getGlobalConfig(Configuration)}
      */
     @Deprecated
     public GlobalConfig getGlobalConfig() {
@@ -100,7 +100,7 @@ public class MybatisConfiguration extends Configuration {
 
     /**
      * @param globalConfig GlobalConfig
-     * @deprecated 3.3.3 please use {@link GlobalConfigUtils#setGlobalConfig(Configuration, GlobalConfig)}
+     * @deprecated 3.4.0 please use {@link GlobalConfigUtils#setGlobalConfig(Configuration, GlobalConfig)}
      */
     @Deprecated
     public void setGlobalConfig(GlobalConfig globalConfig) {

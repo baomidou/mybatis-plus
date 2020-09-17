@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.Map;
@@ -109,8 +110,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @Override
     public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
-        super.setEntityClass(entityClass);
-        this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getEntityClass()).chooseSelect(predicate));
+        if (entityClass == null) {
+            entityClass = getEntityClass();
+        } else {
+            setEntityClass(entityClass);
+        }
+        Assert.notNull(entityClass, "entityClass can not be null");
+        this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate));
         return typedThis;
     }
 

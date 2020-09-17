@@ -39,7 +39,8 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.GBASE, new MySqlDialect());
         dialect_enum_map.put(DbType.OSCAR, new MySqlDialect());
         dialect_enum_map.put(DbType.XU_GU, new MySqlDialect());
-        dialect_enum_map.put(DbType.CLICKHOUSE, new MySqlDialect());
+        dialect_enum_map.put(DbType.CLICK_HOUSE, new MySqlDialect());
+        dialect_enum_map.put(DbType.OCEAN_BASE, new MySqlDialect());
         // postgresql and children
         dialect_enum_map.put(DbType.POSTGRE_SQL, new PostgreDialect());
         dialect_enum_map.put(DbType.H2, new PostgreDialect());
@@ -56,6 +57,7 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.DB2, new DB2Dialect());
         dialect_enum_map.put(DbType.SQL_SERVER2005, new SQLServer2005Dialect());
         dialect_enum_map.put(DbType.SQL_SERVER, new SQLServerDialect());
+        dialect_enum_map.put(DbType.SYBASE, new SybaseDialect());
     }
 
     public IDialect getDialect(DbType dbType) {

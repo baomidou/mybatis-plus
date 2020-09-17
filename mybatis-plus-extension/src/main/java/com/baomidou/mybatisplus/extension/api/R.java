@@ -30,6 +30,8 @@ import lombok.experimental.Accessors;
  * @author hubin
  * @since 2018-06-05
  */
+// 使用度较低，如果使用请及时迁移本地 3.5.0 移除
+@Deprecated
 @Data
 @Accessors(chain = true)
 public class R<T> implements Serializable {
@@ -38,7 +40,7 @@ public class R<T> implements Serializable {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
      * 业务错误码
      */

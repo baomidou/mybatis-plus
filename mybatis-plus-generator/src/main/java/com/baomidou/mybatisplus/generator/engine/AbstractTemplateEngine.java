@@ -132,7 +132,7 @@ public abstract class AbstractTemplateEngine {
         }
         return this;
     }
-    
+
     protected void writerFile(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
         if (StringUtils.isNotBlank(templatePath)) this.writer(objectMap, templatePath, outputFile);
     }
@@ -227,15 +227,15 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("chainModel", config.getStrategyConfig().isChainModel());
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
-        objectMap.put("superEntityClass", getSuperClassName(config.getSuperEntityClass()));
-        objectMap.put("superMapperClassPackage", config.getSuperMapperClass());
-        objectMap.put("superMapperClass", getSuperClassName(config.getSuperMapperClass()));
-        objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
-        objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
-        objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
-        objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getSuperControllerClass()));
-        objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
+        objectMap.put("superEntityClass", getSuperClassName(config.getStrategyConfig().getSuperEntityClass()));
+        objectMap.put("superMapperClassPackage", config.getStrategyConfig().getSuperMapperClass());
+        objectMap.put("superMapperClass", getSuperClassName(config.getStrategyConfig().getSuperMapperClass()));
+        objectMap.put("superServiceClassPackage", config.getStrategyConfig().getSuperServiceClass());
+        objectMap.put("superServiceClass", getSuperClassName(config.getStrategyConfig().getSuperServiceClass()));
+        objectMap.put("superServiceImplClassPackage", config.getStrategyConfig().getSuperServiceImplClass());
+        objectMap.put("superServiceImplClass", getSuperClassName(config.getStrategyConfig().getSuperServiceImplClass()));
+        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getStrategyConfig().getSuperControllerClass()));
+        objectMap.put("superControllerClass", getSuperClassName(config.getStrategyConfig().getSuperControllerClass()));
         return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 

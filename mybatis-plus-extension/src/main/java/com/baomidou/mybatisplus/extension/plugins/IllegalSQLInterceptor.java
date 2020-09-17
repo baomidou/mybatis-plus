@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor;
 import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -80,7 +81,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author willenfoo
  * @since 2018-03-22
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link IllegalSQLInnerInterceptor}
  */
+@Deprecated
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class IllegalSQLInterceptor implements Interceptor {
 

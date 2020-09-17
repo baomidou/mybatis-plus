@@ -19,5 +19,5 @@ public interface ICacheService extends IService<CacheModel> {
 
     long testBatchTransactionalClear7();
 
-    boolean testCustomSaveOrUpdateBatch();
+//    boolean testCustomSaveOrUpdateBatch();
 }

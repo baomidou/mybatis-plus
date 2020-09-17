@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 自定义枚举接口
  *
  * @author hubin
- * @since 2017-10-11
+ * @since 3.4.0
  */
 public interface IEnum<T extends Serializable> {
 

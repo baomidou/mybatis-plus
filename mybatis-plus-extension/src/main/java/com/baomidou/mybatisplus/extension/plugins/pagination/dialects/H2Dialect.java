@@ -13,28 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.tenant;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 /**
- * 租户处理器（ schema 级 ）
+ * H2 数据库分页方言
  *
  * @author hubin
- * @since 2017-08-31
+ * @since 2016-11-10
  */
-public interface TenantSchemaHandler {
-
-    /**
-     * 获取 schema 名
-     *
-     * @return schema 名
-     */
-    String getTenantSchema();
-
-    /**
-     * 根据表名判断是否进行过滤
-     *
-     * @param tableName 表名
-     * @return 是否进行过滤
-     */
-    boolean doTableFilter(String tableName);
+@Deprecated
+public class H2Dialect extends PostgreDialect {
 }

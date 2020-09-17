@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.BaseDbTest;
+import lombok.Data;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,12 @@ public class PaginationTest extends BaseDbTest<EntityMapper> {
             assertThat(result.getRecords().size()).isEqualTo(3);
         });
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
+
+        doTest(i -> {
+            Page<?> page = new Page<>(1, 2);
+            page.setCountId("otherCount");
+            i.otherPage(page, new Tj());
+        });
     }
 
     @Override
@@ -89,5 +96,10 @@ public class PaginationTest extends BaseDbTest<EntityMapper> {
             "id BIGINT NOT NULL," +
             "name VARCHAR(30) NULL DEFAULT NULL," +
             "PRIMARY KEY (id))");
+    }
+
+    @Data
+    public static class Tj {
+        private boolean name = true;
     }
 }

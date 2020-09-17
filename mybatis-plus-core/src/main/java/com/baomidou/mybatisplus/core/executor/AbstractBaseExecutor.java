@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.executor;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-
 import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.BaseExecutor;
@@ -38,7 +37,7 @@ import java.util.Optional;
  * 重写执行器 {@link org.apache.ibatis.executor.BaseExecutor}
  *
  * @author nieqiurong 2019/4/22.
- * @deprecated 3.3.3
+ * @deprecated 3.4.0
  */
 @Deprecated
 public abstract class AbstractBaseExecutor extends BaseExecutor {

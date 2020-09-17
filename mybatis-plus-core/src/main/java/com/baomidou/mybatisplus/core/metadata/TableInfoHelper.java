@@ -69,9 +69,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null
-            || ReflectionKit.isPrimitiveOrWrapper(clazz)
-            || clazz == String.class) {
+        if (clazz == null || ReflectionKit.isPrimitiveOrWrapper(clazz) || clazz == String.class) {
             return null;
         }
         // https://github.com/baomidou/mybatis-plus/issues/299
@@ -149,12 +147,11 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
 
-        /* 缓存 lambda */
-        LambdaUtils.installCache(tableInfo);
-
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
 
+        /* 缓存 lambda */
+        LambdaUtils.installCache(tableInfo);
         return tableInfo;
     }
 

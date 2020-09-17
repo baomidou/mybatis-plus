@@ -44,7 +44,7 @@ public interface IPage<T> extends Serializable {
      * KEY/VALUE 条件
      *
      * @return ignore
-     * @deprecated 3.3.3 @2020-06-30
+     * @deprecated 3.4.0 @2020-06-30
      */
     @Deprecated
     default Map<Object, Object> condition() {
@@ -73,13 +73,17 @@ public interface IPage<T> extends Serializable {
      * 计算当前分页偏移量
      */
     default long offset() {
-        return getCurrent() > 0 ? (getCurrent() - 1) * getSize() : 0;
+        long current = getCurrent();
+        if (current <= 1L) {
+            return 0L;
+        }
+        return (current - 1) * getSize();
     }
 
     /**
      * 最大每页分页数限制,优先级高于分页插件内的 maxLimit
      *
-     * @since 3.3.3 @2020-07-17
+     * @since 3.4.0 @2020-07-17
      */
     default Long maxLimit() {
         return null;
@@ -113,7 +117,7 @@ public interface IPage<T> extends Serializable {
      *
      * @param hit 是否命中
      * @since 3.3.1
-     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
+     * @deprecated 3.4.0 @2020-06-30 缓存遵循mybatis的一或二缓
      */
     @Deprecated
     default void hitCount(boolean hit) {
@@ -125,7 +129,7 @@ public interface IPage<T> extends Serializable {
      *
      * @return 是否命中count缓存
      * @since 3.3.1
-     * @deprecated 3.3.3 @2020-06-30 缓存遵循mybatis的一或二缓
+     * @deprecated 3.4.0 @2020-06-30 缓存遵循mybatis的一或二缓
      */
     @Deprecated
     default boolean isHitCount() {
@@ -195,9 +199,11 @@ public interface IPage<T> extends Serializable {
 
     /**
      * 老分页插件不支持
+     * <p>
+     * MappedStatement 的 id
      *
-     * @return count的method
-     * @since 3.3.3 @2020-06-19
+     * @return id
+     * @since 3.4.0 @2020-06-19
      */
     default String countId() {
         return null;
@@ -208,7 +214,7 @@ public interface IPage<T> extends Serializable {
      *
      * @return 缓存key值
      * @since 3.3.2
-     * @deprecated 3.3.3 @2020-06-30
+     * @deprecated 3.4.0 @2020-06-30
      */
     @Deprecated
     default String cacheKey() {

@@ -26,8 +26,9 @@ import net.sf.jsqlparser.statement.update.Update;
  * 攻击 SQL 阻断解析器
  *
  * @author hubin
- * @since 2018-07-17
+ * @since 2018-07-17 use {@link com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor}
  */
+@Deprecated
 public class BlockAttackSqlParser extends AbstractJsqlParser {
 
     @Override

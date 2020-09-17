@@ -23,13 +23,15 @@ import com.baomidou.mybatisplus.extension.api.IErrorCode;
  * @author hubin
  * @since 2017-06-26
  */
+// 使用度较低，如果使用请及时迁移本地 3.5.0 移除
+@Deprecated
 public class ApiException extends RuntimeException {
 
     /**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = -5885155226898287919L;
-	
+
 	/**
      * 错误码
      */

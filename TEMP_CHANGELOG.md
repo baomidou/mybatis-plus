@@ -1,9 +1,2 @@
-- fix: `@TableName.autoResultMap=true` 情况下, 内置的 `selectBody` 将不会进行 as ,使用了的需要注意!!!
-- feat: 新增 `mybatis-plus-boot-starter-test` 模块
-- fix: `MetaObjectHandler` 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
-- feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
-- feat: jsqlparser up to `3.2`
-- feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
-- feat: 分页方言加入 gbase,clickhouse,oscar 支持
-- feat: Wrapper 新增api `not(boolean condition, Consumer<Param> consumer)`
-- feat: 新增 `MybatisPlusInterceptor` 解决 多租户和分页 插件一级和二级缓存不正确问题
+- feat: 公开 AbstractWrapper.getEntityClass
+- fix: 新多租户插件完善子查询,支持 比较符号,in,EXISTS,NOT EXISTS

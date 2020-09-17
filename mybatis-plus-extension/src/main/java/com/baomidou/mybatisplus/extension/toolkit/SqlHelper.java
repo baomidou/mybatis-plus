@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
@@ -36,8 +37,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * SQL 辅助类
@@ -158,7 +159,7 @@ public final class SqlHelper {
      * @param log         日志对象
      * @param consumer    consumer
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
         SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
@@ -203,7 +204,7 @@ public final class SqlHelper {
      * @param consumer    consumer
      * @param <E>         T
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
@@ -231,16 +232,28 @@ public final class SqlHelper {
      * @param consumer    consumer（更新处理） notNull
      * @param <E>         E
      * @return 操作结果
-     * @since 3.3.3
+     * @since 3.4.0
      */
-    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, Predicate<E> predicate, BiConsumer<SqlSession, E> consumer) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
+        String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
         return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
-            if (predicate.test(entity)) {
-                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
+            if (predicate.test(sqlSession, entity)) {
+                sqlSession.insert(sqlStatement, entity);
             } else {
                 consumer.accept(sqlSession, entity);
             }
         });
     }
+
+    /**
+     * 获取mapperStatementId
+     *
+     * @param sqlMethod 方法名
+     * @return 命名id
+     * @since 3.4.0
+     */
+    public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
+        return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
+    }
+
 }

@@ -136,7 +136,12 @@ public class DataSourceConfig {
             return DbType.DM;
         } else if (str.contains("zenith")) {
             return DbType.GAUSS;
-        } else {
+        } else if (str.contains("oscar")) {
+            return DbType.OSCAR;
+        } else if (str.contains("firebird")) {
+            return DbType.FIREBIRD;
+        }
+        else {
             return DbType.OTHER;
         }
     }

@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.extension.parsers;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.reflection.MetaObject;
@@ -31,9 +33,11 @@ import java.util.Map;
  *
  * @author jobob
  * @since 2019-04-23
+ * @deprecated 3.4.0 @2020-07-30 use {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
  */
 @Data
 @Accessors(chain = true)
+@Deprecated
 public class DynamicTableNameParser implements ISqlParser {
     private Map<String, ITableNameHandler> tableNameHandlerMap;
 

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
@@ -158,8 +159,8 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
      * @since 3.3.0
      */
     protected boolean equalsValue(Object sourceValue, Object targetValue) {
-        String sValue = Objects.toString(sourceValue).trim();
-        String tValue = Objects.toString(targetValue).trim();
+        String sValue = StringUtils.toStringTrim(sourceValue);
+        String tValue = StringUtils.toStringTrim(targetValue);
         if (sourceValue instanceof Number && targetValue instanceof Number
             && new BigDecimal(sValue).compareTo(new BigDecimal(tValue)) == 0) {
             return true;

@@ -29,22 +29,22 @@ class DynamicTableNameInnerInterceptorTest {
         // 表名相互包含
         @Language("SQL")
         String origin = "SELECT * FROM t_user, t_user_role", replaced = "SELECT * FROM t_user_r, t_user_role";
-        assertEquals(replaced, interceptor.doIt(origin));
+        assertEquals(replaced, interceptor.changeTable(origin));
         // 表名在末尾
         origin = "SELECT * FROM t_user";
         replaced = "SELECT * FROM t_user_r";
-        assertEquals(replaced, interceptor.doIt(origin));
+        assertEquals(replaced, interceptor.changeTable(origin));
         // 表名前后有注释
         origin = "SELECT * FROM /**/t_user/* t_user */";
         replaced = "SELECT * FROM /**/t_user_r/* t_user */";
-        assertEquals(replaced, interceptor.doIt(origin));
+        assertEquals(replaced, interceptor.changeTable(origin));
         // 值中带有表名
         origin = "SELECT * FROM t_user WHERE name = 't_user'";
         replaced = "SELECT * FROM t_user_r WHERE name = 't_user'";
-        assertEquals(replaced, interceptor.doIt(origin));
+        assertEquals(replaced, interceptor.changeTable(origin));
         // 别名被声明要替换
         origin = "SELECT t_user.* FROM t_user_real t_user";
-        assertEquals(origin, interceptor.doIt(origin));
+        assertEquals(origin, interceptor.changeTable(origin));
     }
 
     /**

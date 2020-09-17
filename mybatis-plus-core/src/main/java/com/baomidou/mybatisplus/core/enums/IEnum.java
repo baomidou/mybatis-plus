@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  * @author hubin
  * @since 2017-10-11
- * @deprecated 3.3.3 @2020-06-30
+ * @deprecated 3.4.0
  */
 @Deprecated
 public interface IEnum<T extends Serializable> extends com.baomidou.mybatisplus.annotation.IEnum<T> {
