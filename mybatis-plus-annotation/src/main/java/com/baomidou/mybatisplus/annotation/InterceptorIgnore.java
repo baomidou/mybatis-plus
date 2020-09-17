@@ -40,4 +40,9 @@ public @interface InterceptorIgnore {
      * 垃圾SQL拦截 {@link com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor}
      */
     String illegalSql() default "";
+
+    /**
+     * 数据权限 {@link com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor}
+     */
+    String dataPermission() default "";
 }

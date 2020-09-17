@@ -14,6 +14,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * https://github.com/JSQLParser/JSqlParser
+ *
  * @author miemie
  * @since 2020-06-22
  */

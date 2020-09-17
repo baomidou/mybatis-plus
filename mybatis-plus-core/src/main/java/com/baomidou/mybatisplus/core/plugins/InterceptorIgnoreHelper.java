@@ -74,6 +74,10 @@ public class InterceptorIgnoreHelper {
         return willIgnore(id, i -> i.getIllegalSql() != null && i.getIllegalSql());
     }
 
+    public static boolean willIgnoreDataPermission(String id) {
+        return willIgnore(id, i -> i.getDataPermission() != null && i.getDataPermission());
+    }
+
     public static boolean willIgnore(String id, Function<InterceptorIgnoreCache, Boolean> function) {
         InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
         if (cache != null) {
@@ -130,5 +134,6 @@ public class InterceptorIgnoreHelper {
         private Boolean dynamicTableName;
         private Boolean blockAttack;
         private Boolean illegalSql;
+        private Boolean dataPermission;
     }
 }
