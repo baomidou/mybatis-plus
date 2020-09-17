@@ -105,6 +105,7 @@ public class AutoGenerator {
         // 模板引擎初始化执行文件输出
         templateEngine.init(this.pretreatmentConfigBuilder(config)).mkdirs().batchOutput().open();
         logger.debug("==========================文件生成完成！！！==========================");
+        config.close();
     }
 
     /**

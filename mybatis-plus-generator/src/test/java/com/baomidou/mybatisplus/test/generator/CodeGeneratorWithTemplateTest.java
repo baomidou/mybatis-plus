@@ -46,7 +46,7 @@ class CodeGeneratorWithTemplateTest {
     /**
      * 是否去掉生成实体的属性名前缀
      */
-    private String[] fieldPrefix = null;
+    private String[] fieldPrefix = new String[]{};
     /**
      * 生成的Service 接口类名是否以I开头
      * <p>默认是以I开头</p>

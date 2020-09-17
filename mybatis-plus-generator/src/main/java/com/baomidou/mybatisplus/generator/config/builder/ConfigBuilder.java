@@ -22,8 +22,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
-import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.querys.DecoratorDbQuery;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -84,7 +84,10 @@ public class ConfigBuilder {
      * 过滤正则
      */
     private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:'\",<.>?]+");
-
+    /**
+     * 表数据查询
+     */
+    private final DecoratorDbQuery dbQuery;
     /**
      * 在构造器中处理配置
      *
@@ -96,18 +99,14 @@ public class ConfigBuilder {
      */
     public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
                          TemplateConfig template, GlobalConfig globalConfig) {
+        this.connection = dataSourceConfig.getConn();
+        this.dataSourceConfig = dataSourceConfig;
+        this.dbQuery = (DecoratorDbQuery) dataSourceConfig.getDbQuery();
         // 全局配置
         this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
         // 模板配置
         this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
-        // 包配置
-        if (null == packageConfig) {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), new PackageConfig());
-        } else {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig);
-        }
-        this.dataSourceConfig = dataSourceConfig;
-        this.connection = dataSourceConfig.getConn();
+        handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig == null ? new PackageConfig() : packageConfig);
         // 策略配置
         this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
         this.tableInfoList = getTablesInfo(this.strategyConfig);
@@ -303,45 +302,8 @@ public class ConfigBuilder {
 
         //不存在的表名
         Set<String> notExistTables = new HashSet<>();
-        DbType dbType = this.dataSourceConfig.getDbType();
-        IDbQuery dbQuery = this.dataSourceConfig.getDbQuery();
         try {
-            String tablesSql = dataSourceConfig.getDbQuery().tablesSql();
-            if (DbType.POSTGRE_SQL == dbType) {
-                String schema = dataSourceConfig.getSchemaName();
-                if (schema == null) {
-                    //pg 默认 schema=public
-                    schema = "public";
-                    dataSourceConfig.setSchemaName(schema);
-                }
-                tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.KINGBASE_ES == dbType) {
-                String schema = dataSourceConfig.getSchemaName();
-                if (schema == null) {
-                    //kingbase 默认 schema=PUBLIC
-                    schema = "PUBLIC";
-                    dataSourceConfig.setSchemaName(schema);
-                }
-                tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.DB2 == dbType) {
-                String schema = dataSourceConfig.getSchemaName();
-                if (schema == null) {
-                    //db2 默认 schema=current schema
-                    schema = "current schema";
-                    dataSourceConfig.setSchemaName(schema);
-                }
-                tablesSql = String.format(tablesSql, schema);
-            }
-            //oracle数据库表太多，出现最大游标错误
-            else if (DbType.ORACLE == dbType) {
-                String schema = dataSourceConfig.getSchemaName();
-                //oracle 默认 schema=username
-                if (schema == null) {
-                    schema = dataSourceConfig.getUsername().toUpperCase();
-                    dataSourceConfig.setSchemaName(schema);
-                }
-                tablesSql = String.format(tablesSql, schema);
-            }
+            String tablesSql = dbQuery.tablesSql();
             StringBuilder sql = new StringBuilder(tablesSql);
             if (config.isEnableSqlFilter()) {
                 if (config.getLikeTable() != null) {
@@ -455,24 +417,11 @@ public class ConfigBuilder {
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
         DbType dbType = this.dataSourceConfig.getDbType();
-        IDbQuery dbQuery = dataSourceConfig.getDbQuery();
         String tableName = tableInfo.getName();
         try {
-            String tableFieldsSql = dbQuery.tableFieldsSql();
+            String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
             Set<String> h2PkColumns = new HashSet<>();
-            if (DbType.POSTGRE_SQL == dbType) {
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
-            } else if (DbType.KINGBASE_ES == dbType) {
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
-            } else if (DbType.DB2 == dbType) {
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
-            } else if (DbType.ORACLE == dbType) {
-                tableName = tableName.toUpperCase();
-                tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableName);
-            } else if (DbType.DM == dbType) {
-                tableName = tableName.toUpperCase();
-                tableFieldsSql = String.format(tableFieldsSql, tableName);
-            } else if (DbType.H2 == dbType) {
+            if (DbType.H2 == dbType) {
                 try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
                     while (pkResults.next()) {
@@ -482,9 +431,6 @@ public class ConfigBuilder {
                         }
                     }
                 }
-                tableFieldsSql = String.format(tableFieldsSql, tableName);
-            } else {
-                tableFieldsSql = String.format(tableFieldsSql, tableName);
             }
             try (
                 PreparedStatement preparedStatement = connection.prepareStatement(tableFieldsSql);
@@ -546,12 +492,11 @@ public class ConfigBuilder {
                         field.setComment(formatComment(results.getString(fieldCommentColumn)));
                     }
                     // 填充逻辑判断
-                    List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
-                    if (null != tableFillList) {
-                        // 忽略大写字段问题
-                        tableFillList.stream().filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
-                            .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
-                    }
+                    getStrategyConfig().getTableFillList()
+                        .stream()
+                        //忽略大写字段问题
+                        .filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
+                        .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
                     if (strategyConfig.includeSuperEntityColumns(field.getName())) {
                         // 跳过公共字段
                         commonFieldList.add(field);
@@ -680,6 +625,17 @@ public class ConfigBuilder {
      */
     public String formatComment(String comment) {
         return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+    }
+
+    public void close() {
+        //暂时只有数据库连接需要关闭
+        Optional.ofNullable(connection).ifPresent((con) -> {
+            try {
+                con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        });
     }
 
 }

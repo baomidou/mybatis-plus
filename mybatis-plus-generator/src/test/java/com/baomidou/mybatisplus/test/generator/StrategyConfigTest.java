@@ -15,11 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -109,6 +113,19 @@ class StrategyConfigTest {
         Assertions.assertFalse(strategyConfig.startsWithTablePrefix("t_name"));
         strategyConfig.setTablePrefix("a_","t_");
         Assertions.assertTrue(strategyConfig.startsWithTablePrefix("t_name"));
+    }
+
+    @Test
+    void addTableFillsTest() {
+        TableFill tableFill = new TableFill("test", FieldFill.INSERT);
+        List<TableFill> tableFillList = new ArrayList<>();
+        tableFillList.add(tableFill);
+        StrategyConfig strategyConfig = new StrategyConfig();
+        strategyConfig.setTableFillList(tableFillList);
+        Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
+        strategyConfig = new StrategyConfig();
+        strategyConfig.addTableFills(tableFill);
+        Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
     }
 
     @Data

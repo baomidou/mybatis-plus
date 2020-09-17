@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.TypeConverts;
 import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
+import com.baomidou.mybatisplus.generator.config.querys.DecoratorDbQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -47,7 +48,7 @@ public class DataSourceConfig {
      */
     private DbType dbType;
     /**
-     * PostgreSQL schemaName
+     * schemaName
      */
     private String schemaName;
     /**
@@ -85,7 +86,7 @@ public class DataSourceConfig {
             dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
                 .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
-        return dbQuery;
+        return new DecoratorDbQuery(dbQuery, this);
     }
 
     /**

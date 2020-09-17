@@ -29,6 +29,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -182,7 +183,7 @@ public class StrategyConfig {
     /**
      * 表填充字段
      */
-    private List<TableFill> tableFillList = null;
+    private final List<TableFill> tableFillList = new ArrayList<>();
     /**
      * 启用sql过滤，语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
      *
@@ -339,6 +340,23 @@ public class StrategyConfig {
 
     public StrategyConfig setSuperControllerClass(String superControllerClass) {
         this.superControllerClass = superControllerClass;
+        return this;
+    }
+
+    /**
+     * 设置表填充字段
+     *
+     * @param tableFillList tableFillList
+     * @see #addTableFills(TableFill...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
+        return this.addTableFills(tableFillList.toArray(new TableFill[]{}));
+    }
+
+    public StrategyConfig addTableFills(TableFill... tableFill) {
+        this.tableFillList.addAll(Arrays.asList(tableFill));
         return this;
     }
 
