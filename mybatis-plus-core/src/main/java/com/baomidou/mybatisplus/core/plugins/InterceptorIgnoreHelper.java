@@ -92,6 +92,7 @@ public class InterceptorIgnoreHelper {
             .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
             .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
             .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
+            .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
             .build();
     }
 
@@ -101,6 +102,7 @@ public class InterceptorIgnoreHelper {
             .dynamicTableName(getBoolean(ignore.dynamicTableName()))
             .blockAttack(getBoolean(ignore.blockAttack()))
             .illegalSql(getBoolean(ignore.illegalSql()))
+            .dataPermission(getBoolean(ignore.dataPermission()))
             .build();
     }
 

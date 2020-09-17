@@ -43,6 +43,7 @@ public @interface InterceptorIgnore {
 
     /**
      * 数据权限 {@link com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor}
+     * <p>默认关闭，需要注解打开</p>
      */
-    String dataPermission() default "";
+    String dataPermission() default "true";
 }
