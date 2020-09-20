@@ -183,7 +183,7 @@ public class AutoGenerator {
                 });
             }
         }
-        return config.setTableInfoList(tableList);
+        return config;
     }
 
     public InjectionConfig getCfg() {

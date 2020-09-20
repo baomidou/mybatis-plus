@@ -57,7 +57,7 @@ public class StrategyConfig {
     /**
      * 名称转换
      */
-    private INameConvert nameConvert;
+    private INameConvert nameConvert = new INameConvert.DefaultNameConvert(this);
     /**
      * 数据库表映射到实体的命名策略
      */

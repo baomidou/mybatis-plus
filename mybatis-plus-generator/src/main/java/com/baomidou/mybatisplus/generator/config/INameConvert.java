@@ -17,6 +17,9 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+
+import java.util.Set;
 
 /**
  * 名称转换接口类
@@ -41,4 +44,49 @@ public interface INameConvert {
      * @return
      */
     String propertyNameConvert(TableField field);
+
+
+    /**
+     * 默认名称转换接口类
+     *
+     * @author nieqiurong 2020/9/20.
+     */
+    class DefaultNameConvert implements INameConvert {
+
+        private final StrategyConfig strategyConfig;
+
+        public DefaultNameConvert(StrategyConfig strategyConfig) {
+            this.strategyConfig = strategyConfig;
+        }
+
+        @Override
+        public String entityNameConvert(TableInfo tableInfo) {
+            return NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix()));
+        }
+
+        @Override
+        public String propertyNameConvert(TableField field) {
+            return processName(field.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix());
+        }
+
+        private String processName(String name, NamingStrategy strategy, Set<String> prefix) {
+            String propertyName;
+            if (prefix.size() > 0) {
+                if (strategy == NamingStrategy.underline_to_camel) {
+                    // 删除前缀、下划线转驼峰
+                    propertyName = NamingStrategy.removePrefixAndCamel(name, prefix);
+                } else {
+                    // 删除前缀
+                    propertyName = NamingStrategy.removePrefix(name, prefix);
+                }
+            } else if (strategy == NamingStrategy.underline_to_camel) {
+                // 下划线转驼峰
+                propertyName = NamingStrategy.underlineToCamel(name);
+            } else {
+                // 不处理
+                propertyName = name;
+            }
+            return propertyName;
+        }
+    }
 }

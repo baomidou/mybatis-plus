@@ -21,9 +21,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.generator.config.INameConvert;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -128,13 +129,81 @@ class StrategyConfigTest {
         Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
     }
 
+    @Test
+    void entityNameConvertTest() {
+        StrategyConfig strategyConfig;
+        TableInfo tableInfo = new TableInfo();
+        tableInfo.setName("t_user");
+
+        strategyConfig = new StrategyConfig();
+        Assertions.assertEquals("T_user", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
+        strategyConfig.setTablePrefix("t_", "a_");
+        Assertions.assertEquals("User", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
+        Assertions.assertEquals("TUser", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
+
+        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
+        strategyConfig.setTablePrefix("t_", "a_");
+        Assertions.assertEquals("User", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setNameConvert(new INameConvert() {
+            @Override
+            public String entityNameConvert(TableInfo tableInfo) {
+                return "aaaa";
+            }
+
+            @Override
+            public String propertyNameConvert(TableField field) {
+                return "bbbb";
+            }
+        });
+        Assertions.assertEquals("aaaa", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
+    }
+
+    @Test
+    void propertyNameConvertTest() {
+        StrategyConfig strategyConfig;
+        TableField tableField = new TableField();
+        tableField.setName("c_user_name");
+
+        strategyConfig = new StrategyConfig();
+        Assertions.assertEquals("c_user_name", strategyConfig.getNameConvert().propertyNameConvert(tableField));
+        strategyConfig.setTablePrefix("t_", "c_");
+        Assertions.assertEquals("user_name", strategyConfig.getNameConvert().propertyNameConvert(tableField));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
+        Assertions.assertEquals("cUserName", strategyConfig.getNameConvert().propertyNameConvert(tableField));
+
+        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
+        strategyConfig.setTablePrefix("t_", "c_");
+        Assertions.assertEquals("userName", strategyConfig.getNameConvert().propertyNameConvert(tableField));
+
+        strategyConfig = new StrategyConfig();
+        strategyConfig.setNameConvert(new INameConvert() {
+            @Override
+            public String entityNameConvert(TableInfo tableInfo) {
+                return "aaaa";
+            }
+
+            @Override
+            public String propertyNameConvert(TableField field) {
+                return "bbbb";
+            }
+        });
+        Assertions.assertEquals("bbbb", strategyConfig.getNameConvert().propertyNameConvert(tableField));
+    }
+
     @Data
     static class SuperBean {
 
-        @TableId(value = "test_id")
+        @com.baomidou.mybatisplus.annotation.TableId(value = "test_id")
         private String id;
 
-        @TableField(value = "aa_name")
+        @com.baomidou.mybatisplus.annotation.TableField(value = "aa_name")
         private String name;
 
         private String ok;

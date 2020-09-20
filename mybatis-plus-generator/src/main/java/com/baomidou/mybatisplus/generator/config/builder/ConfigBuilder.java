@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.querys.DecoratorDbQuery;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
-import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -71,7 +70,7 @@ public class ConfigBuilder {
     /**
      * 数据库表信息
      */
-    private List<TableInfo> tableInfoList;
+    private final List<TableInfo> tableInfoList = new ArrayList<>();
     /**
      * 包配置详情
      */
@@ -123,7 +122,7 @@ public class ConfigBuilder {
         handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig == null ? new PackageConfig() : packageConfig);
         // 策略配置
         this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
-        this.tableInfoList = getTablesInfo(this.strategyConfig);
+        this.tableInfoList.addAll(getTablesInfo());
     }
 
     /**
@@ -168,21 +167,10 @@ public class ConfigBuilder {
 
     /**
      * 处理表对应的类名称
-     *
-     * @param tableList 表名称
-     * @param config    策略配置项
-     * @return 补充完整信息后的表
      */
-    private List<TableInfo> processTable(List<TableInfo> tableList, StrategyConfig config) {
-        for (TableInfo tableInfo : tableList) {
-            String entityName;
-            INameConvert nameConvert = strategyConfig.getNameConvert();
-            if (null != nameConvert) {
-                // 自定义处理实体名称
-                entityName = nameConvert.entityNameConvert(tableInfo);
-            } else {
-                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), config.getTablePrefix()));
-            }
+    private void processTable() {
+        for (TableInfo tableInfo : tableInfoList) {
+            String entityName = strategyConfig.getNameConvert().entityNameConvert(tableInfo);
             if (StringUtils.isNotBlank(globalConfig.getEntityName())) {
                 tableInfo.setConvert(true);
                 tableInfo.setEntityName(String.format(globalConfig.getEntityName(), entityName));
@@ -217,7 +205,6 @@ public class ConfigBuilder {
             // 检测导入包
             checkImportPackages(tableInfo);
         }
-        return tableList;
     }
 
     /**
@@ -252,13 +239,13 @@ public class ConfigBuilder {
     /**
      * 获取所有的数据库表信息
      */
-    private List<TableInfo> getTablesInfo(StrategyConfig config) {
-        boolean isInclude = config.getInclude().size() > 0;
-        boolean isExclude = config.getExclude().size() > 0;
+    private List<TableInfo> getTablesInfo() {
+        boolean isInclude = strategyConfig.getInclude().size() > 0;
+        boolean isExclude = strategyConfig.getExclude().size() > 0;
         if (isInclude && isExclude) {
             throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
         }
-        if (config.getNotLikeTable() != null && config.getLikeTable() != null) {
+        if (strategyConfig.getNotLikeTable() != null && strategyConfig.getLikeTable() != null) {
             throw new RuntimeException("<strategy> 标签中 <likeTable> 与 <notLikeTable> 只能配置一项！");
         }
         //所有的表信息
@@ -273,18 +260,18 @@ public class ConfigBuilder {
         try {
             String tablesSql = dbQuery.tablesSql();
             StringBuilder sql = new StringBuilder(tablesSql);
-            if (config.isEnableSqlFilter()) {
-                if (config.getLikeTable() != null) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(config.getLikeTable().getValue()).append("'");
-                } else if (config.getNotLikeTable() != null) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(config.getNotLikeTable().getValue()).append("'");
+            if (strategyConfig.isEnableSqlFilter()) {
+                if (strategyConfig.getLikeTable() != null) {
+                    sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(strategyConfig.getLikeTable().getValue()).append("'");
+                } else if (strategyConfig.getNotLikeTable() != null) {
+                    sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(strategyConfig.getNotLikeTable().getValue()).append("'");
                 }
                 if (isInclude) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
-                        .append(config.getInclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(strategyConfig.getInclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
                 } else if (isExclude) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
-                        .append(config.getExclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(strategyConfig.getExclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
                 }
             }
             TableInfo tableInfo;
@@ -299,13 +286,13 @@ public class ConfigBuilder {
                     tableInfo = new TableInfo();
                     tableInfo.setName(tableName);
                     String tableComment = dbQuery.getTableComment(results);
-                    if (config.isSkipView() && "VIEW".equals(tableComment)) {
+                    if (strategyConfig.isSkipView() && "VIEW".equals(tableComment)) {
                         // 跳过视图
                         continue;
                     }
                     tableInfo.setComment(tableComment);
                     if (isInclude) {
-                        for (String includeTable : config.getInclude()) {
+                        for (String includeTable : strategyConfig.getInclude()) {
                             // 忽略大小写等于 或 正则 true
                             if (tableNameMatches(includeTable, tableName)) {
                                 includeTableList.add(tableInfo);
@@ -317,7 +304,7 @@ public class ConfigBuilder {
                             }
                         }
                     } else if (isExclude) {
-                        for (String excludeTable : config.getExclude()) {
+                        for (String excludeTable : strategyConfig.getExclude()) {
                             // 忽略大小写等于 或 正则 true
                             if (tableNameMatches(excludeTable, tableName)) {
                                 excludeTableList.add(tableInfo);
@@ -349,11 +336,12 @@ public class ConfigBuilder {
                 includeTableList = tableList;
             }
             // 性能优化，只处理需执行表字段 github issues/219
-            includeTableList.forEach(ti -> convertTableFields(ti, config));
+            includeTableList.forEach(this::convertTableFields);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return processTable(includeTableList, config);
+        processTable();
+        return tableList;
     }
 
 
@@ -373,10 +361,9 @@ public class ConfigBuilder {
      * 将字段信息与表信息关联
      *
      * @param tableInfo 表信息
-     * @param config    命名策略
      * @return ignore
      */
-    private TableInfo convertTableFields(TableInfo tableInfo, StrategyConfig config) {
+    private TableInfo convertTableFields(TableInfo tableInfo) {
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
         DbType dbType = this.dataSourceConfig.getDbType();
@@ -442,12 +429,7 @@ public class ConfigBuilder {
                     }
                     field.setColumnName(newColumnName);
                     field.setType(results.getString(dbQuery.fieldType()));
-                    INameConvert nameConvert = strategyConfig.getNameConvert();
-                    if (null != nameConvert) {
-                        field.setPropertyName(nameConvert.propertyNameConvert(field));
-                    } else {
-                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming(), strategyConfig.getFieldPrefix()));
-                    }
+                    field.setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field));
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     field.setComment(dbQuery.getFiledComment(results));
                     // 填充逻辑判断
@@ -492,34 +474,6 @@ public class ConfigBuilder {
     }
 
     /**
-     * 处理表/字段名称
-     *
-     * @param name     ignore
-     * @param strategy ignore
-     * @param prefix   ignore
-     * @return 根据策略返回处理后的名称
-     */
-    private String processName(String name, NamingStrategy strategy, Set<String> prefix) {
-        String propertyName;
-        if (prefix.size() > 0) {
-            if (strategy == NamingStrategy.underline_to_camel) {
-                // 删除前缀、下划线转驼峰
-                propertyName = NamingStrategy.removePrefixAndCamel(name, prefix);
-            } else {
-                // 删除前缀
-                propertyName = NamingStrategy.removePrefix(name, prefix);
-            }
-        } else if (strategy == NamingStrategy.underline_to_camel) {
-            // 下划线转驼峰
-            propertyName = NamingStrategy.underlineToCamel(name);
-        } else {
-            // 不处理
-            propertyName = name;
-        }
-        return propertyName;
-    }
-
-    /**
      * 格式化数据库注释内容
      *
      * @param comment 注释
@@ -543,4 +497,17 @@ public class ConfigBuilder {
         });
     }
 
+
+    /**
+     * 不再建议调用此方法，后续不再公开此方法.
+     *
+     * @param tableInfoList tableInfoList
+     * @return configBuild
+     * @deprecated 3.4.1 {@link #getTableInfoList()} 返回引用，如果有需要请直接操作
+     */
+    @Deprecated
+    public ConfigBuilder setTableInfoList(List<TableInfo> tableInfoList) {
+        this.tableInfoList.addAll(tableInfoList);
+        return this;
+    }
 }
