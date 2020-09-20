@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
@@ -379,11 +380,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         if (!need || StringUtils.isEmpty(sqlStr)) {
             return null;
         }
+        String WRAPPER = Constants.WRAPPER;
+        if(typedThis instanceof LambdaQueryWrapper) {
+            String ew = ((LambdaQueryWrapper)typedThis).WRAPPER;
+            WRAPPER = StringUtils.isNotEmpty(ew)?ew:Constants.WRAPPER;
+        }
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
                 String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
                 sqlStr = sqlStr.replace(String.format("{%s}", i),
-                    String.format(Constants.WRAPPER_PARAM_FORMAT, Constants.WRAPPER, genParamName));
+                    String.format(Constants.WRAPPER_PARAM_FORMAT, WRAPPER, genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -478,4 +484,5 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public Children clone() {
         return SerializationUtils.clone(typedThis);
     }
+
 }

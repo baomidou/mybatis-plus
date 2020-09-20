@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.Map;
@@ -36,7 +37,10 @@ import java.util.function.Predicate;
 @SuppressWarnings("serial")
 public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>>
     implements Query<LambdaQueryWrapper<T>, T, SFunction<T, ?>> {
-
+    /**
+     * 用于解决mybatis issues#448 @Param 指定不同名称问题
+     */
+    public String WRAPPER;
     /**
      * 查询字段
      */
@@ -50,13 +54,30 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
+     * 用于clone时修改参数域
+     * @param wrapper
+     * @return
+     */
+    private LambdaQueryWrapper<T>  setWrapper(String wrapper){
+        this.WRAPPER = wrapper;
+        return this;
+    }
+
+    public LambdaQueryWrapper<T> clone(String wrapper) {
+        return SerializationUtils.clone(typedThis).setWrapper(wrapper);
+    }
+    /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
      */
     public LambdaQueryWrapper(T entity) {
         super.setEntity(entity);
         super.initNeed();
     }
-
+    public LambdaQueryWrapper(T entity, String wrapper) {
+        this.WRAPPER = wrapper;
+        super.setEntity(entity);
+        super.initNeed();
+    }
     /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(...)
      */

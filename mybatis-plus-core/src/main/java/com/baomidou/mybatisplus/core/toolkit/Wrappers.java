@@ -73,6 +73,14 @@ public final class Wrappers {
     }
 
     /**
+     * @param ew 指定变量域
+     * @param <T>
+     * @return
+     */
+    public static <T> LambdaQueryWrapper<T> lambdaQuery(String ew) {
+        return new LambdaQueryWrapper<>(null, ew);
+    }
+    /**
      * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param entity 实体类
