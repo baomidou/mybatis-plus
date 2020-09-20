@@ -68,23 +68,23 @@ public class AutoGenerator {
     /**
      * 数据库表配置
      */
-    private StrategyConfig strategy;
+    private StrategyConfig strategy = new StrategyConfig();
     /**
      * 包 相关配置
      */
-    private PackageConfig packageInfo;
+    private PackageConfig packageInfo = new PackageConfig();
     /**
      * 模板 相关配置
      */
-    private TemplateConfig template;
+    private TemplateConfig template = new TemplateConfig();
     /**
      * 全局 相关配置
      */
-    private GlobalConfig globalConfig;
+    private GlobalConfig globalConfig = new GlobalConfig();
     /**
      * 模板引擎
      */
-    private AbstractTemplateEngine templateEngine;
+    private AbstractTemplateEngine templateEngine = new VelocityTemplateEngine(); // 为了兼容之前逻辑，采用 Velocity 引擎 【 默认 】
 
     /**
      * 生成代码
@@ -97,10 +97,6 @@ public class AutoGenerator {
             if (null != injectionConfig) {
                 injectionConfig.setConfig(config);
             }
-        }
-        if (null == templateEngine) {
-            // 为了兼容之前逻辑，采用 Velocity 引擎 【 默认 】
-            templateEngine = new VelocityTemplateEngine();
         }
         // 模板引擎初始化执行文件输出
         templateEngine.init(this.pretreatmentConfigBuilder(config)).mkdirs().batchOutput().open();

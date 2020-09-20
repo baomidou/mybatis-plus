@@ -197,6 +197,29 @@ class StrategyConfigTest {
         Assertions.assertEquals("bbbb", strategyConfig.getNameConvert().propertyNameConvert(tableField));
     }
 
+    @Test
+    void matchExcludeTableTest(){
+        StrategyConfig strategyConfig = new StrategyConfig();
+        strategyConfig.setExclude("system", "user_1", "test[a|b]");
+        Assertions.assertTrue(strategyConfig.matchExcludeTable("system"));
+        Assertions.assertFalse(strategyConfig.matchExcludeTable("test_exclude"));
+        Assertions.assertTrue(strategyConfig.matchExcludeTable("testa"));
+        Assertions.assertTrue(strategyConfig.matchExcludeTable("testb"));
+        Assertions.assertFalse(strategyConfig.matchExcludeTable("testc"));
+    }
+
+    @Test
+    void matchIncludeTableTest(){
+        StrategyConfig strategyConfig = new StrategyConfig();
+        strategyConfig.setInclude("system", "user_1", "test[a|b]");
+        Assertions.assertTrue(strategyConfig.matchIncludeTable("system"));
+        Assertions.assertFalse(strategyConfig.matchIncludeTable("test_exclude"));
+        Assertions.assertTrue(strategyConfig.matchIncludeTable("testa"));
+        Assertions.assertTrue(strategyConfig.matchIncludeTable("testb"));
+        Assertions.assertFalse(strategyConfig.matchIncludeTable("testc"));
+    }
+
+
     @Data
     static class SuperBean {
 

@@ -419,4 +419,40 @@ public class StrategyConfig {
         }
         return this.superEntityColumns;
     }
+
+    public void validate(){
+        boolean isInclude = this.getInclude().size() > 0;
+        boolean isExclude = this.getExclude().size() > 0;
+        if (isInclude && isExclude) {
+            throw new IllegalArgumentException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
+        }
+        if (this.getNotLikeTable() != null && this.getLikeTable() != null) {
+            throw new IllegalArgumentException("<strategy> 标签中 <likeTable> 与 <notLikeTable> 只能配置一项！");
+        }
+    }
+
+    public boolean matchIncludeTable(String tableName) {
+        return matchTable(tableName, this.getInclude());
+    }
+
+    public boolean matchExcludeTable(String tableName) {
+        return matchTable(tableName, this.getExclude());
+    }
+
+    private boolean matchTable(String tableName, Set<String> matchTables) {
+        return matchTables.stream().anyMatch(t -> tableNameMatches(t, tableName));
+    }
+
+    /**
+     * 表名匹配
+     *
+     * @param setTableName 设置表名
+     * @param dbTableName  数据库表单
+     * @return ignore
+     */
+    private boolean tableNameMatches(String setTableName, String dbTableName) {
+        return setTableName.equalsIgnoreCase(dbTableName)
+            || StringUtils.matches(setTableName, dbTableName);
+    }
+
 }

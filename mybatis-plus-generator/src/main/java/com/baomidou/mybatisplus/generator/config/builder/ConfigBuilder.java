@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -31,7 +30,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -75,12 +73,12 @@ public class ConfigBuilder {
      * 包配置详情
      */
     @Setter(value = AccessLevel.NONE)
-    private Map<String, String> packageInfo;
+    private final Map<String, String> packageInfo = new HashMap<>();
     /**
      * 路径配置信息
      */
     @Setter(value = AccessLevel.NONE)
-    private Map<String, String> pathInfo;
+    private final Map<String, String> pathInfo = new HashMap<>();
     /**
      * 策略配置
      */
@@ -96,7 +94,7 @@ public class ConfigBuilder {
     /**
      * 过滤正则
      */
-    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:'\",<.>?]+");
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-=+\\\\|[{}];:'\",<.>?]+");
     /**
      * 表数据查询
      */
@@ -115,54 +113,14 @@ public class ConfigBuilder {
         this.connection = dataSourceConfig.getConn();
         this.dataSourceConfig = dataSourceConfig;
         this.dbQuery = (DecoratorDbQuery) dataSourceConfig.getDbQuery();
-        // 全局配置
-        this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
-        // 模板配置
-        this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
-        handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig == null ? new PackageConfig() : packageConfig);
-        // 策略配置
-        this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
+        this.globalConfig = globalConfig;
+        this.template = template;
+        this.packageInfo.putAll(packageConfig.initPackageInfo());
+        this.pathInfo.putAll(Optional.ofNullable(packageConfig.getPathInfo()).orElseGet(() -> this.template.initTemplate(this.globalConfig, packageInfo)));
+        this.strategyConfig = strategyConfig;
+        this.strategyConfig.validate();
         this.tableInfoList.addAll(getTablesInfo());
-    }
-
-    /**
-     * 处理包配置
-     *
-     * @param template  TemplateConfig
-     * @param outputDir
-     * @param config    PackageConfig
-     */
-    private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
-        // 包信息
-        packageInfo = CollectionUtils.newHashMapWithExpectedSize(7);
-        packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
-        packageInfo.put(ConstVal.ENTITY, config.joinPackage(config.getEntity()));
-        packageInfo.put(ConstVal.MAPPER, config.joinPackage(config.getMapper()));
-        packageInfo.put(ConstVal.XML, config.joinPackage(config.getXml()));
-        packageInfo.put(ConstVal.SERVICE, config.joinPackage(config.getService()));
-        packageInfo.put(ConstVal.SERVICE_IMPL, config.joinPackage(config.getServiceImpl()));
-        packageInfo.put(ConstVal.CONTROLLER, config.joinPackage(config.getController()));
-
-        // 自定义路径
-        Map<String, String> configPathInfo = config.getPathInfo();
-        if (null != configPathInfo) {
-            pathInfo = configPathInfo;
-        } else {
-            // 生成路径信息
-            pathInfo = CollectionUtils.newHashMapWithExpectedSize(6);
-            setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
-            setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
-            setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
-            setPathInfo(pathInfo, template.getService(), outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
-            setPathInfo(pathInfo, template.getServiceImpl(), outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
-            setPathInfo(pathInfo, template.getController(), outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
-        }
-    }
-
-    private void setPathInfo(Map<String, String> pathInfo, String template, String outputDir, String path, String module) {
-        if (StringUtils.isNotBlank(template)) {
-            pathInfo.put(path, joinPath(outputDir, packageInfo.get(module)));
-        }
+        processTable();
     }
 
     /**
@@ -242,12 +200,6 @@ public class ConfigBuilder {
     private List<TableInfo> getTablesInfo() {
         boolean isInclude = strategyConfig.getInclude().size() > 0;
         boolean isExclude = strategyConfig.getExclude().size() > 0;
-        if (isInclude && isExclude) {
-            throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
-        }
-        if (strategyConfig.getNotLikeTable() != null && strategyConfig.getLikeTable() != null) {
-            throw new RuntimeException("<strategy> 标签中 <likeTable> 与 <notLikeTable> 只能配置一项！");
-        }
         //所有的表信息
         List<TableInfo> tableList = new ArrayList<>();
 
@@ -255,8 +207,6 @@ public class ConfigBuilder {
         List<TableInfo> includeTableList = new ArrayList<>();
         List<TableInfo> excludeTableList = new ArrayList<>();
 
-        //不存在的表名
-        Set<String> notExistTables = new HashSet<>();
         try {
             String tablesSql = dbQuery.tablesSql();
             StringBuilder sql = new StringBuilder(tablesSql);
@@ -291,70 +241,43 @@ public class ConfigBuilder {
                         continue;
                     }
                     tableInfo.setComment(tableComment);
-                    if (isInclude) {
-                        for (String includeTable : strategyConfig.getInclude()) {
-                            // 忽略大小写等于 或 正则 true
-                            if (tableNameMatches(includeTable, tableName)) {
-                                includeTableList.add(tableInfo);
-                            } else {
-                                //过滤正则表名
-                                if (!REGX.matcher(includeTable).find()) {
-                                    notExistTables.add(includeTable);
-                                }
-                            }
-                        }
-                    } else if (isExclude) {
-                        for (String excludeTable : strategyConfig.getExclude()) {
-                            // 忽略大小写等于 或 正则 true
-                            if (tableNameMatches(excludeTable, tableName)) {
-                                excludeTableList.add(tableInfo);
-                            } else {
-                                //过滤正则表名
-                                if (!REGX.matcher(excludeTable).find()) {
-                                    notExistTables.add(excludeTable);
-                                }
-                            }
-                        }
+                    if (isInclude && strategyConfig.matchIncludeTable(tableName)) {
+                        includeTableList.add(tableInfo);
+                    } else if (isExclude && strategyConfig.matchExcludeTable(tableName)) {
+                        excludeTableList.add(tableInfo);
                     }
                     tableList.add(tableInfo);
                 }
             }
-            // 将已经存在的表移除，获取配置中数据库不存在的表
-            for (TableInfo tabInfo : tableList) {
-                notExistTables.remove(tabInfo.getName());
-            }
-            if (notExistTables.size() > 0) {
-                System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
-            }
-
-            // 需要反向生成的表信息
-            if (isExclude) {
-                tableList.removeAll(excludeTableList);
-                includeTableList = tableList;
-            }
-            if (!isInclude && !isExclude) {
-                includeTableList = tableList;
+            //TODO 我要把这个打印不存在表的功能和正则匹配功能删掉，就算是苗老板来了也拦不住的那种
+            if (isExclude || isInclude) {
+                Set<String> notExistTables = new HashSet<>();
+                notExistTables.addAll(strategyConfig.getExclude());
+                notExistTables.addAll(strategyConfig.getInclude());
+                notExistTables = notExistTables.stream().filter(s -> !REGX.matcher(s).find()).collect(Collectors.toSet());
+                // 将已经存在的表移除，获取配置中数据库不存在的表
+                for (TableInfo tabInfo : tableList) {
+                    if (notExistTables.isEmpty()) {
+                        break;
+                    }
+                    notExistTables.remove(tabInfo.getName());
+                }
+                if (notExistTables.size() > 0) {
+                    System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
+                }
+                // 需要反向生成的表信息
+                if (isExclude) {
+                    tableList.removeAll(excludeTableList);
+                } else {
+                    tableList = includeTableList;
+                }
             }
             // 性能优化，只处理需执行表字段 github issues/219
-            includeTableList.forEach(this::convertTableFields);
+            tableList.forEach(this::convertTableFields);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        processTable();
         return tableList;
-    }
-
-
-    /**
-     * 表名匹配
-     *
-     * @param setTableName 设置表名
-     * @param dbTableName  数据库表单
-     * @return ignore
-     */
-    private boolean tableNameMatches(String setTableName, String dbTableName) {
-        return setTableName.equalsIgnoreCase(dbTableName)
-            || StringUtils.matches(setTableName, dbTableName);
     }
 
     /**
@@ -433,7 +356,7 @@ public class ConfigBuilder {
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     field.setComment(dbQuery.getFiledComment(results));
                     // 填充逻辑判断
-                    getStrategyConfig().getTableFillList()
+                    strategyConfig.getTableFillList()
                         .stream()
                         //忽略大写字段问题
                         .filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
@@ -447,30 +370,11 @@ public class ConfigBuilder {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("SQL Exception：" + e.getMessage());
+            throw new RuntimeException(e);
         }
         tableInfo.setFields(fieldList);
         tableInfo.setCommonFields(commonFieldList);
         return tableInfo;
-    }
-
-
-    /**
-     * 连接路径字符串
-     *
-     * @param parentDir   路径常量字符串
-     * @param packageName 包名
-     * @return 连接后的路径
-     */
-    private String joinPath(String parentDir, String packageName) {
-        if (StringUtils.isBlank(parentDir)) {
-            parentDir = System.getProperty(ConstVal.JAVA_TMPDIR);
-        }
-        if (!StringUtils.endsWith(parentDir, File.separator)) {
-            parentDir += File.separator;
-        }
-        packageName = packageName.replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
-        return parentDir + packageName;
     }
 
     /**
@@ -482,6 +386,7 @@ public class ConfigBuilder {
      * @since 3.4.0
      * @deprecated 3.4.1
      */
+    @Deprecated
     public String formatComment(String comment) {
         return dbQuery.formatComment(comment);
     }

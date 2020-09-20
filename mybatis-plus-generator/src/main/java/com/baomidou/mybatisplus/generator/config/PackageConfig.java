@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
@@ -90,4 +91,18 @@ public class PackageConfig {
     public String joinPackage(String subPackage) {
         return StringUtils.isBlank(parent) ? subPackage : (parent + StringPool.DOT + subPackage);
     }
+
+    public Map<String, String> initPackageInfo() {
+        Map<String, String> initMap = CollectionUtils.newHashMapWithExpectedSize(7);
+        initMap.put(ConstVal.MODULE_NAME, this.getModuleName());
+        initMap.put(ConstVal.ENTITY, this.joinPackage(this.getEntity()));
+        initMap.put(ConstVal.MAPPER, this.joinPackage(this.getMapper()));
+        initMap.put(ConstVal.XML, this.joinPackage(this.getXml()));
+        initMap.put(ConstVal.SERVICE, this.joinPackage(this.getService()));
+        initMap.put(ConstVal.SERVICE_IMPL, this.joinPackage(this.getServiceImpl()));
+        initMap.put(ConstVal.CONTROLLER, this.joinPackage(this.getController()));
+        return initMap;
+    }
+
+
 }
