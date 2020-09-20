@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.generator.config.querys;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
 
@@ -83,7 +85,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     /**
-     * 扩展{@link #tableFieldsSql()}接口
+     * 扩展{@link #tableFieldsSql()}方法
      *
      * @param tableName 表名
      * @return 查询表字段语句
@@ -120,6 +122,10 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         return dbQuery.tableComment();
     }
 
+    public String getTableComment(ResultSet resultSet) throws SQLException {
+        return getResultStringValue(resultSet, this.tableComment());
+    }
+
     @Override
     public String fieldName() {
         return dbQuery.fieldName();
@@ -133,6 +139,18 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     @Override
     public String fieldComment() {
         return dbQuery.fieldComment();
+    }
+
+    public String getFiledComment(ResultSet resultSet) throws SQLException {
+        return getResultStringValue(resultSet, this.fieldComment());
+    }
+
+    private String getResultStringValue(ResultSet resultSet, String columnLabel) throws SQLException {
+        return StringUtils.isNotBlank(columnLabel) ? StringPool.EMPTY : formatComment(resultSet.getString(columnLabel));
+    }
+
+    public String formatComment(String comment) {
+        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
     }
 
     @Override

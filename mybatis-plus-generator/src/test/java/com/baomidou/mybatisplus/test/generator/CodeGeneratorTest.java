@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.mysql.cj.jdbc.Driver;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
  * @author K神
  * @since 2017/12/29
  */
+@Disabled
 class CodeGeneratorTest {
 
     /**

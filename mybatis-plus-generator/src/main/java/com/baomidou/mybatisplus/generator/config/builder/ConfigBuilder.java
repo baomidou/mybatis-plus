@@ -26,6 +26,11 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.querys.DecoratorDbQuery;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.io.File;
 import java.sql.Connection;
@@ -42,19 +47,26 @@ import java.util.stream.Collectors;
  * @author YangHu, tangguo, hubin, Juzi
  * @since 2016-08-30
  */
+@Data
+@Accessors(chain = true)
 public class ConfigBuilder {
 
     /**
      * 模板路径配置信息
      */
+    @Setter(value = AccessLevel.NONE)
     private final TemplateConfig template;
     /**
      * 数据库配置
      */
+    @Getter(value = AccessLevel.NONE)
+    @Setter(value = AccessLevel.NONE)
     private final DataSourceConfig dataSourceConfig;
     /**
      * SQL连接
      */
+    @Getter(value = AccessLevel.NONE)
+    @Setter(value = AccessLevel.NONE)
     private final Connection connection;
     /**
      * 数据库表信息
@@ -63,10 +75,12 @@ public class ConfigBuilder {
     /**
      * 包配置详情
      */
+    @Setter(value = AccessLevel.NONE)
     private Map<String, String> packageInfo;
     /**
      * 路径配置信息
      */
+    @Setter(value = AccessLevel.NONE)
     private Map<String, String> pathInfo;
     /**
      * 策略配置
@@ -112,52 +126,6 @@ public class ConfigBuilder {
         this.tableInfoList = getTablesInfo(this.strategyConfig);
     }
 
-    // ************************ 曝露方法 BEGIN*****************************
-
-    /**
-     * 所有包配置信息
-     *
-     * @return 包配置
-     */
-    public Map<String, String> getPackageInfo() {
-        return packageInfo;
-    }
-
-
-    /**
-     * 所有路径配置
-     *
-     * @return 路径配置
-     */
-    public Map<String, String> getPathInfo() {
-        return pathInfo;
-    }
-
-    /**
-     * 表信息
-     *
-     * @return 所有表信息
-     */
-    public List<TableInfo> getTableInfoList() {
-        return tableInfoList;
-    }
-
-    public ConfigBuilder setTableInfoList(List<TableInfo> tableInfoList) {
-        this.tableInfoList = tableInfoList;
-        return this;
-    }
-
-    /**
-     * 模板路径配置信息
-     *
-     * @return 所以模板路径配置信息
-     */
-    public TemplateConfig getTemplate() {
-        return this.template;
-    }
-
-    // ****************************** 曝露方法 END**********************************
-
     /**
      * 处理包配置
      *
@@ -169,12 +137,12 @@ public class ConfigBuilder {
         // 包信息
         packageInfo = CollectionUtils.newHashMapWithExpectedSize(7);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
-        packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
-        packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
-        packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
-        packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
-        packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
-        packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
+        packageInfo.put(ConstVal.ENTITY, config.joinPackage(config.getEntity()));
+        packageInfo.put(ConstVal.MAPPER, config.joinPackage(config.getMapper()));
+        packageInfo.put(ConstVal.XML, config.joinPackage(config.getXml()));
+        packageInfo.put(ConstVal.SERVICE, config.joinPackage(config.getService()));
+        packageInfo.put(ConstVal.SERVICE_IMPL, config.joinPackage(config.getServiceImpl()));
+        packageInfo.put(ConstVal.CONTROLLER, config.joinPackage(config.getController()));
 
         // 自定义路径
         Map<String, String> configPathInfo = config.getPathInfo();
@@ -330,16 +298,12 @@ public class ConfigBuilder {
                     }
                     tableInfo = new TableInfo();
                     tableInfo.setName(tableName);
-                    String commentColumn = dbQuery.tableComment();
-                    if (StringUtils.isNotBlank(commentColumn)) {
-                        String tableComment = results.getString(commentColumn);
-                        if (config.isSkipView() && "VIEW".equals(tableComment)) {
-                            // 跳过视图
-                            continue;
-                        }
-                        tableInfo.setComment(formatComment(tableComment));
+                    String tableComment = dbQuery.getTableComment(results);
+                    if (config.isSkipView() && "VIEW".equals(tableComment)) {
+                        // 跳过视图
+                        continue;
                     }
-
+                    tableInfo.setComment(tableComment);
                     if (isInclude) {
                         for (String includeTable : config.getInclude()) {
                             // 忽略大小写等于 或 正则 true
@@ -413,7 +377,6 @@ public class ConfigBuilder {
      * @return ignore
      */
     private TableInfo convertTableFields(TableInfo tableInfo, StrategyConfig config) {
-        boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
         DbType dbType = this.dataSourceConfig.getDbType();
@@ -452,8 +415,7 @@ public class ConfigBuilder {
                     }
 
                     // 处理ID
-                    if (isId && !haveId) {
-                        haveId = true;
+                    if (isId) {
                         field.setKeyFlag(true);
                         tableInfo.setHavePrimaryKey(true);
                         field.setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
@@ -484,13 +446,10 @@ public class ConfigBuilder {
                     if (null != nameConvert) {
                         field.setPropertyName(nameConvert.propertyNameConvert(field));
                     } else {
-                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming()));
+                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming(), strategyConfig.getFieldPrefix()));
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
-                    String fieldCommentColumn = dbQuery.fieldComment();
-                    if (StringUtils.isNotBlank(fieldCommentColumn)) {
-                        field.setComment(formatComment(results.getString(fieldCommentColumn)));
-                    }
+                    field.setComment(dbQuery.getFiledComment(results));
                     // 填充逻辑判断
                     getStrategyConfig().getTableFillList()
                         .stream()
@@ -532,29 +491,6 @@ public class ConfigBuilder {
         return parentDir + packageName;
     }
 
-
-    /**
-     * 连接父子包名
-     *
-     * @param parent     父包名
-     * @param subPackage 子包名
-     * @return 连接后的包名
-     */
-    private String joinPackage(String parent, String subPackage) {
-        return StringUtils.isBlank(parent) ? subPackage : (parent + StringPool.DOT + subPackage);
-    }
-
-
-    /**
-     * 处理字段名称
-     *
-     * @return 根据策略返回处理后的名称
-     */
-    private String processName(String name, NamingStrategy strategy) {
-        return processName(name, strategy, strategyConfig.getFieldPrefix());
-    }
-
-
     /**
      * 处理表/字段名称
      *
@@ -583,48 +519,17 @@ public class ConfigBuilder {
         return propertyName;
     }
 
-
-    public StrategyConfig getStrategyConfig() {
-        return strategyConfig;
-    }
-
-
-    public ConfigBuilder setStrategyConfig(StrategyConfig strategyConfig) {
-        this.strategyConfig = strategyConfig;
-        return this;
-    }
-
-
-    public GlobalConfig getGlobalConfig() {
-        return globalConfig;
-    }
-
-
-    public ConfigBuilder setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-        return this;
-    }
-
-
-    public InjectionConfig getInjectionConfig() {
-        return injectionConfig;
-    }
-
-
-    public ConfigBuilder setInjectionConfig(InjectionConfig injectionConfig) {
-        this.injectionConfig = injectionConfig;
-        return this;
-    }
-
     /**
      * 格式化数据库注释内容
      *
      * @param comment 注释
      * @return 注释
+     * @see DecoratorDbQuery#formatComment(java.lang.String)
      * @since 3.4.0
+     * @deprecated 3.4.1
      */
     public String formatComment(String comment) {
-        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+        return dbQuery.formatComment(comment);
     }
 
     public void close() {

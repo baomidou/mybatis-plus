@@ -80,4 +80,14 @@ public class PackageConfig {
         }
         return parent;
     }
+
+
+    /**
+     * 连接父子包名
+     *
+     * @return 连接后的包名
+     */
+    public String joinPackage(String subPackage) {
+        return StringUtils.isBlank(parent) ? subPackage : (parent + StringPool.DOT + subPackage);
+    }
 }
