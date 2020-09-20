@@ -66,7 +66,10 @@ public interface INameConvert {
 
         @Override
         public String propertyNameConvert(TableField field) {
-            return processName(field.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix());
+            String name = processName(field.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix());
+            //TODO 暂时先放在这里调用，后面要改掉才行!!!!!
+            field.setPropertyName(strategyConfig, name);
+            return name;
         }
 
         private String processName(String name, NamingStrategy strategy, Set<String> prefix) {

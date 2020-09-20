@@ -160,39 +160,9 @@ public class ConfigBuilder {
             } else {
                 tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
             }
-            // 检测导入包
-            checkImportPackages(tableInfo);
+            tableInfo.importPackage(strategyConfig, globalConfig);
         }
     }
-
-    /**
-     * 检测导入包
-     *
-     * @param tableInfo ignore
-     */
-    private void checkImportPackages(TableInfo tableInfo) {
-        if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
-            // 自定义父类
-            tableInfo.getImportPackages().add(strategyConfig.getSuperEntityClass());
-        } else if (globalConfig.isActiveRecord()) {
-            // 无父类开启 AR 模式
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
-        }
-        if (null != globalConfig.getIdType() && tableInfo.isHavePrimaryKey()) {
-            // 指定需要 IdType 场景
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
-        }
-        if (StringUtils.isNotBlank(strategyConfig.getVersionFieldName())
-            && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
-            tableInfo.getFields().forEach(f -> {
-                if (strategyConfig.getVersionFieldName().equals(f.getName())) {
-                    tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
-                }
-            });
-        }
-    }
-
 
     /**
      * 获取所有的数据库表信息

@@ -15,16 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
@@ -36,9 +28,7 @@ import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 生成文件
@@ -127,57 +117,6 @@ public class AutoGenerator {
         if (null != injectionConfig) {
             injectionConfig.initMap();
             config.setInjectionConfig(injectionConfig);
-        }
-        /*
-         * 表信息列表
-         */
-        List<TableInfo> tableList = this.getAllTableInfoList(config);
-        for (TableInfo tableInfo : tableList) {
-            /* ---------- 添加导入包 ---------- */
-            if (config.getGlobalConfig().isActiveRecord()) {
-                // 开启 ActiveRecord 模式
-                tableInfo.setImportPackages(Model.class.getCanonicalName());
-            }
-            if (tableInfo.isConvert()) {
-                // 表注解
-                tableInfo.setImportPackages(TableName.class.getCanonicalName());
-            }
-            if (config.getStrategyConfig().getLogicDeleteFieldName() != null && tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
-                // 逻辑删除注解
-                tableInfo.setImportPackages(TableLogic.class.getCanonicalName());
-            }
-            if (StringUtils.isNotBlank(config.getStrategyConfig().getVersionFieldName())) {
-                // 乐观锁注解
-                tableInfo.setImportPackages(Version.class.getCanonicalName());
-            }
-            boolean importSerializable = true;
-            if (StringUtils.isNotBlank(config.getStrategyConfig().getSuperEntityClass())) {
-                // 父实体
-                tableInfo.setImportPackages(config.getStrategyConfig().getSuperEntityClass());
-                importSerializable = false;
-            }
-            if (config.getGlobalConfig().isActiveRecord()) {
-                importSerializable = true;
-            }
-            if (importSerializable) {
-                tableInfo.setImportPackages(Serializable.class.getCanonicalName());
-            }
-            // Boolean类型is前缀处理
-            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()
-                && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
-                List<TableField> tableFields = tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
-                    .filter(field -> field.getPropertyName().startsWith("is")).collect(Collectors.toList());
-                tableFields.forEach(field -> {
-                    //主键为is的情况基本上是不存在的.
-                    if (field.isKeyFlag()) {
-                        tableInfo.setImportPackages(TableId.class.getCanonicalName());
-                    } else {
-                        tableInfo.setImportPackages(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
-                    }
-                    field.setConvert(true);
-                    field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
-                });
-            }
         }
         return config;
     }

@@ -15,13 +15,17 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -124,12 +128,8 @@ public class TableInfo {
     }
 
     public TableInfo setImportPackages(String pkg) {
-        if (importPackages.contains(pkg)) {
-            return this;
-        } else {
-            importPackages.add(pkg);
-            return this;
-        }
+        importPackages.add(pkg);
+        return this;
     }
 
     /**
@@ -159,4 +159,39 @@ public class TableInfo {
         return fieldNames;
     }
 
+    public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig){
+        boolean importSerializable = true;
+        if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
+            // 自定义父类
+            importSerializable = false;
+            this.importPackages.add(strategyConfig.getSuperEntityClass());
+        } else {
+            if (globalConfig.isActiveRecord()) {
+                // 无父类开启 AR 模式
+                this.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
+            }
+        }
+        if (importSerializable) {
+            this.setImportPackages(Serializable.class.getCanonicalName());
+        }
+        if (this.isConvert()) {
+            this.importPackages.add(TableName.class.getCanonicalName());
+        }
+        if (strategyConfig.getLogicDeleteFieldName() != null && this.isLogicDelete(strategyConfig.getLogicDeleteFieldName())) {
+            this.importPackages.add(TableLogic.class.getCanonicalName());
+        }
+        if (null != globalConfig.getIdType() && this.isHavePrimaryKey()) {
+            // 指定需要 IdType 场景
+            this.importPackages.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+            this.importPackages.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
+        }
+        if (StringUtils.isNotBlank(strategyConfig.getVersionFieldName())
+            && CollectionUtils.isNotEmpty(this.getFields())) {
+            this.getFields().forEach(f -> {
+                if (strategyConfig.getVersionFieldName().equals(f.getName())) {
+                    this.importPackages.add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
+                }
+            });
+        }
+    }
 }
