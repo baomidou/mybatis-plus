@@ -28,7 +28,12 @@ public class MySqlDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " LIMIT " + FIRST_MARK + StringPool.COMMA + SECOND_MARK;
-        return new DialectModel(sql, offset, limit).setConsumerChain();
+        StringBuilder sql = new StringBuilder(originalSql).append(" LIMIT ").append(FIRST_MARK);
+        if (offset != 0L) {
+            sql.append(StringPool.COMMA).append(SECOND_MARK);
+            return new DialectModel(sql.toString(), offset, limit).setConsumerChain();
+        } else {
+            return new DialectModel(sql.toString(), limit).setConsumer(true);
+        }
     }
 }

@@ -17,19 +17,22 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.generator.config.converts.*;
-import com.baomidou.mybatisplus.generator.config.querys.*;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.TypeConverts;
+import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
+import com.baomidou.mybatisplus.generator.config.querys.DecoratorDbQuery;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * 数据库配置
  *
- * @author YangHu
+ * @author YangHu, hcl
  * @since 2016/8/30
  */
 @Data
@@ -45,13 +48,19 @@ public class DataSourceConfig {
      */
     private DbType dbType;
     /**
-     * PostgreSQL schemaName
+     * schemaName
      */
     private String schemaName;
     /**
      * 类型转换
      */
     private ITypeConvert typeConvert;
+    /**
+     * 关键字处理器
+     *
+     * @since 3.3.2
+     */
+    private IKeyWordsHandler keyWordsHandler;
     /**
      * 驱动连接的URL
      */
@@ -71,38 +80,13 @@ public class DataSourceConfig {
 
     public IDbQuery getDbQuery() {
         if (null == dbQuery) {
-            switch (getDbType()) {
-                case ORACLE:
-                    dbQuery = new OracleQuery();
-                    break;
-                case SQL_SERVER:
-                    dbQuery = new SqlServerQuery();
-                    break;
-                case POSTGRE_SQL:
-                    dbQuery = new PostgreSqlQuery();
-                    break;
-                case DB2:
-                    dbQuery = new DB2Query();
-                    break;
-                case MARIADB:
-                    dbQuery = new MariadbQuery();
-                    break;
-                case H2:
-                    dbQuery = new H2Query();
-                    break;
-                case SQLITE:
-                    dbQuery = new SqliteQuery();
-                    break;
-                case DM:
-                    dbQuery = new DMQuery();
-                    break;
-                default:
-                    // 默认 MYSQL
-                    dbQuery = new MySqlQuery();
-                    break;
-            }
+            DbType dbType = getDbType();
+            DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
+            // 默认 MYSQL
+            dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
+                .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
-        return dbQuery;
+        return new DecoratorDbQuery(dbQuery, this);
     }
 
     /**
@@ -144,42 +128,32 @@ public class DataSourceConfig {
         } else if (str.contains("mariadb")) {
             return DbType.MARIADB;
         } else if (str.contains("sqlite")) {
-            return DbType.MARIADB;
+            return DbType.SQLITE;
         } else if (str.contains("h2")) {
             return DbType.H2;
-        } else {
-            return null;
+        } else if (str.contains("kingbase") || str.contains("kingbase8")) {
+            return DbType.KINGBASE_ES;
+        } else if (str.contains("dm")) {
+            return DbType.DM;
+        } else if (str.contains("zenith")) {
+            return DbType.GAUSS;
+        } else if (str.contains("oscar")) {
+            return DbType.OSCAR;
+        } else if (str.contains("firebird")) {
+            return DbType.FIREBIRD;
+        }
+        else {
+            return DbType.OTHER;
         }
     }
 
     public ITypeConvert getTypeConvert() {
         if (null == typeConvert) {
-            switch (getDbType()) {
-                case ORACLE:
-                    typeConvert = new OracleTypeConvert();
-                    break;
-                case SQL_SERVER:
-                    typeConvert = new SqlServerTypeConvert();
-                    break;
-                case POSTGRE_SQL:
-                    typeConvert = new PostgreSqlTypeConvert();
-                    break;
-                case DB2:
-                    typeConvert = new DB2TypeConvert();
-                    break;
-                case SQLITE:
-                    typeConvert = new SqliteTypeConvert();
-                    break;
-                case DM:
-                    typeConvert = new DmTypeConvert();
-                    break;
-                case MARIADB:
-                    typeConvert = new MySqlTypeConvert();
-                    break;
-                default:
-                    // 默认 MYSQL
-                    typeConvert = new MySqlTypeConvert();
-                    break;
+            DbType dbType = getDbType();
+            // 默认 MYSQL
+            typeConvert = TypeConverts.getTypeConvert(dbType);
+            if (null == typeConvert) {
+                typeConvert = MySqlTypeConvert.INSTANCE;
             }
         }
         return typeConvert;
@@ -191,12 +165,12 @@ public class DataSourceConfig {
      * @return Connection
      */
     public Connection getConn() {
-        Connection conn = null;
+        Connection conn;
         try {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return conn;
     }

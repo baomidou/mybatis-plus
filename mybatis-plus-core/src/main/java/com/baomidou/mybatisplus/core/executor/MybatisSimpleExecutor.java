@@ -36,7 +36,9 @@ import java.util.List;
  * 重写执行器 {@link org.apache.ibatis.executor.SimpleExecutor}
  *
  * @author nieqiurong 2019/4/14.
+ * @deprecated 3.4.0
  */
+@Deprecated
 public class MybatisSimpleExecutor extends AbstractBaseExecutor {
 
     public MybatisSimpleExecutor(Configuration configuration, Transaction transaction) {
@@ -75,12 +77,10 @@ public class MybatisSimpleExecutor extends AbstractBaseExecutor {
         Configuration configuration = ms.getConfiguration();
         StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, null, boundSql);
         Statement stmt = prepareStatement(handler, ms.getStatementLog(), true);
-        if (stmt != null) {
-            stmt.closeOnCompletion();
-            return handler.queryCursor(stmt);
-        } else {
-            return null;
-        }
+        assert stmt != null;
+        Cursor<E> cursor = handler.queryCursor(stmt);
+        stmt.closeOnCompletion();
+        return cursor;
     }
 
     @Override

@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.enums;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.AllArgsConstructor;
 
 /**
  * wrapper 内部使用枚举
@@ -24,19 +24,14 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  * @author miemie
  * @since 2018-07-30
  */
+@AllArgsConstructor
 public enum WrapperKeyword implements ISqlSegment {
     /**
      * 只用作于辨识,不用于其他
      */
-    APPLY(null),
-    LEFT_BRACKET(StringPool.LEFT_BRACKET),
-    RIGHT_BRACKET(StringPool.RIGHT_BRACKET);
+    APPLY(null);
 
     private final String keyword;
-
-    WrapperKeyword(final String keyword) {
-        this.keyword = keyword;
-    }
 
     @Override
     public String getSqlSegment() {

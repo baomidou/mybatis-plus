@@ -15,60 +15,17 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional.query.impl;
 
-import java.util.function.Predicate;
-
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
 
 /**
  * @author miemie
  * @since 2018-12-19
+ * @deprecated 3.3.0
  */
-@SuppressWarnings({ "serial", "unchecked" })
-public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
-    implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
-
-    private BaseMapper<T> baseMapper;
+@Deprecated
+public class LambdaQueryChainWrapper<T> extends com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper<T> {
 
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper) {
-        super();
-        this.baseMapper = baseMapper;
-        super.wrapperChildren = new LambdaQueryWrapper<>();
+        super(baseMapper);
     }
-
-    @SafeVarargs
-    @Override
-    public final LambdaQueryChainWrapper<T> select(SFunction<T, ?>... columns) {
-        wrapperChildren.select(columns);
-        return typedThis;
-    }
-
-    @Override
-    public LambdaQueryChainWrapper<T> select(Predicate<TableFieldInfo> predicate) {
-        wrapperChildren.select(predicate);
-        return typedThis;
-    }
-
-    @Override
-    public LambdaQueryChainWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
-        wrapperChildren.select(entityClass, predicate);
-        return typedThis;
-    }
-
-    @Override
-    public String getSqlSelect() {
-        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSelect");
-    }
-
-    @Override
-    public BaseMapper<T> getBaseMapper() {
-        return baseMapper;
-    }
-
 }

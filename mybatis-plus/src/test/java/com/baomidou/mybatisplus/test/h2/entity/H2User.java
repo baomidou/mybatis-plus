@@ -50,7 +50,7 @@ public class H2User extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(strategy = FieldStrategy.IGNORED)
+    @TableField
     private Integer testType;
 
     /**

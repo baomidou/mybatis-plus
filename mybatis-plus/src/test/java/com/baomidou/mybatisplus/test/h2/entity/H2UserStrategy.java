@@ -15,20 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.h2.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 测试用户类
@@ -43,9 +37,9 @@ import lombok.experimental.Accessors;
 public class H2UserStrategy extends SuperEntity {
 
     /**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 2043176352335589747L;
+     * serialVersionUID
+     */
+    private static final long serialVersionUID = 2043176352335589747L;
 
     /**
      * whereStrategy = FieldStrategy.IGNORED 在拼接where条件时是在带上该条件
@@ -59,11 +53,12 @@ public class H2UserStrategy extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(strategy = FieldStrategy.IGNORED, fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.IGNORED)
     private Integer testType;
 
     /**
      * 转义关键字测试
+     *
      * @since 2019-5-7 测试updateStrategy
      */
     @TableField(value = "`desc`", updateStrategy = FieldStrategy.IGNORED)

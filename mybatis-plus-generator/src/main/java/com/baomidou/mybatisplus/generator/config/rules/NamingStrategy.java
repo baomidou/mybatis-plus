@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -39,7 +41,7 @@ public enum NamingStrategy {
 
     public static String underlineToCamel(String name) {
         // 快速检查
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             // 没必要转换
             return StringPool.EMPTY;
         }
@@ -53,7 +55,7 @@ public enum NamingStrategy {
         String[] camels = tempName.split(ConstVal.UNDERLINE);
         // 跳过原始字符串中开头、结尾的下换线或双重下划线
         // 处理真正的驼峰片段
-        Arrays.stream(camels).filter(camel -> !StringUtils.isEmpty(camel)).forEach(camel -> {
+        Arrays.stream(camels).filter(camel -> !StringUtils.isBlank(camel)).forEach(camel -> {
             if (result.length() == 0) {
                 // 第一个驼峰片段，全部字母都小写
                 result.append(camel);
@@ -71,15 +73,23 @@ public enum NamingStrategy {
      * @param name   ignore
      * @param prefix ignore
      * @return ignore
+     * @see #removePrefix(String, Set)
+     * @deprecated 3.4.1
      */
+    @Deprecated
     public static String removePrefix(String name, String... prefix) {
-        if (StringUtils.isEmpty(name)) {
+        Set<String> set = new HashSet<>(Arrays.asList(prefix));
+        return removePrefix(name, set);
+    }
+
+    public static String removePrefix(String name, Set<String> prefix) {
+        if (StringUtils.isBlank(name)) {
             return StringPool.EMPTY;
         }
         if (null != prefix) {
             // 判断是否有匹配的前缀，然后截取前缀
             // 删除前缀
-            return Arrays.stream(prefix).filter(pf -> name.toLowerCase()
+            return prefix.stream().filter(pf -> name.toLowerCase()
                 .matches(StringPool.HAT + pf.toLowerCase() + ".*"))
                 .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
         }
@@ -94,7 +104,7 @@ public enum NamingStrategy {
      * @return ignore
      */
     public static boolean isPrefixContained(String name, String... prefix) {
-        if (null == prefix || StringUtils.isEmpty(name)) {
+        if (null == prefix || StringUtils.isBlank(name)) {
             return false;
         }
         return Arrays.stream(prefix).anyMatch(pf -> name.toLowerCase().matches(StringPool.HAT + pf.toLowerCase() + ".*"));
@@ -106,10 +116,18 @@ public enum NamingStrategy {
      * @param name        ignore
      * @param tablePrefix ignore
      * @return ignore
+     * @see #removePrefix(String, Set)
+     * @deprecated 3.4.1
      */
+    @Deprecated
     public static String removePrefixAndCamel(String name, String[] tablePrefix) {
         return underlineToCamel(removePrefix(name, tablePrefix));
     }
+
+    public static String removePrefixAndCamel(String name, Set<String> tablePrefix) {
+        return underlineToCamel(removePrefix(name, tablePrefix));
+    }
+
 
     /**
      * 实体首字母大写
@@ -118,7 +136,7 @@ public enum NamingStrategy {
      * @return 转换后的字符串
      */
     public static String capitalFirst(String name) {
-        if (StringUtils.isNotEmpty(name)) {
+        if (StringUtils.isNotBlank(name)) {
             return name.substring(0, 1).toUpperCase() + name.substring(1);
         }
         return StringPool.EMPTY;

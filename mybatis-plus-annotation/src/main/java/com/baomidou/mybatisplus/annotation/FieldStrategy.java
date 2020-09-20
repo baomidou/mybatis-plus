@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.annotation;
 
 /**
  * 字段策略枚举类
+ * <p>
+ * 如果字段是基本数据类型则最终效果等同于 {@link #IGNORED}
  *
  * @author hubin
  * @since 2016-09-09

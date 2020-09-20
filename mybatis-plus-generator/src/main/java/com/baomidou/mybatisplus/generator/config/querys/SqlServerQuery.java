@@ -18,8 +18,6 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * SqlServer 表数据查询
  *
@@ -27,27 +25,20 @@ import com.baomidou.mybatisplus.annotation.DbType;
  * @since 2018-01-16
  */
 public class SqlServerQuery extends AbstractDbQuery {
-
-
-    @Override
-    public DbType dbType() {
-        return DbType.SQL_SERVER;
-    }
-
-
+    
     @Override
     public String tablesSql() {
-        return "select cast(so.name as varchar(500)) as TABLE_NAME, " +
+        return "select * from (select cast(so.name as varchar(500)) as TABLE_NAME, " +
             "cast(sep.value as varchar(500)) as COMMENTS from sysobjects so " +
             "left JOIN sys.extended_properties sep on sep.major_id=so.id and sep.minor_id=0 " +
-            "where (xtype='U' or xtype='v')";
+            "where (xtype='U' or xtype='v')) a where 1=1 ";
     }
 
 
     @Override
     public String tableFieldsSql() {
         return "SELECT  cast(a.name AS VARCHAR(500)) AS TABLE_NAME,cast(b.name AS VARCHAR(500)) AS COLUMN_NAME, "
-            + "cast(c.VALUE AS VARCHAR(500)) AS COMMENTS,cast(sys.types.name AS VARCHAR (500)) AS DATA_TYPE,"
+            + "cast(c.VALUE AS NVARCHAR(500)) AS COMMENTS,cast(sys.types.name AS VARCHAR (500)) AS DATA_TYPE,"
             + "(" + " SELECT CASE count(1) WHEN 1 then 'PRI' ELSE '' END"
             + " FROM syscolumns,sysobjects,sysindexes,sysindexkeys,systypes "
             + " WHERE syscolumns.xusertype = systypes.xusertype AND syscolumns.id = object_id (a.name) AND sysobjects.xtype = 'PK'"

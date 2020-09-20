@@ -27,9 +27,11 @@ import java.util.Objects;
  *
  * @author hubin
  * @since 2017-10-11
+ * @deprecated 3.3.0
  */
+@Deprecated
 public class EnumUtils {
-
+    
     /**
      * 值映射为枚举
      *
@@ -37,8 +39,10 @@ public class EnumUtils {
      * @param value     枚举值
      * @param method    取值方法
      * @param <E>       对应枚举
-     * @return
+     * @return 枚举
+     * @deprecated 3.2.1
      */
+    @Deprecated
     public static <E extends Enum<?>> E valueOf(Class<E> enumClass, Object value, Method method) {
         E[] es = enumClass.getEnumConstants();
         for (E e : es) {

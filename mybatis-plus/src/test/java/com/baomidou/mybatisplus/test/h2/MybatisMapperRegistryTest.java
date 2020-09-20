@@ -17,7 +17,6 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
-import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.config.DBConfig;
@@ -97,7 +96,7 @@ class MybatisMapperRegistryTest extends BaseTest {
             
             H2StudentChildrenMapper h2StudentChildrenMapper = mapperRegistry.getMapper(H2StudentChildrenMapper.class, sqlSession);
             Assertions.assertFalse(configuration.hasStatement(H2StudentChildrenMapper.class.getName() + ".selectById"));
-            Map<Method, MybatisMapperMethod> methodCache = mybatisMapperProxyFactory.getMethodCache();
+            Map<Method, ?> methodCache = mybatisMapperProxyFactory.getMethodCache();
             Assertions.assertTrue(methodCache.isEmpty());
             
             h2StudentChildrenMapper.selectById(2);

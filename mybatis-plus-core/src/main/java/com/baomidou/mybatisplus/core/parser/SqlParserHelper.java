@@ -29,7 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2018-07-22
+ * @deprecated 3.4.0
  */
+@Deprecated
 public class SqlParserHelper {
 
     public static final String DELEGATE_MAPPED_STATEMENT = "delegate.mappedStatement";
@@ -73,6 +75,19 @@ public class SqlParserHelper {
                 SQL_PARSER_INFO_CACHE.putIfAbsent(sid, sqlParser.filter());
             }
         }
+    }
+
+    /**
+     * 获取 SqlParser 注解信息
+     */
+    public static boolean getSqlParserInfo(MappedStatement ms) {
+        String id = ms.getId();
+        Boolean value = SQL_PARSER_INFO_CACHE.get(id);
+        if (value != null) {
+            return value;
+        }
+        String mapperName = id.substring(0, id.lastIndexOf(StringPool.DOT));
+        return SQL_PARSER_INFO_CACHE.getOrDefault(mapperName, false);
     }
 
     /**

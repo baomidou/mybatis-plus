@@ -35,7 +35,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JsqlParserCountOptimize implements ISqlParser {
-    private static final List<SelectItem> COUNT_SELECT_ITEM = countSelectItem();
+    private static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
 
     private boolean optimizeJoin = false;
@@ -57,19 +57,12 @@ public class JsqlParserCountOptimize implements ISqlParser {
     /**
      * 获取jsqlparser中count的SelectItem
      */
-    private static List<SelectItem> countSelectItem() {
+    private static SelectItem defaultCountSelectItem() {
         Function function = new Function();
+        ExpressionList expressionList = new ExpressionList(Collections.singletonList(new LongValue(1)));
         function.setName("COUNT");
-        List<Expression> expressions = new ArrayList<>();
-        LongValue longValue = new LongValue(1);
-        ExpressionList expressionList = new ExpressionList();
-        expressions.add(longValue);
-        expressionList.setExpressions(expressions);
         function.setParameters(expressionList);
-        List<SelectItem> selectItems = new ArrayList<>();
-        SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
-        selectItems.add(selectExpressionItem);
-        return selectItems;
+        return new SelectExpressionItem(function);
     }
 
     @Override
@@ -82,11 +75,11 @@ public class JsqlParserCountOptimize implements ISqlParser {
             Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
-            List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
+            GroupByElement groupBy = plainSelect.getGroupBy();
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
 
             // 添加包含groupBy 不去除orderBy
-            if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
+            if (null == groupBy && CollectionUtils.isNotEmpty(orderBy)) {
                 plainSelect.setOrderByElements(null);
                 sqlInfo.setOrderBy(false);
             }
@@ -97,7 +90,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
                 }
             }
             // 包含 distinct、groupBy不优化
-            if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
+            if (distinct != null || null != groupBy) {
                 return sqlInfo.setSql(SqlParserUtils.getOriginalCountSql(selectStatement.toString()));
             }
             // 包含 join 连表,进行判断是否移除 join 连表

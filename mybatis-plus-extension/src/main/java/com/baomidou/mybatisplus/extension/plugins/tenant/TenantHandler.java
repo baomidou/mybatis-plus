@@ -15,35 +15,54 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ValueListExpression;
 
 /**
  * 租户处理器（ TenantId 行级 ）
  *
  * @author hubin
  * @since 2017-08-31
+ * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link TenantLineInnerInterceptor} {@link TenantLineHandler}
  */
+@Deprecated
 public interface TenantHandler {
 
     /**
-     * 获取租户值
+     * 获取租户 ID 值表达式，支持多个 ID 条件查询
+     * <p>
+     * 支持自定义表达式，比如：tenant_id in (1,2) @since 2019-8-2
+     * 多参请使用 {@link ValueListExpression}
      *
-     * @return 租户值
+     * @param select 参数 true 表示为 select 下的 where 条件,false 表示 insert/update/delete 下的条件
+     *               只有 select 下才允许多参,否则只支持单参
+     * @return 租户 ID 值表达式
      */
-    Expression getTenantId();
+    Expression getTenantId(boolean select);
 
     /**
      * 获取租户字段名
+     * <p>
+     * 默认字段名叫: tenant_id
      *
      * @return 租户字段名
      */
-    String getTenantIdColumn();
+    default String getTenantIdColumn() {
+        return "tenant_id";
+    }
 
     /**
      * 根据表名判断是否进行过滤
+     * <p>
+     * 默认都要进行解析
      *
      * @param tableName 表名
-     * @return 是否进行过滤
+     * @return 是否进行过滤, true:表示忽略，false:需要解析多租户字段
      */
-    boolean doTableFilter(String tableName);
+    default boolean doTableFilter(String tableName) {
+        return false;
+    }
 }

@@ -38,7 +38,9 @@ import java.util.Map;
  * 重写执行器 {@link org.apache.ibatis.executor.ReuseExecutor}
  *
  * @author nieqiurong 2019/4/14.
+ * @deprecated 3.4.0
  */
+@Deprecated
 public class MybatisReuseExecutor extends AbstractBaseExecutor {
 
     private final Map<String, Statement> statementMap = new HashMap<>();
@@ -102,7 +104,7 @@ public class MybatisReuseExecutor extends AbstractBaseExecutor {
 
     private boolean hasStatementFor(String sql) {
         try {
-            return statementMap.keySet().contains(sql) && !statementMap.get(sql).getConnection().isClosed();
+            return statementMap.containsKey(sql) && !statementMap.get(sql).getConnection().isClosed();
         } catch (SQLException e) {
             return false;
         }

@@ -15,18 +15,21 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
+import java.io.IOException;
+
 import javax.sql.DataSource;
+
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.io.IOException;
 
 /**
  * H2 Memory Database config
@@ -37,6 +40,8 @@ import java.io.IOException;
 @Configuration
 @EnableTransactionManagement
 public class DBConfig {
+
+    private String locationPattern = "classpath:/h2/*.sql";
 
     @Bean
     public DataSource dataSource(){
@@ -66,9 +71,21 @@ public class DBConfig {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.setContinueOnError(false);
         resourceDatabasePopulator.addScripts(
-            new PathMatchingResourcePatternResolver().getResources("classpath:/h2/*.sql")
+            new PathMatchingResourcePatternResolver().getResources(locationPattern)
         );
         return resourceDatabasePopulator;
     }
 
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource ds){
+        return new JdbcTemplate(ds);
+    }
+
+    public String getLocationPattern() {
+        return locationPattern;
+    }
+
+    public void setLocationPattern(String locationPattern) {
+        this.locationPattern = locationPattern;
+    }
 }

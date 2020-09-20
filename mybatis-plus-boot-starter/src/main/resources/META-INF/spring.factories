@@ -1,3 +1,6 @@
 # Auto Configure
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.baomidou.mybatisplus.autoconfigure.SafetyEncryptProcessor
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration,\
   com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration

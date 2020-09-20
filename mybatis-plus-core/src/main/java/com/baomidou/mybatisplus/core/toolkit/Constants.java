@@ -33,6 +33,14 @@ public interface Constants extends StringPool {
      */
     String MD5 = "MD5";
     /**
+     * AES
+     */
+    String AES = "AES";
+    /**
+     * AES 算法
+     */
+    String AES_CBC_CIPHER = "AES/CBC/PKCS5Padding";
+    /**
      * 实体类
      */
     String ENTITY = "et";
@@ -93,6 +101,10 @@ public interface Constants extends StringPool {
      */
     String Q_WRAPPER_SQL_COMMENT = WRAPPER_DOT + "sqlComment";
     /**
+     * wrapper 类的属性 sqlFirst
+     */
+    String Q_WRAPPER_SQL_FIRST = WRAPPER_DOT + "sqlFirst";
+    /**
      * columnMap
      */
     String COLUMN_MAP = "cm";
@@ -112,6 +124,7 @@ public interface Constants extends StringPool {
     /**
      * 乐观锁字段
      */
+    String MP_OPTLOCK_INTERCEPTOR = "oli";
     String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";

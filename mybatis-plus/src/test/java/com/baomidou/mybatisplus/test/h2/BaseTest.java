@@ -15,10 +15,26 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import org.junit.jupiter.api.AfterAll;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
+
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
+import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 
 @DirtiesContext
 public class BaseTest {
+
+    @Resource
+    protected JdbcTemplate jdbcTemplate;
 
     protected static final String NQQ = "聂秋秋";
 
@@ -26,4 +42,26 @@ public class BaseTest {
         System.out.println(object);
     }
 
+    protected List<H2User> queryByName(String name) {
+        String sql = "select TEST_ID, NAME, AGE,LAST_UPDATED_DT from h2user ";
+        if (name != null) {
+            sql += "where name='" + name + "'";
+        }
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            H2User u = new H2User();
+            u.setTestId(rs.getLong("TEST_ID"));
+            u.setName(rs.getString("NAME"));
+            u.setAge(AgeEnum.parseValue(rs.getInt("AGE")));
+            u.setLastUpdatedDt(rs.getDate("LAST_UPDATED_DT"));
+            return u;
+        });
+    }
+
+    @AfterAll
+    public static void afterAll() throws NoSuchFieldException, IllegalAccessException {
+        Field tableInfoCache = TableInfoHelper.class.getDeclaredField("TABLE_INFO_CACHE");
+        tableInfoCache.setAccessible(true);
+        Map<Class<?>, TableInfo> tableInfoMap = (Map<Class<?>, TableInfo>) tableInfoCache.get(TableInfoHelper.class);
+        tableInfoMap.clear();
+    }
 }

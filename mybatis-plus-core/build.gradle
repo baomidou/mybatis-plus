@@ -1,4 +1,5 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
+
 dependencies {
     api project(":mybatis-plus-annotation")
     api "${lib.'jsqlparser'}"
@@ -6,15 +7,7 @@ dependencies {
 
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
-    
-
-    testCompile "${lib.'mybatis-ehcache'}"
-    testCompile "${lib.'logback-classic'}"
-    testCompile "${lib.'commons-dbcp2'}"
-
-    testCompile "${lib.aspectjweaver}"
-    testCompile "${lib.hikaricp}"
-    testCompile "${lib.druid}"
-    testCompile "${lib.fastjson}"
-    testCompile "${lib.tomcatjdbc}"
+    implementation "${lib.'imadcn'}"
+    implementation "${lib.'mybatis-ehcache'}"
+    implementation "${lib.'mybatis-redis'}"
 }

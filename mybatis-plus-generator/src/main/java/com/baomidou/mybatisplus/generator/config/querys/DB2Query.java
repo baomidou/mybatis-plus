@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * DB2 表数据查询
  *
@@ -24,13 +22,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  * @since 2018-05-16
  */
 public class DB2Query extends AbstractDbQuery {
-
-
-    @Override
-    public DbType dbType() {
-        return DbType.DB2;
-    }
-
 
     @Override
     public String tablesSql() {

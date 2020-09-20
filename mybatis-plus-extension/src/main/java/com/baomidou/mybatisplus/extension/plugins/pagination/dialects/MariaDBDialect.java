@@ -21,6 +21,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
  * @author Caratacus
  * @since 2018-04-24
  */
+@Deprecated
 public class MariaDBDialect extends MySqlDialect {
-
 }

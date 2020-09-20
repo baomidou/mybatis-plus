@@ -18,8 +18,6 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * H2Database 表数据查询
  *
@@ -30,16 +28,9 @@ public class H2Query extends AbstractDbQuery {
 
     public static final String PK_QUERY_SQL = "select * from INFORMATION_SCHEMA.INDEXES WHERE TABLE_NAME = '%s'";
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.H2;
-    }
-
-
     @Override
     public String tablesSql() {
-        return "SELECT * FROM INFORMATION_SCHEMA.TABLES";
+        return "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE 1=1 ";
     }
 
 

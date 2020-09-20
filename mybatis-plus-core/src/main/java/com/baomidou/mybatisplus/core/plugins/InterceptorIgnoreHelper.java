@@ -1,0 +1,141 @@
+package com.baomidou.mybatisplus.core.plugins;
+
+import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Builder;
+import lombok.Data;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+/**
+ * @author miemie
+ * @since 2020-07-31
+ */
+public class InterceptorIgnoreHelper {
+
+    /**
+     * SQL 解析缓存
+     * key 可能是 mappedStatement 的 ID,也可能是 class 的 name
+     */
+    private static final Map<String, InterceptorIgnoreCache> INTERCEPTOR_IGNORE_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * 初始化缓存 接口上 InterceptorIgnore 注解信息
+     *
+     * @param mapperClass Mapper Class
+     */
+    public synchronized static InterceptorIgnoreCache initSqlParserInfoCache(Class<?> mapperClass) {
+        InterceptorIgnore ignore = mapperClass.getAnnotation(InterceptorIgnore.class);
+        if (ignore != null) {
+            return buildInterceptorIgnoreCache(ignore);
+        }
+        return null;
+    }
+
+    /**
+     * 初始化缓存 方法上 InterceptorIgnore 注解信息
+     *
+     * @param mapperAnnotation Mapper Class Name
+     * @param method           Method
+     */
+    public static void initSqlParserInfoCache(InterceptorIgnoreCache mapperAnnotation, String mapperClassName, Method method) {
+        InterceptorIgnore ignore = method.getAnnotation(InterceptorIgnore.class);
+        final String key = mapperClassName.concat(StringPool.DOT).concat(method.getName());
+        if (ignore != null) {
+            InterceptorIgnoreCache methodCache = buildInterceptorIgnoreCache(ignore);
+            if (mapperAnnotation == null) {
+                INTERCEPTOR_IGNORE_CACHE.put(key, methodCache);
+                return;
+            }
+            INTERCEPTOR_IGNORE_CACHE.put(key, chooseCache(mapperAnnotation, methodCache));
+        } else if (mapperAnnotation != null) {
+            INTERCEPTOR_IGNORE_CACHE.put(key, mapperAnnotation);
+        }
+    }
+
+    public static boolean willIgnoreTenantLine(String id) {
+        return willIgnore(id, i -> i.getTenantLine() != null && i.getTenantLine());
+    }
+
+    public static boolean willIgnoreDynamicTableName(String id) {
+        return willIgnore(id, i -> i.getDynamicTableName() != null && i.getDynamicTableName());
+    }
+
+    public static boolean willIgnoreBlockAttack(String id) {
+        return willIgnore(id, i -> i.getBlockAttack() != null && i.getBlockAttack());
+    }
+
+    public static boolean willIgnoreIllegalSql(String id) {
+        return willIgnore(id, i -> i.getIllegalSql() != null && i.getIllegalSql());
+    }
+
+    public static boolean willIgnoreDataPermission(String id) {
+        return willIgnore(id, i -> i.getDataPermission() != null && i.getDataPermission());
+    }
+
+    public static boolean willIgnore(String id, Function<InterceptorIgnoreCache, Boolean> function) {
+        InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
+        if (cache != null) {
+            return function.apply(cache);
+        }
+        return false;
+    }
+
+    private static InterceptorIgnoreCache chooseCache(InterceptorIgnoreCache mapper, InterceptorIgnoreCache method) {
+        return InterceptorIgnoreCache.builder()
+            .tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine()))
+            .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
+            .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
+            .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
+            .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
+            .build();
+    }
+
+    private static InterceptorIgnoreCache buildInterceptorIgnoreCache(InterceptorIgnore ignore) {
+        return InterceptorIgnoreCache.builder()
+            .tenantLine(getBoolean(ignore.tenantLine()))
+            .dynamicTableName(getBoolean(ignore.dynamicTableName()))
+            .blockAttack(getBoolean(ignore.blockAttack()))
+            .illegalSql(getBoolean(ignore.illegalSql()))
+            .dataPermission(getBoolean(ignore.dataPermission()))
+            .build();
+    }
+
+    private static Boolean getBoolean(String value) {
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        if ("1".equals(value) || "true".equals(value) || "on".equals(value)) {
+            return true;
+        }
+        if ("0".equals(value) || "false".equals(value) || "off".equals(value)) {
+            return false;
+        }
+        throw ExceptionUtils.mpe("not support this value of \"%s\"", value);
+    }
+
+    private static Boolean chooseBoolean(Boolean mapper, Boolean method) {
+        if (mapper == null && method == null) {
+            return null;
+        }
+        if (method != null) {
+            return method;
+        }
+        return mapper;
+    }
+
+    @Data
+    @Builder
+    public static class InterceptorIgnoreCache {
+        private Boolean tenantLine;
+        private Boolean dynamicTableName;
+        private Boolean blockAttack;
+        private Boolean illegalSql;
+        private Boolean dataPermission;
+    }
+}

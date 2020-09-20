@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface TableName {
 
     /**
@@ -35,6 +35,8 @@ public @interface TableName {
 
     /**
      * schema
+     * <p>
+     * 配置此值将覆盖全局配置的 schema
      *
      * @since 3.1.1
      */
@@ -50,14 +52,25 @@ public @interface TableName {
     boolean keepGlobalPrefix() default false;
 
     /**
-     * 实体映射结果集
+     * 实体映射结果集,
+     * 只生效与 mp 自动注入的 method
      */
     String resultMap() default "";
 
     /**
-     * 是否自动构建 resultMap 并使用
-     * 如果设置 resultMap 则不会进行 resultMap 的自动构建并注入
+     * 是否自动构建 resultMap 并使用,
+     * 只生效与 mp 自动注入的 method,
+     * 如果设置 resultMap 则不会进行 resultMap 的自动构建并注入,
      * 只适合个别字段 设置了 typeHandler 或 jdbcType 的情况
+     *
+     * @since 3.1.2
      */
     boolean autoResultMap() default false;
+
+    /**
+     * 需要排除的属性名
+     *
+     * @since 3.3.1
+     */
+    String[] excludeProperty() default {};
 }

@@ -48,10 +48,16 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
      */
     private boolean cacheSqlSegment = true;
 
+    /**
+     * 重写方法,做个性化适配
+     *
+     * @param c 元素集合
+     * @return 是否添加成功
+     */
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
-        boolean goon = transformList(list, list.get(0));
+        boolean goon = transformList(list, list.get(0), list.get(list.size() - 1));
         if (goon) {
             cacheSqlSegment = false;
             if (flushLastValue) {
@@ -67,14 +73,15 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
      *
      * @param list         传入进来的 ISqlSegment 集合
      * @param firstSegment ISqlSegment 集合里第一个值
+     * @param lastSegment  ISqlSegment 集合里最后一个值
      * @return true 是否继续向下执行; false 不再向下执行
      */
-    protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment);
+    protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment);
 
     /**
      * 刷新属性 lastValue
      */
-    private void flushLastValue(List<? extends ISqlSegment> list) {
+    private void flushLastValue(List<ISqlSegment> list) {
         lastValue = list.get(list.size() - 1);
     }
 
@@ -97,5 +104,20 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
         return sqlSegment;
     }
 
+    /**
+     * 只有该类进行过 addAll 操作,才会触发这个方法
+     * <p>
+     * 方法内可以放心进行操作
+     *
+     * @return sqlSegment
+     */
     protected abstract String childrenSqlSegment();
+
+    @Override
+    public void clear() {
+        super.clear();
+        lastValue = null;
+        sqlSegment = EMPTY;
+        cacheSqlSegment = true;
+    }
 }

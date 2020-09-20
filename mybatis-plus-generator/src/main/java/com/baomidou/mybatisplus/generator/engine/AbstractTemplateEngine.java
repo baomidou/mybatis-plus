@@ -15,21 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
@@ -38,6 +26,13 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.FileType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -77,13 +72,13 @@ public abstract class AbstractTemplateEngine {
                 // 自定义内容
                 InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
-                    injectionConfig.initMap();
+                    injectionConfig.initTableMap(tableInfo);
                     objectMap.put("cfg", injectionConfig.getMap());
                     List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
                             if (isCreate(FileType.OTHER, foc.outputFile(tableInfo))) {
-                                writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                                writerFile(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
                             }
                         }
                     }
@@ -93,42 +88,42 @@ public abstract class AbstractTemplateEngine {
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
                     String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.ENTITY, entityFile)) {
-                        writer(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
+                        writerFile(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
                 }
                 // MpMapper.java
                 if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
                     String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.MAPPER, mapperFile)) {
-                        writer(objectMap, templateFilePath(template.getMapper()), mapperFile);
+                        writerFile(objectMap, templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
                 if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
                     if (isCreate(FileType.XML, xmlFile)) {
-                        writer(objectMap, templateFilePath(template.getXml()), xmlFile);
+                        writerFile(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
                 if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
                     String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.SERVICE, serviceFile)) {
-                        writer(objectMap, templateFilePath(template.getService()), serviceFile);
+                        writerFile(objectMap, templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
                 if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
                     String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.SERVICE_IMPL, implFile)) {
-                        writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
+                        writerFile(objectMap, templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
                 if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
                     if (isCreate(FileType.CONTROLLER, controllerFile)) {
-                        writer(objectMap, templateFilePath(template.getController()), controllerFile);
+                        writerFile(objectMap, templateFilePath(template.getController()), controllerFile);
                     }
                 }
             }
@@ -138,6 +133,9 @@ public abstract class AbstractTemplateEngine {
         return this;
     }
 
+    protected void writerFile(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
+        if (StringUtils.isNotBlank(templatePath)) this.writer(objectMap, templatePath, outputFile);
+    }
 
     /**
      * 将模板转化成为文件
@@ -171,7 +169,7 @@ public abstract class AbstractTemplateEngine {
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
         if (getConfigBuilder().getGlobalConfig().isOpen()
-            && StringUtils.isNotEmpty(outDir)) {
+            && StringUtils.isNotBlank(outDir)) {
             try {
                 String osName = System.getProperty("os.name");
                 if (osName != null) {
@@ -197,11 +195,14 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     public Map<String, Object> getObjectMap(TableInfo tableInfo) {
-        Map<String, Object> objectMap = new HashMap<>(30);
+        Map<String, Object> objectMap;
         ConfigBuilder config = getConfigBuilder();
         if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
+            objectMap = CollectionUtils.newHashMapWithExpectedSize(33);
             objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
             objectMap.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
+        } else {
+            objectMap = CollectionUtils.newHashMapWithExpectedSize(31);
         }
         objectMap.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
         objectMap.put("config", config);
@@ -223,20 +224,30 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("entitySerialVersionUID", config.getStrategyConfig().isEntitySerialVersionUID());
         objectMap.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
         objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+        objectMap.put("chainModel", config.getStrategyConfig().isChainModel());
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
-        objectMap.put("superEntityClass", getSuperClassName(config.getSuperEntityClass()));
-        objectMap.put("superMapperClassPackage", config.getSuperMapperClass());
-        objectMap.put("superMapperClass", getSuperClassName(config.getSuperMapperClass()));
-        objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
-        objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
-        objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
-        objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
-        objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
-        return config.getInjectionConfig().prepareObjectMap(objectMap);
+        objectMap.put("superEntityClass", getSuperClassName(config.getStrategyConfig().getSuperEntityClass()));
+        objectMap.put("superMapperClassPackage", config.getStrategyConfig().getSuperMapperClass());
+        objectMap.put("superMapperClass", getSuperClassName(config.getStrategyConfig().getSuperMapperClass()));
+        objectMap.put("superServiceClassPackage", config.getStrategyConfig().getSuperServiceClass());
+        objectMap.put("superServiceClass", getSuperClassName(config.getStrategyConfig().getSuperServiceClass()));
+        objectMap.put("superServiceImplClassPackage", config.getStrategyConfig().getSuperServiceImplClass());
+        objectMap.put("superServiceImplClass", getSuperClassName(config.getStrategyConfig().getSuperServiceImplClass()));
+        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getStrategyConfig().getSuperControllerClass()));
+        objectMap.put("superControllerClass", getSuperClassName(config.getStrategyConfig().getSuperControllerClass()));
+        return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
+    /**
+     * 用于渲染对象MAP信息 {@link #getObjectMap(TableInfo)} 时的superClassPacket非空校验
+     *
+     * @param classPacket ignore
+     * @return ignore
+     */
+    private String verifyClassPacket(String classPacket) {
+        return StringUtils.isBlank(classPacket) ? null : classPacket;
+    }
 
     /**
      * 获取类名
@@ -245,7 +256,7 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     private String getSuperClassName(String classPath) {
-        if (StringUtils.isEmpty(classPath)) {
+        if (StringUtils.isBlank(classPath)) {
             return null;
         }
         return classPath.substring(classPath.lastIndexOf(StringPool.DOT) + 1);
@@ -277,7 +288,7 @@ public abstract class AbstractTemplateEngine {
         File file = new File(filePath);
         boolean exist = file.exists();
         if (!exist) {
-            PackageHelper.mkDir(file.getParentFile());
+            file.getParentFile().mkdirs();
         }
         return !exist || getConfigBuilder().getGlobalConfig().isFileOverride();
     }

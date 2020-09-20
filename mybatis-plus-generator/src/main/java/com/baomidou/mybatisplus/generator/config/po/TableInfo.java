@@ -15,17 +15,22 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
+
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 表信息，关联到当前字段信息
@@ -48,6 +53,7 @@ public class TableInfo {
     private String serviceImplName;
     private String controllerName;
     private List<TableField> fields;
+    private boolean havePrimaryKey;
     /**
      * 公共字段
      */
@@ -60,7 +66,7 @@ public class TableInfo {
     }
 
     protected TableInfo setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.containsTablePrefix(name)) {
+        if (strategyConfig.startsWithTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
             // 包含前缀
             this.convert = true;
         } else if (strategyConfig.isCapitalModeNaming(name)) {
@@ -91,8 +97,8 @@ public class TableInfo {
     }
 
     public TableInfo setFields(List<TableField> fields) {
+        this.fields = fields;
         if (CollectionUtils.isNotEmpty(fields)) {
-            this.fields = fields;
             // 收集导入包信息
             for (TableField field : fields) {
                 if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
@@ -137,18 +143,55 @@ public class TableInfo {
      * 转换filed实体为 xml mapper 中的 base column 字符串信息
      */
     public String getFieldNames() {
-        if (StringUtils.isEmpty(fieldNames)) {
+        if (StringUtils.isBlank(fieldNames)
+            && CollectionUtils.isNotEmpty(fields)) {
             StringBuilder names = new StringBuilder();
             IntStream.range(0, fields.size()).forEach(i -> {
                 TableField fd = fields.get(i);
                 if (i == fields.size() - 1) {
-                    names.append(fd.getName());
+                    names.append(fd.getColumnName());
                 } else {
-                    names.append(fd.getName()).append(", ");
+                    names.append(fd.getColumnName()).append(", ");
                 }
             });
             fieldNames = names.toString();
         }
         return fieldNames;
+    }
+
+    public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig){
+        boolean importSerializable = true;
+        if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
+            // 自定义父类
+            importSerializable = false;
+            this.importPackages.add(strategyConfig.getSuperEntityClass());
+        } else {
+            if (globalConfig.isActiveRecord()) {
+                // 无父类开启 AR 模式
+                this.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
+            }
+        }
+        if (importSerializable) {
+            this.setImportPackages(Serializable.class.getCanonicalName());
+        }
+        if (this.isConvert()) {
+            this.importPackages.add(TableName.class.getCanonicalName());
+        }
+        if (strategyConfig.getLogicDeleteFieldName() != null && this.isLogicDelete(strategyConfig.getLogicDeleteFieldName())) {
+            this.importPackages.add(TableLogic.class.getCanonicalName());
+        }
+        if (null != globalConfig.getIdType() && this.isHavePrimaryKey()) {
+            // 指定需要 IdType 场景
+            this.importPackages.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+            this.importPackages.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
+        }
+        if (StringUtils.isNotBlank(strategyConfig.getVersionFieldName())
+            && CollectionUtils.isNotEmpty(this.getFields())) {
+            this.getFields().forEach(f -> {
+                if (strategyConfig.getVersionFieldName().equals(f.getName())) {
+                    this.importPackages.add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
+                }
+            });
+        }
     }
 }

@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
@@ -41,7 +42,7 @@ public class PackageConfig {
     /**
      * 父包模块名
      */
-    private String moduleName = null;
+    private String moduleName = "";
     /**
      * Entity包名
      */
@@ -75,9 +76,33 @@ public class PackageConfig {
      * 父包名
      */
     public String getParent() {
-        if (StringUtils.isNotEmpty(moduleName)) {
+        if (StringUtils.isNotBlank(moduleName)) {
             return parent + StringPool.DOT + moduleName;
         }
         return parent;
     }
+
+
+    /**
+     * 连接父子包名
+     *
+     * @return 连接后的包名
+     */
+    public String joinPackage(String subPackage) {
+        return StringUtils.isBlank(parent) ? subPackage : (parent + StringPool.DOT + subPackage);
+    }
+
+    public Map<String, String> initPackageInfo() {
+        Map<String, String> initMap = CollectionUtils.newHashMapWithExpectedSize(7);
+        initMap.put(ConstVal.MODULE_NAME, this.getModuleName());
+        initMap.put(ConstVal.ENTITY, this.joinPackage(this.getEntity()));
+        initMap.put(ConstVal.MAPPER, this.joinPackage(this.getMapper()));
+        initMap.put(ConstVal.XML, this.joinPackage(this.getXml()));
+        initMap.put(ConstVal.SERVICE, this.joinPackage(this.getService()));
+        initMap.put(ConstVal.SERVICE_IMPL, this.joinPackage(this.getServiceImpl()));
+        initMap.put(ConstVal.CONTROLLER, this.joinPackage(this.getController()));
+        return initMap;
+    }
+
+
 }

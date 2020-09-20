@@ -22,12 +22,8 @@ import java.io.Serializable;
  *
  * @author hubin
  * @since 2017-10-11
+ * @deprecated 3.4.0
  */
-public interface IEnum<T extends Serializable> {
-
-    /**
-     * 枚举数据库存储值
-     */
-    T getValue();
-
+@Deprecated
+public interface IEnum<T extends Serializable> extends com.baomidou.mybatisplus.annotation.IEnum<T> {
 }

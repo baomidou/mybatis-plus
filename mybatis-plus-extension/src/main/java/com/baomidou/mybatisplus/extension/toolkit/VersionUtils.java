@@ -34,7 +34,7 @@ public class VersionUtils {
      * @return ignore
      */
     public static int compareVersion(String version1, String version2) {
-        Assert.isTrue(!StringUtils.isEmpty(version1) && !StringUtils.isEmpty(version2),
+        Assert.isTrue(!StringUtils.isBlank(version1) && !StringUtils.isBlank(version2),
             "Error: CompareVersion Error: Illegal Argument !");
         // 切割点 "."；
         String[] versionArray1 = version1.split("\\.");

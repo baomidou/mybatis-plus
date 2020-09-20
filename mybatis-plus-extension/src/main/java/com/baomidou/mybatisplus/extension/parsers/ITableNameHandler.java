@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.extension.parsers;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
@@ -22,27 +25,13 @@ import org.apache.ibatis.reflection.MetaObject;
  *
  * @author jobob
  * @since 2019-04-23
+ * @deprecated 3.4.0 @2020-07-30 use {@link TableNameHandler} {@link MybatisPlusInterceptor} {@link DynamicTableNameInnerInterceptor}
  */
+@Deprecated
 public interface ITableNameHandler {
 
     /**
-     * 表名 SQL 处理
-     *
-     * @param metaObject 元对象
-     * @param sql        当前执行 SQL
-     * @param tableName  表名
-     * @return
-     */
-    default String process(MetaObject metaObject, String sql, String tableName) {
-        String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
-        if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
-            return sql.replaceAll(tableName, dynamicTableName);
-        }
-        return sql;
-    }
-
-    /**
-     * 生成动态表名，无改变返回 NULL
+     * 生成动态表名
      *
      * @param metaObject 元对象
      * @param sql        当前执行 SQL

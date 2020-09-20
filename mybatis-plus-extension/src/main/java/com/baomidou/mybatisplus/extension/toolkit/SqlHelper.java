@@ -15,19 +15,30 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.MyBatisExceptionTranslator;
+import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
 /**
  * SQL 辅助类
@@ -37,12 +48,10 @@ import java.util.List;
  */
 public final class SqlHelper {
 
-    private static final Log logger = LogFactory.getLog(SqlHelper.class);
     /**
      * 主要用于 service 和 ar
      */
     public static SqlSessionFactory FACTORY;
-
 
     /**
      * 批量操作 SqlSession
@@ -52,17 +61,18 @@ public final class SqlHelper {
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
         // TODO 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
-        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+        return sqlSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
 
     /**
-     * 获取sqlSession
+     * 获取SqlSessionFactory
      *
-     * @param clazz 对象类
-     * @return ignore
+     * @param clazz 实体类
+     * @return SqlSessionFactory
+     * @since 3.3.0
      */
-    private static SqlSession getSqlSession(Class<?> clazz) {
-        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
+    public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
+        return GlobalConfigUtils.currentSessionFactory(clazz);
     }
 
     /**
@@ -72,7 +82,7 @@ public final class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
-        return SqlHelper.getSqlSession(clazz);
+        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
 
     /**
@@ -98,18 +108,6 @@ public final class SqlHelper {
     }
 
     /**
-     * 删除不存在的逻辑上属于成功
-     *
-     * @param result 数据库操作返回影响条数
-     * @deprecated  3.1.1 {@link SqlHelper#retBool(java.lang.Integer)}
-     * @return boolean
-     */
-    @Deprecated
-    public static boolean delBool(Integer result) {
-        return null != result && result >= 0;
-    }
-
-    /**
      * 返回SelectCount执行结果
      *
      * @param result ignore
@@ -117,19 +115,6 @@ public final class SqlHelper {
      */
     public static int retCount(Integer result) {
         return (null == result) ? 0 : result;
-    }
-
-    /**
-     * 从list中取第一条数据返回对应List中泛型的单个结果
-     *
-     * @param list ignore
-     * @param <E>  ignore
-     * @return ignore
-     * @deprecated 3.1.1
-     */
-    @Deprecated
-    public static <E> E getObject(List<E> list) {
-        return getObject(logger, list);
     }
 
     /**
@@ -149,4 +134,126 @@ public final class SqlHelper {
         }
         return null;
     }
+
+    /**
+     * 清理缓存.
+     * 批量插入因为无法重用sqlSession，只能新开启一个sqlSession
+     *
+     * @param clazz 实体类
+     * @deprecated 3.3.1
+     */
+    @Deprecated
+    public static void clearCache(Class<?> clazz) {
+        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        if (sqlSessionHolder != null) {
+            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
+            sqlSession.clearCache();
+        }
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param entityClass 实体
+     * @param log         日志对象
+     * @param consumer    consumer
+     * @return 操作结果
+     * @since 3.4.0
+     */
+    public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
+        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
+        if (sqlSessionHolder != null) {
+            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
+            //原生无法支持执行器切换，当存在批量操作时，会嵌套两个session的，优先commit上一个session
+            //按道理来说，这里的值应该一直为false。
+            sqlSession.commit(!transaction);
+        }
+        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
+        if (!transaction) {
+            log.warn("SqlSession [" + sqlSession + "] was not registered for synchronization because DataSource is not transactional");
+        }
+        try {
+            consumer.accept(sqlSession);
+            //非事物情况下，强制commit。
+            sqlSession.commit(!transaction);
+            return true;
+        } catch (Throwable t) {
+            sqlSession.rollback();
+            Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
+            if (unwrapped instanceof RuntimeException) {
+                MyBatisExceptionTranslator myBatisExceptionTranslator
+                    = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
+                throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
+            }
+            throw ExceptionUtils.mpe(unwrapped);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param entityClass 实体类
+     * @param log         日志对象
+     * @param list        数据集合
+     * @param batchSize   批次大小
+     * @param consumer    consumer
+     * @param <E>         T
+     * @return 操作结果
+     * @since 3.4.0
+     */
+    public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
+        return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
+            int size = list.size();
+            int i = 1;
+            for (E element : list) {
+                consumer.accept(sqlSession, element);
+                if ((i % batchSize == 0) || i == size) {
+                    sqlSession.flushStatements();
+                }
+                i++;
+            }
+        });
+    }
+
+    /**
+     * 批量更新或保存
+     *
+     * @param entityClass 实体
+     * @param log         日志对象
+     * @param list        数据集合
+     * @param batchSize   批次大小
+     * @param predicate   predicate(新增条件) notNull
+     * @param consumer    consumer（更新处理） notNull
+     * @param <E>         E
+     * @return 操作结果
+     * @since 3.4.0
+     */
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
+        String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
+        return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
+            if (predicate.test(sqlSession, entity)) {
+                sqlSession.insert(sqlStatement, entity);
+            } else {
+                consumer.accept(sqlSession, entity);
+            }
+        });
+    }
+
+    /**
+     * 获取mapperStatementId
+     *
+     * @param sqlMethod 方法名
+     * @return 命名id
+     * @since 3.4.0
+     */
+    public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
+        return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
+    }
+
 }

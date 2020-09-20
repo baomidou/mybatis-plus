@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.executor;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-
+import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.ExecutorException;
@@ -31,14 +31,15 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
  * 重写执行器 {@link org.apache.ibatis.executor.BaseExecutor}
  *
  * @author nieqiurong 2019/4/22.
+ * @deprecated 3.4.0
  */
+@Deprecated
 public abstract class AbstractBaseExecutor extends BaseExecutor {
 
     protected AbstractBaseExecutor(Configuration configuration, Transaction transaction) {
@@ -52,23 +53,10 @@ public abstract class AbstractBaseExecutor extends BaseExecutor {
         }
         CacheKey cacheKey = new CacheKey();
         cacheKey.update(ms.getId());
-        Object offset = rowBounds.getOffset();
-        Object limit = rowBounds.getLimit();
-        if (parameterObject instanceof Map) {
-            Map<?, ?> parameterMap = (Map<?, ?>) parameterObject;
-            Optional<? extends Map.Entry<?, ?>> optional = parameterMap.entrySet().stream().filter(entry -> entry.getValue() instanceof IPage).findFirst();
-            if (optional.isPresent()) {
-                IPage<?> page = (IPage) optional.get().getValue();
-                offset = page.getCurrent();
-                limit = page.getSize();
-            }
-        } else if (parameterObject instanceof IPage) {
-            IPage<?> page = (IPage) parameterObject;
-            offset = page.getCurrent();
-            limit = page.getSize();
-        }
-        cacheKey.update(offset);
-        cacheKey.update(limit);
+        cacheKey.update(rowBounds.getOffset());
+        cacheKey.update(rowBounds.getLimit());
+        Optional<IPage> pageOptional = ParameterUtils.findPage(parameterObject);
+        pageOptional.ifPresent(page -> cacheKey.update(page.cacheKey()));
         cacheKey.update(boundSql.getSql());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();

@@ -13,10 +13,6 @@
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">
   </a>
 
-  <a href="https://github.com/996icu/996.ICU/blob/master/LICENSE">
-    <img alt="996icu" src="https://img.shields.io/badge/license-NPL%20(The%20996%20Prohibited%20License)-blue.svg">
-  </a>
-
   <a href="https://www.apache.org/licenses/LICENSE-2.0">
     <img alt="code style" src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square">
   </a>
@@ -26,7 +22,7 @@
 
 Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
-技术讨论 QQ 群 ： 576493122 🈵  、  648281531 、  643509491
+技术讨论 QQ 群 ： 183066216 、  576493122 🈵  、  648281531 🈵 、  643509491 🈵
 
 # 优点 | Advantages
 
@@ -77,9 +73,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - [基于Hibernate扩展 Hibernate-Plus](https://gitee.com/baomidou/hibernate-plus)
 
 # 王者荣耀
-![MPTrophy](https://gitee.com/uploads/images/2018/0102/101803_2fdba060_12260.jpeg)
-
-![MPTrophy](https://images.gitee.com/uploads/images/2018/1218/151845_f562bcb5_12260.png)
+![MPTrophy](https://images.gitee.com/uploads/images/2020/0611/222825_a19dfd37_399953.jpeg)
 
 # 期望 | Futures
 

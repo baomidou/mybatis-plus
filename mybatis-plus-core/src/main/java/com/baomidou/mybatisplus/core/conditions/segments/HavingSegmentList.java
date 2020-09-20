@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.joining;
 public class HavingSegmentList extends AbstractISegmentList {
 
     @Override
-    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment) {
         if (!isEmpty()) {
             this.add(SqlKeyword.AND);
         }
