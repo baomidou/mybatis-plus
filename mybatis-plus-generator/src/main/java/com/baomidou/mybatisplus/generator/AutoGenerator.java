@@ -20,10 +20,7 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +45,6 @@ public class AutoGenerator {
     /**
      * 注入配置
      */
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     protected InjectionConfig injectionConfig;
     /**
      * 数据源配置
@@ -74,7 +69,7 @@ public class AutoGenerator {
     /**
      * 模板引擎
      */
-    private AbstractTemplateEngine templateEngine = new VelocityTemplateEngine(); // 为了兼容之前逻辑，采用 Velocity 引擎 【 默认 】
+    private AbstractTemplateEngine templateEngine;
 
     /**
      * 生成代码
@@ -87,6 +82,10 @@ public class AutoGenerator {
             if (null != injectionConfig) {
                 injectionConfig.setConfig(config);
             }
+        }
+        if (null == templateEngine) {
+            // 为了兼容之前逻辑，采用 Velocity 引擎 【 默认 】
+            templateEngine = new VelocityTemplateEngine();
         }
         // 模板引擎初始化执行文件输出
         templateEngine.init(this.pretreatmentConfigBuilder(config)).mkdirs().batchOutput().open();
@@ -121,10 +120,23 @@ public class AutoGenerator {
         return config;
     }
 
+    /**
+     * @return this
+     * @see #getInjectionConfig()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public InjectionConfig getCfg() {
         return injectionConfig;
     }
 
+    /**
+     * @param injectionConfig injectionConfig
+     * @return this
+     * @see #setInjectionConfig(InjectionConfig)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public AutoGenerator setCfg(InjectionConfig injectionConfig) {
         this.injectionConfig = injectionConfig;
         return this;

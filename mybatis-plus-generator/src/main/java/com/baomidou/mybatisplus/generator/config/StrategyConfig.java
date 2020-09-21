@@ -220,7 +220,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public boolean containsTablePrefix(String tableName) {
-        return getTablePrefix().stream().anyMatch(tableName::contains);
+        return this.tablePrefix.stream().anyMatch(tableName::contains);
     }
 
     /**
@@ -230,7 +230,7 @@ public class StrategyConfig {
      * @since 3.3.2
      */
     public boolean startsWithTablePrefix(String tableName) {
-        return getTablePrefix().stream().anyMatch(tableName::startsWith);
+        return this.tablePrefix.stream().anyMatch(tableName::startsWith);
     }
 
     public NamingStrategy getColumnNaming() {
@@ -238,7 +238,24 @@ public class StrategyConfig {
         return Optional.ofNullable(columnNaming).orElse(naming);
     }
 
+    /**
+     * @param tablePrefix 表前缀
+     * @return this
+     * @see #addTablePrefix(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setTablePrefix(String... tablePrefix) {
+        return addTablePrefix(tablePrefix);
+    }
+
+    /**
+     * 增加表前缀
+     * @since 3.4.1
+     * @param tablePrefix 表前缀
+     * @return this
+     */
+    public StrategyConfig addTablePrefix(String... tablePrefix) {
         this.tablePrefix.addAll(Arrays.asList(tablePrefix));
         return this;
     }
@@ -253,17 +270,71 @@ public class StrategyConfig {
         return this;
     }
 
+    /**
+     * @param include 包含表
+     * @return this
+     * @see #addInclude(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setInclude(String... include) {
+        return addInclude(include);
+    }
+
+    /**
+     * 增加包含的表名
+     *
+     * @param include 包含表
+     * @return this
+     * @since 3.4.1
+     */
+    public StrategyConfig addInclude(String... include) {
         this.include.addAll(Arrays.asList(include));
         return this;
     }
 
+    /**
+     * @param exclude 排除表
+     * @return this
+     * @see #addExclude(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setExclude(String... exclude) {
+        return addExclude(exclude);
+    }
+
+    /**
+     * 增加排除表
+     *
+     * @param exclude 排除表
+     * @return this
+     * @since 3.4.1
+     */
+    public StrategyConfig addExclude(String... exclude) {
         this.exclude.addAll(Arrays.asList(exclude));
         return this;
     }
 
+    /**
+     * @param fieldPrefixs 字段前缀
+     * @return this
+     * @see #addFieldPrefix(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setFieldPrefix(String... fieldPrefixs) {
+        return addFieldPrefix(fieldPrefixs);
+    }
+
+    /**
+     * 增加字段前缀
+     *
+     * @param fieldPrefixs 字段前缀
+     * @return this
+     * @since 3.4.1
+     */
+    public StrategyConfig addFieldPrefix(String... fieldPrefixs) {
         this.fieldPrefix.addAll(Arrays.asList(fieldPrefixs));
         return this;
     }
@@ -355,6 +426,13 @@ public class StrategyConfig {
         return this.addTableFills(tableFillList.toArray(new TableFill[]{}));
     }
 
+    /**
+     * 添加表字段填充
+     *
+     * @param tableFill 填充字段
+     * @return this
+     * @since 3.4.1
+     */
     public StrategyConfig addTableFills(TableFill... tableFill) {
         this.tableFillList.addAll(Arrays.asList(tableFill));
         return this;

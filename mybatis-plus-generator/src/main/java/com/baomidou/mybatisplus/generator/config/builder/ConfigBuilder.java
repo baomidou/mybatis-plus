@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -99,6 +98,7 @@ public class ConfigBuilder {
      * 表数据查询
      */
     private final DecoratorDbQuery dbQuery;
+
     /**
      * 在构造器中处理配置
      *
@@ -293,26 +293,11 @@ public class ConfigBuilder {
                             isId = StringUtils.isNotBlank(key) && "PRI".equals(key.toUpperCase());
                         }
                     }
-
                     // 处理ID
                     if (isId) {
-                        field.setKeyFlag(true);
+                        field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
                         tableInfo.setHavePrimaryKey(true);
-                        field.setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
-                    } else {
-                        field.setKeyFlag(false);
                     }
-                    // 自定义字段查询
-                    String[] fcs = dbQuery.fieldCustom();
-                    if (null != fcs) {
-                        Map<String, Object> customMap = CollectionUtils.newHashMapWithExpectedSize(fcs.length);
-                        for (String fc : fcs) {
-                            customMap.put(fc, results.getObject(fc));
-                        }
-                        field.setCustomMap(customMap);
-                    }
-                    // 处理其它信息
-                    field.setName(columnName);
                     String newColumnName = columnName;
                     IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
                     if (keyWordsHandler != null && keyWordsHandler.isKeyWords(columnName)) {
@@ -320,11 +305,13 @@ public class ConfigBuilder {
                         field.setKeyWords(true);
                         newColumnName = keyWordsHandler.formatColumn(columnName);
                     }
-                    field.setColumnName(newColumnName);
-                    field.setType(results.getString(dbQuery.fieldType()));
-                    field.setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field));
-                    field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
-                    field.setComment(dbQuery.getFiledComment(results));
+                    field.setName(columnName).setColumnName(newColumnName)
+                        .setType(results.getString(dbQuery.fieldType()))
+                        .setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field))
+                        .setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
+                        .setComment(dbQuery.getFiledComment(results))
+                        .setCustomMap(dbQuery.getCustomFields(results));
+                    ;
                     // 填充逻辑判断
                     strategyConfig.getTableFillList()
                         .stream()
@@ -342,8 +329,8 @@ public class ConfigBuilder {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        tableInfo.setFields(fieldList);
-        tableInfo.setCommonFields(commonFieldList);
+        tableInfo.addFields(fieldList);
+        tableInfo.addCommonFields(commonFieldList);
         return tableInfo;
     }
 
@@ -371,7 +358,6 @@ public class ConfigBuilder {
             }
         });
     }
-
 
     /**
      * 不再建议调用此方法，后续不再公开此方法.

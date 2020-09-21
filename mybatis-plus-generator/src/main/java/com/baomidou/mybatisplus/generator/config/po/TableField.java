@@ -88,6 +88,13 @@ public class TableField {
         return this;
     }
 
+    //TODO 先标记一下，后面再考虑。
+    @Deprecated
+    public TableField setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+        return this;
+    }
+
     public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
         //TODO 这个好像是苗老板写的，有空打死他吧.
         if (strategyConfig.isEntityBooleanColumnRemoveIsPrefix()

@@ -16,14 +16,19 @@
 package com.baomidou.mybatisplus.generator.config.po;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
@@ -52,12 +57,12 @@ public class TableInfo {
     private String serviceName;
     private String serviceImplName;
     private String controllerName;
-    private List<TableField> fields;
+    private final List<TableField> fields = new ArrayList<>();
     private boolean havePrimaryKey;
     /**
      * 公共字段
      */
-    private List<TableField> commonFields;
+    private final List<TableField> commonFields = new ArrayList<>();
     private String fieldNames;
 
     public TableInfo setConvert(boolean convert) {
@@ -96,39 +101,56 @@ public class TableInfo {
         return this;
     }
 
+
+    /**
+     * @see #addFields(List)
+     * @see #addFields(TableField...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public TableInfo setFields(List<TableField> fields) {
-        this.fields = fields;
-        if (CollectionUtils.isNotEmpty(fields)) {
-            // 收集导入包信息
-            for (TableField field : fields) {
-                if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
-                    importPackages.add(field.getColumnType().getPkg());
-                }
-                if (field.isKeyFlag()) {
-                    // 主键
-                    if (field.isConvert() || field.isKeyIdentityFlag()) {
-                        importPackages.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
-                    }
-                    // 自增
-                    if (field.isKeyIdentityFlag()) {
-                        importPackages.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
-                    }
-                } else if (field.isConvert()) {
-                    // 普通字段
-                    importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
-                }
-                if (null != field.getFill()) {
-                    // 填充字段
-                    importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
-                    importPackages.add(com.baomidou.mybatisplus.annotation.FieldFill.class.getCanonicalName());
-                }
-            }
-        }
+        return addFields(fields);
+    }
+
+    /**
+     * @param fields 字段集合
+     * @return this
+     * @since 3.4.1
+     */
+    public TableInfo addFields(List<TableField> fields) {
+        this.fields.addAll(fields);
         return this;
     }
 
+    /**
+     * @param fields 字段集合
+     * @return this
+     * @since 3.4.1
+     */
+    public TableInfo addFields(TableField... fields) {
+        this.fields.addAll(Arrays.asList(fields));
+        return this;
+    }
+
+    /**
+     * @param pkg 包空间
+     * @return this
+     * @see #addImportPackages(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public TableInfo setImportPackages(String pkg) {
         importPackages.add(pkg);
+        return this;
+    }
+
+    /**
+     * @param pkgs 包空间
+     * @return this
+     * @since 3.4.1
+     */
+    public TableInfo addImportPackages(String... pkgs) {
+        importPackages.addAll(Arrays.asList(pkgs));
         return this;
     }
 
@@ -140,23 +162,59 @@ public class TableInfo {
     }
 
     /**
+     * @param fieldNames fieldNames
+     * @deprecated 3.4.1 不打算公开此方法了
+     */
+    @Deprecated
+    public TableInfo setFieldNames(String fieldNames) {
+        this.fieldNames = fieldNames;
+        return this;
+    }
+
+    /**
      * 转换filed实体为 xml mapper 中的 base column 字符串信息
      */
     public String getFieldNames() {
-        if (StringUtils.isBlank(fieldNames)
-            && CollectionUtils.isNotEmpty(fields)) {
-            StringBuilder names = new StringBuilder();
-            IntStream.range(0, fields.size()).forEach(i -> {
-                TableField fd = fields.get(i);
-                if (i == fields.size() - 1) {
-                    names.append(fd.getColumnName());
-                } else {
-                    names.append(fd.getColumnName()).append(", ");
-                }
-            });
-            fieldNames = names.toString();
+        //TODO 感觉这个也啥必要,不打算公开set方法了
+        if (StringUtils.isBlank(fieldNames)) {
+            this.fieldNames = this.fields.stream().map(TableField::getColumnName).collect(Collectors.joining(", "));
         }
-        return fieldNames;
+        return this.fieldNames;
+    }
+
+    /**
+     * @param commonFields 公共字段
+     * @return this
+     * @see #addCommonFields(TableField...)
+     * @see #addCommonFields(List)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public TableInfo setCommonFields(List<TableField> commonFields) {
+        return addCommonFields(commonFields);
+    }
+
+    /**
+     * 添加公共字段
+     *
+     * @param commonFields 公共字段
+     * @return this
+     * @since 3.4.1
+     */
+    public TableInfo addCommonFields(TableField... commonFields) {
+        return addCommonFields(Arrays.asList(commonFields));
+    }
+
+    /**
+     * 添加公共字段
+     *
+     * @param commonFields 公共字段
+     * @return this
+     * @since 3.4.1
+     */
+    public TableInfo addCommonFields(List<TableField> commonFields) {
+        this.commonFields.addAll(commonFields);
+        return this;
     }
 
     public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig){
@@ -172,7 +230,7 @@ public class TableInfo {
             }
         }
         if (importSerializable) {
-            this.setImportPackages(Serializable.class.getCanonicalName());
+            this.importPackages.add(Serializable.class.getCanonicalName());
         }
         if (this.isConvert()) {
             this.importPackages.add(TableName.class.getCanonicalName());
@@ -182,16 +240,35 @@ public class TableInfo {
         }
         if (null != globalConfig.getIdType() && this.isHavePrimaryKey()) {
             // 指定需要 IdType 场景
-            this.importPackages.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
-            this.importPackages.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
+            this.importPackages.add(IdType.class.getCanonicalName());
+            this.importPackages.add(TableId.class.getCanonicalName());
         }
-        if (StringUtils.isNotBlank(strategyConfig.getVersionFieldName())
-            && CollectionUtils.isNotEmpty(this.getFields())) {
-            this.getFields().forEach(f -> {
-                if (strategyConfig.getVersionFieldName().equals(f.getName())) {
-                    this.importPackages.add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
+        this.fields.forEach(field -> {
+            if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
+                importPackages.add(field.getColumnType().getPkg());
+            }
+            if (field.isKeyFlag()) {
+                // 主键
+                if (field.isConvert() || field.isKeyIdentityFlag()) {
+                    importPackages.add(TableId.class.getCanonicalName());
                 }
-            });
-        }
+                // 自增
+                if (field.isKeyIdentityFlag()) {
+                    importPackages.add(IdType.class.getCanonicalName());
+                }
+            } else if (field.isConvert()) {
+                // 普通字段
+                importPackages.add(TableField.class.getCanonicalName());
+            }
+            if (null != field.getFill()) {
+                // 填充字段
+                importPackages.add(TableField.class.getCanonicalName());
+                importPackages.add(FieldFill.class.getCanonicalName());
+            }
+            String versionFieldName = strategyConfig.getVersionFieldName();
+            if (StringUtils.isNotBlank(versionFieldName) && versionFieldName.equals(field.getName())) {
+                this.importPackages.add(Version.class.getCanonicalName());
+            }
+        });
     }
 }

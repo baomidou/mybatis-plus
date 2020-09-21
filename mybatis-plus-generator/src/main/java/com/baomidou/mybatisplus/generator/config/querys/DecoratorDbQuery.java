@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.querys;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -23,6 +24,8 @@ import com.baomidou.mybatisplus.generator.config.IDbQuery;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 装饰DbQuery
@@ -141,12 +144,17 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         return dbQuery.fieldComment();
     }
 
-    public String getFiledComment(ResultSet resultSet) throws SQLException {
+    public String getFiledComment(ResultSet resultSet) {
         return getResultStringValue(resultSet, this.fieldComment());
     }
 
-    private String getResultStringValue(ResultSet resultSet, String columnLabel) throws SQLException {
-        return StringUtils.isNotBlank(columnLabel) ? StringPool.EMPTY : formatComment(resultSet.getString(columnLabel));
+    private String getResultStringValue(ResultSet resultSet, String columnLabel) {
+        try {
+            return StringUtils.isNotBlank(columnLabel) ? StringPool.EMPTY : formatComment(resultSet.getString(columnLabel));
+        } catch (SQLException e) {
+            //ignore
+        }
+        return StringPool.EMPTY;
     }
 
     public String formatComment(String comment) {
@@ -159,12 +167,34 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     @Override
-    public boolean isKeyIdentity(ResultSet results) throws SQLException {
-        return dbQuery.isKeyIdentity(results);
+    public boolean isKeyIdentity(ResultSet results) {
+        try {
+            return dbQuery.isKeyIdentity(results);
+        } catch (SQLException e) {
+            // ignore
+        }
+        return false;
     }
 
     @Override
     public String[] fieldCustom() {
         return dbQuery.fieldCustom();
+    }
+
+    public Map<String, Object> getCustomFields(ResultSet resultSet) {
+        String[] fcs = this.fieldCustom();
+        if (null != fcs) {
+            Map<String, Object> customMap = CollectionUtils.newHashMapWithExpectedSize(fcs.length);
+            for (String fc : fcs) {
+                try {
+                    customMap.put(fc, resultSet.getObject(fc));
+                } catch (SQLException sqlException) {
+                    //ignore
+                    customMap.put(fc, null);
+                }
+            }
+            return customMap;
+        }
+        return Collections.emptyMap();
     }
 }
