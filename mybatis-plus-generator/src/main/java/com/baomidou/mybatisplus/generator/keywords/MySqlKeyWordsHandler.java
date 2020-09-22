@@ -27,8 +27,8 @@ import java.util.List;
  * @since 3.3.2
  */
 public class MySqlKeyWordsHandler extends BaseKeyWordsHandler {
-    
-    private static List<String> KEY_WORDS = new ArrayList<>(Arrays.asList(
+
+    private static final List<String> KEY_WORDS = new ArrayList<>(Arrays.asList(
         "ACCESSIBLE",
         "ACCOUNT",
         "ACTION",
@@ -651,18 +651,18 @@ public class MySqlKeyWordsHandler extends BaseKeyWordsHandler {
         "YEAR",
         "YEAR_MONTH",
         "ZEROFILL"));
-    
+
     public MySqlKeyWordsHandler() {
         super(KEY_WORDS);
     }
-    
+
     public MySqlKeyWordsHandler(List<String> keyWords) {
         super(keyWords);
     }
-    
+
     @Override
     public String formatStyle() {
         return "`%s`";
     }
-    
+
 }

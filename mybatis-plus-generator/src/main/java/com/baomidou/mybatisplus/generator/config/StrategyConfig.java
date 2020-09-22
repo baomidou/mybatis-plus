@@ -260,12 +260,49 @@ public class StrategyConfig {
         return this;
     }
 
+    /**
+     * @param fieldName 字段名
+     * @return 是否匹配
+     * @see #matchSuperEntityColumns(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public boolean includeSuperEntityColumns(String fieldName) {
+        // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
+        return matchSuperEntityColumns(fieldName);
+    }
+
+    /**
+     * 匹配父类字段(忽略大小写)
+     *
+     * @param fieldName 字段名
+     * @return 是否匹配
+     * @since 3.4.1
+     */
+    public boolean matchSuperEntityColumns(String fieldName) {
         // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
         return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
     }
 
+    /**
+     * @param superEntityColumns 父类字段
+     * @return this
+     * @see #addSuperEntityColumns(String...)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
+        return addSuperEntityColumns(superEntityColumns);
+    }
+
+    /**
+     * 添加父类公共字段
+     *
+     * @param superEntityColumns 父类字段(数据库字段列名)
+     * @return this
+     * @since 3.4.1
+     */
+    public StrategyConfig addSuperEntityColumns(String... superEntityColumns) {
         this.superEntityColumns.addAll(Arrays.asList(superEntityColumns));
         return this;
     }
@@ -361,7 +398,7 @@ public class StrategyConfig {
      * </p>
      *
      * @param clazz 实体父类 Class
-     * @return
+     * @return this
      */
     public StrategyConfig setSuperEntityClass(Class<?> clazz) {
         this.superEntityClass = clazz.getName();
@@ -376,7 +413,7 @@ public class StrategyConfig {
      *
      * @param clazz        实体父类 Class
      * @param columnNaming 字段命名策略
-     * @return
+     * @return this
      */
     public StrategyConfig setSuperEntityClass(Class<?> clazz, NamingStrategy columnNaming) {
         this.columnNaming = columnNaming;
@@ -419,6 +456,7 @@ public class StrategyConfig {
      *
      * @param tableFillList tableFillList
      * @see #addTableFills(TableFill...)
+     * @see #addTableFills(List)
      * @deprecated 3.4.1
      */
     @Deprecated
@@ -435,6 +473,18 @@ public class StrategyConfig {
      */
     public StrategyConfig addTableFills(TableFill... tableFill) {
         this.tableFillList.addAll(Arrays.asList(tableFill));
+        return this;
+    }
+
+    /**
+     * 添加表字段填充
+     *
+     * @param tableFillList 填充字段集合
+     * @return this
+     * @since 3.4.1
+     */
+    public StrategyConfig addTableFills(List<TableFill> tableFillList) {
+        this.tableFillList.addAll(tableFillList);
         return this;
     }
 
@@ -524,13 +574,12 @@ public class StrategyConfig {
     /**
      * 表名匹配
      *
-     * @param setTableName 设置表名
-     * @param dbTableName  数据库表单
-     * @return ignore
+     * @param matchTableName 匹配表名
+     * @param dbTableName    数据库表名
+     * @return 是否匹配
      */
-    private boolean tableNameMatches(String setTableName, String dbTableName) {
-        return setTableName.equalsIgnoreCase(dbTableName)
-            || StringUtils.matches(setTableName, dbTableName);
+    private boolean tableNameMatches(String matchTableName, String dbTableName) {
+        return matchTableName.equalsIgnoreCase(dbTableName) || StringUtils.matches(matchTableName, dbTableName);
     }
 
 }

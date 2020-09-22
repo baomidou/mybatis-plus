@@ -53,19 +53,19 @@ public class AutoGenerator {
     /**
      * 数据库表配置
      */
-    private StrategyConfig strategy = new StrategyConfig();
+    private StrategyConfig strategy;
     /**
      * 包 相关配置
      */
-    private PackageConfig packageInfo = new PackageConfig();
+    private PackageConfig packageInfo;
     /**
      * 模板 相关配置
      */
-    private TemplateConfig template = new TemplateConfig();
+    private TemplateConfig template;
     /**
      * 全局 相关配置
      */
-    private GlobalConfig globalConfig = new GlobalConfig();
+    private GlobalConfig globalConfig;
     /**
      * 模板引擎
      */

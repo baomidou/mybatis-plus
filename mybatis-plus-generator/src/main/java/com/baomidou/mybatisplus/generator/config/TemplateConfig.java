@@ -87,7 +87,7 @@ public class TemplateConfig {
         return this;
     }
 
-    public Map<String, String> initTemplate(GlobalConfig globalConfig, Map<String, String> packageInfo) {
+    public Map<String, String> getPathInfo(GlobalConfig globalConfig, Map<String, String> packageInfo) {
         Map<String, String> initMap = CollectionUtils.newHashMapWithExpectedSize(6);
         String outputDir = globalConfig.getOutputDir();
         setPathInfo(initMap, packageInfo, this.getEntity(globalConfig.isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);

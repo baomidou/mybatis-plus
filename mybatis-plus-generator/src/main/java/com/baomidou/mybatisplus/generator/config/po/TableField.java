@@ -88,7 +88,13 @@ public class TableField {
         return this;
     }
 
-    //TODO 先标记一下，后面再考虑。
+
+    /**
+     * @param propertyName 属性名称
+     * @return this
+     * @see #setPropertyName(StrategyConfig, String)
+     * @deprecated 3.4.1
+     */
     @Deprecated
     public TableField setPropertyName(String propertyName) {
         this.propertyName = propertyName;
@@ -96,7 +102,6 @@ public class TableField {
     }
 
     public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
-        //TODO 这个好像是苗老板写的，有空打死他吧.
         if (strategyConfig.isEntityBooleanColumnRemoveIsPrefix()
             && "boolean".equalsIgnoreCase(this.getPropertyType()) && this.getPropertyName().startsWith("is")) {
             this.convert = true;

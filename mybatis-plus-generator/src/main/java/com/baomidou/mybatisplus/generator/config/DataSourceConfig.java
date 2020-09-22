@@ -86,7 +86,7 @@ public class DataSourceConfig {
             dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
                 .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
-        return new DecoratorDbQuery(dbQuery, this);
+        return dbQuery;
     }
 
     /**
@@ -161,8 +161,10 @@ public class DataSourceConfig {
 
     /**
      * 创建数据库连接对象
+     * 这方法建议只调用一次，毕竟只是代码生成，用一个连接就行。
      *
      * @return Connection
+     * @see DecoratorDbQuery#getConnection()
      */
     public Connection getConn() {
         Connection conn;

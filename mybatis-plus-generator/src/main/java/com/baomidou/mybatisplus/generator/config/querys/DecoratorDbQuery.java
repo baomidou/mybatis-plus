@@ -21,11 +21,17 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * 装饰DbQuery
@@ -36,12 +42,18 @@ public class DecoratorDbQuery extends AbstractDbQuery {
 
     private final IDbQuery dbQuery;
     private final DataSourceConfig dataSourceConfig;
+    private final Connection connection;
     private final DbType dbType;
+    private final StrategyConfig strategyConfig;
+    private String schema;
 
-    public DecoratorDbQuery(IDbQuery dbQuery, DataSourceConfig dataSourceConfig) {
+    public DecoratorDbQuery(IDbQuery dbQuery, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig) {
         this.dbQuery = dbQuery;
         this.dataSourceConfig = dataSourceConfig;
+        this.connection = dataSourceConfig.getConn();
         this.dbType = dataSourceConfig.getDbType();
+        this.strategyConfig = strategyConfig;
+        this.schema = dataSourceConfig.getSchemaName();
     }
 
     @Override
@@ -51,22 +63,19 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         if (DbType.POSTGRE_SQL == dbType) {
             if (schema == null) {
                 //pg 默认 schema=public
-                schema = "public";
-                dataSourceConfig.setSchemaName(schema);
+                this.schema = "public";
             }
             tablesSql = String.format(tablesSql, schema);
         } else if (DbType.KINGBASE_ES == dbType) {
             if (schema == null) {
                 //kingbase 默认 schema=PUBLIC
-                schema = "PUBLIC";
-                dataSourceConfig.setSchemaName(schema);
+                this.schema = "PUBLIC";
             }
             tablesSql = String.format(tablesSql, schema);
         } else if (DbType.DB2 == dbType) {
             if (schema == null) {
                 //db2 默认 schema=current schema
-                schema = "current schema";
-                dataSourceConfig.setSchemaName(schema);
+                this.schema = "current schema";
             }
             tablesSql = String.format(tablesSql, schema);
         }
@@ -74,10 +83,27 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         else if (DbType.ORACLE == dbType) {
             //oracle 默认 schema=username
             if (schema == null) {
-                schema = dataSourceConfig.getUsername().toUpperCase();
-                dataSourceConfig.setSchemaName(schema);
+                this.schema = dataSourceConfig.getUsername().toUpperCase();
             }
             tablesSql = String.format(tablesSql, schema);
+        }
+        if (strategyConfig.isEnableSqlFilter()) {
+            StringBuilder sql = new StringBuilder(tablesSql);
+            boolean isInclude = strategyConfig.getInclude().size() > 0;
+            boolean isExclude = strategyConfig.getExclude().size() > 0;
+            if (strategyConfig.getLikeTable() != null) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(strategyConfig.getLikeTable().getValue()).append("'");
+            } else if (strategyConfig.getNotLikeTable() != null) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(strategyConfig.getNotLikeTable().getValue()).append("'");
+            }
+            if (isInclude) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
+                    .append(strategyConfig.getInclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+            } else if (isExclude) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
+                    .append(strategyConfig.getExclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+            }
+            return sql.toString();
         }
         return tablesSql;
     }
@@ -96,18 +122,16 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     public String tableFieldsSql(String tableName) {
         String tableFieldsSql = this.tableFieldsSql();
         if (DbType.POSTGRE_SQL == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.KINGBASE_ES == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.DB2 == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.ORACLE == dbType) {
             tableName = tableName.toUpperCase();
-            tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableName);
+            tableFieldsSql = String.format(tableFieldsSql.replace("#schema", this.schema), tableName);
         } else if (DbType.DM == dbType) {
             tableName = tableName.toUpperCase();
-            tableFieldsSql = String.format(tableFieldsSql, tableName);
-        } else if (DbType.H2 == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, tableName);
         } else {
             tableFieldsSql = String.format(tableFieldsSql, tableName);
@@ -125,10 +149,6 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         return dbQuery.tableComment();
     }
 
-    public String getTableComment(ResultSet resultSet) throws SQLException {
-        return getResultStringValue(resultSet, this.tableComment());
-    }
-
     @Override
     public String fieldName() {
         return dbQuery.fieldName();
@@ -144,23 +164,6 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         return dbQuery.fieldComment();
     }
 
-    public String getFiledComment(ResultSet resultSet) {
-        return getResultStringValue(resultSet, this.fieldComment());
-    }
-
-    private String getResultStringValue(ResultSet resultSet, String columnLabel) {
-        try {
-            return StringUtils.isNotBlank(columnLabel) ? StringPool.EMPTY : formatComment(resultSet.getString(columnLabel));
-        } catch (SQLException e) {
-            //ignore
-        }
-        return StringPool.EMPTY;
-    }
-
-    public String formatComment(String comment) {
-        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
-    }
-
     @Override
     public String fieldKey() {
         return dbQuery.fieldKey();
@@ -171,7 +174,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         try {
             return dbQuery.isKeyIdentity(results);
         } catch (SQLException e) {
-            // ignore
+            // ignore 这个看到在查H2的时候出了异常，先忽略这个异常了.
         }
         return false;
     }
@@ -196,5 +199,77 @@ public class DecoratorDbQuery extends AbstractDbQuery {
             return customMap;
         }
         return Collections.emptyMap();
+    }
+
+    public void query(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
+        //TODO 先插在这里，等后面重构了#tablesSql里面的一堆默认逻辑在处理。
+        if (StringUtils.isBlank(connection.getSchema()) && StringUtils.isNotBlank(this.schema)) {
+            try {
+                connection.setSchema(schema);
+            } catch (SQLException sqlException) {
+                //这取决驱动与数据库实现，暂时忽略掉这错误.
+            }
+        }
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                consumer.accept(new ResultSetWrapper(resultSet, this));
+            }
+        }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void closeConnection() {
+        Optional.ofNullable(connection).ifPresent((con) -> {
+            try {
+                con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        });
+    }
+
+    public static class ResultSetWrapper {
+
+        private final IDbQuery dbQuery;
+
+        private final ResultSet resultSet;
+
+        ResultSetWrapper(ResultSet resultSet, IDbQuery dbQuery) {
+            this.resultSet = resultSet;
+            this.dbQuery = dbQuery;
+        }
+
+        public ResultSet getResultSet() {
+            return resultSet;
+        }
+
+        public String getStringResult(String columnLabel) {
+            try {
+                return resultSet.getString(columnLabel);
+            } catch (SQLException sqlException) {
+                throw new RuntimeException(String.format("读取[%s]字段出错!", columnLabel), sqlException);
+            }
+        }
+
+        public String getFiledComment() {
+            return getComment(dbQuery.fieldComment());
+
+        }
+
+        private String getComment(String columnLabel) {
+            return StringUtils.isNotBlank(columnLabel) ? formatComment(getStringResult(columnLabel)) : StringPool.EMPTY;
+        }
+
+        public String getTableComment() {
+            return getComment(dbQuery.tableComment());
+        }
+
+        public String formatComment(String comment) {
+            return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+        }
     }
 }

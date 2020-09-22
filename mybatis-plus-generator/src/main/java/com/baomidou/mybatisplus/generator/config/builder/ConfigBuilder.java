@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -29,9 +30,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -58,12 +56,6 @@ public class ConfigBuilder {
     @Getter(value = AccessLevel.NONE)
     @Setter(value = AccessLevel.NONE)
     private final DataSourceConfig dataSourceConfig;
-    /**
-     * SQL连接
-     */
-    @Getter(value = AccessLevel.NONE)
-    @Setter(value = AccessLevel.NONE)
-    private final Connection connection;
     /**
      * 数据库表信息
      */
@@ -110,15 +102,16 @@ public class ConfigBuilder {
      */
     public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
                          TemplateConfig template, GlobalConfig globalConfig) {
-        this.connection = dataSourceConfig.getConn();
-        this.dataSourceConfig = dataSourceConfig;
-        this.dbQuery = (DecoratorDbQuery) dataSourceConfig.getDbQuery();
-        this.globalConfig = globalConfig;
-        this.template = template;
-        this.packageInfo.putAll(packageConfig.initPackageInfo());
-        this.pathInfo.putAll(Optional.ofNullable(packageConfig.getPathInfo()).orElseGet(() -> this.template.initTemplate(this.globalConfig, packageInfo)));
-        this.strategyConfig = strategyConfig;
+        this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(StrategyConfig::new);
+        //TODO 先把验证插在这里，后续改成build构建的话在build的时候验证
         this.strategyConfig.validate();
+        this.dataSourceConfig = dataSourceConfig;
+        this.dbQuery = new DecoratorDbQuery(dataSourceConfig.getDbQuery(), dataSourceConfig, strategyConfig);
+        this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
+        this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
+        packageConfig = Optional.ofNullable(packageConfig).orElseGet(PackageConfig::new);
+        this.packageInfo.putAll(packageConfig.initPackageInfo());
+        this.pathInfo.putAll(Optional.ofNullable(packageConfig.getPathInfo()).orElseGet(() -> this.template.getPathInfo(this.globalConfig, packageInfo)));
         this.tableInfoList.addAll(getTablesInfo());
         processTable();
     }
@@ -176,55 +169,29 @@ public class ConfigBuilder {
         //需要反向生成或排除的表信息
         List<TableInfo> includeTableList = new ArrayList<>();
         List<TableInfo> excludeTableList = new ArrayList<>();
-
         try {
-            String tablesSql = dbQuery.tablesSql();
-            StringBuilder sql = new StringBuilder(tablesSql);
-            if (strategyConfig.isEnableSqlFilter()) {
-                if (strategyConfig.getLikeTable() != null) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(strategyConfig.getLikeTable().getValue()).append("'");
-                } else if (strategyConfig.getNotLikeTable() != null) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(strategyConfig.getNotLikeTable().getValue()).append("'");
-                }
-                if (isInclude) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
-                        .append(strategyConfig.getInclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
-                } else if (isExclude) {
-                    sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
-                        .append(strategyConfig.getExclude().stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
-                }
-            }
-            TableInfo tableInfo;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
-                 ResultSet results = preparedStatement.executeQuery()) {
-                while (results.next()) {
-                    final String tableName = results.getString(dbQuery.tableName());
-                    if (StringUtils.isBlank(tableName)) {
-                        System.err.println("当前数据库为空！！！");
-                        continue;
-                    }
-                    tableInfo = new TableInfo();
+            dbQuery.query(dbQuery.tablesSql(), resultSetWrapper -> {
+                String tableName = resultSetWrapper.getStringResult(dbQuery.tableName());
+                if (StringUtils.isNotBlank(tableName)) {
+                    TableInfo tableInfo = new TableInfo();
                     tableInfo.setName(tableName);
-                    String tableComment = dbQuery.getTableComment(results);
-                    if (strategyConfig.isSkipView() && "VIEW".equals(tableComment)) {
-                        // 跳过视图
-                        continue;
+                    String tableComment = resultSetWrapper.getTableComment();
+                    // 跳过视图
+                    if (!(strategyConfig.isSkipView() && "VIEW".equals(tableComment))) {
+                        tableInfo.setComment(tableComment);
+                        if (isInclude && strategyConfig.matchIncludeTable(tableName)) {
+                            includeTableList.add(tableInfo);
+                        } else if (isExclude && strategyConfig.matchExcludeTable(tableName)) {
+                            excludeTableList.add(tableInfo);
+                        }
+                        tableList.add(tableInfo);
                     }
-                    tableInfo.setComment(tableComment);
-                    if (isInclude && strategyConfig.matchIncludeTable(tableName)) {
-                        includeTableList.add(tableInfo);
-                    } else if (isExclude && strategyConfig.matchExcludeTable(tableName)) {
-                        excludeTableList.add(tableInfo);
-                    }
-                    tableList.add(tableInfo);
                 }
-            }
+            });
             //TODO 我要把这个打印不存在表的功能和正则匹配功能删掉，就算是苗老板来了也拦不住的那种
             if (isExclude || isInclude) {
-                Set<String> notExistTables = new HashSet<>();
-                notExistTables.addAll(strategyConfig.getExclude());
-                notExistTables.addAll(strategyConfig.getInclude());
-                notExistTables = notExistTables.stream().filter(s -> !REGX.matcher(s).find()).collect(Collectors.toSet());
+                Set<String> notExistTables = new HashSet<>(isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude())
+                    .stream().filter(s -> !REGX.matcher(s).find()).collect(Collectors.toSet());
                 // 将已经存在的表移除，获取配置中数据库不存在的表
                 for (TableInfo tabInfo : tableList) {
                     if (notExistTables.isEmpty()) {
@@ -239,7 +206,8 @@ public class ConfigBuilder {
                 if (isExclude) {
                     tableList.removeAll(excludeTableList);
                 } else {
-                    tableList = includeTableList;
+                    tableList.clear();
+                    tableList.addAll(includeTableList);
                 }
             }
             // 性能优化，只处理需执行表字段 github issues/219
@@ -254,9 +222,8 @@ public class ConfigBuilder {
      * 将字段信息与表信息关联
      *
      * @param tableInfo 表信息
-     * @return ignore
      */
-    private TableInfo convertTableFields(TableInfo tableInfo) {
+    private void convertTableFields(TableInfo tableInfo) {
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
         DbType dbType = this.dataSourceConfig.getDbType();
@@ -265,73 +232,63 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.H2 == dbType) {
-                try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
-                     ResultSet pkResults = pkQueryStmt.executeQuery()) {
-                    while (pkResults.next()) {
-                        String primaryKey = pkResults.getString(dbQuery.fieldKey());
-                        if (Boolean.parseBoolean(primaryKey)) {
-                            h2PkColumns.add(pkResults.getString(dbQuery.fieldName()));
-                        }
+                dbQuery.query(String.format(H2Query.PK_QUERY_SQL, tableName), resultWrapper -> {
+                    String primaryKey = resultWrapper.getStringResult(dbQuery.fieldKey());
+                    if (Boolean.parseBoolean(primaryKey)) {
+                        h2PkColumns.add(resultWrapper.getStringResult(dbQuery.fieldName()));
+                    }
+                });
+            }
+            dbQuery.query(tableFieldsSql, resultSetWrapper -> {
+                TableField field = new TableField();
+                String columnName = resultSetWrapper.getStringResult(dbQuery.fieldName());
+                // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
+                boolean isId;
+                if (DbType.H2 == dbType) {
+                    isId = h2PkColumns.contains(columnName);
+                } else {
+                    String key = resultSetWrapper.getStringResult(dbQuery.fieldKey());
+                    if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
+                        isId = StringUtils.isNotBlank(key) && "1".equals(key);
+                    } else {
+                        isId = StringUtils.isNotBlank(key) && "PRI".equals(key.toUpperCase());
                     }
                 }
-            }
-            try (
-                PreparedStatement preparedStatement = connection.prepareStatement(tableFieldsSql);
-                ResultSet results = preparedStatement.executeQuery()) {
-                while (results.next()) {
-                    TableField field = new TableField();
-                    String columnName = results.getString(dbQuery.fieldName());
-                    // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                    boolean isId;
-                    if (DbType.H2 == dbType) {
-                        isId = h2PkColumns.contains(columnName);
-                    } else {
-                        String key = results.getString(dbQuery.fieldKey());
-                        if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
-                            isId = StringUtils.isNotBlank(key) && "1".equals(key);
-                        } else {
-                            isId = StringUtils.isNotBlank(key) && "PRI".equals(key.toUpperCase());
-                        }
-                    }
-                    // 处理ID
-                    if (isId) {
-                        field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
-                        tableInfo.setHavePrimaryKey(true);
-                    }
-                    String newColumnName = columnName;
-                    IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
-                    if (keyWordsHandler != null && keyWordsHandler.isKeyWords(columnName)) {
-                        System.err.printf("当前表[%s]存在字段[%s]为数据库关键字或保留字!%n", tableName, columnName);
-                        field.setKeyWords(true);
-                        newColumnName = keyWordsHandler.formatColumn(columnName);
-                    }
-                    field.setName(columnName).setColumnName(newColumnName)
-                        .setType(results.getString(dbQuery.fieldType()))
-                        .setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field))
-                        .setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
-                        .setComment(dbQuery.getFiledComment(results))
-                        .setCustomMap(dbQuery.getCustomFields(results));
-                    ;
-                    // 填充逻辑判断
-                    strategyConfig.getTableFillList()
-                        .stream()
-                        //忽略大写字段问题
-                        .filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
-                        .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
-                    if (strategyConfig.includeSuperEntityColumns(field.getName())) {
-                        // 跳过公共字段
-                        commonFieldList.add(field);
-                        continue;
-                    }
+                // 处理ID
+                if (isId) {
+                    field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(resultSetWrapper.getResultSet()));
+                    tableInfo.setHavePrimaryKey(true);
+                }
+                String newColumnName = columnName;
+                IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
+                if (keyWordsHandler != null && keyWordsHandler.isKeyWords(columnName)) {
+                    System.err.printf("当前表[%s]存在字段[%s]为数据库关键字或保留字!%n", tableName, columnName);
+                    field.setKeyWords(true);
+                    newColumnName = keyWordsHandler.formatColumn(columnName);
+                }
+                field.setName(columnName).setColumnName(newColumnName)
+                    .setType(resultSetWrapper.getStringResult(dbQuery.fieldType()))
+                    .setPropertyName(this.strategyConfig, strategyConfig.getNameConvert().propertyNameConvert(field))
+                    .setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
+                    .setComment(resultSetWrapper.getFiledComment())
+                    .setCustomMap(dbQuery.getCustomFields(resultSetWrapper.getResultSet()));
+                // 填充逻辑判断
+                strategyConfig.getTableFillList().stream()
+                    //忽略大写字段问题
+                    .filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
+                    .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
+                if (strategyConfig.matchSuperEntityColumns(field.getName())) {
+                    // 跳过公共字段
+                    commonFieldList.add(field);
+                } else {
                     fieldList.add(field);
                 }
-            }
+            });
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         tableInfo.addFields(fieldList);
         tableInfo.addCommonFields(commonFieldList);
-        return tableInfo;
     }
 
     /**
@@ -339,24 +296,18 @@ public class ConfigBuilder {
      *
      * @param comment 注释
      * @return 注释
-     * @see DecoratorDbQuery#formatComment(java.lang.String)
+     * @see DecoratorDbQuery.ResultSetWrapper#formatComment(java.lang.String)
      * @since 3.4.0
      * @deprecated 3.4.1
      */
     @Deprecated
     public String formatComment(String comment) {
-        return dbQuery.formatComment(comment);
+        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
     }
 
     public void close() {
         //暂时只有数据库连接需要关闭
-        Optional.ofNullable(connection).ifPresent((con) -> {
-            try {
-                con.close();
-            } catch (SQLException sqlException) {
-                sqlException.printStackTrace();
-            }
-        });
+        dbQuery.closeConnection();
     }
 
     /**
