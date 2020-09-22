@@ -19,7 +19,8 @@ class BlockAttackInnerInterceptorTest {
         checkEx("update user set name = null where 1=1", "1=1");
         checkEx("update user set name = null where 1<>2", "1<>2");
         checkEx("update user set name = null where 1!=2", "1!=2");
-//        check("update user set name = null where 1=1 and 2=2", "1=1 and 2=2");
+        checkEx("update user set name = null where 1=1 and 2=2", "1=1 and 2=2");
+        checkEx("update user set name = null where 1=1 and 2=3 or 1=1", "1=1 and 2=3 or 1=1");
 
         checkNotEx("update user set name = null where 1=?", "1=?");
     }
@@ -30,7 +31,8 @@ class BlockAttackInnerInterceptorTest {
         checkEx("delete from user where 1=1", "1=1");
         checkEx("delete from user where 1<>2", "1<>2");
         checkEx("delete from user where 1!=2", "1!=2");
-//        check("delete from user where 1=1 and 2=2", "1=1 and 2=2");
+        checkEx("delete from user where 1=1 and 2=2", "1=1 and 2=2");
+        checkEx("delete from user where 1=1 and 2=3 or 1=1", "1=1 and 2=3 or 1=1");
     }
 
     void checkEx(String sql, String as) {
