@@ -88,6 +88,10 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
 
             AndExpression andExpression = (AndExpression) where;
             return fullMatch(andExpression.getLeftExpression()) && fullMatch(andExpression.getRightExpression());
+        } else if (where instanceof Parenthesis) {
+            // example: (1 = 1)
+            Parenthesis parenthesis = (Parenthesis) where;
+            return fullMatch(parenthesis.getExpression());
         }
 
         return false;

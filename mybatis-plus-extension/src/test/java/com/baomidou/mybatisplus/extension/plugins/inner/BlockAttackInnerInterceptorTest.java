@@ -21,6 +21,9 @@ class BlockAttackInnerInterceptorTest {
         checkEx("update user set name = null where 1!=2", "1!=2");
         checkEx("update user set name = null where 1=1 and 2=2", "1=1 and 2=2");
         checkEx("update user set name = null where 1=1 and 2=3 or 1=1", "1=1 and 2=3 or 1=1");
+        checkEx("update user set name = null where 1=1 and (2=2)", "1=1 and (2=2)");
+        checkEx("update user set name = null where (1=1 and 2=2)", "(1=1 and 2=2)");
+        checkEx("update user set name = null where (1=1 and (2=3 or 3=3))", "(1=1 and (2=3 or 3=3))");
 
         checkNotEx("update user set name = null where 1=?", "1=?");
     }
