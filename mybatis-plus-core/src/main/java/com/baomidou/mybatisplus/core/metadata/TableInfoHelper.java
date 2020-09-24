@@ -56,6 +56,11 @@ public class TableInfoHelper {
     private static final Map<Class<?>, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
 
     /**
+     * 储存表名对应的反射类表信息
+     */
+    private static final Map<String, TableInfo> TABLE_NAME_INFO_CACHE = new ConcurrentHashMap<>();
+
+    /**
      * 默认表主键名称
      */
     private static final String DEFAULT_ID_NAME = "id";
@@ -91,6 +96,21 @@ public class TableInfoHelper {
 
     /**
      * <p>
+     * 根据表名获取实体映射表信息
+     * </p>
+     *
+     * @param tableName 表名
+     * @return 数据库表反射信息
+     */
+    public static TableInfo getTableInfo(String tableName) {
+        if(StringUtils.isBlank(tableName)){
+            return null;
+        }
+        return TABLE_NAME_INFO_CACHE.get(tableName);
+    }
+
+    /**
+     * <p>
      * 获取所有实体映射表信息
      * </p>
      *
@@ -118,10 +138,15 @@ public class TableInfoHelper {
                 // 不是同一个 Configuration,进行重新初始化
                 targetTableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
                 TABLE_INFO_CACHE.put(clazz, targetTableInfo);
+                TABLE_NAME_INFO_CACHE.put(targetTableInfo.getTableName(), targetTableInfo);
             }
             return targetTableInfo;
         }
-        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key));
+        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> {
+            TableInfo tableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key);
+            TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
+            return tableInfo;
+        });
     }
 
     /**
