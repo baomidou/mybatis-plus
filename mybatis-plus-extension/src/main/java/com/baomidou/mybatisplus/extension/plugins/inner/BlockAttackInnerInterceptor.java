@@ -20,10 +20,13 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -62,19 +65,35 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     }
 
     protected void checkWhere(Expression where, String ex) {
-        Assert.notNull(where, ex);
+        Assert.isFalse(this.fullMatch(where), ex);
+    }
+
+    private boolean fullMatch(Expression where) {
+        if (where == null) {
+            return true;
+        }
         if (where instanceof EqualsTo) {
             // example: 1=1
             EqualsTo equalsTo = (EqualsTo) where;
-            Expression leftExpression = equalsTo.getLeftExpression();
-            Expression rightExpression = equalsTo.getRightExpression();
-            Assert.isFalse(leftExpression.toString().equals(rightExpression.toString()), ex);
+            return StringUtils.equals(equalsTo.getLeftExpression().toString(), equalsTo.getRightExpression().toString());
         } else if (where instanceof NotEqualsTo) {
             // example: 1 != 2
             NotEqualsTo notEqualsTo = (NotEqualsTo) where;
-            Expression leftExpression = notEqualsTo.getLeftExpression();
-            Expression rightExpression = notEqualsTo.getRightExpression();
-            Assert.isTrue(leftExpression.toString().equals(rightExpression.toString()), ex);
+            return !StringUtils.equals(notEqualsTo.getLeftExpression().toString(), notEqualsTo.getRightExpression().toString());
+        } else if (where instanceof OrExpression) {
+
+            OrExpression orExpression = (OrExpression) where;
+            return fullMatch(orExpression.getLeftExpression()) || fullMatch(orExpression.getRightExpression());
+        } else if (where instanceof AndExpression) {
+
+            AndExpression andExpression = (AndExpression) where;
+            return fullMatch(andExpression.getLeftExpression()) && fullMatch(andExpression.getRightExpression());
+        } else if (where instanceof Parenthesis) {
+            // example: (1 = 1)
+            Parenthesis parenthesis = (Parenthesis) where;
+            return fullMatch(parenthesis.getExpression());
         }
+
+        return false;
     }
 }
