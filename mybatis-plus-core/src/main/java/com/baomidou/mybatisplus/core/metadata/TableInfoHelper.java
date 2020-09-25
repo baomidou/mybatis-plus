@@ -78,7 +78,8 @@ public class TableInfoHelper {
             return null;
         }
         // https://github.com/baomidou/mybatis-plus/issues/299
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
+        Class<?> targetClass = ClassUtils.getUserClass(clazz);
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(targetClass);
         if (null != tableInfo) {
             return tableInfo;
         }
@@ -88,8 +89,9 @@ public class TableInfoHelper {
             currentClass = currentClass.getSuperclass();
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
         }
+        //把父类的移到子类中来
         if (tableInfo != null) {
-            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+            TABLE_INFO_CACHE.put(targetClass, tableInfo);
         }
         return tableInfo;
     }
@@ -103,7 +105,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(String tableName) {
-        if(StringUtils.isBlank(tableName)){
+        if (StringUtils.isBlank(tableName)) {
             return null;
         }
         return TABLE_NAME_INFO_CACHE.get(tableName);
@@ -116,7 +118,6 @@ public class TableInfoHelper {
      *
      * @return 数据库表反射信息集合
      */
-    @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
         return Collections.unmodifiableList(new ArrayList<>(TABLE_INFO_CACHE.values()));
     }
@@ -137,16 +138,10 @@ public class TableInfoHelper {
             if (!oldConfiguration.equals(configuration)) {
                 // 不是同一个 Configuration,进行重新初始化
                 targetTableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
-                TABLE_INFO_CACHE.put(clazz, targetTableInfo);
-                TABLE_NAME_INFO_CACHE.put(targetTableInfo.getTableName(), targetTableInfo);
             }
             return targetTableInfo;
         }
-        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> {
-            TableInfo tableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key);
-            TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
-            return tableInfo;
-        });
+        return initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
     }
 
     /**
@@ -174,6 +169,9 @@ public class TableInfoHelper {
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
+
+        TABLE_INFO_CACHE.put(clazz, tableInfo);
+        TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
         /* 缓存 lambda */
         LambdaUtils.installCache(tableInfo);
