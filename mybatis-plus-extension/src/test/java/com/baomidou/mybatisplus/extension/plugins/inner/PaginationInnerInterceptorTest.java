@@ -37,6 +37,10 @@ class PaginationInnerInterceptorTest {
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? where u.xx = ?",
             "SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? WHERE u.xx = ?");
 
+        /* join 表与 where 条件大小写不同的情况 */
+        assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id where R.NAME = ?",
+            "SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE R.NAME = ?");
+
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?",
             "SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?");
     }
