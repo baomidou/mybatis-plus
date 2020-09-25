@@ -98,6 +98,8 @@ public class JsqlParserCountOptimize implements ISqlParser {
             if (optimizeJoin && CollectionUtils.isNotEmpty(joins)) {
                 boolean canRemoveJoin = true;
                 String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
+                // 不区分大小写
+                whereS = whereS.toLowerCase();
                 for (Join join : joins) {
                     if (!join.isLeft()) {
                         canRemoveJoin = false;
@@ -105,6 +107,8 @@ public class JsqlParserCountOptimize implements ISqlParser {
                     }
                     Table table = (Table) join.getRightItem();
                     String str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                    // 不区分大小写
+                    str = str.toLowerCase();
                     String onExpressionS = join.getOnExpression().toString();
                     /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
                     if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {
