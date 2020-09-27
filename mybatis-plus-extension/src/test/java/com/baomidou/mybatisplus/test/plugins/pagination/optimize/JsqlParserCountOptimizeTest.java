@@ -30,6 +30,10 @@ class JsqlParserCountOptimizeTest {
         assertThat(parser.parser(metaObject, "select * from user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? where u.xx = ?").getSql())
             .isEqualTo("SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? WHERE u.xx = ?");
 
+        /* join 表与 where 条件大小写不同的情况 */
+        assertThat(parser.parser(metaObject, "select * from user u LEFT JOIN role r ON r.id = u.role_id where R.NAME = ?").getSql())
+            .isEqualTo("SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE R.NAME = ?");
+
         assertThat(parser.parser(metaObject, "select * from user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?").getSql())
             .isEqualTo("SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?");
 
