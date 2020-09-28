@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
+import com.baomidou.mybatisplus.extension.plugins.inner.FakeTenantLineInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ValueListExpression;
@@ -27,6 +28,7 @@ import net.sf.jsqlparser.expression.ValueListExpression;
  * @author hubin
  * @since 2017-08-31
  * @deprecated 3.4.0 please use {@link MybatisPlusInterceptor} {@link TenantLineInnerInterceptor} {@link TenantLineHandler}
+ * or {@link FakeTenantLineInnerInterceptor}
  */
 @Deprecated
 public interface TenantHandler {
