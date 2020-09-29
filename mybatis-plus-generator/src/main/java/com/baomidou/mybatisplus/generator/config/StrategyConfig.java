@@ -246,6 +246,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setTablePrefix(String... tablePrefix) {
+        this.tablePrefix.clear();   //保持语义
         return addTablePrefix(tablePrefix);
     }
 
@@ -292,6 +293,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
+        this.superEntityColumns.clear();    //保持语义
         return addSuperEntityColumns(superEntityColumns);
     }
 
@@ -315,6 +317,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setInclude(String... include) {
+        this.include.clear();   //保持语义
         return addInclude(include);
     }
 
@@ -338,6 +341,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setExclude(String... exclude) {
+        this.exclude.clear();   //保持语义
         return addExclude(exclude);
     }
 
@@ -361,6 +365,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setFieldPrefix(String... fieldPrefixs) {
+        this.fieldPrefix.clear();   //保持语义
         return addFieldPrefix(fieldPrefixs);
     }
 
@@ -461,6 +466,7 @@ public class StrategyConfig {
      */
     @Deprecated
     public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
+        this.tableFillList.clear(); //保持语义
         return this.addTableFills(tableFillList.toArray(new TableFill[]{}));
     }
 

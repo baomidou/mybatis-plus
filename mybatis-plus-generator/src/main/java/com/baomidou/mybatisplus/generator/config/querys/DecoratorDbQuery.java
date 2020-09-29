@@ -41,15 +41,13 @@ import java.util.stream.Collectors;
 public class DecoratorDbQuery extends AbstractDbQuery {
 
     private final IDbQuery dbQuery;
-    private final DataSourceConfig dataSourceConfig;
     private final Connection connection;
     private final DbType dbType;
     private final StrategyConfig strategyConfig;
-    private String schema;
+    private final String schema;
 
     public DecoratorDbQuery(IDbQuery dbQuery, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig) {
         this.dbQuery = dbQuery;
-        this.dataSourceConfig = dataSourceConfig;
         this.connection = dataSourceConfig.getConn();
         this.dbType = dataSourceConfig.getDbType();
         this.strategyConfig = strategyConfig;
@@ -59,33 +57,8 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     @Override
     public String tablesSql() {
         String tablesSql = dbQuery.tablesSql();
-        String schema = dataSourceConfig.getSchemaName();
-        if (DbType.POSTGRE_SQL == dbType) {
-            if (schema == null) {
-                //pg 默认 schema=public
-                this.schema = "public";
-            }
-            tablesSql = String.format(tablesSql, schema);
-        } else if (DbType.KINGBASE_ES == dbType) {
-            if (schema == null) {
-                //kingbase 默认 schema=PUBLIC
-                this.schema = "PUBLIC";
-            }
-            tablesSql = String.format(tablesSql, schema);
-        } else if (DbType.DB2 == dbType) {
-            if (schema == null) {
-                //db2 默认 schema=current schema
-                this.schema = "current schema";
-            }
-            tablesSql = String.format(tablesSql, schema);
-        }
-        //oracle数据库表太多，出现最大游标错误
-        else if (DbType.ORACLE == dbType) {
-            //oracle 默认 schema=username
-            if (schema == null) {
-                this.schema = dataSourceConfig.getUsername().toUpperCase();
-            }
-            tablesSql = String.format(tablesSql, schema);
+        if (DbType.POSTGRE_SQL == dbType || DbType.KINGBASE_ES == dbType || DbType.DB2 == dbType || DbType.ORACLE == dbType) {
+            tablesSql = String.format(tablesSql, this.schema);
         }
         if (strategyConfig.isEnableSqlFilter()) {
             StringBuilder sql = new StringBuilder(tablesSql);
@@ -121,9 +94,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
      */
     public String tableFieldsSql(String tableName) {
         String tableFieldsSql = this.tableFieldsSql();
-        if (DbType.KINGBASE_ES == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
-        } else if (DbType.DB2 == dbType) {
+        if (DbType.KINGBASE_ES == dbType || DbType.DB2 == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.ORACLE == dbType) {
             tableName = tableName.toUpperCase();
@@ -190,8 +161,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
                 try {
                     customMap.put(fc, resultSet.getObject(fc));
                 } catch (SQLException sqlException) {
-                    //ignore
-                    customMap.put(fc, null);
+                    throw new RuntimeException("获取自定义字段错误:", sqlException);
                 }
             }
             return customMap;
@@ -200,10 +170,6 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     public void query(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
-        if (StringUtils.isNotBlank(this.schema)) {
-            //切换至指定schema.
-            connection.setSchema(this.schema);
-        }
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {

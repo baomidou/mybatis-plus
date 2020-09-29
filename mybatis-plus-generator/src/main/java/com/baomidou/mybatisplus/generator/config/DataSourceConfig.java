@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.TypeConverts;
 import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
@@ -169,11 +170,34 @@ public class DataSourceConfig {
     public Connection getConn() {
         Connection conn;
         try {
-            Class.forName(driverName);
-            conn = DriverManager.getConnection(url, username, password);
+            Class.forName(this.driverName);
+            conn = DriverManager.getConnection(this.url, this.username, this.password);
+            String schema = StringUtils.isNotBlank(this.schemaName) ? this.schemaName : getDefaultSchema(getDbType());
+            if (StringUtils.isNotBlank(schema)) {
+                this.schemaName = schema;
+                conn.setSchema(schema);
+            }
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
         return conn;
+    }
+
+    private String getDefaultSchema(DbType dbType){
+        String schema = null;
+        if (DbType.POSTGRE_SQL == dbType) {
+            //pg 默认 schema=public
+            schema = "public";
+        } else if (DbType.KINGBASE_ES == dbType) {
+            //kingbase 默认 schema=PUBLIC
+            schema = "PUBLIC";
+        } else if (DbType.DB2 == dbType) {
+            //db2 默认 schema=current schema
+            schema = "current schema";
+        } else if (DbType.ORACLE == dbType) {
+            //oracle 默认 schema=username
+            schema = this.username.toUpperCase();
+        }
+        return schema;
     }
 }

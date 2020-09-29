@@ -319,6 +319,7 @@ public class ConfigBuilder {
      */
     @Deprecated
     public ConfigBuilder setTableInfoList(List<TableInfo> tableInfoList) {
+        this.tableInfoList.clear(); //保持语义
         this.tableInfoList.addAll(tableInfoList);
         return this;
     }

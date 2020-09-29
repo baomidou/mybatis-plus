@@ -109,6 +109,7 @@ public class TableInfo {
      */
     @Deprecated
     public TableInfo setFields(List<TableField> fields) {
+        this.fields.clear();    //保持语义
         return addFields(fields);
     }
 
@@ -140,8 +141,8 @@ public class TableInfo {
      */
     @Deprecated
     public TableInfo setImportPackages(String pkg) {
-        importPackages.add(pkg);
-        return this;
+        importPackages.clear(); //保持语义
+        return addImportPackages(pkg);
     }
 
     /**
@@ -191,6 +192,7 @@ public class TableInfo {
      */
     @Deprecated
     public TableInfo setCommonFields(List<TableField> commonFields) {
+        this.commonFields.clear(); //保持语义
         return addCommonFields(commonFields);
     }
 
