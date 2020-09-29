@@ -121,9 +121,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
      */
     public String tableFieldsSql(String tableName) {
         String tableFieldsSql = this.tableFieldsSql();
-        if (DbType.POSTGRE_SQL == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
-        } else if (DbType.KINGBASE_ES == dbType) {
+        if (DbType.KINGBASE_ES == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.DB2 == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
@@ -202,13 +200,9 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     public void query(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
-        //TODO 先插在这里，等后面重构了#tablesSql里面的一堆默认逻辑在处理。
-        if (StringUtils.isBlank(connection.getSchema()) && StringUtils.isNotBlank(this.schema)) {
-            try {
-                connection.setSchema(schema);
-            } catch (SQLException sqlException) {
-                //这取决驱动与数据库实现，暂时忽略掉这错误.
-            }
+        if (StringUtils.isNotBlank(this.schema)) {
+            //切换至指定schema.
+            connection.setSchema(this.schema);
         }
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         try (ResultSet resultSet = preparedStatement.executeQuery()) {
