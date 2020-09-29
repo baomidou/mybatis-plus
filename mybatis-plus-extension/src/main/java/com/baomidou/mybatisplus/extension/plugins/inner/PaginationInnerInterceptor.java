@@ -302,8 +302,15 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                         canRemoveJoin = false;
                         break;
                     }
-                    Table table = (Table) join.getRightItem();
-                    String str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                    FromItem rightItem = join.getRightItem();
+                    String str = "";
+                    if (rightItem instanceof Table) {
+                        Table table = (Table) rightItem;
+                        str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                    } else if (rightItem instanceof SubSelect) {
+                        SubSelect subSelect = (SubSelect) rightItem;
+                        str = subSelect.getAlias().getName() + StringPool.DOT;
+                    }
                     // 不区分大小写
                     str = str.toLowerCase();
                     String onExpressionS = join.getOnExpression().toString();
@@ -320,11 +327,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             // 优化 SQL
             plainSelect.setSelectItems(COUNT_SELECT_ITEM);
             return select.toString();
-        } catch (Throwable e) {
+        } catch (JSQLParserException e) {
             // 无法优化使用原 SQL
             logger.warn("optimize this sql to a count sql has exception, sql:\"" + sql + "\", exception:\n" + e.getCause());
-            return lowLevelCountSql(sql);
+        } catch (Exception e) {
+            logger.warn("optimize this sql to a count sql has error, sql:\"" + sql + "\", exception:\n" + e);
         }
+        return lowLevelCountSql(sql);
     }
 
     /**
@@ -367,8 +376,10 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
         } catch (JSQLParserException e) {
             logger.warn("failed to concat orderBy from IPage, exception:\n" + e.getCause());
-            return originalSql;
+        } catch (Exception e) {
+            logger.warn("failed to concat orderBy from IPage, exception:\n" + e);
         }
+        return originalSql;
     }
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {

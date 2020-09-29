@@ -75,6 +75,16 @@ class PaginationInnerInterceptorTest {
             "SELECT COUNT(1) FROM (SELECT * FROM record_1 WHERE id = ? GROUP BY date(date_time)) TOTAL");
     }
 
+    @Test
+    void leftJoinSelectCount() {
+        assertsCountSql("select r.id, r.name, r.phone,rlr.total_top_up from reseller r " +
+                "left join (select ral.reseller_id, sum(ral.top_up_money) as total_top_up, sum(ral.acquire_money) as total_acquire " +
+                "from reseller_acquire_log ral " +
+                "group by ral.reseller_id) rlr on r.id = rlr.reseller_id " +
+                "order by r.created_at desc",
+            "SELECT COUNT(1) FROM reseller r");
+    }
+
     void assertsCountSql(String sql, String targetSql) {
         assertThat(interceptor.autoCountSql(true, sql)).isEqualTo(targetSql);
     }
