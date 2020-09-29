@@ -1,3 +1,4 @@
 - feat: 公开 AbstractWrapper.getEntityClass
 - fix: 新多租户插件完善子查询,支持 比较符号,in,EXISTS,NOT EXISTS
 - feat: 新增 FakeTenantLineInnerInterceptor 对 TenantSqlParser 进行过度
+- feat: 分页count识别 `left join (subSelect)` 优化
