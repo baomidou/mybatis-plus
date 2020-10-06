@@ -149,13 +149,14 @@ public class ConfigBuilder {
             //TODO 我要把这个打印不存在表的功能和正则匹配功能删掉，就算是苗老板来了也拦不住的那种
             if (isExclude || isInclude) {
                 Set<String> notExistTables = new HashSet<>(isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude())
-                    .stream().filter(s -> !REGX.matcher(s).find()).collect(Collectors.toSet());
+                    .stream().filter(s -> !REGX.matcher(s).find()).map(String::toLowerCase).collect(Collectors.toSet());
                 // 将已经存在的表移除，获取配置中数据库不存在的表
                 for (TableInfo tabInfo : tableList) {
                     if (notExistTables.isEmpty()) {
                         break;
                     }
-                    notExistTables.remove(tabInfo.getName());
+                    //解决可能大小写不敏感的情况导致无法移除掉
+                    notExistTables.remove(tabInfo.getName().toLowerCase());
                 }
                 if (notExistTables.size() > 0) {
                     System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");

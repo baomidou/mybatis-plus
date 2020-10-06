@@ -43,7 +43,8 @@ import java.util.*;
  */
 public abstract class AbstractTemplateEngine {
 
-    protected static final Logger logger = LoggerFactory.getLogger(AbstractTemplateEngine.class);
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     /**
      * 配置信息
      */
