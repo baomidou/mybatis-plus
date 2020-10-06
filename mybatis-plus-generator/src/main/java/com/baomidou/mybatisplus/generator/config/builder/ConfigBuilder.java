@@ -85,7 +85,7 @@ public class ConfigBuilder {
     /**
      * 过滤正则
      */
-    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-=+\\\\|[{}];:'\",<.>?]+");
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-=+\\\\|{};:'\",<.>?]+");
     /**
      * 表数据查询
      */
@@ -113,48 +113,6 @@ public class ConfigBuilder {
         this.packageInfo.putAll(packageConfig.initPackageInfo());
         this.pathInfo.putAll(Optional.ofNullable(packageConfig.getPathInfo()).orElseGet(() -> this.template.getPathInfo(this.globalConfig, packageInfo)));
         this.tableInfoList.addAll(getTablesInfo());
-        processTable();
-    }
-
-    /**
-     * 处理表对应的类名称
-     */
-    private void processTable() {
-        for (TableInfo tableInfo : tableInfoList) {
-            String entityName = strategyConfig.getNameConvert().entityNameConvert(tableInfo);
-            if (StringUtils.isNotBlank(globalConfig.getEntityName())) {
-                tableInfo.setConvert(true);
-                tableInfo.setEntityName(String.format(globalConfig.getEntityName(), entityName));
-            } else {
-                tableInfo.setEntityName(strategyConfig, entityName);
-            }
-            if (StringUtils.isNotBlank(globalConfig.getMapperName())) {
-                tableInfo.setMapperName(String.format(globalConfig.getMapperName(), entityName));
-            } else {
-                tableInfo.setMapperName(entityName + ConstVal.MAPPER);
-            }
-            if (StringUtils.isNotBlank(globalConfig.getXmlName())) {
-                tableInfo.setXmlName(String.format(globalConfig.getXmlName(), entityName));
-            } else {
-                tableInfo.setXmlName(entityName + ConstVal.MAPPER);
-            }
-            if (StringUtils.isNotBlank(globalConfig.getServiceName())) {
-                tableInfo.setServiceName(String.format(globalConfig.getServiceName(), entityName));
-            } else {
-                tableInfo.setServiceName("I" + entityName + ConstVal.SERVICE);
-            }
-            if (StringUtils.isNotBlank(globalConfig.getServiceImplName())) {
-                tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), entityName));
-            } else {
-                tableInfo.setServiceImplName(entityName + ConstVal.SERVICE_IMPL);
-            }
-            if (StringUtils.isNotBlank(globalConfig.getControllerName())) {
-                tableInfo.setControllerName(String.format(globalConfig.getControllerName(), entityName));
-            } else {
-                tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
-            }
-            tableInfo.importPackage(strategyConfig, globalConfig);
-        }
     }
 
     /**
@@ -170,12 +128,12 @@ public class ConfigBuilder {
         List<TableInfo> includeTableList = new ArrayList<>();
         List<TableInfo> excludeTableList = new ArrayList<>();
         try {
-            dbQuery.query(dbQuery.tablesSql(), resultSetWrapper -> {
-                String tableName = resultSetWrapper.getStringResult(dbQuery.tableName());
+            dbQuery.query(dbQuery.tablesSql(), result -> {
+                String tableName = result.getStringResult(dbQuery.tableName());
                 if (StringUtils.isNotBlank(tableName)) {
                     TableInfo tableInfo = new TableInfo();
                     tableInfo.setName(tableName);
-                    String tableComment = resultSetWrapper.getTableComment();
+                    String tableComment = result.getTableComment();
                     // 跳过视图
                     if (!(strategyConfig.isSkipView() && "VIEW".equals(tableComment))) {
                         tableInfo.setComment(tableComment);
@@ -232,22 +190,22 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.H2 == dbType) {
-                dbQuery.query(String.format(H2Query.PK_QUERY_SQL, tableName), resultWrapper -> {
-                    String primaryKey = resultWrapper.getStringResult(dbQuery.fieldKey());
+                dbQuery.query(String.format(H2Query.PK_QUERY_SQL, tableName), result -> {
+                    String primaryKey = result.getStringResult(dbQuery.fieldKey());
                     if (Boolean.parseBoolean(primaryKey)) {
-                        h2PkColumns.add(resultWrapper.getStringResult(dbQuery.fieldName()));
+                        h2PkColumns.add(result.getStringResult(dbQuery.fieldName()));
                     }
                 });
             }
-            dbQuery.query(tableFieldsSql, resultSetWrapper -> {
+            dbQuery.query(tableFieldsSql, result -> {
                 TableField field = new TableField();
-                String columnName = resultSetWrapper.getStringResult(dbQuery.fieldName());
+                String columnName = result.getStringResult(dbQuery.fieldName());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
                 boolean isId;
                 if (DbType.H2 == dbType) {
                     isId = h2PkColumns.contains(columnName);
                 } else {
-                    String key = resultSetWrapper.getStringResult(dbQuery.fieldKey());
+                    String key = result.getStringResult(dbQuery.fieldKey());
                     if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
                         isId = StringUtils.isNotBlank(key) && "1".equals(key);
                     } else {
@@ -256,7 +214,7 @@ public class ConfigBuilder {
                 }
                 // 处理ID
                 if (isId) {
-                    field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(resultSetWrapper.getResultSet()));
+                    field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(result.getResultSet()));
                     tableInfo.setHavePrimaryKey(true);
                 }
                 String newColumnName = columnName;
@@ -267,11 +225,11 @@ public class ConfigBuilder {
                     newColumnName = keyWordsHandler.formatColumn(columnName);
                 }
                 field.setName(columnName).setColumnName(newColumnName)
-                    .setType(resultSetWrapper.getStringResult(dbQuery.fieldType()))
+                    .setType(result.getStringResult(dbQuery.fieldType()))
                     .setPropertyName(this.strategyConfig, strategyConfig.getNameConvert().propertyNameConvert(field))
                     .setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
-                    .setComment(resultSetWrapper.getFiledComment())
-                    .setCustomMap(dbQuery.getCustomFields(resultSetWrapper.getResultSet()));
+                    .setComment(result.getFiledComment())
+                    .setCustomMap(dbQuery.getCustomFields(result.getResultSet()));
                 // 填充逻辑判断
                 strategyConfig.getTableFillList().stream()
                     //忽略大写字段问题
@@ -289,6 +247,7 @@ public class ConfigBuilder {
         }
         tableInfo.addFields(fieldList);
         tableInfo.addCommonFields(commonFieldList);
+        tableInfo.processTable(strategyConfig, globalConfig);
     }
 
     /**

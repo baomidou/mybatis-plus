@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -30,6 +31,8 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
@@ -65,6 +68,13 @@ public class TableInfo {
     private final List<TableField> commonFields = new ArrayList<>();
     private String fieldNames;
 
+    /**
+     * @param convert convert
+     * @return this
+     * @see #setConvert(StrategyConfig)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public TableInfo setConvert(boolean convert) {
         this.convert = convert;
         return this;
@@ -76,7 +86,7 @@ public class TableInfo {
             this.convert = true;
         } else if (strategyConfig.isCapitalModeNaming(name)) {
             // 包含
-            this.convert = false;
+            this.convert = !entityName.equalsIgnoreCase(name);
         } else {
             // 转换字段
             if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
@@ -93,6 +103,18 @@ public class TableInfo {
 
     public String getEntityPath() {
         return entityName.substring(0, 1).toLowerCase() + entityName.substring(1);
+    }
+
+    /**
+     * @param entityName 实体名称
+     * @return this
+     * @see #setEntityName(StrategyConfig, String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public TableInfo setEntityName(String entityName) {
+        this.entityName = entityName;
+        return this;
     }
 
     public TableInfo setEntityName(StrategyConfig strategyConfig, String entityName) {
@@ -219,7 +241,7 @@ public class TableInfo {
         return this;
     }
 
-    public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig){
+    public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
         boolean importSerializable = true;
         if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
             // 自定义父类
@@ -228,7 +250,8 @@ public class TableInfo {
         } else {
             if (globalConfig.isActiveRecord()) {
                 // 无父类开启 AR 模式
-                this.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
+                this.getImportPackages().add(Model.class.getCanonicalName());
+                importSerializable = false;
             }
         }
         if (importSerializable) {
@@ -260,11 +283,12 @@ public class TableInfo {
                 }
             } else if (field.isConvert()) {
                 // 普通字段
-                importPackages.add(TableField.class.getCanonicalName());
+                importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
             }
             if (null != field.getFill()) {
                 // 填充字段
-                importPackages.add(TableField.class.getCanonicalName());
+                importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                //TODO 好像default的不用处理也行,这个做优化项目.
                 importPackages.add(FieldFill.class.getCanonicalName());
             }
             String versionFieldName = strategyConfig.getVersionFieldName();
@@ -272,5 +296,21 @@ public class TableInfo {
                 this.importPackages.add(Version.class.getCanonicalName());
             }
         });
+    }
+
+    public void processTable(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
+        String entityName = strategyConfig.getNameConvert().entityNameConvert(this);
+        this.setEntityName(strategyConfig, this.getFileName(entityName, globalConfig.getEntityName(), () -> entityName));
+        this.mapperName = this.getFileName(entityName, globalConfig.getMapperName(), () -> entityName + ConstVal.MAPPER);
+        this.xmlName = this.getFileName(entityName, globalConfig.getXmlName(), () -> entityName + ConstVal.XML);
+        this.serviceName = this.getFileName(entityName, globalConfig.getServiceName(), () -> "I" + entityName + ConstVal.SERVICE);
+        this.serviceImplName = this.getFileName(entityName, globalConfig.getServiceImplName(), () -> entityName + ConstVal.SERVICE_IMPL);
+        this.controllerName = this.getFileName(entityName, globalConfig.getControllerName(), () -> entityName + ConstVal.CONTROLLER);
+        this.importPackage(strategyConfig, globalConfig);
+    }
+
+
+    public String getFileName(String entityName, String value, Supplier<String> defaultValue) {
+        return StringUtils.isNotBlank(value) ? String.format(value, entityName) : defaultValue.get();
     }
 }

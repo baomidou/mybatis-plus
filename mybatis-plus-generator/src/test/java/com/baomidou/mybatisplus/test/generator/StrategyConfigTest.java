@@ -219,6 +219,14 @@ class StrategyConfigTest {
         Assertions.assertFalse(strategyConfig.matchIncludeTable("testc"));
     }
 
+    @Test
+    void isCapitalModeNamingTest() {
+        Assertions.assertFalse(new StrategyConfig().isCapitalModeNaming("T_USER"));
+        Assertions.assertFalse(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("user"));
+        Assertions.assertFalse(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("user_name"));
+        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("USER_NAME"));
+        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("T_USER"));
+    }
 
     @Data
     static class SuperBean {

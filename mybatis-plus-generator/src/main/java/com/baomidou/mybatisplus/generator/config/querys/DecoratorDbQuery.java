@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  * 装饰DbQuery
  *
  * @author nieqiurong 2020/9/17.
+ * @since 3.4.1
  */
 public class DecoratorDbQuery extends AbstractDbQuery {
 
@@ -170,8 +171,8 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     public void query(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 consumer.accept(new ResultSetWrapper(resultSet, this));
             }
