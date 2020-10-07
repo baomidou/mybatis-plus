@@ -16,12 +16,13 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -73,6 +74,13 @@ public class PackageConfig {
     private Map<String, String> pathInfo;
 
     /**
+     * 包配置信息
+     *
+     * @since 3.4.1
+     */
+    private final Map<String, String> packageInfo = new HashMap<>();
+
+    /**
      * 父包名
      */
     public String getParent() {
@@ -89,20 +97,27 @@ public class PackageConfig {
      * @return 连接后的包名
      */
     public String joinPackage(String subPackage) {
+        String parent = getParent();
         return StringUtils.isBlank(parent) ? subPackage : (parent + StringPool.DOT + subPackage);
     }
 
-    public Map<String, String> initPackageInfo() {
-        Map<String, String> initMap = CollectionUtils.newHashMapWithExpectedSize(7);
-        initMap.put(ConstVal.MODULE_NAME, this.getModuleName());
-        initMap.put(ConstVal.ENTITY, this.joinPackage(this.getEntity()));
-        initMap.put(ConstVal.MAPPER, this.joinPackage(this.getMapper()));
-        initMap.put(ConstVal.XML, this.joinPackage(this.getXml()));
-        initMap.put(ConstVal.SERVICE, this.joinPackage(this.getService()));
-        initMap.put(ConstVal.SERVICE_IMPL, this.joinPackage(this.getServiceImpl()));
-        initMap.put(ConstVal.CONTROLLER, this.joinPackage(this.getController()));
-        return initMap;
+    /**
+     * 获取包配置信息
+     *
+     * @return 包配置信息
+     * @since 3.4.1
+     */
+    public Map<String, String> getPackageInfo() {
+        if (packageInfo.isEmpty()) {
+            packageInfo.put(ConstVal.MODULE_NAME, this.getModuleName());
+            packageInfo.put(ConstVal.ENTITY, this.joinPackage(this.getEntity()));
+            packageInfo.put(ConstVal.MAPPER, this.joinPackage(this.getMapper()));
+            packageInfo.put(ConstVal.XML, this.joinPackage(this.getXml()));
+            packageInfo.put(ConstVal.SERVICE, this.joinPackage(this.getService()));
+            packageInfo.put(ConstVal.SERVICE_IMPL, this.joinPackage(this.getServiceImpl()));
+            packageInfo.put(ConstVal.CONTROLLER, this.joinPackage(this.getController()));
+        }
+        return Collections.unmodifiableMap(this.packageInfo);
     }
-
 
 }

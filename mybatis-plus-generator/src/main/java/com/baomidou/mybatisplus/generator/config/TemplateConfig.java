@@ -15,16 +15,11 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
-import java.io.File;
-import java.util.Map;
 
 /**
  * 模板路径配置项
@@ -81,46 +76,11 @@ public class TemplateConfig {
                     case CONTROLLER:
                         setController(null);
                         break;
+                    default:
                 }
             }
         }
         return this;
-    }
-
-    public Map<String, String> getPathInfo(GlobalConfig globalConfig, Map<String, String> packageInfo) {
-        Map<String, String> initMap = CollectionUtils.newHashMapWithExpectedSize(6);
-        String outputDir = globalConfig.getOutputDir();
-        setPathInfo(initMap, packageInfo, this.getEntity(globalConfig.isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
-        setPathInfo(initMap, packageInfo, this.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
-        setPathInfo(initMap, packageInfo, this.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
-        setPathInfo(initMap, packageInfo, this.getService(), outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
-        setPathInfo(initMap, packageInfo, this.getServiceImpl(), outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
-        setPathInfo(initMap, packageInfo, this.getController(), outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
-        return initMap;
-    }
-
-    private void setPathInfo(Map<String, String> pathInfo, Map<String, String> packageInfo, String template, String outputDir, String path, String module) {
-        if (StringUtils.isNotBlank(template)) {
-            pathInfo.put(path, joinPath(outputDir, packageInfo.get(module)));
-        }
-    }
-
-    /**
-     * 连接路径字符串
-     *
-     * @param parentDir   路径常量字符串
-     * @param packageName 包名
-     * @return 连接后的路径
-     */
-    private String joinPath(String parentDir, String packageName) {
-        if (StringUtils.isBlank(parentDir)) {
-            parentDir = System.getProperty(ConstVal.JAVA_TMPDIR);
-        }
-        if (!StringUtils.endsWith(parentDir, File.separator)) {
-            parentDir += File.separator;
-        }
-        packageName = packageName.replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
-        return parentDir + packageName;
     }
 
 }

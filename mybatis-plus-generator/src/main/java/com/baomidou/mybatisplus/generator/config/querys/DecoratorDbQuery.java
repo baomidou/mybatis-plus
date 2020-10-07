@@ -22,6 +22,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,6 +48,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     private final DbType dbType;
     private final StrategyConfig strategyConfig;
     private final String schema;
+    private final Logger logger;
 
     public DecoratorDbQuery(IDbQuery dbQuery, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig) {
         this.dbQuery = dbQuery;
@@ -53,6 +56,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         this.dbType = dataSourceConfig.getDbType();
         this.strategyConfig = strategyConfig;
         this.schema = dataSourceConfig.getSchemaName();
+        this.logger = LoggerFactory.getLogger(dbQuery.getClass());
     }
 
     @Override
@@ -144,6 +148,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
         try {
             return dbQuery.isKeyIdentity(results);
         } catch (SQLException e) {
+            logger.warn("判断主键自增错误:{}", e.getMessage());
             // ignore 这个看到在查H2的时候出了异常，先忽略这个异常了.
         }
         return false;
@@ -171,11 +176,17 @@ public class DecoratorDbQuery extends AbstractDbQuery {
     }
 
     public void query(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
+        logger.debug("执行SQL:{}", sql);
+        int count = 0;
+        long start = System.nanoTime();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                consumer.accept(new ResultSetWrapper(resultSet, this));
+                consumer.accept(new ResultSetWrapper(resultSet, this, this.dbType));
+                count++;
             }
+            long end = System.nanoTime();
+            logger.info("返回记录数:{},耗时(ms):{}", count, (end - start) / 1000000);
         }
     }
 
@@ -199,9 +210,12 @@ public class DecoratorDbQuery extends AbstractDbQuery {
 
         private final ResultSet resultSet;
 
-        ResultSetWrapper(ResultSet resultSet, IDbQuery dbQuery) {
+        private final DbType dbType;
+
+        ResultSetWrapper(ResultSet resultSet, IDbQuery dbQuery, DbType dbType) {
             this.resultSet = resultSet;
             this.dbQuery = dbQuery;
+            this.dbType = dbType;
         }
 
         public ResultSet getResultSet() {
@@ -231,6 +245,15 @@ public class DecoratorDbQuery extends AbstractDbQuery {
 
         public String formatComment(String comment) {
             return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+        }
+
+        public boolean isPrimaryKey() {
+            String key = this.getStringResult(dbQuery.fieldKey());
+            if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
+                return StringUtils.isNotBlank(key) && "1".equals(key);
+            } else {
+                return StringUtils.isNotBlank(key) && "PRI".equals(key.toUpperCase());
+            }
         }
     }
 }

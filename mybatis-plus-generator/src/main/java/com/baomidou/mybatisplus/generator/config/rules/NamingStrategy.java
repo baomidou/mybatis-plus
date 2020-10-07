@@ -102,7 +102,9 @@ public enum NamingStrategy {
      * @param name   ignore
      * @param prefix ignore
      * @return ignore
+     * @deprecated 3.4.1
      */
+    @Deprecated
     public static boolean isPrefixContained(String name, String... prefix) {
         if (null == prefix || StringUtils.isBlank(name)) {
             return false;

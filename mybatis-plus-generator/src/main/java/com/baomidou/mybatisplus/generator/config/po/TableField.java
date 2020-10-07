@@ -62,6 +62,12 @@ public class TableField {
      */
     private Map<String, Object> customMap;
 
+    /**
+     * @param convert
+     * @return this
+     * @see #setConvert(StrategyConfig)
+     * @deprecated 3.4.1
+     */
     public TableField setConvert(boolean convert) {
         this.convert = convert;
         return this;

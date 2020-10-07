@@ -29,6 +29,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -45,6 +47,8 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class ConfigBuilder {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(ConfigBuilder.class);
+
     /**
      * 模板路径配置信息
      */
@@ -60,11 +64,6 @@ public class ConfigBuilder {
      * 数据库表信息
      */
     private final List<TableInfo> tableInfoList = new ArrayList<>();
-    /**
-     * 包配置详情
-     */
-    @Setter(value = AccessLevel.NONE)
-    private final Map<String, String> packageInfo = new HashMap<>();
     /**
      * 路径配置信息
      */
@@ -85,11 +84,15 @@ public class ConfigBuilder {
     /**
      * 过滤正则
      */
-    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-=+\\\\|{};:'\",<.>?]+");
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()+\\\\\\[\\]|{};:'\",<.>?]+");
     /**
      * 表数据查询
      */
     private final DecoratorDbQuery dbQuery;
+    /**
+     * 包配置信息
+     */
+    private final PackageConfig packageConfig;
 
     /**
      * 在构造器中处理配置
@@ -109,9 +112,8 @@ public class ConfigBuilder {
         this.dbQuery = new DecoratorDbQuery(dataSourceConfig.getDbQuery(), dataSourceConfig, strategyConfig);
         this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
         this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
-        packageConfig = Optional.ofNullable(packageConfig).orElseGet(PackageConfig::new);
-        this.packageInfo.putAll(packageConfig.initPackageInfo());
-        this.pathInfo.putAll(Optional.ofNullable(packageConfig.getPathInfo()).orElseGet(() -> this.template.getPathInfo(this.globalConfig, packageInfo)));
+        this.packageConfig = Optional.ofNullable(packageConfig).orElseGet(PackageConfig::new);
+        this.pathInfo.putAll(new PathInfoHandler(this.globalConfig, this.template, this.packageConfig).getPathInfo());
         this.tableInfoList.addAll(getTablesInfo());
     }
 
@@ -148,8 +150,10 @@ public class ConfigBuilder {
             });
             //TODO 我要把这个打印不存在表的功能和正则匹配功能删掉，就算是苗老板来了也拦不住的那种
             if (isExclude || isInclude) {
-                Set<String> notExistTables = new HashSet<>(isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude())
-                    .stream().filter(s -> !REGX.matcher(s).find()).map(String::toLowerCase).collect(Collectors.toSet());
+                Map<String, String> notExistTables = new HashSet<>(isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude())
+                    .stream()
+                    .filter(s -> !matcherRegTable(s))
+                    .collect(Collectors.toMap(String::toLowerCase, s -> s, (o, n) -> n));
                 // 将已经存在的表移除，获取配置中数据库不存在的表
                 for (TableInfo tabInfo : tableList) {
                     if (notExistTables.isEmpty()) {
@@ -159,7 +163,7 @@ public class ConfigBuilder {
                     notExistTables.remove(tabInfo.getName().toLowerCase());
                 }
                 if (notExistTables.size() > 0) {
-                    System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
+                    LOGGER.warn("表[{}]在数据库中不存在！！！", String.join(StringPool.COMMA, notExistTables.values()));
                 }
                 // 需要反向生成的表信息
                 if (isExclude) {
@@ -202,17 +206,7 @@ public class ConfigBuilder {
                 TableField field = new TableField();
                 String columnName = result.getStringResult(dbQuery.fieldName());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                boolean isId;
-                if (DbType.H2 == dbType) {
-                    isId = h2PkColumns.contains(columnName);
-                } else {
-                    String key = result.getStringResult(dbQuery.fieldKey());
-                    if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
-                        isId = StringUtils.isNotBlank(key) && "1".equals(key);
-                    } else {
-                        isId = StringUtils.isNotBlank(key) && "PRI".equals(key.toUpperCase());
-                    }
-                }
+                boolean isId = DbType.H2 == dbType ? h2PkColumns.contains(columnName) : result.isPrimaryKey();
                 // 处理ID
                 if (isId) {
                     field.setKeyFlag(true).setKeyIdentityFlag(dbQuery.isKeyIdentity(result.getResultSet()));
@@ -221,7 +215,7 @@ public class ConfigBuilder {
                 String newColumnName = columnName;
                 IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
                 if (keyWordsHandler != null && keyWordsHandler.isKeyWords(columnName)) {
-                    System.err.printf("当前表[%s]存在字段[%s]为数据库关键字或保留字!%n", tableName, columnName);
+                    LOGGER.warn("当前表[{}]存在字段[{}]为数据库关键字或保留字!", tableName, columnName);
                     field.setKeyWords(true);
                     newColumnName = keyWordsHandler.formatColumn(columnName);
                 }
@@ -283,4 +277,28 @@ public class ConfigBuilder {
         this.tableInfoList.addAll(tableInfoList);
         return this;
     }
+
+    /**
+     * 判断表名是否为正则表名(这表名规范比较随意,只能尽量匹配上特殊符号)
+     *
+     * @param tableName 表名
+     * @return 是否正则
+     * @since 3.4.1
+     */
+    public static boolean matcherRegTable(String tableName) {
+        return REGX.matcher(tableName).find();
+    }
+
+    /**
+     * 获取包配置信息
+     *
+     * @return 包配置信息
+     * @see PackageConfig#getPackageInfo()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public Map<String, String> getPackageInfo() {
+        return packageConfig.getPackageInfo();
+    }
+
 }

@@ -66,12 +66,12 @@ public abstract class AbstractTemplateEngine {
     public AbstractTemplateEngine batchOutput() {
         try {
             List<TableInfo> tableInfoList = getConfigBuilder().getTableInfoList();
+            Map<String, String> pathInfo = getConfigBuilder().getPathInfo();
+            TemplateConfig template = getConfigBuilder().getTemplate();
+            // 自定义内容
+            InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
             for (TableInfo tableInfo : tableInfoList) {
                 Map<String, Object> objectMap = getObjectMap(tableInfo);
-                Map<String, String> pathInfo = getConfigBuilder().getPathInfo();
-                TemplateConfig template = getConfigBuilder().getTemplate();
-                // 自定义内容
-                InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
                     injectionConfig.initTableMap(tableInfo);
                     objectMap.put("cfg", injectionConfig.getMap());
@@ -207,7 +207,7 @@ public abstract class AbstractTemplateEngine {
         }
         objectMap.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
         objectMap.put("config", config);
-        objectMap.put("package", config.getPackageInfo());
+        objectMap.put("package", config.getPackageConfig().getPackageInfo());
         GlobalConfig globalConfig = config.getGlobalConfig();
         objectMap.put("author", globalConfig.getAuthor());
         objectMap.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
