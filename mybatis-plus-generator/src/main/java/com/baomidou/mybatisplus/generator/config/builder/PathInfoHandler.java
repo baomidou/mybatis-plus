@@ -40,12 +40,11 @@ class PathInfoHandler {
 
     private final String outputDir;
 
-    private final Map<String, String> packageInfo;
-
+    private final PackageConfig packageConfig;
 
     PathInfoHandler(GlobalConfig globalConfig, TemplateConfig templateConfig, PackageConfig packageConfig) {
         this.outputDir = globalConfig.getOutputDir();
-        this.packageInfo = packageConfig.getPackageInfo();
+        this.packageConfig = packageConfig;
         Map<String, String> pathInfo = packageConfig.getPathInfo();
         if (CollectionUtils.isNotEmpty(pathInfo)) {
             this.pathInfo.putAll(pathInfo);
@@ -64,7 +63,7 @@ class PathInfoHandler {
     }
 
     private void putPathInfo(String template, String path, String module) {
-        if (StringUtils.isNotBlank(template)) pathInfo.put(path, joinPath(outputDir, packageInfo.get(module)));
+        if (StringUtils.isNotBlank(template)) pathInfo.put(path, joinPath(outputDir, packageConfig.getPackageInfo(module)));
     }
 
     /**

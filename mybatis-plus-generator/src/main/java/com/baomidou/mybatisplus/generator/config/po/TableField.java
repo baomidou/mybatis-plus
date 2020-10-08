@@ -79,7 +79,7 @@ public class TableField {
             return this;
         }
         if (strategyConfig.isCapitalModeNaming(name)) {
-            this.convert = false;
+            this.convert = !name.equalsIgnoreCase(propertyName);
         } else {
             // 转换字段
             if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
@@ -98,8 +98,7 @@ public class TableField {
     /**
      * @param propertyName 属性名称
      * @return this
-     * @see #setPropertyName(StrategyConfig, String)
-     * @deprecated 3.4.1
+     * @deprecated 3.4.1 {@link #setPropertyName(String, StrategyConfig, IColumnType)}
      */
     @Deprecated
     public TableField setPropertyName(String propertyName) {
@@ -107,14 +106,49 @@ public class TableField {
         return this;
     }
 
-    public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
+    /**
+     * 设置属性名称
+     *
+     * @param propertyName   属性名
+     * @param strategyConfig 策略配置
+     * @param columnType     字段类型
+     * @return this
+     * @since 3.4.1
+     */
+    public TableField setPropertyName(String propertyName, StrategyConfig strategyConfig, IColumnType columnType) {
+        this.columnType = columnType;
         if (strategyConfig.isEntityBooleanColumnRemoveIsPrefix()
-            && "boolean".equalsIgnoreCase(this.getPropertyType()) && this.getPropertyName().startsWith("is")) {
+            && "boolean".equalsIgnoreCase(this.getPropertyType()) && propertyName.startsWith("is")) {
             this.convert = true;
-            propertyName = StringUtils.removePrefixAfterPrefixToLower(this.getPropertyName(), 2);
+            this.propertyName = StringUtils.removePrefixAfterPrefixToLower(propertyName, 2);
+            return this;
         }
         this.propertyName = propertyName;
         this.setConvert(strategyConfig);
+        return this;
+    }
+
+    /**
+     * 设置属性名称
+     *
+     * @param strategyConfig 策略配置
+     * @param propertyName   属性名
+     * @return this
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
+        return setPropertyName(propertyName, strategyConfig, this.columnType);
+    }
+
+    /**
+     * @param columnType 字段类型
+     * @return this
+     * @deprecated 3.4.1 {@link #setPropertyName(String, StrategyConfig, IColumnType)}
+     */
+    @Deprecated
+    public TableField setColumnType(IColumnType columnType) {
+        this.columnType = columnType;
         return this;
     }
 

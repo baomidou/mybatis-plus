@@ -419,7 +419,9 @@ public class StrategyConfig {
      * @param clazz        实体父类 Class
      * @param columnNaming 字段命名策略
      * @return this
+     * @deprecated 3.4.1 {@link #setSuperEntityClass(Class)} {@link #setColumnNaming(NamingStrategy)}
      */
+    @Deprecated
     public StrategyConfig setSuperEntityClass(Class<?> clazz, NamingStrategy columnNaming) {
         this.columnNaming = columnNaming;
         this.superEntityClass = clazz.getName();
@@ -554,7 +556,12 @@ public class StrategyConfig {
         return this.superEntityColumns;
     }
 
-    public void validate(){
+    /**
+     * 验证配置项
+     *
+     * @since 3.4.1
+     */
+    public void validate() {
         boolean isInclude = this.getInclude().size() > 0;
         boolean isExclude = this.getExclude().size() > 0;
         if (isInclude && isExclude) {
@@ -565,14 +572,36 @@ public class StrategyConfig {
         }
     }
 
+    /**
+     * 包含表名匹配
+     *
+     * @param tableName 表名
+     * @return 是否匹配
+     * @since 3.4.1
+     */
     public boolean matchIncludeTable(String tableName) {
         return matchTable(tableName, this.getInclude());
     }
 
+    /**
+     * 排除表名匹配
+     *
+     * @param tableName 表名
+     * @return 是否匹配
+     * @since 3.4.1
+     */
     public boolean matchExcludeTable(String tableName) {
         return matchTable(tableName, this.getExclude());
     }
 
+    /**
+     * 表名匹配
+     *
+     * @param tableName   表名
+     * @param matchTables 匹配集合
+     * @return 是否匹配
+     * @since 3.4.1
+     */
     private boolean matchTable(String tableName, Set<String> matchTables) {
         return matchTables.stream().anyMatch(t -> tableNameMatches(t, tableName));
     }

@@ -84,17 +84,20 @@ public class TableInfo {
         if (strategyConfig.startsWithTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
             // 包含前缀
             this.convert = true;
-            return this;
-        }
-        // 转换字段
-        if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
-            // 包含大写处理
-            if (StringUtils.containsUpperCase(name)) {
+        } else if (strategyConfig.isCapitalModeNaming(name)) {
+            // 包含
+            this.convert = !entityName.equalsIgnoreCase(name);
+        } else {
+            // 转换字段
+            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
+                // 包含大写处理
+                if (StringUtils.containsUpperCase(name)) {
+                    this.convert = true;
+                }
+            } else if (!entityName.equalsIgnoreCase(name)) {
                 this.convert = true;
             }
-            return this;
         }
-        this.convert = !entityName.equalsIgnoreCase(name);
         return this;
     }
 
@@ -238,6 +241,13 @@ public class TableInfo {
         return this;
     }
 
+    /**
+     * 导包处理
+     *
+     * @param strategyConfig 策略配置
+     * @param globalConfig   全局配置
+     * @since 3.4.1
+     */
     public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
         boolean importSerializable = true;
         if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
@@ -247,7 +257,7 @@ public class TableInfo {
         } else {
             if (globalConfig.isActiveRecord()) {
                 // 无父类开启 AR 模式
-                this.getImportPackages().add(Model.class.getCanonicalName());
+                this.importPackages.add(Model.class.getCanonicalName());
                 importSerializable = false;
             }
         }
@@ -295,6 +305,13 @@ public class TableInfo {
         });
     }
 
+    /**
+     * 处理表信息(文件名与导包)
+     *
+     * @param strategyConfig 策略配置
+     * @param globalConfig   全局配置
+     * @since 3.4.1
+     */
     public void processTable(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
         String entityName = strategyConfig.getNameConvert().entityNameConvert(this);
         this.setEntityName(strategyConfig, this.getFileName(entityName, globalConfig.getEntityName(), () -> entityName));
@@ -307,6 +324,15 @@ public class TableInfo {
     }
 
 
+    /**
+     * 获取文件名称(含格式化处理)
+     *
+     * @param entityName   实体名
+     * @param value        文件名(支持格式化处理)
+     * @param defaultValue 默认文件名
+     * @return 文件名称
+     * @since 3.4.1
+     */
     public String getFileName(String entityName, String value, Supplier<String> defaultValue) {
         return StringUtils.isNotBlank(value) ? String.format(value, entityName) : defaultValue.get();
     }

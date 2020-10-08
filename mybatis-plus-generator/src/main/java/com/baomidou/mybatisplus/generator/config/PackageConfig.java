@@ -95,6 +95,7 @@ public class PackageConfig {
      * 连接父子包名
      *
      * @return 连接后的包名
+     * @since 3.4.1
      */
     public String joinPackage(String subPackage) {
         String parent = getParent();
@@ -120,4 +121,14 @@ public class PackageConfig {
         return Collections.unmodifiableMap(this.packageInfo);
     }
 
+    /**
+     * 获取包配置信息
+     *
+     * @param module 模块
+     * @return 配置信息
+     * @since 3.4.1
+     */
+    public String getPackageInfo(String module) {
+        return getPackageInfo().get(module);
+    }
 }

@@ -175,6 +175,8 @@ public class ConfigBuilder {
             }
             // 性能优化，只处理需执行表字段 github issues/219
             tableList.forEach(this::convertTableFields);
+            // 数据库操作完成,释放连接对象
+            dbQuery.closeConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -221,8 +223,7 @@ public class ConfigBuilder {
                 }
                 field.setName(columnName).setColumnName(newColumnName)
                     .setType(result.getStringResult(dbQuery.fieldType()))
-                    .setPropertyName(this.strategyConfig, strategyConfig.getNameConvert().propertyNameConvert(field))
-                    .setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
+                    .setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field), this.strategyConfig, dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
                     .setComment(result.getFiledComment())
                     .setCustomMap(dbQuery.getCustomFields(result.getResultSet()));
                 // 填充逻辑判断
@@ -257,11 +258,6 @@ public class ConfigBuilder {
     @Deprecated
     public String formatComment(String comment) {
         return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
-    }
-
-    public void close() {
-        //暂时只有数据库连接需要关闭
-        dbQuery.closeConnection();
     }
 
     /**

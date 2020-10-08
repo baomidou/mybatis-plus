@@ -198,106 +198,131 @@ public class MybatisConfiguration extends Configuration {
         getLanguageRegistry().setDefaultDriverClass(driver);
     }
 
+    @Override
     public void addKeyGenerator(String id, KeyGenerator keyGenerator) {
         keyGenerators.put(id, keyGenerator);
     }
 
+    @Override
     public Collection<String> getKeyGeneratorNames() {
         return keyGenerators.keySet();
     }
 
+    @Override
     public Collection<KeyGenerator> getKeyGenerators() {
         return keyGenerators.values();
     }
 
+    @Override
     public KeyGenerator getKeyGenerator(String id) {
         return keyGenerators.get(id);
     }
 
+    @Override
     public boolean hasKeyGenerator(String id) {
         return keyGenerators.containsKey(id);
     }
 
+    @Override
     public void addCache(Cache cache) {
         caches.put(cache.getId(), cache);
     }
 
+    @Override
     public Collection<String> getCacheNames() {
         return caches.keySet();
     }
 
+    @Override
     public Collection<Cache> getCaches() {
         return caches.values();
     }
 
+    @Override
     public Cache getCache(String id) {
         return caches.get(id);
     }
 
+    @Override
     public boolean hasCache(String id) {
         return caches.containsKey(id);
     }
 
+    @Override
     public void addResultMap(ResultMap rm) {
         resultMaps.put(rm.getId(), rm);
         checkLocallyForDiscriminatedNestedResultMaps(rm);
         checkGloballyForDiscriminatedNestedResultMaps(rm);
     }
 
+    @Override
     public Collection<String> getResultMapNames() {
         return resultMaps.keySet();
     }
 
+    @Override
     public Collection<ResultMap> getResultMaps() {
         return resultMaps.values();
     }
 
+    @Override
     public ResultMap getResultMap(String id) {
         return resultMaps.get(id);
     }
 
+    @Override
     public boolean hasResultMap(String id) {
         return resultMaps.containsKey(id);
     }
 
+    @Override
     public void addParameterMap(ParameterMap pm) {
         parameterMaps.put(pm.getId(), pm);
     }
 
+    @Override
     public Collection<String> getParameterMapNames() {
         return parameterMaps.keySet();
     }
 
+    @Override
     public Collection<ParameterMap> getParameterMaps() {
         return parameterMaps.values();
     }
 
+    @Override
     public ParameterMap getParameterMap(String id) {
         return parameterMaps.get(id);
     }
 
+    @Override
     public boolean hasParameterMap(String id) {
         return parameterMaps.containsKey(id);
     }
 
+    @Override
     public Map<String, XNode> getSqlFragments() {
         return sqlFragments;
     }
 
+    @Override
     public Collection<String> getMappedStatementNames() {
         buildAllStatements();
         return mappedStatements.keySet();
     }
 
+    @Override
     public Collection<MappedStatement> getMappedStatements() {
         buildAllStatements();
         return mappedStatements.values();
     }
 
+    @Override
     public MappedStatement getMappedStatement(String id) {
         return this.getMappedStatement(id, true);
     }
 
+    @Override
     public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
         if (validateIncompleteStatements) {
             buildAllStatements();
@@ -305,6 +330,7 @@ public class MybatisConfiguration extends Configuration {
         return mappedStatements.get(id);
     }
 
+    @Override
     public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
         if (validateIncompleteStatements) {
             buildAllStatements();
@@ -335,6 +361,7 @@ public class MybatisConfiguration extends Configuration {
     }
 
     // Slow but a one time cost. A better solution is welcome.
+    @Override
     protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (rm.hasNestedResultMaps()) {
             for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
@@ -353,6 +380,7 @@ public class MybatisConfiguration extends Configuration {
     }
 
     // Slow but a one time cost. A better solution is welcome.
+    @Override
     protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
             for (Map.Entry<String, String> entry : rm.getDiscriminator().getDiscriminatorMap().entrySet()) {

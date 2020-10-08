@@ -186,7 +186,7 @@ public class DecoratorDbQuery extends AbstractDbQuery {
                 count++;
             }
             long end = System.nanoTime();
-            logger.info("返回记录数:{},耗时(ms):{}", count, (end - start) / 1000000);
+            logger.debug("返回记录数:{},耗时(ms):{}", count, (end - start) / 1000000);
         }
     }
 

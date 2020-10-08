@@ -172,7 +172,7 @@ public class DataSourceConfig {
         try {
             Class.forName(this.driverName);
             conn = DriverManager.getConnection(this.url, this.username, this.password);
-            String schema = StringUtils.isNotBlank(this.schemaName) ? this.schemaName : getDefaultSchema(getDbType());
+            String schema = StringUtils.isNotBlank(this.schemaName) ? this.schemaName : getDefaultSchema();
             if (StringUtils.isNotBlank(schema)) {
                 this.schemaName = schema;
                 conn.setSchema(schema);
@@ -183,7 +183,14 @@ public class DataSourceConfig {
         return conn;
     }
 
-    private String getDefaultSchema(DbType dbType){
+    /**
+     * 获取数据库默认schema
+     *
+     * @return 默认schema
+     * @since 3.4.1
+     */
+    private String getDefaultSchema() {
+        DbType dbType = getDbType();
         String schema = null;
         if (DbType.POSTGRE_SQL == dbType) {
             //pg 默认 schema=public

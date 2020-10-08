@@ -224,7 +224,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("entity", tableInfo.getEntityName());
         objectMap.put("entitySerialVersionUID", config.getStrategyConfig().isEntitySerialVersionUID());
         objectMap.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
-        objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+        objectMap.put("entityBuilderModel", config.getStrategyConfig().isChainModel());
         objectMap.put("chainModel", config.getStrategyConfig().isChainModel());
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());

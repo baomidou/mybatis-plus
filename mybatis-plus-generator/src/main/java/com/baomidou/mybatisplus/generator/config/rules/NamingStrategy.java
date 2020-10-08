@@ -86,14 +86,10 @@ public enum NamingStrategy {
         if (StringUtils.isBlank(name)) {
             return StringPool.EMPTY;
         }
-        if (null != prefix) {
-            // 判断是否有匹配的前缀，然后截取前缀
-            // 删除前缀
-            return prefix.stream().filter(pf -> name.toLowerCase()
-                .matches(StringPool.HAT + pf.toLowerCase() + ".*"))
-                .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
-        }
-        return name;
+        // 判断是否有匹配的前缀，然后截取前缀
+        // 删除前缀 TODO 前缀统一配置小写格式????
+        return prefix.stream().filter(pf -> name.toLowerCase().startsWith(pf))
+            .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
     }
 
     /**

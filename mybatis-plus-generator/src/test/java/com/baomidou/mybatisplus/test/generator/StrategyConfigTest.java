@@ -226,6 +226,7 @@ class StrategyConfigTest {
         Assertions.assertFalse(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("user_name"));
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("USER_NAME"));
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("T_USER"));
+        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("NAME"));
     }
 
     @Data
