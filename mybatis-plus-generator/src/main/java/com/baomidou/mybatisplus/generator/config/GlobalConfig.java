@@ -32,9 +32,9 @@ import lombok.experimental.Accessors;
 public class GlobalConfig {
 
     /**
-     * 生成文件的输出目录【默认 D 盘根目录】
+     * 生成文件的输出目录【 windows:D://  linux or mac:/tmp 】
      */
-    private String outputDir = "D://";
+    private String outputDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://" : "/tmp";
 
     /**
      * 是否覆盖已有文件

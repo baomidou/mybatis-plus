@@ -53,6 +53,7 @@ public interface ConstVal {
 
     String TEMPLATE_ENTITY_JAVA = "/templates/entity.java";
     String TEMPLATE_ENTITY_KT = "/templates/entity.kt";
+    String TEMPLATE_ENTITY = "/templates/entity";
     String TEMPLATE_MAPPER = "/templates/mapper.java";
     String TEMPLATE_XML = "/templates/mapper.xml";
     String TEMPLATE_SERVICE = "/templates/service.java";

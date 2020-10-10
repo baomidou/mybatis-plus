@@ -111,7 +111,7 @@ public class ConfigBuilder {
         this.dataSourceConfig = dataSourceConfig;
         this.dbQuery = new DecoratorDbQuery(dataSourceConfig.getDbQuery(), dataSourceConfig, strategyConfig);
         this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GlobalConfig::new);
-        this.template = Optional.ofNullable(template).orElseGet(TemplateConfig::new);
+        this.template = Optional.ofNullable(template).orElseGet(() -> new TemplateConfig.Builder().all().build());
         this.packageConfig = Optional.ofNullable(packageConfig).orElseGet(PackageConfig::new);
         this.pathInfo.putAll(new PathInfoHandler(this.globalConfig, this.template, this.packageConfig).getPathInfo());
         this.tableInfoList.addAll(getTablesInfo());
