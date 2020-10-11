@@ -15,27 +15,25 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.builder.BaseBuilder;
+import com.baomidou.mybatisplus.generator.config.builder.ControllerBuilder;
+import com.baomidou.mybatisplus.generator.config.builder.EntityBuilder;
+import com.baomidou.mybatisplus.generator.config.builder.MapperBuilder;
+import com.baomidou.mybatisplus.generator.config.builder.ServiceBuilder;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 策略配置项
@@ -55,19 +53,6 @@ public class StrategyConfig {
      */
     private boolean skipView = false;
     /**
-     * 名称转换
-     */
-    private INameConvert nameConvert = new INameConvert.DefaultNameConvert(this);
-    /**
-     * 数据库表映射到实体的命名策略
-     */
-    private NamingStrategy naming = NamingStrategy.no_change;
-    /**
-     * 数据库表字段映射到实体的命名策略
-     * <p>未指定按照 naming 执行</p>
-     */
-    private NamingStrategy columnNaming = null;
-    /**
      * 表前缀
      */
     @Setter(AccessLevel.NONE)
@@ -77,32 +62,6 @@ public class StrategyConfig {
      */
     @Setter(AccessLevel.NONE)
     private final Set<String> fieldPrefix = new HashSet<>();
-    /**
-     * 自定义继承的Entity类全称，带包名
-     */
-    @Setter(AccessLevel.NONE)
-    private String superEntityClass;
-    /**
-     * 自定义基础的Entity类，公共字段
-     */
-    @Setter(AccessLevel.NONE)
-    private final Set<String> superEntityColumns = new HashSet<>();
-    /**
-     * 自定义继承的Mapper类全称，带包名
-     */
-    private String superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
-    /**
-     * 自定义继承的Service类全称，带包名
-     */
-    private String superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
-    /**
-     * 自定义继承的ServiceImpl类全称，带包名
-     */
-    private String superServiceImplClass = ConstVal.SUPER_SERVICE_IMPL_CLASS;
-    /**
-     * 自定义继承的Controller类全称，带包名
-     */
-    private String superControllerClass;
     /**
      * 需要包含的表名，允许正则表达式（与exclude二选一配置）<br/>
      * 当{@link #enableSqlFilter}为true时，正则表达式无效.
@@ -115,75 +74,6 @@ public class StrategyConfig {
      */
     @Setter(AccessLevel.NONE)
     private final Set<String> exclude = new HashSet<>();
-    /**
-     * 实体是否生成 serialVersionUID
-     */
-    private boolean entitySerialVersionUID = true;
-    /**
-     * 【实体】是否生成字段常量（默认 false）<br>
-     * -----------------------------------<br>
-     * public static final String ID = "test_id";
-     */
-    private boolean entityColumnConstant = false;
-    /**
-     * 【实体】是否为构建者模型（默认 false）<br>
-     * -----------------------------------<br>
-     * public User setName(String name) { this.name = name; return this; }
-     *
-     * @deprecated 3.3.2 {@link #chainModel}
-     */
-    @Deprecated
-    private boolean entityBuilderModel = false;
-
-    /**
-     * 【实体】是否为链式模型（默认 false）<br>
-     * -----------------------------------<br>
-     * public User setName(String name) { this.name = name; return this; }
-     *
-     * @since 3.3.2
-     */
-    private boolean chainModel = false;
-
-    /**
-     * 【实体】是否为lombok模型（默认 false）<br>
-     * <a href="https://projectlombok.org/">document</a>
-     */
-    private boolean entityLombokModel = false;
-    /**
-     * Boolean类型字段是否移除is前缀（默认 false）<br>
-     * 比如 : 数据库字段名称 : 'is_xxx',类型为 : tinyint. 在映射实体的时候则会去掉is,在实体类中映射最终结果为 xxx
-     */
-    private boolean entityBooleanColumnRemoveIsPrefix = false;
-    /**
-     * 生成 <code>@RestController</code> 控制器
-     * <pre>
-     *      <code>@Controller</code> -> <code>@RestController</code>
-     * </pre>
-     */
-    private boolean restControllerStyle = false;
-    /**
-     * 驼峰转连字符
-     * <pre>
-     *      <code>@RequestMapping("/managerUserActionHistory")</code> -> <code>@RequestMapping("/manager-user-action-history")</code>
-     * </pre>
-     */
-    private boolean controllerMappingHyphenStyle = false;
-    /**
-     * 是否生成实体时，生成字段注解
-     */
-    private boolean entityTableFieldAnnotationEnable = false;
-    /**
-     * 乐观锁属性名称
-     */
-    private String versionFieldName;
-    /**
-     * 逻辑删除属性名称
-     */
-    private String logicDeleteFieldName;
-    /**
-     * 表填充字段
-     */
-    private final List<TableFill> tableFillList = new ArrayList<>();
     /**
      * 启用sql过滤，语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
      *
@@ -202,6 +92,120 @@ public class StrategyConfig {
      * @since 3.3.0
      */
     private LikeTable notLikeTable;
+
+    /**
+     * 后续不再公开此构造方法
+     *
+     * @see Builder
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig() {
+    }
+
+    @Getter(AccessLevel.NONE)
+    private final EntityBuilder entityBuilder = new EntityBuilder(this);
+
+    @Getter(AccessLevel.NONE)
+    private final ControllerBuilder controllerBuilder = new ControllerBuilder(this);
+
+    @Getter(AccessLevel.NONE)
+    private final MapperBuilder mapperBuilder = new MapperBuilder(this);
+
+    @Getter(AccessLevel.NONE)
+    private final ServiceBuilder serviceBuilder = new ServiceBuilder(this);
+
+    /**
+     * 实体配置
+     *
+     * @return 实体配置
+     * @since 3.4.1
+     */
+    public EntityBuilder entity() {
+        return entityBuilder;
+    }
+
+    /**
+     * 控制器配置
+     *
+     * @return 控制器配置
+     * @since 3.4.1
+     */
+    public ControllerBuilder controller() {
+        return controllerBuilder;
+    }
+
+    /**
+     * Mapper配置
+     *
+     * @return Mapper配置
+     * @since 3.4.1
+     */
+    public MapperBuilder mapper() {
+        return mapperBuilder;
+    }
+
+    /**
+     * Service配置
+     *
+     * @return Service配置
+     * @since 3.4.1
+     */
+    public ServiceBuilder service() {
+        return serviceBuilder;
+    }
+
+
+    /**
+     * 获取名称转换实现
+     *
+     * @return 名称转换
+     * @see EntityBuilder#getNameConvert()
+     * @deprecated 3.4.1
+     */
+    public INameConvert getNameConvert() {
+        return entityBuilder.getNameConvert();
+    }
+
+    /**
+     * 名称转换实现
+     *
+     * @param nameConvert 名称转换实现
+     * @return this
+     * @see EntityBuilder#nameConvert(INameConvert)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setNameConvert(INameConvert nameConvert) {
+        this.entityBuilder.nameConvert(nameConvert);
+        return this;
+    }
+
+    /**
+     * 获取数据库表映射到实体的命名策略
+     *
+     * @return 命名策略
+     * @see EntityBuilder#getNaming()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public NamingStrategy getNaming() {
+        return entityBuilder.getNaming();
+    }
+
+    /**
+     * 设置数据库表映射到实体的命名策略
+     *
+     * @param naming 命名策略
+     * @return this
+     * @see EntityBuilder#naming(NamingStrategy)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setNaming(NamingStrategy naming) {
+        this.entityBuilder.naming(naming);
+        return this;
+    }
 
     /**
      * 大写命名、字段符合大写字母数字下划线命名
@@ -233,30 +237,40 @@ public class StrategyConfig {
         return this.tablePrefix.stream().anyMatch(tableName::startsWith);
     }
 
+    /**
+     * 获取字段命名策略
+     *
+     * @return 命名策略
+     * @see EntityBuilder#getColumnNaming()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public NamingStrategy getColumnNaming() {
-        // 未指定以 naming 策略为准
-        return Optional.ofNullable(columnNaming).orElse(naming);
+        return entityBuilder.getColumnNaming();
+    }
+
+    /**
+     * 设置字段命名策略
+     *
+     * @param columnNaming 命名策略
+     * @return this
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setColumnNaming(NamingStrategy columnNaming) {
+        this.entityBuilder.columnNaming(columnNaming);
+        return this;
     }
 
     /**
      * @param tablePrefix 表前缀
      * @return this
-     * @see #addTablePrefix(String...)
+     * @see Builder#addTablePrefix(String...)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setTablePrefix(String... tablePrefix) {
         this.tablePrefix.clear();   //保持语义
-        return addTablePrefix(tablePrefix);
-    }
-
-    /**
-     * 增加表前缀
-     * @since 3.4.1
-     * @param tablePrefix 表前缀
-     * @return this
-     */
-    public StrategyConfig addTablePrefix(String... tablePrefix) {
         this.tablePrefix.addAll(Arrays.asList(tablePrefix));
         return this;
     }
@@ -264,71 +278,37 @@ public class StrategyConfig {
     /**
      * @param fieldName 字段名
      * @return 是否匹配
-     * @see #matchSuperEntityColumns(String)
+     * @see EntityBuilder#matchSuperEntityColumns(String)
      * @deprecated 3.4.1
      */
     @Deprecated
     public boolean includeSuperEntityColumns(String fieldName) {
         // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
-        return matchSuperEntityColumns(fieldName);
-    }
-
-    /**
-     * 匹配父类字段(忽略大小写)
-     *
-     * @param fieldName 字段名
-     * @return 是否匹配
-     * @since 3.4.1
-     */
-    public boolean matchSuperEntityColumns(String fieldName) {
-        // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
-        return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
+        return entityBuilder.matchSuperEntityColumns(fieldName);
     }
 
     /**
      * @param superEntityColumns 父类字段
      * @return this
-     * @see #addSuperEntityColumns(String...)
+     * @see EntityBuilder#addSuperEntityColumns(String...)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
-        this.superEntityColumns.clear();    //保持语义
-        return addSuperEntityColumns(superEntityColumns);
-    }
-
-    /**
-     * 添加父类公共字段
-     *
-     * @param superEntityColumns 父类字段(数据库字段列名)
-     * @return this
-     * @since 3.4.1
-     */
-    public StrategyConfig addSuperEntityColumns(String... superEntityColumns) {
-        this.superEntityColumns.addAll(Arrays.asList(superEntityColumns));
+        this.entityBuilder.getSuperEntityColumns().clear();    //保持语义
+        this.entityBuilder.getSuperEntityColumns().addAll(Arrays.asList(superEntityColumns));
         return this;
     }
 
     /**
      * @param include 包含表
      * @return this
-     * @see #addInclude(String...)
+     * @see Builder#addInclude(String...)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setInclude(String... include) {
         this.include.clear();   //保持语义
-        return addInclude(include);
-    }
-
-    /**
-     * 增加包含的表名
-     *
-     * @param include 包含表
-     * @return this
-     * @since 3.4.1
-     */
-    public StrategyConfig addInclude(String... include) {
         this.include.addAll(Arrays.asList(include));
         return this;
     }
@@ -336,23 +316,12 @@ public class StrategyConfig {
     /**
      * @param exclude 排除表
      * @return this
-     * @see #addExclude(String...)
+     * @see Builder#addExclude(String...)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setExclude(String... exclude) {
         this.exclude.clear();   //保持语义
-        return addExclude(exclude);
-    }
-
-    /**
-     * 增加排除表
-     *
-     * @param exclude 排除表
-     * @return this
-     * @since 3.4.1
-     */
-    public StrategyConfig addExclude(String... exclude) {
         this.exclude.addAll(Arrays.asList(exclude));
         return this;
     }
@@ -360,23 +329,12 @@ public class StrategyConfig {
     /**
      * @param fieldPrefixs 字段前缀
      * @return this
-     * @see #addFieldPrefix(String...)
+     * @see Builder#addFieldPrefix(String...)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setFieldPrefix(String... fieldPrefixs) {
         this.fieldPrefix.clear();   //保持语义
-        return addFieldPrefix(fieldPrefixs);
-    }
-
-    /**
-     * 增加字段前缀
-     *
-     * @param fieldPrefixs 字段前缀
-     * @return this
-     * @since 3.4.1
-     */
-    public StrategyConfig addFieldPrefix(String... fieldPrefixs) {
         this.fieldPrefix.addAll(Arrays.asList(fieldPrefixs));
         return this;
     }
@@ -386,12 +344,26 @@ public class StrategyConfig {
      *
      * @param superEntityClass 类全名称
      * @return this
+     * @see EntityBuilder#superClass(String)
+     * @deprecated 3.4.1
      */
+    @Deprecated
     public StrategyConfig setSuperEntityClass(String superEntityClass) {
-        this.superEntityClass = superEntityClass;
+        this.entityBuilder.superClass(superEntityClass);
         return this;
     }
 
+    /**
+     * 获取实体父类全名称
+     *
+     * @return 类全名称
+     * @see EntityBuilder#getSuperClass() ()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getSuperEntityClass() {
+        return entityBuilder.getSuperClass();
+    }
 
     /**
      * <p>
@@ -404,9 +376,12 @@ public class StrategyConfig {
      *
      * @param clazz 实体父类 Class
      * @return this
+     * @see EntityBuilder#superClass(Class)
+     * @deprecated 3.4.1
      */
+    @Deprecated
     public StrategyConfig setSuperEntityClass(Class<?> clazz) {
-        this.superEntityClass = clazz.getName();
+        this.entityBuilder.superClass(clazz);
         return this;
     }
 
@@ -419,42 +394,184 @@ public class StrategyConfig {
      * @param clazz        实体父类 Class
      * @param columnNaming 字段命名策略
      * @return this
+     * @see EntityBuilder#columnNaming(NamingStrategy)
+     * @see EntityBuilder#superClass(Class)
      * @deprecated 3.4.1 {@link #setSuperEntityClass(Class)} {@link #setColumnNaming(NamingStrategy)}
      */
     @Deprecated
     public StrategyConfig setSuperEntityClass(Class<?> clazz, NamingStrategy columnNaming) {
-        this.columnNaming = columnNaming;
-        this.superEntityClass = clazz.getName();
+        this.entityBuilder.columnNaming(columnNaming);
+        this.entityBuilder.superClass(clazz);
         return this;
     }
 
+    /**
+     * Service接口父类
+     *
+     * @param clazz 类
+     * @return this
+     * @see ServiceBuilder#superServiceClass(Class)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperServiceClass(Class<?> clazz) {
-        this.superServiceClass = clazz.getName();
+        this.serviceBuilder.superServiceClass(clazz);
         return this;
     }
 
+    /**
+     * Service接口父类
+     *
+     * @param superServiceClass 类名
+     * @return this
+     * @see ServiceBuilder#superServiceClass(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperServiceClass(String superServiceClass) {
-        this.superServiceClass = superServiceClass;
+        this.serviceBuilder.superServiceClass(superServiceClass);
         return this;
     }
 
+    /**
+     * Service接口父类
+     *
+     * @return Service接口父类
+     * @see ServiceBuilder#getSuperServiceClass()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getSuperServiceClass() {
+        return serviceBuilder.getSuperServiceClass();
+    }
+
+    /**
+     * Service实现类父类
+     *
+     * @param clazz 类
+     * @return this
+     * @see ServiceBuilder#superServiceImplClass(Class)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperServiceImplClass(Class<?> clazz) {
-        this.superServiceImplClass = clazz.getName();
+        this.serviceBuilder.superServiceImplClass(clazz);
         return this;
     }
 
+    /**
+     * Service实现类父类
+     *
+     * @param superServiceImplClass 类名
+     * @return this
+     * @see ServiceBuilder#superServiceImplClass(Class)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
-        this.superServiceImplClass = superServiceImplClass;
+        this.serviceBuilder.superServiceImplClass(superServiceImplClass);
         return this;
     }
 
+    /**
+     * 获取Service实现类父类
+     *
+     * @return this
+     * @see ServiceBuilder#getSuperServiceImplClass()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getSuperServiceImplClass() {
+        return serviceBuilder.getSuperServiceImplClass();
+    }
+
+    /**
+     * 设置父类控制器
+     *
+     * @param clazz 父类控制器
+     * @return this
+     * @see ControllerBuilder#superClass(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
-        this.superControllerClass = clazz.getName();
+        this.controllerBuilder.superClass(clazz);
         return this;
     }
 
+    /**
+     * 设置父类控制器
+     *
+     * @param superControllerClass 父类控制器
+     * @return this
+     * @see ControllerBuilder#superClass(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public StrategyConfig setSuperControllerClass(String superControllerClass) {
-        this.superControllerClass = superControllerClass;
+        this.controllerBuilder.superClass(superControllerClass);
+        return this;
+    }
+
+    /**
+     * 获取父类控制器
+     *
+     * @return 父类控制器
+     * @see ControllerBuilder#getSuperClass()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getSuperControllerClass() {
+        return controllerBuilder.getSuperClass();
+    }
+
+    /**
+     * 是否生成@RestController控制器
+     *
+     * @return 是否生成
+     * @see ControllerBuilder#isRestStyle()
+     */
+    @Deprecated
+    public boolean isRestControllerStyle() {
+        return controllerBuilder.isRestStyle();
+    }
+
+    /**
+     * 生成@RestController控制器
+     *
+     * @param restControllerStyle 是否生成
+     * @return this
+     * @see ControllerBuilder#restStyle(boolean)
+     */
+    @Deprecated
+    public StrategyConfig setRestControllerStyle(boolean restControllerStyle) {
+        this.controllerBuilder.restStyle(restControllerStyle);
+        return this;
+    }
+
+    /**
+     * 是否驼峰转连字符
+     *
+     * @return 是否驼峰转连字符
+     * @see ControllerBuilder#isHyphenStyle()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isControllerMappingHyphenStyle() {
+        return controllerBuilder.isHyphenStyle();
+    }
+
+    /**
+     * 是否驼峰转连字符
+     *
+     * @param controllerMappingHyphenStyle 是否驼峰转连字符
+     * @return this
+     * @see ControllerBuilder#hyphenStyle(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setControllerMappingHyphenStyle(boolean controllerMappingHyphenStyle) {
+        this.controllerBuilder.hyphenStyle(controllerMappingHyphenStyle);
         return this;
     }
 
@@ -462,38 +579,26 @@ public class StrategyConfig {
      * 设置表填充字段
      *
      * @param tableFillList tableFillList
-     * @see #addTableFills(TableFill...)
-     * @see #addTableFills(List)
+     * @see EntityBuilder#addTableFills(List)
      * @deprecated 3.4.1
      */
     @Deprecated
     public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
-        this.tableFillList.clear(); //保持语义
-        return this.addTableFills(tableFillList.toArray(new TableFill[]{}));
-    }
-
-    /**
-     * 添加表字段填充
-     *
-     * @param tableFill 填充字段
-     * @return this
-     * @since 3.4.1
-     */
-    public StrategyConfig addTableFills(TableFill... tableFill) {
-        this.tableFillList.addAll(Arrays.asList(tableFill));
+        this.entityBuilder.getTableFillList().clear(); //保持语义
+        this.entityBuilder.addTableFills(tableFillList.toArray(new TableFill[]{}));
         return this;
     }
 
     /**
-     * 添加表字段填充
+     * 获取表填充字段
      *
-     * @param tableFillList 填充字段集合
-     * @return this
-     * @since 3.4.1
+     * @return 表填充字段
+     * @see EntityBuilder#getTableFillList()
+     * @deprecated 3.4.1
      */
-    public StrategyConfig addTableFills(List<TableFill> tableFillList) {
-        this.tableFillList.addAll(tableFillList);
-        return this;
+    @Deprecated
+    public List<TableFill> getTableFillList() {
+        return entityBuilder.getTableFillList();
     }
 
     /**
@@ -502,23 +607,11 @@ public class StrategyConfig {
      * </p>
      *
      * @param clazz 实体父类 Class
+     * @deprecated 3.4.1
      */
+    @Deprecated
     protected void convertSuperEntityColumns(Class<?> clazz) {
-        List<Field> fields = TableInfoHelper.getAllFields(clazz);
-        this.superEntityColumns.addAll(fields.stream().map(field -> {
-            TableId tableId = field.getAnnotation(TableId.class);
-            if (tableId != null && StringUtils.isNotBlank(tableId.value())) {
-                return tableId.value();
-            }
-            TableField tableField = field.getAnnotation(TableField.class);
-            if (tableField != null && StringUtils.isNotBlank(tableField.value())) {
-                return tableField.value();
-            }
-            if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
-                return field.getName();
-            }
-            return StringUtils.camelToUnderline(field.getName());
-        }).collect(Collectors.toSet()));
+        entityBuilder.convertSuperEntityColumns(clazz);
     }
 
     /**
@@ -544,16 +637,238 @@ public class StrategyConfig {
         return setChainModel(entityBuilderModel);
     }
 
+    /**
+     * @return 父类字段
+     * @see EntityBuilder#getSuperEntityColumns()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
     public Set<String> getSuperEntityColumns() {
-        if (StringUtils.isNotBlank(this.superEntityClass)) {
-            try {
-                Class<?> superEntity = ClassUtils.toClassConfident(this.superEntityClass);
-                convertSuperEntityColumns(superEntity);
-            } catch (Exception e) {
-                //当父类实体存在类加载器的时候,识别父类实体字段，不存在的情况就只有通过指定superEntityColumns属性了。
-            }
-        }
-        return this.superEntityColumns;
+        return this.entityBuilder.getSuperEntityColumns();
+    }
+
+    /**
+     * 获取实体是否为链式模型
+     *
+     * @return 是否为链式模型
+     * @see EntityBuilder#isChain()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isChainModel() {
+        return entityBuilder.isChain();
+    }
+
+    /**
+     * 设置是否为链式模型
+     *
+     * @param chainModel 链式模型
+     * @return this
+     * @see EntityBuilder#chainModel(boolean)
+     * @deprecated 3.4.1
+     */
+    public StrategyConfig setChainModel(boolean chainModel) {
+        this.entityBuilder.chainModel(chainModel);
+        return this;
+    }
+
+    /**
+     * 实体是否生成serialVersionUID
+     *
+     * @return 是否生成
+     * @see EntityBuilder#isSerialVersionUID()
+     * @deprecated 3.4.1
+     */
+    public boolean isEntitySerialVersionUID() {
+        return entityBuilder.isSerialVersionUID();
+    }
+
+    /**
+     * @param entitySerialVersionUID 是否生成
+     * @return this
+     * @see EntityBuilder#serialVersionUID(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setEntitySerialVersionUID(boolean entitySerialVersionUID) {
+        this.entityBuilder.serialVersionUID(entitySerialVersionUID);
+        return this;
+    }
+
+    /**
+     * 是否为lombok模型
+     *
+     * @return 是否为lombok模型
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isEntityLombokModel() {
+        return entityBuilder.isLombok();
+    }
+
+    /**
+     * 设置是否为lombok模型
+     * @param entityLombokModel 是否为lombok模型
+     * @return this
+     */
+    @Deprecated
+    public StrategyConfig setEntityLombokModel(boolean entityLombokModel) {
+        this.entityBuilder.lombok(entityLombokModel);
+        return this;
+    }
+
+    /**
+     * 是否生成字段常量
+     *
+     * @return 是否生成字段常量
+     * @see EntityBuilder#isColumnConstant()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isEntityColumnConstant() {
+        return entityBuilder.isColumnConstant();
+    }
+
+    /**
+     * 是否生成字段常量
+     *
+     * @param entityColumnConstant 是否生成字段常量
+     * @return this
+     * @see EntityBuilder#columnConstant(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setEntityColumnConstant(boolean entityColumnConstant) {
+        this.entityBuilder.columnConstant(entityColumnConstant);
+        return this;
+    }
+
+    /**
+     * Boolean类型字段是否移除is前缀
+     *
+     * @return 是否移除
+     * @see EntityBuilder#isBooleanColumnRemoveIsPrefix()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isEntityBooleanColumnRemoveIsPrefix() {
+        return entityBuilder.isBooleanColumnRemoveIsPrefix();
+    }
+
+    /**
+     * Boolean类型字段是否移除is前缀
+     *
+     * @param entityBooleanColumnRemoveIsPrefix 是否移除
+     * @return this
+     * @see EntityBuilder#booleanColumnRemoveIsPrefix(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setEntityBooleanColumnRemoveIsPrefix(boolean entityBooleanColumnRemoveIsPrefix) {
+        this.entityBuilder.booleanColumnRemoveIsPrefix(entityBooleanColumnRemoveIsPrefix);
+        return this;
+    }
+
+    /**
+     * 生成实体时，是否生成字段注解
+     *
+     * @return 是否生成
+     * @see EntityBuilder#isTableFieldAnnotationEnable()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public boolean isEntityTableFieldAnnotationEnable() {
+        return entityBuilder.isTableFieldAnnotationEnable();
+    }
+
+    /**
+     * 生成实体时，是否生成字段注解
+     *
+     * @param entityTableFieldAnnotationEnable 是否生成
+     * @return this
+     * @see EntityBuilder#tableFieldAnnotationEnable(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setEntityTableFieldAnnotationEnable(boolean entityTableFieldAnnotationEnable) {
+        this.entityBuilder.tableFieldAnnotationEnable(entityTableFieldAnnotationEnable);
+        return this;
+    }
+
+    /**
+     * 乐观锁属性名称
+     * @deprecated 3.4.1
+     * @return 乐观锁属性名称
+     */
+    @Deprecated
+    public String getVersionFieldName() {
+        return entityBuilder.getVersionFieldName();
+    }
+
+    /**
+     * 乐观锁属性名称
+     *
+     * @param versionFieldName 乐观锁属性名称
+     * @return this
+     * @see EntityBuilder#versionFieldName(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setVersionFieldName(String versionFieldName) {
+        this.entityBuilder.versionFieldName(versionFieldName);
+        return this;
+    }
+
+    /**
+     * 逻辑删除属性名称
+     *
+     * @return 逻辑删除属性名称
+     * @see EntityBuilder#getLogicDeleteFieldName()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getLogicDeleteFieldName() {
+        return entityBuilder.getLogicDeleteFieldName();
+    }
+
+    /**
+     * 逻辑删除属性名称
+     *
+     * @param logicDeleteFieldName 逻辑删除属性名称
+     * @return this
+     * @see EntityBuilder#logicDeleteFieldName(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setLogicDeleteFieldName(String logicDeleteFieldName) {
+        this.entityBuilder.logicDeleteFieldName(logicDeleteFieldName);
+        return this;
+    }
+
+    /**
+     * 父类Mapper
+     *
+     * @return 类名
+     * @see MapperBuilder#getSuperClass()
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public String getSuperMapperClass() {
+        return mapperBuilder.getSuperClass();
+    }
+
+    /**
+     * 父类Mapper
+     *
+     * @param superMapperClass 类名
+     * @return this
+     * @see MapperBuilder#superClass(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setSuperMapperClass(String superMapperClass) {
+        this.mapperBuilder.superClass(superMapperClass);
+        return this;
     }
 
     /**
@@ -617,4 +932,168 @@ public class StrategyConfig {
         return matchTableName.equalsIgnoreCase(dbTableName) || StringUtils.matches(matchTableName, dbTableName);
     }
 
+    /**
+     * 是否大写命名
+     *
+     * @param capitalMode 是否大写命名
+     * @return this
+     * @see Builder#capitalMode(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setCapitalMode(boolean capitalMode) {
+        this.isCapitalMode = capitalMode;
+        return this;
+    }
+
+    /**
+     * 是否跳过视图
+     *
+     * @param skipView 是否跳过视图
+     * @return this
+     * @see Builder#skipView(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setSkipView(boolean skipView) {
+        this.skipView = skipView;
+        return this;
+    }
+
+    /**
+     * 是否启用sql过滤
+     *
+     * @param enableSqlFilter 是否启用
+     * @return this
+     * @see Builder#enableSqlFilter(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setEnableSqlFilter(boolean enableSqlFilter) {
+        this.enableSqlFilter = enableSqlFilter;
+        return this;
+    }
+
+    /**
+     * 包含表名
+     *
+     * @param likeTable 包含表名
+     * @return this
+     * @see Builder#likeTable(LikeTable)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setLikeTable(LikeTable likeTable) {
+        this.likeTable = likeTable;
+        return this;
+    }
+
+    /**
+     * 不包含表名
+     *
+     * @param notLikeTable 不包含表名
+     * @return this
+     * @see Builder#notLikeTable(LikeTable)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public StrategyConfig setNotLikeTable(LikeTable notLikeTable) {
+        this.notLikeTable = notLikeTable;
+        return this;
+    }
+
+    /**
+     * 策略配置构建者
+     *
+     * @author nieqiurong 2020/10/11.
+     * @since 3.4.1
+     */
+    public static class Builder extends BaseBuilder {
+
+        private final StrategyConfig strategyConfig;
+
+        public Builder() {
+            super(new StrategyConfig());
+            strategyConfig = super.build();
+        }
+
+        public Builder capitalMode(boolean capitalMode){
+            this.strategyConfig.isCapitalMode = capitalMode;
+            return this;
+        }
+
+        public Builder skipView(boolean skipView){
+            this.strategyConfig.skipView = skipView;
+            return this;
+        }
+
+        public Builder enableSqlFilter(boolean enableSqlFilter){
+            this.strategyConfig.enableSqlFilter = enableSqlFilter;
+            return this;
+        }
+
+        public Builder likeTable(LikeTable likeTable){
+            this.strategyConfig.likeTable = likeTable;
+            return this;
+        }
+
+        public Builder notLikeTable(LikeTable notLikeTable) {
+            this.strategyConfig.notLikeTable = notLikeTable;
+            return this;
+        }
+
+        /**
+         * 增加字段前缀
+         *
+         * @param fieldPrefix 字段前缀
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addFieldPrefix(String... fieldPrefix) {
+            this.strategyConfig.fieldPrefix.addAll(Arrays.asList(fieldPrefix));
+            return this;
+        }
+
+        /**
+         * 增加包含的表名
+         *
+         * @param include 包含表
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addInclude(String... include) {
+            this.strategyConfig.include.addAll(Arrays.asList(include));
+            return this;
+        }
+
+        /**
+         * 增加排除表
+         *
+         * @param exclude 排除表
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addExclude(String... exclude) {
+            this.strategyConfig.exclude.addAll(Arrays.asList(exclude));
+            return this;
+        }
+
+        /**
+         * 增加表前缀
+         *
+         * @param tablePrefix 表前缀
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addTablePrefix(String... tablePrefix) {
+            this.strategyConfig.tablePrefix.addAll(Arrays.asList(tablePrefix));
+            return this;
+        }
+
+        @Override
+        public StrategyConfig build() {
+            this.strategyConfig.validate();
+            return strategyConfig;
+        }
+    }
 }

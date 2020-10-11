@@ -62,12 +62,12 @@ public interface INameConvert {
 
         @Override
         public String entityNameConvert(TableInfo tableInfo) {
-            return NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix()));
+            return NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategyConfig.entity().getNaming(), strategyConfig.getTablePrefix()));
         }
 
         @Override
         public String propertyNameConvert(TableField field) {
-            return processName(field.getName(), strategyConfig.getNaming(), strategyConfig.getTablePrefix());
+            return processName(field.getName(), strategyConfig.entity().getNaming(), strategyConfig.getTablePrefix());
         }
 
         private String processName(String name, NamingStrategy strategy, Set<String> prefix) {

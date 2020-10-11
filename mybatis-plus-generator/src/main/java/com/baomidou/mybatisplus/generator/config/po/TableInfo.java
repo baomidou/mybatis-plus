@@ -81,7 +81,7 @@ public class TableInfo {
     }
 
     protected TableInfo setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.startsWithTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
+        if (strategyConfig.startsWithTablePrefix(name) || strategyConfig.entity().isTableFieldAnnotationEnable()) {
             // 包含前缀
             this.convert = true;
         } else if (strategyConfig.isCapitalModeNaming(name)) {
@@ -89,7 +89,7 @@ public class TableInfo {
             this.convert = !entityName.equalsIgnoreCase(name);
         } else {
             // 转换字段
-            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
+            if (NamingStrategy.underline_to_camel == strategyConfig.entity().getColumnNaming()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;
@@ -250,10 +250,10 @@ public class TableInfo {
      */
     public void importPackage(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
         boolean importSerializable = true;
-        if (StringUtils.isNotBlank(strategyConfig.getSuperEntityClass())) {
+        if (StringUtils.isNotBlank(strategyConfig.entity().getSuperClass())) {
             // 自定义父类
             importSerializable = false;
-            this.importPackages.add(strategyConfig.getSuperEntityClass());
+            this.importPackages.add(strategyConfig.entity().getSuperClass());
         } else {
             if (globalConfig.isActiveRecord()) {
                 // 无父类开启 AR 模式
@@ -267,7 +267,7 @@ public class TableInfo {
         if (this.isConvert()) {
             this.importPackages.add(TableName.class.getCanonicalName());
         }
-        if (strategyConfig.getLogicDeleteFieldName() != null && this.isLogicDelete(strategyConfig.getLogicDeleteFieldName())) {
+        if (strategyConfig.entity().getLogicDeleteFieldName() != null && this.isLogicDelete(strategyConfig.entity().getLogicDeleteFieldName())) {
             this.importPackages.add(TableLogic.class.getCanonicalName());
         }
         if (null != globalConfig.getIdType() && this.isHavePrimaryKey()) {
@@ -298,7 +298,7 @@ public class TableInfo {
                 //TODO 好像default的不用处理也行,这个做优化项目.
                 importPackages.add(FieldFill.class.getCanonicalName());
             }
-            String versionFieldName = strategyConfig.getVersionFieldName();
+            String versionFieldName = strategyConfig.entity().getVersionFieldName();
             if (StringUtils.isNotBlank(versionFieldName) && versionFieldName.equals(field.getName())) {
                 this.importPackages.add(Version.class.getCanonicalName());
             }
@@ -313,7 +313,7 @@ public class TableInfo {
      * @since 3.4.1
      */
     public void processTable(StrategyConfig strategyConfig, GlobalConfig globalConfig) {
-        String entityName = strategyConfig.getNameConvert().entityNameConvert(this);
+        String entityName = strategyConfig.entity().getNameConvert().entityNameConvert(this);
         this.setEntityName(strategyConfig, this.getFileName(entityName, globalConfig.getEntityName(), () -> entityName));
         this.mapperName = this.getFileName(entityName, globalConfig.getMapperName(), () -> entityName + ConstVal.MAPPER);
         this.xmlName = this.getFileName(entityName, globalConfig.getXmlName(), () -> entityName + ConstVal.XML);

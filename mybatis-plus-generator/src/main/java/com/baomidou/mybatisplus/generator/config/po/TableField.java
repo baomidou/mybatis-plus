@@ -74,7 +74,7 @@ public class TableField {
     }
 
     protected TableField setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.isEntityTableFieldAnnotationEnable() || isKeyWords()) {
+        if (strategyConfig.entity().isTableFieldAnnotationEnable() || isKeyWords()) {
             this.convert = true;
             return this;
         }
@@ -82,7 +82,7 @@ public class TableField {
             this.convert = !name.equalsIgnoreCase(propertyName);
         } else {
             // 转换字段
-            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
+            if (NamingStrategy.underline_to_camel == strategyConfig.entity().getColumnNaming()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;
@@ -117,7 +117,7 @@ public class TableField {
      */
     public TableField setPropertyName(String propertyName, StrategyConfig strategyConfig, IColumnType columnType) {
         this.columnType = columnType;
-        if (strategyConfig.isEntityBooleanColumnRemoveIsPrefix()
+        if (strategyConfig.entity().isBooleanColumnRemoveIsPrefix()
             && "boolean".equalsIgnoreCase(this.getPropertyType()) && propertyName.startsWith("is")) {
             this.convert = true;
             this.propertyName = StringUtils.removePrefixAfterPrefixToLower(propertyName, 2);

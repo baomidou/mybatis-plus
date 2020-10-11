@@ -223,15 +223,15 @@ public class ConfigBuilder {
                 }
                 field.setName(columnName).setColumnName(newColumnName)
                     .setType(result.getStringResult(dbQuery.fieldType()))
-                    .setPropertyName(strategyConfig.getNameConvert().propertyNameConvert(field), this.strategyConfig, dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
+                    .setPropertyName(strategyConfig.entity().getNameConvert().propertyNameConvert(field), this.strategyConfig, dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field))
                     .setComment(result.getFiledComment())
                     .setCustomMap(dbQuery.getCustomFields(result.getResultSet()));
                 // 填充逻辑判断
-                strategyConfig.getTableFillList().stream()
+                strategyConfig.entity().getTableFillList().stream()
                     //忽略大写字段问题
                     .filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
                     .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
-                if (strategyConfig.matchSuperEntityColumns(field.getName())) {
+                if (strategyConfig.entity().matchSuperEntityColumns(field.getName())) {
                     // 跳过公共字段
                     commonFieldList.add(field);
                 } else {

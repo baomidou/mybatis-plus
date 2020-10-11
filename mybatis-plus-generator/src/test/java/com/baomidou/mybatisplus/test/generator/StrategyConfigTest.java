@@ -125,7 +125,7 @@ class StrategyConfigTest {
         strategyConfig.setTableFillList(tableFillList);
         Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
         strategyConfig = new StrategyConfig();
-        strategyConfig.addTableFills(tableFill);
+        strategyConfig.entity().addTableFills(tableFill);
         Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
     }
 
@@ -227,6 +227,39 @@ class StrategyConfigTest {
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("USER_NAME"));
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("T_USER"));
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("NAME"));
+    }
+
+    private void builderValidate(StrategyConfig strategyConfig){
+        Assertions.assertTrue(strategyConfig.isSkipView());
+        Assertions.assertTrue(strategyConfig.isChainModel());
+        Assertions.assertTrue(strategyConfig.entity().isChain());
+        Assertions.assertTrue(strategyConfig.isEntityLombokModel());
+        Assertions.assertTrue(strategyConfig.entity().isLombok());
+        Assertions.assertTrue(strategyConfig.isEntitySerialVersionUID());
+        Assertions.assertTrue(strategyConfig.entity().isSerialVersionUID());
+        Assertions.assertTrue(strategyConfig.isControllerMappingHyphenStyle());
+        Assertions.assertTrue(strategyConfig.controller().isHyphenStyle());
+        Assertions.assertTrue(strategyConfig.isRestControllerStyle());
+        Assertions.assertTrue(strategyConfig.controller().isRestStyle());
+        Assertions.assertEquals("com.baomidou.mp.SuperController", strategyConfig.getSuperControllerClass());
+        Assertions.assertEquals("com.baomidou.mp.SuperController", strategyConfig.controller().getSuperClass());
+        Assertions.assertEquals("com.baomidou.mp.SuperMapper", strategyConfig.getSuperMapperClass());
+        Assertions.assertEquals("com.baomidou.mp.SuperMapper", strategyConfig.mapper().getSuperClass());
+    }
+
+    @Test
+    void builderTest() {
+        StrategyConfig strategyConfig;
+        strategyConfig = new StrategyConfig().setCapitalMode(true).setChainModel(true).setSkipView(true).setEntityLombokModel(true)
+            .setEntitySerialVersionUID(true).setControllerMappingHyphenStyle(true).setRestControllerStyle(true)
+            .setSuperControllerClass("com.baomidou.mp.SuperController").setSuperMapperClass("com.baomidou.mp.SuperMapper")
+        ;
+        builderValidate(strategyConfig);
+        strategyConfig = new StrategyConfig.Builder().skipView(true)
+            .entity().chainModel(true).lombok(true).serialVersionUID(true)
+            .controller().superClass("com.baomidou.mp.SuperController").hyphenStyle(true).restStyle(true)
+            .mapper().superClass("com.baomidou.mp.SuperMapper").build();
+        builderValidate(strategyConfig);
     }
 
     @Data

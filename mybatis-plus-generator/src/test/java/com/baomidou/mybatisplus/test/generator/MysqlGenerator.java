@@ -108,7 +108,7 @@ public class MysqlGenerator extends GeneratorTest {
                 // .setSuperEntityClass("com.baomidou.demo.TestEntity")
                 // 自定义实体，公共字段
                 .setSuperEntityColumns("test_id")
-                .addTableFills(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE))
+                .setTableFillList(Collections.singletonList(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE)))
                 .setEntityBooleanColumnRemoveIsPrefix(true)
             // 自定义 mapper 父类
             // .setSuperMapperClass("com.baomidou.demo.TestMapper")
