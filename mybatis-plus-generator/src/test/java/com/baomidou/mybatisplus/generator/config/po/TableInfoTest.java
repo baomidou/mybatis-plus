@@ -153,7 +153,7 @@ public class TableInfoTest {
         tableInfo = new TableInfo().setName("user").setHavePrimaryKey(true);
         tableInfo.addFields(new TableField().setName("u_id").setPropertyName(strategyConfig, "uid").setColumnType(DbColumnType.LONG).setKeyFlag(true));
         tableInfo.addFields(new TableField().setName("create_time").setPropertyName(strategyConfig, "createTime").setColumnType(DbColumnType.DATE).setFill(FieldFill.DEFAULT.name()));
-        tableInfo.importPackage(new StrategyConfig().entity().addTableFills(new TableFill("createTime", FieldFill.DEFAULT)).build(), new GlobalConfig());
+        tableInfo.importPackage(new StrategyConfig().entityBuilder().addTableFills(new TableFill("createTime", FieldFill.DEFAULT)).build(), new GlobalConfig());
         Assertions.assertEquals(5, tableInfo.getImportPackages().size());
         Assertions.assertTrue(tableInfo.getImportPackages().contains(Date.class.getName()));
         Assertions.assertTrue(tableInfo.getImportPackages().contains(Serializable.class.getName()));

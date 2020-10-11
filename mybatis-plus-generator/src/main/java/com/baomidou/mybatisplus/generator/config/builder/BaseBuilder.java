@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
- * 基础属性配置
+ * 配置构建
  *
  * @author nieqiurong 2020/10/11.
  * @since 3.4.1
@@ -19,20 +19,20 @@ public class BaseBuilder {
         this.strategyConfig = strategyConfig;
     }
 
-    public EntityBuilder entity() {
-        return strategyConfig.entity();
+    public Entity.Builder entityBuilder() {
+        return strategyConfig.entityBuilder();
     }
 
-    public ControllerBuilder controller() {
-        return strategyConfig.controller();
+    public Controller.Builder controllerBuilder() {
+        return strategyConfig.controllerBuilder();
     }
 
-    public MapperBuilder mapper() {
-        return strategyConfig.mapper();
+    public Mapper.Builder mapperBuilder() {
+        return strategyConfig.mapperBuilder();
     }
 
-    public ServiceBuilder service() {
-        return strategyConfig.service();
+    public Service.Builder serviceBuilder() {
+        return strategyConfig.serviceBuilder();
     }
 
     public StrategyConfig build() {

@@ -29,11 +29,10 @@ import java.util.stream.Collectors;
  * @since 3.4.1
  */
 @Getter
-public class EntityBuilder extends BaseBuilder {
+public class Entity {
 
-    public EntityBuilder(StrategyConfig strategyConfig) {
-        super(strategyConfig);
-        this.nameConvert = new INameConvert.DefaultNameConvert(strategyConfig);
+    private Entity() {
+
     }
 
     /**
@@ -118,161 +117,6 @@ public class EntityBuilder extends BaseBuilder {
     private NamingStrategy columnNaming = null;
 
     /**
-     * 名称转换实现
-     *
-     * @param nameConvert 名称转换实现
-     * @return this
-     */
-    public EntityBuilder nameConvert(INameConvert nameConvert) {
-        this.nameConvert = nameConvert;
-        return this;
-    }
-
-    public EntityBuilder superClass(Class<?> clazz) {
-        this.superClass = clazz.getName();
-        return this;
-    }
-
-    public EntityBuilder superClass(String superEntityClass) {
-        this.superClass = superEntityClass;
-        return this;
-    }
-
-    /**
-     * 实体是否生成serialVersionUID
-     *
-     * @param serialVersionUID 是否生成
-     * @return this
-     */
-    public EntityBuilder serialVersionUID(boolean serialVersionUID) {
-        this.serialVersionUID = serialVersionUID;
-        return this;
-    }
-
-    /**
-     * 是否生成字段常量
-     *
-     * @param columnConstant 是否生成字段常量
-     * @return this
-     */
-    public EntityBuilder columnConstant(boolean columnConstant) {
-        this.columnConstant = columnConstant;
-        return this;
-    }
-
-    /**
-     * 实体是否为链式模型
-     *
-     * @param chain 是否为链式模型
-     * @return this
-     */
-    public EntityBuilder chainModel(boolean chain) {
-        this.chain = chain;
-        return this;
-    }
-
-    /**
-     * 是否为lombok模型
-     *
-     * @param lombok 是否为lombok模型
-     * @return this
-     */
-    public EntityBuilder lombok(boolean lombok) {
-        this.lombok = lombok;
-        return this;
-    }
-
-    /**
-     * Boolean类型字段是否移除is前缀
-     *
-     * @param booleanColumnRemoveIsPrefix 是否移除
-     * @return this
-     */
-    public EntityBuilder booleanColumnRemoveIsPrefix(boolean booleanColumnRemoveIsPrefix) {
-        this.booleanColumnRemoveIsPrefix = booleanColumnRemoveIsPrefix;
-        return this;
-    }
-
-    /**
-     * 生成实体时，是否生成字段注解
-     *
-     * @param tableFieldAnnotationEnable 是否生成
-     * @return this
-     */
-    public EntityBuilder tableFieldAnnotationEnable(boolean tableFieldAnnotationEnable) {
-        this.tableFieldAnnotationEnable = tableFieldAnnotationEnable;
-        return this;
-    }
-
-    /**
-     * 乐观锁属性名称
-     *
-     * @param versionFieldName 乐观锁属性名称
-     * @return this
-     */
-    public EntityBuilder versionFieldName(String versionFieldName) {
-        this.versionFieldName = versionFieldName;
-        return this;
-    }
-
-    /**
-     * 逻辑删除属性名称
-     *
-     * @param logicDeleteFieldName 逻辑删除属性名称
-     * @return this
-     */
-    public EntityBuilder logicDeleteFieldName(String logicDeleteFieldName) {
-        this.logicDeleteFieldName = logicDeleteFieldName;
-        return this;
-    }
-
-    public EntityBuilder naming(NamingStrategy namingStrategy) {
-        this.naming = namingStrategy;
-        return this;
-    }
-
-    public EntityBuilder columnNaming(NamingStrategy namingStrategy) {
-        this.columnNaming = namingStrategy;
-        return this;
-    }
-
-    /**
-     * 添加父类公共字段
-     *
-     * @param superEntityColumns 父类字段(数据库字段列名)
-     * @return this
-     * @since 3.4.1
-     */
-    public EntityBuilder addSuperEntityColumns(String... superEntityColumns) {
-        this.superEntityColumns.addAll(Arrays.asList(superEntityColumns));
-        return this;
-    }
-
-    /**
-     * 添加表字段填充
-     *
-     * @param tableFill 填充字段
-     * @return this
-     * @since 3.4.1
-     */
-    public EntityBuilder addTableFills(TableFill... tableFill) {
-        this.tableFillList.addAll(Arrays.asList(tableFill));
-        return this;
-    }
-
-    /**
-     * 添加表字段填充
-     *
-     * @param tableFillList 填充字段集合
-     * @return this
-     * @since 3.4.1
-     */
-    public EntityBuilder addTableFills(List<TableFill> tableFillList) {
-        this.tableFillList.addAll(tableFillList);
-        return this;
-    }
-
-    /**
      * <p>
      * 父类 Class 反射属性转换为公共字段
      * </p>
@@ -326,4 +170,171 @@ public class EntityBuilder extends BaseBuilder {
         return superEntityColumns.stream().anyMatch(e -> e.equalsIgnoreCase(fieldName));
     }
 
+    public static class Builder extends BaseBuilder {
+
+        private final Entity entity = new Entity();
+
+        public Builder(StrategyConfig strategyConfig) {
+            super(strategyConfig);
+            this.entity.nameConvert = new INameConvert.DefaultNameConvert(strategyConfig);
+        }
+
+        /**
+         * 名称转换实现
+         *
+         * @param nameConvert 名称转换实现
+         * @return this
+         */
+        public Builder nameConvert(INameConvert nameConvert) {
+            this.entity.nameConvert = nameConvert;
+            return this;
+        }
+
+        public Builder superClass(Class<?> clazz) {
+            return superClass(clazz.getName());
+        }
+
+        public Builder superClass(String superEntityClass) {
+            this.entity.superClass = superEntityClass;
+            return this;
+        }
+
+        /**
+         * 实体是否生成serialVersionUID
+         *
+         * @param serialVersionUID 是否生成
+         * @return this
+         */
+        public Builder serialVersionUID(boolean serialVersionUID) {
+            this.entity.serialVersionUID = serialVersionUID;
+            return this;
+        }
+
+        /**
+         * 是否生成字段常量
+         *
+         * @param columnConstant 是否生成字段常量
+         * @return this
+         */
+        public Builder columnConstant(boolean columnConstant) {
+            this.entity.columnConstant = columnConstant;
+            return this;
+        }
+
+        /**
+         * 实体是否为链式模型
+         *
+         * @param chain 是否为链式模型
+         * @return this
+         */
+        public Builder chainModel(boolean chain) {
+            this.entity.chain = chain;
+            return this;
+        }
+
+        /**
+         * 是否为lombok模型
+         *
+         * @param lombok 是否为lombok模型
+         * @return this
+         */
+        public Builder lombok(boolean lombok) {
+            this.entity.lombok = lombok;
+            return this;
+        }
+
+        /**
+         * Boolean类型字段是否移除is前缀
+         *
+         * @param booleanColumnRemoveIsPrefix 是否移除
+         * @return this
+         */
+        public Builder booleanColumnRemoveIsPrefix(boolean booleanColumnRemoveIsPrefix) {
+            this.entity.booleanColumnRemoveIsPrefix = booleanColumnRemoveIsPrefix;
+            return this;
+        }
+
+        /**
+         * 生成实体时，是否生成字段注解
+         *
+         * @param tableFieldAnnotationEnable 是否生成
+         * @return this
+         */
+        public Builder tableFieldAnnotationEnable(boolean tableFieldAnnotationEnable) {
+            this.entity.tableFieldAnnotationEnable = tableFieldAnnotationEnable;
+            return this;
+        }
+
+        /**
+         * 乐观锁属性名称
+         *
+         * @param versionFieldName 乐观锁属性名称
+         * @return this
+         */
+        public Builder versionFieldName(String versionFieldName) {
+            this.entity.versionFieldName = versionFieldName;
+            return this;
+        }
+
+        /**
+         * 逻辑删除属性名称
+         *
+         * @param logicDeleteFieldName 逻辑删除属性名称
+         * @return this
+         */
+        public Builder logicDeleteFieldName(String logicDeleteFieldName) {
+            this.entity.logicDeleteFieldName = logicDeleteFieldName;
+            return this;
+        }
+
+        public Builder naming(NamingStrategy namingStrategy) {
+            this.entity.naming = namingStrategy;
+            return this;
+        }
+
+        public Builder columnNaming(NamingStrategy namingStrategy) {
+            this.entity.columnNaming = namingStrategy;
+            return this;
+        }
+
+        /**
+         * 添加父类公共字段
+         *
+         * @param superEntityColumns 父类字段(数据库字段列名)
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addSuperEntityColumns(String... superEntityColumns) {
+            this.entity.superEntityColumns.addAll(Arrays.asList(superEntityColumns));
+            return this;
+        }
+
+        /**
+         * 添加表字段填充
+         *
+         * @param tableFill 填充字段
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addTableFills(TableFill... tableFill) {
+            this.entity.tableFillList.addAll(Arrays.asList(tableFill));
+            return this;
+        }
+
+        /**
+         * 添加表字段填充
+         *
+         * @param tableFillList 填充字段集合
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder addTableFills(List<TableFill> tableFillList) {
+            this.entity.tableFillList.addAll(tableFillList);
+            return this;
+        }
+
+        public Entity get(){
+            return this.entity;
+        }
+    }
 }
