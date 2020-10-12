@@ -1,5 +1,21 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.generator.config.builder;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -115,6 +131,20 @@ public class Entity {
      * <p>未指定按照 naming 执行</p>
      */
     private NamingStrategy columnNaming = null;
+
+    /**
+     * 开启 ActiveRecord 模式
+     *
+     * @since 3.4.1
+     */
+    private boolean activeRecord;
+
+    /**
+     * 指定生成的主键的ID类型
+     *
+     * @since 3.4.1
+     */
+    private IdType idType;
 
     /**
      * <p>
@@ -330,6 +360,30 @@ public class Entity {
          */
         public Builder addTableFills(List<TableFill> tableFillList) {
             this.entity.tableFillList.addAll(tableFillList);
+            return this;
+        }
+
+        /**
+         * 开启 ActiveRecord 模式
+         *
+         * @param activeRecord 是否开启
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder activeRecord(boolean activeRecord) {
+            this.entity.activeRecord = activeRecord;
+            return this;
+        }
+
+        /**
+         * 指定生成的主键的ID类型
+         *
+         * @param idType ID类型
+         * @return this
+         * @since 3.4.1
+         */
+        public Builder idType(IdType idType) {
+            this.entity.idType = idType;
             return this;
         }
 

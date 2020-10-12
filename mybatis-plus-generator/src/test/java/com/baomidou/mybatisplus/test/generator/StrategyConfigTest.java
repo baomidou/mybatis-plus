@@ -229,7 +229,7 @@ class StrategyConfigTest {
         Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("NAME"));
     }
 
-    private void builderValidate(StrategyConfig strategyConfig){
+    private void buildAssert(StrategyConfig strategyConfig){
         Assertions.assertTrue(strategyConfig.isSkipView());
         Assertions.assertTrue(strategyConfig.isChainModel());
         Assertions.assertTrue(strategyConfig.entity().isChain());
@@ -254,12 +254,12 @@ class StrategyConfigTest {
             .setEntitySerialVersionUID(true).setControllerMappingHyphenStyle(true).setRestControllerStyle(true)
             .setSuperControllerClass("com.baomidou.mp.SuperController").setSuperMapperClass("com.baomidou.mp.SuperMapper")
         ;
-        builderValidate(strategyConfig);
+        buildAssert(strategyConfig);
         strategyConfig = new StrategyConfig.Builder().skipView(true)
             .entityBuilder().chainModel(true).lombok(true).serialVersionUID(true)
             .controllerBuilder().superClass("com.baomidou.mp.SuperController").hyphenStyle(true).restStyle(true)
             .mapperBuilder().superClass("com.baomidou.mp.SuperMapper").build();
-        builderValidate(strategyConfig);
+        buildAssert(strategyConfig);
     }
 
     @Data

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -210,17 +211,18 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("package", config.getPackageConfig().getPackageInfo());
         GlobalConfig globalConfig = config.getGlobalConfig();
         objectMap.put("author", globalConfig.getAuthor());
-        objectMap.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
+        IdType idType = Optional.ofNullable(config.getStrategyConfig().entity().getIdType()).orElseGet(globalConfig::getIdType);
+        objectMap.put("idType", idType == null ? null : idType.toString());
         objectMap.put("logicDeleteFieldName", config.getStrategyConfig().entity().getLogicDeleteFieldName());
         objectMap.put("versionFieldName", config.getStrategyConfig().entity().getVersionFieldName());
-        objectMap.put("activeRecord", globalConfig.isActiveRecord());
+        objectMap.put("activeRecord", globalConfig.isActiveRecord() || config.getStrategyConfig().entity().isActiveRecord());
         objectMap.put("kotlin", globalConfig.isKotlin());
         objectMap.put("swagger2", globalConfig.isSwagger2());
         objectMap.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         objectMap.put("table", tableInfo);
-        objectMap.put("enableCache", globalConfig.isEnableCache());
-        objectMap.put("baseResultMap", globalConfig.isBaseResultMap());
-        objectMap.put("baseColumnList", globalConfig.isBaseColumnList());
+        objectMap.put("enableCache", globalConfig.isEnableCache() || config.getStrategyConfig().mapper().isEnableXmlCache());
+        objectMap.put("baseResultMap", globalConfig.isBaseResultMap() || config.getStrategyConfig().mapper().isBaseResultMap());
+        objectMap.put("baseColumnList", globalConfig.isBaseColumnList() || config.getStrategyConfig().mapper().isBaseResultMap());
         objectMap.put("entity", tableInfo.getEntityName());
         objectMap.put("entitySerialVersionUID", config.getStrategyConfig().entity().isSerialVersionUID());
         objectMap.put("entityColumnConstant", config.getStrategyConfig().entity().isColumnConstant());
