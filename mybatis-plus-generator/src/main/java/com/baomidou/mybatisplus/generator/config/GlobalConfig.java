@@ -311,6 +311,79 @@ public class GlobalConfig {
     }
 
     /**
+     * @param outputDir
+     * @return this
+     * @see Builder#outputDir(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
+        return this;
+    }
+
+    /**
+     * @param fileOverride
+     * @return this
+     * @see Builder#fileOverride(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setFileOverride(boolean fileOverride) {
+        this.fileOverride = fileOverride;
+        return this;
+    }
+
+    /**
+     * @param open
+     * @return this
+     * @see Builder#openDir(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setOpen(boolean open) {
+        this.open = open;
+        return this;
+    }
+
+    /**
+     * @param author
+     * @return this
+     * @see Builder#author(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setAuthor(String author) {
+        this.author = author;
+        return this;
+    }
+
+    /**
+     * @param kotlin
+     * @return this
+     * @see Builder#kotlin(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setKotlin(boolean kotlin) {
+        this.kotlin = kotlin;
+        return this;
+    }
+
+    /**
+     * @param swagger2
+     * @return this
+     * @see Builder#swagger2(boolean)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public GlobalConfig setSwagger2(boolean swagger2) {
+        this.swagger2 = swagger2;
+        return this;
+    }
+
+
+    /**
      * 全局配置构建
      *
      * @author nieqiurong 2020/10/11.

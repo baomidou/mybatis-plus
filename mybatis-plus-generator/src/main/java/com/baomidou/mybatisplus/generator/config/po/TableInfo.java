@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -255,7 +256,7 @@ public class TableInfo {
             importSerializable = false;
             this.importPackages.add(strategyConfig.entity().getSuperClass());
         } else {
-            if (globalConfig.isActiveRecord()) {
+            if (globalConfig.isActiveRecord() || strategyConfig.entity().isActiveRecord()) {
                 // 无父类开启 AR 模式
                 this.importPackages.add(Model.class.getCanonicalName());
                 importSerializable = false;
@@ -270,7 +271,8 @@ public class TableInfo {
         if (strategyConfig.entity().getLogicDeleteFieldName() != null && this.isLogicDelete(strategyConfig.entity().getLogicDeleteFieldName())) {
             this.importPackages.add(TableLogic.class.getCanonicalName());
         }
-        if (null != globalConfig.getIdType() && this.isHavePrimaryKey()) {
+        IdType idType = Optional.ofNullable(strategyConfig.entity().getIdType()).orElseGet(globalConfig::getIdType);
+        if (null != idType && this.isHavePrimaryKey()) {
             // 指定需要 IdType 场景
             this.importPackages.add(IdType.class.getCanonicalName());
             this.importPackages.add(TableId.class.getCanonicalName());
