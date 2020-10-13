@@ -122,6 +122,116 @@ public class PackageConfig {
     }
 
     /**
+     * 后续不再公开此构造方法
+     *
+     * @see Builder
+     * @deprecated 3.4.1
+     */
+    public PackageConfig() {
+    }
+
+    /**
+     * @param parent 父包名
+     * @return this
+     * @see Builder#parent(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public PackageConfig setParent(String parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    /**
+     * @param moduleName 模块名
+     * @return this
+     * @see Builder#moduleName(String)
+     * @deprecated 3.4.1
+     */
+    @Deprecated
+    public PackageConfig setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+        return this;
+    }
+
+    /**
+     * @param entity 实体名
+     * @return this
+     * @see Builder#entity(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setEntity(String entity) {
+        this.entity = entity;
+        return this;
+    }
+
+    /**
+     * @param service service接口包名
+     * @return this
+     * @see Builder#service(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setService(String service) {
+        this.service = service;
+        return this;
+    }
+
+    /**
+     * @param serviceImpl service实现类包名
+     * @return this
+     * @see Builder#serviceImpl(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setServiceImpl(String serviceImpl) {
+        this.serviceImpl = serviceImpl;
+        return this;
+    }
+
+    /**
+     * @param mapper mapper包名
+     * @return this
+     * @see Builder#mapper(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setMapper(String mapper) {
+        this.mapper = mapper;
+        return this;
+    }
+
+    /**
+     * @param xml xml包名
+     * @return this
+     * @see Builder#xml(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setXml(String xml) {
+        this.xml = xml;
+        return this;
+    }
+
+    /**
+     * @param controller 控制器包名
+     * @return this
+     * @see Builder#controller(String)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setController(String controller) {
+        this.controller = controller;
+        return this;
+    }
+
+    /**
+     * @param pathInfo 路径信息
+     * @return this
+     * @see Builder#pathInfo(Map)
+     * @deprecated 3.4.1
+     */
+    public PackageConfig setPathInfo(Map<String, String> pathInfo) {
+        this.pathInfo = pathInfo;
+        return this;
+    }
+
+    /**
      * 获取包配置信息
      *
      * @param module 模块
@@ -130,5 +240,131 @@ public class PackageConfig {
      */
     public String getPackageInfo(String module) {
         return getPackageInfo().get(module);
+    }
+
+    /**
+     * 构建者
+     *
+     * @author nieqiurong 2020/10/13.
+     * @since 3.4.1
+     */
+    public static class Builder {
+
+        private final PackageConfig packageConfig = new PackageConfig();
+
+        /**
+         * 指定父包名
+         *
+         * @param parent 父包名
+         * @return this
+         */
+        public Builder parent(String parent) {
+            this.packageConfig.parent = parent;
+            return this;
+        }
+
+        /**
+         * 指定模块名称
+         *
+         * @param moduleName 模块名
+         * @return this
+         */
+        public Builder moduleName(String moduleName) {
+            this.packageConfig.moduleName = moduleName;
+            return this;
+        }
+
+        /**
+         * 指定实体包名
+         *
+         * @param entity 实体包名
+         * @return this
+         */
+        public Builder entity(String entity) {
+            this.packageConfig.entity = entity;
+            return this;
+        }
+
+        /**
+         * 指定service接口包名
+         *
+         * @param service service包名
+         * @return this
+         */
+        public Builder service(String service) {
+            this.packageConfig.service = service;
+            return this;
+        }
+
+        /**
+         * service实现类包名
+         *
+         * @param serviceImpl service实现类包名
+         * @return this
+         */
+        public Builder serviceImpl(String serviceImpl) {
+            this.packageConfig.serviceImpl = serviceImpl;
+            return this;
+        }
+
+        /**
+         * 指定mapper接口包名
+         *
+         * @param mapper mapper包名
+         * @return this
+         */
+        public Builder mapper(String mapper) {
+            this.packageConfig.mapper = mapper;
+            return this;
+        }
+
+        /**
+         * 指定xml包名
+         *
+         * @param xml xml包名
+         * @return this
+         */
+        public Builder xml(String xml) {
+            this.packageConfig.xml = xml;
+            return this;
+        }
+
+        /**
+         * 指定控制器包名
+         *
+         * @param controller 控制器包名
+         * @return this
+         */
+        public Builder controller(String controller) {
+            this.packageConfig.controller = controller;
+            return this;
+        }
+
+        /**
+         * 路径配置信息
+         *
+         * @param pathInfo 路径配置信息
+         * @return this
+         */
+        public Builder pathInfo(Map<String, String> pathInfo) {
+            this.packageConfig.pathInfo = pathInfo;
+            return this;
+        }
+
+        /**
+         * 构建包配置对象
+         * <p>当指定{@link #parent(String)} 与 {@link #moduleName(String)}时,其他模块名字会加上这两个作为前缀</p>
+         * <p>
+         * 例如:
+         * <p>当设置 {@link #parent(String)},那么entity的配置为 {@link #getParent()}.{@link #getEntity()}</p>
+         * <p>当设置 {@link #parent(String)}与{@link #moduleName(String)},那么entity的配置为 {@link #getParent()}.{@link #getModuleName()}.{@link #getEntity()} </p>
+         * </p>
+         *
+         * @return 包配置对象
+         */
+        public PackageConfig build() {
+            //TODO 后面考虑把那些entity包名挂到Entity上去
+            return this.packageConfig;
+        }
     }
 }
