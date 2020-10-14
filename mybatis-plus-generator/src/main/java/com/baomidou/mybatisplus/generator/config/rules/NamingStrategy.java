@@ -58,7 +58,7 @@ public enum NamingStrategy {
         Arrays.stream(camels).filter(camel -> !StringUtils.isBlank(camel)).forEach(camel -> {
             if (result.length() == 0) {
                 // 第一个驼峰片段，全部字母都小写
-                result.append(camel);
+                result.append(camel.toLowerCase());
             } else {
                 // 其他的驼峰片段，首字母大写
                 result.append(capitalFirst(camel));
