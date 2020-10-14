@@ -461,6 +461,8 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql();
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.POSTGRE_SQL == dbType) {
+                //TODO 还原代码后解决PgSchema的问题.
+                this.connection.setSchema(dataSourceConfig.getSchemaName());
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.KINGBASE_ES == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
