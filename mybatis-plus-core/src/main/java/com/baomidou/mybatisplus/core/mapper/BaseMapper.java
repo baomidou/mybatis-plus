@@ -106,9 +106,9 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，删除记录
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
-    int delete(@Param(Constants.WRAPPER) Wrapper<T> wrapper);
+    int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * 删除（根据ID 批量删除）
