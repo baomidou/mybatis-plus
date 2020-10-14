@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.mysql.cj.jdbc.Driver;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,7 +32,6 @@ import org.junit.jupiter.api.Test;
  * @author K神
  * @since 2017/12/29
  */
-@Disabled
 class CodeGeneratorTest {
 
     /**
@@ -47,7 +45,7 @@ class CodeGeneratorTest {
     /**
      * 是否去掉生成实体的属性名前缀
      */
-    private String[] fieldPrefix = new String[]{};
+    private String[] fieldPrefix = null;
     /**
      * 生成的Service 接口类名是否以I开头
      * <p>默认是以I开头</p>

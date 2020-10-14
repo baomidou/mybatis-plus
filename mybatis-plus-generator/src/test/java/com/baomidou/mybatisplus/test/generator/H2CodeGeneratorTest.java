@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  */
 class H2CodeGeneratorTest {
 
-    private static final String outPutDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://tmp" : "/tmp";
+    private static String outPutDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://tmp" : "/tmp";
 
     private DataSourceConfig dataSourceConfig() {
         String dbUrl = "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";

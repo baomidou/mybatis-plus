@@ -44,7 +44,6 @@ class MybatisParameterHandlerTest {
 
         private String name;
 
-        @TableField(fill = FieldFill.INSERT)
         private String insertOperator;
 
         @TableField(fill = FieldFill.UPDATE)
@@ -66,6 +65,12 @@ class MybatisParameterHandlerTest {
         BoundSql boundSql = mock(BoundSql.class);
         StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
         GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(new DefaultIdentifierGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+
+            @Override
+            public boolean compatibleFillId() {
+                return true;
+            }
+
             @Override
             public void insertFill(MetaObject metaObject) {
                 setFieldValByName("id", 666L, metaObject);

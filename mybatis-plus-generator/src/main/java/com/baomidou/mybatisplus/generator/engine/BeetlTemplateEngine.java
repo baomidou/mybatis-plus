@@ -58,8 +58,7 @@ public class BeetlTemplateEngine extends AbstractTemplateEngine {
             Configuration cfg = Configuration.defaultConfiguration();
             groupTemplate = new GroupTemplate(new ClasspathResourceLoader("/"), cfg);
         } catch (IOException e) {
-            logger.error("初始化模板引擎失败:", e);
-            throw new RuntimeException(e);
+            logger.error(e.getMessage(), e);
         }
         return this;
     }

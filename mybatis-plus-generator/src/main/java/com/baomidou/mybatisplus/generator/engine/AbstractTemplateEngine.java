@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -44,8 +43,7 @@ import java.util.*;
  */
 public abstract class AbstractTemplateEngine {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractTemplateEngine.class);
     /**
      * 配置信息
      */
@@ -67,12 +65,12 @@ public abstract class AbstractTemplateEngine {
     public AbstractTemplateEngine batchOutput() {
         try {
             List<TableInfo> tableInfoList = getConfigBuilder().getTableInfoList();
-            Map<String, String> pathInfo = getConfigBuilder().getPathInfo();
-            TemplateConfig template = getConfigBuilder().getTemplate();
-            // 自定义内容
-            InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
             for (TableInfo tableInfo : tableInfoList) {
                 Map<String, Object> objectMap = getObjectMap(tableInfo);
+                Map<String, String> pathInfo = getConfigBuilder().getPathInfo();
+                TemplateConfig template = getConfigBuilder().getTemplate();
+                // 自定义内容
+                InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
                     injectionConfig.initTableMap(tableInfo);
                     objectMap.put("cfg", injectionConfig.getMap());
@@ -199,46 +197,45 @@ public abstract class AbstractTemplateEngine {
     public Map<String, Object> getObjectMap(TableInfo tableInfo) {
         Map<String, Object> objectMap;
         ConfigBuilder config = getConfigBuilder();
-        if (config.getStrategyConfig().controller().isHyphenStyle()) {
+        if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
             objectMap = CollectionUtils.newHashMapWithExpectedSize(33);
-            objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().controller().isHyphenStyle());
+            objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
             objectMap.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
         } else {
             objectMap = CollectionUtils.newHashMapWithExpectedSize(31);
         }
-        objectMap.put("restControllerStyle", config.getStrategyConfig().controller().isRestStyle());
+        objectMap.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
         objectMap.put("config", config);
-        objectMap.put("package", config.getPackageConfig().getPackageInfo());
+        objectMap.put("package", config.getPackageInfo());
         GlobalConfig globalConfig = config.getGlobalConfig();
         objectMap.put("author", globalConfig.getAuthor());
-        IdType idType = Optional.ofNullable(config.getStrategyConfig().entity().getIdType()).orElseGet(globalConfig::getIdType);
-        objectMap.put("idType", idType == null ? null : idType.toString());
-        objectMap.put("logicDeleteFieldName", config.getStrategyConfig().entity().getLogicDeleteFieldName());
-        objectMap.put("versionFieldName", config.getStrategyConfig().entity().getVersionFieldName());
-        objectMap.put("activeRecord", globalConfig.isActiveRecord() || config.getStrategyConfig().entity().isActiveRecord());
+        objectMap.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
+        objectMap.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
+        objectMap.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
+        objectMap.put("activeRecord", globalConfig.isActiveRecord());
         objectMap.put("kotlin", globalConfig.isKotlin());
         objectMap.put("swagger2", globalConfig.isSwagger2());
         objectMap.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         objectMap.put("table", tableInfo);
-        objectMap.put("enableCache", globalConfig.isEnableCache() || config.getStrategyConfig().mapper().isEnableXmlCache());
-        objectMap.put("baseResultMap", globalConfig.isBaseResultMap() || config.getStrategyConfig().mapper().isBaseResultMap());
-        objectMap.put("baseColumnList", globalConfig.isBaseColumnList() || config.getStrategyConfig().mapper().isBaseResultMap());
+        objectMap.put("enableCache", globalConfig.isEnableCache());
+        objectMap.put("baseResultMap", globalConfig.isBaseResultMap());
+        objectMap.put("baseColumnList", globalConfig.isBaseColumnList());
         objectMap.put("entity", tableInfo.getEntityName());
-        objectMap.put("entitySerialVersionUID", config.getStrategyConfig().entity().isSerialVersionUID());
-        objectMap.put("entityColumnConstant", config.getStrategyConfig().entity().isColumnConstant());
-        objectMap.put("entityBuilderModel", config.getStrategyConfig().entity().isChain());
-        objectMap.put("chainModel", config.getStrategyConfig().entity().isChain());
-        objectMap.put("entityLombokModel", config.getStrategyConfig().entity().isLombok());
-        objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().entity().isBooleanColumnRemoveIsPrefix());
-        objectMap.put("superEntityClass", getSuperClassName(config.getStrategyConfig().entity().getSuperClass()));
-        objectMap.put("superMapperClassPackage", config.getStrategyConfig().mapper().getSuperClass());
-        objectMap.put("superMapperClass", getSuperClassName(config.getStrategyConfig().mapper().getSuperClass()));
-        objectMap.put("superServiceClassPackage", config.getStrategyConfig().service().getSuperServiceClass());
-        objectMap.put("superServiceClass", getSuperClassName(config.getStrategyConfig().service().getSuperServiceClass()));
-        objectMap.put("superServiceImplClassPackage", config.getStrategyConfig().service().getSuperServiceImplClass());
-        objectMap.put("superServiceImplClass", getSuperClassName(config.getStrategyConfig().service().getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getStrategyConfig().controller().getSuperClass()));
-        objectMap.put("superControllerClass", getSuperClassName(config.getStrategyConfig().controller().getSuperClass()));
+        objectMap.put("entitySerialVersionUID", config.getStrategyConfig().isEntitySerialVersionUID());
+        objectMap.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
+        objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+        objectMap.put("chainModel", config.getStrategyConfig().isChainModel());
+        objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+        objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
+        objectMap.put("superEntityClass", getSuperClassName(config.getStrategyConfig().getSuperEntityClass()));
+        objectMap.put("superMapperClassPackage", config.getStrategyConfig().getSuperMapperClass());
+        objectMap.put("superMapperClass", getSuperClassName(config.getStrategyConfig().getSuperMapperClass()));
+        objectMap.put("superServiceClassPackage", config.getStrategyConfig().getSuperServiceClass());
+        objectMap.put("superServiceClass", getSuperClassName(config.getStrategyConfig().getSuperServiceClass()));
+        objectMap.put("superServiceImplClassPackage", config.getStrategyConfig().getSuperServiceImplClass());
+        objectMap.put("superServiceImplClass", getSuperClassName(config.getStrategyConfig().getSuperServiceImplClass()));
+        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getStrategyConfig().getSuperControllerClass()));
+        objectMap.put("superControllerClass", getSuperClassName(config.getStrategyConfig().getSuperControllerClass()));
         return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
