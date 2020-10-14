@@ -62,27 +62,21 @@ public class TableField {
      */
     private Map<String, Object> customMap;
 
-    /**
-     * @param convert
-     * @return this
-     * @see #setConvert(StrategyConfig)
-     * @deprecated 3.4.1
-     */
     public TableField setConvert(boolean convert) {
         this.convert = convert;
         return this;
     }
 
     protected TableField setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.entity().isTableFieldAnnotationEnable() || isKeyWords()) {
+        if (strategyConfig.isEntityTableFieldAnnotationEnable() || isKeyWords()) {
             this.convert = true;
             return this;
         }
         if (strategyConfig.isCapitalModeNaming(name)) {
-            this.convert = !name.equalsIgnoreCase(propertyName);
+            this.convert = false;
         } else {
             // 转换字段
-            if (NamingStrategy.underline_to_camel == strategyConfig.entity().getColumnNaming()) {
+            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;
@@ -94,61 +88,9 @@ public class TableField {
         return this;
     }
 
-
-    /**
-     * @param propertyName 属性名称
-     * @return this
-     * @deprecated 3.4.1 {@link #setPropertyName(String, StrategyConfig, IColumnType)}
-     */
-    @Deprecated
-    public TableField setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-        return this;
-    }
-
-    /**
-     * 设置属性名称
-     *
-     * @param propertyName   属性名
-     * @param strategyConfig 策略配置
-     * @param columnType     字段类型
-     * @return this
-     * @since 3.4.1
-     */
-    public TableField setPropertyName(String propertyName, StrategyConfig strategyConfig, IColumnType columnType) {
-        this.columnType = columnType;
-        if (strategyConfig.entity().isBooleanColumnRemoveIsPrefix()
-            && "boolean".equalsIgnoreCase(this.getPropertyType()) && propertyName.startsWith("is")) {
-            this.convert = true;
-            this.propertyName = StringUtils.removePrefixAfterPrefixToLower(propertyName, 2);
-            return this;
-        }
+    public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
         this.propertyName = propertyName;
         this.setConvert(strategyConfig);
-        return this;
-    }
-
-    /**
-     * 设置属性名称
-     *
-     * @param strategyConfig 策略配置
-     * @param propertyName   属性名
-     * @return this
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public TableField setPropertyName(StrategyConfig strategyConfig, String propertyName) {
-        return setPropertyName(propertyName, strategyConfig, this.columnType);
-    }
-
-    /**
-     * @param columnType 字段类型
-     * @return this
-     * @deprecated 3.4.1 {@link #setPropertyName(String, StrategyConfig, IColumnType)}
-     */
-    @Deprecated
-    public TableField setColumnType(IColumnType columnType) {
-        this.columnType = columnType;
         return this;
     }
 
@@ -192,4 +134,5 @@ public class TableField {
         }
         return columnName;
     }
+
 }

@@ -27,19 +27,18 @@ import java.util.Locale;
  * @since 3.3.2
  */
 public abstract class BaseKeyWordsHandler implements IKeyWordsHandler {
-
+    
     public List<String> keyWords;
-
+    
     public BaseKeyWordsHandler(List<String> keyWords) {
         this.keyWords = keyWords;
     }
-
+    
     @Override
     public List<String> getKeyWords() {
         return keyWords;
     }
-
-    @Override
+    
     public boolean isKeyWords(String columnName) {
         return getKeyWords().contains(columnName.toUpperCase(Locale.ENGLISH));
     }

@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.generator.config;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+
 /**
  * 表数据查询接口
  *
@@ -25,6 +27,17 @@ import java.sql.SQLException;
  * @since 2018-01-16
  */
 public interface IDbQuery {
+
+    /**
+     * 数据库类型
+     *
+     * @deprecated 3.3.1 {@link DataSourceConfig#setDbType(DbType)}
+     */
+    @Deprecated
+    default DbType dbType() {
+        return null;
+    }
+
 
     /**
      * 表信息查询 SQL

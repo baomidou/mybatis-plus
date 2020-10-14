@@ -16,8 +16,6 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.generator.config.builder.Entity;
-import com.baomidou.mybatisplus.generator.config.builder.Mapper;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 
 import lombok.Data;
@@ -34,9 +32,9 @@ import lombok.experimental.Accessors;
 public class GlobalConfig {
 
     /**
-     * 生成文件的输出目录【 windows:D://  linux or mac:/tmp 】
+     * 生成文件的输出目录【默认 D 盘根目录】
      */
-    private String outputDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://" : "/tmp";
+    private String outputDir = "D://";
 
     /**
      * 是否覆盖已有文件
@@ -51,7 +49,6 @@ public class GlobalConfig {
     /**
      * 是否在xml中添加二级缓存配置
      */
-    @Deprecated
     private boolean enableCache = false;
 
     /**
@@ -72,13 +69,11 @@ public class GlobalConfig {
     /**
      * 开启 ActiveRecord 模式
      */
-    @Deprecated
     private boolean activeRecord = false;
 
     /**
      * 开启 BaseResultMap
      */
-    @Deprecated
     private boolean baseResultMap = false;
 
     /**
@@ -89,7 +84,6 @@ public class GlobalConfig {
     /**
      * 开启 baseColumnList
      */
-    @Deprecated
     private boolean baseColumnList = false;
     /**
      * 各层文件名称方式，例如： %sAction 生成 UserAction
@@ -101,435 +95,8 @@ public class GlobalConfig {
     private String serviceName;
     private String serviceImplName;
     private String controllerName;
-
-    /**
-     * 后续不再公开此构造方法
-     *
-     * @see Builder
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig() {
-    }
-
     /**
      * 指定生成的主键的ID类型
      */
-    @Deprecated
     private IdType idType;
-
-    /**
-     * 是否开启 ActiveRecord 模式
-     *
-     * @return 是否开启
-     * @see Entity#isActiveRecord()
-     * @deprecated 3.4.1
-     */
-    public boolean isActiveRecord() {
-        return activeRecord;
-    }
-
-    /**
-     * 开启 ActiveRecord 模式
-     *
-     * @param activeRecord 是否开启
-     * @return this
-     * @see com.baomidou.mybatisplus.generator.config.builder.Entity.Builder#activeRecord(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setActiveRecord(boolean activeRecord) {
-        this.activeRecord = activeRecord;
-        return this;
-    }
-
-    /**
-     * @return this
-     * @see Entity#getIdType()
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public IdType getIdType() {
-        return idType;
-    }
-
-    /**
-     * 指定生成的主键的ID类型
-     *
-     * @param idType 主键类型
-     * @return this
-     * @see Entity.Builder#idType(IdType)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setIdType(IdType idType) {
-        this.idType = idType;
-        return this;
-    }
-
-    /**
-     * @return 是否开启
-     * @see Mapper#isBaseResultMap() a
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public boolean isBaseResultMap() {
-        return baseResultMap;
-    }
-
-    /**
-     * @param baseResultMap 是否开启
-     * @return this
-     * @see Mapper.Builder#baseResultMap(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setBaseResultMap(boolean baseResultMap) {
-        this.baseResultMap = baseResultMap;
-        return this;
-    }
-
-    /**
-     * @return 是否开启
-     * @see Mapper#isBaseColumnList()
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public boolean isBaseColumnList() {
-        return baseColumnList;
-    }
-
-    /**
-     * @see Mapper.Builder#baseColumnList(boolean)
-     * @param baseColumnList 是否开启
-     * @return this
-     */
-    @Deprecated
-    public GlobalConfig setBaseColumnList(boolean baseColumnList) {
-        this.baseColumnList = baseColumnList;
-        return this;
-    }
-
-    /**
-     * @return 是否开启
-     * @see Mapper#isEnableXmlCache()
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public boolean isEnableCache() {
-        return enableCache;
-    }
-
-    /**
-     * @param enableCache 是否开启
-     * @return this
-     * @see Mapper.Builder#enableXmlCache(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setEnableCache(boolean enableCache) {
-        this.enableCache = enableCache;
-        return this;
-    }
-
-    /**
-     * @param entityName
-     * @return this
-     * @see Builder#entityName(String)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setEntityName(String entityName) {
-        this.entityName = entityName;
-        return this;
-    }
-
-    /**
-     * @param mapperName
-     * @return this
-     * @see Builder#mapperName(String)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setMapperName(String mapperName) {
-        this.mapperName = mapperName;
-        return this;
-    }
-
-    /**
-     * @param xmlName
-     * @return this
-     * @see Builder#xmlName(String)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setXmlName(String xmlName) {
-        this.xmlName = xmlName;
-        return this;
-    }
-
-    /**
-     * @param serviceName
-     * @return this
-     * @see Builder#serviceName(String)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setServiceName(String serviceName) {
-        this.serviceName = serviceName;
-        return this;
-    }
-
-    /**
-     * @param serviceImplName
-     * @return this
-     * @see Builder#serviceImplName(String)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setServiceImplName(String serviceImplName) {
-        this.serviceImplName = serviceImplName;
-        return this;
-    }
-
-    /**
-     * @param controllerName
-     * @return this
-     * @see Builder#controllerName(String)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setControllerName(String controllerName) {
-        this.controllerName = controllerName;
-        return this;
-    }
-
-    /**
-     * @param dateType
-     * @return this
-     * @see Builder#dateType(DateType)
-     * @deprecated 3.4.1
-     */
-    public GlobalConfig setDateType(DateType dateType) {
-        this.dateType = dateType;
-        return this;
-    }
-
-    /**
-     * @param outputDir
-     * @return this
-     * @see Builder#outputDir(String)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setOutputDir(String outputDir) {
-        this.outputDir = outputDir;
-        return this;
-    }
-
-    /**
-     * @param fileOverride
-     * @return this
-     * @see Builder#fileOverride(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setFileOverride(boolean fileOverride) {
-        this.fileOverride = fileOverride;
-        return this;
-    }
-
-    /**
-     * @param open
-     * @return this
-     * @see Builder#openDir(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setOpen(boolean open) {
-        this.open = open;
-        return this;
-    }
-
-    /**
-     * @param author
-     * @return this
-     * @see Builder#author(String)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setAuthor(String author) {
-        this.author = author;
-        return this;
-    }
-
-    /**
-     * @param kotlin
-     * @return this
-     * @see Builder#kotlin(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setKotlin(boolean kotlin) {
-        this.kotlin = kotlin;
-        return this;
-    }
-
-    /**
-     * @param swagger2
-     * @return this
-     * @see Builder#swagger2(boolean)
-     * @deprecated 3.4.1
-     */
-    @Deprecated
-    public GlobalConfig setSwagger2(boolean swagger2) {
-        this.swagger2 = swagger2;
-        return this;
-    }
-
-
-    /**
-     * 全局配置构建
-     *
-     * @author nieqiurong 2020/10/11.
-     * @since 3.4.1
-     */
-    public static class Builder {
-
-        private final GlobalConfig globalConfig = new GlobalConfig();
-
-        /**
-         * 开启 ActiveRecord 模式
-         *
-         * @param activeRecord 是否开启
-         * @return this
-         * @see com.baomidou.mybatisplus.generator.config.builder.Entity.Builder#activeRecord(boolean)
-         * @deprecated 3.4.1
-         */
-        @Deprecated
-        public Builder activeRecord(boolean activeRecord) {
-            this.globalConfig.activeRecord = activeRecord;
-            return this;
-        }
-
-        /**
-         * 指定生成的主键的ID类型
-         *
-         * @param idType 主键类型
-         * @return this
-         * @see Entity.Builder#idType(IdType)
-         * @deprecated 3.4.1
-         */
-        @Deprecated
-        public Builder idType(IdType idType) {
-            this.globalConfig.idType = idType;
-            return this;
-        }
-
-        /**
-         * 开启baseResultMap
-         *
-         * @param baseResultMap 是否开启
-         * @return this
-         * @see Mapper.Builder#baseResultMap(boolean)
-         * @deprecated 3.4.1
-         */
-        @Deprecated
-        public Builder baseResultMap(boolean baseResultMap) {
-            this.globalConfig.baseResultMap = baseResultMap;
-            return this;
-        }
-
-        /**
-         * 开启baseColumnList
-         *
-         * @param baseColumnList 是否开启
-         * @return this
-         * @see Mapper.Builder#baseColumnList(boolean)
-         * @deprecated 3.4.1
-         */
-        @Deprecated
-        public Builder baseColumnList(boolean baseColumnList) {
-            this.globalConfig.baseColumnList = baseColumnList;
-            return this;
-        }
-
-        /**
-         * xml中添加二级缓存配置
-         *
-         * @param enableCache 是否开启
-         * @return this
-         * @see Mapper.Builder#enableXmlCache(boolean)
-         * @deprecated 3.4.1
-         */
-        @Deprecated
-        public Builder enableCache(boolean enableCache) {
-            this.globalConfig.enableCache = enableCache;
-            return this;
-        }
-
-        public Builder fileOverride(boolean fileOverride) {
-            this.globalConfig.fileOverride = fileOverride;
-            return this;
-        }
-
-        public Builder openDir(boolean open){
-            this.globalConfig.open = open;
-            return this;
-        }
-
-        public Builder outputDir(String outputDir) {
-            this.globalConfig.outputDir = outputDir;
-            return this;
-        }
-
-        public Builder author(String author){
-            this.globalConfig.author = author;
-            return this;
-        }
-
-        public Builder kotlin(boolean kotlin){
-            this.globalConfig.kotlin = kotlin;
-            return this;
-        }
-
-        public Builder swagger2(boolean swagger2){
-            this.globalConfig.swagger2 = swagger2;
-            return this;
-        }
-
-        public Builder entityName(String entityName){
-            this.globalConfig.entityName = entityName;
-            return this;
-        }
-
-        public Builder xmlName(String xmlName) {
-            this.globalConfig.xmlName = xmlName;
-            return this;
-        }
-
-        public Builder serviceName(String serviceName) {
-            this.globalConfig.serviceName = serviceName;
-            return this;
-        }
-
-        public Builder serviceImplName(String serviceImplName) {
-            this.globalConfig.serviceImplName = serviceImplName;
-            return this;
-        }
-
-        public Builder controllerName(String controllerName) {
-            this.globalConfig.controllerName = controllerName;
-            return this;
-        }
-
-        public Builder mapperName(String mapperName) {
-            this.globalConfig.mapperName = mapperName;
-            return this;
-        }
-
-        public Builder dateType(DateType dateType) {
-            this.globalConfig.dateType = dateType;
-            return this;
-        }
-
-        public GlobalConfig build() {
-            return this.globalConfig;
-        }
-    }
 }

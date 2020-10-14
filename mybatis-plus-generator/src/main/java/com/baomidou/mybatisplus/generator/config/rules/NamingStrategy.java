@@ -58,7 +58,7 @@ public enum NamingStrategy {
         Arrays.stream(camels).filter(camel -> !StringUtils.isBlank(camel)).forEach(camel -> {
             if (result.length() == 0) {
                 // 第一个驼峰片段，全部字母都小写
-                result.append(camel.toLowerCase());
+                result.append(camel);
             } else {
                 // 其他的驼峰片段，首字母大写
                 result.append(capitalFirst(camel));
@@ -86,10 +86,14 @@ public enum NamingStrategy {
         if (StringUtils.isBlank(name)) {
             return StringPool.EMPTY;
         }
-        // 判断是否有匹配的前缀，然后截取前缀
-        // 删除前缀 TODO 前缀统一配置小写格式????
-        return prefix.stream().filter(pf -> name.toLowerCase().startsWith(pf))
-            .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
+        if (null != prefix) {
+            // 判断是否有匹配的前缀，然后截取前缀
+            // 删除前缀
+            return prefix.stream().filter(pf -> name.toLowerCase()
+                .matches(StringPool.HAT + pf.toLowerCase() + ".*"))
+                .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
+        }
+        return name;
     }
 
     /**
@@ -98,9 +102,7 @@ public enum NamingStrategy {
      * @param name   ignore
      * @param prefix ignore
      * @return ignore
-     * @deprecated 3.4.1
      */
-    @Deprecated
     public static boolean isPrefixContained(String name, String... prefix) {
         if (null == prefix || StringUtils.isBlank(name)) {
             return false;

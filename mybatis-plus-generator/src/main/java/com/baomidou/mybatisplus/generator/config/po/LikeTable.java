@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  */
 public class LikeTable {
 
-    private final String value;
+    private String value;
 
     private SqlLike like = SqlLike.DEFAULT;
 

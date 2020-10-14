@@ -15,16 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.generator.config.INameConvert;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
-import com.baomidou.mybatisplus.generator.config.po.TableFill;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -116,159 +111,13 @@ class StrategyConfigTest {
         Assertions.assertTrue(strategyConfig.startsWithTablePrefix("t_name"));
     }
 
-    @Test
-    void addTableFillsTest() {
-        TableFill tableFill = new TableFill("test", FieldFill.INSERT);
-        List<TableFill> tableFillList = new ArrayList<>();
-        tableFillList.add(tableFill);
-        StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setTableFillList(tableFillList);
-        Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
-        strategyConfig = new StrategyConfig();
-        strategyConfig.entityBuilder().addTableFills(tableFill);
-        Assertions.assertFalse(strategyConfig.getTableFillList().isEmpty());
-    }
-
-    @Test
-    void entityNameConvertTest() {
-        StrategyConfig strategyConfig;
-        TableInfo tableInfo = new TableInfo();
-        tableInfo.setName("t_user");
-
-        strategyConfig = new StrategyConfig();
-        Assertions.assertEquals("T_user", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
-        strategyConfig.setTablePrefix("t_", "a_");
-        Assertions.assertEquals("User", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
-
-        strategyConfig = new StrategyConfig();
-        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
-        Assertions.assertEquals("TUser", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
-
-        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
-        strategyConfig.setTablePrefix("t_", "a_");
-        Assertions.assertEquals("User", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
-
-        strategyConfig = new StrategyConfig();
-        strategyConfig.setNameConvert(new INameConvert() {
-            @Override
-            public String entityNameConvert(TableInfo tableInfo) {
-                return "aaaa";
-            }
-
-            @Override
-            public String propertyNameConvert(TableField field) {
-                return "bbbb";
-            }
-        });
-        Assertions.assertEquals("aaaa", strategyConfig.getNameConvert().entityNameConvert(tableInfo));
-    }
-
-    @Test
-    void propertyNameConvertTest() {
-        StrategyConfig strategyConfig;
-        TableField tableField = new TableField();
-        tableField.setName("c_user_name");
-
-        strategyConfig = new StrategyConfig();
-        Assertions.assertEquals("c_user_name", strategyConfig.getNameConvert().propertyNameConvert(tableField));
-        strategyConfig.setTablePrefix("t_", "c_");
-        Assertions.assertEquals("user_name", strategyConfig.getNameConvert().propertyNameConvert(tableField));
-
-        strategyConfig = new StrategyConfig();
-        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
-        Assertions.assertEquals("cUserName", strategyConfig.getNameConvert().propertyNameConvert(tableField));
-
-        strategyConfig.setNaming(NamingStrategy.underline_to_camel);
-        strategyConfig.setTablePrefix("t_", "c_");
-        Assertions.assertEquals("userName", strategyConfig.getNameConvert().propertyNameConvert(tableField));
-
-        strategyConfig = new StrategyConfig();
-        strategyConfig.setNameConvert(new INameConvert() {
-            @Override
-            public String entityNameConvert(TableInfo tableInfo) {
-                return "aaaa";
-            }
-
-            @Override
-            public String propertyNameConvert(TableField field) {
-                return "bbbb";
-            }
-        });
-        Assertions.assertEquals("bbbb", strategyConfig.getNameConvert().propertyNameConvert(tableField));
-    }
-
-    @Test
-    void matchExcludeTableTest(){
-        StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setExclude("system", "user_1", "test[a|b]");
-        Assertions.assertTrue(strategyConfig.matchExcludeTable("system"));
-        Assertions.assertFalse(strategyConfig.matchExcludeTable("test_exclude"));
-        Assertions.assertTrue(strategyConfig.matchExcludeTable("testa"));
-        Assertions.assertTrue(strategyConfig.matchExcludeTable("testb"));
-        Assertions.assertFalse(strategyConfig.matchExcludeTable("testc"));
-    }
-
-    @Test
-    void matchIncludeTableTest(){
-        StrategyConfig strategyConfig = new StrategyConfig();
-        strategyConfig.setInclude("system", "user_1", "test[a|b]");
-        Assertions.assertTrue(strategyConfig.matchIncludeTable("system"));
-        Assertions.assertFalse(strategyConfig.matchIncludeTable("test_exclude"));
-        Assertions.assertTrue(strategyConfig.matchIncludeTable("testa"));
-        Assertions.assertTrue(strategyConfig.matchIncludeTable("testb"));
-        Assertions.assertFalse(strategyConfig.matchIncludeTable("testc"));
-    }
-
-    @Test
-    void isCapitalModeNamingTest() {
-        Assertions.assertFalse(new StrategyConfig().isCapitalModeNaming("T_USER"));
-        Assertions.assertFalse(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("user"));
-        Assertions.assertFalse(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("user_name"));
-        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("USER_NAME"));
-        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("T_USER"));
-        Assertions.assertTrue(new StrategyConfig().setCapitalMode(true).isCapitalModeNaming("NAME"));
-    }
-
-    private void buildAssert(StrategyConfig strategyConfig){
-        Assertions.assertTrue(strategyConfig.isSkipView());
-        Assertions.assertTrue(strategyConfig.isChainModel());
-        Assertions.assertTrue(strategyConfig.entity().isChain());
-        Assertions.assertTrue(strategyConfig.isEntityLombokModel());
-        Assertions.assertTrue(strategyConfig.entity().isLombok());
-        Assertions.assertTrue(strategyConfig.isEntitySerialVersionUID());
-        Assertions.assertTrue(strategyConfig.entity().isSerialVersionUID());
-        Assertions.assertTrue(strategyConfig.isControllerMappingHyphenStyle());
-        Assertions.assertTrue(strategyConfig.controller().isHyphenStyle());
-        Assertions.assertTrue(strategyConfig.isRestControllerStyle());
-        Assertions.assertTrue(strategyConfig.controller().isRestStyle());
-        Assertions.assertEquals("com.baomidou.mp.SuperController", strategyConfig.getSuperControllerClass());
-        Assertions.assertEquals("com.baomidou.mp.SuperController", strategyConfig.controllerBuilder().get().getSuperClass());
-        Assertions.assertEquals("com.baomidou.mp.SuperMapper", strategyConfig.getSuperMapperClass());
-        Assertions.assertEquals("com.baomidou.mp.SuperMapper", strategyConfig.mapper().getSuperClass());
-    }
-
-    @Test
-    void builderTest() {
-        StrategyConfig strategyConfig;
-        strategyConfig = new StrategyConfig().setCapitalMode(true).setChainModel(true).setSkipView(true).setEntityLombokModel(true)
-            .setEntitySerialVersionUID(true).setControllerMappingHyphenStyle(true).setRestControllerStyle(true)
-            .setSuperControllerClass("com.baomidou.mp.SuperController").setSuperMapperClass("com.baomidou.mp.SuperMapper")
-        ;
-        buildAssert(strategyConfig);
-        strategyConfig = new StrategyConfig.Builder().skipView(true)
-            .entityBuilder().chainModel(true).lombok(true).serialVersionUID(true)
-            .controllerBuilder().superClass("com.baomidou.mp.SuperController").hyphenStyle(true).restStyle(true)
-            .mapperBuilder().superClass("com.baomidou.mp.SuperMapper").build();
-        buildAssert(strategyConfig);
-    }
-
     @Data
     static class SuperBean {
 
-        @com.baomidou.mybatisplus.annotation.TableId(value = "test_id")
+        @TableId(value = "test_id")
         private String id;
 
-        @com.baomidou.mybatisplus.annotation.TableField(value = "aa_name")
+        @TableField(value = "aa_name")
         private String name;
 
         private String ok;

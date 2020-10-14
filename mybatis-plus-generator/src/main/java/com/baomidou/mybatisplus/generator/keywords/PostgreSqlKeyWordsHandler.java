@@ -27,8 +27,8 @@ import java.util.List;
  * @since 3.3.2
  */
 public class PostgreSqlKeyWordsHandler extends BaseKeyWordsHandler {
-
-    private static final List<String> KEY_WORDS = new ArrayList<>(Arrays.asList(
+    
+    private static List<String> KEY_WORDS = new ArrayList<>(Arrays.asList(
         "ALL",
         "ANALYSE",
         "ANALYZE",
@@ -130,18 +130,18 @@ public class PostgreSqlKeyWordsHandler extends BaseKeyWordsHandler {
         "WINDOW",
         "WITH"
     ));
-
+    
     public PostgreSqlKeyWordsHandler() {
         super(KEY_WORDS);
     }
-
+    
     public PostgreSqlKeyWordsHandler(List<String> keyWords) {
         super(keyWords);
     }
-
+    
     @Override
     public String formatStyle() {
         return "\"%s\"";
     }
-
+    
 }

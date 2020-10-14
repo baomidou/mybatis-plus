@@ -14,14 +14,5 @@ public class NamingStrategyTest {
         Assertions.assertEquals(NamingStrategy.removePrefix("test_ab", new HashSet<>(Arrays.asList("t_", "test"))), "_ab");
     }
 
-    @Test
-    void underlineToCamelTest(){
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("Aid"), "aid");
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("test_id"), "testId");
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("TEST_ID"), "testId");
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("Test_id"), "testId");
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("Test_ID"), "testId");
-        Assertions.assertEquals(NamingStrategy.underlineToCamel("TeSt_id"), "testId");
-    }
 
 }
