@@ -45,21 +45,6 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * 兼容填充主键判断开关
-     * 如果启用开关:当主键值为空且主键生成策略为NONE或INPUT会进入新增填充
-     * 这开关主要是用来兼容旧版本的用户使用插入填充来进行主键填充的开关
-     * 暂时不确定什么时候会移出此开关,请尽快使用新的Id生成策略来生成Id
-     *
-     * @return 是否启用
-     * @since 3.3.0
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    default boolean compatibleFillId() {
-        return false;
-    }
-
-    /**
      * 是否开启了更新填充
      */
     default boolean openUpdateFill() {

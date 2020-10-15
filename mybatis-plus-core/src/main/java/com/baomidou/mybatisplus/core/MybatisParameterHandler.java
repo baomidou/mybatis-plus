@@ -142,21 +142,8 @@ public class MybatisParameterHandler implements ParameterHandler {
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill()) {
-                if (tableInfo.isWithInsertFill()) {
-                    metaObjectHandler.insertFill(metaObject);
-                } else {
-                    // 兼容旧操作 id类型为input或none的要用填充器处理一下
-                    if (metaObjectHandler.compatibleFillId()) {
-                        String keyProperty = tableInfo.getKeyProperty();
-                        if (StringUtils.isNotBlank(keyProperty)) {
-                            Object value = metaObject.getValue(keyProperty);
-                            if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
-                                metaObjectHandler.insertFill(metaObject);
-                            }
-                        }
-                    }
-                }
+            if (metaObjectHandler.openInsertFill() && tableInfo.isWithInsertFill()) {
+                metaObjectHandler.insertFill(metaObject);
             }
         });
     }

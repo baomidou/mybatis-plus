@@ -83,7 +83,7 @@ public class ConfigBuilder {
     /**
      * 过滤正则
      */
-    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:'\",<.>?]+");
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()+\\\\\\[\\]|{};:'\",<.>?]+");
 
     /**
      * 在构造器中处理配置
@@ -314,6 +314,8 @@ public class ConfigBuilder {
                     schema = "public";
                     dataSourceConfig.setSchemaName(schema);
                 }
+                //TODO 还原代码后解决PgSchema的问题.
+                this.connection.setSchema(schema);
                 tablesSql = String.format(tablesSql, schema);
             } else if (DbType.KINGBASE_ES == dbType) {
                 String schema = dataSourceConfig.getSchemaName();
@@ -461,9 +463,7 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql();
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.POSTGRE_SQL == dbType) {
-                //TODO 还原代码后解决PgSchema的问题.
-                this.connection.setSchema(dataSourceConfig.getSchemaName());
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
             } else if (DbType.KINGBASE_ES == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.DB2 == dbType) {
