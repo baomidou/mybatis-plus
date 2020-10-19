@@ -48,7 +48,7 @@ public class IdWorker {
      * @return id
      */
     public static long getId() {
-        return getId(new Object());
+        return getId(null);
     }
 
     /**
@@ -66,7 +66,7 @@ public class IdWorker {
      * @return id
      */
     public static String getIdStr() {
-        return getIdStr(new Object());
+        return getIdStr(null);
     }
 
     /**
