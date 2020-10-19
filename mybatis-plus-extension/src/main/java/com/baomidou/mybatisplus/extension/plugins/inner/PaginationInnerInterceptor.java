@@ -31,8 +31,6 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -76,9 +74,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     private static SelectItem defaultCountSelectItem() {
         Function function = new Function();
-        ExpressionList expressionList = new ExpressionList(Collections.singletonList(new LongValue(1)));
         function.setName("COUNT");
-        function.setParameters(expressionList);
+        function.setAllColumns(true);
         return new SelectExpressionItem(function);
     }
 
