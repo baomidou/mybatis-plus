@@ -58,9 +58,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return baseMapper;
     }
 
-    protected Class<?> entityClass = currentModelClass();
+    protected Class<T> entityClass = currentModelClass();
 
-    protected Class<?> mapperClass = currentMapperClass();
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
+    }
+
+    protected Class<T> mapperClass = currentMapperClass();
 
     /**
      * 判断数据库操作是否成功
