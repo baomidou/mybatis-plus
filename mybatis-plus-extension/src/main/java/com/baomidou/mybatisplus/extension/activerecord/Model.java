@@ -47,7 +47,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private transient Log log = LogFactory.getLog(getClass());
+    private final transient Log log = LogFactory.getLog(getClass());
 
     /**
      * 插入（字段选择插入）

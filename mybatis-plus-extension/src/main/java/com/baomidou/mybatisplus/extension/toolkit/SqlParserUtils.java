@@ -30,7 +30,7 @@ import java.util.Optional;
  */
 public class SqlParserUtils {
 
-    private static ISqlParser COUNT_SQL_PARSER = new JsqlParserCountOptimize();
+    private static final ISqlParser COUNT_SQL_PARSER = new JsqlParserCountOptimize();
 
     /**
      * 获取 COUNT 原生 SQL 包装

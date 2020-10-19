@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
     implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
-    private BaseMapper<T> baseMapper;
+    private final BaseMapper<T> baseMapper;
 
     public LambdaUpdateChainWrapper(BaseMapper<T> baseMapper) {
         super();

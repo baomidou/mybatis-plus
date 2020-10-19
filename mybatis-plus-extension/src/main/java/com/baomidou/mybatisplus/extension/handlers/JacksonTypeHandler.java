@@ -36,7 +36,7 @@ import java.io.IOException;
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     private static ObjectMapper objectMapper = new ObjectMapper();
-    private Class<?> type;
+    private final Class<?> type;
 
     public JacksonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {

@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
     implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
-    private BaseMapper<T> baseMapper;
+    private final BaseMapper<T> baseMapper;
 
     public QueryChainWrapper(BaseMapper<T> baseMapper) {
         super();

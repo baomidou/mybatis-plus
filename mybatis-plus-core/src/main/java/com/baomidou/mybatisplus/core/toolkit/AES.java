@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
@@ -80,12 +80,8 @@ public class AES {
      * @return
      */
     public static String encrypt(String data, String key) {
-        try {
-            byte[] valueByte = encrypt(data.getBytes(Constants.UTF_8), key.getBytes(Constants.UTF_8));
-            return Base64.getEncoder().encodeToString(valueByte);
-        } catch (UnsupportedEncodingException e) {
-            throw new MybatisPlusException(e);
-        }
+        byte[] valueByte = encrypt(data.getBytes(StandardCharsets.UTF_8), key.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(valueByte);
     }
 
     /**
@@ -96,13 +92,9 @@ public class AES {
      * @return
      */
     public static String decrypt(String data, String key) {
-        try {
-            byte[] originalData = Base64.getDecoder().decode(data.getBytes());
-            byte[] valueByte = decrypt(originalData, key.getBytes(Constants.UTF_8));
-            return new String(valueByte);
-        } catch (UnsupportedEncodingException e) {
-            throw new MybatisPlusException(e);
-        }
+        byte[] originalData = Base64.getDecoder().decode(data.getBytes());
+        byte[] valueByte = decrypt(originalData, key.getBytes(StandardCharsets.UTF_8));
+        return new String(valueByte);
     }
 
     /**

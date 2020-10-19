@@ -40,7 +40,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * 查询字段
      */
-    private SharedString sqlSelect = new SharedString();
+    private final SharedString sqlSelect = new SharedString();
 
     public QueryWrapper() {
         this(null);

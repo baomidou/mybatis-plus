@@ -48,17 +48,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
     private static final Map<String, String> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
-    private static ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+    private static final ReflectorFactory REFLECTOR_FACTORY = new DefaultReflectorFactory();
     private final Class<E> type;
 
-    private Invoker invoker;
+    private final Invoker invoker;
 
     public MybatisEnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.type = type;
-        MetaClass metaClass = MetaClass.forClass(type, reflectorFactory);
+        MetaClass metaClass = MetaClass.forClass(type, REFLECTOR_FACTORY);
         String name = "value";
         if (!IEnum.class.isAssignableFrom(type)) {
             name = findEnumValueFieldName(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", this.type.getName())));

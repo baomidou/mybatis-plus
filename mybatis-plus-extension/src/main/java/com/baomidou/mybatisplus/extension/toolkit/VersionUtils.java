@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  *
  * @author Caratacus
  * @since 2016-12-5
+ * @deprecated 3.4.1
  */
+@Deprecated
 public class VersionUtils {
 
     /**

@@ -33,7 +33,7 @@ import java.util.function.Predicate;
 public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
     implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 
-    private BaseMapper<T> baseMapper;
+    private final BaseMapper<T> baseMapper;
 
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper) {
         super();

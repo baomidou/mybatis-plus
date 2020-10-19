@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class SqlRunner implements ISqlRunner {
 
-    private Log log = LogFactory.getLog(SqlRunner.class);
+    private final Log log = LogFactory.getLog(SqlRunner.class);
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
     // 默认FACTORY

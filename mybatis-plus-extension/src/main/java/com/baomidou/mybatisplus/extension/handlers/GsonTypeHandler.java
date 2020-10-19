@@ -33,7 +33,7 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
     private static Gson gson = new Gson();
-    private Class<?> type;
+    private final Class<?> type;
 
     public GsonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {

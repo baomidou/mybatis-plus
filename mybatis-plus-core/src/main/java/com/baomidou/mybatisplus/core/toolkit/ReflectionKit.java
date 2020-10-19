@@ -80,7 +80,7 @@ public final class ReflectionKit {
      * @return 属性值
      */
     public static Object getFieldValue(Object entity, String fieldName) {
-        Class cls = entity.getClass();
+        Class<?> cls = entity.getClass();
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
             Field field = fieldMaps.get(fieldName);
