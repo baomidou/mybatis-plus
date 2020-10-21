@@ -37,8 +37,8 @@ import java.util.function.Consumer;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings({"serial", "unchecked", "rawtypes"})
-public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param extends AbstractWrapper>
+@SuppressWarnings({"serial", "unchecked"})
+public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param extends AbstractWrapper<T, R, Param>>
     extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
 
     protected final Children typedThis = (Children) this;
@@ -53,7 +53,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     public AbstractChainWrapper() {
     }
 
-    public AbstractWrapper getWrapper() {
+    public AbstractWrapper<T, R, Param> getWrapper() {
         return wrapperChildren;
     }
 
