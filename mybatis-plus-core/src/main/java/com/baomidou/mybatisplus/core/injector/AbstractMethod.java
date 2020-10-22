@@ -155,6 +155,7 @@ public abstract class AbstractMethod implements Constants {
      * @return count sql 脚本
      */
     protected String sqlCount() {
+        // #2985
         return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
             SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), ASTERISK);
     }
