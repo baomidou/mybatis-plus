@@ -62,10 +62,4 @@ class JSqlParserTest {
         Delete delete = (Delete) CCJSqlParserUtil.parse("delete from tableName t");
         Assertions.assertNull(delete.getWhere());
     }
-
-    @Test
-    void count() throws Exception {
-        Select select = (Select) CCJSqlParserUtil.parse("select count(*) from table");
-        Assertions.assertNull(select);
-    }
 }
