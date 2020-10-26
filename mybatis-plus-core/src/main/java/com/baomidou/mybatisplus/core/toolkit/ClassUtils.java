@@ -82,6 +82,7 @@ public final class ClassUtils {
      * @return 如果是代理的class，返回父 class，否则返回自身
      */
     public static Class<?> getUserClass(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
         return isProxy(clazz) ? clazz.getSuperclass() : clazz;
     }
 
@@ -94,7 +95,7 @@ public final class ClassUtils {
      * @return 返回对象的 user class
      */
     public static Class<?> getUserClass(Object object) {
-        Assert.notNull(object, "Error: Instance must not be null");
+        Assert.notNull(object, "Instance must not be null");
         return getUserClass(object.getClass());
     }
 
@@ -119,7 +120,7 @@ public final class ClassUtils {
             throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 %s 添加无参的构造方法", e, clazz.getName());
         }
     }
-    
+
     /**
      * 实例化对象.
      *
@@ -132,7 +133,7 @@ public final class ClassUtils {
     public static <T> T newInstance(String clazzName) {
         return (T) newInstance(toClassConfident(clazzName));
     }
-    
+
 
     /**
      * <p>
@@ -181,7 +182,7 @@ public final class ClassUtils {
         int lastDotIndex = fqClassName.lastIndexOf(PACKAGE_SEPARATOR);
         return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : "");
     }
-    
+
     /**
      * Return the default ClassLoader to use: typically the thread context
      * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
@@ -219,5 +220,4 @@ public final class ClassUtils {
         }
         return cl;
     }
-    
 }

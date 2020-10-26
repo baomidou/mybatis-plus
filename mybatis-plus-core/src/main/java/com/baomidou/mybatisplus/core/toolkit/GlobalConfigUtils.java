@@ -49,6 +49,7 @@ public class GlobalConfigUtils {
      * @param clazz 实体类
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
         return getGlobalConfig(tableInfo.getConfiguration()).getSqlSessionFactory();
