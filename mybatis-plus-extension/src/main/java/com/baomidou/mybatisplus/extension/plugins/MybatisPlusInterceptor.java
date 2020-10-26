@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.Setter;
@@ -113,7 +114,7 @@ public class MybatisPlusInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper pm = PropertyMapper.newInstance(properties);
-        Map<String, Properties> group = pm.group("@");
+        Map<String, Properties> group = pm.group(StringPool.AT);
         group.forEach((k, v) -> {
             InnerInterceptor innerInterceptor = ClassUtils.newInstance(k);
             innerInterceptor.setProperties(v);
