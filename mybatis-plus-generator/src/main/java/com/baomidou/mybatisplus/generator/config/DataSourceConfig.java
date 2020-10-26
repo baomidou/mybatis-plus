@@ -47,7 +47,7 @@ public class DataSourceConfig {
      */
     private DbType dbType;
     /**
-     * PostgreSQL schemaName
+     * schemaName
      */
     private String schemaName;
     /**
@@ -114,34 +114,35 @@ public class DataSourceConfig {
      * @return 类型枚举值，如果没找到，则返回 null
      */
     private DbType getDbType(String str) {
-        if (str.contains("mysql")) {
+        if (str.contains(":mysql:") || str.contains(":cobar:")) {
             return DbType.MYSQL;
-        } else if (str.contains("oracle")) {
+        } else if (str.contains(":oracle:")) {
             return DbType.ORACLE;
-        } else if (str.contains("postgresql")) {
+        } else if (str.contains(":postgresql:")) {
             return DbType.POSTGRE_SQL;
-        } else if (str.contains("sqlserver")) {
+        } else if (str.contains(":sqlserver:")) {
             return DbType.SQL_SERVER;
-        } else if (str.contains("db2")) {
+        } else if (str.contains(":db2:")) {
             return DbType.DB2;
-        } else if (str.contains("mariadb")) {
+        } else if (str.contains(":mariadb:")) {
             return DbType.MARIADB;
-        } else if (str.contains("sqlite")) {
+        } else if (str.contains(":sqlite:")) {
             return DbType.SQLITE;
-        } else if (str.contains("h2")) {
+        } else if (str.contains(":h2:")) {
             return DbType.H2;
-        } else if (str.contains("kingbase") || str.contains("kingbase8")) {
+        } else if (str.contains(":kingbase:") || str.contains(":kingbase8:")) {
             return DbType.KINGBASE_ES;
-        } else if (str.contains("dm")) {
+        } else if (str.contains(":dm:")) {
             return DbType.DM;
-        } else if (str.contains("zenith")) {
+        } else if (str.contains(":zenith:")) {
             return DbType.GAUSS;
-        } else if (str.contains("oscar")) {
+        } else if (str.contains(":oscar:")) {
             return DbType.OSCAR;
-        } else if (str.contains("firebird")) {
+        } else if (str.contains(":firebird:")) {
             return DbType.FIREBIRD;
-        }
-        else {
+        } else if (str.contains(":xugu:")) {
+            return DbType.XU_GU;
+        } else {
             return DbType.OTHER;
         }
     }
