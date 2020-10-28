@@ -95,12 +95,9 @@ public class DataSourceConfig {
      */
     public DbType getDbType() {
         if (null == this.dbType) {
-            this.dbType = this.getDbType(this.driverName);
+            this.dbType = this.getDbType(this.url.toLowerCase());
             if (null == this.dbType) {
-                this.dbType = this.getDbType(this.url.toLowerCase());
-                if (null == this.dbType) {
-                    throw ExceptionUtils.mpe("Unknown type of database!");
-                }
+                throw ExceptionUtils.mpe("Unknown type of database!");
             }
         }
 

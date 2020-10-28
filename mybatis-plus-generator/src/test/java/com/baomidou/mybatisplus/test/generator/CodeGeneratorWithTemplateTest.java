@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.mysql.cj.jdbc.Driver;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -46,7 +47,7 @@ class CodeGeneratorWithTemplateTest {
     /**
      * 是否去掉生成实体的属性名前缀
      */
-    private String[] fieldPrefix = null;
+    private String[] fieldPrefix = new String[]{};
     /**
      * 生成的Service 接口类名是否以I开头
      * <p>默认是以I开头</p>
@@ -55,6 +56,7 @@ class CodeGeneratorWithTemplateTest {
     private boolean serviceClassNameStartWithI = true;
 
     @Test
+    @Disabled
     void generateCode() {
         String packageName = "com.baomidou.springboot";
         enableTableFieldAnnotation = false;
