@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.generator.config.querys;
 
 /**
- * <p></p>
+ * <p>Oscar（神通数据库） 表数据查询</p>
  *
  * @author whli
  * @version 1.0.0
@@ -11,11 +11,11 @@ public class OscarQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "SELECT " +
+        return "SELECT * FROM (SELECT " +
             "a.TABLE_NAME, " +
             "b.COMMENTS " +
             "FROM USER_TABLES a " +
-            "INNER JOIN USER_TAB_COMMENTS b ON (b.TABLE_TYPE = 'TABLE' AND a.TABLE_NAME = b.TABLE_NAME) ";
+            "INNER JOIN USER_TAB_COMMENTS b ON (b.TABLE_TYPE = 'TABLE' AND a.TABLE_NAME = b.TABLE_NAME)) a WHERE 1=1 ";
     }
 
     @Override
