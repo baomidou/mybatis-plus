@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import java.io.Serializable;
+
 /**
  * mybatis_plus 自用常量集中管理
  *
  * @author miemie
  * @since 2018-07-22
  */
-public interface Constants extends StringPool {
+public interface Constants extends StringPool, Serializable {
 
     /**
      * project name
