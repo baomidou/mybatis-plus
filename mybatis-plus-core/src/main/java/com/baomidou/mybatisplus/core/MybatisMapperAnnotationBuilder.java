@@ -117,11 +117,20 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 }
             }
             // TODO 注入 CURD 动态 SQL , 放在在最后, because 可能会有人会用注解重写sql
-            if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
-                GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
+            try {
+                // https://github.com/baomidou/mybatis-plus/issues/3038
+                if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
+                    parserInjector();
+                }
+            } catch (IncompleteElementException e) {
+                configuration.addIncompleteMethod(new InjectorResolver(this));
             }
         }
         parsePendingMethods();
+    }
+
+    void parserInjector() {
+        GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
     }
 
     private boolean canHaveStatement(Method method) {

@@ -45,6 +45,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin
  * @since 2018-04-06
  */
+@SuppressWarnings("serial")
 public abstract class AbstractMethod implements Constants {
     protected static final Log logger = LogFactory.getLog(AbstractMethod.class);
 
