@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test;
  * @author miemie
  * @since 2020-08-11
  */
-@Disabled
-public class ImadcnIdentifierGeneratorTest {
+@Disabled("不需要参与全局test")
+class ImadcnIdentifierGeneratorTest {
 
     private static ImadcnIdentifierGenerator generator;
 

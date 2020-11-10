@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.test.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
-import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
+import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
@@ -168,5 +168,4 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         when(callableStatement.getObject(6)).thenReturn(null);
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6));
     }
-
 }
