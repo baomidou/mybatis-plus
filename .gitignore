@@ -1,4 +1,5 @@
 **/target/
+lombok.config
 
 **/.gitignore
 # IntelliJ project files
