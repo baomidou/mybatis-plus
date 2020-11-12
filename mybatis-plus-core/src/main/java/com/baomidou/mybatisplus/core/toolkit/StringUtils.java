@@ -527,4 +527,44 @@ public final class StringUtils {
         return buf.toString();
     }
 
+    /**
+     * <p>比较两个字符串，相同则返回true。字符串可为null</p>
+     *
+     * <p>对字符串大小写敏感</p>
+     *
+     * <pre>
+     * StringUtils.equals(null, null)   = true
+     * StringUtils.equals(null, "abc")  = false
+     * StringUtils.equals("abc", null)  = false
+     * StringUtils.equals("abc", "abc") = true
+     * StringUtils.equals("abc", "ABC") = false
+     * </pre>
+     *
+     * @param cs1  第一个字符串, 可为 {@code null}
+     * @param cs2  第二个字符串, 可为 {@code null}
+     * @return {@code true} 如果两个字符串相同, 或者都为 {@code null}
+     * @see Object#equals(Object)
+     */
+    public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
+        if (cs1 == cs2) {
+            return true;
+        }
+        if (cs1 == null || cs2 == null) {
+            return false;
+        }
+        if (cs1.length() != cs2.length()) {
+            return false;
+        }
+        if (cs1 instanceof String && cs2 instanceof String) {
+            return cs1.equals(cs2);
+        }
+        // Step-wise comparison
+        final int length = cs1.length();
+        for (int i = 0; i < length; i++) {
+            if (cs1.charAt(i) != cs2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

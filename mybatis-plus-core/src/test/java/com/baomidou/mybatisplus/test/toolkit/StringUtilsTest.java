@@ -61,4 +61,16 @@ class StringUtilsTest {
         assertThat(StringUtils.getTargetColumn("`order`")).isEqualTo("order");
         assertThat(StringUtils.getTargetColumn("'order'")).isEqualTo("order");
     }
+
+    /**
+     * 测试equals方法
+     */
+    @Test
+    void equal(){
+        assertTrue(StringUtils.equals(null, null));
+        Assertions.assertFalse(StringUtils.equals(null, "abc"));
+        Assertions.assertFalse(StringUtils.equals("abc", null));
+        assertTrue(StringUtils.equals("abc", "abc"));
+        Assertions.assertFalse(StringUtils.equals("abc", "ABC"));
+    }
 }
