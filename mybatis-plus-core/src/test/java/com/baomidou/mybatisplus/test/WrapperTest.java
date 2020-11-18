@@ -251,7 +251,7 @@ class WrapperTest {
     void testOrderBy() {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
         QueryWrapper wrapper = new QueryWrapper<>();
-        wrapper.eq("name", "anson");
+        wrapper.eq("name", "ga");
         wrapper.orderBy(true, true, "id ,name",";delete from user;",";where 1=1 index");
         logSqlSegment("测试 Order By sql注入",wrapper,"(name = ?) ORDER BY id,name ASC,deletefromuser ASC,where11index ASC");
     }
