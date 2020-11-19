@@ -21,6 +21,7 @@ import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -64,6 +65,10 @@ public abstract class PluginUtils {
 
     public static MPBoundSql mpBoundSql(BoundSql boundSql) {
         return new MPBoundSql(boundSql);
+    }
+
+    public static MpSqlSource mpSqlSource(SqlSource sqlSource) {
+        return new MpSqlSource(sqlSource);
     }
 
     public static MPStatementHandler mpStatementHandler(StatementHandler statementHandler) {
@@ -152,6 +157,22 @@ public abstract class PluginUtils {
         @SuppressWarnings("unchecked")
         private <T> T get(String property) {
             return (T) boundSql.getValue(property);
+        }
+    }
+
+    public static class MpSqlSource {
+        private final MetaObject sqlSource;
+
+        public MpSqlSource(SqlSource sqlSource) {
+            this.sqlSource = SystemMetaObject.forObject(sqlSource);
+        }
+
+        public String sql() {
+            return (String) sqlSource.getValue("sqlSource.sql");
+        }
+
+        public void sql(String sql) {
+            sqlSource.setValue("sqlSource.sql", sql);
         }
     }
 }
