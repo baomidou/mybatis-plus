@@ -19,7 +19,7 @@ import java.io.*;
 
 
 /**
- * <p> copy from spring-core#org.springframework.util.SerializationUtils version 5.2.2 </p>
+ * <p> copy from spring-core#org.springframework.util.SerializationUtils version 5.2.8 </p>
  *
  * @since 1.0
  */

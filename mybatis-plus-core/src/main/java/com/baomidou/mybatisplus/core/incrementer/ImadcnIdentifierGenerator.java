@@ -14,6 +14,7 @@ import java.io.IOException;
  * 用 https://github.com/imadcn/idworker 的实现
  *
  * @author miemie
+ * @since 3.4.0
  * @since 2020-08-11
  */
 public class ImadcnIdentifierGenerator implements IdentifierGenerator, Closeable {

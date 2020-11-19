@@ -219,7 +219,7 @@ public class TableInfo implements Constants {
         if (havePK()) {
             sqlSelect = keyColumn;
             if (resultMap == null && keyRelated) {
-                sqlSelect += (" AS " + keyProperty);
+                sqlSelect += (AS + keyProperty);
             }
         } else {
             sqlSelect = EMPTY;

@@ -129,6 +129,13 @@ public class GlobalConfig implements Serializable {
          */
         private String propertyFormat;
         /**
+         * 实验性功能,占位符替换,等同于 {@link com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor},
+         * 只是这个属于启动时替换,用得地方多会启动慢一点点,不适用于其他的 {@link org.apache.ibatis.scripting.LanguageDriver}
+         *
+         * @since 3.4.2
+         */
+        private boolean replacePlaceholder;
+        /**
          * 表名是否使用驼峰转下划线命名,只对表名生效
          */
         private boolean tableUnderline = true;

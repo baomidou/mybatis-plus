@@ -234,7 +234,7 @@ public class TableFieldInfo implements Constants {
             if (StringUtils.isNotBlank(propertyFormat)) {
                 asProperty = String.format(propertyFormat, this.property);
             }
-            this.sqlSelect += (" AS " + asProperty);
+            this.sqlSelect += (AS + asProperty);
         }
 
         this.insertStrategy = this.chooseFieldStrategy(tableField.insertStrategy(), dbConfig.getInsertStrategy());
@@ -300,7 +300,7 @@ public class TableFieldInfo implements Constants {
             if (StringUtils.isNotBlank(propertyFormat)) {
                 asProperty = String.format(propertyFormat, this.property);
             }
-            this.sqlSelect += (" AS " + asProperty);
+            this.sqlSelect += (AS + asProperty);
         }
     }
 

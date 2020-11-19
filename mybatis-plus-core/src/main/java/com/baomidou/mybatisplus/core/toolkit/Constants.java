@@ -43,6 +43,12 @@ public interface Constants extends StringPool, Serializable {
      */
     String AES_CBC_CIPHER = "AES/CBC/PKCS5Padding";
     /**
+     * as
+     */
+    String AS = " AS ";
+
+
+    /**
      * 实体类
      */
     String ENTITY = "et";

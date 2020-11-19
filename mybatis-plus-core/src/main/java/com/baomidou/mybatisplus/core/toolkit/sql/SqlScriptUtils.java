@@ -26,11 +26,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author miemie
  * @since 2018-08-15
  */
-public final class SqlScriptUtils implements Constants {
-
-    private SqlScriptUtils() {
-        // ignore
-    }
+@SuppressWarnings("serial")
+public abstract class SqlScriptUtils implements Constants {
 
     /**
      * <p>

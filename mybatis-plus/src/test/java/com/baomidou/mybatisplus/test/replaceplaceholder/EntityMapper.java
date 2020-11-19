@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.replaceselectbody;
+package com.baomidou.mybatisplus.test.replaceplaceholder;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;

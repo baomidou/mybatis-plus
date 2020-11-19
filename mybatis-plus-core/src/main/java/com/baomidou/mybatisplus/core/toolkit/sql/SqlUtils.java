@@ -16,15 +16,28 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.enums.SqlLike;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * SqlUtils工具类
+ * !!! 本工具不适用于本框架外的类使用 !!!
  *
  * @author Caratacus
  * @since 2016-11-13
  */
-public class SqlUtils {
+@SuppressWarnings("serial")
+public abstract class SqlUtils implements Constants {
+
+    private static final Pattern pattern = Pattern.compile("\\{@((\\w+?)|(\\w+?:\\w+?)|(\\w+?:\\w+?:\\w+?))}");
 
     /**
      * 用%连接like
@@ -35,11 +48,78 @@ public class SqlUtils {
     public static String concatLike(Object str, SqlLike type) {
         switch (type) {
             case LEFT:
-                return StringPool.PERCENT + str;
+                return PERCENT + str;
             case RIGHT:
-                return str + StringPool.PERCENT;
+                return str + PERCENT;
             default:
-                return StringPool.PERCENT + str + StringPool.PERCENT;
+                return PERCENT + str + PERCENT;
         }
+    }
+
+    public static List<String> findPlaceholder(String sql) {
+        Matcher matcher = pattern.matcher(sql);
+        List<String> list = new ArrayList<>();
+        while (matcher.find()) {
+            list.add(matcher.group());
+        }
+        return list;
+    }
+
+    public static String replaceSqlPlaceholder(String sql, List<String> placeHolder, String asFormat) {
+        for (String s : placeHolder) {
+            String s1 = s.substring(2, s.length() - 1);
+            int i1 = s1.indexOf(COLON);
+            String tableName;
+            String alisa = null;
+            String asAlisa = null;
+            if (i1 < 0) {
+                tableName = s1;
+            } else {
+                tableName = s1.substring(0, i1);
+                s1 = s1.substring(i1 + 1);
+                i1 = s1.indexOf(COLON);
+                if (i1 < 0) {
+                    alisa = s1;
+                } else {
+                    alisa = s1.substring(0, i1);
+                    asAlisa = s1.substring(i1 + 1);
+                }
+            }
+            sql = sql.replace(s, getSelectBody(tableName, alisa, asAlisa, asFormat));
+        }
+        return sql;
+    }
+
+    public static String getSelectBody(String tableName, String alisa, String asAlisa, String asFormat) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
+        Assert.notNull(tableInfo, "can not find TableInfo Cache by \"%s\"", tableName);
+        String s = tableInfo.chooseSelect(TableFieldInfo::isSelect);
+        if (alisa == null) {
+            return s;
+        }
+        return getNewSelectBody(s, alisa, asAlisa, asFormat);
+    }
+
+    public static String getNewSelectBody(String selectBody, String alisa, String asAlisa, String asFormat) {
+        String[] split = selectBody.split(COMMA);
+        StringBuilder sb = new StringBuilder();
+        boolean asA = asAlisa != null;
+        for (String body : split) {
+            final String sa = alisa.concat(DOT);
+            if (asA) {
+                int as = body.indexOf(AS);
+                if (as < 0) {
+                    sb.append(sa).append(body).append(AS).append(String.format(asFormat, asAlisa.concat(DOT).concat(body)));
+                } else {
+                    // todo
+                    String s1 = body.substring(0, as);
+                    sb.append(s1);
+                }
+            } else {
+                sb.append(sa).append(body);
+            }
+            sb.append(COMMA);
+        }
+        return sb.deleteCharAt(sb.length() - 1).toString();
     }
 }

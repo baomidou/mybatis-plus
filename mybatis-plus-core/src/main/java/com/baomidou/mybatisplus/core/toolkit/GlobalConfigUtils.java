@@ -95,6 +95,10 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getDbConfig().getIdType();
     }
 
+    public static GlobalConfig.DbConfig getDbConfig(Configuration configuration) {
+        return getGlobalConfig(configuration).getDbConfig();
+    }
+
     public static ISqlInjector getSqlInjector(Configuration configuration) {
         return getGlobalConfig(configuration).getSqlInjector();
     }

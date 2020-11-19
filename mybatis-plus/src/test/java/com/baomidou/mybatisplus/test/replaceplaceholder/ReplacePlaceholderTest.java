@@ -1,7 +1,8 @@
-package com.baomidou.mybatisplus.test.replaceselectbody;
+package com.baomidou.mybatisplus.test.replaceplaceholder;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.ReplaceSelectBodyInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
@@ -14,18 +15,12 @@ import java.util.List;
  * @author miemie
  * @since 2020-06-23
  */
-public class ReplaceSelectBodyTest extends BaseDbTest<EntityMapper> {
+public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void replace() {
         doTest(i -> {
             i.selectAll();
-            i.selectAll();
-            i.selectAll();
-            i.selectAll();
-            i.selectAll2();
-            i.selectAll2();
-            i.selectAll2();
             i.selectAll2();
         });
     }
@@ -33,8 +28,15 @@ public class ReplaceSelectBodyTest extends BaseDbTest<EntityMapper> {
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new ReplaceSelectBodyInnerInterceptor());
+        interceptor.addInnerInterceptor(new ReplacePlaceholderInnerInterceptor());
         return Collections.singletonList(interceptor);
+    }
+
+    @Override
+    protected GlobalConfig globalConfig() {
+        GlobalConfig config = super.globalConfig();
+        config.getDbConfig().setReplacePlaceholder(true);
+        return config;
     }
 
     @Override

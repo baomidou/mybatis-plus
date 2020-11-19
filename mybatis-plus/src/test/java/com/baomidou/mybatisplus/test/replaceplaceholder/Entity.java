@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.replaceselectbody;
+package com.baomidou.mybatisplus.test.replaceplaceholder;
 
 import lombok.Data;
 
