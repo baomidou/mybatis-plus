@@ -31,7 +31,7 @@ public class MybatisMethodResolver extends MethodResolver {
     private final Method method;
 
     public MybatisMethodResolver(MybatisMapperAnnotationBuilder annotationBuilder, Method method) {
-        super(annotationBuilder, method);
+        super(null, null);
         this.annotationBuilder = annotationBuilder;
         this.method = method;
     }

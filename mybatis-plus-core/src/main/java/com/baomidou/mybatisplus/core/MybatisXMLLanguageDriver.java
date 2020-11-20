@@ -52,7 +52,7 @@ public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
             List<String> find = SqlUtils.findPlaceholder(script);
             if (CollectionUtils.isNotEmpty(find)) {
                 try {
-                    script = SqlUtils.replaceSqlPlaceholder(script, find, config.getPropertyFormat());
+                    script = SqlUtils.replaceSqlPlaceholder(script, find, config.getEscapeSymbol());
                 } catch (MybatisPlusException e) {
                     throw new IncompleteElementException();
                 }

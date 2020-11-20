@@ -113,17 +113,20 @@ public class GlobalConfig implements Serializable {
         private String schema;
         /**
          * db字段 format
-         * <li> 例: `%s` </li>
-         * <p> 对主键无效 </p>
+         * <p>
+         * 例: `%s`
+         * <p>
+         * 对主键无效
          *
          * @since 3.1.1
          */
         private String columnFormat;
         /**
-         * entity 的字段(property)的 format,
-         * 只有在 column as property 这种情况下生效
-         * <li> 例: `%s` </li>
-         * <p> 对主键无效 </p>
+         * entity 的字段(property)的 format,只有在 column as property 这种情况下生效
+         * <p>
+         * 例: `%s`
+         * <p>
+         * 对主键无效
          *
          * @since 3.3.0
          */
@@ -135,6 +138,16 @@ public class GlobalConfig implements Serializable {
          * @since 3.4.2
          */
         private boolean replacePlaceholder;
+        /**
+         * 转义符
+         * <p>
+         * 配合 {@link #replacePlaceholder} 使用时有效
+         * <p>
+         * 例: " 或 ' 或 `
+         *
+         * @since 3.4.2
+         */
+        private String escapeSymbol;
         /**
          * 表名是否使用驼峰转下划线命名,只对表名生效
          */

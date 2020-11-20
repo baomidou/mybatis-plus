@@ -107,10 +107,10 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     parseResultMap(method);
                 }
                 try {
-                    parseStatement(method);
-                    // TODO 加入 SqlParser 注解过滤缓存
+                    // TODO 加入 注解过滤缓存
                     InterceptorIgnoreHelper.initSqlParserInfoCache(cache, mapperName, method);
                     SqlParserHelper.initSqlParserInfoCache(mapperName, method);
+                    parseStatement(method);
                 } catch (IncompleteElementException e) {
                     // TODO 使用 MybatisMethodResolver 而不是 MethodResolver
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));

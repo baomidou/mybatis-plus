@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * 功能类似于 {@link GlobalConfig.DbConfig#replacePlaceholder},
+ * 功能类似于 {@link GlobalConfig.DbConfig#isReplacePlaceholder()},
  * 只是这个是在运行时实时替换,适用范围更广
  *
  * @author miemie
@@ -26,13 +26,13 @@ public class ReplacePlaceholderInnerInterceptor implements InnerInterceptor {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    private String asFormat;
+    private String escapeSymbol;
 
     public ReplacePlaceholderInnerInterceptor() {
     }
 
-    public ReplacePlaceholderInnerInterceptor(String asFormat) {
-        this.asFormat = asFormat;
+    public ReplacePlaceholderInnerInterceptor(String escapeSymbol) {
+        this.escapeSymbol = escapeSymbol;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ReplacePlaceholderInnerInterceptor implements InnerInterceptor {
         String sql = boundSql.getSql();
         List<String> find = SqlUtils.findPlaceholder(sql);
         if (CollectionUtils.isNotEmpty(find)) {
-            sql = SqlUtils.replaceSqlPlaceholder(sql, find, asFormat);
+            sql = SqlUtils.replaceSqlPlaceholder(sql, find, escapeSymbol);
             PluginUtils.mpBoundSql(boundSql).sql(sql);
         }
     }

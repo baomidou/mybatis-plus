@@ -26,7 +26,7 @@ class SqlUtilsTest {
         s = SqlUtils.getNewSelectBody("`id`,`name`", "d", null, null);
         assertThat(s).isEqualTo("d.`id`,d.`name`");
 
-        s = SqlUtils.getNewSelectBody("id,name", "d", "pp", "`%s`");
+        s = SqlUtils.getNewSelectBody("id,name", "d", "pp", "`");
         assertThat(s).isEqualTo("d.id AS `pp.id`,d.name AS `pp.name`");
 
         s = SqlUtils.getNewSelectBody("id AS t_id,name AS t_name", "d", null, null);
@@ -35,10 +35,10 @@ class SqlUtilsTest {
         s = SqlUtils.getNewSelectBody("`id` AS t_id,`name` AS t_name", "d", null, null);
         assertThat(s).isEqualTo("d.`id` AS t_id,d.`name` AS t_name");
 
-        s = SqlUtils.getNewSelectBody("id AS `t_id`,name AS `t_name`", "d", "pp", "`%s`");
+        s = SqlUtils.getNewSelectBody("id AS `t_id`,name AS `t_name`", "d", "pp", "`");
         assertThat(s).isEqualTo("d.id AS `pp.t_id`,d.name AS `pp.t_name`");
 
-        s = SqlUtils.getNewSelectBody("`id` AS `t_id`,`name` AS `t_name`", "d", "pp", "`%s`");
-        assertThat(s).isEqualTo("d.`id` AS `pp.t_id`,d.`name` AS `pp.t_name`");
+        s = SqlUtils.getNewSelectBody("`id` AS `t_id`,`name` AS `t_name`", "d", "pp", "'");
+        assertThat(s).isEqualTo("d.`id` AS 'pp.t_id',d.`name` AS 'pp.t_name'");
     }
 }

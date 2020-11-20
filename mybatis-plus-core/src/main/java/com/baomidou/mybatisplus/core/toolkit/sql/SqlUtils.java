@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public abstract class SqlUtils implements Constants {
         return list;
     }
 
-    public static String replaceSqlPlaceholder(String sql, List<String> placeHolder, String asFormat) {
+    public static String replaceSqlPlaceholder(String sql, List<String> placeHolder, String escapeSymbol) {
         for (String s : placeHolder) {
             String s1 = s.substring(2, s.length() - 1);
             int i1 = s1.indexOf(COLON);
@@ -85,22 +86,22 @@ public abstract class SqlUtils implements Constants {
                     asAlisa = s1.substring(i1 + 1);
                 }
             }
-            sql = sql.replace(s, getSelectBody(tableName, alisa, asAlisa, asFormat));
+            sql = sql.replace(s, getSelectBody(tableName, alisa, asAlisa, escapeSymbol));
         }
         return sql;
     }
 
-    public static String getSelectBody(String tableName, String alisa, String asAlisa, String asFormat) {
+    public static String getSelectBody(String tableName, String alisa, String asAlisa, String escapeSymbol) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
         Assert.notNull(tableInfo, "can not find TableInfo Cache by \"%s\"", tableName);
         String s = tableInfo.chooseSelect(TableFieldInfo::isSelect);
         if (alisa == null) {
             return s;
         }
-        return getNewSelectBody(s, alisa, asAlisa, asFormat);
+        return getNewSelectBody(s, alisa, asAlisa, escapeSymbol);
     }
 
-    public static String getNewSelectBody(String selectBody, String alisa, String asAlisa, String asFormat) {
+    public static String getNewSelectBody(String selectBody, String alisa, String asAlisa, String escapeSymbol) {
         String[] split = selectBody.split(COMMA);
         StringBuilder sb = new StringBuilder();
         boolean asA = asAlisa != null;
@@ -109,11 +110,12 @@ public abstract class SqlUtils implements Constants {
             if (asA) {
                 int as = body.indexOf(AS);
                 if (as < 0) {
-                    sb.append(sa).append(body).append(AS).append(String.format(asFormat, asAlisa.concat(DOT).concat(body)));
+                    sb.append(sa).append(body).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(body), escapeSymbol));
                 } else {
-                    // todo
-                    String s1 = body.substring(0, as);
-                    sb.append(s1);
+                    String column = body.substring(0, as);
+                    String property = body.substring(as + 4);
+                    property = StringUtils.getTargetColumn(property);
+                    sb.append(sa).append(column).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(property), escapeSymbol));
                 }
             } else {
                 sb.append(sa).append(body);
@@ -121,5 +123,9 @@ public abstract class SqlUtils implements Constants {
             sb.append(COMMA);
         }
         return sb.deleteCharAt(sb.length() - 1).toString();
+    }
+
+    private static String escapeColumn(String column, String escapeSymbol) {
+        return escapeSymbol.concat(column).concat(escapeSymbol);
     }
 }
