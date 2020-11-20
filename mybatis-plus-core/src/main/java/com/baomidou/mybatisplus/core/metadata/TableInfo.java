@@ -50,6 +50,7 @@ import static java.util.stream.Collectors.joining;
 @Data
 @Setter(AccessLevel.PACKAGE)
 @Accessors(chain = true)
+@SuppressWarnings("serial")
 public class TableInfo implements Constants {
 
     /**

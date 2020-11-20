@@ -38,6 +38,7 @@ import java.util.Map;
 @Getter
 @ToString
 @EqualsAndHashCode
+@SuppressWarnings("serial")
 public class TableFieldInfo implements Constants {
 
     /**
