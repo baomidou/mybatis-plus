@@ -1,6 +1,1 @@
-- feat: 公开 AbstractWrapper.getEntityClass
-- fix: 新多租户插件完善子查询,支持 比较符号,in,EXISTS,NOT EXISTS
-- feat: 新增 FakeTenantLineInnerInterceptor 对 TenantSqlParser 进行过度
-- feat: 分页count识别 `left join (subSelect)` 优化
-- feat: 所有 count 从 count(1) 变更为 count(*)
-- feat: mybatis up to 3.5.6
+- fix: 移除 BlockAttackInnerInterceptor 内引用的 commons 的 utils
