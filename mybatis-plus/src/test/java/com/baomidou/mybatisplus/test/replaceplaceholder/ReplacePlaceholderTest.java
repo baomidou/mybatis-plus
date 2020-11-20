@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.replaceplaceholder;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
@@ -32,12 +31,13 @@ public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
         return Collections.singletonList(interceptor);
     }
 
-    @Override
-    protected GlobalConfig globalConfig() {
-        GlobalConfig config = super.globalConfig();
-        config.getDbConfig().setReplacePlaceholder(true);
-        return config;
-    }
+    // 全局 gradle test 不支持,全局缓存串台了
+//    @Override
+//    protected GlobalConfig globalConfig() {
+//        GlobalConfig config = super.globalConfig();
+//        config.getDbConfig().setReplacePlaceholder(true);
+//        return config;
+//    }
 
     @Override
     protected String tableDataSql() {
