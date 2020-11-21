@@ -116,6 +116,7 @@ subprojects {
     jar {
         afterEvaluate {
             manifest {
+                attributes 'Implementation-Title': archiveBaseName
                 attributes 'Implementation-Version': archiveVersion
                 attributes 'Built-Gradle': gradle.gradleVersion
                 attributes 'Bundle-DocURL': 'https://mybatis.plus/'
