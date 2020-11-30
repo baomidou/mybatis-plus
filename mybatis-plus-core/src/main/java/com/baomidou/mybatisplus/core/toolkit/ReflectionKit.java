@@ -15,20 +15,26 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * 反射工具类，提供反射相关的快捷操作
@@ -38,6 +44,7 @@ import static java.util.stream.Collectors.toMap;
  * @since 2016-09-22
  */
 public final class ReflectionKit {
+
     private static final Log logger = LogFactory.getLog(ReflectionKit.class);
     /**
      * class field cache
@@ -94,6 +101,28 @@ public final class ReflectionKit {
 
     /**
      * <p>
+     * 获取目标父类的指定位置的泛型
+     * </p>
+     *
+     * @param clazz  对象
+     * @param target 目标父类
+     * @param index  目标父类泛型索引位置
+     * @return 目标父类的指定位置的泛型的实际类型，如果对象为空、目标父类未找到、索引越界等将返回Object.class
+     */
+    public static Class<?> getTargetSuperClassGenericType(final Class<?> clazz, final Class<?> target, final int index) {
+        Class<?> superClass = clazz;
+        while (superClass != null && superClass.getSuperclass() != target) {
+            superClass = superClass.getSuperclass();
+        }
+        if (superClass == null) {
+            logger.warn(String.format("Warn: %s's target superclass %s not found", clazz.getSimpleName(), target.getSimpleName()));
+            return Object.class;
+        }
+        return getSuperClassGenericType(superClass, index);
+    }
+
+    /**
+     * <p>
      * 反射对象获取泛型
      * </p>
      *
@@ -110,12 +139,12 @@ public final class ReflectionKit {
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         if (index >= params.length || index < 0) {
             logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
-                    clazz.getSimpleName(), params.length));
+                clazz.getSimpleName(), params.length));
             return Object.class;
         }
         if (!(params[index] instanceof Class)) {
             logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
-                    clazz.getSimpleName()));
+                clazz.getSimpleName()));
             return Object.class;
         }
         return (Class<?>) params[index];
@@ -161,11 +190,11 @@ public final class ReflectionKit {
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
             return fieldMap.values().stream()
-                    /* 过滤静态属性 */
-                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                    /* 过滤 transient关键字修饰的属性 */
-                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                    .collect(Collectors.toList());
+                /* 过滤静态属性 */
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .collect(Collectors.toList());
         });
     }
 
@@ -182,19 +211,19 @@ public final class ReflectionKit {
         if (clazz.getSuperclass() != null) {
             /* 排除重载属性 */
             Map<String, Field> fieldMap = excludeOverrideSuperField(clazz.getDeclaredFields(),
-                    /* 处理父类字段 */
-                    getFieldList(clazz.getSuperclass()));
+                /* 处理父类字段 */
+                getFieldList(clazz.getSuperclass()));
             /*
              * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
              * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
             return fieldMap.values().stream()
-                    /* 过滤静态属性 */
-                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                    /* 过滤 transient关键字修饰的属性 */
-                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                    .collect(Collectors.toList());
+                /* 过滤静态属性 */
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -211,12 +240,12 @@ public final class ReflectionKit {
     public static Map<String, Field> excludeOverrideSuperField(Field[] fields, List<Field> superFieldList) {
         // 子类属性
         Map<String, Field> fieldMap = Stream.of(fields).collect(toMap(Field::getName, identity(),
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u));
-                },
-                LinkedHashMap::new));
+            (u, v) -> {
+                throw new IllegalStateException(String.format("Duplicate key %s", u));
+            },
+            LinkedHashMap::new));
         superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName()))
-                .forEach(f -> fieldMap.put(f.getName(), f));
+            .forEach(f -> fieldMap.put(f.getName(), f));
         return fieldMap;
     }
 
