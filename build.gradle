@@ -1,4 +1,4 @@
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
@@ -114,6 +114,13 @@ subprojects {
     }
 
     jar {
+        into("META-INF/") {
+            from rootProject.file("LICENSE")
+        }
+        into("META-INF/maven/$project.group/$project.name") {
+            from { generatePomFileForMavenJavaPublication }
+            rename ".*", "pom.xml"
+        }
         afterEvaluate {
             manifest {
                 attributes 'Implementation-Title': archiveBaseName
@@ -123,7 +130,7 @@ subprojects {
                 attributes 'Build-OS': System.getProperty("os.name")
                 attributes 'Built-By': System.getProperty("user.name")
                 attributes 'Build-Jdk': System.getProperty("java.version")
-                attributes 'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+                attributes 'Build-Timestamp': LocalDateTime.now().format("yyyy-MM-dd HH:mm:ss")
             }
         }
     }
@@ -140,6 +147,7 @@ subprojects {
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
         ignoreFailures = true
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
 
     //noinspection GroovyAssignabilityCheck
