@@ -78,6 +78,6 @@ public class H2Query extends AbstractDbQuery {
 
     @Override
     public boolean isKeyIdentity(ResultSet results) throws SQLException {
-        return "auto_increment".equals(results.getString("Extra"));
+        return results.getString("SEQUENCE_NAME") != null;
     }
 }
