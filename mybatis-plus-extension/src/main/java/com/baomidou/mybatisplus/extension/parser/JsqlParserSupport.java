@@ -49,7 +49,7 @@ public abstract class JsqlParserSupport {
             Statement statement = CCJSqlParserUtil.parse(sql);
             return processParser(statement, 0, sql, obj);
         } catch (JSQLParserException e) {
-            throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e, sql);
+            throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e.getCause(), sql);
         }
     }
 
@@ -71,7 +71,7 @@ public abstract class JsqlParserSupport {
             }
             return sb.toString();
         } catch (JSQLParserException e) {
-            throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e, sql);
+            throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e.getCause(), sql);
         }
     }
 
