@@ -99,6 +99,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 查看 {@link #findIDialect(Executor)} 逻辑
      */
     private IDialect dialect;
+    /**
+     * 生成 countSql 优化掉 join
+     * 现在只支持 left join
+     *
+     * @since 3.4.2
+     */
+    protected boolean optimizeJoin = true;
 
     public PaginationInnerInterceptor(DbType dbType) {
         this.dbType = dbType;
@@ -288,42 +295,44 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 return lowLevelCountSql(select.toString());
             }
             // 包含 join 连表,进行判断是否移除 join 连表
-            List<Join> joins = plainSelect.getJoins();
-            if (CollectionUtils.isNotEmpty(joins)) {
-                boolean canRemoveJoin = true;
-                String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
-                // 不区分大小写
-                whereS = whereS.toLowerCase();
-                for (Join join : joins) {
-                    if (!join.isLeft()) {
-                        canRemoveJoin = false;
-                        break;
-                    }
-                    FromItem rightItem = join.getRightItem();
-                    String str = "";
-                    if (rightItem instanceof Table) {
-                        Table table = (Table) rightItem;
-                        str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
-                    } else if (rightItem instanceof SubSelect) {
-                        SubSelect subSelect = (SubSelect) rightItem;
-                        /* 如果 left join 是子查询，并且子查询里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
-                        if (subSelect.toString().contains(StringPool.QUESTION_MARK)) {
+            if (optimizeJoin) {
+                List<Join> joins = plainSelect.getJoins();
+                if (CollectionUtils.isNotEmpty(joins)) {
+                    boolean canRemoveJoin = true;
+                    String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
+                    // 不区分大小写
+                    whereS = whereS.toLowerCase();
+                    for (Join join : joins) {
+                        if (!join.isLeft()) {
                             canRemoveJoin = false;
                             break;
                         }
-                        str = subSelect.getAlias().getName() + StringPool.DOT;
+                        FromItem rightItem = join.getRightItem();
+                        String str = "";
+                        if (rightItem instanceof Table) {
+                            Table table = (Table) rightItem;
+                            str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                        } else if (rightItem instanceof SubSelect) {
+                            SubSelect subSelect = (SubSelect) rightItem;
+                            /* 如果 left join 是子查询，并且子查询里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
+                            if (subSelect.toString().contains(StringPool.QUESTION_MARK)) {
+                                canRemoveJoin = false;
+                                break;
+                            }
+                            str = subSelect.getAlias().getName() + StringPool.DOT;
+                        }
+                        // 不区分大小写
+                        str = str.toLowerCase();
+                        String onExpressionS = join.getOnExpression().toString();
+                        /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
+                        if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {
+                            canRemoveJoin = false;
+                            break;
+                        }
                     }
-                    // 不区分大小写
-                    str = str.toLowerCase();
-                    String onExpressionS = join.getOnExpression().toString();
-                    /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
-                    if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {
-                        canRemoveJoin = false;
-                        break;
+                    if (canRemoveJoin) {
+                        plainSelect.setJoins(null);
                     }
-                }
-                if (canRemoveJoin) {
-                    plainSelect.setJoins(null);
                 }
             }
             // 优化 SQL
@@ -450,6 +459,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
             .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
             .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
-            .whenNotBlack("maxLimit", Long::parseLong, this::setMaxLimit);
+            .whenNotBlack("maxLimit", Long::parseLong, this::setMaxLimit)
+            .whenNotBlack("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
     }
 }
