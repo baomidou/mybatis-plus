@@ -14,6 +14,9 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
     </#if>
 </#if>
+<#if entityExcelModel>
+    import com.alibaba.excel.annotation.ExcelProperty;
+</#if>
 
 /**
  * <p>
@@ -58,8 +61,12 @@ public class ${entity} implements Serializable {
     </#if>
 
     <#if field.comment!?length gt 0>
-        <#if swagger2>
-    @ApiModelProperty(value = "${field.comment}")
+        <#if swagger2 || entityExcelModel >
+            <#if entityExcelModel>
+                @ExcelProperty("${field.comment}")
+            <#else>
+                @ApiModelProperty(value = "${field.comment}")
+            </#if>
         <#else>
     /**
      * ${field.comment}

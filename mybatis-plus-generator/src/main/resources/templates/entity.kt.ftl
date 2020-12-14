@@ -7,6 +7,10 @@ import ${pkg}
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 </#if>
+<#if entityExcelModel>
+    import com.alibaba.excel.annotation.ExcelProperty;
+</#if>
+
 /**
  * <p>
  * ${table.comment}
@@ -36,8 +40,12 @@ class ${entity} : Serializable {
 </#if>
 
 <#if field.comment!?length gt 0>
-<#if swagger2>
+<#if swagger2 || entityExcelModel>
+    <#if entityExcelModel>
+        @ExcelProperty("${field.comment}")
+    <#else>
         @ApiModelProperty(value = "${field.comment}")
+    </#if>
 <#else>
     /**
      * ${field.comment}

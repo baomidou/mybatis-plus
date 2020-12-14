@@ -13,6 +13,10 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 <% } %>
 <% } %>
+<% if (entityExcelModel){%>
+import com.alibaba.excel.annotation.ExcelProperty;
+<% } %>
+
 /**
  * <p>
  * ${table.comment!}
@@ -58,9 +62,13 @@ public class ${entity} implements Serializable {
     %>
 
     <% if(isNotEmpty(field.comment)){ %>
-        <% if(swagger2){ %>
+        <% if(entityExcelModel||swagger2){ %>
+            <% if(swagger2){ %>
     @ApiModelProperty(value = "${field.comment}")
-        <% }else{ %>
+            <% }else{ %>
+    @ExcelProperty("${field.comment}")
+             <% } %>
+        <% } else{ %>
     /**
      * ${field.comment}
      */

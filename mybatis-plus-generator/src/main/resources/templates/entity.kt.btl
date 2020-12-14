@@ -6,6 +6,10 @@ import ${pkg}
 import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiModelProperty
 <% } %>
+<% if(entityExcelModel){ %>
+import com.alibaba.excel.annotation.ExcelProperty;
+<% } %>
+
 /**
  * <p>
  * ${table.comment!}
@@ -37,8 +41,12 @@ class ${entity} : Serializable {
     %>
 
     <% if(isNotEmpty(field.comment)){ %>
-        <% if(swagger2){ %>
+        <% if(swagger2 || entityExcelModel){ %>
+            <% if(entityExcelModel){ %>
+    @ExcelProperty("${field.comment}")
+            <% }else %>
     @ApiModelProperty(value = "${field.comment}")
+            <% } %>
         <% }else{ %>
     /**
      * ${field.comment}

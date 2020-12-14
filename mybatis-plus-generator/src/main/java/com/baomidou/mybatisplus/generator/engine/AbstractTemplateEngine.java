@@ -219,6 +219,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
         objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
         objectMap.put("chainModel", config.getStrategyConfig().isChainModel());
+        objectMap.put("entityExcelModel", config.getStrategyConfig().isEntityExcelModel());
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
         objectMap.put("superEntityClass", getSuperClassName(config.getSuperEntityClass()));

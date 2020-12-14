@@ -128,7 +128,7 @@ public class StrategyConfig {
      */
     @Deprecated
     private boolean entityBuilderModel = false;
-    
+
     /**
      * 【实体】是否为链式模型（默认 false）<br>
      * -----------------------------------<br>
@@ -137,12 +137,19 @@ public class StrategyConfig {
      * @since 3.3.2
      */
     private boolean chainModel = false;
-    
+
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
      */
     private boolean entityLombokModel = false;
+
+    /**
+     * 【实体】是否为easyExcel模型（默认 false）<br>
+     * <a href="https://www.yuque.com/easyexcel/doc/easyexcel">document</a>
+     */
+    private boolean entityExcelModel = false;
+
     /**
      * Boolean类型字段是否移除is前缀（默认 false）<br>
      * 比如 : 数据库字段名称 : 'is_xxx',类型为 : tinyint. 在映射实体的时候则会去掉is,在实体类中映射最终结果为 xxx
@@ -205,7 +212,7 @@ public class StrategyConfig {
     public boolean isCapitalModeNaming(String word) {
         return isCapitalMode && StringUtils.isCapitalMode(word);
     }
-    
+
     /**
      * 表名称包含指定前缀
      *
@@ -222,7 +229,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     /**
      * 表名称匹配表前缀
      *
@@ -238,7 +245,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     public NamingStrategy getColumnNaming() {
         // 未指定以 naming 策略为准
         return Optional.ofNullable(columnNaming).orElse(naming);
@@ -276,7 +283,7 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
-    
+
     /**
      * 设置实体父类
      *
@@ -334,17 +341,17 @@ public class StrategyConfig {
         this.superServiceClass = superServiceClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(Class<?> clazz) {
         this.superServiceImplClass = clazz.getName();
         return this;
     }
-    
+
     public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
         this.superServiceImplClass = superServiceImplClass;
         return this;
     }
-    
+
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
         return this;
@@ -371,8 +378,8 @@ public class StrategyConfig {
             return StringUtils.camelToUnderline(field.getName());
         }).distinct().toArray(String[]::new);
     }
-    
-    
+
+
     /**
      * 是否为构建者模型
      *
@@ -383,7 +390,7 @@ public class StrategyConfig {
     public boolean isEntityBuilderModel() {
         return isChainModel();
     }
-    
+
     /**
      * 设置是否为构建者模型
      *
@@ -395,5 +402,5 @@ public class StrategyConfig {
     public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
         return setChainModel(entityBuilderModel);
     }
-    
+
 }
