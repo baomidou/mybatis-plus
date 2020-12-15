@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.enums.OrderByInjectKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -32,10 +31,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
@@ -506,14 +503,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     /**
      * 获取 columnName
-     * TODO: 这里先让能用，采用regex形式过滤 ORDER BY 的内容，暂未想到更好的办法
      */
     protected String columnToString(R column) {
-        AtomicReference<String> columnAtomic = new AtomicReference<>((String) column);
-        Arrays.stream(OrderByInjectKeyword.values())
-            .forEach(orderByInjectKeyword ->
-                columnAtomic.set(columnAtomic.get().replaceAll(Pattern.compile(StringPool.BACK_SLASH+orderByInjectKeyword.getSqlSegment()).pattern(), StringPool.EMPTY)));
-        return columnAtomic.get();
+        return (String) column;
     }
 
     /**
