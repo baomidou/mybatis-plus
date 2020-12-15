@@ -567,4 +567,30 @@ public final class StringUtils {
         }
         return true;
     }
+
+
+    /**
+     * 是否包含特定字符，忽略大小写，如果给定两个参数都为<code>null</code>，返回true
+     *
+     * <p>对字符串大小写不敏感</p>
+     *
+     * <pre>
+     * StringUtils.equals(null, null)   = true
+     * StringUtils.equals(null, "abc")  = false
+     * StringUtils.equals("abc", null)  = false
+     * StringUtils.equals("abc", "abc") = true
+     * StringUtils.equals("abc", "ABC") = true
+     * </pre>
+     *
+     * @param str     被检测字符串
+     * @param testStr 被测试是否包含的字符串
+     * @return 是否包含
+     */
+    public static boolean containsIgnoreCase(CharSequence str, CharSequence testStr) {
+        if (null == str) {
+            // 如果被监测字符串和
+            return null == testStr;
+        }
+        return str.toString().toLowerCase().contains(testStr.toString().toLowerCase());
+    }
 }

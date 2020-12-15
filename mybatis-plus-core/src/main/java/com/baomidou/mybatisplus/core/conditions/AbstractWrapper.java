@@ -26,13 +26,12 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
@@ -76,6 +75,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 实体类型(主要用于确定泛型以及取TableInfo缓存)
      */
     private Class<T> entityClass;
+
+    /**
+     * OrderBy字段过滤关键字
+     */
+    private final static String[] KEYWORDS = { "master", "truncate", "insert", "select", "delete", "update", "declare",
+        "alter", "drop", "sleep" };
 
     @Override
     public T getEntity() {
@@ -306,9 +311,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return typedThis;
         }
         SqlKeyword mode = isAsc ? ASC : DESC;
-        for (R column : columns) {
+        Arrays.stream(columns).filter(sqlInjectPredicate()).forEach(column->{
             doIt(condition, ORDER_BY, () -> columnToString(column), mode);
-        }
+        });
         return typedThis;
     }
 
@@ -514,12 +519,27 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param columns 多字段
      */
     protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
+        return Arrays.stream(columns).filter(sqlInjectPredicate()).map(this::columnToString).collect(joining(StringPool.COMMA));
     }
 
     @Override
     @SuppressWarnings("all")
     public Children clone() {
         return SerializationUtils.clone(typedThis);
+    }
+
+    /**
+     * 判断用户输入里面有没有关键字
+     * @return Predicate
+     */
+    private Predicate<R> sqlInjectPredicate() {
+        return sql -> {
+            for (String keyword : KEYWORDS) {
+                if (StringUtils.containsIgnoreCase((String)sql, keyword)) {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 }

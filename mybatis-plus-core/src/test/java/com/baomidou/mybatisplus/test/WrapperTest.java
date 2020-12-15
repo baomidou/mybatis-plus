@@ -236,6 +236,14 @@ class WrapperTest {
         return map;
     }
 
+    @Test
+    void testOrderBy() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
+        QueryWrapper wrapper = new QueryWrapper<>();
+        wrapper.eq("name", "user-name");
+        wrapper.orderBy(true, true, "id",";delete from test;");
+        logSqlSegment("测试 Order By sql注入",wrapper,"(name = ?) ORDER BY id ASC");
+    }
 
 //    public void test() {
 //        String sql = new QueryWrapper()
