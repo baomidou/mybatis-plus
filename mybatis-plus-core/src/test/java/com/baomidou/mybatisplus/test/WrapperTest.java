@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.enums.OrderByInjectKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -28,7 +27,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.regex.Pattern;
 
 class WrapperTest {
 
@@ -238,23 +236,6 @@ class WrapperTest {
         return map;
     }
 
-    @Test
-    void testOrderByInjectKeyword(){
-        Arrays.stream(OrderByInjectKeyword.values())
-            .forEach(orderByInjectKeyword -> {
-                System.out.println(Pattern.compile(StringPool.BACK_SLASH+orderByInjectKeyword.getSqlSegment()).pattern());
-            });
-    }
-
-
-    @Test
-    void testOrderBy() {
-        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
-        QueryWrapper wrapper = new QueryWrapper<>();
-        wrapper.eq("name", "anson");
-        wrapper.orderBy(true, true, "id ,name",";delete from user;",";where 1=1 index");
-        logSqlSegment("测试 Order By sql注入",wrapper,"(name = ?) ORDER BY id,name ASC,deletefromuser ASC,where11index ASC");
-    }
 
 //    public void test() {
 //        String sql = new QueryWrapper()
