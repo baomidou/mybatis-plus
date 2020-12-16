@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
@@ -311,9 +310,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return typedThis;
         }
         SqlKeyword mode = isAsc ? ASC : DESC;
-        Arrays.stream(columns).filter(sqlInjectPredicate()).forEach(column->{
-            doIt(condition, ORDER_BY, () -> columnToString(column), mode);
-        });
+        Arrays.stream(columns).filter(sqlInjectPredicate()).forEach(column->
+            doIt(condition, ORDER_BY, () -> columnToString(column), mode));
         return typedThis;
     }
 
@@ -519,7 +517,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param columns 多字段
      */
     protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).filter(sqlInjectPredicate()).map(this::columnToString).collect(joining(StringPool.COMMA));
+        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
     }
 
     @Override
