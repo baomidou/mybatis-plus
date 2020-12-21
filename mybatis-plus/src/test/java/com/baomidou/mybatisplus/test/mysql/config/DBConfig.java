@@ -53,6 +53,11 @@ public class DBConfig {
     }
 
     @Bean
+    public DataSourceTransactionManager assignTm(DataSource ds) {
+        return new DataSourceTransactionManager(ds);
+    }
+
+    @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) throws IOException {
         final DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);

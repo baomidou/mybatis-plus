@@ -75,5 +75,7 @@ class MetadataTest {
         Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"), new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(), MybatisConfiguration.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"), new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(), MybatisConfiguration.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"), new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(), MybatisConfiguration.class.getName()));
+        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration-properties.allow-rebind-tm"), new Metadata("mybatis-plus.configuration-properties.allow-rebind-tm", Boolean.class.getName(), Properties.class.getName()));
     }
+
 }
