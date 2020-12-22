@@ -152,50 +152,21 @@ public class CopyServiceImpl<M extends BaseMapper<T>, T> implements IService<T> 
     @Override
     public boolean saveOrUpdate(T entity) {
         DefaultTransactionStatus transactionStatus = (DefaultTransactionStatus) TransactionAspectSupport.currentTransactionStatus();
-        Assertions.assertTrue(transactionStatus.isReadOnly());
-
-        if (null != entity) {
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
-            Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
-            String keyProperty = tableInfo.getKeyProperty();
-            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-            Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
-            return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
-        }
-        return false;
+        return transactionStatus.isReadOnly();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-
         DefaultTransactionStatus transactionStatus = (DefaultTransactionStatus) TransactionAspectSupport.currentTransactionStatus();
-        Assertions.assertFalse(transactionStatus.isReadOnly());
-
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
-        String keyProperty = tableInfo.getKeyProperty();
-        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.saveOrUpdateBatch(this.entityClass, this.mapperClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = ReflectionKit.getFieldValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal)
-                || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
-        }, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
-        });
+        return transactionStatus.isReadOnly();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
-        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
-        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(sqlStatement, param);
-        });
+        DefaultTransactionStatus transactionStatus = (DefaultTransactionStatus) TransactionAspectSupport.currentTransactionStatus();
+        return transactionStatus.isReadOnly();
     }
 
     @Override
