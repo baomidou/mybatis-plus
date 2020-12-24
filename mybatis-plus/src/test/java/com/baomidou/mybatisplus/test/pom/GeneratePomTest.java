@@ -59,9 +59,6 @@ class GeneratePomTest {
             Dependency extension = dependenciesMap.get("mybatis-plus-extension");
             Assertions.assertEquals("compile", extension.getScope());
             Assertions.assertFalse(extension.isOptional());
-            Dependency generator = dependenciesMap.get("mybatis-plus-generator");
-            Assertions.assertEquals("compile", generator.getScope());
-            Assertions.assertTrue(generator.isOptional());
         }
     }
 

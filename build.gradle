@@ -63,11 +63,6 @@ ext {
         "mysql"                      : "mysql:mysql-connector-java:8.0.21",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3.1",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.1.java8",
-        //code generator
-        "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
-        "freemarker"                 : "org.freemarker:freemarker:2.3.30",
-        "beetl"                      : "com.ibeetl:beetl:3.2.1.RELEASE",
-        "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.2",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
@@ -172,7 +167,6 @@ subprojects {
     test {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
-        exclude("**/generator/**")
         exclude("**/mysql/**")
         exclude("**/phoenix/**")
     }
