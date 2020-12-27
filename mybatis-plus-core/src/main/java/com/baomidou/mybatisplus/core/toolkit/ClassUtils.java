@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.apache.ibatis.io.Resources;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -145,7 +147,7 @@ public final class ClassUtils {
      */
     public static Class<?> toClassConfident(String name) {
         try {
-            return Class.forName(name, false, getDefaultClassLoader());
+            return Resources.classForName(name);
         } catch (ClassNotFoundException e) {
             try {
                 return Class.forName(name);
