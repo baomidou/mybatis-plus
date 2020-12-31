@@ -394,8 +394,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     }
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
-        orderByElements = CollectionUtils.isEmpty(orderByElements) ? new ArrayList<>(orderList.size()) : orderByElements;
-        List<OrderByElement> orderByElementList = orderList.stream()
+        List<OrderByElement> additionalOrderBy = orderList.stream()
             .filter(item -> StringUtils.isNotBlank(item.getColumn()))
             .map(item -> {
                 OrderByElement element = new OrderByElement();
@@ -404,7 +403,10 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 element.setAscDescPresent(true);
                 return element;
             }).collect(Collectors.toList());
-        orderByElements.addAll(orderByElementList);
+        if (CollectionUtils.isEmpty(orderByElements)) {
+            return additionalOrderBy;
+        }
+        orderByElements.addAll(additionalOrderBy);
         return orderByElements;
     }
 
