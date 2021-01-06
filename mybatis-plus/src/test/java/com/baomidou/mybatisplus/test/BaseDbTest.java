@@ -94,25 +94,34 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         return dataSource;
     }
 
-    protected SqlSession autoCommitSession(boolean autoCommit) {
-        return sqlSessionFactory.openSession(autoCommit);
-    }
-
     protected void doTest(Consumer<T> consumer) {
-        try (SqlSession sqlSession = autoCommitSession(false)) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             doTest(sqlSession, consumer);
         }
     }
 
     protected void doTestAutoCommit(Consumer<T> consumer) {
-        try (SqlSession sqlSession = autoCommitSession(true)) {
-            doTest(sqlSession, consumer);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            doTestAutoCommit(sqlSession, consumer);
         }
     }
 
     protected void doTest(SqlSession sqlSession, Consumer<T> consumer) {
+        doMapper(sqlSession, false, consumer);
+    }
+
+    protected void doTestAutoCommit(SqlSession sqlSession, Consumer<T> consumer) {
+        doMapper(sqlSession, true, consumer);
+    }
+
+    protected void doMapper(SqlSession sqlSession, boolean commit, Consumer<T> consumer) {
         T t = sqlSession.getMapper(mapper);
         consumer.accept(t);
+        if (commit) {
+            sqlSession.commit();
+        } else {
+            sqlSession.rollback();
+        }
     }
 
     protected List<String> tableSql() {

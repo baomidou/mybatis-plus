@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-public class PaginationTest extends BaseDbTest<EntityMapper> {
+class PaginationTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void page() {
