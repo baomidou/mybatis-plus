@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.autoresultmap;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,10 @@ public class AutoResultMapTest extends BaseDbTest<EntityMapper> {
             assertThat(entity.getName()).as("名称不一致正常").isNotNull();
             assertThat(entity.getGg()).as("typeHandler正常").isNotNull();
             assertThat(entity.getGg().getName()).as("是老王").isEqualTo("老王");
+        });
+        doTest(m -> {
+            Entity entity = new Entity().setName("老王");
+            m.selectOne(Wrappers.lambdaQuery(entity).ne(Entity::getId, 1));
         });
     }
 

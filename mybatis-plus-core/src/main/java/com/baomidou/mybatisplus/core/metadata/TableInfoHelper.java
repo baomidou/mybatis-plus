@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.metadata;
 
@@ -56,6 +56,11 @@ public class TableInfoHelper {
     private static final Map<Class<?>, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
 
     /**
+     * 储存表名对应的反射类表信息
+     */
+    private static final Map<String, TableInfo> TABLE_NAME_INFO_CACHE = new ConcurrentHashMap<>();
+
+    /**
      * 默认表主键名称
      */
     private static final String DEFAULT_ID_NAME = "id";
@@ -69,11 +74,12 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null || ReflectionKit.isPrimitiveOrWrapper(clazz) || clazz == String.class) {
+        if (clazz == null || ReflectionKit.isPrimitiveOrWrapper(clazz) || clazz == String.class || clazz.isInterface()) {
             return null;
         }
         // https://github.com/baomidou/mybatis-plus/issues/299
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
+        Class<?> targetClass = ClassUtils.getUserClass(clazz);
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(targetClass);
         if (null != tableInfo) {
             return tableInfo;
         }
@@ -83,10 +89,26 @@ public class TableInfoHelper {
             currentClass = currentClass.getSuperclass();
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
         }
+        //把父类的移到子类中来
         if (tableInfo != null) {
-            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+            TABLE_INFO_CACHE.put(targetClass, tableInfo);
         }
         return tableInfo;
+    }
+
+    /**
+     * <p>
+     * 根据表名获取实体映射表信息
+     * </p>
+     *
+     * @param tableName 表名
+     * @return 数据库表反射信息
+     */
+    public static TableInfo getTableInfo(String tableName) {
+        if (StringUtils.isBlank(tableName)) {
+            return null;
+        }
+        return TABLE_NAME_INFO_CACHE.get(tableName);
     }
 
     /**
@@ -96,7 +118,6 @@ public class TableInfoHelper {
      *
      * @return 数据库表反射信息集合
      */
-    @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
         return Collections.unmodifiableList(new ArrayList<>(TABLE_INFO_CACHE.values()));
     }
@@ -117,11 +138,10 @@ public class TableInfoHelper {
             if (!oldConfiguration.equals(configuration)) {
                 // 不是同一个 Configuration,进行重新初始化
                 targetTableInfo = initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
-                TABLE_INFO_CACHE.put(clazz, targetTableInfo);
             }
             return targetTableInfo;
         }
-        return TABLE_INFO_CACHE.computeIfAbsent(clazz, key -> initTableInfo(configuration, builderAssistant.getCurrentNamespace(), key));
+        return initTableInfo(configuration, builderAssistant.getCurrentNamespace(), clazz);
     }
 
     /**
@@ -149,6 +169,9 @@ public class TableInfoHelper {
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
+
+        TABLE_INFO_CACHE.put(clazz, tableInfo);
+        TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
         /* 缓存 lambda */
         LambdaUtils.installCache(tableInfo);
@@ -251,7 +274,6 @@ public class TableInfoHelper {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
-        //TODO @咩咩 有空一起来撸完这反射模块.
         Reflector reflector = reflectorFactory.findForClass(clazz);
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
@@ -467,7 +489,6 @@ public class TableInfoHelper {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
         Configuration configuration = builderAssistant.getConfiguration();
-        //TODO 这里不加上builderAssistant.getCurrentNamespace()的会导致com.baomidou.mybatisplus.core.parser.SqlParserHelper.getSqlParserInfo越(chu)界(gui)
         String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(), new ArrayList<>()).build();
         MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,

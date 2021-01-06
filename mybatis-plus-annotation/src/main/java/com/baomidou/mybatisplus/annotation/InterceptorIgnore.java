@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.*;
@@ -5,8 +20,8 @@ import java.lang.annotation.*;
 /**
  * 内置插件的一些过滤规则
  * <p>
- * 支持注解在 mapper 上以及 mapper.method 上
- * 同时存在则 mapper.method 比 mapper 优先级高
+ * 支持注解在 Mapper 上以及 Mapper.Method 上
+ * 同时存在则 Mapper.method 比 Mapper 优先级高
  * <p>
  * 支持:
  * true 和 false , 1 和 0 , on 和 off
@@ -43,6 +58,19 @@ public @interface InterceptorIgnore {
 
     /**
      * 数据权限 {@link com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor}
+     * <p>
+     * 默认关闭，需要注解打开
      */
-    String dataPermission() default "";
+    String dataPermission() default "1";
+
+    /**
+     * 其他的
+     * <p>
+     * 格式应该为:  "key"+"@"+可选项[false,true,1,0,on,off]
+     * 例如: "xxx@1" 或 "xxx@true" 或 "xxx@on"
+     * <p>
+     * 如果配置了该属性的注解是注解在 Mapper 上的,则如果该 Mapper 的一部分 Method 需要取反则需要在 Method 上注解并配置此属性为反值
+     * 例如: "xxx@1" 在 Mapper 上, 则 Method 上需要 "xxx@0"
+     */
+    String[] others() default {};
 }

@@ -28,9 +28,10 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 
 ## Links
 
--   [Documentation](https://mybatis.plus)
--   [Samples](https://github.com/baomidou/mybatis-plus-samples.git)
--   [Showcase](https://github.com/baomidou/awosome-mybaits-plus)
+- [Documentation](https://mybatis.plus)
+- [Code Generator](https://github.com/baomidou/generator)
+- [Samples](https://github.com/baomidou/mybatis-plus-samples)
+-   [Showcase](https://github.com/baomidou/awesome-mybatis-plus)
 
 ## Features
 
@@ -55,12 +56,12 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.2.0</version>
+            <version>3.4.1</version>
         </dependency>
         ```
     -   Gradle
         ```groovy
-        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.1.2'
+        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.1'
         ```
 -   Modify mapper file extends BaseMapper interface
 

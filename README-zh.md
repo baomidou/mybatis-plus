@@ -38,9 +38,12 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - **内置性能分析插件**：可输出Sql语句以及其执行时间，建议开发测试时启用该功能，能有效解决慢查询
 - **内置全局拦截插件**：提供全表 delete 、 update 操作智能分析阻断，预防误操作
 
-# 文档 | Documentation
+## 相关链接 | Links
 
-[中文](https://mybatis.plus)
+- [文档](https://mybatis.plus)
+- [代码生成](https://github.com/baomidou/generator)
+- [功能示例](https://gitee.com/baomidou/mybatis-plus-samples)
+- [展示](https://github.com/baomidou/awesome-mybatis-plus)
 
 # 原理 | Principle
 
@@ -51,8 +54,6 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 [Spring-MVC](https://gitee.com/baomidou/mybatisplus-spring-mvc)
 
 [Spring-Boot](https://gitee.com/baomidou/mybatisplus-spring-boot)
-
-[mybatisplus-sharding-jdbc](https://gitee.com/baomidou/mybatisplus-sharding-jdbc)
 
 [SSM-实战 Demo](https://gitee.com/juapk/SpringWind)
 

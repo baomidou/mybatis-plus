@@ -51,13 +51,11 @@ class JSqlParserTest {
         assertThat(select.toString()).isEqualTo(targetSql);
     }
 
-
     @Test
     void updateWhereParser() throws Exception {
         Update update = (Update) CCJSqlParserUtil.parse("Update tableName t SET t.a=(select c from tn where tn.id=t.id),b=2,c=3 ");
         Assertions.assertNull(update.getWhere());
     }
-
 
     @Test
     void deleteWhereParser() throws Exception {

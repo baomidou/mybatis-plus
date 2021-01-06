@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.service;
 
@@ -27,6 +27,8 @@ import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +98,7 @@ public interface IService<T> {
      * @param batchSize  每次的数量
      */
     boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize);
-    
+
     /**
      * 根据 ID 删除
      *
@@ -189,7 +191,7 @@ public interface IService<T> {
      * @param entity 实体对象
      */
     boolean saveOrUpdate(T entity);
-    
+
     /**
      * 根据 ID 查询
      *
@@ -387,6 +389,13 @@ public interface IService<T> {
     BaseMapper<T> getBaseMapper();
 
     /**
+     * 获取 entity 的 class
+     *
+     * @return {@link Class<T>}
+     */
+    Class<T> getEntityClass();
+
+    /**
      * 以下的方法使用介绍:
      *
      * 一. 名称介绍
@@ -420,6 +429,26 @@ public interface IService<T> {
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
         return ChainWrappers.lambdaQueryChain(getBaseMapper());
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * kotlin 使用
+     *
+     * @return KtQueryWrapper 的包装类
+     */
+    default KtQueryChainWrapper<T> ktQuery() {
+        return ChainWrappers.ktQueryChain(getBaseMapper(), getEntityClass());
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * kotlin 使用
+     *
+     * @return KtQueryWrapper 的包装类
+     */
+    default KtUpdateChainWrapper<T> ktUpdate() {
+        return ChainWrappers.ktUpdateChain(getBaseMapper(), getEntityClass());
     }
 
     /**

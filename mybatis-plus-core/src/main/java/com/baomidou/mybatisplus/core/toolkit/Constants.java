@@ -1,19 +1,21 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
+
+import java.io.Serializable;
 
 /**
  * mybatis_plus 自用常量集中管理
@@ -21,7 +23,7 @@ package com.baomidou.mybatisplus.core.toolkit;
  * @author miemie
  * @since 2018-07-22
  */
-public interface Constants extends StringPool {
+public interface Constants extends StringPool, Serializable {
 
     /**
      * project name
@@ -40,6 +42,12 @@ public interface Constants extends StringPool {
      * AES 算法
      */
     String AES_CBC_CIPHER = "AES/CBC/PKCS5Padding";
+    /**
+     * as
+     */
+    String AS = " AS ";
+
+
     /**
      * 实体类
      */

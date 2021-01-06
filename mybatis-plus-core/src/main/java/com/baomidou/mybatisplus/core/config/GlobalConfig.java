@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.config;
 
@@ -113,21 +113,41 @@ public class GlobalConfig implements Serializable {
         private String schema;
         /**
          * db字段 format
-         * <li> 例: `%s` </li>
-         * <p> 对主键无效 </p>
+         * <p>
+         * 例: `%s`
+         * <p>
+         * 对主键无效
          *
          * @since 3.1.1
          */
         private String columnFormat;
         /**
-         * entity 的字段(property)的 format,
-         * 只有在 column as property 这种情况下生效
-         * <li> 例: `%s` </li>
-         * <p> 对主键无效 </p>
+         * entity 的字段(property)的 format,只有在 column as property 这种情况下生效
+         * <p>
+         * 例: `%s`
+         * <p>
+         * 对主键无效
          *
          * @since 3.3.0
          */
         private String propertyFormat;
+        /**
+         * 实验性功能,占位符替换,等同于 {@link com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor},
+         * 只是这个属于启动时替换,用得地方多会启动慢一点点,不适用于其他的 {@link org.apache.ibatis.scripting.LanguageDriver}
+         *
+         * @since 3.4.2
+         */
+        private boolean replacePlaceholder;
+        /**
+         * 转义符
+         * <p>
+         * 配合 {@link #replacePlaceholder} 使用时有效
+         * <p>
+         * 例: " 或 ' 或 `
+         *
+         * @since 3.4.2
+         */
+        private String escapeSymbol;
         /**
          * 表名是否使用驼峰转下划线命名,只对表名生效
          */

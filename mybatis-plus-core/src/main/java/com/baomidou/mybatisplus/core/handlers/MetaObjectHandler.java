@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.handlers;
 
@@ -42,21 +42,6 @@ public interface MetaObjectHandler {
      */
     default boolean openInsertFill() {
         return true;
-    }
-
-    /**
-     * 兼容填充主键判断开关
-     * 如果启用开关:当主键值为空且主键生成策略为NONE或INPUT会进入新增填充
-     * 这开关主要是用来兼容旧版本的用户使用插入填充来进行主键填充的开关
-     * 暂时不确定什么时候会移出此开关,请尽快使用新的Id生成策略来生成Id
-     *
-     * @return 是否启用
-     * @since 3.3.0
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    default boolean compatibleFillId() {
-        return false;
     }
 
     /**

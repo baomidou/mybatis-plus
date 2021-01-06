@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core;
 
@@ -107,21 +107,30 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     parseResultMap(method);
                 }
                 try {
-                    parseStatement(method);
-                    // TODO 加入 SqlParser 注解过滤缓存
+                    // TODO 加入 注解过滤缓存
                     InterceptorIgnoreHelper.initSqlParserInfoCache(cache, mapperName, method);
                     SqlParserHelper.initSqlParserInfoCache(mapperName, method);
+                    parseStatement(method);
                 } catch (IncompleteElementException e) {
                     // TODO 使用 MybatisMethodResolver 而不是 MethodResolver
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
                 }
             }
             // TODO 注入 CURD 动态 SQL , 放在在最后, because 可能会有人会用注解重写sql
-            if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
-                GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
+            try {
+                // https://github.com/baomidou/mybatis-plus/issues/3038
+                if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
+                    parserInjector();
+                }
+            } catch (IncompleteElementException e) {
+                configuration.addIncompleteMethod(new InjectorResolver(this));
             }
         }
         parsePendingMethods();
+    }
+
+    void parserInjector() {
+        GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
     }
 
     private boolean canHaveStatement(Method method) {

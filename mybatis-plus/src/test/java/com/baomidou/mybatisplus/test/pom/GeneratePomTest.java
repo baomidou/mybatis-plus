@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.pom;
 
 import jodd.io.FileUtil;
 import jodd.jerry.Jerry;
+import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,8 +47,8 @@ class GeneratePomTest {
 
     @Test
     void test() throws IOException {
-        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");) {
-            Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml")) {
+            JerryParser jerryParser = Jerry.create((new LagartoDOMBuilder().enableXmlMode()));
             Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
             Jerry dependencies = doc.s("dependencies dependency");
             Map<String, Dependency> dependenciesMap = new HashMap<>();
@@ -58,9 +59,6 @@ class GeneratePomTest {
             Dependency extension = dependenciesMap.get("mybatis-plus-extension");
             Assertions.assertEquals("compile", extension.getScope());
             Assertions.assertFalse(extension.isOptional());
-            Dependency generator = dependenciesMap.get("mybatis-plus-generator");
-            Assertions.assertEquals("compile", generator.getScope());
-            Assertions.assertTrue(generator.isOptional());
         }
     }
 

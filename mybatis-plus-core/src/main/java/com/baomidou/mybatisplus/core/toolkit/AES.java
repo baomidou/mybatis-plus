@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
@@ -80,12 +80,8 @@ public class AES {
      * @return
      */
     public static String encrypt(String data, String key) {
-        try {
-            byte[] valueByte = encrypt(data.getBytes(Constants.UTF_8), key.getBytes(Constants.UTF_8));
-            return Base64.getEncoder().encodeToString(valueByte);
-        } catch (UnsupportedEncodingException e) {
-            throw new MybatisPlusException(e);
-        }
+        byte[] valueByte = encrypt(data.getBytes(StandardCharsets.UTF_8), key.getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(valueByte);
     }
 
     /**
@@ -96,13 +92,9 @@ public class AES {
      * @return
      */
     public static String decrypt(String data, String key) {
-        try {
-            byte[] originalData = Base64.getDecoder().decode(data.getBytes());
-            byte[] valueByte = decrypt(originalData, key.getBytes(Constants.UTF_8));
-            return new String(valueByte);
-        } catch (UnsupportedEncodingException e) {
-            throw new MybatisPlusException(e);
-        }
+        byte[] originalData = Base64.getDecoder().decode(data.getBytes());
+        byte[] valueByte = decrypt(originalData, key.getBytes(StandardCharsets.UTF_8));
+        return new String(valueByte);
     }
 
     /**
