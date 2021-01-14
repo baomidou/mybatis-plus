@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingRuleE
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingStrategy;
 import com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
