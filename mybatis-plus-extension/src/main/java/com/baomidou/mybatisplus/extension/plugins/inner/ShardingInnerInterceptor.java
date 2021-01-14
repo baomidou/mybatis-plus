@@ -34,10 +34,8 @@ public class ShardingInnerInterceptor extends JsqlParserSupport implements Inner
 
     private final Map<String, ShardingStrategyProcessor> shardingMap;
 
-
     public ShardingInnerInterceptor(ShardingStrategy... shardingStrategies) {
-        shardingMap =
-                Arrays.stream(shardingStrategies).collect(Collectors.toMap(ShardingStrategy::getLogicTable, i -> new ShardingStrategyProcessor(i, ClassUtils.newInstance(i.getProcessor()))));
+        shardingMap = Arrays.stream(shardingStrategies).collect(Collectors.toMap(ShardingStrategy::getLogicTable, i -> new ShardingStrategyProcessor(i, ClassUtils.newInstance(i.getProcessor()))));
     }
 
     @AllArgsConstructor
