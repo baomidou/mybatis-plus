@@ -1,17 +1,5 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.reflection.MetaObject;
-
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -22,7 +10,6 @@ import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingNode;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingNodeExtractor;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingProcessor;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingStrategy;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.sf.jsqlparser.schema.Table;
@@ -31,9 +18,17 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.reflection.MetaObject;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author zengzhihong
+ * @since 2021-01-14
  */
 public class ShardingInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
@@ -135,5 +130,4 @@ public class ShardingInnerInterceptor extends JsqlParserSupport implements Inner
         }
         return values;
     }
-
 }

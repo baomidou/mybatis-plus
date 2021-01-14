@@ -5,6 +5,7 @@ import java.util.Map;
 
 /**
  * @author zengzhihong
+ * @since 2021-01-14
  */
 public interface ShardingProcessor {
 
@@ -16,5 +17,4 @@ public interface ShardingProcessor {
      * @return 真实表名
      */
     String doSharding(ShardingStrategy strategy, Map<String, List<Object>> shardingValues);
-
 }

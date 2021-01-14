@@ -1,16 +1,16 @@
 package com.baomidou.mybatisplus.extension.plugins.handler.sharding;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author zengzhihong
+ * @since 2021-01-14
  */
 @EqualsAndHashCode
 public class ShardingStrategy {
@@ -59,5 +59,4 @@ public class ShardingStrategy {
     public boolean containsColumn(String column) {
         return shardingColumnList.contains(column);
     }
-
 }
