@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.1.1-SNAPSHOT"
+    version = "3.4.1.2-SNAPSHOT"
 }
 
 ext {
@@ -136,8 +136,10 @@ subprojects {
         includes(["**/*.java", "**/*.kt"])
         exclude "**/test/java/**/*.kt"
         exclude "**/test/java/**/*.java"
+        exclude "**/*Test.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
+        ignoreFailures = true
         ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
 
