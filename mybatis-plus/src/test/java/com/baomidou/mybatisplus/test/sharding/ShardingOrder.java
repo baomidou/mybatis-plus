@@ -1,11 +1,10 @@
-package com.baomidou.mybatisplus.test.h2.sharding.model;
-
-import java.time.LocalDateTime;
+package com.baomidou.mybatisplus.test.sharding;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * @author miemie

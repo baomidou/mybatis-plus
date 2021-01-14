@@ -1,7 +1,6 @@
-package com.baomidou.mybatisplus.test.h2.sharding.mapper;
+package com.baomidou.mybatisplus.test.sharding;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.test.h2.sharding.model.ShardingOrder;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -10,6 +9,4 @@ import org.apache.ibatis.annotations.Param;
 public interface ShardingOrderMapper extends BaseMapper<ShardingOrder> {
 
     int insert1(@Param("orderId") Long orderId);
-
-
 }
