@@ -1,4 +1,30 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.baomidou.mybatisplus.test.sharding;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.plugin.Interceptor;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingProcessor;
@@ -6,17 +32,8 @@ import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingRuleE
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingStrategy;
 import com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.plugin.Interceptor;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zengzhihong
@@ -118,7 +135,7 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         final ShardingStrategy orderShardingHashStrategy = new ShardingStrategy("sharding_order",
-            "order_id", ShardingRuleEnum.ABSOLUTE, OrderShardingProcessor.class);
+                "order_id", ShardingRuleEnum.ABSOLUTE, OrderShardingProcessor.class);
         interceptor.addInnerInterceptor(new ShardingInnerInterceptor(orderShardingHashStrategy));
         return Collections.singletonList(interceptor);
     }
@@ -126,26 +143,26 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
     @Override
     protected List<String> tableSql() {
         return Lists.newArrayList("CREATE TABLE IF NOT EXISTS sharding_order_01\n" +
-                "            (\n" +
-                "                order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
-                "                subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "                create_time  DATETIME      NULL,\n" +
-                "                PRIMARY KEY (order_id)\n" +
-                "            )",
-            "CREATE TABLE IF NOT EXISTS sharding_order_02\n" +
-                "        (\n" +
-                "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
-                "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "            create_time  DATETIME      NULL,\n" +
-                "        PRIMARY KEY (order_id)\n" +
-                ")",
-            "CREATE TABLE IF NOT EXISTS sharding_order_03\n" +
-                "        (\n" +
-                "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
-                "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "            create_time  DATETIME      NULL,\n" +
-                "        PRIMARY KEY (order_id)\n" +
-                ")");
+                        "            (\n" +
+                        "                order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
+                        "                subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
+                        "                create_time  DATETIME      NULL,\n" +
+                        "                PRIMARY KEY (order_id)\n" +
+                        "            )",
+                "CREATE TABLE IF NOT EXISTS sharding_order_02\n" +
+                        "        (\n" +
+                        "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
+                        "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
+                        "            create_time  DATETIME      NULL,\n" +
+                        "        PRIMARY KEY (order_id)\n" +
+                        ")",
+                "CREATE TABLE IF NOT EXISTS sharding_order_03\n" +
+                        "        (\n" +
+                        "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
+                        "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
+                        "            create_time  DATETIME      NULL,\n" +
+                        "        PRIMARY KEY (order_id)\n" +
+                        ")");
     }
 
     static class OrderShardingProcessor implements ShardingProcessor {

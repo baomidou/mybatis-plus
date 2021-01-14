@@ -1,12 +1,54 @@
+/*
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.baomidou.mybatisplus.extension.plugins.handler.sharding;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+
 import lombok.Getter;
-import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.arithmetic.*;
+import net.sf.jsqlparser.expression.AllComparisonExpression;
+import net.sf.jsqlparser.expression.AnyComparisonExpression;
+import net.sf.jsqlparser.expression.CastExpression;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.JdbcNamedParameter;
+import net.sf.jsqlparser.expression.JdbcParameter;
+import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.operators.arithmetic.Addition;
+import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseAnd;
+import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseOr;
+import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseXor;
+import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
+import net.sf.jsqlparser.expression.operators.arithmetic.Division;
+import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
-import net.sf.jsqlparser.expression.operators.relational.*;
+import net.sf.jsqlparser.expression.operators.relational.Between;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
+import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
+import net.sf.jsqlparser.expression.operators.relational.Matches;
+import net.sf.jsqlparser.expression.operators.relational.MinorThan;
+import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
@@ -17,9 +59,6 @@ import net.sf.jsqlparser.statement.select.SubJoin;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author zengzhihong
@@ -48,13 +87,13 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
     public void visit(Column column) {
         this.currentColumn = column;
         final ShardingNode<Table, ShardingNode<String, Integer>> tableNode =
-            obtainTableNode(column);
+                obtainTableNode(column);
         // SQL正确的前提下 tableNode一定不为null
         if (null == tableNode) {
             throw ExceptionUtils.mpe("please determine the alias on sql");
         }
         final ShardingNode<String, Integer> columnNode =
-            tableNode.getList().stream().filter(i -> i.getNode().equals(column.getColumnName())).findFirst().orElse(null);
+                tableNode.getList().stream().filter(i -> i.getNode().equals(column.getColumnName())).findFirst().orElse(null);
         if (null == columnNode) {
             tableNode.getList().add(new ShardingNode<>(column.getColumnName(), new ArrayList<>()));
         }
@@ -72,7 +111,7 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
                         continue;
                     }
                     visit(insert.getColumns().get(i));
-                    visit((JdbcParameter)expression);
+                    visit((JdbcParameter) expression);
                 }
             }
         }
@@ -113,12 +152,12 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
     @Override
     public void visit(JdbcParameter jdbcParameter) {
         final ShardingNode<Table, ShardingNode<String, Integer>> tableNode =
-            obtainTableNode(this.currentColumn);
+                obtainTableNode(this.currentColumn);
         if (null == tableNode) {
             throw ExceptionUtils.mpe("please determine the alias on sql");
         }
         final ShardingNode<String, Integer> columnNode =
-            tableNode.getList().stream().filter(i -> i.getNode().equals(this.currentColumn.getColumnName())).findFirst().orElse(null);
+                tableNode.getList().stream().filter(i -> i.getNode().equals(this.currentColumn.getColumnName())).findFirst().orElse(null);
         if (null == columnNode) {
             throw ExceptionUtils.mpe("please determine the alias on sql");
         }
@@ -134,7 +173,7 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
 
     private ShardingNode<Table, ShardingNode<String, Integer>> obtainTableNode(Column column) {
         return null == column || null == column.getTable() || null == column.getTable().getName() ? nodes.get(0) :
-            nodes.stream().filter(i -> i.getNode().getAlias().getName().equals(column.getTable().getName())).findFirst().orElse(null);
+                nodes.stream().filter(i -> i.getNode().getAlias().getName().equals(column.getTable().getName())).findFirst().orElse(null);
     }
 
 
