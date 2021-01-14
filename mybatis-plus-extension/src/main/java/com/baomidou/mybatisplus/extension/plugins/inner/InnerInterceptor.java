@@ -16,11 +16,12 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.ReuseExecutor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
@@ -109,10 +110,11 @@ public interface InnerInterceptor {
     }
 
     /**
-     * 创建完StatementHandler生成proxy时传递
-     * {@link Configuration#newStatementHandler(org.apache.ibatis.executor.Executor, org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)}
+     * {@link StatementHandler#getBoundSql()} 操作前置处理
+     * <p>
+     * 只有 {@link BatchExecutor} 和 {@link ReuseExecutor} 才会调用到这个方法
      *
-     * @param sh 原生对象 而非代理对象
+     * @param sh StatementHandler(可能是代理对象)
      */
     default void beforeGetBoundSql(StatementHandler sh) {
         // do nothing
