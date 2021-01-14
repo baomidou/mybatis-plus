@@ -60,8 +60,10 @@ import java.util.function.Predicate;
  * @author miemie
  * @since 2018-11-29
  */
+
 @NoArgsConstructor
 @AllArgsConstructor
+@SuppressWarnings("serial")
 public class InsertBatchSomeColumn extends AbstractMethod {
 
     /**
