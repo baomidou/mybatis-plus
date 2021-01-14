@@ -20,6 +20,7 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
@@ -104,6 +105,16 @@ public interface InnerInterceptor {
      * @param transactionTimeout transactionTimeout
      */
     default void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+        // do nothing
+    }
+
+    /**
+     * 创建完StatementHandler生成proxy时传递
+     * {@link Configuration#newStatementHandler(org.apache.ibatis.executor.Executor, org.apache.ibatis.mapping.MappedStatement, java.lang.Object, org.apache.ibatis.session.RowBounds, org.apache.ibatis.session.ResultHandler, org.apache.ibatis.mapping.BoundSql)}
+     *
+     * @param sh 原生对象 而非代理对象
+     */
+    default void beforeGetBoundSql(StatementHandler sh) {
         // do nothing
     }
 
