@@ -13,11 +13,13 @@ import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeReference;
 import org.h2.Driver;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
@@ -94,14 +96,18 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         return dataSource;
     }
 
+    protected SqlSession sqlSession(@Nullable ExecutorType type) {
+        return sqlSessionFactory.openSession(type);
+    }
+
     protected void doTest(Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        try (SqlSession sqlSession = sqlSession(null)) {
             doTest(sqlSession, consumer);
         }
     }
 
     protected void doTestAutoCommit(Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        try (SqlSession sqlSession = sqlSession(null)) {
             doTestAutoCommit(sqlSession, consumer);
         }
     }

@@ -18,7 +18,7 @@ class BatchTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void save() {
-        doTestAutoCommit(sqlSessionFactory.openSession(ExecutorType.BATCH), i -> {
+        doTestAutoCommit(sqlSession(ExecutorType.BATCH), i -> {
             int i1 = i.insert(new Entity("老王"));
             assertThat(i1).isEqualTo(BatchExecutor.BATCH_UPDATE_RETURN_VALUE);
             int i2 = i.insert(new Entity("老李"));
