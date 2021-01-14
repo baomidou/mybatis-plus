@@ -141,7 +141,6 @@ subprojects {
         exclude "**/Maps.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
-        ignoreFailures = true
         ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
 
