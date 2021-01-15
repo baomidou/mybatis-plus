@@ -157,6 +157,12 @@ class TenantLineInnerInterceptorTest {
     }
 
     @Test
+    void selectBodySubSelect(){
+        assertSql("select t1.col1,(select t2.col2 from t2 t2 where t1.col1=t2.col1) from t1 t1",
+            "SELECT t1.col1, (SELECT t2.col2 FROM t2 t2 WHERE t1.col1 = t2.col1 AND t2.tenant_id = 1) FROM t1 t1 WHERE t1.tenant_id = 1");
+    }
+
+    @Test
     void selectLeftJoin() {
         // left join
         assertSql("SELECT * FROM entity e " +

@@ -100,8 +100,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             processSelectBody(withItem.getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
-            if (operationList.getSelects() != null && operationList.getSelects().size() > 0) {
-                operationList.getSelects().forEach(this::processSelectBody);
+            List<SelectBody> selectBodys = operationList.getSelects();
+            if (CollectionUtils.isNotEmpty(selectBodys)) {
+                selectBodys.forEach(this::processSelectBody);
             }
         }
     }
@@ -236,13 +237,11 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         }
         //#3087 github
         List<SelectItem> selectItems = plainSelect.getSelectItems();
-        if (selectItems != null && selectItems.size() > 0) {
-            selectItems.forEach(item -> {
-                processSelectItem(item);
-            });
+        if (CollectionUtils.isNotEmpty(selectItems)) {
+            selectItems.forEach(this::processSelectItem);
         }
         List<Join> joins = plainSelect.getJoins();
-        if (joins != null && joins.size() > 0) {
+        if (CollectionUtils.isNotEmpty(joins)) {
             joins.forEach(j -> {
                 processJoin(j);
                 processFromItem(j.getRightItem());
