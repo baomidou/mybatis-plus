@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.sharding;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingProcessor;
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingRuleEnum;
@@ -27,16 +32,43 @@ import lombok.extern.slf4j.Slf4j;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
 
-    private final LocalDateTime date1 = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
-    private final LocalDateTime date2 = LocalDateTime.of(2021, 2, 1, 0, 0, 0);
-    private final LocalDateTime date3 = LocalDateTime.of(2021, 3, 1, 0, 0, 0);
-
     @Test
-    void insertTest() {
-        ShardingOrder shardingOrder1 = new ShardingOrder().setOrderId(1L).setSubject("test1").setCreateTime(date1);
-        doTestAutoCommit(i -> {
-            i.insert(shardingOrder1);
-            i.insert1(2L);
+    void test() {
+        String logicTableName = "sharding_order";
+        long orderId = IdWorker.getId();
+        long mod = orderId % 3;
+        String actualTableName = logicTableName + "_" + mod;
+        System.out.println("\n\n\n逻辑表名:" + logicTableName + ",orderId:" + orderId + ",取模：" + mod + ",真实表名:" + actualTableName + "\n\n\n");
+
+        ShardingOrder entity = new ShardingOrder().setOrderId(orderId).setSubject("test1").setCreateTime(LocalDateTime.now());
+        doTestAutoCommit(m -> {
+            m.insert(entity);
+
+            Wrapper<ShardingOrder> wrapper = Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, orderId);
+            int affectedRow = m.update(entity, wrapper);
+            assertThat(affectedRow).as("更新成功").isEqualTo(1);
+
+            affectedRow = m.selectCount(wrapper);
+            assertThat(affectedRow).as("查询记录数").isEqualTo(1);
+        });
+
+        doTest(m -> {
+            final List<ShardingOrder> orderList = jdbcTemplate.query("SELECT * FROM " + actualTableName, (rs, rowNum) -> {
+                ShardingOrder order = new ShardingOrder();
+                order.setOrderId(rs.getLong("order_id"));
+                return order;
+            });
+            assertThat(orderList.size()).as("jdbc查询记录数").isEqualTo(1);
+            assertThat(orderList.get(0).getOrderId()).isEqualTo(orderId);
+
+            int affectedRow = jdbcTemplate.update("UPDATE " + actualTableName + " SET subject = ?", "test");
+            assertThat(affectedRow).as("jdbc更新成功").isEqualTo(1);
+
+        });
+
+        doTestAutoCommit(m -> {
+            int affectedRow = m.delete(Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, orderId));
+            assertThat(affectedRow).as("删除成功").isEqualTo(1);
         });
     }
 
@@ -127,21 +159,21 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Lists.newArrayList("CREATE TABLE IF NOT EXISTS sharding_order_01\n" +
+        return Lists.newArrayList("CREATE TABLE IF NOT EXISTS sharding_order_0\n" +
                         "            (\n" +
                         "                order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
                         "                subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
                         "                create_time  DATETIME      NULL,\n" +
                         "                PRIMARY KEY (order_id)\n" +
                         "            )",
-                "CREATE TABLE IF NOT EXISTS sharding_order_02\n" +
+                "CREATE TABLE IF NOT EXISTS sharding_order_1\n" +
                         "        (\n" +
                         "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
                         "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
                         "            create_time  DATETIME      NULL,\n" +
                         "        PRIMARY KEY (order_id)\n" +
                         ")",
-                "CREATE TABLE IF NOT EXISTS sharding_order_03\n" +
+                "CREATE TABLE IF NOT EXISTS sharding_order_2\n" +
                         "        (\n" +
                         "            order_id     BIGINT(20)  NOT NULL AUTO_INCREMENT,\n" +
                         "            subject   VARCHAR(30) NULL DEFAULT NULL,\n" +
@@ -158,7 +190,7 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
             // value是一个集合 比如 in查询
             // 不管有几个value 此处最终return一个真实表名
             // 未携带分配字段会报错 所以shardingValues 一定是 notEmpty
-            return "sharding_order_" + String.format("%02d", ((Long) values.get(0) % 3 + 1));
+            return "sharding_order_" + (Long) values.get(0) % 3;
         }
     }
 }

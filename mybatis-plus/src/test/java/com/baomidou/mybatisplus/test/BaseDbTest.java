@@ -1,12 +1,12 @@
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.function.Consumer;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
@@ -23,11 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.function.Consumer;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * @author miemie
@@ -37,6 +39,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     protected SqlSessionFactory sqlSessionFactory;
     protected Class<T> mapper;
+    protected JdbcTemplate jdbcTemplate;
 
     @SuppressWarnings("unchecked")
     public BaseDbTest() {
@@ -49,17 +52,17 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         Consumer<Configuration> consumer = consumer();
         mapper = (Class<T>) getRawType();
 
-        JdbcTemplate template = new JdbcTemplate(ds);
+        jdbcTemplate = new JdbcTemplate(ds);
         if (CollectionUtils.isNotEmpty(tableSql)) {
             for (String sql : tableSql) {
                 if (StringUtils.isNotBlank(sql)) {
-                    template.execute(sql);
+                    jdbcTemplate.execute(sql);
                 }
             }
         }
 
         if (StringUtils.isNotBlank(tableDataSql)) {
-            template.execute(tableDataSql);
+            jdbcTemplate.execute(tableDataSql);
         }
         MybatisSqlSessionFactoryBuilder builder = new MybatisSqlSessionFactoryBuilder();
         Environment environment = new Environment("test", new JdbcTransactionFactory(), ds);
@@ -74,7 +77,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
             try {
                 InputStream inputStream = Resources.getResourceAsStream(mapperXml);
                 XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(inputStream,
-                    configuration, mapperXml, configuration.getSqlFragments());
+                        configuration, mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
             } catch (IOException e) {
                 throw ExceptionUtils.mpe(e);
