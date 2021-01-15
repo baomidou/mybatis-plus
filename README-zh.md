@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://search.maven.org/search?q=g:com.baomidou%20AND%20a:mybatis-plus">
+  <a href="https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*">
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">
   </a>
 
@@ -57,7 +57,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [SSM-实战 Demo](https://gitee.com/juapk/SpringWind)
 
-# [点此查看仓库](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
+# Latest Version:[![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
 
 ```xml
 <dependency>

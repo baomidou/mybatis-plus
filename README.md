@@ -51,7 +51,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 ## Getting started
 
 -   Add MyBatis-Plus dependency
-    - Latest-Version:[![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square)](https://search.maven.org/search?q=g:com.baomidou%20AND%20a:mybatis-plus)
+    - Latest Version:[![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
     - Maven:
       ```xml
       <dependency>
