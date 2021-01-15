@@ -51,18 +51,20 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 ## Getting started
 
 -   Add MyBatis-Plus dependency
-    -   Maven:
-        ```xml
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.1</version>
-        </dependency>
-        ```
-    -   Gradle
-        ```groovy
-        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.4.1'
-        ```
+    - Latest
+      Version: [[!Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square)](https://search.maven.org/search?q=g:com.baomidou%20AND%20a:mybatis-plus)
+    - Maven:
+      ```xml
+      <dependency>
+          <groupId>com.baomidou</groupId>
+          <artifactId>mybatis-plus-boot-starter</artifactId>
+          <version>Latest Version</version>
+      </dependency>
+      ```
+    - Gradle
+      ```groovy
+      compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+      ```
 -   Modify mapper file extends BaseMapper interface
 
     ```java
@@ -71,14 +73,14 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     }
     ```
 
--   Use it
-    ```java
-    List<User> userList = userMapper.selectList(
-            new QueryWrapper<User>()
-                    .lambda()
-                    .ge(User::getAge, 18)
-    );
-    ```
+- Use it
+  ``` java
+  List<User> userList = userMapper.selectList(
+          new QueryWrapper<User>()
+                  .lambda()
+                  .ge(User::getAge, 18)
+  );
+  ```
     MyBatis-Plus will execute the following SQL
     ```sql
     SELECT * FROM user WHERE age >= 18

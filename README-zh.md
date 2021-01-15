@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.baomidou%22%20AND%20a%3A%22mybatis-plus%22">
+  <a href="https://search.maven.org/search?q=g:com.baomidou%20AND%20a:mybatis-plus">
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">
   </a>
 
