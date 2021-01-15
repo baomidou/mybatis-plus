@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.1.2-SNAPSHOT"
+    version = "3.4.2"
 }
 
 ext {
