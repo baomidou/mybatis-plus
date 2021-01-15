@@ -59,7 +59,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
 
-```xml
+``` xml
 <dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus</artifactId>
@@ -72,6 +72,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - [基于Cookie的SSO中间件 Kisso](https://gitee.com/baomidou/kisso)
 - [Java快速开发框架 SpringWind](https://gitee.com/juapk/SpringWind)
 - [基于Hibernate扩展 Hibernate-Plus](https://gitee.com/baomidou/hibernate-plus)
+- [基于 pac4j-jwt 的快速集成的 web 安全组件 shaun](https://gitee.com/baomidou/shaun)
 
 # 王者荣耀
 ![MPTrophy](https://images.gitee.com/uploads/images/2020/0611/222825_a19dfd37_399953.jpeg)
