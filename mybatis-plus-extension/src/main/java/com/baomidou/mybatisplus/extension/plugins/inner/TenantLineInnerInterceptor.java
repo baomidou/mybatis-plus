@@ -22,10 +22,7 @@ import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.NotExpression;
-import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
@@ -237,6 +234,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         } else {
             processFromItem(fromItem);
         }
+        //#3087 github
+        List<SelectItem> selectItems = plainSelect.getSelectItems();
+        if (selectItems != null && selectItems.size() > 0) {
+            selectItems.forEach(item -> {
+                processSelectItem(item);
+            });
+        }
         List<Join> joins = plainSelect.getJoins();
         if (joins != null && joins.size() > 0) {
             joins.forEach(j -> {
@@ -299,6 +303,24 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             } else if (where instanceof Parenthesis) {
                 Parenthesis expression = (Parenthesis) where;
                 processWhereSubSelect(expression.getExpression());
+            }
+        }
+    }
+
+    protected void processSelectItem(SelectItem selectItem) {
+        if (selectItem instanceof SelectExpressionItem) {
+            SelectExpressionItem selectExpressionItem = (SelectExpressionItem) selectItem;
+            if (selectExpressionItem.getExpression() instanceof SubSelect) {
+                processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody());
+            } else if (selectExpressionItem.getExpression() instanceof Function) {
+                ExpressionList parameters = ((Function) selectExpressionItem.getExpression()).getParameters();
+                if (parameters != null) {
+                    parameters.getExpressions().forEach(expression -> {
+                        if (expression instanceof SubSelect) {
+                            processSelectBody(((SubSelect) expression).getSelectBody());
+                        }
+                    });
+                }
             }
         }
     }
