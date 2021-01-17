@@ -47,7 +47,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final transient Log log = LogFactory.getLog(getClass());
+    private transient Log log = null;
 
     /**
      * 插入（字段选择插入）
@@ -196,7 +196,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public T selectOne(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(log, selectList(queryWrapper));
+        return SqlHelper.getObject(getLog(), selectList(queryWrapper));
     }
 
     /**
@@ -281,5 +281,18 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      */
     protected void closeSqlSession(SqlSession sqlSession) {
         SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(getClass()));
+    }
+
+    /**
+     * 获取Log
+     *
+     * @return log对象
+     */
+    private Log getLog() {
+        if (log == null) {
+            log = LogFactory.getLog(getClass());
+        }
+
+        return log;
     }
 }
