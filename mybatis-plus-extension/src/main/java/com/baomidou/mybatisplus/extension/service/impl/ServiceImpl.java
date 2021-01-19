@@ -90,7 +90,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     /**
      * @see ResolvableType
-     * @since 3.4.2
+     * @since 3.4.3
      */
     protected ResolvableType getResolvableType() {
         return ResolvableType.forClass(ClassUtils.getUserClass(getClass()));

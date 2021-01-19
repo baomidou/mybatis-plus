@@ -125,6 +125,9 @@ public final class SqlHelper {
         return getObject(() -> log, list);
     }
 
+    /**
+     * @since 3.4.3
+     */
     public static <E> E getObject(Supplier<Log> supplier, List<E> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             int size = list.size();

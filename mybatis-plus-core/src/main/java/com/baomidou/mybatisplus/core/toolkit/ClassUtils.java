@@ -159,6 +159,12 @@ public final class ClassUtils {
         return toClassConfident(name, null);
     }
 
+    /**
+     * @param name
+     * @param classLoader
+     * @return
+     * @since 3.4.3
+     */
     public static Class<?> toClassConfident(String name, ClassLoader classLoader) {
         try {
             return loadClass(name, getClassLoaders(classLoader));
