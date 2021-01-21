@@ -22,7 +22,12 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
@@ -34,7 +39,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT_BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT_IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT_LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
 import static java.util.stream.Collectors.joining;
 
@@ -252,13 +279,13 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children exists(boolean condition, String existsSql) {
-        return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
+    public Children exists(boolean condition, String existsSql, Object... value) {
+        return doIt(condition, EXISTS, () -> String.format("(%s)", formatSql(existsSql, value)));
     }
 
     @Override
-    public Children notExists(boolean condition, String existsSql) {
-        return not(condition).exists(condition, existsSql);
+    public Children notExists(boolean condition, String existsSql, Object... value) {
+        return not(condition).exists(condition, existsSql, value);
     }
 
     @Override
