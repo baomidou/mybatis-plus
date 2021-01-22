@@ -114,8 +114,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children exists(String existsSql) {
-        return exists(true, existsSql);
+    default Children exists(String existsSql, Object... value) {
+        return exists(true, existsSql, value);
     }
 
     /**
@@ -125,15 +125,16 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
+     * @param value 同apply
      * @return children
      */
-    Children exists(boolean condition, String existsSql);
+    Children exists(boolean condition, String existsSql, Object... value);
 
     /**
      * ignore
      */
-    default Children notExists(String existsSql) {
-        return notExists(true, existsSql);
+    default Children notExists(String existsSql, Object... value) {
+        return notExists(true, existsSql, value);
     }
 
     /**
@@ -143,7 +144,8 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
+     * @param value 同apply
      * @return children
      */
-    Children notExists(boolean condition, String existsSql);
+    Children notExists(boolean condition, String existsSql, Object... value);
 }

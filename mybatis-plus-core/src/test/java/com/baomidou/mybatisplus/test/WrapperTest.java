@@ -26,7 +26,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class WrapperTest {
 
@@ -217,6 +221,20 @@ class WrapperTest {
     void testInEmptyColl() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList());
         logSqlSegment("测试 empty 的 coll", queryWrapper, "(xxx IN ())");
+    }
+
+    @Test
+    void testExistsValue() {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("a", "b");
+        wrapper.exists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
+        logSqlSegment("testExistsValue", wrapper, "(a = ? AND EXISTS (select 1 from xxx where id = ? and name = ?))");
+        logParams(wrapper);
+        wrapper = new QueryWrapper<>();
+        wrapper.eq("a", "b");
+        wrapper.notExists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
+        logSqlSegment("testNotExistsValue", wrapper, "(a = ? AND NOT EXISTS (select 1 from xxx where id = ? and name = ?))");
+        logParams(wrapper);
     }
 
     private List<Object> getList() {

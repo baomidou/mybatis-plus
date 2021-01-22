@@ -252,13 +252,13 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children exists(boolean condition, String existsSql) {
-        return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
+    public Children exists(boolean condition, String existsSql, Object... value) {
+        return doIt(condition, EXISTS, () -> String.format("(%s)", formatSql(existsSql, value)));
     }
 
     @Override
-    public Children notExists(boolean condition, String existsSql) {
-        return not(condition).exists(condition, existsSql);
+    public Children notExists(boolean condition, String existsSql, Object... value) {
+        return not(condition).exists(condition, existsSql, value);
     }
 
     @Override
