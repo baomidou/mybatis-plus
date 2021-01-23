@@ -414,11 +414,20 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return null;
         }
         if (ArrayUtils.isNotEmpty(params)) {
+            StringBuffer buf = new StringBuffer();
             for (int i = 0; i < params.length; ++i) {
                 String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format("{%s}", i),
-                    String.format(Constants.WRAPPER_PARAM_FORMAT, Constants.WRAPPER, genParamName));
+                String searchText = buf.append("{").append(i).append("}").toString();
+                buf.delete(0,buf.length());
+                String replaceText = buf.append("#{")
+                    .append(Constants.WRAPPER)
+                    .append(".paramNameValuePairs.")
+                    .append(genParamName)
+                    .append("}")
+                    .toString();
+                sqlStr = StringUtils.replaceOnce(sqlStr,searchText,replaceText);
                 paramNameValuePairs.put(genParamName, params[i]);
+                buf.delete(0,buf.length());
             }
         }
         return sqlStr;

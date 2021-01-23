@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * String 工具类
  *
- * @author D.Yang, hcl
+ * @author D.Yang, hcl, t1zg
  * @author hcl
  * @since 2016-08-18
  */
@@ -251,6 +251,38 @@ public final class StringUtils {
         }
 
         return sb;
+    }
+    /**
+     * 字符串替换
+     * <p>
+     * 对于性能要求较高的时候可使用 只会替换一次
+     * </p>
+     *
+     * @param src      源字符串
+     * @param searchText      搜索字符串
+     * @param replaceText 替换字符串
+     * @return 返回替换后的字符串
+     */
+    public static String replaceOnce( String src, String searchText,  String replaceText ) {
+        int max = 1;
+        int start = 0;
+        int end = src.indexOf(searchText, start);
+
+        if (end == -1) {
+            return src;
+        }
+        int length = searchText.length();
+        StringBuilder buf = new StringBuilder(src.length());
+        while (end != -1) {
+            buf.append(src, start, end).append(replaceText);
+            start = end + length;
+            if (--max == 0) {
+                break;
+            }
+            end = src.indexOf(searchText,start);
+        }
+        buf.append(src, start, src.length());
+        return buf.toString();
     }
 
     /**
