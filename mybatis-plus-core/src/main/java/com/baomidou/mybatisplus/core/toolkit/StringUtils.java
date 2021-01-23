@@ -233,7 +233,7 @@ public final class StringUtils {
      * @param src      源字符串
      * @param ptn      需要替换部分的正则表达式
      * @param replacer 替换处理器
-     * @return 返回字符串构建起
+     * @return 返回字符串构建器
      */
     public static StringBuilder replace(CharSequence src, Pattern ptn, BiIntFunction<Matcher, CharSequence> replacer) {
         int idx = 0, last = 0, len = src.length();
