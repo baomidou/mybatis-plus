@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.CommonData;
 import com.baomidou.mybatisplus.test.mysql.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
@@ -151,5 +153,22 @@ class MysqlTestDataMapperTest {
         assertThat(entitys).isNotEmpty();
         assertThat(entitys.size()).isEqualTo(1);
         assertThat(entitys.get(0).getColumn4()).isNotNull();
+    }
+
+    @Test
+    void testInQueryTime(){
+        queryTime(30000);
+        queryTime(50000);
+        queryTime(100000);
+    }
+
+    private void queryTime(int size){
+        Long[] ids = new Long[size];
+        Arrays.fill(ids,1L);
+        QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id",ids);
+        Long start = System.currentTimeMillis();
+        commonDataMapper.selectList(queryWrapper);
+        System.out.println(System.currentTimeMillis() - start);
     }
 }
