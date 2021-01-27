@@ -292,22 +292,28 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children groupBy(boolean condition, R... columns) {
-        if (ArrayUtils.isEmpty(columns)) {
-            return typedThis;
+    public Children groupBy(boolean condition, R column, R... columns) {
+        if (condition) {
+            String one = columnToString(column);
+            if (ArrayUtils.isNotEmpty(columns)) {
+                one += (StringPool.COMMA + columnsToString(columns));
+            }
+            final String finalOne = one;
+            doIt(true, GROUP_BY, () -> finalOne);
         }
-        return doIt(condition, GROUP_BY,
-            () -> columns.length == 1 ? columnToString(columns[0]) : columnsToString(columns));
+        return typedThis;
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
-        if (ArrayUtils.isEmpty(columns)) {
-            return typedThis;
-        }
-        SqlKeyword mode = isAsc ? ASC : DESC;
-        for (R column : columns) {
-            doIt(condition, ORDER_BY, () -> columnToString(column), mode);
+    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+        if (condition) {
+            SqlKeyword mode = isAsc ? ASC : DESC;
+            doIt(true, ORDER_BY, () -> columnToString(column), mode);
+            if (ArrayUtils.isNotEmpty(columns)) {
+                for (R c : columns) {
+                    doIt(true, ORDER_BY, () -> columnToString(c), mode);
+                }
+            }
         }
         return typedThis;
     }
@@ -429,7 +435,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      *
      * @param value 集合
      */
-    private ISqlSegment inExpression(Collection<?> value) {
+    protected ISqlSegment inExpression(Collection<?> value) {
         return () -> value.stream().map(i -> formatSql("{0}", i))
             .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }

@@ -188,14 +188,14 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children groupBy(boolean condition, R... columns) {
-        getWrapper().groupBy(condition, columns);
+    public Children groupBy(boolean condition, R column, R... columns) {
+        getWrapper().groupBy(condition, column, columns);
         return typedThis;
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
-        getWrapper().orderBy(condition, isAsc, columns);
+    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+        getWrapper().orderBy(condition, isAsc, column, columns);
         return typedThis;
     }
 

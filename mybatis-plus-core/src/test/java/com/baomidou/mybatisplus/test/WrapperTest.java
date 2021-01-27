@@ -26,11 +26,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class WrapperTest {
 
@@ -39,7 +35,7 @@ class WrapperTest {
     }
 
     private void logSqlSegment(String explain, Wrapper<?> wrapper, String targetSql) {
-        System.out.println(String.format(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓", explain));
+        System.out.printf(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓%n", explain);
         System.out.println(wrapper.getSqlSegment());
         System.out.println(wrapper.getTargetSql());
         Assertions.assertThat(wrapper.getTargetSql().trim()).isEqualTo(targetSql);
@@ -174,13 +170,13 @@ class WrapperTest {
     void testFunc() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .isNull("nullColumn").or().isNotNull("notNullColumn")
-            .orderByAsc("id").orderByDesc("name")
-            .groupBy("id", "name").groupBy("id2", "name2")
+            .orderByAsc("id").orderByDesc("name","name2")
+            .groupBy("id").groupBy("name", "id2", "name2")
             .in("inColl", getList()).or().notIn("notInColl", getList())
             .in("inArray").notIn("notInArray", 1, 2, 3)
             .inSql("inSql", "1,2,3,4,5").notInSql("inSql", "1,2,3,4,5")
             .having("sum(age) > {0}", 1).having("id is not null");
-        logSqlSegment("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC");
+        logSqlSegment("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
         logParams(queryWrapper);
     }
 

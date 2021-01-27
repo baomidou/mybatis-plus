@@ -191,15 +191,8 @@ public interface Func<Children, R> extends Serializable {
     /**
      * ignore
      */
-    default Children groupBy(R column) {
-        return groupBy(true, column);
-    }
-
-    /**
-     * ignore
-     */
-    default Children groupBy(R... columns) {
-        return groupBy(true, columns);
+    default Children groupBy(R column, R... columns) {
+        return groupBy(true, column, columns);
     }
 
     /**
@@ -207,23 +200,17 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: groupBy("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    Children groupBy(boolean condition, R... columns);
+    Children groupBy(boolean condition, R column, R... columns);
 
     /**
      * ignore
      */
-    default Children orderByAsc(R column) {
-        return orderByAsc(true, column);
-    }
-
-    /**
-     * ignore
-     */
-    default Children orderByAsc(R... columns) {
-        return orderByAsc(true, columns);
+    default Children orderByAsc(R column, R... columns) {
+        return orderByAsc(true, column, columns);
     }
 
     /**
@@ -231,25 +218,19 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: orderByAsc("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    default Children orderByAsc(boolean condition, R... columns) {
-        return orderBy(condition, true, columns);
+    default Children orderByAsc(boolean condition, R column, R... columns) {
+        return orderBy(condition, true, column, columns);
     }
 
     /**
      * ignore
      */
-    default Children orderByDesc(R column) {
-        return orderByDesc(true, column);
-    }
-
-    /**
-     * ignore
-     */
-    default Children orderByDesc(R... columns) {
-        return orderByDesc(true, columns);
+    default Children orderByDesc(R column, R... columns) {
+        return orderByDesc(true, column, columns);
     }
 
     /**
@@ -257,11 +238,12 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: orderByDesc("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    default Children orderByDesc(boolean condition, R... columns) {
-        return orderBy(condition, false, columns);
+    default Children orderByDesc(boolean condition, R column, R... columns) {
+        return orderBy(condition, false, column, columns);
     }
 
     /**
@@ -270,10 +252,11 @@ public interface Func<Children, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param isAsc     是否是 ASC 排序
+     * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    Children orderBy(boolean condition, boolean isAsc, R... columns);
+    Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
 
     /**
      * ignore
