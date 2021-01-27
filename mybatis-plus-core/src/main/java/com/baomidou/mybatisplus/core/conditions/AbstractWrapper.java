@@ -283,8 +283,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children in(boolean condition, R column, Object... values) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN, inExpression(values)));
+    }
+
+    @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN, inExpression(coll)));
+    }
+
+    @Override
+    public Children notIn(boolean condition, R column, Object... values) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN, inExpression(values)));
     }
 
     @Override
@@ -453,6 +463,19 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return () -> "()";
         }
         return () -> value.stream().map(i -> formatParam(null, i))
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+    }
+
+    /**
+     * 获取in表达式 包含括号
+     *
+     * @param values 数组
+     */
+    protected ISqlSegment inExpression(Object[] values) {
+        if (ArrayUtils.isEmpty(values)) {
+            return () -> "()";
+        }
+        return () -> Arrays.stream(values).map(i -> formatParam(null, i))
             .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 

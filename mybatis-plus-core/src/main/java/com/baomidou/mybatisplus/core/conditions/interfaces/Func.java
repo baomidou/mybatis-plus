@@ -16,12 +16,8 @@
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Consumer;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * 查询条件封装
@@ -104,10 +100,7 @@ public interface Func<Children, R> extends Serializable {
      * @param values    数据数组
      * @return children
      */
-    default Children in(boolean condition, R column, Object... values) {
-        return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
-            .collect(toList()));
-    }
+    Children in(boolean condition, R column, Object... values);
 
     /**
      * ignore
@@ -143,10 +136,7 @@ public interface Func<Children, R> extends Serializable {
      * @param values    数据数组
      * @return children
      */
-    default Children notIn(boolean condition, R column, Object... values) {
-        return notIn(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
-            .collect(toList()));
-    }
+    Children notIn(boolean condition, R column, Object... values);
 
     /**
      * ignore

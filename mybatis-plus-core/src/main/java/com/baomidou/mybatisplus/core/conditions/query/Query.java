@@ -27,10 +27,7 @@ import java.util.function.Predicate;
 public interface Query<Children, T, R> extends Serializable {
 
     /**
-     * 设置查询字段
-     *
-     * @param columns 字段数组
-     * @return children
+     * ignore
      */
     @SuppressWarnings("unchecked")
     Children select(R... columns);

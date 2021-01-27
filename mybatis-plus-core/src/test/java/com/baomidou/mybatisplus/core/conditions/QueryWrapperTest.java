@@ -157,7 +157,7 @@ class QueryWrapperTest extends BaseWrapperTest {
             .orderByAsc("id").orderByDesc("name", "name2")
             .groupBy("id").groupBy("name", "id2", "name2")
             .in("inColl", getList()).or().notIn("notInColl", getList())
-            .in("inArray").notIn("notInArray", 1, 2, 3)
+            .in("inArray").notIn("notInArray", 5, 6, 7)
             .inSql("inSql", "1,2,3,4,5").notInSql("inSql", "1,2,3,4,5")
             .having("sum(age) > {0}", 1).having("id is not null");
         logSqlSegment("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
