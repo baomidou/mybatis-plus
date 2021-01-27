@@ -1,7 +1,9 @@
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.StringTypeHandler;
@@ -20,6 +22,11 @@ class UpdateWrapperTest {
         Assertions.assertThat(wrapper.getSqlSet().trim()).isEqualTo(targetSql);
     }
 
+    private <T> void logParams(UpdateWrapper<T> wrapper) {
+        wrapper.getParamNameValuePairs().forEach((k, v) ->
+            System.out.println("key: '" + k + "'\t\tvalue: '" + v + StringPool.SINGLE_QUOTE));
+    }
+
     @Test
     void test1() {
         UpdateWrapper<User> wrapper = new UpdateWrapper<User>()
@@ -30,5 +37,6 @@ class UpdateWrapperTest {
             "name=#{ew.paramNameValuePairs.MPGENVAL1,typeHandler=org.apache.ibatis.type.StringTypeHandler}," +
                 "name=#{ew.paramNameValuePairs.MPGENVAL2,typeHandler=org.apache.ibatis.type.StringTypeHandler,jdbcType=VARCHAR}," +
                 "name=#{ew.paramNameValuePairs.MPGENVAL3,typeHandler=org.apache.ibatis.type.StringTypeHandler,jdbcType=VARCHAR,numericScale=2}");
+        logParams(wrapper);
     }
 }

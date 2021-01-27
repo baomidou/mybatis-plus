@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
@@ -386,19 +387,48 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected abstract Children instance();
 
-    protected final String formatParamIfNeed(boolean need, String sqlStr, String mapping, Object... params) {
-        if (!need || StringUtils.isBlank(sqlStr)) {
+    /**
+     * 格式化 sql
+     * <p>
+     * 支持 "{0}" 这种,或者 "sql {0} sql" 这种
+     *
+     * @param need    是否需要进行操作
+     * @param sqlStr  可能是sql片段
+     * @param mapping 例如: "javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler" 这种
+     * @param params  参数
+     * @return sql片段
+     */
+    protected final String formatSqlMaybeWithParam(String sqlStr, String mapping, Object... params) {
+        if (StringUtils.isBlank(sqlStr)) {
             return null;
         }
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
-                String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format("{%s}", i),
-                    String.format(Constants.WRAPPER_PARAM_FORMAT, Constants.WRAPPER, genParamName));
-                paramNameValuePairs.put(genParamName, params[i]);
+                sqlStr = sqlStr.replace(String.format("{%s}", i), formatParam(mapping, params[i]));
             }
         }
         return sqlStr;
+    }
+
+    /**
+     * 处理入参
+     *
+     * @param mapping 例如: "javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler" 这种
+     * @param param   参数
+     * @return value
+     */
+    protected final String formatParam(String mapping, Object param) {
+        final String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
+        final String paramStr = Constants.WRAPPER_PARAM_PREFIX + genParamName;
+        paramNameValuePairs.put(genParamName, param);
+        return SqlScriptUtils.safeParam(paramStr, mapping);
+    }
+
+    protected final Children maybeDoIt(boolean condition, Consumer<Children> consumer) {
+        if (condition) {
+            consumer.accept(typedThis);
+        }
+        return typedThis;
     }
 
     /**

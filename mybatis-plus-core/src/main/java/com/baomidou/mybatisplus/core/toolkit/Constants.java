@@ -139,4 +139,5 @@ public interface Constants extends StringPool, Serializable {
 
     String WRAPPER_PARAM = "MPGENVAL";
     String WRAPPER_PARAM_FORMAT = "#{%s.paramNameValuePairs.%s}";
+    String WRAPPER_PARAM_PREFIX = WRAPPER_DOT + "paramNameValuePairs" + DOT;
 }
