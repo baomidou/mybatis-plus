@@ -386,8 +386,19 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected abstract Children instance();
 
-    protected final String formatParam(String sql, Object param, String mapping) {
-        return null; // todo
+    protected final String formatParamIfNeed(boolean need, String sqlStr, String mapping, Object... params) {
+        if (!need || StringUtils.isBlank(sqlStr)) {
+            return null;
+        }
+        if (ArrayUtils.isNotEmpty(params)) {
+            for (int i = 0; i < params.length; ++i) {
+                String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
+                sqlStr = sqlStr.replace(String.format("{%s}", i),
+                    String.format(Constants.WRAPPER_PARAM_FORMAT, Constants.WRAPPER, genParamName));
+                paramNameValuePairs.put(genParamName, params[i]);
+            }
+        }
+        return sqlStr;
     }
 
     /**
