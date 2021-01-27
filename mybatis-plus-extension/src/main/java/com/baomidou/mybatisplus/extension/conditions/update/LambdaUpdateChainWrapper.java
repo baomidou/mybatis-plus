@@ -42,7 +42,7 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
 
     @Override
     public LambdaUpdateChainWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
-        wrapperChildren.set(condition, column, val,mapping);
+        wrapperChildren.set(condition, column, val, mapping);
         return typedThis;
     }
 

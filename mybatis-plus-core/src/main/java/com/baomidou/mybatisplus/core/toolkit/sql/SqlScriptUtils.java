@@ -210,7 +210,7 @@ public abstract class SqlScriptUtils implements Constants {
         return null;
     }
 
-    public static String convertParamMapping(Class<? extends TypeHandler> typeHandler, JdbcType jdbcType, Integer numericScale) {
+    public static String convertParamMapping(Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
         if (typeHandler == null && jdbcType == null && numericScale == null) {
             return null;
         }

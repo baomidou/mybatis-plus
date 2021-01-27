@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
@@ -76,14 +76,10 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
-        if (condition) {
-            String sql = formatSql("{0}", val);
-            if (StringUtils.isNotBlank(mapping)) {
-                sql = sql.substring(0, sql.length() - 1) + StringPool.COMMA + mapping + "}";
-            }
-            sqlSet.add(String.format("%s=%s", columnToString(column), sql));
-        }
-        return typedThis;
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(columnToString(column) + Constants.EQUALS + sql);
+        });
     }
 
     @Override
@@ -99,7 +95,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return String.join(StringPool.COMMA, sqlSet);
+        return String.join(Constants.COMMA, sqlSet);
     }
 
     @Override

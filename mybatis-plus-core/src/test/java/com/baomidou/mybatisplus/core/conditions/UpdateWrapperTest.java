@@ -1,9 +1,7 @@
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.StringTypeHandler;
@@ -14,17 +12,12 @@ import org.junit.jupiter.api.Test;
  * @author miemie
  * @since 2021-01-27
  */
-class UpdateWrapperTest {
+class UpdateWrapperTest extends BaseWrapperTest {
 
     private void logSqlSet(String explain, Update<?, ?> wrapper, String targetSql) {
         System.out.printf(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓%n", explain);
         System.out.println(wrapper.getSqlSet());
         Assertions.assertThat(wrapper.getSqlSet().trim()).isEqualTo(targetSql);
-    }
-
-    private <T> void logParams(UpdateWrapper<T> wrapper) {
-        wrapper.getParamNameValuePairs().forEach((k, v) ->
-            System.out.println("key: '" + k + "'\t\tvalue: '" + v + StringPool.SINGLE_QUOTE));
     }
 
     @Test

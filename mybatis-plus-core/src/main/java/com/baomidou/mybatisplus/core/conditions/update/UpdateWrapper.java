@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
@@ -71,14 +71,14 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return String.join(StringPool.COMMA, sqlSet);
+        return String.join(Constants.COMMA, sqlSet);
     }
 
     @Override
     public UpdateWrapper<T> set(boolean condition, String column, Object val, String mapping) {
-        return maybeDoIt(condition, i -> {
-            String sql = formatSqlMaybeWithParam("{0}", mapping, val);
-            sqlSet.add(String.format("%s=%s", column, sql));
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(column + Constants.EQUALS + sql);
         });
     }
 

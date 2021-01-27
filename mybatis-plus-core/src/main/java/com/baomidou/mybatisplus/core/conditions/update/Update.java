@@ -49,7 +49,7 @@ public interface Update<Children, R> extends Serializable {
     /**
      * ignore
      */
-    default Children set(R column, Object val, Class<? extends TypeHandler> typeHandler) {
+    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler) {
         return set(true, column, val, typeHandler, null, null);
     }
 
@@ -61,28 +61,28 @@ public interface Update<Children, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler> typeHandler) {
+    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler) {
         return set(condition, column, val, typeHandler, null, null);
     }
 
     /**
      * ignore
      */
-    default Children set(R column, Object val, Class<? extends TypeHandler> typeHandler, JdbcType jdbcType) {
+    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
         return set(true, column, val, typeHandler, jdbcType, null);
     }
 
     /**
      * ignore
      */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler> typeHandler, JdbcType jdbcType) {
+    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
         return set(condition, column, val, typeHandler, jdbcType, null);
     }
 
     /**
      * ignore
      */
-    default Children set(R column, Object val, Class<? extends TypeHandler> typeHandler, JdbcType jdbcType, Integer numericScale) {
+    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
         return set(true, column, val, typeHandler, jdbcType, numericScale);
     }
 
@@ -94,7 +94,7 @@ public interface Update<Children, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler> typeHandler, JdbcType jdbcType, Integer numericScale) {
+    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
         String mapping = null;
         if (condition) {
             mapping = SqlScriptUtils.convertParamMapping(typeHandler, jdbcType, numericScale);

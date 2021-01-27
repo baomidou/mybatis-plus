@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
-class QueryWrapperTest {
+class QueryWrapperTest extends BaseWrapperTest {
 
     private void log(String message) {
         System.out.println(message);
@@ -29,11 +28,6 @@ class QueryWrapperTest {
         System.out.println(wrapper.getSqlSegment());
         System.out.println(wrapper.getTargetSql());
         assertThat(wrapper.getTargetSql().trim()).isEqualTo(targetSql);
-    }
-
-    private <T> void logParams(QueryWrapper<T> wrapper) {
-        wrapper.getParamNameValuePairs().forEach((k, v) ->
-            System.out.println("key: '" + k + "'\t\tvalue: '" + v + StringPool.SINGLE_QUOTE));
     }
 
     @Test
