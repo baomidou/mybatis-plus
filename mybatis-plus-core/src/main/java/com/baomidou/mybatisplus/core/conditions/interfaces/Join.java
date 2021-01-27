@@ -44,8 +44,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children apply(String applySql, Object... value) {
-        return apply(true, applySql, value);
+    default Children apply(String applySql, Object... values) {
+        return apply(true, applySql, values);
     }
 
     /**
@@ -56,9 +56,10 @@ public interface Join<Children> extends Serializable {
      * <p>例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())</p>
      *
      * @param condition 执行条件
+     * @param values    数据数组
      * @return children
      */
-    Children apply(boolean condition, String applySql, Object... value);
+    Children apply(boolean condition, String applySql, Object... values);
 
     /**
      * ignore
@@ -114,8 +115,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children exists(String existsSql, Object... value) {
-        return exists(true, existsSql, value);
+    default Children exists(String existsSql, Object... values) {
+        return exists(true, existsSql, values);
     }
 
     /**
@@ -125,16 +126,16 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
-     * @param value 同apply
+     * @param values    数据数组
      * @return children
      */
-    Children exists(boolean condition, String existsSql, Object... value);
+    Children exists(boolean condition, String existsSql, Object... values);
 
     /**
      * ignore
      */
-    default Children notExists(String existsSql, Object... value) {
-        return notExists(true, existsSql, value);
+    default Children notExists(String existsSql, Object... values) {
+        return notExists(true, existsSql, values);
     }
 
     /**
@@ -144,8 +145,8 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
-     * @param value 同apply
+     * @param values    数据数组
      * @return children
      */
-    Children notExists(boolean condition, String existsSql, Object... value);
+    Children notExists(boolean condition, String existsSql, Object... values);
 }

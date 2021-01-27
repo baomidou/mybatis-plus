@@ -220,8 +220,8 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children apply(boolean condition, String applySql, Object... value) {
-        getWrapper().apply(condition, applySql, value);
+    public Children apply(boolean condition, String applySql, Object... values) {
+        getWrapper().apply(condition, applySql, values);
         return typedThis;
     }
 
@@ -244,14 +244,14 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children exists(boolean condition, String existsSql, Object... value) {
-        getWrapper().exists(condition, existsSql);
+    public Children exists(boolean condition, String existsSql, Object... values) {
+        getWrapper().exists(condition, existsSql, values);
         return typedThis;
     }
 
     @Override
-    public Children notExists(boolean condition, String existsSql, Object... value) {
-        getWrapper().notExists(condition, existsSql);
+    public Children notExists(boolean condition, String existsSql, Object... values) {
+        getWrapper().notExists(condition, existsSql, values);
         return typedThis;
     }
 
