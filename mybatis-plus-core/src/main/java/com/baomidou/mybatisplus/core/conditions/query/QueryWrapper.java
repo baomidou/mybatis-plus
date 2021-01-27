@@ -100,7 +100,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), sqlSelect, paramNameSeq, paramNameValuePairs,
-            expression, lastSql, sqlComment, sqlFirst);
+            expression, paramAlias, lastSql, sqlComment, sqlFirst);
     }
 
     /**

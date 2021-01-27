@@ -106,6 +106,17 @@ public final class Assert {
     }
 
     /**
+     * 断言这个 map 为 empty
+     * <p>为 empty 则抛异常</p>
+     *
+     * @param map     集合
+     * @param message 消息
+     */
+    public static void isEmpty(Map<?, ?> map, String message, Object... params) {
+        isTrue(CollectionUtils.isEmpty(map), message, params);
+    }
+
+    /**
      * 断言这个 数组 不为 empty
      * <p>为 empty 则抛异常</p>
      *

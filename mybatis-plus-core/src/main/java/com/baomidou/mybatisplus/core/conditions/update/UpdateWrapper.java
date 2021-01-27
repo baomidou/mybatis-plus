@@ -95,7 +95,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), sqlSet, paramNameSeq, paramNameValuePairs,
-            expression, lastSql, sqlComment, sqlFirst);
+            expression, paramAlias, lastSql, sqlComment, sqlFirst);
     }
 
     @Override

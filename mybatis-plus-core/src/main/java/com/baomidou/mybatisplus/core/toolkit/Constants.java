@@ -138,5 +138,5 @@ public interface Constants extends StringPool, Serializable {
      * wrapper 内部参数相关
      */
     String WRAPPER_PARAM = "MPGENVAL";
-    String WRAPPER_PARAM_PREFIX = WRAPPER_DOT + "paramNameValuePairs" + DOT;
+    String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
 }

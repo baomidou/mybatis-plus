@@ -58,6 +58,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
+    /**
+     * 其他
+     */
+    protected SharedString paramAlias;
     protected SharedString lastSql;
     /**
      * SQL注释
@@ -68,7 +72,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected SharedString sqlFirst;
     /**
-     * ß
      * 数据库表映射实体类
      */
     private T entity;
@@ -421,7 +424,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected final String formatParam(String mapping, Object param) {
         final String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
-        final String paramStr = Constants.WRAPPER_PARAM_PREFIX + genParamName;
+        final String paramStr = getParamAlias() + Constants.WRAPPER_PARAM_MIDDLE + genParamName;
         paramNameValuePairs.put(genParamName, param);
         return SqlScriptUtils.safeParam(paramStr, mapping);
     }
@@ -513,6 +516,24 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     public Map<String, Object> getParamNameValuePairs() {
         return paramNameValuePairs;
+    }
+
+    public String getParamAlias() {
+        return paramAlias == null ? Constants.WRAPPER : paramAlias.getStringValue();
+    }
+
+    /**
+     * 参数别名设置，初始化时优先设置该值、重复设置异常
+     *
+     * @param paramAlias 参数别名
+     * @return Children
+     */
+    public Children setParamAlias(String paramAlias) {
+        Assert.notEmpty(paramAlias, "paramAlias can not be empty!");
+        Assert.isEmpty(paramNameValuePairs, "Please call this method before working!");
+        Assert.isNull(this.paramAlias, "Please do not call the method repeatedly!");
+        this.paramAlias = new SharedString(paramAlias);
+        return typedThis;
     }
 
     /**
