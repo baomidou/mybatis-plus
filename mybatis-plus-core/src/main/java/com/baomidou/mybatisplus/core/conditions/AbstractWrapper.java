@@ -386,6 +386,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected abstract Children instance();
 
+    protected final String formatParam(String sql, Object param, String mapping) {
+        return null; // todo
+    }
+
     /**
      * 格式化SQL
      *

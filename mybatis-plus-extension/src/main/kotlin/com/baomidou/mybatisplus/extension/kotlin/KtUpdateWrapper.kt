@@ -74,9 +74,13 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
         return typedThis
     }
 
-    override fun set(condition: Boolean, column: KProperty<*>, value: Any?): KtUpdateWrapper<T> {
+    override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
         if (condition) {
-            sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", value)))
+            var sql = formatSql("{0}", value)
+            if (StringUtils.isNotBlank(mapping)) {
+                sql = sql.substring(0, sql.length - 1) + StringPool.COMMA + mapping + "}"
+            }
+            sqlSet.add(String.format("%s=%s", columnToString(column), sql))
         }
         return typedThis
     }

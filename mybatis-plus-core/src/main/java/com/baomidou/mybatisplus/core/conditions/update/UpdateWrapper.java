@@ -75,9 +75,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     @Override
-    public UpdateWrapper<T> set(boolean condition, String column, Object val) {
+    public UpdateWrapper<T> set(boolean condition, String column, Object val, String mapping) {
         if (condition) {
-            sqlSet.add(String.format("%s=%s", column, formatSql("{0}", val)));
+            String sql = formatSql("{0}", val);
+            if (StringUtils.isNotBlank(mapping)) {
+                sql = sql.substring(0, sql.length() - 1) + StringPool.COMMA + mapping + "}";
+            }
+            sqlSet.add(String.format("%s=%s", column, sql));
         }
         return typedThis;
     }

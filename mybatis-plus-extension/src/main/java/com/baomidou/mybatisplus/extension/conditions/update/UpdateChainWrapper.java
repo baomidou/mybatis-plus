@@ -40,8 +40,8 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     }
 
     @Override
-    public UpdateChainWrapper<T> set(boolean condition, String column, Object val) {
-        wrapperChildren.set(condition, column, val);
+    public UpdateChainWrapper<T> set(boolean condition, String column, Object val, String mapping) {
+        wrapperChildren.set(condition, column, val, mapping);
         return typedThis;
     }
 

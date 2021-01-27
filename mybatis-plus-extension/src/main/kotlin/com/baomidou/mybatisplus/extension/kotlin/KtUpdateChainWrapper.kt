@@ -39,8 +39,8 @@ class KtUpdateChainWrapper<T : Any>(
         super.wrapperChildren = KtUpdateWrapper(entity)
     }
 
-    override fun set(condition: Boolean, column: KProperty<*>, value: Any?): KtUpdateChainWrapper<T> {
-        wrapperChildren.set(condition, column, value)
+    override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
+        wrapperChildren.set(condition, column, value, mapping)
         return typedThis
     }
 
