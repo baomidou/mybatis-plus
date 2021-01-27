@@ -189,7 +189,7 @@ public abstract class SqlScriptUtils implements Constants {
         return DOLLAR_LEFT_BRACE + param + RIGHT_BRACE;
     }
 
-    public static String mappingTypeHandler(Class<? extends TypeHandler> typeHandler) {
+    public static String mappingTypeHandler(Class<? extends TypeHandler<?>> typeHandler) {
         if (typeHandler != null) {
             return "typeHandler=" + typeHandler.getName();
         }
