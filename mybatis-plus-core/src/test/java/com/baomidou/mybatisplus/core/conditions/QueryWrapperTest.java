@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +32,9 @@ class QueryWrapperTest extends BaseWrapperTest {
     @Test
     void test() {
         try {
-            Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
-                .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
-                .eq(User::getId, 1);
+            Wrapper<Entity> wrapper = new QueryWrapper<Entity>().lambda().eq(Entity::getName, 123)
+                .or(c -> c.eq(Entity::getRoleId, 1).eq(Entity::getId, 2))
+                .eq(Entity::getId, 1);
             log(wrapper.getSqlSegment());
         } catch (Exception e) {
             log(e.getMessage());
@@ -44,7 +43,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void test1() {
-        QueryWrapper<User> ew = new QueryWrapper<User>() {
+        QueryWrapper<Entity> ew = new QueryWrapper<Entity>() {
             /**
              * serialVersionUID
              */
@@ -69,7 +68,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void test2() {
-        UpdateWrapper<User> ew = new UpdateWrapper<User>()
+        UpdateWrapper<Entity> ew = new UpdateWrapper<Entity>()
             .set("name", "三毛").set("id", 1)
             .eq("xxx", 123)
             .and(i -> i.eq("andx", 65444).le("ande", 66666))
@@ -80,7 +79,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void test3() {
-        UpdateWrapper<User> ew = new UpdateWrapper<User>()
+        UpdateWrapper<Entity> ew = new UpdateWrapper<Entity>()
             .setSql("abc=1,def=2").set("sets", 1111).eq("id", 1).ge("age", 3);
         log(ew.getSqlSet());
         log(ew.getSqlSegment());
@@ -88,57 +87,57 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testQueryWrapper() {
-        logSqlSegment("去除第一个 or,以及自动拼接 and,以及手动拼接 or,以及去除最后的多个or", new QueryWrapper<User>().or()
+        logSqlSegment("去除第一个 or,以及自动拼接 and,以及手动拼接 or,以及去除最后的多个or", new QueryWrapper<Entity>().or()
                 .ge("age", 3).or().ge("age", 3).ge("age", 3).or().or().or().or(),
             "(age >= ? OR age >= ? AND age >= ?)");
 
-        logSqlSegment("多个 or 相连接,去除多余的 or", new QueryWrapper<User>()
+        logSqlSegment("多个 or 相连接,去除多余的 or", new QueryWrapper<Entity>()
                 .ge("age", 3).or().or().or().ge("age", 3).or().or().ge("age", 3),
             "(age >= ? OR age >= ? OR age >= ?)");
 
-        logSqlSegment("嵌套,正常嵌套", new QueryWrapper<User>()
+        logSqlSegment("嵌套,正常嵌套", new QueryWrapper<Entity>()
                 .nested(i -> i.eq("id", 1)).eq("id", 1),
             "((id = ?) AND id = ?)");
 
-        logSqlSegment("嵌套,第一个套外的 and 自动消除", new QueryWrapper<User>()
+        logSqlSegment("嵌套,第一个套外的 and 自动消除", new QueryWrapper<Entity>()
                 .and(i -> i.eq("id", 1)).eq("id", 1),
             "((id = ?) AND id = ?)");
 
-        logSqlSegment("嵌套,多层嵌套", new QueryWrapper<User>()
+        logSqlSegment("嵌套,多层嵌套", new QueryWrapper<Entity>()
                 .and(i -> i.eq("id", 1).and(j -> j.eq("id", 2))),
             "((id = ? AND (id = ?)))");
 
-        logSqlSegment("嵌套,第一个套外的 or 自动消除", new QueryWrapper<User>()
+        logSqlSegment("嵌套,第一个套外的 or 自动消除", new QueryWrapper<Entity>()
                 .or(i -> i.eq("id", 1)).eq("id", 1),
             "((id = ?) AND id = ?)");
 
-        logSqlSegment("嵌套,套内外自动拼接 and", new QueryWrapper<User>()
+        logSqlSegment("嵌套,套内外自动拼接 and", new QueryWrapper<Entity>()
                 .eq("id", 11).and(i -> i.eq("id", 1)).eq("id", 1),
             "(id = ? AND (id = ?) AND id = ?)");
 
-        logSqlSegment("嵌套,套内外手动拼接 or,去除套内第一个 or", new QueryWrapper<User>()
+        logSqlSegment("嵌套,套内外手动拼接 or,去除套内第一个 or", new QueryWrapper<Entity>()
                 .eq("id", 11).or(i -> i.or().eq("id", 1)).or().eq("id", 1),
             "(id = ? OR (id = ?) OR id = ?)");
 
-        logSqlSegment("多个 order by 和 group by 拼接,自动优化顺序,last方法拼接在最后", new QueryWrapper<User>()
+        logSqlSegment("多个 order by 和 group by 拼接,自动优化顺序,last方法拼接在最后", new QueryWrapper<Entity>()
                 .eq("id", 11)
                 .last("limit 1")
                 .orderByAsc("id", "name", "sex").orderByDesc("age", "txl")
                 .groupBy("id", "name", "sex").groupBy("id", "name"),
             "(id = ?) GROUP BY id,name,sex,id,name ORDER BY id ASC,name ASC,sex ASC,age DESC,txl DESC limit 1");
 
-        logSqlSegment("只存在 order by", new QueryWrapper<User>()
+        logSqlSegment("只存在 order by", new QueryWrapper<Entity>()
                 .orderByAsc("id", "name", "sex").orderByDesc("age", "txl"),
             "ORDER BY id ASC,name ASC,sex ASC,age DESC,txl DESC");
 
-        logSqlSegment("只存在 group by", new QueryWrapper<User>()
+        logSqlSegment("只存在 group by", new QueryWrapper<Entity>()
                 .groupBy("id", "name", "sex").groupBy("id", "name"),
             "GROUP BY id,name,sex,id,name");
     }
 
     @Test
     void testCompare() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
             .allEq(getMap()).allEq((k, v) -> true, getMap())
             .eq("id", 1).ne("id", 1)
             .or().gt("id", 1).ge("id", 1)
@@ -152,7 +151,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testFunc() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
             .isNull("nullColumn").or().isNotNull("notNullColumn")
             .orderByAsc("id").orderByDesc("name", "name2")
             .groupBy("id").groupBy("name", "id2", "name2")
@@ -166,7 +165,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testJoin() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
             .last("limit 1").or()
             .apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
             .apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
@@ -178,7 +177,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testNested() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
             .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2)))
             .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
             .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)))
@@ -189,23 +188,23 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testPluralLambda() {
-        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(User::getName, "sss");
-        queryWrapper.lambda().eq(User::getName, "sss2");
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(Entity::getName, "sss");
+        queryWrapper.lambda().eq(Entity::getName, "sss2");
         logSqlSegment("测试 PluralLambda", queryWrapper, "(username = ? AND username = ?)");
         logParams(queryWrapper);
     }
 
     @Test
     void testInEmptyColl() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList());
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().in("xxx", Collections.emptyList());
         logSqlSegment("测试 empty 的 coll", queryWrapper, "(xxx IN ())");
     }
 
     @Test
     void testExistsValue() {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        QueryWrapper<Entity> wrapper = new QueryWrapper<>();
         wrapper.eq("a", "b");
         wrapper.exists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
         logSqlSegment("testExistsValue", wrapper, "(a = ? AND EXISTS (select 1 from xxx where id = ? and name = ?))");
