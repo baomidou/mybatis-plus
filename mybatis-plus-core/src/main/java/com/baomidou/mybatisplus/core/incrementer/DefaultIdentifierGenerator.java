@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core.incrementer;
 
 import com.baomidou.mybatisplus.core.toolkit.Sequence;
 
+import java.net.InetAddress;
+
 /**
  * 默认生成器
  *
@@ -28,8 +30,17 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
 
     private final Sequence sequence;
 
+    /**
+     * @see #DefaultIdentifierGenerator(InetAddress)
+     * @deprecated 3.4.3
+     */
+    @Deprecated
     public DefaultIdentifierGenerator() {
         this.sequence = new Sequence();
+    }
+
+    public DefaultIdentifierGenerator(InetAddress inetAddress) {
+        this.sequence = new Sequence(inetAddress);
     }
 
     public DefaultIdentifierGenerator(long workerId, long dataCenterId) {

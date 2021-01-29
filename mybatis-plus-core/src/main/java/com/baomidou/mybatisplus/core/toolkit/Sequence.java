@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -22,6 +23,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -73,9 +75,38 @@ public class Sequence {
      */
     private long lastTimestamp = -1L;
 
+    private InetAddress inetAddress;
+
+    /**
+     * @deprecated 3.4.3
+     */
+    @Deprecated
     public Sequence() {
+        this.inetAddress = getLocalHost();
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    public Sequence(InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
+        this.datacenterId = getDatacenterId(maxDatacenterId);
+        this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    private InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new MybatisPlusException(e);
+        }
+    }
+
+    /**
+     * @return InetAddress
+     * @since 3.4.3
+     */
+    protected InetAddress getInetAddress() {
+        return Optional.ofNullable(this.inetAddress).orElseGet(this::getLocalHost);
     }
 
     /**
@@ -113,24 +144,12 @@ public class Sequence {
     }
 
     /**
-     * 获取 InetAddress
-     *
-     * @return InetAddress
-     * @throws  UnknownHostException
-     * @since 3.4.3
-     */
-    protected InetAddress getInetAddress() throws UnknownHostException {
-        return InetAddress.getLocalHost();
-    }
-
-    /**
      * 数据标识id部分
      */
     protected long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            InetAddress ip = this.getInetAddress();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            NetworkInterface network = NetworkInterface.getByInetAddress(this.getInetAddress());
             if (network == null) {
                 id = 1L;
             } else {
