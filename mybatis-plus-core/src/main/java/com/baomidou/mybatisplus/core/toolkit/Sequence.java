@@ -21,6 +21,7 @@ import org.apache.ibatis.logging.LogFactory;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -95,7 +96,7 @@ public class Sequence {
     /**
      * 获取 maxWorkerId
      */
-    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -112,12 +113,23 @@ public class Sequence {
     }
 
     /**
+     * 获取 InetAddress
+     *
+     * @return InetAddress
+     * @throws  UnknownHostException
+     * @since 3.4.3
+     */
+    protected InetAddress getInetAddress() throws UnknownHostException {
+        return InetAddress.getLocalHost();
+    }
+
+    /**
      * 数据标识id部分
      */
-    protected static long getDatacenterId(long maxDatacenterId) {
+    protected long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            InetAddress ip = InetAddress.getLocalHost();
+            InetAddress ip = this.getInetAddress();
             NetworkInterface network = NetworkInterface.getByInetAddress(ip);
             if (network == null) {
                 id = 1L;
