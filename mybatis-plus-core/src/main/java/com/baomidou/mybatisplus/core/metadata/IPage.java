@@ -77,7 +77,11 @@ public interface IPage<T> extends Serializable {
         if (current <= 1L) {
             return 0L;
         }
-        return current * getSize();
+        current = current * getSize();
+        if (current < 0L) {
+            return 0L;
+        }
+        return current;
     }
 
     /**
