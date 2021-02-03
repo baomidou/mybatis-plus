@@ -73,11 +73,11 @@ public interface IPage<T> extends Serializable {
      * 计算当前分页偏移量
      */
     default long offset() {
-        long current = getCurrent();
+        long current = getCurrent() - 1;
         if (current <= 1L) {
             return 0L;
         }
-        return (current - 1) * getSize();
+        return current * getSize();
     }
 
     /**

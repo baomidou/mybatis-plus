@@ -55,7 +55,7 @@ public @interface TableField {
     /**
      * 字段 where 实体查询比较条件
      * <p>
-     * 默认 {@link SqlCondition.EQUAL}
+     * 默认 {@link SqlCondition#EQUAL}
      */
     String condition() default "";
 
