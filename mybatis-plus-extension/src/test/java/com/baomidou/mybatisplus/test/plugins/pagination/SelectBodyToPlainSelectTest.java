@@ -1,8 +1,7 @@
 package com.baomidou.mybatisplus.test.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -21,6 +20,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 用SetOperationList处理sql带union的语句
  */
 class SelectBodyToPlainSelectTest {
+
+    private static final List<OrderItem> ITEMS = new ArrayList<>();
+
+    static {
+        ITEMS.add(OrderItem.asc("column"));
+    }
 
     /**
      * 报错的测试
@@ -41,8 +46,6 @@ class SelectBodyToPlainSelectTest {
         });
     }
 
-    private Page<?> page = new Page<>();
-
     @BeforeEach
     void setup() {
         List<OrderItem> orderItems = new ArrayList<>();
@@ -54,53 +57,54 @@ class SelectBodyToPlainSelectTest {
         orderEmptyColumn.setAsc(false);
         orderEmptyColumn.setColumn("");
         orderItems.add(orderEmptyColumn);
-        page.setOrders(orderItems);
     }
 
     @Test
     void testPaginationInterceptorConcatOrderByBefore() {
-        String actualSql = new PaginationInterceptor()
-            .concatOrderBy("select * from test", page);
+        String actualSql = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test", ITEMS);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");
 
-        String actualSqlWhere = new PaginationInterceptor()
-            .concatOrderBy("select * from test where 1 = 1", page);
+        String actualSqlWhere = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1", ITEMS);
 
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC");
     }
 
     @Test
     void testPaginationInterceptorConcatOrderByFix() {
-        String actualSql = new PaginationInterceptor()
-            .concatOrderBy("select * from test union select * from test2", page);
+        List<OrderItem> orderList = new ArrayList<>();
+        orderList.add(OrderItem.asc("column"));
+        String actualSql = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test union select * from test2", orderList);
         assertThat(actualSql).isEqualTo("SELECT * FROM test UNION SELECT * FROM test2 ORDER BY column ASC");
 
-        String actualSqlUnionAll = new PaginationInterceptor()
-            .concatOrderBy("select * from test union all select * from test2", page);
+        String actualSqlUnionAll = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test union all select * from test2", orderList);
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test UNION ALL SELECT * FROM test2 ORDER BY column ASC");
     }
 
     @Test
     void testPaginationInterceptorConcatOrderByFixWithWhere() {
-        String actualSqlWhere = new PaginationInterceptor()
-            .concatOrderBy("select * from test where 1 = 1 union select * from test2 where 1 = 1", page);
+        String actualSqlWhere = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1 union select * from test2 where 1 = 1", ITEMS);
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
 
-        String actualSqlUnionAll = new PaginationInterceptor()
-            .concatOrderBy("select * from test where 1 = 1 union all select * from test2 where 1 = 1 ", page);
+        String actualSqlUnionAll = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1 union all select * from test2 where 1 = 1 ", ITEMS);
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION ALL SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
     }
 
     @Test
     void testPaginationInterceptorOrderByEmptyColumnFix() {
-        String actualSql = new PaginationInterceptor()
-            .concatOrderBy("select * from test", page);
+        String actualSql = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test", ITEMS);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");
 
-        String actualSqlWhere = new PaginationInterceptor()
-            .concatOrderBy("select * from test where 1 = 1", page);
+        String actualSqlWhere = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1", ITEMS);
 
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC");
     }

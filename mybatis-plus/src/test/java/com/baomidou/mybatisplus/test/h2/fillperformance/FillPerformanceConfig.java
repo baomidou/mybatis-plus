@@ -3,8 +3,8 @@ package com.baomidou.mybatisplus.test.h2.fillperformance;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.handlers.StrictFill;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ExecutorType;
@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
 
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.fillperformance.mapper")
@@ -33,8 +32,11 @@ public class FillPerformanceConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
         sqlSessionFactory.setGlobalConfig(new GlobalConfig().setMetaObjectHandler(metaObjectHandler()));
-        PaginationInterceptor pagination = new PaginationInterceptor();
-        sqlSessionFactory.setPlugins(pagination);
+
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
+
         return sqlSessionFactory.getObject();
     }
 
@@ -53,16 +55,16 @@ public class FillPerformanceConfig {
 //                strictInsertFill(metaObject,"j",String.class,"1234567890");
 //                strictInsertFill(metaObject,"l",String.class,"1234567890");
 //                strictInsertFill(metaObject,"m",String.class,"1234567890");
-                setFieldValByName("c","1234567890",metaObject);
-                setFieldValByName("d","1234567890",metaObject);
-                setFieldValByName("e","1234567890",metaObject);
-                setFieldValByName("f","1234567890",metaObject);
-                setFieldValByName("g","1234567890",metaObject);
-                setFieldValByName("h","1234567890",metaObject);
-                setFieldValByName("i","1234567890",metaObject);
-                setFieldValByName("j","1234567890",metaObject);
-                setFieldValByName("l","1234567890",metaObject);
-                setFieldValByName("m","1234567890",metaObject);
+                setFieldValByName("c", "1234567890", metaObject);
+                setFieldValByName("d", "1234567890", metaObject);
+                setFieldValByName("e", "1234567890", metaObject);
+                setFieldValByName("f", "1234567890", metaObject);
+                setFieldValByName("g", "1234567890", metaObject);
+                setFieldValByName("h", "1234567890", metaObject);
+                setFieldValByName("i", "1234567890", metaObject);
+                setFieldValByName("j", "1234567890", metaObject);
+                setFieldValByName("l", "1234567890", metaObject);
+                setFieldValByName("m", "1234567890", metaObject);
 //                setInsertFieldValByName("c","1234567890",metaObject);
 //                setInsertFieldValByName("d","1234567890",metaObject);
 //                setInsertFieldValByName("e","1234567890",metaObject);

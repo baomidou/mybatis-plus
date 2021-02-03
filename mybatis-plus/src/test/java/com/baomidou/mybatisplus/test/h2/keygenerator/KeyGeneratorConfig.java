@@ -18,8 +18,9 @@ package com.baomidou.mybatisplus.test.h2.keygenerator;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.incrementer.H2KeyGenerator;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -45,11 +46,12 @@ public class KeyGeneratorConfig {
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
-        PaginationInterceptor pagination = new PaginationInterceptor();
-        SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
-        sqlSessionFactory.setPlugins(
-            pagination,
-            sqlExplainInterceptor);
+
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        mybatisPlusInterceptor.addInnerInterceptor(new BlockAttackInnerInterceptor());
+        sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
+
         sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();
     }
