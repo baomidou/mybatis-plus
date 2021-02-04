@@ -120,6 +120,7 @@ public class MybatisMapperMethod {
         Assert.notNull(result, "can't found IPage for args!");
         Object param = method.convertArgsToSqlCommandParam(args);
         List<E> list = sqlSession.selectList(command.getName(), param);
+        //TODO 与com.baomidou.mybatisplus.core.executor一起移除.
         if (list instanceof PageList) {
             PageList<E> pageList = (PageList<E>) list;
             result.setRecords(pageList.getRecords());

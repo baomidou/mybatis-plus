@@ -27,10 +27,12 @@ import java.util.List;
  *
  * @author nieqiuqiu
  * @since 3.3.0
+ * @deprecated 3.4.3
  */
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public final class PageList<T> extends ArrayList<T> {
 
     /**
