@@ -65,6 +65,7 @@ import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -583,21 +584,21 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             if (this.mapperLocations.length == 0) {
                 LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");
             } else {
-                for (Resource mapperLocation : this.mapperLocations) {
+                Stream.of(this.mapperLocations).parallel().forEach(mapperLocation->{
                     if (mapperLocation == null) {
-                        continue;
+                        return;
                     }
                     try {
                         XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
                             targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
                         xmlMapperBuilder.parse();
-                    } catch (Exception e) {
-                        throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
                     } finally {
                         ErrorContext.instance().reset();
                     }
                     LOGGER.debug(() -> "Parsed mapper file: '" + mapperLocation + "'");
-                }
+                });
             }
         } else {
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
