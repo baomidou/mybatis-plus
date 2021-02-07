@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.pagination;
+package com.baomidou.mybatisplus.test.pagecache;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -21,58 +21,59 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-class PaginationTest extends BaseDbTest<EntityMapper> {
+class PageCacheTest extends BaseDbTest<PageCacheMapper> {
 
     @Test
     void page() {
-        Cache cache = sqlSessionFactory.getConfiguration().getCache(EntityMapper.class.getName());
+        Cache cache = sqlSessionFactory.getConfiguration().getCache(PageCacheMapper.class.getName());
         assertThat(cache).as("使用 @CacheNamespace 指定了使用缓存").isNotNull();
-
+        final long total = 5;
+        final long size = 3;
         doTestAutoCommit(m -> {
-            Page<Entity> page = new Page<>(1, 5);
-            IPage<Entity> result = m.selectPage(page, null);
-            assertThat(page).isEqualTo(result);
-            assertThat(result.getTotal()).isEqualTo(2L);
-            assertThat(result.getRecords().size()).isEqualTo(2);
+            Page<PageCache> page = new Page<>(1, size);
+            IPage<PageCache> result = m.selectPage(page, null);
+            assertThat(page).as("对象是同一个").isEqualTo(result);
+            assertThat(result.getTotal()).isEqualTo(total);
+            assertThat(result.getRecords().size()).isEqualTo(size);
         });
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
 
         doTestAutoCommit(m -> {
-            Page<Entity> page = new Page<>(1, 5);
-            IPage<Entity> result = m.selectPage(page, null);
+            Page<PageCache> page = new Page<>(1, size);
+            IPage<PageCache> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
-            assertThat(result.getTotal()).isEqualTo(2L);
-            assertThat(result.getRecords().size()).isEqualTo(2);
+            assertThat(result.getTotal()).isEqualTo(total);
+            assertThat(result.getRecords().size()).isEqualTo(size);
         });
         assertThat(cache.getSize()).as("因为命中缓存了所以还是2条").isEqualTo(2);
 
         doTestAutoCommit(m -> {
-            Page<Entity> page = new Page<>(1, 5);
+            Page<PageCache> page = new Page<>(1, size);
             page.addOrder(OrderItem.asc("id"));
-            IPage<Entity> result = m.selectPage(page, null);
+            IPage<PageCache> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
-            assertThat(result.getTotal()).isEqualTo(2L);
-            assertThat(result.getRecords().size()).isEqualTo(2);
+            assertThat(result.getTotal()).isEqualTo(total);
+            assertThat(result.getRecords().size()).isEqualTo(size);
         });
         assertThat(cache.getSize()).as("条件不一样了,缓存变为3条").isEqualTo(3);
 
 
-        doTestAutoCommit(m -> m.insert(new Entity()));
+        doTestAutoCommit(m -> m.insert(new PageCache()));
         assertThat(cache.getSize()).as("update 操作清除了所有缓存").isEqualTo(0);
 
 
         doTestAutoCommit(m -> {
-            Page<Entity> page = new Page<>(1, 5);
-            IPage<Entity> result = m.selectPage(page, null);
+            Page<PageCache> page = new Page<>(1, size);
+            IPage<PageCache> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
-            assertThat(result.getTotal()).isEqualTo(3L);
-            assertThat(result.getRecords().size()).isEqualTo(3);
+            assertThat(result.getTotal()).isEqualTo(total + 1);
+            assertThat(result.getRecords().size()).isEqualTo(size);
         });
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
         doTest(i -> {
-            Page<?> page = new Page<>(1, 2);
+            Page<?> page = new Page<>(1, size);
             page.setCountId("otherCount");
             i.otherPage(page, new Tj());
         });
@@ -87,12 +88,12 @@ class PaginationTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');";
+        return "insert into page_cache(id,name) values(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5');";
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
+        return Arrays.asList("drop table if exists page_cache", "CREATE TABLE IF NOT EXISTS page_cache (" +
             "id BIGINT NOT NULL," +
             "name VARCHAR(30) NULL DEFAULT NULL," +
             "PRIMARY KEY (id))");
