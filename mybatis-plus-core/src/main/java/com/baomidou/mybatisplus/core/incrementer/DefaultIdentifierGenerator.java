@@ -22,7 +22,7 @@ import java.net.InetAddress;
 /**
  * 默认生成器
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
+ * @author  nieqiuqiu
  * @since 2019-10-15
  * @since 3.3.0
  */
