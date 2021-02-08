@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 /**
  * Id生成器接口
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
+ * @author  nieqiuqiu
  * @since 2019-10-15
  * @since 3.3.0
  */
