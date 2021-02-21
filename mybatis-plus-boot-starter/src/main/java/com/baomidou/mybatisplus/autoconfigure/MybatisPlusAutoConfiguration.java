@@ -67,9 +67,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
+import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -287,10 +290,17 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             builder.addPropertyValue("annotationClass", Mapper.class);
             builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
             BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
-            Stream.of(beanWrapper.getPropertyDescriptors())
+            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)
+                .collect(Collectors.toSet());
+            if (propertyNames.contains("lazyInitialization")) {
                 // Need to mybatis-spring 2.0.2+
-                .filter(x -> x.getName().equals("lazyInitialization")).findAny()
-                .ifPresent(x -> builder.addPropertyValue("lazyInitialization", "${mybatis.lazy-initialization:false}"));
+                // TODO 兼容了mybatis.lazy-initialization配置
+                builder.addPropertyValue("lazyInitialization", "${mybatis-plus.lazy-initialization:${mybatis.lazy-initialization:false}}");
+            }
+            if (propertyNames.contains("defaultScope")) {
+                // Need to mybatis-spring 2.0.6+
+                builder.addPropertyValue("defaultScope", "${mybatis-plus.mapper-default-scope:}");
+            }
             registry.registerBeanDefinition(MapperScannerConfigurer.class.getName(), builder.getBeanDefinition());
         }
 
