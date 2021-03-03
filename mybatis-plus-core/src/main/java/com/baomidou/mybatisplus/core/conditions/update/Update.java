@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
-
 import java.io.Serializable;
 
 /**
@@ -43,63 +39,7 @@ public interface Update<Children, R> extends Serializable {
      * @return children
      */
     default Children set(boolean condition, R column, Object val) {
-        return set(condition, column, val, null, null, null);
-    }
-
-    /**
-     * ignore
-     */
-    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler) {
-        return set(true, column, val, typeHandler, null, null);
-    }
-
-    /**
-     * 设置 更新 SQL 的 SET 片段
-     *
-     * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       值
-     * @return children
-     */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler) {
-        return set(condition, column, val, typeHandler, null, null);
-    }
-
-    /**
-     * ignore
-     */
-    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
-        return set(true, column, val, typeHandler, jdbcType, null);
-    }
-
-    /**
-     * ignore
-     */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType) {
-        return set(condition, column, val, typeHandler, jdbcType, null);
-    }
-
-    /**
-     * ignore
-     */
-    default Children set(R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
-        return set(true, column, val, typeHandler, jdbcType, numericScale);
-    }
-
-    /**
-     * 设置 更新 SQL 的 SET 片段
-     *
-     * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       值
-     * @return children
-     */
-    default Children set(boolean condition, R column, Object val, Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
-        String mapping = null;
-        if (condition) {
-            mapping = SqlScriptUtils.convertParamMapping(typeHandler, jdbcType, numericScale);
-        }
-        return set(condition, column, val, mapping);
+        return set(condition, column, val, null);
     }
 
     /**
