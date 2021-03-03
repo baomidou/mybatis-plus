@@ -59,12 +59,12 @@ public final class LambdaUtils {
         Class<?> clazz = func.getClass();
         String name = clazz.getName();
         return Optional.ofNullable(FUNC_CACHE.get(name))
-                .map(WeakReference::get)
-                .orElseGet(() -> {
-                    SerializedLambda lambda = SerializedLambda.resolve(func, clazz.getClassLoader());
-                    FUNC_CACHE.put(name, new WeakReference<>(lambda));
-                    return lambda;
-                });
+            .map(WeakReference::get)
+            .orElseGet(() -> {
+                SerializedLambda lambda = SerializedLambda.resolve(func, clazz.getClassLoader());
+                FUNC_CACHE.put(name, new WeakReference<>(lambda));
+                return lambda;
+            });
     }
 
     /**
@@ -107,7 +107,7 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
         );
         return map;
     }

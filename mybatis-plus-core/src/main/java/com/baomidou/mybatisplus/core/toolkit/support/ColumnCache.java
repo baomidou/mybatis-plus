@@ -38,4 +38,13 @@ public class ColumnCache implements Serializable {
      * 查询 column
      */
     private String columnSelect;
+    /**
+     * mapping
+     */
+    private String mapping;
+
+    public ColumnCache(String column, String columnSelect) {
+        this.column = column;
+        this.columnSelect = columnSelect;
+    }
 }
