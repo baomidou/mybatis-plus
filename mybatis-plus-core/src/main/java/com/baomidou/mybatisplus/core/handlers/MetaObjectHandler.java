@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.reflection.MetaObject;
@@ -24,7 +22,6 @@ import org.apache.ibatis.reflection.MetaObject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -88,81 +85,6 @@ public interface MetaObjectHandler {
      */
     default Object getFieldValByName(String fieldName, MetaObject metaObject) {
         return metaObject.hasGetter(fieldName) ? metaObject.getValue(fieldName) : null;
-    }
-
-    /**
-     * insert 时填充,只会填充 fill 被标识为 INSERT 与 INSERT_UPDATE 的字段
-     *
-     * @param fieldName  java bean property name
-     * @param fieldVal   java bean property value
-     * @param metaObject meta object parameter
-     * @since 3.0.7
-     * @deprecated 3.3.0 please use {@link #strictInsertFill}
-     */
-    @Deprecated
-    default MetaObjectHandler setInsertFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        return setFieldValByName(fieldName, fieldVal, metaObject, FieldFill.INSERT);
-    }
-
-    /**
-     * update 时填充,只会填充 fill 被标识为 UPDATE 与 INSERT_UPDATE 的字段
-     *
-     * @param fieldName  java bean property name
-     * @param fieldVal   java bean property value
-     * @param metaObject meta object parameter
-     * @since 3.0.7
-     * @deprecated 3.3.0 please use {@link #strictUpdateFill}
-     */
-    @Deprecated
-    default MetaObjectHandler setUpdateFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        return setFieldValByName(fieldName, fieldVal, metaObject, FieldFill.UPDATE);
-    }
-
-    /**
-     * Common method to set value for java bean.
-     *
-     * @param fieldName  java bean property name
-     * @param fieldVal   java bean property value
-     * @param metaObject meta object parameter
-     * @param fieldFill  填充策略枚举
-     * @since 3.0.7
-     * @deprecated 3.3.0 please use like {@link #strictInsertFill} or {@link #strictUpdateFill}
-     */
-    @Deprecated
-    default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
-        if (Objects.nonNull(fieldVal) && isFill(fieldName, fieldVal, metaObject, fieldFill)) {
-            metaObject.setValue(fieldName, fieldVal);
-        }
-        return this;
-    }
-
-    /**
-     * 填充判断
-     * <li> 如果是主键,不填充 </li>
-     * <li> 根据字段名找不到字段,不填充 </li>
-     * <li> 字段类型与填充值类型不匹配,不填充 </li>
-     * <li> 字段类型需在TableField注解里配置fill: @TableField(value="test_type", fill = FieldFill.INSERT), 没有配置或者不匹配时不填充 </li>
-     * v_3.1.0以后的版本(不包括3.1.0)，子类的值也可以自动填充，Timestamp的值也可以填入到java.util.Date类型里面
-     *
-     * @param fieldName  java bean property name
-     * @param fieldVal   java bean property value
-     * @param metaObject meta object parameter
-     * @param fieldFill  填充策略枚举
-     * @return 是否进行填充
-     * @since 3.0.7
-     * @deprecated 3.3.0
-     */
-    @Deprecated
-    default boolean isFill(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
-        Optional<TableFieldInfo> first = findTableInfo(metaObject).getFieldList().stream()
-            //v_3.1.1+ 设置子类的值也可以通过
-            .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))
-            .findFirst();
-        if (first.isPresent()) {
-            FieldFill fill = first.get().getFieldFill();
-            return fill == fieldFill || FieldFill.INSERT_UPDATE == fill;
-        }
-        return false;
     }
 
     /**
