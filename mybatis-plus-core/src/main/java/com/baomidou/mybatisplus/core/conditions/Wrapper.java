@@ -33,6 +33,8 @@ import java.util.Objects;
 @SuppressWarnings("all")
 public abstract class Wrapper<T> implements ISqlSegment {
 
+    protected String alias;
+
     /**
      * 实体对象（子类实现）
      *
@@ -87,6 +89,21 @@ public abstract class Wrapper<T> implements ISqlSegment {
         }
         return StringPool.EMPTY;
     }
+
+    /**
+     * 获取以wrapper中定义的where条件所等价的SQL片段
+     * （与getCustomSqlSegment方法作用相同，唯一的区别是可以指定where语句中条件的表别名）
+     * <p>
+     * 使用方法: `select xxx from table_a as a left join table_b as b on b.a_id = a.id` + ${ew.customSqlSegment("a")}
+     * <p>
+     */
+    public String customSqlSegment(String alias) {
+        this.alias = alias;
+        String sqlSegment = getCustomSqlSegment();
+        this.alias = null;
+        return sqlSegment;
+    }
+
 
     /**
      * 查询条件为空(包含entity)

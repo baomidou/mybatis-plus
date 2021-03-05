@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
@@ -60,7 +61,8 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     protected String columnToString(SFunction<T, ?> column, boolean onlyColumn) {
         ColumnCache cache = getColumnCache(column);
-        return onlyColumn ? cache.getColumn() : cache.getColumnSelect();
+        String columnStr = onlyColumn ? cache.getColumn() : cache.getColumnSelect();
+        return alias != null ? alias + Constants.DOT + columnStr : columnStr;
     }
 
     /**
