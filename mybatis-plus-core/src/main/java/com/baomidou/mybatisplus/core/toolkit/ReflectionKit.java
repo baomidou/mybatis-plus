@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -45,7 +45,7 @@ public final class ReflectionKit {
     private static final Map<Class<?>, List<Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<>();
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
-    
+
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(8);
 
     static {
@@ -124,6 +124,122 @@ public final class ReflectionKit {
             return Object.class;
         }
         return (Class<?>) params[index];
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GenericTypeInfo {
+        private String name;
+        private Class clazz;
+    }
+
+    /**
+     * 获取type所实现的指定接口targetType的index位置泛型类型
+     * @param type 当前类型
+     * @param targetType type类型实现的某一接口类型
+     * @param index 泛型位置
+     * @return type所实现的指定接口targetType的指定位置index的泛型类型
+     * @author lichangfeng
+     * @since 2021-03-08
+     */
+    public static Class<?> getGenericInterfaces(Class type, Class targetType, int index) {
+        return getGenericInterfaces(type, targetType).get(index).getClazz();
+    }
+    /**
+     * 获取type所实现的指定接口targetType的泛型类型信息
+     * @param type 当前类型
+     * @param targetType type类型实现的某一接口类型
+     * @return type所实现的指定接口targetType的泛型类型信息，list保持了泛型的顺序
+     * @author lichangfeng
+     * @since 2021-03-08
+     */
+    public static List<GenericTypeInfo> getGenericInterfaces(Class type, Class targetType) {
+        // 初始化 targetInfos
+        TypeVariable[] tvs = targetType.getTypeParameters();
+        List<GenericTypeInfo> targetInfos = new ArrayList<>(tvs.length);
+        for (TypeVariable tv : tvs) {
+            targetInfos.add(new GenericTypeInfo(tv.getName(), null));
+        }
+        // 如果type不是targetType的子类型，直接返回
+        if (!targetType.isAssignableFrom(type)) {
+            logger.warn(targetType+" is not assignable from "+type);
+            return targetInfos;
+        }
+        // 递归调用获取泛型信息
+        getGenericInterfaces(Collections.EMPTY_LIST, type, targetType, targetInfos);
+        return targetInfos;
+    }
+
+    /**
+     * 通过递归调用，向上遍历currType所有接口类型的泛型信息，当找到targetType时，设置targetInfos
+     * @param currInfos 当前类型的泛型信息
+     * @param currType 当前类型
+     * @param targetType 目标类型
+     * @param targetInfos 目标类型泛型信息
+     */
+    private static void getGenericInterfaces(List<GenericTypeInfo> currInfos, Class currType, Class targetType, List<GenericTypeInfo> targetInfos) {
+        // 当前类型为目标类型，设置targetInfos
+        if (currType.equals(targetType)) {
+            for (int i = 0; i < targetInfos.size(); i++) {
+                Class tc = currInfos.get(i).getClazz();
+                if (tc==null) {
+                    continue;
+                }
+                /*
+                向上遍历currType所有接口类型树时，可能targetType会出现多次，我们取其泛型类型的最具体类型，
+                如同一位置泛型类型获取到两次，分别为type1和type2，如果type1是type2的子类，就取type1，用isAssignableFrom方法
+                 */
+                if (targetInfos.get(i).getClazz()==null || targetInfos.get(i).getClazz().isAssignableFrom(tc)) {
+                    targetInfos.get(i).setClazz(tc);
+                }
+            }
+            return;
+        }
+
+        // currType 所有直接实现的类型
+        Type[] impleTypes = currType.getGenericInterfaces();
+        for (Type impleType : impleTypes) {
+            if (impleType instanceof ParameterizedType) {
+                // 有标明泛型
+                ParameterizedType parameterizedType = (ParameterizedType) impleType;
+                // 类型impleType声明的泛型信息
+                TypeVariable[] tvs = ((Class) parameterizedType.getRawType()).getTypeParameters();
+                // 子类型中明确的泛型信息
+                Type[] ts = ((ParameterizedType) impleType).getActualTypeArguments();
+                // 将声明的泛型信息和子类型中标明的泛型信息组合为info list
+                List<GenericTypeInfo> impleTypeInfos = new ArrayList<>(ts.length);
+                for (int i = 0; i < ts.length; i++) {
+                    if (ts[i] instanceof Class) {
+                        GenericTypeInfo info = new GenericTypeInfo(tvs[i].getName(), (Class) ts[i]);
+                        impleTypeInfos.add(info);
+                    } else {
+                        String typeName = ts[i].getTypeName();
+                        /*
+                        向上获取其具体类型
+                        如Inter3 extends Inter2<Obj>， Inter2<T> extends Inter1<T>，则我们可以根据Inter2的T为Obj，得出Inter1的T也为Obj
+                         */
+                        Class infoClass = currInfos.stream().filter(info -> info.getName().equals(typeName)).map(info -> info.getClazz()).findFirst().orElse(null);
+                        GenericTypeInfo info = new GenericTypeInfo(tvs[i].getName(), infoClass);
+                        impleTypeInfos.add(info);
+                    }
+                }
+                getGenericInterfaces(impleTypeInfos, (Class) parameterizedType.getRawType(), targetType, targetInfos);
+
+            } else {
+                // 无标明泛型
+                // 类型impleType声明的泛型信息
+                TypeVariable[] tvs = ((Class) impleType).getTypeParameters();
+                List<GenericTypeInfo> impleTypeInfos = new ArrayList<>(tvs.length);
+                for (int i = 0; i < tvs.length; i++) {
+                    GenericTypeInfo info = new GenericTypeInfo(tvs[i].getName(), null);
+                    impleTypeInfos.add(info);
+                }
+                getGenericInterfaces(impleTypeInfos, (Class)impleType, targetType, targetInfos);
+            }
+        }
+
+
     }
 
     /**
@@ -235,7 +351,7 @@ public final class ReflectionKit {
         Assert.notNull(clazz, "Class must not be null");
         return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));
     }
-    
+
     public static Class<?> resolvePrimitiveIfNecessary(Class<?> clazz) {
         return (clazz.isPrimitive() && clazz != void.class ? PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(clazz) : clazz);
     }

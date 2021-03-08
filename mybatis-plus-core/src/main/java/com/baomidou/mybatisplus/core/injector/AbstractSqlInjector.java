@@ -15,11 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -43,7 +46,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
 
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        Class<?> modelClass = extractModelClass(mapperClass);
+        Class<?> modelClass = ReflectionKit.getGenericInterfaces(mapperClass, Mapper.class, 0);
         if (modelClass != null) {
             String className = mapperClass.toString();
             Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
@@ -78,6 +81,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * @param mapperClass mapper 接口
      * @return mapper 泛型
      */
+    @Deprecated
     protected Class<?> extractModelClass(Class<?> mapperClass) {
         Type[] types = mapperClass.getGenericInterfaces();
         ParameterizedType target = null;
