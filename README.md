@@ -90,3 +90,5 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 ## License
 
 MyBatis-Plus is under the Apache 2.0 license. See the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0) file for details.
+
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=baomidou_mybatis-plus&branchName=3.0)](https://cloud.quality-gate.com/dashboard/branches/76603#overview)
