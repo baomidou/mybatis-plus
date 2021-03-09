@@ -58,6 +58,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -168,6 +169,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             factory.setConfigurationProperties(this.properties.getConfigurationProperties());
         }
         if (!ObjectUtils.isEmpty(this.interceptors)) {
+            AnnotationAwareOrderComparator.sort(this.interceptors);
             factory.setPlugins(this.interceptors);
         }
         if (this.databaseIdProvider != null) {
