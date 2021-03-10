@@ -15,23 +15,34 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
-import lombok.Setter;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.util.*;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerPostProcessor;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
+
+import lombok.Setter;
 
 /**
  * @author miemie
@@ -51,6 +62,9 @@ public class MybatisPlusInterceptor implements Interceptor {
 
     @Setter
     private List<InnerInterceptor> interceptors = new ArrayList<>();
+
+    @Setter
+    private List<InnerPostProcessor> postProcessors = new ArrayList<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -114,12 +128,22 @@ public class MybatisPlusInterceptor implements Interceptor {
         return target;
     }
 
-    public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
+    public MybatisPlusInterceptor addInnerInterceptor(InnerInterceptor innerInterceptor) {
         this.interceptors.add(innerInterceptor);
+        return this;
+    }
+
+    public MybatisPlusInterceptor addInnerPostProcessor(InnerPostProcessor innerPostProcessor) {
+        this.postProcessors.add(innerPostProcessor);
+        return this;
     }
 
     public List<InnerInterceptor> getInterceptors() {
         return Collections.unmodifiableList(interceptors);
+    }
+
+    public List<InnerPostProcessor> getPostProcessor() {
+        return Collections.unmodifiableList(postProcessors);
     }
 
     /**
