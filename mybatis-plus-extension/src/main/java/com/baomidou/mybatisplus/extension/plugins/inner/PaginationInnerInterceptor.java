@@ -380,6 +380,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
                 List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
                 plainSelect.setOrderByElements(orderByElementsReturn);
+                //如果原语句包含子查询，则保留
+                if(selectStatement.getWithItemsList().size()>=1){
+                        selectStatement.setSelectBody(plainSelect);
+                        String result = selectStatement.toString();
+                        return result;
+                }
                 return select.toString();
             } else if (selectBody instanceof SetOperationList) {
                 SetOperationList setOperationList = (SetOperationList) selectBody;
