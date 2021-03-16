@@ -124,6 +124,12 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                     List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
                     List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
                     plainSelect.setOrderByElements(orderByElementsReturn);
+                    //如果包含子查询，则需要在子查询后加上order by
+                    if(null!= selectStatement.getWithItemsList() && selectStatement.getWithItemsList().size()>=1){
+                        selectStatement.setSelectBody(plainSelect);
+                        String result = selectStatement.toString();
+                        return result;
+                    }
                     return plainSelect.toString();
                 } else if (selectStatement.getSelectBody() instanceof SetOperationList) {
                     SetOperationList setOperationList = (SetOperationList) selectStatement.getSelectBody();
