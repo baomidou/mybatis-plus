@@ -32,7 +32,7 @@ import java.lang.annotation.*;
  *
  * public enum GradeEnum {
  *     PRIMARY(1,"小学"),
- *     SECONDORY("2", "中学"),
+ *     SECONDORY(2, "中学"),
  *     HIGH(3, "高中");
  *
  *     &#64;EnumValue
