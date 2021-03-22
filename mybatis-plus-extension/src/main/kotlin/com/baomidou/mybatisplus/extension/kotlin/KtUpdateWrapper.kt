@@ -33,7 +33,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
+open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
 
     /**
      * SQL 更新字段内容，例如：name='1', age=2
