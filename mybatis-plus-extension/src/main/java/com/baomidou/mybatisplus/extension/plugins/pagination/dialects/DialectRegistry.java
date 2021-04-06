@@ -48,6 +48,7 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.HSQL, new PostgreDialect());
         dialect_enum_map.put(DbType.KINGBASE_ES, new PostgreDialect());
         dialect_enum_map.put(DbType.PHOENIX, new PostgreDialect());
+        dialect_enum_map.put(DbType.HighGo, new HighGoDialect());
         // oracle and children
         dialect_enum_map.put(DbType.ORACLE, new OracleDialect());
         dialect_enum_map.put(DbType.DM, new OracleDialect());
