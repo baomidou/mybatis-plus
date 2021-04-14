@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
 
 /**
  * <p>
@@ -155,7 +157,24 @@ public abstract class SqlScriptUtils implements Constants {
      * @return 脚本
      */
     public static String safeParam(final String param) {
-        return HASH_LEFT_BRACE + param + RIGHT_BRACE;
+        return safeParam(param, null);
+    }
+
+    /**
+     * <p>
+     * 安全入参:  #{入参,mapping}
+     * </p>
+     *
+     * @param param   入参
+     * @param mapping 映射
+     * @return 脚本
+     */
+    public static String safeParam(final String param, final String mapping) {
+        String target = HASH_LEFT_BRACE + param;
+        if (StringUtils.isBlank(mapping)) {
+            return target + RIGHT_BRACE;
+        }
+        return target + COMMA + mapping + RIGHT_BRACE;
     }
 
     /**
@@ -168,5 +187,50 @@ public abstract class SqlScriptUtils implements Constants {
      */
     public static String unSafeParam(final String param) {
         return DOLLAR_LEFT_BRACE + param + RIGHT_BRACE;
+    }
+
+    public static String mappingTypeHandler(Class<? extends TypeHandler<?>> typeHandler) {
+        if (typeHandler != null) {
+            return "typeHandler=" + typeHandler.getName();
+        }
+        return null;
+    }
+
+    public static String mappingJdbcType(JdbcType jdbcType) {
+        if (jdbcType != null) {
+            return "jdbcType=" + jdbcType.name();
+        }
+        return null;
+    }
+
+    public static String mappingNumericScale(Integer numericScale) {
+        if (numericScale != null) {
+            return "numericScale=" + numericScale;
+        }
+        return null;
+    }
+
+    public static String convertParamMapping(Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
+        if (typeHandler == null && jdbcType == null && numericScale == null) {
+            return null;
+        }
+        String mapping = null;
+        if (typeHandler != null) {
+            mapping = mappingTypeHandler(typeHandler);
+        }
+        if (jdbcType != null) {
+            mapping = appendMapping(mapping, mappingJdbcType(jdbcType));
+        }
+        if (numericScale != null) {
+            mapping = appendMapping(mapping, mappingNumericScale(numericScale));
+        }
+        return mapping;
+    }
+
+    private static String appendMapping(String mapping, String other) {
+        if (mapping != null) {
+            return mapping + COMMA + other;
+        }
+        return other;
     }
 }

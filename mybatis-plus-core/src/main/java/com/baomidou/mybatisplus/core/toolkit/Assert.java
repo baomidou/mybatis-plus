@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,17 @@ public final class Assert {
      */
     public static void notEmpty(Map<?, ?> map, String message, Object... params) {
         isTrue(CollectionUtils.isNotEmpty(map), message, params);
+    }
+
+    /**
+     * 断言这个 map 为 empty
+     * <p>为 empty 则抛异常</p>
+     *
+     * @param map     集合
+     * @param message 消息
+     */
+    public static void isEmpty(Map<?, ?> map, String message, Object... params) {
+        isTrue(CollectionUtils.isEmpty(map), message, params);
     }
 
     /**

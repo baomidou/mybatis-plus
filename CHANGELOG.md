@@ -1,12 +1,24 @@
 ﻿# CHANGELOG
 
+## [v3.4.2] 2021.01.15
+
+- fix: 移除 BlockAttackInnerInterceptor 内引用的 commons 的 utils
+- feat: PaginationInnerInterceptor 添加 optimizeJoin 属性控制是否在count时对sql的join进行优化
+- feat: 可通过Resources.setDefaultClassLoader设置默认类加载器.
+- feat: InterceptorIgnore 注解新增 others 属性
+- feat: IService 增加 kotlin 链式调用支持(ktQuery() 和 ktUpdate())
+- style: jsqlparser up to 4.0
+- style: 移除 com.baomidou.mybatisplus.extension.injector.methods.additional 包下的过时类
+- style: generator 模块另开仓库 [generator](https://github.com/baomidou/generator)
+
 ## [v3.4.1] 2020.11.10
-- feat: 公开 AbstractWrapper.getEntityClass
+
 - fix: 新多租户插件完善子查询,支持 比较符号,in,EXISTS,NOT EXISTS
+- feat: 公开 AbstractWrapper.getEntityClass
 - feat: 新增 FakeTenantLineInnerInterceptor 对 TenantSqlParser 进行过度
 - feat: 分页count识别 `left join (subSelect)` 优化
 - feat: 所有 count 从 count(1) 变更为 count(*)
-- feat: mybatis up to 3.5.6
+- style: mybatis up to 3.5.6
 
 ## [v3.4.0] 2020.8.23
 - fix: @TableName.autoResultMap=true 情况下, 内置的 selectBody 将不会进行 as ,使用了的需要注意!!!

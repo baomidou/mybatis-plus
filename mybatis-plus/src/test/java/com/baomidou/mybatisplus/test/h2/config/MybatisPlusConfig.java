@@ -134,8 +134,7 @@ public class MybatisPlusConfig {
         conf.setEnableSqlRunner(true)
             .setDbConfig(new GlobalConfig.DbConfig()
                 .setLogicDeleteValue("1")
-                .setLogicNotDeleteValue("0")
-                .setIdType(IdType.ID_WORKER));
+                .setLogicNotDeleteValue("0"));
         return conf;
     }
 }

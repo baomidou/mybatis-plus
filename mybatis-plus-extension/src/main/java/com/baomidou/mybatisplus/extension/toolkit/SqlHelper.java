@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * SQL 辅助类
@@ -121,9 +122,17 @@ public final class SqlHelper {
      * @return ignore
      */
     public static <E> E getObject(Log log, List<E> list) {
+        return getObject(() -> log, list);
+    }
+
+    /**
+     * @since 3.4.3
+     */
+    public static <E> E getObject(Supplier<Log> supplier, List<E> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             int size = list.size();
             if (size > 1) {
+                Log log = supplier.get();
                 log.warn(String.format("Warn: execute Method There are  %s results.", size));
             }
             return list.get(0);

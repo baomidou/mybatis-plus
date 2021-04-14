@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.1.1-SNAPSHOT"
+    version = "3.4.2"
 }
 
 ext {
@@ -12,12 +12,12 @@ ext {
 
     libraries = [
         mybatisVersion = '3.5.6',
-        mybatisSpringVersion = '2.0.5',
-        mybatisSpringBootStarterVersion = '2.1.3',
-        springVersion = '5.2.8.RELEASE',
-        springBootVersion = '2.3.2.RELEASE',
-        jsqlparserVersion = '3.2',
-        junitVersion = '5.7.0',
+        mybatisSpringVersion = '2.0.6',
+        mybatisSpringBootStarterVersion = '2.1.4',
+        springVersion = '5.3.3',
+        springBootVersion = '2.4.2',
+        jsqlparserVersion = '4.0',
+        junitVersion = '5.7.1',
     ]
 
     lib = [
@@ -37,6 +37,7 @@ ext {
         "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
         "cglib"                      : "cglib:cglib:3.3.0",
         "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
+        "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:2.2.6.RELEASE",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.6",
@@ -134,11 +135,9 @@ subprojects {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
-        exclude "**/test/**/*.kt"
-        exclude "**/test/**/*.java"
+        exclude "**/test/java/**/*.kt"
+        exclude "**/test/java/**/*.java"
         exclude "**/*Test.java"
-        exclude "**/TableNameParser.java"
-        exclude "**/Maps.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
         ignoreFailures = true

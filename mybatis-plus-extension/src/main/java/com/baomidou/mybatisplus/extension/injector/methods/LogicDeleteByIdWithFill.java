@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import static java.util.stream.Collectors.toList;
  * @author miemie
  * @since 2018-11-09
  */
+@SuppressWarnings("serial")
 public class LogicDeleteByIdWithFill extends AbstractMethod {
 
     @Override

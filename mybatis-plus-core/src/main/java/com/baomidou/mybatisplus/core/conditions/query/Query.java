@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,7 @@ import java.util.function.Predicate;
 public interface Query<Children, T, R> extends Serializable {
 
     /**
-     * 设置查询字段
-     *
-     * @param columns 字段数组
-     * @return children
+     * ignore
      */
     @SuppressWarnings("unchecked")
     Children select(R... columns);

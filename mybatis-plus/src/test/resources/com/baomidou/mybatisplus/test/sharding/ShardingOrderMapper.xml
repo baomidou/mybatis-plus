@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.sharding.ShardingOrderMapper">
+    <!-- 一定要携带分片字段 -->
+    <insert id="insert1">
+        INSERT INTO sharding_order (order_id, subject, create_time)
+        VALUES (#{orderId}, '2', '2021-01-01 00:00:00')
+    </insert>
+</mapper>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children apply(String applySql, Object... value) {
-        return apply(true, applySql, value);
+    default Children apply(String applySql, Object... values) {
+        return apply(true, applySql, values);
     }
 
     /**
@@ -56,9 +56,10 @@ public interface Join<Children> extends Serializable {
      * <p>例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())</p>
      *
      * @param condition 执行条件
+     * @param values    数据数组
      * @return children
      */
-    Children apply(boolean condition, String applySql, Object... value);
+    Children apply(boolean condition, String applySql, Object... values);
 
     /**
      * ignore
@@ -114,8 +115,8 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
-    default Children exists(String existsSql) {
-        return exists(true, existsSql);
+    default Children exists(String existsSql, Object... values) {
+        return exists(true, existsSql, values);
     }
 
     /**
@@ -125,15 +126,16 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
+     * @param values    数据数组
      * @return children
      */
-    Children exists(boolean condition, String existsSql);
+    Children exists(boolean condition, String existsSql, Object... values);
 
     /**
      * ignore
      */
-    default Children notExists(String existsSql) {
-        return notExists(true, existsSql);
+    default Children notExists(String existsSql, Object... values) {
+        return notExists(true, existsSql, values);
     }
 
     /**
@@ -143,7 +145,8 @@ public interface Join<Children> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
+     * @param values    数据数组
      * @return children
      */
-    Children notExists(boolean condition, String existsSql);
+    Children notExists(boolean condition, String existsSql, Object... values);
 }

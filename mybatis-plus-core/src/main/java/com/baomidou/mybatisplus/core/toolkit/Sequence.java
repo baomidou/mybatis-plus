@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -72,9 +75,38 @@ public class Sequence {
      */
     private long lastTimestamp = -1L;
 
+    private InetAddress inetAddress;
+
+    /**
+     * @deprecated 3.4.3
+     */
+    @Deprecated
     public Sequence() {
+        this.inetAddress = getLocalHost();
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    public Sequence(InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
+        this.datacenterId = getDatacenterId(maxDatacenterId);
+        this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    private InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new MybatisPlusException(e);
+        }
+    }
+
+    /**
+     * @return InetAddress
+     * @since 3.4.3
+     */
+    protected InetAddress getInetAddress() {
+        return Optional.ofNullable(this.inetAddress).orElseGet(this::getLocalHost);
     }
 
     /**
@@ -95,7 +127,7 @@ public class Sequence {
     /**
      * 获取 maxWorkerId
      */
-    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -114,11 +146,10 @@ public class Sequence {
     /**
      * 数据标识id部分
      */
-    protected static long getDatacenterId(long maxDatacenterId) {
+    protected long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            InetAddress ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            NetworkInterface network = NetworkInterface.getByInetAddress(this.getInetAddress());
             if (network == null) {
                 id = 1L;
             } else {

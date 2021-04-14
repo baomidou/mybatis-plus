@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,16 @@ import java.util.List;
  * @since 2017/07/08
  */
 public final class ClassUtils {
+
+    private static ClassLoader systemClassLoader;
+
+    static {
+        try {
+            systemClassLoader = ClassLoader.getSystemClassLoader();
+        } catch (SecurityException ignored) {
+            // AccessControlException on Google App Engine
+        }
+    }
 
     private static final char PACKAGE_SEPARATOR = '.';
 
@@ -146,15 +156,34 @@ public final class ClassUtils {
      * @return 返回转换后的 Class
      */
     public static Class<?> toClassConfident(String name) {
+        return toClassConfident(name, null);
+    }
+
+    /**
+     * @param name
+     * @param classLoader
+     * @return
+     * @since 3.4.3
+     */
+    public static Class<?> toClassConfident(String name, ClassLoader classLoader) {
         try {
-            return Resources.classForName(name);
+            return loadClass(name, getClassLoaders(classLoader));
         } catch (ClassNotFoundException e) {
-            try {
-                return Class.forName(name);
-            } catch (ClassNotFoundException ex) {
-                throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
+            throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
+        }
+    }
+
+    private static Class<?> loadClass(String className, ClassLoader[] classLoaders) throws ClassNotFoundException {
+        for (ClassLoader classLoader : classLoaders) {
+            if (classLoader != null) {
+                try {
+                    return Class.forName(className, true, classLoader);
+                } catch (ClassNotFoundException e) {
+                    // ignore
+                }
             }
         }
+        throw new ClassNotFoundException("Cannot find class: " + className);
     }
 
 
@@ -201,6 +230,7 @@ public final class ClassUtils {
      * @see ClassLoader#getSystemClassLoader()
      * @since 3.3.2
      */
+    @Deprecated
     public static ClassLoader getDefaultClassLoader() {
         ClassLoader cl = null;
         try {
@@ -221,5 +251,14 @@ public final class ClassUtils {
             }
         }
         return cl;
+    }
+
+    private static ClassLoader[] getClassLoaders(ClassLoader classLoader) {
+        return new ClassLoader[]{
+            classLoader,
+            Resources.getDefaultClassLoader(),
+            Thread.currentThread().getContextClassLoader(),
+            ClassUtils.class.getClassLoader(),
+            systemClassLoader};
     }
 }

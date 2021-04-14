@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,8 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     }
 
     protected String columnToString(SFunction<T, ?> column, boolean onlyColumn) {
-        return getColumn(LambdaUtils.resolve(column), onlyColumn);
+        ColumnCache cache = getColumnCache(column);
+        return onlyColumn ? cache.getColumn() : cache.getColumnSelect();
     }
 
     /**
@@ -67,19 +68,17 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      * <p>
      * 如果获取不到列信息，那么本次条件组装将会失败
      *
-     * @param lambda     lambda 表达式
-     * @param onlyColumn 如果是，结果: "name", 如果否： "name" as "name"
      * @return 列
      * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
      * @see SerializedLambda#getImplClass()
      * @see SerializedLambda#getImplMethodName()
      */
-    private String getColumn(SerializedLambda lambda, boolean onlyColumn) {
+    protected ColumnCache getColumnCache(SFunction<T, ?> column) {
+        SerializedLambda lambda = LambdaUtils.resolve(column);
         Class<?> aClass = lambda.getInstantiatedType();
         tryInitCache(aClass);
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        ColumnCache columnCache = getColumnCache(fieldName, aClass);
-        return onlyColumn ? columnCache.getColumn() : columnCache.getColumnSelect();
+        return getColumnCache(fieldName, aClass);
     }
 
     private void tryInitCache(Class<?> lambdaClass) {
@@ -89,9 +88,9 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
                 lambdaClass = entityClass;
             }
             columnMap = LambdaUtils.getColumnMap(lambdaClass);
+            Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
             initColumnMap = true;
         }
-        Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
     }
 
     private ColumnCache getColumnCache(String fieldName, Class<?> lambdaClass) {

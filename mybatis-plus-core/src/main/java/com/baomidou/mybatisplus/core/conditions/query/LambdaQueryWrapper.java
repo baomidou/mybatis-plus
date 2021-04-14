@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,34 +43,22 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     private SharedString sqlSelect = new SharedString();
 
-    /**
-     * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
-     */
     public LambdaQueryWrapper() {
         this((T) null);
     }
 
-    /**
-     * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
-     */
     public LambdaQueryWrapper(T entity) {
         super.setEntity(entity);
         super.initNeed();
     }
 
-    /**
-     * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
-     */
     public LambdaQueryWrapper(Class<T> entityClass) {
         super.setEntityClass(entityClass);
         super.initNeed();
     }
 
-    /**
-     * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(...)
-     */
     LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
-                       Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
+                       Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
                        SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
         super.setEntityClass(entityClass);
@@ -78,6 +66,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
         this.sqlSelect = sqlSelect;
+        this.paramAlias = paramAlias;
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
         this.sqlFirst = sqlFirst;
@@ -132,7 +121,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     protected LambdaQueryWrapper<T> instance() {
         return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), null, paramNameSeq, paramNameValuePairs,
-            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+            new MergeSegments(), paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 
     @Override

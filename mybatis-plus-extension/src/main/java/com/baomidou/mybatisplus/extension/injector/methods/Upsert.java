@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author fly
  * @since 2018-04-06
  */
+@SuppressWarnings("serial")
 public class Upsert extends AbstractMethod {
 
     @Override

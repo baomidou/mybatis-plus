@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,11 +132,11 @@ public interface Constants extends StringPool, Serializable {
     /**
      * 乐观锁字段
      */
-    String MP_OPTLOCK_INTERCEPTOR = "oli";
     String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
-    String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
-    String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
 
+    /**
+     * wrapper 内部参数相关
+     */
     String WRAPPER_PARAM = "MPGENVAL";
-    String WRAPPER_PARAM_FORMAT = "#{%s.paramNameValuePairs.%s}";
+    String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,7 @@ public class MybatisMapperMethod {
         Assert.notNull(result, "can't found IPage for args!");
         Object param = method.convertArgsToSqlCommandParam(args);
         List<E> list = sqlSession.selectList(command.getName(), param);
+        //TODO 与com.baomidou.mybatisplus.core.executor一起移除.
         if (list instanceof PageList) {
             PageList<E> pageList = (PageList<E>) list;
             result.setRecords(pageList.getRecords());

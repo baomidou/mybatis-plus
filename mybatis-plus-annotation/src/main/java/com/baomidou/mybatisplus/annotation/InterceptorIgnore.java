@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,11 @@ public @interface InterceptorIgnore {
      * 默认关闭，需要注解打开
      */
     String dataPermission() default "1";
+
+    /**
+     * 分表 {@link com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor}
+     */
+    String sharding() default "";
 
     /**
      * 其他的

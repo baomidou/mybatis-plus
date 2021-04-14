@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 /**
  * Id生成器接口
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
+ * @author  nieqiuqiu
  * @since 2019-10-15
  * @since 3.3.0
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,8 +170,20 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children in(boolean condition, R column, Object... values) {
+        getWrapper().in(condition, column, values);
+        return typedThis;
+    }
+
+    @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
         getWrapper().notIn(condition, column, coll);
+        return typedThis;
+    }
+
+    @Override
+    public Children notIn(boolean condition, R column, Object... values) {
+        getWrapper().notIn(condition, column, values);
         return typedThis;
     }
 
@@ -188,14 +200,14 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children groupBy(boolean condition, R... columns) {
-        getWrapper().groupBy(condition, columns);
+    public Children groupBy(boolean condition, R column, R... columns) {
+        getWrapper().groupBy(condition, column, columns);
         return typedThis;
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
-        getWrapper().orderBy(condition, isAsc, columns);
+    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+        getWrapper().orderBy(condition, isAsc, column, columns);
         return typedThis;
     }
 
@@ -220,8 +232,8 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children apply(boolean condition, String applySql, Object... value) {
-        getWrapper().apply(condition, applySql, value);
+    public Children apply(boolean condition, String applySql, Object... values) {
+        getWrapper().apply(condition, applySql, values);
         return typedThis;
     }
 
@@ -244,14 +256,14 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children exists(boolean condition, String existsSql) {
-        getWrapper().exists(condition, existsSql);
+    public Children exists(boolean condition, String existsSql, Object... values) {
+        getWrapper().exists(condition, existsSql, values);
         return typedThis;
     }
 
     @Override
-    public Children notExists(boolean condition, String existsSql) {
-        getWrapper().notExists(condition, existsSql);
+    public Children notExists(boolean condition, String existsSql, Object... values) {
+        getWrapper().notExists(condition, existsSql, values);
         return typedThis;
     }
 

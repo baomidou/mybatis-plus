@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,27 @@ public interface Update<Children, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    Children set(boolean condition, R column, Object val);
+    default Children set(boolean condition, R column, Object val) {
+        return set(condition, column, val, null);
+    }
+
+    /**
+     * ignore
+     */
+    default Children set(R column, Object val, String mapping) {
+        return set(true, column, val, mapping);
+    }
+
+    /**
+     * 设置 更新 SQL 的 SET 片段
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       值
+     * @param mapping   例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
+     * @return children
+     */
+    Children set(boolean condition, R column, Object val, String mapping);
 
     /**
      * ignore

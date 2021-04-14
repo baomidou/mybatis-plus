@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,7 @@ import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.NotExpression;
-import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
@@ -103,8 +100,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             processSelectBody(withItem.getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
-            if (operationList.getSelects() != null && operationList.getSelects().size() > 0) {
-                operationList.getSelects().forEach(this::processSelectBody);
+            List<SelectBody> selectBodys = operationList.getSelects();
+            if (CollectionUtils.isNotEmpty(selectBodys)) {
+                selectBodys.forEach(this::processSelectBody);
             }
         }
     }
@@ -237,8 +235,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         } else {
             processFromItem(fromItem);
         }
+        //#3087 github
+        List<SelectItem> selectItems = plainSelect.getSelectItems();
+        if (CollectionUtils.isNotEmpty(selectItems)) {
+            selectItems.forEach(this::processSelectItem);
+        }
         List<Join> joins = plainSelect.getJoins();
-        if (joins != null && joins.size() > 0) {
+        if (CollectionUtils.isNotEmpty(joins)) {
             joins.forEach(j -> {
                 processJoin(j);
                 processFromItem(j.getRightItem());
@@ -299,6 +302,24 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             } else if (where instanceof Parenthesis) {
                 Parenthesis expression = (Parenthesis) where;
                 processWhereSubSelect(expression.getExpression());
+            }
+        }
+    }
+
+    protected void processSelectItem(SelectItem selectItem) {
+        if (selectItem instanceof SelectExpressionItem) {
+            SelectExpressionItem selectExpressionItem = (SelectExpressionItem) selectItem;
+            if (selectExpressionItem.getExpression() instanceof SubSelect) {
+                processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody());
+            } else if (selectExpressionItem.getExpression() instanceof Function) {
+                ExpressionList parameters = ((Function) selectExpressionItem.getExpression()).getParameters();
+                if (parameters != null) {
+                    parameters.getExpressions().forEach(expression -> {
+                        if (expression instanceof SubSelect) {
+                            processSelectBody(((SubSelect) expression).getSelectBody());
+                        }
+                    });
+                }
             }
         }
     }

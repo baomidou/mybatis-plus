@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ class KtUpdateChainWrapper<T : Any>(
         super.wrapperChildren = KtUpdateWrapper(entity)
     }
 
-    override fun set(condition: Boolean, column: KProperty<*>, value: Any?): KtUpdateChainWrapper<T> {
-        wrapperChildren.set(condition, column, value)
+    override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
+        wrapperChildren.set(condition, column, value, mapping)
         return typedThis
     }
 

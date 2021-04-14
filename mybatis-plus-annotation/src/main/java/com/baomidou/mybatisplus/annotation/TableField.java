@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public @interface TableField {
     /**
      * 字段 where 实体查询比较条件
      * <p>
-     * 默认 {@link SqlCondition.EQUAL}
+     * 默认 {@link SqlCondition#EQUAL}
      */
     String condition() default "";
 

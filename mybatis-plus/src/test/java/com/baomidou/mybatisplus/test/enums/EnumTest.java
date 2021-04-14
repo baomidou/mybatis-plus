@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-public class EnumTest extends BaseDbTest<EntityMapper> {
+class EnumTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void test() {
