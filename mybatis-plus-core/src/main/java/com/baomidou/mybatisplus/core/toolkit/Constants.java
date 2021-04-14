@@ -97,6 +97,14 @@ public interface Constants extends StringPool, Serializable {
      */
     String WRAPPER_ENTITY_DOT = WRAPPER_DOT + "entity" + DOT;
     /**
+     * wrapper 类的属性 expression
+     */
+    String WRAPPER_EXPRESSION = WRAPPER_DOT + "expression";
+    /**
+     * wrapper 类的属性 expression 下级属性 order
+     */
+    String WRAPPER_EXPRESSION_ORDER = WRAPPER_EXPRESSION + DOT + "orderBy";
+    /**
      * UpdateWrapper 类的属性 sqlSet
      */
     String U_WRAPPER_SQL_SET = WRAPPER_DOT + "sqlSet";

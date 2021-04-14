@@ -162,6 +162,32 @@ public class TableFieldInfo implements Constants {
     private Class<? extends TypeHandler<?>> typeHandler;
 
     /**
+     *  是否存在OrderBy注解
+     */
+    private boolean isOrderBy;
+    /**
+     * 排序类型
+     */
+    private String orderByType;
+    /**
+     * 排序顺序
+     */
+    private short orderBySort;
+
+    /**
+     * 全新的 存在 TableField 注解时使用的构造函数
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
+                          Reflector reflector, boolean existTableLogic,boolean isOrderBy) {
+        this(dbConfig,tableInfo,field,tableField,reflector,existTableLogic);
+        this.isOrderBy = isOrderBy;
+        if(isOrderBy){
+            initOrderBy(field);
+        }
+    }
+
+    /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -268,6 +294,17 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
+                          boolean existTableLogic,boolean isOrderBy) {
+        this(dbConfig,tableInfo,field,reflector,existTableLogic);
+        this.isOrderBy = isOrderBy;
+        if(isOrderBy){
+            initOrderBy(field);
+        }
+    }
+    /**
+     * 不存在 TableField 注解时, 使用的构造函数
+     */
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
                           boolean existTableLogic) {
         field.setAccessible(true);
         this.field = field;
@@ -309,6 +346,21 @@ public class TableFieldInfo implements Constants {
                 asProperty = String.format(propertyFormat, this.property);
             }
             this.sqlSelect += (AS + asProperty);
+        }
+    }
+
+    /**
+     * 排序初始化
+     * @param field 字段
+     */
+    private void initOrderBy(Field field){
+        OrderBy orderBy = field.getAnnotation(OrderBy.class);
+        if (null != orderBy) {
+            this.isOrderBy = true;
+            this.orderBySort = orderBy.sort();
+            this.orderByType = orderBy.isDesc()?"desc":"asc";
+        }else{
+            this.isOrderBy = false;
         }
     }
 

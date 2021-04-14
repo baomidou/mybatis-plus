@@ -282,6 +282,8 @@ public class TableInfoHelper {
         boolean existTableId = isExistTableId(list);
         // 是否存在 @TableLogic 注解
         boolean existTableLogic = isExistTableLogic(list);
+        // 是否存在 @OrderBy 注解
+        boolean existOrderBy = isExistOrderBy(list);
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
@@ -311,12 +313,12 @@ public class TableInfoHelper {
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic));
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic,existOrderBy));
                 continue;
             }
 
-            /* 无 @TableField 注解的字段初始化 */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic));
+            /* 无 @TableField  注解的字段初始化 */
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic,existOrderBy));
         }
 
         /* 字段列表 */
@@ -350,6 +352,18 @@ public class TableInfoHelper {
      */
     public static boolean isExistTableLogic(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(TableLogic.class));
+    }
+
+    /**
+     * <p>
+     * 判断排序注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return true 为存在 @TableId 注解;
+     */
+    public static boolean isExistOrderBy(List<Field> list){
+        return list.stream().anyMatch(field -> field.isAnnotationPresent(OrderBy.class));
     }
 
     /**
