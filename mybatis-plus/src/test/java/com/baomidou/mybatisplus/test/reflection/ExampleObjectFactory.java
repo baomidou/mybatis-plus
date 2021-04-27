@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.reflection;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * 对象工厂
@@ -33,7 +33,7 @@ public class ExampleObjectFactory extends DefaultObjectFactory {
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = -2878759377109110945L;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExampleObjectFactory.class);
 
     public <T> T create(Class<T> type) {

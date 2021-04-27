@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
-import java.io.IOException;
-
-import javax.sql.DataSource;
-
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +26,9 @@ import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.sql.DataSource;
+import java.io.IOException;
 
 /**
  * H2 Memory Database config

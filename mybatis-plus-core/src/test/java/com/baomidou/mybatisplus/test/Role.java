@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-
 import lombok.Data;
 
 @Data

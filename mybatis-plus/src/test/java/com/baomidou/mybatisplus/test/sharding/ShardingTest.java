@@ -1,18 +1,5 @@
 package com.baomidou.mybatisplus.test.sharding;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.plugin.Interceptor;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -22,8 +9,19 @@ import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingRuleE
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingStrategy;
 import com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.plugin.Interceptor;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author zengzhihong

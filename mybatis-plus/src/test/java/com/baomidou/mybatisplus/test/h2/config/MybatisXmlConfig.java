@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+
+import javax.sql.DataSource;
 
 /**
  * @author nieqiurong 2018/8/14 13:18.
