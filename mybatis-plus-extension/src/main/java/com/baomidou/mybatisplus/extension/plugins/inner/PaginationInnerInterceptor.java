@@ -371,7 +371,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * @param originalSql 需要拼接的SQL
      * @return ignore
      */
-    protected String concatOrderBy(String originalSql, List<OrderItem> orderList) {
+    public String concatOrderBy(String originalSql, List<OrderItem> orderList) {
         try {
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
             SelectBody selectBody = select.getSelectBody();
