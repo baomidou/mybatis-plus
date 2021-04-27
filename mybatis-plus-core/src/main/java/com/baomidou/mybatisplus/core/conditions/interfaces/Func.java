@@ -73,6 +73,7 @@ public interface Func<Children, R> extends Serializable {
      * 字段 IN (value.get(0), value.get(1), ...)
      * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
+     * <li> 注意！集合为空若存在逻辑错误，请在 condition 条件中判断 </li>
      * <li> 如果集合为 empty 则不会进行 sql 拼接 </li>
      *
      * @param condition 执行条件
@@ -93,6 +94,7 @@ public interface Func<Children, R> extends Serializable {
      * 字段 IN (v0, v1, ...)
      * <p>例: in("id", 1, 2, 3, 4, 5)</p>
      *
+     * <li> 注意！数组为空若存在逻辑错误，请在 condition 条件中判断 </li>
      * <li> 如果动态数组为 empty 则不会进行 sql 拼接 </li>
      *
      * @param condition 执行条件
