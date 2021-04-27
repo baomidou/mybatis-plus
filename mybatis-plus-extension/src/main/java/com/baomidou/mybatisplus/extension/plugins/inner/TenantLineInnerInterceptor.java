@@ -202,8 +202,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         PlainSelect plainSelect = (PlainSelect) selectBody;
         FromItem fromItem = plainSelect.getFromItem();
         if (fromItem instanceof Table) {
-            Table fromTable = (Table) fromItem;
-            plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
+            // fixed gitee pulls/141 duplicate update
+            processPlainSelect(plainSelect);
             appendSelectItem(plainSelect.getSelectItems());
         } else if (fromItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) fromItem;
@@ -319,7 +319,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             if (selectExpressionItem.getExpression() instanceof SubSelect) {
                 processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody());
             } else if (selectExpressionItem.getExpression() instanceof Function) {
-                processFunction((Function)selectExpressionItem.getExpression());
+                processFunction((Function) selectExpressionItem.getExpression());
             }
         }
     }
@@ -336,9 +336,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (parameters != null) {
             parameters.getExpressions().forEach(expression -> {
                 if (expression instanceof SubSelect) {
-                    processSelectBody(((SubSelect)expression).getSelectBody());
+                    processSelectBody(((SubSelect) expression).getSelectBody());
                 } else if (expression instanceof Function) {
-                    processFunction((Function)expression);
+                    processFunction((Function) expression);
                 }
             });
         }
