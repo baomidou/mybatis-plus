@@ -1,7 +1,8 @@
 package com.baomidou.mybatisplus.test.h2.issues.genericid;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -33,8 +34,9 @@ public class MybatisPlusConfig {
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
-        PaginationInterceptor pagination = new PaginationInterceptor();
-        sqlSessionFactory.setPlugins(pagination);
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
         return sqlSessionFactory.getObject();
     }
 

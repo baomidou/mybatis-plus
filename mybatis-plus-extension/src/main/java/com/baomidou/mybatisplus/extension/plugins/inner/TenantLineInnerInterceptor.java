@@ -124,6 +124,16 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return;
         }
         columns.add(new Column(tenantLineHandler.getTenantIdColumn()));
+
+        // fixed gitee pulls/141 duplicate update
+        List<Expression> duplicateUpdateColumns = insert.getDuplicateUpdateExpressionList();
+        if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
+            EqualsTo equalsTo = new EqualsTo();
+            equalsTo.setLeftExpression(new StringValue(tenantLineHandler.getTenantIdColumn()));
+            equalsTo.setRightExpression(tenantLineHandler.getTenantId());
+            duplicateUpdateColumns.add(equalsTo);
+        }
+
         Select select = insert.getSelect();
         if (select != null) {
             this.processInsertSelect(select.getSelectBody());
@@ -312,15 +322,28 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             if (selectExpressionItem.getExpression() instanceof SubSelect) {
                 processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody());
             } else if (selectExpressionItem.getExpression() instanceof Function) {
-                ExpressionList parameters = ((Function) selectExpressionItem.getExpression()).getParameters();
-                if (parameters != null) {
-                    parameters.getExpressions().forEach(expression -> {
-                        if (expression instanceof SubSelect) {
-                            processSelectBody(((SubSelect) expression).getSelectBody());
-                        }
-                    });
-                }
+                processFunction((Function)selectExpressionItem.getExpression());
             }
+        }
+    }
+
+    /**
+     * 处理函数
+     * <p>支持: 1. select fun(args..) 2. select fun1(fun2(args..),args..)<p>
+     * <p> fixed gitee pulls/141</p>
+     *
+     * @param function
+     */
+    protected void processFunction(Function function) {
+        ExpressionList parameters = function.getParameters();
+        if (parameters != null) {
+            parameters.getExpressions().forEach(expression -> {
+                if (expression instanceof SubSelect) {
+                    processSelectBody(((SubSelect)expression).getSelectBody());
+                } else if (expression instanceof Function) {
+                    processFunction((Function)expression);
+                }
+            });
         }
     }
 

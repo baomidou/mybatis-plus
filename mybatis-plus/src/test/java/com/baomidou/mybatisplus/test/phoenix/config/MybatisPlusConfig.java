@@ -21,15 +21,15 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.injector.methods.Upsert;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -47,8 +47,7 @@ public class MybatisPlusConfig {
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(
         DataSource dataSource,
-        GlobalConfig globalConfig,
-        PaginationInterceptor paginationInterceptor
+        GlobalConfig globalConfig
     ) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         /* 数据源 */
@@ -61,9 +60,10 @@ public class MybatisPlusConfig {
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /* 驼峰转下划线 */
         configuration.setMapUnderscoreToCamelCase(true);
-        /* 乐观锁插件 */
-        configuration.addInterceptor(new OptimisticLockerInterceptor());
-        configuration.addInterceptor(paginationInterceptor);
+        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+        mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        mybatisPlusInterceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
         /* map 下划线转驼峰 */
         configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
         sqlSessionFactory.setConfiguration(configuration);
@@ -89,10 +89,5 @@ public class MybatisPlusConfig {
         };
         conf.setSqlInjector(phoenixSqlInjector);
         return conf;
-    }
-
-    @Bean
-    PaginationInterceptor paginationInterceptor() {
-        return new PaginationInterceptor();
     }
 }

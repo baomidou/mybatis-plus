@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.test.h2.mapper;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 自定义父类 SuperMapper

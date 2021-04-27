@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.h2.entity;
 
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+
+import java.util.Date;
 
 
 /**

@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.h2.cache.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
@@ -9,7 +8,6 @@ import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
