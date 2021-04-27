@@ -34,11 +34,4 @@ public @interface KeySequence {
      * 序列名
      */
     String value() default "";
-
-    /**
-     * id的类型
-     * @deprecated 3.1.2 自动匹配,无需指定
-     */
-    @Deprecated
-    Class<?> clazz() default Long.class;
 }

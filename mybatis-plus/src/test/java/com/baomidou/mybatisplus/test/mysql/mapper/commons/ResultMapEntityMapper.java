@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.mysql.mapper.commons;
 
-import com.baomidou.mybatisplus.annotation.SqlParser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.test.mysql.MyBaseMapper;
@@ -33,12 +32,10 @@ import java.io.Serializable;
 public interface ResultMapEntityMapper extends MyBaseMapper<ResultMapEntity> {
 
     @Override
-    @SqlParser
     @ResultMap("resultChildren1")
     @Select("select * from result_map_entity where id = #{id}")
     ResultMapEntity selectById(Serializable id);
 
     @Override
-    @SqlParser
     ResultMapEntity selectOne(@Param(Constants.WRAPPER) Wrapper<ResultMapEntity> queryWrapper);
 }

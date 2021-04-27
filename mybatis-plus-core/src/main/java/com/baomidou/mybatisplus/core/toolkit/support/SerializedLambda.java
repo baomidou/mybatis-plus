@@ -50,13 +50,7 @@ public class SerializedLambda implements Serializable {
      *
      * @param lambda lambda对象
      * @return 返回解析后的 SerializedLambda
-     * @deprecated 3.4.2 {@link #resolve(SFunction, ClassLoader)}
      */
-    @Deprecated
-    public static SerializedLambda resolve(SFunction<?, ?> lambda) {
-        return resolve(lambda, null);
-    }
-
     public static SerializedLambda resolve(SFunction<?, ?> lambda, ClassLoader classLoader) {
         if (!lambda.getClass().isSynthetic()) {
             throw ExceptionUtils.mpe("该方法仅能传入 lambda 表达式产生的合成类");
@@ -141,9 +135,9 @@ public class SerializedLambda implements Serializable {
         String interfaceName = getFunctionalInterfaceClassName();
         String implName = getImplClassName();
         return String.format("%s -> %s::%s",
-                interfaceName.substring(interfaceName.lastIndexOf('.') + 1),
-                implName.substring(implName.lastIndexOf('.') + 1),
-                implMethodName);
+            interfaceName.substring(interfaceName.lastIndexOf('.') + 1),
+            implName.substring(implName.lastIndexOf('.') + 1),
+            implMethodName);
     }
 
 }

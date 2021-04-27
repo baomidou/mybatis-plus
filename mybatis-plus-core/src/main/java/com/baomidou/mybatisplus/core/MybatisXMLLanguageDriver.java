@@ -41,7 +41,7 @@ public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
     @Override
     public ParameterHandler createParameterHandler(MappedStatement mappedStatement,
                                                    Object parameterObject, BoundSql boundSql) {
-        // TODO 使用 MybatisParameterHandler 而不是 ParameterHandler
+        // 使用 MybatisParameterHandler 而不是 ParameterHandler
         return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
     }
 
