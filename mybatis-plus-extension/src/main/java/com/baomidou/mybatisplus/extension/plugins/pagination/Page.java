@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -71,10 +70,6 @@ public class Page<T> implements IPage<T> {
      * 是否进行 count 查询
      */
     protected boolean isSearchCount = true;
-    /**
-     * 是否命中count缓存
-     */
-    protected boolean hitCount = false;
     /**
      * countId
      */
@@ -241,71 +236,6 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    /**
-     * 设置需要进行正序排序的字段
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param ascs 字段
-     * @return 返回自身
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setAscs(List<String> ascs) {
-        return CollectionUtils.isNotEmpty(ascs) ? setAsc(ascs.toArray(new String[0])) : this;
-    }
-
-    /**
-     * 升序
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param ascs 多个升序字段
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setAsc(String... ascs) {
-        // 保证原来方法 set 的语意
-        removeOrder(OrderItem::isAsc);
-        for (String s : ascs) {
-            addOrder(OrderItem.asc(s));
-        }
-        return this;
-    }
-
-    /**
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param descs 需要倒序排列的字段
-     * @return 自身
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setDescs(List<String> descs) {
-        // 保证原来方法 set 的语意
-        if (CollectionUtils.isNotEmpty(descs)) {
-            removeOrder(item -> !item.isAsc());
-            for (String s : descs) {
-                addOrder(OrderItem.desc(s));
-            }
-        }
-        return this;
-    }
-
-    /**
-     * 降序，这方法名不知道是谁起的
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param descs 多个降序字段
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setDesc(String... descs) {
-        setDescs(Arrays.asList(descs));
-        return this;
-    }
-
     @Override
     public List<OrderItem> orders() {
         return getOrders();
@@ -336,19 +266,5 @@ public class Page<T> implements IPage<T> {
     public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
         return this;
-    }
-
-    @Override
-    public void hitCount(boolean hit) {
-        this.hitCount = hit;
-    }
-
-    public void setHitCount(boolean hit) {
-        this.hitCount = hit;
-    }
-
-    @Override
-    public boolean isHitCount() {
-        return hitCount;
     }
 }

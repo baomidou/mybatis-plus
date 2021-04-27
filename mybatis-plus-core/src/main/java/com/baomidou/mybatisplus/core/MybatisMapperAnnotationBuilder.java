@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Getter;
@@ -109,7 +108,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 try {
                     // TODO 加入 注解过滤缓存
                     InterceptorIgnoreHelper.initSqlParserInfoCache(cache, mapperName, method);
-                    SqlParserHelper.initSqlParserInfoCache(mapperName, method);
                     parseStatement(method);
                 } catch (IncompleteElementException e) {
                     // TODO 使用 MybatisMethodResolver 而不是 MethodResolver

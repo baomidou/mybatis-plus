@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
@@ -93,8 +92,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         PluginUtils.MPStatementHandler mpStatementHandler = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpStatementHandler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || InterceptorIgnoreHelper.willIgnoreIllegalSql(ms.getId())
-            || SqlParserHelper.getSqlParserInfo(ms)) return;
+        if (sct == SqlCommandType.INSERT || InterceptorIgnoreHelper.willIgnoreIllegalSql(ms.getId())) return;
         BoundSql boundSql = mpStatementHandler.boundSql();
         String originalSql = boundSql.getSql();
         logger.debug("检查SQL是否合规，SQL:" + originalSql);

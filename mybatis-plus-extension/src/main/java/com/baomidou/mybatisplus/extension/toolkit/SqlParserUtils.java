@@ -15,13 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
-import org.apache.ibatis.reflection.MetaObject;
-
-import java.util.Optional;
-
 /**
  * SQL 解析工具类
  *
@@ -29,8 +22,6 @@ import java.util.Optional;
  * @since 2018-07-22
  */
 public class SqlParserUtils {
-
-    private static final ISqlParser COUNT_SQL_PARSER = new JsqlParserCountOptimize();
 
     /**
      * 获取 COUNT 原生 SQL 包装
@@ -40,26 +31,5 @@ public class SqlParserUtils {
      */
     public static String getOriginalCountSql(String originalSql) {
         return String.format("SELECT COUNT(*) FROM (%s) TOTAL", originalSql);
-    }
-
-    /**
-     * 获取CountOptimize
-     *
-     * @param optimizeCountSql 是否优化 Count SQL
-     * @param sqlParser        Count SQL 解析类
-     * @param originalSql      需要计算Count SQL
-     * @return SqlInfo
-     * @deprecated 3.4.0
-     */
-    @Deprecated
-    public static SqlInfo getOptimizeCountSql(boolean optimizeCountSql, ISqlParser sqlParser, String originalSql) {
-        return getOptimizeCountSql(optimizeCountSql, sqlParser, originalSql, null);
-    }
-
-    public static SqlInfo getOptimizeCountSql(boolean optimizeCountSql, ISqlParser sqlParser, String originalSql, MetaObject metaObject) {
-        if (optimizeCountSql) {
-            return Optional.ofNullable(sqlParser).orElseGet(() -> COUNT_SQL_PARSER).parser(metaObject, originalSql);
-        }
-        return SqlInfo.newInstance().setSql(getOriginalCountSql(originalSql));
     }
 }

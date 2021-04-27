@@ -141,23 +141,6 @@ public final class SqlHelper {
     }
 
     /**
-     * 清理缓存.
-     * 批量插入因为无法重用sqlSession，只能新开启一个sqlSession
-     *
-     * @param clazz 实体类
-     * @deprecated 3.3.1
-     */
-    @Deprecated
-    public static void clearCache(Class<?> clazz) {
-        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
-        if (sqlSessionHolder != null) {
-            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
-            sqlSession.clearCache();
-        }
-    }
-
-    /**
      * 执行批量操作
      *
      * @param entityClass 实体
