@@ -22,6 +22,8 @@
   </a>
 </p>
 
+[![Maintainability](https://cloud.quality-gate.com/dashboard/api/badge?projectName=baomidou_mybatis-plus&branchName=3.0)](https://cloud.quality-gate.com/dashboard/branches/76603#overview)
+
 ## What is MyBatis-Plus?
 
 MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development. This toolkit provides some efficient, useful, out-of-the-box features for MyBatis, use it can effectively save your development time.
