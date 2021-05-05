@@ -486,6 +486,12 @@ public class TableNameParserTest {
         assertThat(new TableNameParser("select * from mp where id = 1 for update").tables()).isEqualTo(asSet("mp"));
     }
 
+    @Test
+    public void testOnDuplicateKeyUpdate () {
+        String sql = "INSERT INTO cf_procedure (_id,password) VALUES ('1','password') ON DUPLICATE KEY UPDATE id = 'UpId', password = 'upPassword';";
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("cf_procedure"));
+    }
+
     private static Collection<String> asSet(String... a) {
         Set<String> result = new HashSet<>();
         Collections.addAll(result, a);
