@@ -267,4 +267,10 @@ public class Page<T> implements IPage<T> {
         this.optimizeCountSql = optimizeCountSql;
         return this;
     }
+
+    @Override
+    public long getPages() {
+        // 解决 github issues/3208
+        return IPage.super.getPages();
+    }
 }
