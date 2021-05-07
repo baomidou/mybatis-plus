@@ -37,7 +37,7 @@ ext {
         "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
         "cglib"                      : "cglib:cglib:3.3.0",
         "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
-        "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:2.2.6.RELEASE",
+        "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:3.0.2",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.6",
