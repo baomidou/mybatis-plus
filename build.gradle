@@ -11,7 +11,7 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.6',
+        mybatisVersion = '3.5.7',
         mybatisSpringVersion = '2.0.6',
         mybatisSpringBootStarterVersion = '2.1.4',
         springVersion = '5.3.3',
@@ -63,7 +63,7 @@ ext {
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.21",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3.1",
-        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.1.java8",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
