@@ -246,10 +246,12 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
+    @Deprecated
     public boolean isOptimizeCountSql() {
         return optimizeCountSql();
     }
 
+    @Deprecated
     @Override
     public boolean isSearchCount() {
         if (total < 0) {
