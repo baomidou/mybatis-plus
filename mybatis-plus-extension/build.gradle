@@ -16,5 +16,5 @@ dependencies {
     implementation "${lib['mybatis-thymeleaf']}"
     implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
-    testImplementation "com.github.pagehelper:pagehelper:5.1.11"
+    testImplementation "com.github.pagehelper:pagehelper:5.2.0"
 }
