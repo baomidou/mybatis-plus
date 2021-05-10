@@ -273,25 +273,4 @@ public class Page<T> implements IPage<T> {
         // 解决 github issues/3208
         return IPage.super.getPages();
     }
-
-    public static Page<T> of(long current, long size){
-        return this(current, size, 0);
-    }
-
-    public static Page<T> of(long current, long size, long total) {
-        this(current, size, total, true);
-    }
-
-    public static Page<T> of(long current, long size, boolean isSearchCount) {
-        this(current, size, 0, isSearchCount);
-    }
-
-    public static Page<T> of(long current, long size, long total, boolean isSearchCount) {
-        if (current > 1) {
-            this.current = current;
-        }
-        this.size = size;
-        this.total = total;
-        this.isSearchCount = isSearchCount;
-    }
 }
