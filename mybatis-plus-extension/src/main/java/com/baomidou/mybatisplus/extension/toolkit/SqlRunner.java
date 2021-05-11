@@ -208,7 +208,12 @@ public class SqlRunner implements ISqlRunner {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        final SqlSession sqlSession = sqlSession();
+        try {
+            page.setRecords(sqlSession.selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        } finally {
+            closeSqlSession(sqlSession);
+        }
         return page;
     }
 
