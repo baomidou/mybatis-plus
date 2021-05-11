@@ -268,22 +268,23 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children in(boolean condition, R column, Collection<?> coll) {
-        return doIt(condition, () -> columnToString(column), IN, inExpression(coll));
+        return doIt(condition && CollectionUtils.isNotEmpty(coll), () -> columnToString(column), IN, inExpression(coll));
     }
 
     @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
-        return not(condition).in(condition, column, coll);
+        return not(condition && CollectionUtils.isNotEmpty(coll)).in(condition, column, coll);
     }
 
     @Override
     public Children inSql(boolean condition, R column, String inValue) {
-        return doIt(condition, () -> columnToString(column), IN, () -> String.format("(%s)", inValue));
+        return doIt(condition && StringUtils.isNotBlank(inValue),
+            () -> columnToString(column), IN, () -> String.format("(%s)", inValue));
     }
 
     @Override
     public Children notInSql(boolean condition, R column, String inValue) {
-        return not(condition).inSql(condition, column, inValue);
+        return not(condition && StringUtils.isNotBlank(inValue)).inSql(condition, column, inValue);
     }
 
     @Override

@@ -214,10 +214,16 @@ class WrapperTest {
 
     @Test
     void testInEmptyColl() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList());
-        logSqlSegment("测试 empty 的 coll", queryWrapper, "(xxx IN ())");
+        // 当用户输入在 in/notIn 的条件过滤中输入了一个空list，会导致sql查询为空，这不太符合用户预期，我们应该直接将空list这个条件去掉
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList())
+            .notIn("ttt",Collections.emptyList());
+        logSqlSegment("测试 empty 的 coll", queryWrapper, "");
+        QueryWrapper<User> queryWrapper1 = new QueryWrapper<User>().inSql("xxx", "")
+            .notInSql("ttt","");
+        logSqlSegment("测试 blank string sql", queryWrapper, "");
     }
 
+    @Test
     private List<Object> getList() {
         List<Object> list = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
