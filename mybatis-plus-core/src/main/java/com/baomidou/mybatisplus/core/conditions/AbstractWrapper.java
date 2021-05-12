@@ -327,11 +327,20 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             final SqlKeyword mode = isAsc ? ASC : DESC;
             appendSqlSegments(ORDER_BY, columnToSqlSegment(column), mode);
             if (ArrayUtils.isNotEmpty(columns)) {
-                for (R c : columns) {
-                    appendSqlSegments(ORDER_BY, columnToSqlSegment(c), mode);
-                }
+                Arrays.stream(columns).forEach(c -> appendSqlSegments(ORDER_BY,
+                    columnToSqlSegment(columnSqlInjectFilter(c)), mode));
             }
         });
+    }
+
+    /**
+     * 字段 SQL 注入过滤处理，子类重写实现过滤逻辑
+     *
+     * @param column 字段内容
+     * @return
+     */
+    protected R columnSqlInjectFilter(R column) {
+        return column;
     }
 
     @Override

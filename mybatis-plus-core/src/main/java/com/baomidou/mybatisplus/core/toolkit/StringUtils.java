@@ -540,8 +540,8 @@ public final class StringUtils {
      * StringUtils.equals("abc", "ABC") = false
      * </pre>
      *
-     * @param cs1  第一个字符串, 可为 {@code null}
-     * @param cs2  第二个字符串, 可为 {@code null}
+     * @param cs1 第一个字符串, 可为 {@code null}
+     * @param cs2 第二个字符串, 可为 {@code null}
      * @return {@code true} 如果两个字符串相同, 或者都为 {@code null}
      * @see Object#equals(Object)
      */
@@ -566,5 +566,24 @@ public final class StringUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * 字符串去除空白内容：
+     * \n 回车
+     * \t 水平制表符
+     * \s 空格
+     * \r 换行
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static String replaceBlank(String str) {
+        if (null != str) {
+            Pattern pattern = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher matcher = pattern.matcher(str);
+            return matcher.replaceAll("");
+        }
+        return null;
     }
 }

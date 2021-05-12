@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -94,6 +95,11 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     public String getSqlSelect() {
         return sqlSelect.getStringValue();
+    }
+
+    @Override
+    protected String columnSqlInjectFilter(String column) {
+        return StringUtils.replaceBlank(column);
     }
 
     /**
