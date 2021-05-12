@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.injector;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -237,26 +238,20 @@ public abstract class AbstractMethod implements Constants {
         }
     }
 
-    protected String sqlOrderBy(TableInfo tableInfo){
-        //如果不存在排序字段，直接返回空
-        if(!tableInfo.isExistOrderBy()){
+    protected String sqlOrderBy(TableInfo tableInfo) {
+        /* 不存在排序字段，直接返回空 */
+        List<TableFieldInfo> orderByFields = tableInfo.getOrderByFields();
+        if (CollectionUtils.isEmpty(orderByFields)) {
             return StringPool.EMPTY;
         }
-        List<TableFieldInfo> orderByFields = tableInfo.getOrderByFields();
         orderByFields.sort(Comparator.comparingInt(TableFieldInfo::getOrderBySort));
-        StringBuilder sql = new StringBuilder(NEWLINE + " order by ");
-        orderByFields.forEach(
-            tableFieldInfo -> {
-                sql.append(tableFieldInfo.getColumn());
-                sql.append(" ");
-                sql.append(tableFieldInfo.getOrderByType());
-                sql.append(",");
-            }
-        );
-        //删除最后一个
-        sql.deleteCharAt(sql.length()-1);
-        //当wrapper中传递了orderBy属性，@orderBy注解失效
-        return SqlScriptUtils.convertIf(sql.toString(),String.format("%s == null or %s == null or %s == null or %s.size() == 0",WRAPPER,WRAPPER_EXPRESSION,WRAPPER_EXPRESSION_ORDER,WRAPPER_EXPRESSION_ORDER), true);
+        StringBuilder sql = new StringBuilder();
+        sql.append(NEWLINE).append(" ORDER BY ");
+        sql.append(orderByFields.stream().map(tfi -> String.format("%s %s", tfi.getColumn(),
+            tfi.getOrderByType())).collect(joining(",")));
+        /* 当wrapper中传递了orderBy属性，@orderBy注解失效 */
+        return SqlScriptUtils.convertIf(sql.toString(), String.format("%s == null or %s == null or %s == null or %s.size() == 0",
+            WRAPPER, WRAPPER_EXPRESSION, WRAPPER_EXPRESSION_ORDER, WRAPPER_EXPRESSION_ORDER), true);
     }
 
     /**

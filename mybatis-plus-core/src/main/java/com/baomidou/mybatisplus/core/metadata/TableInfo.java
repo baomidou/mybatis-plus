@@ -172,18 +172,11 @@ public class TableInfo implements Constants {
     private TableFieldInfo versionFieldInfo;
 
     /**
-     * 是否存在排序
-     */
-    @Getter
-    @Setter
-    private boolean isExistOrderBy;
-
-    /**
      * 排序列表
      */
     @Getter
     @Setter
-    public List<TableFieldInfo> orderByFields = new LinkedList<>();
+    public List<TableFieldInfo> orderByFields;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -459,8 +452,10 @@ public class TableInfo implements Constants {
             if (i.isWithUpdateFill()) {
                 this.withUpdateFill = true;
             }
-            if(i.isOrderBy()){
-                this.isExistOrderBy = true;
+            if (i.isOrderBy()) {
+                if (null == this.orderByFields) {
+                    this.orderByFields = new LinkedList<>();
+                }
                 this.orderByFields.add(i);
             }
             if (i.isVersion()) {
