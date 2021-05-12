@@ -32,10 +32,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -173,6 +170,20 @@ public class TableInfo implements Constants {
     @Getter
     @Setter(AccessLevel.NONE)
     private TableFieldInfo versionFieldInfo;
+
+    /**
+     * 是否存在排序
+     */
+    @Getter
+    @Setter
+    private boolean isExistOrderBy;
+
+    /**
+     * 排序列表
+     */
+    @Getter
+    @Setter
+    public List<TableFieldInfo> orderByFields = new LinkedList<>();
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -447,6 +458,10 @@ public class TableInfo implements Constants {
             }
             if (i.isWithUpdateFill()) {
                 this.withUpdateFill = true;
+            }
+            if(i.isOrderBy()){
+                this.isExistOrderBy = true;
+                this.orderByFields.add(i);
             }
             if (i.isVersion()) {
                 this.withVersion = true;
