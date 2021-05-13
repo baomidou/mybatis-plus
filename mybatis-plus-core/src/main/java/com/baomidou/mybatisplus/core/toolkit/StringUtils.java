@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -579,11 +580,9 @@ public final class StringUtils {
      * @return
      */
     public static String replaceBlank(String str) {
-        if (null != str) {
-            Pattern pattern = Pattern.compile("\\s*|\t|\r|\n");
-            Matcher matcher = pattern.matcher(str);
-            return matcher.replaceAll("");
-        }
-        return null;
+        Objects.requireNonNull(str);
+        Pattern pattern = Pattern.compile("\\s*|\t|\r|\n");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.replaceAll("");
     }
 }
