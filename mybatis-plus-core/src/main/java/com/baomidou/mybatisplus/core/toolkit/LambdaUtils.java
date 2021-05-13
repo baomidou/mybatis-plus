@@ -19,10 +19,13 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
+import java.lang.invoke.SerializedLambda;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,13 +50,12 @@ public final class LambdaUtils {
     private static final Map<String, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction, ClassLoader)} 中的方法，在此基础上加了缓存。
+     * 解析 lambda 表达式
      * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
-     * @see SerializedLambda#resolve(SFunction, ClassLoader)
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
@@ -61,10 +63,38 @@ public final class LambdaUtils {
         return Optional.ofNullable(FUNC_CACHE.get(name))
             .map(WeakReference::get)
             .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.resolve(func, clazz.getClassLoader());
+                // perf
+                SerializedLambda lambda;
+                try {
+                    Method writeReplace = clazz.getDeclaredMethod("writeReplace");
+                    writeReplace.setAccessible(true);
+                    lambda = (SerializedLambda) writeReplace.invoke(func);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 FUNC_CACHE.put(name, new WeakReference<>(lambda));
                 return lambda;
             });
+    }
+
+    /**
+     * 获取实例化方法的类型
+     *
+     * @return Class<?>
+     */
+    public static Class<?> getInstantiatedType(SerializedLambda serializedLambda) {
+        Objects.requireNonNull(serializedLambda);
+        String instantiatedMethodType = serializedLambda.getInstantiatedMethodType();
+        Class<?> capturingClass;
+        try {
+            Field capturingClassField = serializedLambda.getClass().getDeclaredField("capturingClass");
+            capturingClassField.setAccessible(true);
+            capturingClass = (Class<?>) capturingClassField.get(serializedLambda);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        String instantiatedTypeName = ClassUtils.normalizedName(instantiatedMethodType.substring(2, instantiatedMethodType.indexOf(';')));
+        return ClassUtils.toClassConfident(instantiatedTypeName, capturingClass.getClassLoader());
     }
 
     /**

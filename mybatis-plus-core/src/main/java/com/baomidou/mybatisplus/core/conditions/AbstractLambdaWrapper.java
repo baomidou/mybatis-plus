@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
+import java.lang.invoke.SerializedLambda;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -75,7 +75,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      */
     protected ColumnCache getColumnCache(SFunction<T, ?> column) {
         SerializedLambda lambda = LambdaUtils.resolve(column);
-        Class<?> aClass = lambda.getInstantiatedType();
+        Class<?> aClass = LambdaUtils.getInstantiatedType(lambda);
         tryInitCache(aClass);
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
         return getColumnCache(fieldName, aClass);

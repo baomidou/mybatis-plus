@@ -16,11 +16,12 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.lang.invoke.SerializedLambda;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,15 +36,14 @@ class LambdaUtilsTest {
     @Test
     void testResolve() {
         SerializedLambda lambda = LambdaUtils.resolve(TestModel::getId);
-        assertEquals(Parent.class.getName(), lambda.getImplClassName());
         assertEquals("getId", lambda.getImplMethodName());
         assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
-        assertEquals(TestModel.class, lambda.getInstantiatedType());
+        assertEquals(TestModel.class, LambdaUtils.getInstantiatedType(lambda));
 
         // 测试接口泛型获取
         lambda = new TestModelHolder().toLambda();
         // 无法从泛型获取到实现类，即使改泛型参数已经被实现
-        assertEquals(Named.class, lambda.getInstantiatedType());
+        assertEquals(Named.class, LambdaUtils.getInstantiatedType(lambda));
     }
 
     /**
@@ -61,7 +61,7 @@ class LambdaUtilsTest {
      * @param lambda 解析后的 lambda
      */
     private void assertInstantiatedMethodTypeIsReference(SerializedLambda lambda) {
-        Assertions.assertNotNull(lambda.getInstantiatedType());
+        Assertions.assertNotNull(LambdaUtils.getInstantiatedType(lambda));
     }
 
     /**
@@ -91,6 +91,31 @@ class LambdaUtilsTest {
 
     private interface Named {
         String getName();
+    }
+
+    /**
+     * 测试
+     * <p>
+     * print：
+     * >>>
+     * getId
+     * getName
+     * getId
+     * class com.baomidou.mybatisplus.test.toolkit.LambdaUtilsTest$TestModel
+     * >>>
+     */
+    @Test
+    void simpleTest() {
+        // getImplMethodName
+        System.out.println(LambdaUtils.resolve(TestModel::getId).getImplMethodName());
+        System.out.println(LambdaUtils.resolve(TestModel::getName).getImplMethodName());
+        System.out.println(LambdaUtils.resolve(TestModel::getId).getImplMethodName());
+        // getInstantiatedType
+        SerializedLambda resolve = LambdaUtils.resolve(TestModel::getId);
+        System.out.println(LambdaUtils.getInstantiatedType(resolve));
+        // ..
+        this.testResolve();
+        this.test();
     }
 
 }

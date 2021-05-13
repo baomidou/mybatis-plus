@@ -261,4 +261,15 @@ public final class ClassUtils {
             ClassUtils.class.getClassLoader(),
             systemClassLoader};
     }
+
+    /**
+     * 正常化类名称，将类名称中的 / 替换为 .
+     *
+     * @param name 名称
+     * @return 正常的类名
+     */
+    public static String normalizedName(String name) {
+        return name.replace('/', '.');
+    }
+
 }
