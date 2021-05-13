@@ -52,7 +52,7 @@ ext {
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
         "gson"                       : "com.google.code.gson:gson:2.8.6",
-        "lagarto"                    : "org.jodd:jodd-lagarto:6.0.2",
+        "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
