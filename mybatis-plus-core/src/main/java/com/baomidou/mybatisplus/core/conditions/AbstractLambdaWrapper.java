@@ -19,10 +19,10 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
-import java.lang.invoke.SerializedLambda;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -72,9 +72,9 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
      */
     protected ColumnCache getColumnCache(SFunction<T, ?> column) {
-        SerializedLambda lambda = LambdaUtils.extract(column);
+        LambdaMeta lambda = LambdaUtils.extract(column);
         String fileName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        return getColumnCache(fileName, LambdaUtils.instantiatedClass(lambda));
+        return getColumnCache(fileName, lambda.getInstantiatedClass());
     }
 
     private void tryInitCache(Class<?> lambdaClass) {

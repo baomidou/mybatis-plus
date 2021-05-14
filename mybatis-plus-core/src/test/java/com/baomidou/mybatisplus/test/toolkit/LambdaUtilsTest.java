@@ -16,11 +16,10 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
-
-import java.lang.invoke.SerializedLambda;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -35,10 +34,10 @@ class LambdaUtilsTest {
      */
     @Test
     void testExtract() {
-        SFunction<TestModel, Object> getId = TestModel::getId;
-        SerializedLambda lambda = LambdaUtils.extract(getId);
-        assertNotNull(lambda);
-        assertSame(TestModel.class, LambdaUtils.instantiatedClass(lambda));
+        SFunction<TestModel, Object> function = TestModel::getName;
+        LambdaMeta meta = LambdaUtils.extract(function);
+        assertNotNull(meta);
+        assertSame(TestModel.class, meta.getInstantiatedClass());
     }
 
     /**
@@ -57,7 +56,7 @@ class LambdaUtilsTest {
     // 处理 ISSUE:https://gitee.com/baomidou/mybatis-plus/issues/I13Y8Y，由于 java 本身处理的问题，这里无法获取到实例
     private abstract static class BaseHolder<T extends Named> {
 
-        SerializedLambda toLambda() {
+        LambdaMeta toLambda() {
             return LambdaUtils.extract(T::getName);
         }
 

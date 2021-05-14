@@ -19,10 +19,11 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambdaMeta;
 
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -37,16 +38,6 @@ import static java.util.Locale.ENGLISH;
  * @since 2018-05-10
  */
 public final class LambdaUtils {
-    private static final Field FIELD_CAPTURING_CLASS;
-
-    static {
-        try {
-            Class<SerializedLambda> aClass = SerializedLambda.class;
-            FIELD_CAPTURING_CLASS = ReflectionKit.setAccessible(aClass.getDeclaredField("capturingClass"));
-        } catch (NoSuchFieldException e) {
-            throw new MybatisPlusException(e);
-        }
-    }
 
     /**
      * 字段映射
@@ -60,40 +51,14 @@ public final class LambdaUtils {
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
      */
-    public static <T> SerializedLambda extract(SFunction<T, ?> func) {
+    public static <T> LambdaMeta extract(SFunction<T, ?> func) {
         try {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
-            return (SerializedLambda) ReflectionKit.setAccessible(method).invoke(func);
+            return new SerializedLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
         } catch (NoSuchMethodException e) {
             String message = "Cannot find method writeReplace, please make sure that the lambda composite class is currently passed in";
             throw new MybatisPlusException(message);
         } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new MybatisPlusException(e);
-        }
-    }
-
-    /**
-     * 实例化该接口的类名
-     *
-     * @param lambda lambda 对象
-     * @return 返回对应的实例类
-     */
-    public static Class<?> instantiatedClass(SerializedLambda lambda) {
-        String instantiatedMethodType = lambda.getInstantiatedMethodType();
-        String instantiatedType = instantiatedMethodType.substring(2, instantiatedMethodType.indexOf(';')).replace('/', '.');
-        return ClassUtils.toClassConfident(instantiatedType, capturingClass(lambda).getClassLoader());
-    }
-
-    /**
-     * 获取 lambda 的捕获类，这取决于 lambda 类在构造时所处的类
-     *
-     * @param lambda lambda
-     * @return 返回对应的捕获类
-     */
-    public static Class<?> capturingClass(SerializedLambda lambda) {
-        try {
-            return (Class<?>) FIELD_CAPTURING_CLASS.get(lambda);
-        } catch (IllegalAccessException e) {
             throw new MybatisPlusException(e);
         }
     }
