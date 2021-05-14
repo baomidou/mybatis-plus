@@ -32,7 +32,7 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
-    private static Gson gson = new Gson();
+    private static Gson GSON;
     private final Class<?> type;
 
     public GsonTypeHandler(Class<?> type) {
@@ -45,16 +45,23 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
 
     @Override
     protected Object parse(String json) {
-        return gson.fromJson(json, type);
+        return getGson().fromJson(json, type);
     }
 
     @Override
     protected String toJson(Object obj) {
-        return gson.toJson(obj);
+        return getGson().toJson(obj);
+    }
+
+    public static Gson getGson() {
+        if (null == GSON) {
+            GSON = new Gson();
+        }
+        return GSON;
     }
 
     public static void setGson(Gson gson) {
         Assert.notNull(gson, "Gson should not be null");
-        GsonTypeHandler.gson = gson;
+        GsonTypeHandler.GSON = gson;
     }
 }
