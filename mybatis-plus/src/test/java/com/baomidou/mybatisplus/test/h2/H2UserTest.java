@@ -498,7 +498,7 @@ class H2UserTest extends BaseTest {
     }
 
     /**
-     * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#resolve(SFunction)}
+     * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
      */
     @Test
     void testLambdaCache() {

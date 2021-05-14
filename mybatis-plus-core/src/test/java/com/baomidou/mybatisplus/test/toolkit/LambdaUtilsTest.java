@@ -16,13 +16,14 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.Getter;
-import org.apache.ibatis.reflection.property.PropertyNamer;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.lang.invoke.SerializedLambda;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * 测试 Lambda 解析类
@@ -33,35 +34,11 @@ class LambdaUtilsTest {
      * 测试解析
      */
     @Test
-    void testResolve() {
-        SerializedLambda lambda = LambdaUtils.resolve(TestModel::getId);
-        assertEquals(Parent.class.getName(), lambda.getImplClassName());
-        assertEquals("getId", lambda.getImplMethodName());
-        assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
-        assertEquals(TestModel.class, lambda.getInstantiatedType());
-
-        // 测试接口泛型获取
-        lambda = new TestModelHolder().toLambda();
-        // 无法从泛型获取到实现类，即使改泛型参数已经被实现
-        assertEquals(Named.class, lambda.getInstantiatedType());
-    }
-
-    /**
-     * 在 Java 中，一般来讲，只要是泛型，肯定是引用类型，但是为了避免翻车，还是测试一下
-     */
-    @Test
-    void test() {
-        assertInstantiatedMethodTypeIsReference(LambdaUtils.resolve(TestModel::getId));
-        assertInstantiatedMethodTypeIsReference(LambdaUtils.resolve(Integer::byteValue));
-    }
-
-    /**
-     * 断言当前方法所在实例的方法类型为引用类型
-     *
-     * @param lambda 解析后的 lambda
-     */
-    private void assertInstantiatedMethodTypeIsReference(SerializedLambda lambda) {
-        Assertions.assertNotNull(lambda.getInstantiatedType());
+    void testExtract() {
+        SFunction<TestModel, Object> getId = TestModel::getId;
+        SerializedLambda lambda = LambdaUtils.extract(getId);
+        assertNotNull(lambda);
+        assertSame(TestModel.class, LambdaUtils.instantiatedClass(lambda));
     }
 
     /**
@@ -81,7 +58,7 @@ class LambdaUtilsTest {
     private abstract static class BaseHolder<T extends Named> {
 
         SerializedLambda toLambda() {
-            return LambdaUtils.resolve(T::getName);
+            return LambdaUtils.extract(T::getName);
         }
 
     }

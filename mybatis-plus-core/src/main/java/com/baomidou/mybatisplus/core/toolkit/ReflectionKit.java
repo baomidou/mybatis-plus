@@ -18,10 +18,8 @@ package com.baomidou.mybatisplus.core.toolkit;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
+import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -100,12 +98,12 @@ public final class ReflectionKit {
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         if (index >= params.length || index < 0) {
             logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
-                clazz.getSimpleName(), params.length));
+                    clazz.getSimpleName(), params.length));
             return Object.class;
         }
         if (!(params[index] instanceof Class)) {
             logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
-                clazz.getSimpleName()));
+                    clazz.getSimpleName()));
             return Object.class;
         }
         return (Class<?>) params[index];
@@ -151,11 +149,11 @@ public final class ReflectionKit {
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
             return fieldMap.values().stream()
-                /* 过滤静态属性 */
-                .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                /* 过滤 transient关键字修饰的属性 */
-                .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                .collect(Collectors.toList());
+                    /* 过滤静态属性 */
+                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                    /* 过滤 transient关键字修饰的属性 */
+                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                    .collect(Collectors.toList());
         });
     }
 
@@ -170,12 +168,12 @@ public final class ReflectionKit {
     public static Map<String, Field> excludeOverrideSuperField(Field[] fields, List<Field> superFieldList) {
         // 子类属性
         Map<String, Field> fieldMap = Stream.of(fields).collect(toMap(Field::getName, identity(),
-            (u, v) -> {
-                throw new IllegalStateException(String.format("Duplicate key %s", u));
-            },
-            LinkedHashMap::new));
+                (u, v) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+                },
+                LinkedHashMap::new));
         superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName()))
-            .forEach(f -> fieldMap.put(f.getName(), f));
+                .forEach(f -> fieldMap.put(f.getName(), f));
         return fieldMap;
     }
 
@@ -193,4 +191,16 @@ public final class ReflectionKit {
     public static Class<?> resolvePrimitiveIfNecessary(Class<?> clazz) {
         return (clazz.isPrimitive() && clazz != void.class ? PRIMITIVE_TYPE_TO_WRAPPER_MAP.get(clazz) : clazz);
     }
+
+    /**
+     * 设置可访问对象的可访问权限为 true
+     *
+     * @param object 可访问的对象
+     * @param <T>    类型
+     * @return 返回设置后的对象
+     */
+    public static <T extends AccessibleObject> T setAccessible(T object) {
+        return AccessController.doPrivileged(new SetAccessibleAction<>(object));
+    }
+
 }

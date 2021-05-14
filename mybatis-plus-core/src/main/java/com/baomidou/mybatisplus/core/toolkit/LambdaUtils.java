@@ -15,15 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
-import java.lang.ref.WeakReference;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Locale.ENGLISH;
@@ -35,6 +37,16 @@ import static java.util.Locale.ENGLISH;
  * @since 2018-05-10
  */
 public final class LambdaUtils {
+    private static final Field FIELD_CAPTURING_CLASS;
+
+    static {
+        try {
+            Class<SerializedLambda> aClass = SerializedLambda.class;
+            FIELD_CAPTURING_CLASS = ReflectionKit.setAccessible(aClass.getDeclaredField("capturingClass"));
+        } catch (NoSuchFieldException e) {
+            throw new MybatisPlusException(e);
+        }
+    }
 
     /**
      * 字段映射
@@ -42,29 +54,48 @@ public final class LambdaUtils {
     private static final Map<String, Map<String, ColumnCache>> COLUMN_CACHE_MAP = new ConcurrentHashMap<>();
 
     /**
-     * SerializedLambda 反序列化缓存
-     */
-    private static final Map<String, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
-
-    /**
-     * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction, ClassLoader)} 中的方法，在此基础上加了缓存。
      * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
-     * @see SerializedLambda#resolve(SFunction, ClassLoader)
      */
-    public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
-        Class<?> clazz = func.getClass();
-        String name = clazz.getName();
-        return Optional.ofNullable(FUNC_CACHE.get(name))
-            .map(WeakReference::get)
-            .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.resolve(func, clazz.getClassLoader());
-                FUNC_CACHE.put(name, new WeakReference<>(lambda));
-                return lambda;
-            });
+    public static <T> SerializedLambda extract(SFunction<T, ?> func) {
+        try {
+            Method method = func.getClass().getDeclaredMethod("writeReplace");
+            return (SerializedLambda) ReflectionKit.setAccessible(method).invoke(func);
+        } catch (NoSuchMethodException e) {
+            String message = "Cannot find method writeReplace, please make sure that the lambda composite class is currently passed in";
+            throw new MybatisPlusException(message);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new MybatisPlusException(e);
+        }
+    }
+
+    /**
+     * 实例化该接口的类名
+     *
+     * @param lambda lambda 对象
+     * @return 返回对应的实例类
+     */
+    public static Class<?> instantiatedClass(SerializedLambda lambda) {
+        String instantiatedMethodType = lambda.getInstantiatedMethodType();
+        String instantiatedType = instantiatedMethodType.substring(2, instantiatedMethodType.indexOf(';')).replace('/', '.');
+        return ClassUtils.toClassConfident(instantiatedType, capturingClass(lambda).getClassLoader());
+    }
+
+    /**
+     * 获取 lambda 的捕获类，这取决于 lambda 类在构造时所处的类
+     *
+     * @param lambda lambda
+     * @return 返回对应的捕获类
+     */
+    public static Class<?> capturingClass(SerializedLambda lambda) {
+        try {
+            return (Class<?>) FIELD_CAPTURING_CLASS.get(lambda);
+        } catch (IllegalAccessException e) {
+            throw new MybatisPlusException(e);
+        }
     }
 
     /**
@@ -107,7 +138,7 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
+                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
         );
         return map;
     }
