@@ -161,7 +161,7 @@ public final class SqlHelper {
         }
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         if (!transaction) {
-            log.warn("SqlSession [" + sqlSession + "] was not registered for synchronization because DataSource is not transactional");
+            log.warn("SqlSession [" + sqlSession + "] Transaction not enabled");
         }
         try {
             consumer.accept(sqlSession);
