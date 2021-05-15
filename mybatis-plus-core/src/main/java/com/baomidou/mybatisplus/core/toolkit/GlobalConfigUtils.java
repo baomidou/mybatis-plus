@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -87,8 +88,8 @@ public class GlobalConfigUtils {
         return CollectionUtils.computeIfAbsent(GLOBAL_CONFIG, key, k -> defaults());
     }
 
-    public static IKeyGenerator getKeyGenerator(Configuration configuration) {
-        return getGlobalConfig(configuration).getDbConfig().getKeyGenerator();
+    public static List<IKeyGenerator> getKeyGenerators(Configuration configuration) {
+        return getGlobalConfig(configuration).getDbConfig().getKeyGenerators();
     }
 
     public static IdType getIdType(Configuration configuration) {

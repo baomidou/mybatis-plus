@@ -28,6 +28,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -159,7 +160,7 @@ public class GlobalConfig implements Serializable {
         /**
          * 表主键生成器
          */
-        private IKeyGenerator keyGenerator;
+        private List<IKeyGenerator> keyGenerators;
         /**
          * 逻辑删除全局属性名
          */

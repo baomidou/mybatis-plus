@@ -232,7 +232,7 @@ public class TableInfoHelper {
         tableInfo.setTableName(targetTableName);
 
         /* 开启了自定义 KEY 生成器 */
-        if (null != dbConfig.getKeyGenerator()) {
+        if (CollectionUtils.isNotEmpty(dbConfig.getKeyGenerators())) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
         return excludeProperty;
@@ -313,12 +313,12 @@ public class TableInfoHelper {
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic,existOrderBy));
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, existOrderBy));
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic,existOrderBy));
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, existOrderBy));
         }
 
         /* 字段列表 */
@@ -362,7 +362,7 @@ public class TableInfoHelper {
      * @param list 字段列表
      * @return true 为存在 @TableId 注解;
      */
-    public static boolean isExistOrderBy(List<Field> list){
+    public static boolean isExistOrderBy(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(OrderBy.class));
     }
 
@@ -498,9 +498,21 @@ public class TableInfoHelper {
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
-        IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
-        if (null == keyGenerator) {
+        List<IKeyGenerator> keyGenerators = GlobalConfigUtils.getKeyGenerators(builderAssistant.getConfiguration());
+        if (CollectionUtils.isEmpty(keyGenerators)) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
+        }
+        IKeyGenerator keyGenerator = null;
+        if (keyGenerators.size() > 1) {
+            // 多个主键生成器
+            KeySequence keySequence = tableInfo.getKeySequence();
+            if (null != keySequence && DbType.OTHER != keySequence.dbType()) {
+                keyGenerator = keyGenerators.stream().filter(k -> k.dbType() == keySequence.dbType()).findFirst().get();
+            }
+        }
+        // 无法找到注解指定生成器，默认使用第一个生成器
+        if (null == keyGenerator) {
+            keyGenerator = keyGenerators.get(0);
         }
         Configuration configuration = builderAssistant.getConfiguration();
         String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;

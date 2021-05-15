@@ -34,4 +34,9 @@ public @interface KeySequence {
      * 序列名
      */
     String value() default "";
+
+    /**
+     * 数据库类型，未配置默认使用注入 IKeyGenerator 实现，多个实现必须指定
+     */
+    DbType dbType() default DbType.OTHER;
 }
