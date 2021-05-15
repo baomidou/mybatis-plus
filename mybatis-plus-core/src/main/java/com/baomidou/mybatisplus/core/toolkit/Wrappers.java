@@ -239,10 +239,6 @@ public final class Wrappers {
             return Collections.emptyMap();
         }
 
-        @Override
-        protected String columnsToString(String... columns) {
-            return null;
-        }
 
         @Override
         protected String columnToString(String column) {

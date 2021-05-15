@@ -140,64 +140,64 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children eq(boolean condition, R column, Object val) {
-        return addCondition(condition, column, EQ, val);
+    public Children eq(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, EQ, val);
     }
 
     @Override
-    public Children ne(boolean condition, R column, Object val) {
-        return addCondition(condition, column, NE, val);
+    public Children ne(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, NE, val);
     }
 
     @Override
-    public Children gt(boolean condition, R column, Object val) {
-        return addCondition(condition, column, GT, val);
+    public Children gt(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, GT, val);
     }
 
     @Override
-    public Children ge(boolean condition, R column, Object val) {
-        return addCondition(condition, column, GE, val);
+    public Children ge(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, GE, val);
     }
 
     @Override
-    public Children lt(boolean condition, R column, Object val) {
-        return addCondition(condition, column, LT, val);
+    public Children lt(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, LT, val);
     }
 
     @Override
-    public Children le(boolean condition, R column, Object val) {
-        return addCondition(condition, column, LE, val);
+    public Children le(boolean condition, String alias, R column, Object val) {
+        return addCondition(condition, alias, column, LE, val);
     }
 
     @Override
-    public Children like(boolean condition, R column, Object val) {
-        return likeValue(condition, LIKE, column, val, SqlLike.DEFAULT);
+    public Children like(boolean condition, String alias, R column, Object val) {
+        return likeValue(condition, LIKE, alias, column, val, SqlLike.DEFAULT);
     }
 
     @Override
-    public Children notLike(boolean condition, R column, Object val) {
-        return likeValue(condition, NOT_LIKE, column, val, SqlLike.DEFAULT);
+    public Children notLike(boolean condition, String alias, R column, Object val) {
+        return likeValue(condition, NOT_LIKE, alias, column, val, SqlLike.DEFAULT);
     }
 
     @Override
-    public Children likeLeft(boolean condition, R column, Object val) {
-        return likeValue(condition, LIKE, column, val, SqlLike.LEFT);
+    public Children likeLeft(boolean condition, String alias, R column, Object val) {
+        return likeValue(condition, LIKE, alias, column, val, SqlLike.LEFT);
     }
 
     @Override
-    public Children likeRight(boolean condition, R column, Object val) {
-        return likeValue(condition, LIKE, column, val, SqlLike.RIGHT);
+    public Children likeRight(boolean condition, String alias, R column, Object val) {
+        return likeValue(condition, LIKE, alias, column, val, SqlLike.RIGHT);
     }
 
     @Override
-    public Children between(boolean condition, R column, Object val1, Object val2) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), BETWEEN,
+    public Children between(boolean condition, String alias, R column, Object val1, Object val2) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), BETWEEN,
             () -> formatParam(null, val1), AND, () -> formatParam(null, val2)));
     }
 
     @Override
-    public Children notBetween(boolean condition, R column, Object val1, Object val2) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_BETWEEN,
+    public Children notBetween(boolean condition, String alias, R column, Object val1, Object val2) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), NOT_BETWEEN,
             () -> formatParam(null, val1), AND, () -> formatParam(null, val2)));
     }
 
@@ -268,53 +268,53 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children isNull(boolean condition, R column) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IS_NULL));
+    public Children isNull(boolean condition, String alias, R column) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), IS_NULL));
     }
 
     @Override
-    public Children isNotNull(boolean condition, R column) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IS_NOT_NULL));
+    public Children isNotNull(boolean condition, String alias, R column) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), IS_NOT_NULL));
     }
 
     @Override
-    public Children in(boolean condition, R column, Collection<?> coll) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN, inExpression(coll)));
+    public Children in(boolean condition, String alias, R column, Collection<?> coll) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), IN, inExpression(coll)));
     }
 
     @Override
-    public Children in(boolean condition, R column, Object... values) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN, inExpression(values)));
+    public Children in(boolean condition, String alias, R column, Object... values) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), IN, inExpression(values)));
     }
 
     @Override
-    public Children notIn(boolean condition, R column, Collection<?> coll) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN, inExpression(coll)));
+    public Children notIn(boolean condition, String alias, R column, Collection<?> coll) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), NOT_IN, inExpression(coll)));
     }
 
     @Override
-    public Children notIn(boolean condition, R column, Object... values) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN, inExpression(values)));
+    public Children notIn(boolean condition, String alias, R column, Object... values) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), NOT_IN, inExpression(values)));
     }
 
     @Override
-    public Children inSql(boolean condition, R column, String inValue) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN,
+    public Children inSql(boolean condition, String alias, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), IN,
             () -> String.format("(%s)", inValue)));
     }
 
     @Override
-    public Children notInSql(boolean condition, R column, String inValue) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN,
+    public Children notInSql(boolean condition, String alias, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), NOT_IN,
             () -> String.format("(%s)", inValue)));
     }
 
     @Override
-    public Children groupBy(boolean condition, R column, R... columns) {
+    public Children groupBy(boolean condition, String alias, R column, R... columns) {
         return maybeDo(condition, () -> {
-            String one = columnToString(column);
+            String one = columnToSqlSegment(alias, column).getSqlSegment();
             if (ArrayUtils.isNotEmpty(columns)) {
-                one += (StringPool.COMMA + columnsToString(columns));
+                one += (StringPool.COMMA + columnsToString(alias, columns));
             }
             final String finalOne = one;
             appendSqlSegments(GROUP_BY, () -> finalOne);
@@ -322,13 +322,13 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+    public Children orderBy(boolean condition, boolean isAsc, String alias, R column, R... columns) {
         return maybeDo(condition, () -> {
             final SqlKeyword mode = isAsc ? ASC : DESC;
-            appendSqlSegments(ORDER_BY, columnToSqlSegment(column), mode);
+            appendSqlSegments(ORDER_BY, columnToSqlSegment(alias, column), mode);
             if (ArrayUtils.isNotEmpty(columns)) {
                 Arrays.stream(columns).forEach(c -> appendSqlSegments(ORDER_BY,
-                    columnToSqlSegment(columnSqlInjectFilter(c)), mode));
+                    columnToSqlSegment(alias, columnSqlInjectFilter(c)), mode));
             }
         });
     }
@@ -374,8 +374,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 内部自用
      * <p>拼接 LIKE 以及 值</p>
      */
-    protected Children likeValue(boolean condition, SqlKeyword keyword, R column, Object val, SqlLike sqlLike) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), keyword,
+    protected Children likeValue(boolean condition, SqlKeyword keyword, String alias, R column, Object val, SqlLike sqlLike) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), keyword,
             () -> formatParam(null, SqlUtils.concatLike(val, sqlLike))));
     }
 
@@ -387,9 +387,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param sqlKeyword SQL 关键词
      * @param val        条件值
      */
-    protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), sqlKeyword,
-            () -> formatParam(null, val)));
+    protected Children addCondition(boolean condition, String alias, R column, SqlKeyword sqlKeyword, Object val) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(alias, column), sqlKeyword, () -> formatParam(null, val)));
     }
 
     /**
@@ -570,9 +569,20 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     /**
      * 获取 columnName
+     *
+     * @param alias 别名
+     * @param column 列
+     *
+     * @return columnName
      */
-    protected final ISqlSegment columnToSqlSegment(R column) {
-        return () -> columnToString(column);
+    protected final ISqlSegment columnToSqlSegment(String alias, R column) {
+        return () ->{
+            String columnName = columnToString(column);
+            if(!StringUtils.isBlank(alias)){
+                return alias +  StringPool.DOT +  columnName;
+            }
+            return columnName;
+        };
     }
 
     /**
@@ -585,10 +595,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     /**
      * 多字段转换为逗号 "," 分割字符串
      *
+     * @param alias 别名
      * @param columns 多字段
      */
-    protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
+    private String columnsToString(String alias, R... columns) {
+        return Arrays.stream(columns).map(column->columnToSqlSegment(alias, column).getSqlSegment()).collect(joining(StringPool.COMMA));
     }
 
     @Override

@@ -81,196 +81,292 @@ public interface Compare<Children, R> extends Serializable {
      * ignore
      */
     default Children eq(R column, Object val) {
-        return eq(true, column, val);
+        return eq(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children eq(String alias, R column, Object val) {
+        return eq(true, alias, column, val);
     }
 
     /**
      * 等于 =
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children eq(boolean condition, R column, Object val);
+    Children eq(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children ne(R column, Object val) {
-        return ne(true, column, val);
+        return ne(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children ne(String alias, R column, Object val) {
+        return ne(true, alias, column, val);
     }
 
     /**
      * 不等于 &lt;&gt;
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children ne(boolean condition, R column, Object val);
+    Children ne(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children gt(R column, Object val) {
-        return gt(true, column, val);
+        return gt(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children gt(String alias, R column, Object val) {
+        return gt(true, alias, column, val);
     }
 
     /**
      * 大于 &gt;
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children gt(boolean condition, R column, Object val);
+    Children gt(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children ge(R column, Object val) {
-        return ge(true, column, val);
+        return ge(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children ge(String alias, R column, Object val) {
+        return ge(true, alias, column, val);
     }
 
     /**
      * 大于等于 &gt;=
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children ge(boolean condition, R column, Object val);
+    Children ge(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children lt(R column, Object val) {
-        return lt(true, column, val);
+        return lt(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children lt(String alias, R column, Object val) {
+        return lt(true, alias, column, val);
     }
 
     /**
      * 小于 &lt;
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children lt(boolean condition, R column, Object val);
+    Children lt(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children le(R column, Object val) {
-        return le(true, column, val);
+        return le(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children le(String alias, R column, Object val) {
+        return le(true, alias, column, val);
     }
 
     /**
      * 小于等于 &lt;=
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children le(boolean condition, R column, Object val);
+    Children le(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children between(R column, Object val1, Object val2) {
-        return between(true, column, val1, val2);
+        return between(true, "", column, val1, val2);
+    }
+
+    /**
+     * ignore
+     */
+    default Children between(String alias, R column, Object val1, Object val2) {
+        return between(true, alias, column, val1, val2);
     }
 
     /**
      * BETWEEN 值1 AND 值2
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val1      值1
      * @param val2      值2
      * @return children
      */
-    Children between(boolean condition, R column, Object val1, Object val2);
+    Children between(boolean condition, String alias, R column, Object val1, Object val2);
 
     /**
      * ignore
      */
     default Children notBetween(R column, Object val1, Object val2) {
-        return notBetween(true, column, val1, val2);
+        return notBetween(true, "", column, val1, val2);
+    }
+
+    /**
+     * ignore
+     */
+    default Children notBetween(String alias, R column, Object val1, Object val2) {
+        return notBetween(true, alias, column, val1, val2);
     }
 
     /**
      * NOT BETWEEN 值1 AND 值2
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val1      值1
      * @param val2      值2
      * @return children
      */
-    Children notBetween(boolean condition, R column, Object val1, Object val2);
+    Children notBetween(boolean condition, String alias, R column, Object val1, Object val2);
 
     /**
      * ignore
      */
     default Children like(R column, Object val) {
-        return like(true, column, val);
+        return like(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children like(String alias, R column, Object val) {
+        return like(true, alias, column, val);
     }
 
     /**
      * LIKE '%值%'
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children like(boolean condition, R column, Object val);
+    Children like(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children notLike(R column, Object val) {
-        return notLike(true, column, val);
+        return notLike(true, "", column, val);
     }
+
+    /**
+     * ignore
+     */
+    default Children notLike(String alias, R column, Object val) {
+        return notLike(true, alias, column, val);
+    }
+
 
     /**
      * NOT LIKE '%值%'
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children notLike(boolean condition, R column, Object val);
+    Children notLike(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children likeLeft(R column, Object val) {
-        return likeLeft(true, column, val);
+        return likeLeft(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children likeLeft(String alias, R column, Object val) {
+        return likeLeft(true, alias, column, val);
     }
 
     /**
      * LIKE '%值'
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param val       值
      * @return children
      */
-    Children likeLeft(boolean condition, R column, Object val);
+    Children likeLeft(boolean condition, String alias, R column, Object val);
 
     /**
      * ignore
      */
     default Children likeRight(R column, Object val) {
-        return likeRight(true, column, val);
+        return likeRight(true, "", column, val);
+    }
+
+    /**
+     * ignore
+     */
+    default Children likeRight(String alias, R column, Object val) {
+        return likeRight(true, alias, column, val);
     }
 
     /**
@@ -281,5 +377,5 @@ public interface Compare<Children, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    Children likeRight(boolean condition, R column, Object val);
+    Children likeRight(boolean condition, String alias, R column, Object val);
 }
