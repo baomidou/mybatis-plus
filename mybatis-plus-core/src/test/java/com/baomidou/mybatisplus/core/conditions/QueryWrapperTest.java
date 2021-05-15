@@ -161,6 +161,33 @@ class QueryWrapperTest extends BaseWrapperTest {
         logParams(wrapper);
     }
 
+    @Test
+    void testSqlWithAlias() {
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().eq("a", "id", "123")
+                                                                      .ne("b", "username", "456")
+                                                                      .le("c", "roleId", "22222")
+                                                                      .ge("d", "id", "444");
+        logSqlWhere("测试sql别名", queryWrapper,
+                    "(a.id = ? AND b.username <> ? AND c.roleId <= ? AND d.id >= ?)");
+    }
+
+    @Test
+    void testLambdaSqlWithAlias() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq("a", Entity::getId, "sss2");
+        queryWrapper.lambda().eq("b", Entity::getName, "sss");
+        logSqlWhere("测试lambda生成的sql", queryWrapper, "(a.id = ? AND b.username = ?)");
+    }
+
+    @Test
+    void testGroupByAndOrderByWithAlias(){
+        logSqlWhere("order by 和 group by 增加别名测试", new QueryWrapper<Entity>()
+                        .orderByAscWithAlias("a", "id", "name", "sex")
+                        .groupByWithAlias("a", "id", "name", "sex"),
+                    "GROUP BY a.id,a.name,a.sex ORDER BY a.id ASC,a.name ASC,a.sex ASC");
+    }
+
     private List<Object> getList() {
         List<Object> list = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

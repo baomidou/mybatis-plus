@@ -32,7 +32,14 @@ public interface Func<Children, R> extends Serializable {
      * ignore
      */
     default Children isNull(R column) {
-        return isNull(true, column);
+        return isNull(true, "", column);
+    }
+
+    /**
+     * ignore
+     */
+    default Children isNull(String alias, R column) {
+        return isNull(true, alias, column);
     }
 
     /**
@@ -40,16 +47,24 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: isNull("name")</p>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @return children
      */
-    Children isNull(boolean condition, R column);
+    Children isNull(boolean condition, String alias, R column);
 
     /**
      * ignore
      */
     default Children isNotNull(R column) {
-        return isNotNull(true, column);
+        return isNotNull(true, "", column);
+    }
+
+    /**
+     * ignore
+     */
+    default Children isNotNull(String alias, R column) {
+        return isNotNull(true, alias, column);
     }
 
     /**
@@ -60,13 +75,20 @@ public interface Func<Children, R> extends Serializable {
      * @param column    字段
      * @return children
      */
-    Children isNotNull(boolean condition, R column);
+    Children isNotNull(boolean condition, String alias, R column);
 
     /**
      * ignore
      */
     default Children in(R column, Collection<?> coll) {
-        return in(true, column, coll);
+        return in(true, "", column, coll);
+    }
+
+    /**
+     * ignore
+     */
+    default Children in(String alias, R column, Collection<?> coll) {
+        return in(true, alias, column, coll);
     }
 
     /**
@@ -77,17 +99,25 @@ public interface Func<Children, R> extends Serializable {
      * <li> 如果集合为 empty 则不会进行 sql 拼接 </li>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @param coll      数据集合
      * @return children
      */
-    Children in(boolean condition, R column, Collection<?> coll);
+    Children in(boolean condition, String alias, R column, Collection<?> coll);
 
     /**
      * ignore
      */
     default Children in(R column, Object... values) {
-        return in(true, column, values);
+        return in(true, "", column, values);
+    }
+
+    /**
+     * ignore
+     */
+    default Children in(String alias, R column, Object... values) {
+        return in(true, alias, column, values);
     }
 
     /**
@@ -98,17 +128,25 @@ public interface Func<Children, R> extends Serializable {
      * <li> 如果动态数组为 empty 则不会进行 sql 拼接 </li>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @param values    数据数组
      * @return children
      */
-    Children in(boolean condition, R column, Object... values);
+    Children in(boolean condition, String alias, R column, Object... values);
 
     /**
      * ignore
      */
     default Children notIn(R column, Collection<?> coll) {
-        return notIn(true, column, coll);
+        return notIn(true, "", column, coll);
+    }
+
+    /**
+     * ignore
+     */
+    default Children notIn(String alias, R column, Collection<?> coll) {
+        return notIn(true, alias, column, coll);
     }
 
     /**
@@ -116,17 +154,25 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @param coll      数据集合
      * @return children
      */
-    Children notIn(boolean condition, R column, Collection<?> coll);
+    Children notIn(boolean condition, String alias, R column, Collection<?> coll);
 
     /**
      * ignore
      */
     default Children notIn(R column, Object... value) {
-        return notIn(true, column, value);
+        return notIn(true, "", column, value);
+    }
+
+    /**
+     * ignore
+     */
+    default Children notIn(String alias, R column, Object... value) {
+        return notIn(true, alias, column, value);
     }
 
     /**
@@ -134,17 +180,25 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: notIn("id", 1, 2, 3, 4, 5)</p>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @param values    数据数组
      * @return children
      */
-    Children notIn(boolean condition, R column, Object... values);
+    Children notIn(boolean condition, String alias, R column, Object... values);
 
     /**
      * ignore
      */
     default Children inSql(R column, String inValue) {
-        return inSql(true, column, inValue);
+        return inSql(true, "", column, inValue);
+    }
+
+    /**
+     * ignore
+     */
+    default Children inSql(String alias, R column, String inValue) {
+        return inSql(true, alias, column, inValue);
     }
 
     /**
@@ -154,17 +208,25 @@ public interface Func<Children, R> extends Serializable {
      * <p>例2: inSql("id", "select id from table where id &lt; 3")</p>
      *
      * @param condition 执行条件
+     * @param alias     别名
      * @param column    字段
      * @param inValue   sql语句
      * @return children
      */
-    Children inSql(boolean condition, R column, String inValue);
+    Children inSql(boolean condition, String alias, R column, String inValue);
 
     /**
      * ignore
      */
     default Children notInSql(R column, String inValue) {
-        return notInSql(true, column, inValue);
+        return notInSql(true, "", column, inValue);
+    }
+
+    /**
+     * ignore
+     */
+    default Children notInSql(String alias, R column, String inValue) {
+        return notInSql(true, alias, column, inValue);
     }
 
     /**
@@ -174,17 +236,25 @@ public interface Func<Children, R> extends Serializable {
      * <p>例2: notInSql("id", "select id from table where id &lt; 3")</p>
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    字段
      * @param inValue   sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
      * @return children
      */
-    Children notInSql(boolean condition, R column, String inValue);
+    Children notInSql(boolean condition, String alias, R column, String inValue);
 
     /**
      * ignore
      */
     default Children groupBy(R column, R... columns) {
-        return groupBy(true, column, columns);
+        return groupBy(true, "", column, columns);
+    }
+
+    /**
+     * ignore
+     */
+    default Children groupByWithAlias(String alias, R column, R... columns) {
+        return groupBy(true, alias, column, columns);
     }
 
     /**
@@ -192,17 +262,25 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: groupBy("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    Children groupBy(boolean condition, R column, R... columns);
+    Children groupBy(boolean condition, String alias, R column, R... columns);
 
     /**
      * ignore
      */
     default Children orderByAsc(R column, R... columns) {
-        return orderByAsc(true, column, columns);
+        return orderByAsc(true, "", column, columns);
+    }
+
+    /**
+     * ignore
+     */
+    default Children orderByAscWithAlias(String alias, R column, R... columns) {
+        return orderByAsc(true, alias, column, columns);
     }
 
     /**
@@ -210,19 +288,27 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: orderByAsc("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    default Children orderByAsc(boolean condition, R column, R... columns) {
-        return orderBy(condition, true, column, columns);
+    default Children orderByAsc(boolean condition, String alias, R column, R... columns) {
+        return orderBy(condition, true, alias, column, columns);
     }
 
     /**
      * ignore
      */
     default Children orderByDesc(R column, R... columns) {
-        return orderByDesc(true, column, columns);
+        return orderByDesc(true, "", column, columns);
+    }
+
+    /**
+     * ignore
+     */
+    default Children orderByDescWithAlias(String alias, R column, R... columns) {
+        return orderByDesc(true, alias, column, columns);
     }
 
     /**
@@ -230,12 +316,13 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: orderByDesc("id", "name")</p>
      *
      * @param condition 执行条件
+     * @param alias 别名
      * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    default Children orderByDesc(boolean condition, R column, R... columns) {
-        return orderBy(condition, false, column, columns);
+    default Children orderByDesc(boolean condition, String alias, R column, R... columns) {
+        return orderBy(condition, false, alias, column, columns);
     }
 
     /**
@@ -244,11 +331,12 @@ public interface Func<Children, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param isAsc     是否是 ASC 排序
+     * @param alias 别名
      * @param column    单个字段
      * @param columns   字段数组
      * @return children
      */
-    Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
+    Children orderBy(boolean condition, boolean isAsc, String alias, R column, R... columns);
 
     /**
      * ignore
@@ -256,6 +344,7 @@ public interface Func<Children, R> extends Serializable {
     default Children having(String sqlHaving, Object... params) {
         return having(true, sqlHaving, params);
     }
+
 
     /**
      * HAVING ( sql语句 )

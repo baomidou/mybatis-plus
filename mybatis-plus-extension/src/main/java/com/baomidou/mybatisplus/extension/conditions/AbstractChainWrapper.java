@@ -80,134 +80,134 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children eq(boolean condition, R column, Object val) {
-        getWrapper().eq(condition, column, val);
+    public Children eq(boolean condition, String alias, R column, Object val) {
+        getWrapper().eq(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children ne(boolean condition, R column, Object val) {
-        getWrapper().ne(condition, column, val);
+    public Children ne(boolean condition, String alias, R column, Object val) {
+        getWrapper().ne(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children gt(boolean condition, R column, Object val) {
-        getWrapper().gt(condition, column, val);
+    public Children gt(boolean condition, String alias, R column, Object val) {
+        getWrapper().gt(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children ge(boolean condition, R column, Object val) {
-        getWrapper().ge(condition, column, val);
+    public Children ge(boolean condition, String alias, R column, Object val) {
+        getWrapper().ge(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children lt(boolean condition, R column, Object val) {
-        getWrapper().lt(condition, column, val);
+    public Children lt(boolean condition, String alias, R column, Object val) {
+        getWrapper().lt(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children le(boolean condition, R column, Object val) {
-        getWrapper().le(condition, column, val);
+    public Children le(boolean condition, String alias, R column, Object val) {
+        getWrapper().le(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children between(boolean condition, R column, Object val1, Object val2) {
-        getWrapper().between(condition, column, val1, val2);
+    public Children between(boolean condition, String alias, R column, Object val1, Object val2) {
+        getWrapper().between(condition, alias, column, val1, val2);
         return typedThis;
     }
 
     @Override
-    public Children notBetween(boolean condition, R column, Object val1, Object val2) {
-        getWrapper().notBetween(condition, column, val1, val2);
+    public Children notBetween(boolean condition, String alias, R column, Object val1, Object val2) {
+        getWrapper().notBetween(condition, alias, column, val1, val2);
         return typedThis;
     }
 
     @Override
-    public Children like(boolean condition, R column, Object val) {
-        getWrapper().like(condition, column, val);
+    public Children like(boolean condition, String alias, R column, Object val) {
+        getWrapper().like(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children notLike(boolean condition, R column, Object val) {
-        getWrapper().notLike(condition, column, val);
+    public Children notLike(boolean condition, String alias, R column, Object val) {
+        getWrapper().notLike(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children likeLeft(boolean condition, R column, Object val) {
-        getWrapper().likeLeft(condition, column, val);
+    public Children likeLeft(boolean condition, String alias, R column, Object val) {
+        getWrapper().likeLeft(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children likeRight(boolean condition, R column, Object val) {
-        getWrapper().likeRight(condition, column, val);
+    public Children likeRight(boolean condition, String alias, R column, Object val) {
+        getWrapper().likeRight(condition, alias, column, val);
         return typedThis;
     }
 
     @Override
-    public Children isNull(boolean condition, R column) {
-        getWrapper().isNull(condition, column);
+    public Children isNull(boolean condition, String alias, R column) {
+        getWrapper().isNull(condition, alias, column);
         return typedThis;
     }
 
     @Override
-    public Children isNotNull(boolean condition, R column) {
-        getWrapper().isNotNull(condition, column);
+    public Children isNotNull(boolean condition, String alias, R column) {
+        getWrapper().isNotNull(condition, alias, column);
         return typedThis;
     }
 
     @Override
-    public Children in(boolean condition, R column, Collection<?> coll) {
-        getWrapper().in(condition, column, coll);
+    public Children in(boolean condition, String alias, R column, Collection<?> coll) {
+        getWrapper().in(condition, alias, column, coll);
         return typedThis;
     }
 
     @Override
-    public Children in(boolean condition, R column, Object... values) {
-        getWrapper().in(condition, column, values);
+    public Children in(boolean condition, String alias, R column, Object... values) {
+        getWrapper().in(condition, alias, column, values);
         return typedThis;
     }
 
     @Override
-    public Children notIn(boolean condition, R column, Collection<?> coll) {
-        getWrapper().notIn(condition, column, coll);
+    public Children notIn(boolean condition, String alias, R column, Collection<?> coll) {
+        getWrapper().notIn(condition, alias, column, coll);
         return typedThis;
     }
 
     @Override
-    public Children notIn(boolean condition, R column, Object... values) {
-        getWrapper().notIn(condition, column, values);
+    public Children notIn(boolean condition, String alias, R column, Object... values) {
+        getWrapper().notIn(condition, alias, column, values);
         return typedThis;
     }
 
     @Override
-    public Children inSql(boolean condition, R column, String inValue) {
-        getWrapper().inSql(condition, column, inValue);
+    public Children inSql(boolean condition, String alias, R column, String inValue) {
+        getWrapper().inSql(condition, alias, column, inValue);
         return typedThis;
     }
 
     @Override
-    public Children notInSql(boolean condition, R column, String inValue) {
-        getWrapper().notInSql(condition, column, inValue);
+    public Children notInSql(boolean condition, String alias, R column, String inValue) {
+        getWrapper().notInSql(condition, alias, column, inValue);
         return typedThis;
     }
 
     @Override
-    public Children groupBy(boolean condition, R column, R... columns) {
-        getWrapper().groupBy(condition, column, columns);
+    public Children groupBy(boolean condition, String alias, R column, R... columns) {
+        getWrapper().groupBy(condition, alias, column, columns);
         return typedThis;
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
-        getWrapper().orderBy(condition, isAsc, column, columns);
+    public Children orderBy(boolean condition, boolean isAsc, String alias, R column, R... columns) {
+        getWrapper().orderBy(condition, isAsc, alias, column, columns);
         return typedThis;
     }
 

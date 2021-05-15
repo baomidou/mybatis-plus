@@ -42,11 +42,6 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected String columnsToString(SFunction<T, ?>... columns) {
-        return columnsToString(true, columns);
-    }
 
     @SuppressWarnings("unchecked")
     protected String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
