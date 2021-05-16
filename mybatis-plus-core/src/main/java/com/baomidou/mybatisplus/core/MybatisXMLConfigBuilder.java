@@ -289,6 +289,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                         .transactionFactory(txFactory)
                         .dataSource(dataSource);
                     configuration.setEnvironment(environmentBuilder.build());
+                    break;
                 }
             }
         }
