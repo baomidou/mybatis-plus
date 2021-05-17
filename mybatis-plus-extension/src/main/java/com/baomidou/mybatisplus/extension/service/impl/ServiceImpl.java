@@ -34,6 +34,7 @@ import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -229,7 +230,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             if (unwrapped instanceof RuntimeException) {
                 MyBatisExceptionTranslator myBatisExceptionTranslator
                     = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
-                throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
+                DataAccessException dataAccessException = myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped);
+                if (dataAccessException != null) {
+                    throw dataAccessException;
+                }
             }
             throw ExceptionUtils.mpe(unwrapped);
         } finally {
