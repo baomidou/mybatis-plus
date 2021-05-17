@@ -18,14 +18,12 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
-import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.*;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,6 +54,7 @@ public final class LambdaUtils {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
             return new SerializedLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
         } catch (NoSuchMethodException e) {
+            if (func instanceof Proxy) return new ProxyLambdaMeta((Proxy) func);
             String message = "Cannot find method writeReplace, please make sure that the lambda composite class is currently passed in";
             throw new MybatisPlusException(message);
         } catch (InvocationTargetException | IllegalAccessException e) {
