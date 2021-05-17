@@ -74,6 +74,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     protected ColumnCache getColumnCache(SFunction<T, ?> column) {
         LambdaMeta lambda = LambdaUtils.extract(column);
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
+        tryInitCache(lambda.getInstantiatedClass());
         return getColumnCache(fieldName, lambda.getInstantiatedClass());
     }
 
