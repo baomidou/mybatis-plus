@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import lombok.SneakyThrows;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
@@ -31,7 +33,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -149,6 +150,7 @@ public final class SqlHelper {
      * @return 操作结果
      * @since 3.4.0
      */
+    @SneakyThrows
     public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
         SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
@@ -171,10 +173,13 @@ public final class SqlHelper {
         } catch (Throwable t) {
             sqlSession.rollback();
             Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
-            if (unwrapped instanceof RuntimeException) {
+            if (unwrapped instanceof PersistenceException) {
                 MyBatisExceptionTranslator myBatisExceptionTranslator
                     = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
-                throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
+                Throwable throwable = myBatisExceptionTranslator.translateExceptionIfPossible((PersistenceException) unwrapped);
+                if (throwable != null) {
+                    throw throwable;
+                }
             }
             throw ExceptionUtils.mpe(unwrapped);
         } finally {
