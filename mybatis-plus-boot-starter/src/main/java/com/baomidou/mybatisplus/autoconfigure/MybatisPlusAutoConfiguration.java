@@ -68,9 +68,7 @@ import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -211,7 +209,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         // TODO 注入填充器
         this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
         // TODO 注入主键生成器
-        this.getBeanThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerator(i));
+        this.getBeansThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerators(i));
         // TODO 注入sql注入器
         this.getBeanThen(ISqlInjector.class, globalConfig::setSqlInjector);
         // TODO 注入ID生成器
@@ -231,6 +229,22 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     private <T> void getBeanThen(Class<T> clazz, Consumer<T> consumer) {
         if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
             consumer.accept(this.applicationContext.getBean(clazz));
+        }
+    }
+
+    /**
+     * 检查spring容器里是否有对应的bean,有则进行消费
+     *
+     * @param clazz    class
+     * @param consumer 消费
+     * @param <T>      泛型
+     */
+    private <T> void getBeansThen(Class<T> clazz, Consumer<List<T>> consumer) {
+        if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
+            final Map<String, T> beansOfType = this.applicationContext.getBeansOfType(clazz);
+            List<T> clazzList = new ArrayList<>();
+            beansOfType.forEach((k, v) -> clazzList.add(v));
+            consumer.accept(clazzList);
         }
     }
 
