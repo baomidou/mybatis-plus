@@ -72,10 +72,10 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
      */
     protected ColumnCache getColumnCache(SFunction<T, ?> column) {
-        LambdaMeta lambda = LambdaUtils.extract(column);
-        String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        tryInitCache(lambda.getInstantiatedClass());
-        return getColumnCache(fieldName, lambda.getInstantiatedClass());
+        LambdaMeta meta = LambdaUtils.extract(column);
+        String fieldName = PropertyNamer.methodToProperty(meta.getImplMethodName());
+        tryInitCache(meta.getInstantiatedClass());
+        return getColumnCache(fieldName, meta.getInstantiatedClass());
     }
 
     private void tryInitCache(Class<?> lambdaClass) {

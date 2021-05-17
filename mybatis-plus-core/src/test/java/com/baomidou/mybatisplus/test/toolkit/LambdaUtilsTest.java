@@ -21,6 +21,11 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleProxies;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -33,8 +38,18 @@ class LambdaUtilsTest {
      * 测试解析
      */
     @Test
-    void testExtract() {
+    @SuppressWarnings("unchecked")
+    void testExtract() throws IllegalAccessException, NoSuchMethodException {
         SFunction<TestModel, Object> function = TestModel::getName;
+        test(function);
+        MethodHandles.Lookup lookup = MethodHandles.lookup();
+        MethodHandle getter = lookup.findVirtual(TestModel.class, "getId", MethodType.methodType(int.class));
+        function = (SFunction<TestModel, Object>) MethodHandleProxies.asInterfaceInstance(SFunction.class, getter);
+        test(function);
+    }
+
+    private void test(SFunction<TestModel, Object> function) {
+        function.apply(new TestModel());
         LambdaMeta meta = LambdaUtils.extract(function);
         assertNotNull(meta);
         assertSame(TestModel.class, meta.getInstantiatedClass());
@@ -44,7 +59,7 @@ class LambdaUtilsTest {
      * 用于测试的 Model
      */
     @Getter
-    private static class TestModel extends Parent implements Named {
+    public static class TestModel extends Parent implements Named {
         private String name;
     }
 
