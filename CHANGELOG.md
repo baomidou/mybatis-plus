@@ -1,5 +1,34 @@
 ﻿# CHANGELOG
 
+## [v3.4.3] 2021.05.21
+
+- 增加瀚高数据库支持
+- 增加注解 Order By 支持默认排序
+- Wrapper exists notExists orderBy groupBy 支持参数绑定
+- Wrapper 支持 setParamAlias 其它优化
+- 优化 KeyGenerator 支持多实现多数据源注入
+- 增强 ServiceImpl 泛型推断，解决多继承与代理问题
+- 新增 PageDto 用于微服务对象传输序列化
+- 新增 Page 提供静态 of 构造方式
+- 增加代理 MethodHandleProxies 对 lambda 调试支持
+- 调整 ActiveRecord 日志对象初始化
+- 调整 ActiveRecord 模式 Model 类开发 pkVal 方法外部可用
+- 删除标记过时代码
+- 优化枚举值获取方式
+- 分页 count 安全处理
+- Sequence 方法支持重写支持
+- 升级 Mybatis 3.5.7
+- 修复自动配置 lazy-initialization 无属性提示
+- 修复 mysql on duplicate key update 字段名判断为表名问题
+- 修复 lambda 条件 npe 异常
+- 重构 lambda 信息提取方法
+- 获取 lambda 信息不在序列化
+- 合并 gitee pulls/ 141
+- fixed github issues/3208 3016
+- fixed github issues/3482 数据权限处理器支持 union all
+- 调整事务未启用打印提示信息
+- 单元测试优化相关依赖升级
+
 ## [v3.4.2] 2021.01.15
 
 - fix: 移除 BlockAttackInnerInterceptor 内引用的 commons 的 utils
