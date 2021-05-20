@@ -27,6 +27,25 @@ import java.util.List;
  */
 public class PageDto<T> extends Page<T> {
 
+    public PageDto() {
+    }
+
+    public PageDto(long current, long size) {
+        this(current, size, 0);
+    }
+
+    public PageDto(long current, long size, long total) {
+        this(current, size, total, true);
+    }
+
+    public PageDto(long current, long size, boolean searchCount) {
+        this(current, size, 0, searchCount);
+    }
+
+    public PageDto(long current, long size, long total, boolean searchCount) {
+        super(current, size, total, searchCount);
+    }
+
     public String getCountId() {
         return this.countId;
     }
@@ -45,5 +64,22 @@ public class PageDto<T> extends Page<T> {
 
     public boolean isSearchCount() {
         return this.searchCount;
+    }
+
+    /* --------------- 以下为静态构造方式 --------------- */
+    public static <T> Page<T> of(long current, long size) {
+        return of(current, size, 0);
+    }
+
+    public static <T> Page<T> of(long current, long size, long total) {
+        return of(current, size, total, true);
+    }
+
+    public static <T> Page<T> of(long current, long size, boolean searchCount) {
+        return of(current, size, 0, searchCount);
+    }
+
+    public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
+        return new PageDto(current, size, total, searchCount);
     }
 }
