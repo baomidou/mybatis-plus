@@ -50,7 +50,7 @@ public interface IPage<T> extends Serializable {
      *
      * @return true 是 / false 否
      */
-    default boolean isSearchCount() {
+    default boolean searchCount() {
         return true;
     }
 
