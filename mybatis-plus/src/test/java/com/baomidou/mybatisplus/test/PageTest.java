@@ -2,11 +2,11 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.sf.cglib.beans.BeanCopier;
 import org.apache.ibatis.reflection.property.PropertyCopier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cglib.beans.BeanCopier;
 
 import java.util.Collections;
 
