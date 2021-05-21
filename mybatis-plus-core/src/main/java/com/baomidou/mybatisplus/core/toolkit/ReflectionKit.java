@@ -17,8 +17,11 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.springframework.core.GenericTypeResolver;
 
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,28 +88,14 @@ public final class ReflectionKit {
      * 反射对象获取泛型
      * </p>
      *
-     * @param clazz 对象
-     * @param index 泛型所在位置
+     * @param clazz      对象
+     * @param genericIfc 所属泛型父类
+     * @param index      泛型所在位置
      * @return Class
      */
-    public static Class<?> getSuperClassGenericType(final Class<?> clazz, final int index) {
-        Type genType = clazz.getGenericSuperclass();
-        if (!(genType instanceof ParameterizedType)) {
-            logger.warn(String.format("Warn: %s's superclass not ParameterizedType", clazz.getSimpleName()));
-            return Object.class;
-        }
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-        if (index >= params.length || index < 0) {
-            logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
-                    clazz.getSimpleName(), params.length));
-            return Object.class;
-        }
-        if (!(params[index] instanceof Class)) {
-            logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
-                    clazz.getSimpleName()));
-            return Object.class;
-        }
-        return (Class<?>) params[index];
+    public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
+        Class<?>[] typeArguments = GenericTypeResolver.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+        return null == typeArguments ? null : typeArguments[index];
     }
 
     /**
@@ -149,11 +138,11 @@ public final class ReflectionKit {
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
             return fieldMap.values().stream()
-                    /* 过滤静态属性 */
-                    .filter(f -> !Modifier.isStatic(f.getModifiers()))
-                    /* 过滤 transient关键字修饰的属性 */
-                    .filter(f -> !Modifier.isTransient(f.getModifiers()))
-                    .collect(Collectors.toList());
+                /* 过滤静态属性 */
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .collect(Collectors.toList());
         });
     }
 
@@ -168,12 +157,12 @@ public final class ReflectionKit {
     public static Map<String, Field> excludeOverrideSuperField(Field[] fields, List<Field> superFieldList) {
         // 子类属性
         Map<String, Field> fieldMap = Stream.of(fields).collect(toMap(Field::getName, identity(),
-                (u, v) -> {
-                    throw new IllegalStateException(String.format("Duplicate key %s", u));
-                },
-                LinkedHashMap::new));
+            (u, v) -> {
+                throw new IllegalStateException(String.format("Duplicate key %s", u));
+            },
+            LinkedHashMap::new));
         superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName()))
-                .forEach(f -> fieldMap.put(f.getName(), f));
+            .forEach(f -> fieldMap.put(f.getName(), f));
         return fieldMap;
     }
 

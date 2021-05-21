@@ -29,7 +29,6 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ResolvableType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -81,20 +80,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     protected Class<T> currentMapperClass() {
-        return (Class<T>) this.getResolvableType().as(ServiceImpl.class).getGeneric(0).getType();
+        return (Class<T>) ReflectionKit.getSuperClassGenericType(this.getClass(), ServiceImpl.class, 0);
     }
 
     protected Class<T> currentModelClass() {
-        return (Class<T>) this.getResolvableType().as(ServiceImpl.class).getGeneric(1).getType();
+        return (Class<T>) ReflectionKit.getSuperClassGenericType(this.getClass(), ServiceImpl.class, 1);
     }
 
-    /**
-     * @see ResolvableType
-     * @since 3.4.3
-     */
-    protected ResolvableType getResolvableType() {
-        return ResolvableType.forClass(ClassUtils.getUserClass(getClass()));
-    }
 
     /**
      * 批量操作 SqlSession
