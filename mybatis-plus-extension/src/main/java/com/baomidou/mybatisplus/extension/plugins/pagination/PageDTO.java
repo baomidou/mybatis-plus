@@ -25,24 +25,24 @@ import java.util.List;
  * @author hubin
  * @since 2021-05-20
  */
-public class PageDto<T> extends Page<T> {
+public class PageDTO<T> extends Page<T> {
 
-    public PageDto() {
+    public PageDTO() {
     }
 
-    public PageDto(long current, long size) {
+    public PageDTO(long current, long size) {
         this(current, size, 0);
     }
 
-    public PageDto(long current, long size, long total) {
+    public PageDTO(long current, long size, long total) {
         this(current, size, total, true);
     }
 
-    public PageDto(long current, long size, boolean searchCount) {
+    public PageDTO(long current, long size, boolean searchCount) {
         this(current, size, 0, searchCount);
     }
 
-    public PageDto(long current, long size, long total, boolean searchCount) {
+    public PageDTO(long current, long size, long total, boolean searchCount) {
         super(current, size, total, searchCount);
     }
 
@@ -80,6 +80,6 @@ public class PageDto<T> extends Page<T> {
     }
 
     public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
-        return new PageDto(current, size, total, searchCount);
+        return new PageDTO(current, size, total, searchCount);
     }
 }
