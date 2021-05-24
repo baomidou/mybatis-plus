@@ -285,7 +285,7 @@ public class Page<T> implements IPage<T> {
 
     /*
      * --begin------------- 未来抛弃移除的方法 -------------begin--
-     * 该部分属性转移至 com.baomidou.mybatisplus.core.metadata.OrderItem.PageDto
+     * 该部分属性转移至 com.baomidou.mybatisplus.core.metadata.OrderItem.PageDTO
      */
     @Deprecated
     public String getCountId() {
