@@ -500,11 +500,9 @@ class H2UserTest extends BaseTest {
     /**
      * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
      */
-    @Test
+    @RepeatedTest(1000)
     void testLambdaCache() {
-        for (int i = 0; i < 1000; i++) {
-            lambdaCache();
-        }
+        lambdaCache();
     }
 
     private void lambdaCache() {
