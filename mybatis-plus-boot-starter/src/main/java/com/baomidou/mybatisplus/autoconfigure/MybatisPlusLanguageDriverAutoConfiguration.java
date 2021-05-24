@@ -33,6 +33,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClas
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for MyBatis's scripting language drivers.
@@ -41,7 +42,8 @@ import org.springframework.context.annotation.Configuration;
  * @author miemie
  * @since 2019-10-22
  */
-@Configuration
+@Lazy
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(LanguageDriver.class)
 public class MybatisPlusLanguageDriverAutoConfiguration {
 
@@ -50,7 +52,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     /**
      * Configuration class for mybatis-freemarker 1.1.x or under.
      */
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(FreeMarkerLanguageDriver.class)
     @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
     public static class LegacyFreeMarkerConfiguration {
@@ -64,7 +66,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     /**
      * Configuration class for mybatis-freemarker 1.2.x or above.
      */
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class})
     public static class FreeMarkerConfiguration {
         @Bean
@@ -84,7 +86,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     /**
      * Configuration class for mybatis-velocity 2.1.x or above.
      */
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class})
     public static class VelocityConfiguration {
         @Bean
@@ -101,7 +103,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         }
     }
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(ThymeleafLanguageDriver.class)
     public static class ThymeleafConfiguration {
         @Bean

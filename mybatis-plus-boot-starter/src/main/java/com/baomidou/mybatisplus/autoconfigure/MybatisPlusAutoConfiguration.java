@@ -89,7 +89,7 @@ import java.util.stream.Stream;
  * @author Kazuki Shimizu
  * @author Eduardo Macarrón
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(MybatisPlusProperties.class)
@@ -328,7 +328,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
      * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to scan
      * mappers based on the same component-scanning path as Spring Boot itself.
      */
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @Import(AutoConfiguredMapperScannerRegistrar.class)
     @ConditionalOnMissingBean({MapperFactoryBean.class, MapperScannerConfigurer.class})
     public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
