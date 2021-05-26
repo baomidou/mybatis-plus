@@ -25,7 +25,7 @@ import kotlin.reflect.KProperty
  * @author FlyInWind
  * @since 2020-10-18
  */
-class KtUpdateChainWrapper<T : Any>(
+open class KtUpdateChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>
 ) : AbstractChainWrapper<T, KProperty<*>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
     ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KProperty<*>> {
