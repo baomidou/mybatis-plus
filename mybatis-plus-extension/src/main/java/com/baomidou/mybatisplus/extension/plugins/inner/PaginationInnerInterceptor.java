@@ -162,7 +162,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         boolean addOrdered = false;
         String buildSql = boundSql.getSql();
         List<OrderItem> orders = page.orders();
-        if (!CollectionUtils.isEmpty(orders)) {
+        if (CollectionUtils.isNotEmpty(orders)) {
             addOrdered = true;
             buildSql = this.concatOrderBy(buildSql, orders);
         }
@@ -402,9 +402,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     }
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
-        if (CollectionUtils.isEmpty(orderList)) {
-            return orderByElements;
-        }
         List<OrderByElement> additionalOrderBy = orderList.stream()
             .filter(item -> StringUtils.isNotBlank(item.getColumn()))
             .map(item -> {
