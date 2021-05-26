@@ -62,7 +62,9 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
 
     private RuntimeException exception;
 
-
+    public void setException(RuntimeException exception) {
+        this.exception = exception;
+    }
 
     @Override
     public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
