@@ -57,6 +57,7 @@ import java.util.Properties;
 public class TenantLineInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     private TenantLineHandler tenantLineHandler;
+    private String columnFormat;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -116,7 +117,19 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return;
         }
         String tenantIdColumn = tenantLineHandler.getTenantIdColumn();
-        if (columns.stream().map(Column::getColumnName).anyMatch(i -> i.equals(tenantIdColumn))) {
+        // 如果设置了 globalConfig.getDbConfig().setColumnFormat("`") 这样的话columns是含`符号的，需要替换掉再对比
+
+        if (columns
+            .stream()
+            .map(v -> {
+                if (StringUtils.isNotBlank(columnFormat)) {
+                    return v.getColumnName()
+                        .replaceAll(columnFormat,"");
+                } else {
+                    return v.getColumnName();
+                }
+            })
+            .anyMatch(i -> i.equalsIgnoreCase(tenantIdColumn))) {
             // 针对已给出租户列的insert 不处理
             return;
         }
@@ -424,7 +437,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlack("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+            .whenNotBlack("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler)
+            .whenNotBlack("columnFormat", String::valueOf, this::setColumnFormat);
     }
 }
 

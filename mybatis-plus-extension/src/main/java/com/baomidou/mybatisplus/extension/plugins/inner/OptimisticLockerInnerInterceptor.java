@@ -60,6 +60,10 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
 
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
 
+    private RuntimeException exception;
+
+
+
     @Override
     public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
         if (SqlCommandType.UPDATE != ms.getSqlCommandType()) {
@@ -87,7 +91,12 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                 // 旧的 version 值
                 Object originalVersionVal = versionField.get(et);
                 if (originalVersionVal == null) {
-                    return;
+                    // 建议此处可以根据配置抛出runtimeException
+                    if (null != exception) {
+                        throw exception;
+                    } else {
+                        return;
+                    }
                 }
                 String versionColumn = fieldInfo.getColumn();
                 // 新的 version 值
