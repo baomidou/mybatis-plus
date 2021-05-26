@@ -417,7 +417,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         if (CollectionUtils.isEmpty(orderByElements)) {
             return additionalOrderBy;
         }
-        // 建议前端传了排序字段，优先使用前端的排序，比如：默认按id排序，前端传了name排序，建议先按name排序，再按id排序
+        // github pull/3550 优化排序，比如：默认 order by id 前端传了name排序，设置为 order by name,id
         additionalOrderBy.addAll(orderByElements);
         return additionalOrderBy;
     }
