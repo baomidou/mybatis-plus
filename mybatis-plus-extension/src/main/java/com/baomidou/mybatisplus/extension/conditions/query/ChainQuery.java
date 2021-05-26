@@ -84,6 +84,16 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
+     * 判断数据是否存在
+     *
+     * @return true：存在
+     */
+    default boolean isExists() {
+        int count = this.count();
+        return count > 0;
+    }
+
+    /**
      * 获取分页数据
      *
      * @param page 分页条件
