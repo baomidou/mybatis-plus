@@ -162,7 +162,7 @@ public class TableFieldInfo implements Constants {
     private Class<? extends TypeHandler<?>> typeHandler;
 
     /**
-     *  是否存在OrderBy注解
+     * 是否存在OrderBy注解
      */
     private boolean isOrderBy;
     /**
@@ -179,10 +179,10 @@ public class TableFieldInfo implements Constants {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
-                          Reflector reflector, boolean existTableLogic,boolean isOrderBy) {
-        this(dbConfig,tableInfo,field,tableField,reflector,existTableLogic);
+                          Reflector reflector, boolean existTableLogic, boolean isOrderBy) {
+        this(dbConfig, tableInfo, field, tableField, reflector, existTableLogic);
         this.isOrderBy = isOrderBy;
-        if(isOrderBy){
+        if (isOrderBy) {
             initOrderBy(field);
         }
     }
@@ -208,6 +208,9 @@ public class TableFieldInfo implements Constants {
         final Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
         final String numericScale = tableField.numericScale();
         String el = this.property;
+        if (StringUtils.isNotBlank(tableField.property())) {
+            el = tableField.property();
+        }
         if (JdbcType.UNDEFINED != jdbcType) {
             this.jdbcType = jdbcType;
             el += (COMMA + SqlScriptUtils.mappingJdbcType(jdbcType));
@@ -294,13 +297,14 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
-                          boolean existTableLogic,boolean isOrderBy) {
-        this(dbConfig,tableInfo,field,reflector,existTableLogic);
+                          boolean existTableLogic, boolean isOrderBy) {
+        this(dbConfig, tableInfo, field, reflector, existTableLogic);
         this.isOrderBy = isOrderBy;
-        if(isOrderBy){
+        if (isOrderBy) {
             initOrderBy(field);
         }
     }
+
     /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
@@ -351,15 +355,16 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 排序初始化
+     *
      * @param field 字段
      */
-    private void initOrderBy(Field field){
+    private void initOrderBy(Field field) {
         OrderBy orderBy = field.getAnnotation(OrderBy.class);
         if (null != orderBy) {
             this.isOrderBy = true;
             this.orderBySort = orderBy.sort();
-            this.orderByType = orderBy.isDesc()?"desc":"asc";
-        }else{
+            this.orderByType = orderBy.isDesc() ? "desc" : "asc";
+        } else {
             this.isOrderBy = false;
         }
     }
