@@ -16,8 +16,10 @@
 package com.baomidou.mybatisplus.extension.conditions.query;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +48,20 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      */
     default T one() {
         return getBaseMapper().selectOne(getWrapper());
+    }
+
+    /**
+     * 查询一条，忽略 mybatis Expected one result (or null) to be returned by selectOne(), but found: .. ,默认获取第一条记录
+     *
+     * @return 单个
+     * @see DefaultSqlSession#selectOne(java.lang.String, java.lang.Object)  code:list.get(0)
+     */
+    default T first() {
+        List<T> list = this.list();
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+        return list.get(0);
     }
 
     /**
