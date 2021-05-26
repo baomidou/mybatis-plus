@@ -402,6 +402,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     }
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
+        if (CollectionUtils.isEmpty(orderList)) {
+            return orderByElements;
+        }
         List<OrderByElement> additionalOrderBy = orderList.stream()
             .filter(item -> StringUtils.isNotBlank(item.getColumn()))
             .map(item -> {
@@ -414,8 +417,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         if (CollectionUtils.isEmpty(orderByElements)) {
             return additionalOrderBy;
         }
-        orderByElements.addAll(additionalOrderBy);
-        return orderByElements;
+        // 建议前端传了排序字段，优先使用前端的排序，比如：默认按id排序，前端传了name排序，建议先按name排序，再按id排序
+        additionalOrderBy.addAll(orderByElements);
+        return additionalOrderBy;
     }
 
     /**
