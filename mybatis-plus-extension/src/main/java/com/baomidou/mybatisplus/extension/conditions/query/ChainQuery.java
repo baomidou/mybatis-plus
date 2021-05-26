@@ -88,7 +88,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      *
      * @return true：存在
      */
-    default boolean isExists() {
+    default boolean exists() {
         int count = this.count();
         return count > 0;
     }
