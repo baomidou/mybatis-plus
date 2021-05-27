@@ -46,7 +46,6 @@ import java.util.function.Predicate;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@SuppressWarnings("serial")
 public class AlwaysUpdateSomeColumnById extends AbstractMethod {
 
     /**

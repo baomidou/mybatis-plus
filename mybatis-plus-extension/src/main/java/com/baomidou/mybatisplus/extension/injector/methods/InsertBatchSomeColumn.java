@@ -63,7 +63,6 @@ import java.util.function.Predicate;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@SuppressWarnings("serial")
 public class InsertBatchSomeColumn extends AbstractMethod {
 
     /**
