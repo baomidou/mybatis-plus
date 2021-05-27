@@ -65,7 +65,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return entityClass;
     }
 
-    protected Class<T> mapperClass = currentMapperClass();
+    protected Class<M> mapperClass = currentMapperClass();
 
     /**
      * 判断数据库操作是否成功
@@ -79,8 +79,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.retBool(result);
     }
 
-    protected Class<T> currentMapperClass() {
-        return (Class<T>) ReflectionKit.getSuperClassGenericType(this.getClass(), ServiceImpl.class, 0);
+    protected Class<M> currentMapperClass() {
+        return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), ServiceImpl.class, 0);
     }
 
     protected Class<T> currentModelClass() {
