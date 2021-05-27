@@ -70,7 +70,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     /**
      * 判断数据是否存在
      *
-     * @return true：存在
+     * @return true 存在 false 不存在
      */
     default boolean exists() {
         return this.count() > 0;
