@@ -27,7 +27,7 @@ import kotlin.reflect.KProperty
  * @author FlyInWind
  * @since 2020-10-18
  */
-class KtQueryChainWrapper<T : Any>(
+open class KtQueryChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>
 ) : AbstractChainWrapper<T, KProperty<*>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
     ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty<*>> {
