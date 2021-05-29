@@ -32,7 +32,7 @@ public class ObjectUtils {
      */
     public static boolean isNull(Object... objs) {
         for (Object obj : objs) {
-            if (ObjectUtils.isEmpty(obj)) {
+            if (isEmpty(obj)) {
                 return true;
             }
         }
@@ -43,14 +43,14 @@ public class ObjectUtils {
      * 判断object是否不为空,集合会校验size
      */
     public static boolean isNotNull(Object... obj) {
-        return !ObjectUtils.isNull(obj);
+        return !isNull(obj);
     }
 
     /**
      * 对象非空判断
      */
     public static boolean isNotEmpty(Object obj) {
-        return !ObjectUtils.isEmpty(obj);
+        return !isEmpty(obj);
     }
 
     /**
