@@ -181,8 +181,8 @@ public abstract class AbstractMethod implements Constants {
             // 逻辑删除
             String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
                 " ${k} = #{v} ");
-            sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
+            sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s.isEmpty", COLUMN_MAP, COLUMN_MAP), true);
             sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
