@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 
 import java.util.EnumMap;
@@ -34,8 +35,7 @@ public class DialectFactory {
         IDialect dialect = DIALECT_ENUM_MAP.get(dbType);
         if (null == dialect) {
             if (dbType == DbType.OTHER) {
-                // 不支持情况
-                return null;
+                ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
             }
             // mysql same type
             else if (dbType == DbType.MYSQL
