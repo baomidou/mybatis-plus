@@ -34,25 +34,28 @@ public class DialectRegistry {
 
     public DialectRegistry() {
         // mysql and children
-        dialect_enum_map.put(DbType.MYSQL, new MySqlDialect());
-        dialect_enum_map.put(DbType.MARIADB, new MySqlDialect());
-        dialect_enum_map.put(DbType.GBASE, new MySqlDialect());
-        dialect_enum_map.put(DbType.OSCAR, new MySqlDialect());
-        dialect_enum_map.put(DbType.XU_GU, new MySqlDialect());
-        dialect_enum_map.put(DbType.CLICK_HOUSE, new MySqlDialect());
-        dialect_enum_map.put(DbType.OCEAN_BASE, new MySqlDialect());
+        MySqlDialect mySqlDialect = new MySqlDialect();
+        dialect_enum_map.put(DbType.MYSQL, mySqlDialect);
+        dialect_enum_map.put(DbType.MARIADB, mySqlDialect);
+        dialect_enum_map.put(DbType.GBASE, mySqlDialect);
+        dialect_enum_map.put(DbType.OSCAR, mySqlDialect);
+        dialect_enum_map.put(DbType.XU_GU, mySqlDialect);
+        dialect_enum_map.put(DbType.CLICK_HOUSE, mySqlDialect);
+        dialect_enum_map.put(DbType.OCEAN_BASE, mySqlDialect);
         // postgresql and children
-        dialect_enum_map.put(DbType.POSTGRE_SQL, new PostgreDialect());
-        dialect_enum_map.put(DbType.H2, new PostgreDialect());
-        dialect_enum_map.put(DbType.SQLITE, new PostgreDialect());
-        dialect_enum_map.put(DbType.HSQL, new PostgreDialect());
-        dialect_enum_map.put(DbType.KINGBASE_ES, new PostgreDialect());
-        dialect_enum_map.put(DbType.PHOENIX, new PostgreDialect());
+        PostgreDialect postgreDialect = new PostgreDialect();
+        dialect_enum_map.put(DbType.POSTGRE_SQL, postgreDialect);
+        dialect_enum_map.put(DbType.H2, postgreDialect);
+        dialect_enum_map.put(DbType.SQLITE, postgreDialect);
+        dialect_enum_map.put(DbType.HSQL, postgreDialect);
+        dialect_enum_map.put(DbType.KINGBASE_ES, postgreDialect);
+        dialect_enum_map.put(DbType.PHOENIX, postgreDialect);
         dialect_enum_map.put(DbType.HighGo, new HighGoDialect());
         // oracle and children
-        dialect_enum_map.put(DbType.ORACLE, new OracleDialect());
-        dialect_enum_map.put(DbType.DM, new OracleDialect());
-        dialect_enum_map.put(DbType.GAUSS, new OracleDialect());
+        OracleDialect oracleDialect = new OracleDialect();
+        dialect_enum_map.put(DbType.ORACLE, oracleDialect);
+        dialect_enum_map.put(DbType.DM, oracleDialect);
+        dialect_enum_map.put(DbType.GAUSS, oracleDialect);
         // other
         dialect_enum_map.put(DbType.ORACLE_12C, new Oracle12cDialect());
         dialect_enum_map.put(DbType.DB2, new DB2Dialect());
