@@ -120,7 +120,7 @@ public enum DbType {
     /**
      * HighGo
      */
-    HighGo("highgo", "瀚高数据库"),
+    HIGH_GO("highgo", "瀚高数据库"),
     /**
      * UNKONWN DB
      */

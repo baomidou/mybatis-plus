@@ -16,11 +16,10 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 
-import java.util.Optional;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * 分页方言工厂类
@@ -29,11 +28,54 @@ import java.util.Optional;
  * @since 2016-01-23
  */
 public class DialectFactory {
-
-    private static final DialectRegistry DIALECT_REGISTRY = new DialectRegistry();
+    private static final Map<DbType, IDialect> DIALECT_ENUM_MAP = new EnumMap<>(DbType.class);
 
     public static IDialect getDialect(DbType dbType) {
-        return Optional.ofNullable(DIALECT_REGISTRY.getDialect(dbType))
-            .orElseThrow(() -> ExceptionUtils.mpe("%s database not supported.", dbType.getDb()));
+        IDialect dialect = DIALECT_ENUM_MAP.get(dbType);
+        if (null == dialect) {
+            if (dbType == DbType.OTHER) {
+                // 不支持情况
+                return null;
+            }
+            // mysql same type
+            else if (dbType == DbType.MYSQL
+                || dbType == DbType.MARIADB
+                || dbType == DbType.GBASE
+                || dbType == DbType.OSCAR
+                || dbType == DbType.XU_GU
+                || dbType == DbType.CLICK_HOUSE
+                || dbType == DbType.OCEAN_BASE) {
+                dialect = new MySqlDialect();
+            }
+            // postgresql same type
+            else if (dbType == DbType.ORACLE
+                || dbType == DbType.DM
+                || dbType == DbType.GAUSS) {
+                dialect = new OracleDialect();
+            }
+            // oracle same type
+            else if (dbType == DbType.POSTGRE_SQL
+                || dbType == DbType.H2
+                || dbType == DbType.SQLITE
+                || dbType == DbType.HSQL
+                || dbType == DbType.KINGBASE_ES
+                || dbType == DbType.PHOENIX) {
+                dialect = new PostgreDialect();
+            } else if (dbType == DbType.HIGH_GO) {
+                dialect = new HighGoDialect();
+            } else if (dbType == DbType.ORACLE_12C) {
+                dialect = new Oracle12cDialect();
+            } else if (dbType == DbType.DB2) {
+                dialect = new DB2Dialect();
+            } else if (dbType == DbType.SQL_SERVER2005) {
+                dialect = new SQLServer2005Dialect();
+            } else if (dbType == DbType.SQL_SERVER) {
+                dialect = new SQLServerDialect();
+            } else if (dbType == DbType.SYBASE) {
+                dialect = new SybaseDialect();
+            }
+            DIALECT_ENUM_MAP.put(dbType, dialect);
+        }
+        return dialect;
     }
 }
