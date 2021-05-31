@@ -15,8 +15,10 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     @Test
     void test() {
         final String id = "id";
+        Entity entity = new Entity();
         doTest(i -> i.queryChain()
             .func(j -> j.isNotNull(id))
+            .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
             .and(j -> j.isNotNull(id))
             .or(j -> j.isNotNull(id))
             .nested(j -> j.isNotNull(id))

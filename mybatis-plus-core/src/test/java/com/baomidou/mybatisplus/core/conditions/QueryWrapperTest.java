@@ -21,14 +21,14 @@ class QueryWrapperTest extends BaseWrapperTest {
             .eq("xxx", 123)
             .and(i -> i.eq("andx", 65444).le("ande", 66666))
             .ne("xxx", 222);
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ?)");
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ?)");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ?)");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ?)");
         ew.gt("x22", 333);
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?)");
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?)");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?)");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?)");
         ew.orderByAsc("column");
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?) ORDER BY column ASC");
-        logSqlWhere("xx",ew,"(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?) ORDER BY column ASC");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?) ORDER BY column ASC");
+        logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ? AND x22 > ?) ORDER BY column ASC");
         logParams(ew);
     }
 
@@ -98,6 +98,7 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testFunc() {
+        Entity entity = new Entity();
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
             .isNull("nullColumn").or().isNotNull("notNullColumn")
             .orderByAsc("id").orderByDesc("name", "name2")
@@ -105,7 +106,8 @@ class QueryWrapperTest extends BaseWrapperTest {
             .in("inColl", getList()).or().notIn("notInColl", getList())
             .in("inArray").notIn("notInArray", 5, 6, 7)
             .inSql("inSql", "1,2,3,4,5").notInSql("inSql", "1,2,3,4,5")
-            .having("sum(age) > {0}", 1).having("id is not null");
+            .having("sum(age) > {0}", 1).having("id is not null")
+            .func(entity.getId() != null, j -> j.eq("id", entity.getId()));// 不会npe,也不会加入sql
         logSqlWhere("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
         logParams(queryWrapper);
     }
