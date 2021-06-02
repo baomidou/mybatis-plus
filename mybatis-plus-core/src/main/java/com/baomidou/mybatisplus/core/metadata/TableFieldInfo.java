@@ -280,7 +280,7 @@ public class TableFieldInfo implements Constants {
 
         this.insertStrategy = this.chooseFieldStrategy(tableField.insertStrategy(), dbConfig.getInsertStrategy());
         this.updateStrategy = this.chooseFieldStrategy(tableField.updateStrategy(), dbConfig.getUpdateStrategy());
-        this.whereStrategy = this.chooseFieldStrategy(tableField.whereStrategy(), dbConfig.getSelectStrategy());
+        this.whereStrategy = this.chooseFieldStrategy(tableField.whereStrategy(), dbConfig.getWhereStrategy());
 
         if (StringUtils.isNotBlank(tableField.condition())) {
             // 细粒度条件控制
@@ -326,7 +326,7 @@ public class TableFieldInfo implements Constants {
         this.mapping = null;
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
-        this.whereStrategy = dbConfig.getSelectStrategy();
+        this.whereStrategy = dbConfig.getWhereStrategy();
         this.initLogicDelete(dbConfig, field, existTableLogic);
 
         String column = this.property;
