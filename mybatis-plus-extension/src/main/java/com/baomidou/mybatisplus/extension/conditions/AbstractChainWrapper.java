@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -199,6 +200,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return typedThis;
     }
 
+    @Deprecated
     @Override
     public Children groupBy(boolean condition, R column, R... columns) {
         getWrapper().groupBy(condition, column, columns);
@@ -206,8 +208,33 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children groupBy(boolean condition, R column) {
+        getWrapper().groupBy(condition, column);
+        return typedThis;
+    }
+
+    @Override
+    public Children groupBy(boolean condition, List<R> columns) {
+        getWrapper().groupBy(condition, columns);
+        return typedThis;
+    }
+
+    @Deprecated
+    @Override
     public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
         getWrapper().orderBy(condition, isAsc, column, columns);
+        return typedThis;
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, R column) {
+        getWrapper().orderBy(condition, isAsc, column);
+        return typedThis;
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, List<R> columns) {
+        getWrapper().orderBy(condition, isAsc, columns);
         return typedThis;
     }
 

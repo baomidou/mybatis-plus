@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -180,74 +181,168 @@ public interface Func<Children, R> extends Serializable {
      */
     Children notInSql(boolean condition, R column, String inValue);
 
+
     /**
-     * ignore
+     * 分组：GROUP BY 字段, ...
+     * <p>例: groupBy("id")</p>
+     *
+     * @param condition 执行条件
+     * @param column    单个字段
+     * @return children
      */
+    Children groupBy(boolean condition, R column);
+
+    default Children groupBy(R column) {
+        return groupBy(true, column);
+    }
+
+
+    /**
+     * 分组：GROUP BY 字段, ...
+     * <p>例: groupBy(Arrays.asList("id", "name"))</p>
+     *
+     * @param condition 执行条件
+     * @param columns   字段数组
+     * @return children
+     */
+    Children groupBy(boolean condition, List<R> columns);
+
+    default Children groupBy(List<R> columns) {
+        return groupBy(true, columns);
+    }
+
+    @Deprecated
     default Children groupBy(R column, R... columns) {
         return groupBy(true, column, columns);
     }
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy("id", "name")</p>
-     *
-     * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段数组
-     * @return children
+     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
+    @Deprecated
     Children groupBy(boolean condition, R column, R... columns);
 
     /**
-     * ignore
+     * 排序：ORDER BY 字段, ... ASC
+     * <p>例: orderByAsc(true, "id")</p>
+     *
+     * @param condition 执行条件
+     * @param column    单个字段
+     * @return children
      */
+    default Children orderByAsc(boolean condition, R column) {
+        return orderBy(condition, true, column);
+    }
+
+    default Children orderByAsc(R column) {
+        return orderByAsc(true, column);
+    }
+
+    /**
+     * 排序：ORDER BY 字段, ... ASC
+     * <p>例: orderByAsc(true, Arrays.asList("id", "name"))</p>
+     *
+     * @param condition 执行条件
+     * @param columns   字段数组
+     * @return children
+     */
+    default Children orderByAsc(boolean condition, List<R> columns) {
+        return orderBy(condition, true, columns);
+    }
+
+    default Children orderByAsc(List<R> columns) {
+        return orderByAsc(true, columns);
+    }
+
+    @Deprecated
     default Children orderByAsc(R column, R... columns) {
         return orderByAsc(true, column, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc("id", "name")</p>
-     *
-     * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段数组
-     * @return children
+     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
+    @Deprecated
     default Children orderByAsc(boolean condition, R column, R... columns) {
         return orderBy(condition, true, column, columns);
     }
 
+
     /**
-     * ignore
+     * 排序：ORDER BY 字段, ... DESC
+     * <p>例: orderByDesc(true, "id")</p>
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @return children
      */
+    default Children orderByDesc(boolean condition, R column) {
+        return orderBy(condition, false, column);
+    }
+
+    default Children orderByDesc(R column) {
+        return orderByDesc(true, column);
+    }
+
+    /**
+     * 排序：ORDER BY 字段, ... DESC
+     * <p>例: orderByDesc(true, Arrays.asList("id", "name"))</p>
+     *
+     * @param condition 执行条件
+     * @param columns   字段列表
+     * @return children
+     */
+    default Children orderByDesc(boolean condition, List<R> columns) {
+        return orderBy(condition, false, columns);
+    }
+
+    default Children orderByDesc(List<R> columns) {
+        return orderByDesc(true, columns);
+    }
+
+    @Deprecated
     default Children orderByDesc(R column, R... columns) {
         return orderByDesc(true, column, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * <p>例: orderByDesc("id", "name")</p>
-     *
-     * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段数组
-     * @return children
+     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
+    @Deprecated
     default Children orderByDesc(boolean condition, R column, R... columns) {
         return orderBy(condition, false, column, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ...
-     * <p>例: orderBy(true, "id", "name")</p>
+     * <p>例: orderBy(true, "id")</p>
      *
      * @param condition 执行条件
      * @param isAsc     是否是 ASC 排序
      * @param column    单个字段
-     * @param columns   字段数组
      * @return children
      */
+    Children orderBy(boolean condition, boolean isAsc, R column);
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     * <p>例: orderBy(true, Arrays.asList("id", "name"))</p>
+     *
+     * @param condition 执行条件
+     * @param isAsc     是否是 ASC 排序
+     * @param columns   字段列表
+     * @return children
+     */
+    Children orderBy(boolean condition, boolean isAsc, List<R> columns);
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
+     */
+    @Deprecated
     Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
 
     /**

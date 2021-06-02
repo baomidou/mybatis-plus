@@ -486,6 +486,7 @@ class H2UserTest extends BaseTest {
     void testLambdaWrapperClear() {
         userService.save(new H2User("小红", AgeEnum.TWO));
         LambdaQueryWrapper<H2User> lambdaQueryWrapper = new QueryWrapper<H2User>().lambda().eq(H2User::getName, "小宝");
+        lambdaQueryWrapper.orderByDesc(H2User::getName);
         Assertions.assertEquals(0, userService.count(lambdaQueryWrapper));
         lambdaQueryWrapper.clear();
         lambdaQueryWrapper.eq(H2User::getName, "小红");

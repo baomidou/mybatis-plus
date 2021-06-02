@@ -266,7 +266,11 @@ public class TableFieldInfo implements Constants {
         this.sqlSelect = column;
         if (needAs) {
             // 存在指定转换属性
-            this.sqlSelect += String.format("%s\"%s\"", AS, tableField.property());
+            String propertyFormat = dbConfig.getPropertyFormat();
+            if (StringUtils.isBlank(propertyFormat)) {
+                propertyFormat = "%s";
+            }
+            this.sqlSelect += (AS + String.format(propertyFormat, tableField.property()));
         } else if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
             TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             /* 未设置 resultMap 也未开启自动构建 resultMap, 字段规则又不符合 mybatis 的自动封装规则 */
