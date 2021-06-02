@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author <a href="mailto:xyz327@outlook.com">xizhou</a>
@@ -27,18 +28,22 @@ public class MycatAnnotationInterceptor implements PostInnerInterceptor {
 
     private static final String PROHIBITION_SYMBOL = "?";
 
-    private final Set<MyCatAnnotation> mycatAnnotation = new HashSet<>();
+    private final Set<MycatAnnotation> mycatAnnotations = new HashSet<>();
     private final ThreadLocal<String> threadLocal = new ThreadLocal<>();
 
     {
-        mycatAnnotation.add(MyCatAnnotation.of("/**mycat", "*/", true));
-        mycatAnnotation.add(MyCatAnnotation.of("/*balance", "*/", true));
+        mycatAnnotations.add(MycatAnnotation.of("/**mycat", "*/", true));
+        mycatAnnotations.add(MycatAnnotation.of("/*balance", "*/", true));
 
-        mycatAnnotation.add(MyCatAnnotation.of("/*!mycat", "*/", false));
-        mycatAnnotation.add(MyCatAnnotation.of("/*#mycat", "*/", false));
+        mycatAnnotations.add(MycatAnnotation.of("/*!mycat", "*/", false));
+        mycatAnnotations.add(MycatAnnotation.of("/*#mycat", "*/", false));
 
         // mycat2
-        mycatAnnotation.add(MyCatAnnotation.of("/*+ mycat", "*/", true));
+        mycatAnnotations.add(MycatAnnotation.of("/*+ mycat", "*/", true));
+    }
+
+    public void addMycatAnnotation(MycatAnnotation mycatAnnotation) {
+        mycatAnnotations.add(mycatAnnotation);
     }
 
     @Override
@@ -72,7 +77,7 @@ public class MycatAnnotationInterceptor implements PostInnerInterceptor {
     }
 
     private void parseSql(String originSql) {
-        MyCatAnnotation mycatAnno = findMycatAnno(originSql);
+        MycatAnnotation mycatAnno = findMycatAnno(originSql);
         if (mycatAnno == null) {
             return;
         }
@@ -89,8 +94,8 @@ public class MycatAnnotationInterceptor implements PostInnerInterceptor {
         threadLocal.set(mycatAnnotation);
     }
 
-    private MyCatAnnotation findMycatAnno(String originSql) {
-        for (MyCatAnnotation anno : mycatAnnotation) {
+    private MycatAnnotation findMycatAnno(String originSql) {
+        for (MycatAnnotation anno : mycatAnnotations) {
             if (originSql.contains(anno.prefix)) {
                 return anno;
             }
@@ -105,7 +110,8 @@ public class MycatAnnotationInterceptor implements PostInnerInterceptor {
 
 
     @Data(staticConstructor = "of")
-    public static class MyCatAnnotation {
+    @EqualsAndHashCode(of = {"prefix", "suffix"})
+    public static class MycatAnnotation {
 
         private final String prefix;
         private final String suffix;
