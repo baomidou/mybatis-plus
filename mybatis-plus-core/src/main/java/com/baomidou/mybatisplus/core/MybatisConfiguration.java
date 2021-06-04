@@ -316,9 +316,8 @@ public class MybatisConfiguration extends Configuration {
     protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (rm.hasNestedResultMaps()) {
             for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
-                Object value = entry.getValue();
-                if (value instanceof ResultMap) {
-                    ResultMap entryResultMap = (ResultMap) value;
+                ResultMap entryResultMap = entry.getValue();
+                if (entryResultMap != null) {
                     if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
                         Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator().getDiscriminatorMap().values();
                         if (discriminatedResultMapNames.contains(rm.getId())) {
@@ -385,7 +384,7 @@ public class MybatisConfiguration extends Configuration {
                     if (super.get(shortKey) == null) {
                         super.put(shortKey, value);
                     } else {
-                        super.put(shortKey, (V) new StrictMap.Ambiguity(shortKey));
+                        super.put(shortKey, (V) new Ambiguity(shortKey));
                     }
                 }
             }
