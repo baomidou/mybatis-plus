@@ -162,9 +162,9 @@ public final class TableNameParser {
 
     private boolean isCreateIndex(String current, List<SqlToken> tokens, int index) {
         index++; // Point to next token
-        if (TOKEN_CREATE.equals(current.toLowerCase()) && hasIthToken(tokens, index)) {
+        if (TOKEN_CREATE.equalsIgnoreCase(current) && hasIthToken(tokens, index)) {
             String next = tokens.get(index).getValue();
-            return TOKEN_INDEX.equals(next.toLowerCase());
+            return TOKEN_INDEX.equalsIgnoreCase(next);
         }
         return false;
     }
@@ -175,10 +175,10 @@ public final class TableNameParser {
      * @return 判断是否是mysql的特殊语法 on duplicate key update
      */
     private boolean isOnDuplicateKeyUpdate(String current, int index) {
-        if (KEYWORD_DUPLICATE.equals(current.toLowerCase())) {
+        if (KEYWORD_DUPLICATE.equalsIgnoreCase(current)) {
             if (hasMoreTokens(tokens, index++)) {
                 String next = tokens.get(index).getValue();
-                return KEYWORD_UPDATE.equals(next.toLowerCase());
+                return KEYWORD_UPDATE.equalsIgnoreCase(next);
             }
         }
         return false;
@@ -189,7 +189,7 @@ public final class TableNameParser {
     }
 
     private static boolean isFromToken(String currentToken) {
-        return KEYWORD_FROM.equals(currentToken.toLowerCase());
+        return KEYWORD_FROM.equalsIgnoreCase(currentToken);
     }
 
     private int skipDuplicateKeyUpdateIndex(int index) {
