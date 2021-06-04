@@ -176,7 +176,7 @@ public class TableInfo implements Constants {
      */
     @Getter
     @Setter
-    public List<TableFieldInfo> orderByFields;
+    private List<TableFieldInfo> orderByFields;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
