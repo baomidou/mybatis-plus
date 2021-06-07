@@ -46,22 +46,27 @@ public class PageDTO<T> extends Page<T> {
         super(current, size, total, searchCount);
     }
 
+    @Override
     public String getCountId() {
         return this.countId;
     }
 
+    @Override
     public Long getMaxLimit() {
         return this.maxLimit;
     }
 
+    @Override
     public List<OrderItem> getOrders() {
         return this.orders;
     }
 
+    @Override
     public boolean isOptimizeCountSql() {
         return this.optimizeCountSql;
     }
 
+    @Override
     public boolean isSearchCount() {
         return this.searchCount;
     }
@@ -80,6 +85,6 @@ public class PageDTO<T> extends Page<T> {
     }
 
     public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
-        return new PageDTO(current, size, total, searchCount);
+        return new PageDTO<>(current, size, total, searchCount);
     }
 }
