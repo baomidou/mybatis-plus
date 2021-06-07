@@ -274,7 +274,7 @@ public class TableInfo implements Constants {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (havePK()) {
             if (idType == IdType.AUTO) {
-                return EMPTY;
+                return SqlScriptUtils.convertIf(SqlScriptUtils.safeParam(keyProperty) + COMMA, String.format("%s != null", keyProperty), false);
             }
             return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + (newLine ? NEWLINE : EMPTY);
         }
@@ -291,7 +291,7 @@ public class TableInfo implements Constants {
     public String getKeyInsertSqlColumn(final boolean newLine) {
         if (havePK()) {
             if (idType == IdType.AUTO) {
-                return EMPTY;
+                return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine) ;
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
