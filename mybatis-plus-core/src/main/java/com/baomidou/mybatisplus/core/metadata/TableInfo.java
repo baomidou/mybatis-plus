@@ -273,10 +273,11 @@ public class TableInfo implements Constants {
     public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (havePK()) {
+            String keyColumn = SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA;
             if (idType == IdType.AUTO) {
-                return SqlScriptUtils.convertIf(SqlScriptUtils.safeParam(keyProperty) + COMMA, String.format("%s != null", keyProperty), false);
+                return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyProperty), newLine);
             }
-            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + (newLine ? NEWLINE : EMPTY);
+            return keyColumn + (newLine ? NEWLINE : EMPTY);
         }
         return EMPTY;
     }
@@ -291,7 +292,7 @@ public class TableInfo implements Constants {
     public String getKeyInsertSqlColumn(final boolean newLine) {
         if (havePK()) {
             if (idType == IdType.AUTO) {
-                return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine) ;
+                return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine);
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
