@@ -23,16 +23,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @author nieqiurong 2021/1/29
  * @since 3.4.3
  */
-@Configuration
+@Lazy
+@Configuration(proxyBeanMethods = false)
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class IdentifierGeneratorAutoConfiguration {
 
-    @Configuration
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(InetUtils.class)
     public static class InetUtilsAutoConfig {
 
