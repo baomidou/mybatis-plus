@@ -20,11 +20,11 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.toolkit.SqlSessionProxy;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -52,11 +52,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 插入（字段选择插入）
      */
     public boolean insert() {
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retBool(sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -73,11 +70,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param id 主键ID
      */
     public boolean deleteById(Serializable id) {
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -97,11 +91,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public boolean delete(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -113,11 +104,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         // updateById
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -131,11 +119,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
         // update
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE), map));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -143,11 +128,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 查询所有
      */
     public List<T> selectAll() {
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -157,11 +139,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param id 主键ID
      */
     public T selectById(Serializable id) {
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return sqlSession.selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -181,11 +160,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public List<T> selectList(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -208,11 +184,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
-        } finally {
-            closeSqlSession(sqlSession);
         }
         return page;
     }
@@ -225,11 +198,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public Integer selectCount(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
-        SqlSession sqlSession = sqlSession();
-        try {
+        try (SqlSession sqlSession = sqlSession()) {
             return SqlHelper.retCount(sqlSession.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
-        } finally {
-            closeSqlSession(sqlSession);
         }
     }
 
@@ -244,7 +214,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 获取Session 默认自动提交
      */
     protected SqlSession sqlSession() {
-        return SqlHelper.sqlSession(this.entityClass);
+        return new SqlSessionProxy(this.entityClass).newInstance();
     }
 
     /**
@@ -271,14 +241,5 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      */
     public Serializable pkVal() {
         return (Serializable) ReflectionKit.getFieldValue(this, TableInfoHelper.getTableInfo(this.entityClass).getKeyProperty());
-    }
-
-    /**
-     * 释放sqlSession
-     *
-     * @param sqlSession session
-     */
-    protected void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
     }
 }
