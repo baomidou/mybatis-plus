@@ -167,14 +167,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             buildSql = this.concatOrderBy(buildSql, orders);
         }
 
-        // size 小于 0 不构造分页sql
-        if (page.getSize() < 0) {
-            if (addOrdered) {
-                PluginUtils.mpBoundSql(boundSql).sql(buildSql);
-            }
-            return;
-        }
-
         handlerLimit(page);
         IDialect dialect = findIDialect(executor);
 
@@ -450,7 +442,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         final long size = page.getSize();
         Long pageMaxLimit = page.maxLimit();
         Long limit = pageMaxLimit != null ? pageMaxLimit : maxLimit;
-        if (limit != null && limit > 0 && size > limit) {
+        if (size < 0 || (limit != null && limit > 0 && size > limit)) {
             page.setSize(limit);
         }
     }
