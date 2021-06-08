@@ -130,6 +130,8 @@ public interface IPage<T> extends Serializable {
 
     /**
      * 设置每页显示条数
+     * <p>
+     * 为-1时查全表，小于-1不查
      */
     IPage<T> setSize(long size);
 
