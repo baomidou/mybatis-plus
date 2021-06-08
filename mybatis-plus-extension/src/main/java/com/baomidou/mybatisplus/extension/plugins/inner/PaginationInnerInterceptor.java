@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
@@ -121,8 +122,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     @Override
     public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
-        if (page == null || page.getSize() < 0 || !page.searchCount()) {
+        if (page == null || page.getSize() == -1 || !page.searchCount()) {
             return true;
+        }
+
+        // page.getSize() 为-1时查全表，小于-1不查
+        if (page.getSize()< -1) {
+            return false;
         }
 
         BoundSql countSql;

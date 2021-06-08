@@ -46,6 +46,8 @@ public class Page<T> implements IPage<T> {
     protected long total = 0;
     /**
      * 每页显示条数，默认 10
+     * <p>
+     * 为-1时查全表，小于-1不查
      */
     protected long size = 10;
 
