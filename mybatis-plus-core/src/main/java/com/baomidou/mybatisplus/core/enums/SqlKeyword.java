@@ -34,6 +34,7 @@ public enum SqlKeyword implements ISqlSegment {
     IN("IN"),
     NOT_IN("NOT IN"),
     LIKE("LIKE"),
+    LIMIT("LIMIT"),
     NOT_LIKE("NOT LIKE"),
     EQ(StringPool.EQUALS),
     NE("<>"),

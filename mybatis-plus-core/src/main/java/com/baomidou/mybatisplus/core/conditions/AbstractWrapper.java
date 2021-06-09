@@ -33,6 +33,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIMIT;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
 import static java.util.stream.Collectors.joining;
 
@@ -206,6 +207,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children or(boolean condition, Consumer<Children> consumer) {
         return or(condition).addNestedCondition(condition, consumer);
+    }
+
+    @Override
+    public Children limitOne(boolean condition) {
+        return last(condition, LIMIT.getSqlSegment() + StringPool.SPACE + StringPool.ZERO + StringPool.COMMA + StringPool.ONE);
+    }
+
+    @Override
+    public Children limit(boolean condition, int num) {
+        return last(condition, LIMIT.getSqlSegment() + StringPool.SPACE + StringPool.ZERO + StringPool.COMMA + num);
+    }
+
+    @Override
+    public Children limit(boolean condition, int start, int num) {
+        return last(condition, LIMIT.getSqlSegment() + StringPool.SPACE + start + StringPool.COMMA + num);
     }
 
     @Override

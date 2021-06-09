@@ -282,4 +282,59 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children likeRight(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     *
+     * @return children
+     */
+    default Children limitOne() {
+        return limitOne(true);
+    }
+
+    /**
+     * ignore
+     *
+     * @return children
+     */
+    Children limitOne(boolean condition);
+
+    /**
+     * 从 0 开始取 size 个数
+     *
+     * @param num 个数
+     * @return children
+     */
+    default Children limit(int num) {
+        return limit(true, num);
+    }
+
+    /**
+     * 从 0 开始取 size 个数
+     *
+     * @param num 个数
+     * @return children
+     */
+    Children limit(boolean condition, int num);
+
+    /**
+     * 从 start 开始取 size 个
+     *
+     * @param start 起始位置
+     * @param num   个数
+     * @return children
+     */
+    default Children limit(int start, int num) {
+        return limit(true, start, num);
+    }
+
+    /**
+     * 从 start 开始取 size 个
+     *
+     * @param condition 执行条件
+     * @param start     起始位置
+     * @param num       个数
+     * @return children
+     */
+    Children limit(boolean condition, int start, int num);
 }

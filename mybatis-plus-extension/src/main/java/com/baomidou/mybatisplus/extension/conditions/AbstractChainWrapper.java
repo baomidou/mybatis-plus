@@ -152,6 +152,22 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return typedThis;
     }
 
+    public Children limitOne(boolean condition) {
+        getWrapper().limitOne(condition);
+        return typedThis;
+    }
+
+    public Children limit(boolean condition, int num) {
+        getWrapper().limit(condition, num);
+        return typedThis;
+    }
+
+    @Override
+    public Children limit(boolean condition, int start, int num) {
+        getWrapper().limit(condition, start, num);
+        return typedThis;
+    }
+
     @Override
     public Children isNull(boolean condition, R column) {
         getWrapper().isNull(condition, column);
