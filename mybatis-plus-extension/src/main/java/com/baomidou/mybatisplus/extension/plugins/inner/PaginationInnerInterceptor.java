@@ -449,7 +449,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected void handlerLimit(IPage<?> page, Long limit) {
         final long size = page.getSize();
-        if (limit != null && limit > 0 && size > limit) {
+        if (limit != null && (limit > 0 && size > limit || size < 0)) {
             page.setSize(limit);
         }
     }
