@@ -61,6 +61,13 @@ public final class StringUtils {
     private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
 
     /**
+     * 字符串去除空白内容
+     *
+     * <ul> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
+     */
+    private static final Pattern REPLACE_BLANK = Pattern.compile("\\s*|\t|\r|\n");
+
+    /**
      * 判断字符串中是否全是空白字符
      *
      * @param cs 需要判断的字符串
@@ -571,18 +578,18 @@ public final class StringUtils {
 
     /**
      * 字符串去除空白内容：
-     * \n 回车
-     * \t 水平制表符
-     * \s 空格
-     * \r 换行
+     * <ul>
+     *     <li>\n 回车</li>
+     *     <li>\t 水平制表符</li>
+     *     <li>\s 空格</li>
+     *     <li>\r 换行</li>
+     * </ul>
      *
      * @param str 字符串
-     * @return
      */
     public static String replaceBlank(String str) {
         Objects.requireNonNull(str);
-        Pattern pattern = Pattern.compile("\\s*|\t|\r|\n");
-        Matcher matcher = pattern.matcher(str);
+        Matcher matcher = REPLACE_BLANK.matcher(str);
         return matcher.replaceAll("");
     }
 }
