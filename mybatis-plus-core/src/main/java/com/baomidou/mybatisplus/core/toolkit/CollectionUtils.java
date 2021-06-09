@@ -15,9 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -139,5 +137,41 @@ public class CollectionUtils {
             return (int) ((float) expectedSize / 0.75F + 1.0F);
         }
         return Integer.MAX_VALUE; // any large value
+    }
+
+    // 提供处理Map多key取值工具方法
+
+    /**
+     * 批量取出Map中的值
+     *
+     * @param map  map
+     * @param keys 键的集合
+     * @param <K>  key的泛型
+     * @param <V>  value的泛型
+     * @return value的泛型的集合
+     */
+    public static <K, V> List<V> getCollection(Map<K, V> map, Iterable<K> keys) {
+        List<V> result = new ArrayList<>();
+        if (map != null && !map.isEmpty() && keys != null) {
+            keys.forEach(key -> Optional.ofNullable(map.get(key)).ifPresent(result::add));
+        }
+        return result;
+    }
+
+    /**
+     * 批量取出Map中的值
+     *
+     * @param map        map
+     * @param keys       键的集合
+     * @param comparator 排序器
+     * @param <K>        key的泛型
+     * @param <V>        value的泛型
+     * @return value的泛型的集合
+     */
+    public static <K, V> List<V> getCollection(Map<K, V> map, Iterable<K> keys, Comparator<V> comparator) {
+        Objects.requireNonNull(comparator);
+        List<V> result = getCollection(map, keys);
+        Collections.sort(result, comparator);
+        return result;
     }
 }
