@@ -126,6 +126,7 @@ public abstract class InterceptorIgnoreHelper {
             .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
             .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
             .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
+            .sharding(chooseBoolean(mapper.getSharding(), method.getSharding()))
             .others(chooseOthers(mapper.getOthers(), method.getOthers()))
             .build();
     }
