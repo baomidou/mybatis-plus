@@ -167,15 +167,16 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             buildSql = this.concatOrderBy(buildSql, orders);
         }
 
-        // size 小于 0 不构造分页sql
-        if (page.getSize() < 0) {
+        // size 小于 0 且不限制返回值则不构造分页sql
+        Long _limit = page.maxLimit() != null ? page.maxLimit() : maxLimit;
+        if (page.getSize() < 0 && null == _limit) {
             if (addOrdered) {
                 PluginUtils.mpBoundSql(boundSql).sql(buildSql);
             }
             return;
         }
 
-        handlerLimit(page);
+        handlerLimit(page, _limit);
         IDialect dialect = findIDialect(executor);
 
         final Configuration configuration = ms.getConfiguration();
@@ -446,10 +447,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      *
      * @param page IPage
      */
-    protected void handlerLimit(IPage<?> page) {
+    protected void handlerLimit(IPage<?> page, Long limit) {
         final long size = page.getSize();
-        Long pageMaxLimit = page.maxLimit();
-        Long limit = pageMaxLimit != null ? pageMaxLimit : maxLimit;
         if (limit != null && limit > 0 && size > limit) {
             page.setSize(limit);
         }

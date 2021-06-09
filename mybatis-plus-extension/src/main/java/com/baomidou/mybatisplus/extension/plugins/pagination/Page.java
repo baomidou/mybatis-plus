@@ -283,9 +283,9 @@ public class Page<T> implements IPage<T> {
         return new Page(current, size, total, searchCount);
     }
 
-    /*
+    /**
      * --begin------------- 未来抛弃移除的方法 -------------begin--
-     * 该部分属性转移至 com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO
+     * 该部分属性转移至 {@link PageDTO}
      */
     @Deprecated
     public String getCountId() {
@@ -311,6 +311,6 @@ public class Page<T> implements IPage<T> {
     public boolean isSearchCount() {
         return this.searchCount;
     }
-    /* --end------------- 未来抛弃移除的方法 -------------end-- */
+    /** --end------------- 未来抛弃移除的方法 -------------end-- */
 
 }
