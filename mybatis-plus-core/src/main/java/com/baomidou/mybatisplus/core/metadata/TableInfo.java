@@ -176,7 +176,7 @@ public class TableInfo implements Constants {
      */
     @Getter
     @Setter
-    private List<TableFieldInfo> orderByFields;
+    private List<TableFieldInfo> orderByFields = new LinkedList<>();
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -454,9 +454,6 @@ public class TableInfo implements Constants {
                 this.withUpdateFill = true;
             }
             if (i.isOrderBy()) {
-                if (null == this.orderByFields) {
-                    this.orderByFields = new LinkedList<>();
-                }
                 this.orderByFields.add(i);
             }
             if (i.isVersion()) {

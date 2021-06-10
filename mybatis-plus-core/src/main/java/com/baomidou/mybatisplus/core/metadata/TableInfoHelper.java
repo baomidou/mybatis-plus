@@ -282,8 +282,6 @@ public class TableInfoHelper {
         boolean existTableId = isExistTableId(list);
         // 是否存在 @TableLogic 注解
         boolean existTableLogic = isExistTableLogic(list);
-        // 是否存在 @OrderBy 注解
-        boolean existOrderBy = isExistOrderBy(list);
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
@@ -291,34 +289,42 @@ public class TableInfoHelper {
                 continue;
             }
 
+            boolean isPK = false;
+            boolean isOrderBy = field.getAnnotation(OrderBy.class) != null;
+
             /* 主键ID 初始化 */
             if (existTableId) {
                 TableId tableId = field.getAnnotation(TableId.class);
                 if (tableId != null) {
                     if (isReadPK) {
                         throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
-                    } else {
-                        initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
-                        isReadPK = true;
-                        continue;
                     }
+
+                    initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
+                    isPK = isReadPK = true;
                 }
             } else if (!isReadPK) {
-                isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, reflector);
-                if (isReadPK) {
-                    continue;
-                }
+                isPK = isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, reflector);
+
             }
+
+            if (isPK) {
+                if (isOrderBy) {
+                    tableInfo.getOrderByFields().add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, true));
+                }
+                continue;
+            }
+
             final TableField tableField = field.getAnnotation(TableField.class);
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, existOrderBy));
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, isOrderBy));
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, existOrderBy));
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, isOrderBy));
         }
 
         /* 字段列表 */
@@ -336,7 +342,7 @@ public class TableInfoHelper {
      * </p>
      *
      * @param list 字段列表
-     * @return true 为存在 @TableId 注解;
+     * @return true 为存在 {@link TableId} 注解;
      */
     public static boolean isExistTableId(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(TableId.class));
@@ -348,7 +354,7 @@ public class TableInfoHelper {
      * </p>
      *
      * @param list 字段列表
-     * @return true 为存在 @TableId 注解;
+     * @return true 为存在 {@link TableLogic} 注解;
      */
     public static boolean isExistTableLogic(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(TableLogic.class));
@@ -360,7 +366,7 @@ public class TableInfoHelper {
      * </p>
      *
      * @param list 字段列表
-     * @return true 为存在 @TableId 注解;
+     * @return true 为存在 {@link OrderBy} 注解;
      */
     public static boolean isExistOrderBy(List<Field> list) {
         return list.stream().anyMatch(field -> field.isAnnotationPresent(OrderBy.class));
