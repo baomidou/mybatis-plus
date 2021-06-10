@@ -11,16 +11,6 @@ import java.lang.reflect.Field;
  * Created by hcl at 2021/5/14
  */
 public class SerializedLambdaMeta implements LambdaMeta {
-    private static final Field FIELD_CAPTURING_CLASS;
-
-    static {
-        try {
-            Class<SerializedLambda> aClass = SerializedLambda.class;
-            FIELD_CAPTURING_CLASS = ReflectionKit.setAccessible(aClass.getDeclaredField("capturingClass"));
-        } catch (NoSuchFieldException e) {
-            throw new MybatisPlusException(e);
-        }
-    }
 
     private final SerializedLambda lambda;
 
@@ -42,8 +32,8 @@ public class SerializedLambdaMeta implements LambdaMeta {
 
     public Class<?> getCapturingClass() {
         try {
-            return (Class<?>) FIELD_CAPTURING_CLASS.get(lambda);
-        } catch (IllegalAccessException e) {
+            return Class.forName(lambda.getCapturingClass().replace('/', '.'));
+        } catch (ClassNotFoundException e) {
             throw new MybatisPlusException(e);
         }
     }
