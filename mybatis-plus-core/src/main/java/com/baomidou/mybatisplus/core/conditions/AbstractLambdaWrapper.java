@@ -39,9 +39,6 @@ import static java.util.stream.Collectors.joining;
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
         extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
-    private Map<String, ColumnCache> columnMap = null;
-    private boolean initColumnMap = false;
-
     @SuppressWarnings("unchecked")
     @Override
     protected String columnsToString(SFunction<T, ?>... columns) {
@@ -74,26 +71,11 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     protected ColumnCache getColumnCache(SFunction<T, ?> column) {
         LambdaMeta meta = LambdaUtils.extract(column);
         String fieldName = PropertyNamer.methodToProperty(meta.getImplMethodName());
-        tryInitCache(meta.getInstantiatedClass());
-        return getColumnCache(fieldName, meta.getInstantiatedClass());
-    }
+        Class<?> instantiatedClass = meta.getInstantiatedClass();
 
-    private void tryInitCache(Class<?> lambdaClass) {
-        if (!initColumnMap) {
-            final Class<T> entityClass = getEntityClass();
-            if (entityClass != null) {
-                lambdaClass = entityClass;
-            }
-            columnMap = LambdaUtils.getColumnMap(lambdaClass);
-            Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
-            initColumnMap = true;
-        }
-    }
-
-    private ColumnCache getColumnCache(String fieldName, Class<?> lambdaClass) {
-        ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
+        ColumnCache columnCache = getColumnCache(fieldName, instantiatedClass);
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
-                fieldName, lambdaClass.getName());
+            fieldName, instantiatedClass.getName());
         return columnCache;
     }
 }

@@ -79,7 +79,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     public UpdateWrapper<T> set(boolean condition, String column, Object val, String mapping) {
         return maybeDo(condition, () -> {
             String sql = formatParam(mapping, val);
-            sqlSet.add(column + Constants.EQUALS + sql);
+            sqlSet.add(columnToString(column) + Constants.EQUALS + sql);
         });
     }
 

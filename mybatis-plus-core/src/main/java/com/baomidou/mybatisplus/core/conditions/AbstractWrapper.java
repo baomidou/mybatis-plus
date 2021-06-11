@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -77,6 +78,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 实体类型(主要用于确定泛型以及取TableInfo缓存)
      */
     private Class<T> entityClass;
+
+    /**
+     * 字段缓存
+     */
+    private Map<String, ColumnCache> columnCacheMap = null;
+
+    /**
+     * 是否已经初始化了字段缓存
+     */
+    private boolean initColumnCacheMap = false;
 
     @Override
     public T getEntity() {
@@ -600,7 +611,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 获取 columnName
      */
     protected String columnToString(R column) {
-        return (String) column;
+        String columnStr = (String) column;
+        return Optional.ofNullable(getColumnCache(columnStr)).map(ColumnCache::getColumn).orElse(columnStr);
     }
 
     /**
@@ -634,5 +646,38 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public interface DoSomething {
 
         void doIt();
+    }
+
+    protected ColumnCache getColumnCache(String fieldName) {
+        try {
+            return getColumnCache(fieldName, getEntityClass());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * 获取对应的列信息
+     * <p>
+     * 如果获取不到列信息，那么本次条件组装将会失败
+     *
+     * @return 列
+     * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
+     */
+    protected ColumnCache getColumnCache(String fieldName,Class<?> entityClass) {
+        tryInitCache(entityClass);
+        return columnCacheMap.get(LambdaUtils.formatKey(fieldName));
+    }
+
+    private void tryInitCache(Class<?> entityClass) {
+        if (!initColumnCacheMap) {
+            initColumnCacheMap = true;
+            final Class<T> entityClassT = getEntityClass();
+            if (entityClassT != null) {
+                entityClass = entityClassT;
+            }
+            columnCacheMap = LambdaUtils.getColumnMap(entityClass);
+            Assert.notNull(columnCacheMap, "can not find entityClass cache for this entity [%s]", entityClass.getName());
+        }
     }
 }

@@ -24,9 +24,13 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * Entity 对象封装操作类
@@ -80,7 +84,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     public QueryWrapper<T> select(String... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setStringValue(String.join(StringPool.COMMA, columns));
+            this.sqlSelect.setStringValue(columnsToString(false, columns));
         }
         return typedThis;
     }
@@ -126,5 +130,15 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public void clear() {
         super.clear();
         sqlSelect.toNull();
+    }
+
+    protected String columnsToString(boolean onlyColumn, String... columns) {
+        return Arrays.stream(columns).map(i -> columnToString(onlyColumn, i)).collect(joining(StringPool.COMMA));
+    }
+
+    protected String columnToString(boolean onlyColumn, String column) {
+        return Optional.ofNullable(getColumnCache(column))
+            .map(cache -> onlyColumn ? cache.getColumn() : cache.getColumnSelect())
+            .orElse(column);
     }
 }
