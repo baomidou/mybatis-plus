@@ -25,7 +25,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -43,8 +45,18 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     private final SharedString sqlSelect = new SharedString();
 
+    /**
+     * 列名转换
+     */
+    private Function<String, String> columnToString = s -> s;
+
     public QueryWrapper() {
-        this(null);
+        this((T) null);
+    }
+
+    public QueryWrapper(Function<String, String> columnToString) {
+        this((T) null);
+        this.columnToString = Objects.requireNonNull(columnToString);
     }
 
     public QueryWrapper(T entity) {
@@ -126,5 +138,10 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public void clear() {
         super.clear();
         sqlSelect.toNull();
+    }
+
+    @Override
+    protected String columnToString(String column) {
+        return columnToString.apply(column);
     }
 }

@@ -18,9 +18,11 @@ package com.baomidou.mybatisplus.test;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 
 @TableName("sys_user")
 @Data
+@FieldNameConstants
 public class User {
 
     private Integer id;

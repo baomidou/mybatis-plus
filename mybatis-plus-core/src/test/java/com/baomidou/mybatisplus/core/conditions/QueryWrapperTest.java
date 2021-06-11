@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.conditions;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,14 @@ import java.util.*;
  * @since 2021-01-27
  */
 class QueryWrapperTest extends BaseWrapperTest {
+
+    @Test
+    void testColumnToString() {
+        QueryWrapper<Entity> ew = new QueryWrapper<Entity>(StringUtils::camelToUnderline)
+            .eq(Entity.Fields.id, 123)
+            .eq(Entity.Fields.roleId, 213);
+        logSqlWhere("QueryWrapper#columnToString测试", ew, "(id = ? AND role_id = ?)");
+    }
 
     @Test
     void testCacheSqlSegment() {

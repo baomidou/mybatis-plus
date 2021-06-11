@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Data;
+import lombok.experimental.FieldNameConstants;
 import org.assertj.core.api.Assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +35,7 @@ class BaseWrapperTest {
     }
 
     @Data
+    @FieldNameConstants
     protected static class Entity {
         private Integer id;
 

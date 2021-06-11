@@ -25,7 +25,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 /**
  * Update 条件封装
@@ -42,9 +44,19 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     private final List<String> sqlSet;
 
+    /**
+     * 列名转换
+     */
+    private Function<String, String> columnToString = s -> s;
+
     public UpdateWrapper() {
         // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
-        this(null);
+        this((T) null);
+    }
+
+    public UpdateWrapper(Function<String, String> columnToString) {
+        this((T) null);
+        this.columnToString = Objects.requireNonNull(columnToString);
     }
 
     public UpdateWrapper(T entity) {
@@ -79,7 +91,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     public UpdateWrapper<T> set(boolean condition, String column, Object val, String mapping) {
         return maybeDo(condition, () -> {
             String sql = formatParam(mapping, val);
-            sqlSet.add(column + Constants.EQUALS + sql);
+            sqlSet.add(columnToString(column) + Constants.EQUALS + sql);
         });
     }
 
@@ -114,5 +126,10 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     public void clear() {
         super.clear();
         sqlSet.clear();
+    }
+
+    @Override
+    protected String columnToString(String column) {
+        return columnToString.apply(column);
     }
 }
