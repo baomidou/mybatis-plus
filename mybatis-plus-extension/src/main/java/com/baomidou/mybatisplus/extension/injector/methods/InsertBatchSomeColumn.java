@@ -92,7 +92,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         if (tableInfo.havePK()) {
             if (tableInfo.getIdType() == IdType.AUTO) {
                 /* 自增主键 */
-                keyGenerator = new Jdbc3KeyGenerator();
+                keyGenerator = Jdbc3KeyGenerator.INSTANCE;
                 keyProperty = tableInfo.getKeyProperty();
                 keyColumn = tableInfo.getKeyColumn();
             } else {
