@@ -93,7 +93,6 @@ public class MybatisConfiguration extends Configuration {
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
-        logger.debug("addMappedStatement: " + ms.getId());
         if (mappedStatements.containsKey(ms.getId())) {
             /*
              * 说明已加载了xml中的节点； 忽略mapper中的 SqlProvider 数据
