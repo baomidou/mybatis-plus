@@ -56,13 +56,13 @@ class ActiveRecordTest {
     @Transactional
     @Order(1)
     void testInsert() {
-        H2Student student = new H2Student(null, "测试学生", 2);
+        H2Student student = new H2Student(3L, "测试学生", 2);
         assertThat(student.insert()).isTrue();
         System.out.println(student.getId());
-//        assertThat(student.getId()).isEqualTo(1);
+        assertThat(student.getId()).isEqualTo(3);
+        student.setId(null);
         assertThat(student.insert()).isTrue();
         System.out.println(student.getId());
-//        assertThat(student.getId()).isEqualTo(2);
     }
 
     @Test

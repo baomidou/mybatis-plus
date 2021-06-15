@@ -59,7 +59,7 @@ class H2Delete1Eq1Test extends BaseTest {
         h2User.setName("2");
         log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).orderByAsc("name")));
 
-        for (long i = 0; i < 10L; i++) {
+        for (long i = 30; i < 50L; i++) {
             defaultMapper.insert(new H2Student(i, "Tom长大了", 1));
         }
         log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).eq("name", "2").orderByAsc("name")));

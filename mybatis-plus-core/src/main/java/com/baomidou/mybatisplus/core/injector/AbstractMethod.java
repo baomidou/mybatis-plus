@@ -105,8 +105,7 @@ public abstract class AbstractMethod implements Constants {
         }
         if (ew) {
             sqlScript += NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(U_WRAPPER_SQL_SET),
-                String.format("%s != null and %s != null", WRAPPER, U_WRAPPER_SQL_SET), false);
+            sqlScript += convertIfEwParam(U_WRAPPER_SQL_SET, false);
         }
         sqlScript = SqlScriptUtils.convertSet(sqlScript);
         return sqlScript;
@@ -118,8 +117,7 @@ public abstract class AbstractMethod implements Constants {
      * @return sql
      */
     protected String sqlComment() {
-        return SqlScriptUtils.convertIf(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_COMMENT),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_COMMENT), true);
+        return convertIfEwParam(Q_WRAPPER_SQL_COMMENT, true);
     }
 
     /**
@@ -128,8 +126,12 @@ public abstract class AbstractMethod implements Constants {
      * @return sql
      */
     protected String sqlFirst() {
-        return SqlScriptUtils.convertIf(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_FIRST),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_FIRST), true);
+        return convertIfEwParam(Q_WRAPPER_SQL_FIRST, true);
+    }
+
+    protected String convertIfEwParam(final String param, final boolean newLine) {
+        return SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(param),
+            String.format("%s != null and %s != null", WRAPPER, param), newLine);
     }
 
     /**
@@ -149,8 +151,7 @@ public abstract class AbstractMethod implements Constants {
         if (!queryWrapper) {
             return selectColumns;
         }
-        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), selectColumns);
+        return convertChooseEwSelect(selectColumns);
     }
 
     /**
@@ -159,8 +160,7 @@ public abstract class AbstractMethod implements Constants {
      * @return count sql 脚本
      */
     protected String sqlCount() {
-        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), ASTERISK);
+        return convertChooseEwSelect(ASTERISK);
     }
 
     /**
@@ -169,8 +169,12 @@ public abstract class AbstractMethod implements Constants {
      * @param table 表信息
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
+        return convertChooseEwSelect(table.getAllSqlSelect());
+    }
+
+    protected String convertChooseEwSelect(final String otherwise) {
         return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), table.getAllSqlSelect());
+            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), otherwise);
     }
 
     /**
