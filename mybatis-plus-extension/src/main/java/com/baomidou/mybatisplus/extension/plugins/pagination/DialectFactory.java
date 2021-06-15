@@ -47,13 +47,13 @@ public class DialectFactory {
                 || dbType == DbType.OCEAN_BASE) {
                 dialect = new MySqlDialect();
             }
-            // postgresql same type
+            // oracle same type
             else if (dbType == DbType.ORACLE
                 || dbType == DbType.DM
                 || dbType == DbType.GAUSS) {
                 dialect = new OracleDialect();
             }
-            // oracle same type
+            // postgresql same type
             else if (dbType == DbType.POSTGRE_SQL
                 || dbType == DbType.H2
                 || dbType == DbType.SQLITE
