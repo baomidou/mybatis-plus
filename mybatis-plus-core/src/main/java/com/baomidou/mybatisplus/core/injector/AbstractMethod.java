@@ -288,7 +288,7 @@ public abstract class AbstractMethod implements Constants {
         if (null != resultMap) {
             /* 返回 resultMap 映射结果集 */
             return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
-                resultMap, null, new NoKeyGenerator(), null, null);
+                resultMap, null, NoKeyGenerator.INSTANCE, null, null);
         } else {
             /* 普通查询 */
             return addSelectMappedStatementForOther(mapperClass, id, sqlSource, table.getEntityType());
@@ -301,7 +301,7 @@ public abstract class AbstractMethod implements Constants {
     protected MappedStatement addSelectMappedStatementForOther(Class<?> mapperClass, String id, SqlSource sqlSource,
                                                                Class<?> resultType) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
-            null, resultType, new NoKeyGenerator(), null, null);
+            null, resultType, NoKeyGenerator.INSTANCE, null, null);
     }
 
     /**
@@ -319,7 +319,7 @@ public abstract class AbstractMethod implements Constants {
      */
     protected MappedStatement addDeleteMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.DELETE, null,
-            null, Integer.class, new NoKeyGenerator(), null, null);
+            null, Integer.class, NoKeyGenerator.INSTANCE, null, null);
     }
 
     /**
@@ -328,7 +328,7 @@ public abstract class AbstractMethod implements Constants {
     protected MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> parameterType, String id,
                                                        SqlSource sqlSource) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, parameterType, null,
-            Integer.class, new NoKeyGenerator(), null, null);
+            Integer.class, NoKeyGenerator.INSTANCE, null, null);
     }
 
     /**
