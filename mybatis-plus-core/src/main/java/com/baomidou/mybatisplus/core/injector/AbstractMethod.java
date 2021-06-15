@@ -118,8 +118,8 @@ public abstract class AbstractMethod implements Constants {
      * @return sql
      */
     protected String sqlComment() {
-        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_COMMENT),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_COMMENT), EMPTY);
+        return SqlScriptUtils.convertIf(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_COMMENT),
+            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_COMMENT), true);
     }
 
     /**
@@ -128,8 +128,8 @@ public abstract class AbstractMethod implements Constants {
      * @return sql
      */
     protected String sqlFirst() {
-        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_FIRST),
-            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_FIRST), EMPTY);
+        return SqlScriptUtils.convertIf(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_FIRST),
+            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_FIRST), true);
     }
 
     /**
