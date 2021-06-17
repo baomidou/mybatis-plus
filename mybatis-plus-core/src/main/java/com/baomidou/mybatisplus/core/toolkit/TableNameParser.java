@@ -151,10 +151,10 @@ public final class TableNameParser {
      * @return 判断是不是 Oracle 特殊的删除手法
      */
     private static boolean isOracleSpecialDelete(String current, List<SqlToken> tokens, int index) {
-        if (TOKEN_DELETE.equals(current)) {
+        if (TOKEN_DELETE.equalsIgnoreCase(current)) {
             if (hasMoreTokens(tokens, index++)) {
                 String next = tokens.get(index).getValue();
-                return !KEYWORD_FROM.equals(next) && !TOKEN_ALL.equals(next);
+                return !KEYWORD_FROM.equalsIgnoreCase(next) && !TOKEN_ALL.equals(next);
             }
         }
         return false;
