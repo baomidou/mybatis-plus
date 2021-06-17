@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.3.1"
+    version = "3.4.4.3-SNAPSHOT"
 }
 
 ext {
@@ -184,8 +184,8 @@ subprojects {
     publishing {
         repositories {
             maven {
-                def userName = "andto"
-                def passWord = "243194995"
+                def userName = System.getProperty("un")
+                def passWord = System.getProperty("ps")
                 def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
