@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.annotations.Param;
 
@@ -155,10 +156,18 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录
+     * <p>请自行保存只能查询一条记录，例如 qw.last("limit 1") 限制取一条记录</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
+        List<T> ts = this.selectList(queryWrapper);
+        if (CollectionUtils.isNotEmpty(ts)) {
+            System.err.println("One record is expected, but the query result is multiple records");
+            return ts.get(0);
+        }
+        return null;
+    }
 
     /**
      * 根据 Wrapper 条件，查询总记录数

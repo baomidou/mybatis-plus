@@ -43,7 +43,6 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             new SelectById(),
             new SelectBatchByIds(),
             new SelectByMap(),
-            new SelectOne(),
             new SelectCount(),
             new SelectMaps(),
             new SelectMapsPage(),
