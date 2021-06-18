@@ -157,6 +157,7 @@ public class TableInfoHelper {
         TableInfo tableInfo = new TableInfo(clazz);
         tableInfo.setCurrentNamespace(currentNamespace);
         tableInfo.setConfiguration(configuration);
+        tableInfo.setReflector(configuration.getReflectorFactory().findForClass(clazz));
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
 
         /* 初始化表名相关 */
@@ -273,8 +274,7 @@ public class TableInfoHelper {
     private static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
-        Reflector reflector = reflectorFactory.findForClass(clazz);
+        Reflector reflector = tableInfo.getReflector();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;

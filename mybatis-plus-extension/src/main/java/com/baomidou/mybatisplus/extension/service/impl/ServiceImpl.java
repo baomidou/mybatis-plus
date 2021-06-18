@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -26,13 +27,16 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -161,7 +165,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-            Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
+            Object idVal = ReflectionKit.getFieldValue(tableInfo.getReflector(), entity, tableInfo.getKeyProperty());
             return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
         }
         return false;
@@ -174,8 +178,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+        Reflector reflector = tableInfo.getReflector();
         return SqlHelper.saveOrUpdateBatch(this.entityClass, this.mapperClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = ReflectionKit.getFieldValue(entity, keyProperty);
+            Object idVal = ReflectionKit.getFieldValue(reflector, entity, keyProperty);
             return StringUtils.checkValNull(idVal)
                 || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
         }, (sqlSession, entity) -> {
@@ -253,4 +258,53 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
+        Class<T> entityClass = getEntityClass();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        if (tableInfo.isWithLogicDelete()) {
+            try {
+                List<T> entityList = new ArrayList<>();
+                Reflector reflector = tableInfo.getReflector();
+                for (Serializable id : idList) {
+                    // 这是个兼容项,可能会有人传实体
+                    if (entityClass == id.getClass()) {
+                        entityList.add((T) id);
+                    } else {
+                        T entity = (T) reflector.getDefaultConstructor().newInstance();
+                        ReflectionKit.setFieldValue(reflector,entity,tableInfo.getKeyProperty(), id);
+                        entityList.add(entity);
+                    }
+                }
+                return this.updateBatchById(entityList);
+            } catch (ReflectiveOperationException e) {
+                log.error("deleteBatch exception:", e);
+                throw new MybatisPlusException("deleteBatch exception:", e);
+            }
+        }
+        return IService.super.removeByIds(idList);
+    }
+
+    @Override
+    public boolean removeById(Serializable id) {
+        Class<T> entityClass = getEntityClass();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        if (tableInfo.isWithLogicDelete()) {
+            // 这是个兼容项,可能会有人传实体
+            if (entityClass == id.getClass()) {
+                return this.updateById((T) id);
+            }
+            Reflector reflector = tableInfo.getReflector();
+            try {
+                T entity = (T) reflector.getDefaultConstructor().newInstance();
+                ReflectionKit.setFieldValue(reflector,entity,tableInfo.getKeyProperty(), id);
+                return this.updateById(entity);
+            } catch (ReflectiveOperationException e) {
+                log.error("delete exception:", e);
+                throw new MybatisPlusException("delete exception:", e);
+            }
+        }
+        return IService.super.removeById(id);
+    }
 }

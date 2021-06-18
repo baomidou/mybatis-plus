@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.Reflector;
 import org.springframework.core.GenericTypeResolver;
 
 import java.lang.reflect.AccessibleObject;
@@ -80,6 +81,22 @@ public final class ReflectionKit {
             return field.get(entity);
         } catch (ReflectiveOperationException e) {
             throw ExceptionUtils.mpe("Error: Cannot read field in %s.  Cause:", e, cls.getSimpleName());
+        }
+    }
+
+    public static Object getFieldValue(Reflector reflector, Object entity, String fieldName) {
+        try {
+            return reflector.getGetInvoker(fieldName).invoke(entity, null);
+        } catch (ReflectiveOperationException e) {
+            throw ExceptionUtils.mpe("Error: Cannot read field in %s.  Cause:", e, entity.getClass().getSimpleName());
+        }
+    }
+
+    public static void setFieldValue(Reflector reflector, Object entity, String fieldName, Object... values) {
+        try {
+            reflector.getSetInvoker(fieldName).invoke(entity, values);
+        } catch (ReflectiveOperationException e) {
+            throw ExceptionUtils.mpe("Error: Cannot write field in %s.  Cause:", e, entity.getClass().getSimpleName());
         }
     }
 
