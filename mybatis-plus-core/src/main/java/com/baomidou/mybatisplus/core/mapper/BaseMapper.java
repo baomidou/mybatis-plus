@@ -106,6 +106,13 @@ public interface BaseMapper<T> extends Mapper<T> {
     int deleteByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);
 
     /**
+     * 根据 ID 删除
+     *
+     * @param entity 实体
+     */
+    int deleteById(T entity);
+
+    /**
      * 根据 entity 条件，删除记录
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）

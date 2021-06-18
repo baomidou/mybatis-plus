@@ -109,6 +109,15 @@ public interface IService<T> {
     }
 
     /**
+     * 根据 ID 删除
+     *
+     * @param entity 实体
+     */
+    default boolean removeById(T entity) {
+        return SqlHelper.retBool(getBaseMapper().deleteById(entity));
+    }
+
+    /**
      * 根据 columnMap 条件，删除记录
      *
      * @param columnMap 表字段 map 对象

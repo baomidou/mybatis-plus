@@ -30,6 +30,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.*;
@@ -177,6 +178,11 @@ public class TableInfo implements Constants {
     @Getter
     @Setter
     private List<TableFieldInfo> orderByFields = new LinkedList<>();
+
+    @Getter
+    @Setter
+    private Reflector reflector;
+
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
