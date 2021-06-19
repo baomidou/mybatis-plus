@@ -37,14 +37,20 @@ public class DeleteBatchByIds extends AbstractMethod {
         if (tableInfo.isWithLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 tableInfo.getKeyColumn(),
-                SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),
+                SqlScriptUtils.convertForeach(
+                    SqlScriptUtils.convertChoose("@com.baomidou.mybatisplus.core.toolkit.ReflectionKit@isPrimitiveOrWrapper(item.getClass())",
+                        "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
+                    COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-                SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA));
+                SqlScriptUtils.convertForeach(
+                    SqlScriptUtils.convertChoose("@com.baomidou.mybatisplus.core.toolkit.ReflectionKit@isPrimitiveOrWrapper(item.getClass())",
+                        "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
+                    COLLECTION, null, "item", COMMA));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
