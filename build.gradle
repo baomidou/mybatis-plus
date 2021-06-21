@@ -47,7 +47,7 @@ ext {
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.19.0",
+        "assertj-core"               : "org.assertj:assertj-core:3.20.2",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
