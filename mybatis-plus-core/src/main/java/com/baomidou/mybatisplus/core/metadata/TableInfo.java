@@ -15,6 +15,21 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
+import org.apache.ibatis.mapping.ResultFlag;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -22,21 +37,12 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.mapping.ResultFlag;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * 数据库表反射信息
@@ -177,6 +183,13 @@ public class TableInfo implements Constants {
     @Getter
     @Setter
     private List<TableFieldInfo> orderByFields = new LinkedList<>();
+
+    /**
+     * 别名查询扩展字段信息列表
+     *
+     * @since 3.4.4.3
+     */
+    private List<AliasFieldInfo> aliasFieldList;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -469,6 +482,14 @@ public class TableInfo implements Constants {
 
     public List<TableFieldInfo> getFieldList() {
         return Collections.unmodifiableList(fieldList);
+    }
+
+    void setAliasFieldList(List<AliasFieldInfo> aliasFieldList) {
+        this.aliasFieldList = aliasFieldList;
+    }
+
+    public List<AliasFieldInfo> getAliasFieldList() {
+        return CollectionUtils.isEmpty(aliasFieldList) ? Collections.emptyList() : Collections.unmodifiableList(aliasFieldList);
     }
 
     @Deprecated

@@ -15,10 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -32,11 +40,24 @@ import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.OrderBy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
@@ -167,6 +188,9 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
 
+        /* 初始化别名查询扩展字段信息 */
+        initAliasFields(clazz, tableInfo, excludePropertyList);
+
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
 
@@ -275,7 +299,7 @@ public class TableInfoHelper {
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
         Reflector reflector = reflectorFactory.findForClass(clazz);
-        List<Field> list = getAllFields(clazz);
+        List<Field> list = getAllFields(clazz, TableInfoHelper::isTableField);
         // 标记是否读取到主键
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
@@ -334,6 +358,31 @@ public class TableInfoHelper {
         if (!isReadPK) {
             logger.warn(String.format("Can not find table primary key in Class: \"%s\".", clazz.getName()));
         }
+    }
+
+    /**
+     * <p>
+     * 初始化别名查询扩展字段
+     * </p>
+     *
+     * @param clazz           实体类
+     * @param tableInfo       数据库表反射信息
+     * @param excludeProperty 要排除的属性
+     */
+    private static void initAliasFields(Class<?> clazz, TableInfo tableInfo, List<String> excludeProperty) {
+        List<Field> list = getAllFields(clazz, TableInfoHelper::isAliasField);
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
+        ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
+        Reflector reflector = reflectorFactory.findForClass(clazz);
+        List<AliasFieldInfo> aliasFields = list.stream()
+            //过滤掉排除的属性
+            .filter(field -> !excludeProperty.contains(field.getName()))
+            .map(field -> new AliasFieldInfo(field, field.getAnnotation(TableField.class), reflector))
+            .collect(toList());
+
+        tableInfo.setAliasFieldList(aliasFields);
     }
 
     /**
@@ -490,17 +539,38 @@ public class TableInfoHelper {
      * 获取该类的所有属性列表
      * </p>
      *
-     * @param clazz 反射类
+     * @param clazz          反射类
+     * @param fieldPredicate 字段过滤条件
      * @return 属性集合
      */
-    public static List<Field> getAllFields(Class<?> clazz) {
+    public static List<Field> getAllFields(Class<?> clazz, Predicate<Field> fieldPredicate) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
         return fieldList.stream()
-            .filter(field -> {
-                /* 过滤注解非表字段属性 */
-                TableField tableField = field.getAnnotation(TableField.class);
-                return (tableField == null || tableField.exist());
-            }).collect(toList());
+            .filter(fieldPredicate).collect(toList());
+    }
+
+    /**
+     * <p>
+     * 判断字段是否为表字段
+     * </p>
+     *
+     * @param field 字段
+     */
+    public static boolean isTableField(Field field) {
+        TableField tableField = field.getAnnotation(TableField.class);
+        return (tableField == null || tableField.exist());
+    }
+
+    /**
+     * <p>
+     * 判断字段是否为别名查询扩展字段
+     * </p>
+     *
+     * @param field 字段
+     */
+    public static boolean isAliasField(Field field) {
+        TableField tableField = field.getAnnotation(TableField.class);
+        return tableField != null && !tableField.exist() && tableField.aliasField() && StringUtils.isNotBlank(tableField.value());
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {

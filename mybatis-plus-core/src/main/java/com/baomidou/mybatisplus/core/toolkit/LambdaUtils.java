@@ -15,19 +15,27 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.*;
+import static java.util.Locale.ENGLISH;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
-import static java.util.Locale.ENGLISH;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.AliasFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.ProxyLambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambdaMeta;
 
 /**
  * Lambda 解析工具类
@@ -41,6 +49,11 @@ public final class LambdaUtils {
      * 字段映射
      */
     private static final Map<String, Map<String, ColumnCache>> COLUMN_CACHE_MAP = new ConcurrentHashMap<>();
+
+    /**
+     * 别名扩展字段
+     */
+    private static final Map<String, Map<String, ColumnCache>> ALIAS_COLUMN_CACHE_MAP = new ConcurrentHashMap<>();
 
     /**
      * 该缓存可能会在任意不定的时间被清除
@@ -82,7 +95,12 @@ public final class LambdaUtils {
      * @param tableInfo 表信息
      */
     public static void installCache(TableInfo tableInfo) {
-        COLUMN_CACHE_MAP.put(tableInfo.getEntityType().getName(), createColumnCacheMap(tableInfo));
+        String name = tableInfo.getEntityType().getName();
+        COLUMN_CACHE_MAP.put(name, createColumnCacheMap(tableInfo));
+        Map<String, ColumnCache> aliasColumnCacheMap = createAliasColumnCacheMap(tableInfo);
+        if (ObjectUtils.isNotEmpty(aliasColumnCacheMap)) {
+            ALIAS_COLUMN_CACHE_MAP.put(name, aliasColumnCacheMap);
+        }
     }
 
     /**
@@ -102,7 +120,7 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
         );
         return map;
     }
@@ -118,6 +136,42 @@ public final class LambdaUtils {
             TableInfo info = TableInfoHelper.getTableInfo(clazz);
             return info == null ? null : createColumnCacheMap(info);
         });
+    }
+
+    /**
+     * 获取别名扩展字段 MAP
+     *
+     * @param clazz 实体类
+     * @return 缓存 map
+     */
+    public static Map<String, ColumnCache> getAliasColumnMap(Class<?> clazz) {
+        String className = clazz.getName();
+        Map<String, ColumnCache> aliasColumnMap = ALIAS_COLUMN_CACHE_MAP.get(className);
+        if (aliasColumnMap != null) {
+            return aliasColumnMap;
+        }
+        aliasColumnMap = Optional.ofNullable(TableInfoHelper.getTableInfo(clazz))
+            .map(LambdaUtils::createAliasColumnCacheMap)
+            .filter(ObjectUtils::isNotEmpty).orElse(null);
+        if (aliasColumnMap != null) {
+            ALIAS_COLUMN_CACHE_MAP.putIfAbsent(className, aliasColumnMap);
+        }
+        return aliasColumnMap;
+    }
+
+    /**
+     * 缓存别名扩展字段 MAP
+     *
+     * @param info 表信息
+     * @return 缓存 map
+     */
+    private static Map<String, ColumnCache> createAliasColumnCacheMap(TableInfo info) {
+        List<AliasFieldInfo> aliasFieldList = info.getAliasFieldList();
+        if (CollectionUtils.isEmpty(aliasFieldList)) {
+            return null;
+        }
+        return aliasFieldList.stream().collect(Collectors.toMap(field -> formatKey(field.getProperty()),
+            field -> new ColumnCache(field.getColumn(), field.getColumn())));
     }
 
 }
