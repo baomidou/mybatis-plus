@@ -181,10 +181,10 @@ public @interface TableField {
     String numericScale() default "";
 
     /**
-     * 是否为别名扩展字段，默认false，
-     * 需要同时设置 {@link TableField#exist()} 为 false 以及 {@link TableField#value()} 的值不为空才会生效
+     * 是否为别名扩展字段，默认false；为true时，需要同时设置 {@link TableField#exist()} 为 false，
+     * 或者当前属性已在 {@link TableName#excludeProperty()} 中排除， 以及 {@link TableField#value()} 的值不为空才会生效
      * <p>
-     * false：非扩展字段
+     * false：非扩展字段，不会做任何处理
      * true：扩展字段，将会缓存到 {@link com.baomidou.mybatisplus.core.metadata.TableInfo#aliasFieldList} 属性中，以提供多表联查的支持
      *
      * @since 3.4.4.3

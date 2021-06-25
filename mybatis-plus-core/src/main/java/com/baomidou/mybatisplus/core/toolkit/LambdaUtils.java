@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import static java.util.Locale.ENGLISH;
+import static java.util.stream.Collectors.toMap;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
@@ -170,7 +171,7 @@ public final class LambdaUtils {
         if (CollectionUtils.isEmpty(aliasFieldList)) {
             return null;
         }
-        return aliasFieldList.stream().collect(Collectors.toMap(field -> formatKey(field.getProperty()),
+        return aliasFieldList.stream().collect(toMap(field -> formatKey(field.getProperty()),
             field -> new ColumnCache(field.getColumn(), field.getColumn())));
     }
 

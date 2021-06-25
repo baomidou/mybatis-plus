@@ -299,7 +299,7 @@ public class TableInfoHelper {
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
         Reflector reflector = reflectorFactory.findForClass(clazz);
-        List<Field> list = getAllFields(clazz, TableInfoHelper::isTableField);
+        List<Field> list = getAllFields(clazz, field -> isTableField(field, excludeProperty));
         // 标记是否读取到主键
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
@@ -309,10 +309,6 @@ public class TableInfoHelper {
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
-            if (excludeProperty.contains(field.getName())) {
-                continue;
-            }
-
             boolean isPK = false;
             boolean isOrderBy = field.getAnnotation(OrderBy.class) != null;
 
@@ -370,13 +366,11 @@ public class TableInfoHelper {
      * @param excludeProperty 要排除的属性
      */
     private static void initAliasFields(Class<?> clazz, TableInfo tableInfo, List<String> excludeProperty) {
-        List<Field> list = getAllFields(clazz, TableInfoHelper::isAliasField);
+        List<Field> list = getAllFields(clazz, field -> isAliasField(field, excludeProperty));
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
         List<AliasFieldInfo> aliasFields = list.stream()
-            //过滤掉排除的属性
-            .filter(field -> !excludeProperty.contains(field.getName()))
             .map(field -> new AliasFieldInfo(field, field.getAnnotation(TableField.class)))
             .collect(toList());
 
@@ -543,8 +537,7 @@ public class TableInfoHelper {
      */
     public static List<Field> getAllFields(Class<?> clazz, Predicate<Field> fieldPredicate) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
-        return fieldList.stream()
-            .filter(fieldPredicate).collect(toList());
+        return fieldList.stream().filter(fieldPredicate).collect(toList());
     }
 
     /**
@@ -552,11 +545,12 @@ public class TableInfoHelper {
      * 判断字段是否为表字段
      * </p>
      *
-     * @param field 字段
+     * @param field             字段
+     * @param excludeFieldNames 排除的字段名称列表，即非表字段属性
      */
-    public static boolean isTableField(Field field) {
+    public static boolean isTableField(Field field, List<String> excludeFieldNames) {
         TableField tableField = field.getAnnotation(TableField.class);
-        return (tableField == null || tableField.exist());
+        return (tableField == null || tableField.exist()) && !excludeFieldNames.contains(field.getName());
     }
 
     /**
@@ -564,11 +558,13 @@ public class TableInfoHelper {
      * 判断字段是否为别名查询扩展字段
      * </p>
      *
-     * @param field 字段
+     * @param field             字段
+     * @param excludeFieldNames 排除的字段名称列表，即非表字段属性
      */
-    public static boolean isAliasField(Field field) {
+    public static boolean isAliasField(Field field, List<String> excludeFieldNames) {
         TableField tableField = field.getAnnotation(TableField.class);
-        return tableField != null && !tableField.exist() && tableField.aliasField() && StringUtils.isNotBlank(tableField.value());
+        return tableField != null && tableField.aliasField() && StringUtils.isNotBlank(tableField.value())
+            && (!tableField.exist() || excludeFieldNames.contains(field.getName()));
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
