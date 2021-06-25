@@ -33,7 +33,7 @@ public class SqlCondition {
     /**
      * % 两边 %
      */
-    public static final String LIKE = "%s LIKE CONCAT('%%',#{%s},'%%')";
+    public static final String LIKE = "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')";
     /**
      * % 左
      */
