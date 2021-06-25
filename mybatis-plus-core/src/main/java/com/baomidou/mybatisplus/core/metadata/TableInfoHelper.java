@@ -374,12 +374,10 @@ public class TableInfoHelper {
         if (CollectionUtils.isEmpty(list)) {
             return;
         }
-        ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
-        Reflector reflector = reflectorFactory.findForClass(clazz);
         List<AliasFieldInfo> aliasFields = list.stream()
             //过滤掉排除的属性
             .filter(field -> !excludeProperty.contains(field.getName()))
-            .map(field -> new AliasFieldInfo(field, field.getAnnotation(TableField.class), reflector))
+            .map(field -> new AliasFieldInfo(field, field.getAnnotation(TableField.class)))
             .collect(toList());
 
         tableInfo.setAliasFieldList(aliasFields);

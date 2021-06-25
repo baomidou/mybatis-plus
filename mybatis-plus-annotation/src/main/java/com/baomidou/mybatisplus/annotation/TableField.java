@@ -181,7 +181,7 @@ public @interface TableField {
     String numericScale() default "";
 
     /**
-     * 是否为扩展字段，默认false，
+     * 是否为别名扩展字段，默认false，
      * 需要同时设置 {@link TableField#exist()} 为 false 以及 {@link TableField#value()} 的值不为空才会生效
      * <p>
      * false：非扩展字段

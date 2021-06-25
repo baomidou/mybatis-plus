@@ -15,12 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 
-import org.apache.ibatis.reflection.Reflector;
-
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -35,34 +33,23 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class AliasFieldInfo implements Constants {
+public class AliasFieldInfo implements Serializable {
 
     /**
-     * 属性
-     */
-    private final Field field;
-    /**
-     * 字段名
+     * 自定义列名
      */
     private final String column;
+
     /**
      * 属性名
      */
     private final String property;
 
     /**
-     * 属性类型
-     */
-    private final Class<?> propertyType;
-
-    /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
-    public AliasFieldInfo(Field field, TableField tableField, Reflector reflector) {
-        field.setAccessible(true);
-        this.field = field;
+    public AliasFieldInfo(Field field, TableField tableField) {
         this.property = field.getName();
-        this.propertyType = reflector.getGetterType(this.property);
         this.column = tableField.value();
     }
 }
