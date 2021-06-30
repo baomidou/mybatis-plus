@@ -424,7 +424,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlack("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+            .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 
