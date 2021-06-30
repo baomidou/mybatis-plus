@@ -466,10 +466,10 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
-            .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
-            .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
-            .whenNotBlack("maxLimit", Long::parseLong, this::setMaxLimit)
-            .whenNotBlack("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
+            .whenNotBlank("overflow", Boolean::parseBoolean, this::setOverflow)
+            .whenNotBlank("dbType", DbType::getDbType, this::setDbType)
+            .whenNotBlank("dialect", ClassUtils::newInstance, this::setDialect)
+            .whenNotBlank("maxLimit", Long::parseLong, this::setMaxLimit)
+            .whenNotBlank("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
     }
 }
