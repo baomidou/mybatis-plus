@@ -193,6 +193,13 @@ public interface IService<T> {
     boolean saveOrUpdate(T entity);
 
     /**
+     * TableId 在saveOrUpdate的基础上判断是否有重复的记录。重复的条件写在@DuplicateValidation的condition中
+     *
+     * @param entity 实体对象
+     */
+    boolean saveOrUpdateWithDuplicationValidation(T entity);
+
+    /**
      * 根据 ID 查询
      *
      * @param id 主键ID

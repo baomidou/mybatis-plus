@@ -15,9 +15,13 @@
  */
 package com.baomidou.mybatisplus.extension.service.impl;
 
+import com.baomidou.mybatisplus.annotation.DuplicationValidation;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -32,7 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -162,6 +168,71 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
             Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
+            return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
+        }
+        return false;
+    }
+
+    /**
+     * 在saveOrUpdate的基础上判断是否有重复的记录。重复的条件写在@DuplicateValidation的condition中
+     *
+     * @param entity 实体对象
+     * @return boolean
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean saveOrUpdateWithDuplicationValidation(T entity) {
+        if (null != entity) {
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
+            Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+            String keyProperty = tableInfo.getKeyProperty();
+            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+            Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
+
+            Field[] fields = entity.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                DuplicationValidation annotation = field.getAnnotation(DuplicationValidation.class);
+                if(annotation == null){
+                    continue;
+                }
+                TableField tableFieldAnnotation = field.getAnnotation(TableField.class);
+                if(tableFieldAnnotation == null){
+                    continue;
+                }
+                String colName = tableFieldAnnotation.value();
+                if(StringUtils.isBlank(colName)){
+                    continue;
+                }
+                Object propVal = ReflectionKit.getFieldValue(entity, field.getName());
+
+                QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+                String keyColumn = tableInfo.getKeyColumn();
+
+                if(StringUtils.checkValNotNull(idVal)){
+                    queryWrapper.ne(keyColumn, idVal);
+                }
+                String[] conditions = annotation.conditions();
+                if(conditions.length > 0){
+                    for (String fieldName : conditions) {
+                        if(fieldName != null){
+                            Object fieldValue = ReflectionKit.getFieldValue(entity, fieldName);
+                            if(fieldValue != null){
+                                List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+                                for (TableFieldInfo tableFieldInfo : fieldList) {
+                                    if(fieldName.equalsIgnoreCase(tableFieldInfo.getProperty())){
+                                        queryWrapper.eq(tableFieldInfo.getColumn(), fieldValue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                queryWrapper.eq(colName, propVal);
+                int count = count(queryWrapper);
+                if(count > 0){
+                    return false;
+                }
+            }
             return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
         }
         return false;
