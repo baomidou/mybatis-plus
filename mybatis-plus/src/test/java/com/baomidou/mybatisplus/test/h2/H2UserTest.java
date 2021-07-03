@@ -498,6 +498,18 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红")));
     }
 
+    @Test
+    void testLogicDelWithFill() {
+        H2User h2User = new H2User("逻辑删除(根据ID)不填充", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.removeById(h2User.getTestId());
+        Assertions.assertNull(h2User.getLastUpdatedDt());
+        h2User = new H2User("测试逻辑(根据实体)删除填充", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.removeById(h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+    }
+
     /**
      * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
      */
