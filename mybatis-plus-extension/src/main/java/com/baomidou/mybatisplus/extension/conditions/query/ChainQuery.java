@@ -21,6 +21,9 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 具有查询方法的定义
@@ -37,6 +40,53 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      */
     default List<T> list() {
         return getBaseMapper().selectList(getWrapper());
+    }
+
+    /**
+     * 获取集合Stream
+     *
+     * @return 集合Stream
+     * @author dingqianwen
+     */
+    default Stream<T> listStream() {
+        return this.list().stream();
+    }
+
+    /**
+     * 转换返回类型
+     * <p>
+     * 转为其他对象并设置参数
+     * <pre>
+     * {@code
+     *       ChainQuery<User> chainQuery = ...;
+     *       List<UserVo> userVos = chainQuery.listConvert(e -> {
+     *             UserVo userVo = new UserVo();
+     *             userVo.setUsername(e.getUsername());
+     *             userVo.setId(e.getId());
+     *             // ...
+     *             userVo.setExpand("");
+     *             return userVo;
+     *         });
+     * }
+     * </pre>
+     *
+     * <p>
+     * 获取指定字段列表
+     * <pre>
+     * {@code
+     *       ChainQuery<User> chainQuery = ...;
+     *       List<Integer> userIds = chainQuery.listConvert(User::getId);
+     * }
+     * </pre>
+     *
+     * @param mapper a <a href="package-summary.html#NonInterference">non-interfering</a>,
+     *               <a href="package-summary.html#Statelessness">stateless</a>
+     *               function to apply to each element
+     * @return r
+     * @author dingqianwen
+     */
+    default <R> List<R> listConvert(Function<? super T, ? extends R> mapper) {
+        return this.listStream().map(mapper).collect(Collectors.toList());
     }
 
     /**
@@ -71,6 +121,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * 判断数据是否存在
      *
      * @return true 存在 false 不存在
+     * @author dingqianwen
      */
     default boolean exists() {
         return this.count() > 0;
@@ -85,4 +136,5 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     default <E extends IPage<T>> E page(E page) {
         return getBaseMapper().selectPage(page, getWrapper());
     }
+
 }

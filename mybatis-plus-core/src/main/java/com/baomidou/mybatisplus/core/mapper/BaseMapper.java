@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -160,16 +161,18 @@ public interface BaseMapper<T> extends Mapper<T> {
      * <p>请自行保存只能查询一条记录，例如 qw.last("limit 1") 限制取一条记录</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @return one
+     * @author dingqianwen
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<T> ts = this.selectList(queryWrapper);
-        if (CollectionUtils.isNotEmpty(ts)) {
-            if (ts.size() > 1) {
-                throw ExceptionUtils.mpe("One record is expected, but the query result is multiple records");
-            }
-            return ts.get(0);
+        List<T> list = this.selectList(queryWrapper);
+        if (list.size() == 1) {
+            return list.get(0);
+        } else if (list.size() > 1) {
+            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
