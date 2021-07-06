@@ -130,27 +130,27 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (tableInfo == null) {
             return false;
         }
-        if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e))) {
+        if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(tableInfo, entity, e))) {
             return true;
         }
-        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty())) : false;
+        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty())) : false;
     }
 
     /**
      * 根据实体FieldStrategy属性来决定判断逻辑
      */
-    private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
+    private boolean fieldStrategyMatch(TableInfo tableInfo, T entity, TableFieldInfo e) {
         switch (e.getWhereStrategy()) {
             case NOT_NULL:
-                return Objects.nonNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
+                return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
             case IGNORED:
                 return true;
             case NOT_EMPTY:
-                return StringUtils.checkValNotNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
+                return StringUtils.checkValNotNull(tableInfo.getPropertyValue(entity, e.getProperty()));
             case NEVER:
                 return false;
             default:
-                return Objects.nonNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
+                return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
         }
     }
 

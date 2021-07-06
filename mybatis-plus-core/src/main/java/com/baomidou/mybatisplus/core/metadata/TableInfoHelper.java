@@ -29,7 +29,6 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.Reflector;
-import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
@@ -154,9 +153,8 @@ public class TableInfoHelper {
      */
     private synchronized static TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
         /* 没有获取到缓存信息,则初始化 */
-        TableInfo tableInfo = new TableInfo(clazz);
+        TableInfo tableInfo = new TableInfo(configuration, clazz);
         tableInfo.setCurrentNamespace(currentNamespace);
-        tableInfo.setConfiguration(configuration);
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
 
         /* 初始化表名相关 */
@@ -273,8 +271,7 @@ public class TableInfoHelper {
     private static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
-        Reflector reflector = reflectorFactory.findForClass(clazz);
+        Reflector reflector = tableInfo.getReflector();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
@@ -300,11 +297,11 @@ public class TableInfoHelper {
                         throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
                     }
 
-                    initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
+                    initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId);
                     isPK = isReadPK = true;
                 }
             } else if (!isReadPK) {
-                isPK = isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, reflector);
+                isPK = isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field);
 
             }
 
@@ -381,10 +378,8 @@ public class TableInfoHelper {
      * @param tableInfo 表信息
      * @param field     字段
      * @param tableId   注解
-     * @param reflector Reflector
      */
-    private static void initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                  Field field, TableId tableId, Reflector reflector) {
+    private static void initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableId tableId) {
         boolean underCamel = tableInfo.isUnderCamel();
         final String property = field.getName();
         if (field.getAnnotation(TableField.class) != null) {
@@ -413,7 +408,7 @@ public class TableInfoHelper {
                 column = column.toUpperCase();
             }
         }
-        final Class<?> keyType = reflector.getGetterType(property);
+        final Class<?> keyType = tableInfo.getReflector().getGetterType(property);
         if (keyType.isPrimitive()) {
             logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
                 property, tableInfo.getEntityType().getName()));
@@ -431,11 +426,9 @@ public class TableInfoHelper {
      *
      * @param tableInfo 表信息
      * @param field     字段
-     * @param reflector Reflector
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                        Field field, Reflector reflector) {
+    private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         final String property = field.getName();
         if (DEFAULT_ID_NAME.equalsIgnoreCase(property)) {
             if (field.getAnnotation(TableField.class) != null) {
@@ -446,7 +439,7 @@ public class TableInfoHelper {
             if (dbConfig.isCapitalMode()) {
                 column = column.toUpperCase();
             }
-            final Class<?> keyType = reflector.getGetterType(property);
+            final Class<?> keyType = tableInfo.getReflector().getGetterType(property);
             if (keyType.isPrimitive()) {
                 logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
                     property, tableInfo.getEntityType().getName()));
