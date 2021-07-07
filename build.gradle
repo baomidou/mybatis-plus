@@ -16,7 +16,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.2.0',
         springVersion = '5.3.7',
         springBootVersion = '2.4.5',
-        jsqlparserVersion = '4.0',
+        jsqlparserVersion = '4.1',
         junitVersion = '5.7.2',
     ]
 
@@ -34,13 +34,13 @@ ext {
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
         "spring-web"                 : "org.springframework:spring-web:${springVersion}",
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
-        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
+        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.7",
         "cglib"                      : "cglib:cglib:3.3.0",
         "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:3.0.3",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.6",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.30",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.3",
         //copy
@@ -62,12 +62,12 @@ ext {
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.21",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.32.3.1",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.1",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
-        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0-beta1"
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0"
     ]
 }
 
