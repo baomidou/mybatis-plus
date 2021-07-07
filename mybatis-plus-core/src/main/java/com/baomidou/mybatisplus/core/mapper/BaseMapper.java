@@ -15,17 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import org.apache.ibatis.annotations.Param;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /*
 
@@ -165,14 +166,14 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录
-     * <p>请自行保存只能查询一条记录，例如 qw.last("limit 1") 限制取一条记录</p>
+     * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
         List<T> ts = this.selectList(queryWrapper);
         if (CollectionUtils.isNotEmpty(ts)) {
-            if (ts.size() > 1) {
+            if (ts.size() != 1) {
                 throw ExceptionUtils.mpe("One record is expected, but the query result is multiple records");
             }
             return ts.get(0);

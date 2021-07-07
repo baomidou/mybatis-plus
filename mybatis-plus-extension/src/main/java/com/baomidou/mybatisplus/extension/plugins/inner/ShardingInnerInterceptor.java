@@ -42,10 +42,17 @@ import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 分表拦截器
+ * <p>不支持带参数子查询 不支持复杂SQL 单个Statement只能返回一个真实表名</p>
+ *
  * @author zengzhihong
  * @since 2021-01-14
  */
@@ -61,6 +68,7 @@ public class ShardingInnerInterceptor extends JsqlParserSupport implements Inner
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
         final Executor executor = mpSh.executor();
+        // BatchExecutor或者ReuseExecutor 由beforeGetBoundSql方法已经处理过了
         if (executor instanceof BatchExecutor || executor instanceof ReuseExecutor) {
             return;
         }
