@@ -67,7 +67,7 @@ ext {
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
-        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0-beta1"
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0"
     ]
 }
 
