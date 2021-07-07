@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.activerecord;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -270,7 +271,8 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 主键值
      */
     public Serializable pkVal() {
-        return (Serializable) ReflectionKit.getFieldValue(this, TableInfoHelper.getTableInfo(this.entityClass).getKeyProperty());
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
+        return (Serializable) tableInfo.getPropertyValue(this, tableInfo.getKeyProperty());
     }
 
     /**

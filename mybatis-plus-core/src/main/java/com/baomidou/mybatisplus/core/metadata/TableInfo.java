@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -30,6 +31,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.*;
@@ -178,8 +180,31 @@ public class TableInfo implements Constants {
     @Setter
     private List<TableFieldInfo> orderByFields = new LinkedList<>();
 
+    /**
+     * @since 3.4.4
+     */
+    @Getter
+    private Reflector reflector;
+
+    /**
+     * @param entityType 实体类型
+     * @deprecated 3.4.4 {@link #TableInfo(Configuration, Class)}
+     */
+    @Deprecated
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
+    }
+
+    /**
+     * @param configuration 配置对象
+     * @param entityType    实体类型
+     * @since 3.4.4
+     */
+    public TableInfo(Configuration configuration, Class<?> entityType) {
+        this.configuration = configuration;
+        this.entityType = entityType;
+        this.reflector = configuration.getReflectorFactory().findForClass(entityType);
+        this.underCamel = configuration.isMapUnderscoreToCamelCase();
     }
 
     /**
@@ -195,8 +220,10 @@ public class TableInfo implements Constants {
     }
 
     /**
+     * @deprecated 3.4.4 {@link #TableInfo(Configuration, Class)}
      * 设置 Configuration
      */
+    @Deprecated
     void setConfiguration(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configuration = configuration;
@@ -475,4 +502,37 @@ public class TableInfo implements Constants {
     public boolean isLogicDelete() {
         return withLogicDelete;
     }
+
+    /**
+     * 获取对象属性值
+     *
+     * @param entity   对象
+     * @param property 属性名
+     * @return 属性值
+     * @since 3.4.4
+     */
+    public Object getPropertyValue(Object entity, String property) {
+        try {
+            return this.reflector.getGetInvoker(property).invoke(entity, null);
+        } catch (ReflectiveOperationException e) {
+            throw ExceptionUtils.mpe("Error: Cannot read property in %s.  Cause:", e, entity.getClass().getSimpleName());
+        }
+    }
+
+    /**
+     * 设置对象属性值
+     *
+     * @param entity   实体对象
+     * @param property 属性名
+     * @param values   参数
+     * @since 3.4.4
+     */
+    public void setPropertyValue(Object entity, String property, Object... values) {
+        try {
+            this.reflector.getSetInvoker(property).invoke(entity, values);
+        } catch (ReflectiveOperationException e) {
+            throw ExceptionUtils.mpe("Error: Cannot write property in %s.  Cause:", e, entity.getClass().getSimpleName());
+        }
+    }
+
 }
