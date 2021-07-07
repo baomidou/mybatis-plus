@@ -52,13 +52,21 @@ public final class LambdaUtils {
     public static <T> LambdaMeta extract(SFunction<T, ?> func) {
         try {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
-            return new SerializedLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
+            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
         } catch (NoSuchMethodException e) {
-            if (func instanceof Proxy) return new ProxyLambdaMeta((Proxy) func);
+            // IDEA 调试模式下 lambda 表达式是一个代理
+            if (func instanceof Proxy) return new IdeaProxyLambdaMeta((Proxy) func);
             String message = "Cannot find method writeReplace, please make sure that the lambda composite class is currently passed in";
             throw new MybatisPlusException(message);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new MybatisPlusException(e);
+        } catch (RuntimeException e) {
+            // JDK 16 模块化后不能访问 java.lang.invoke.SerializedLambda 了，走序列化路线
+            // https://gitee.com/baomidou/mybatis-plus/issues/I3XDT9
+            if (e.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
+                return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
+            }
+            throw e;
         }
     }
 

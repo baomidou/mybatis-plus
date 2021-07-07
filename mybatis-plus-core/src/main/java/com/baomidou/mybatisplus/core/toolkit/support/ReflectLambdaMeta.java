@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 /**
  * Created by hcl at 2021/5/14
  */
-public class SerializedLambdaMeta implements LambdaMeta {
+public class ReflectLambdaMeta implements LambdaMeta {
     private static final Field FIELD_CAPTURING_CLASS;
 
     static {
@@ -24,7 +24,7 @@ public class SerializedLambdaMeta implements LambdaMeta {
 
     private final SerializedLambda lambda;
 
-    public SerializedLambdaMeta(SerializedLambda lambda) {
+    public ReflectLambdaMeta(SerializedLambda lambda) {
         this.lambda = lambda;
     }
 

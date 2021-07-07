@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
 
@@ -44,6 +45,7 @@ class LambdaUtilsTest {
         test(function);
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle getter = lookup.findVirtual(TestModel.class, "getId", MethodType.methodType(int.class));
+        assertNotNull(SerializedLambda.extract(function));
         function = (SFunction<TestModel, Object>) MethodHandleProxies.asInterfaceInstance(SFunction.class, getter);
         test(function);
     }
