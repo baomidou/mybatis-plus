@@ -348,10 +348,7 @@ public abstract class AbstractMethod implements Constants {
             return null;
         }
         /* 缓存逻辑处理 */
-        boolean isSelect = false;
-        if (sqlCommandType == SqlCommandType.SELECT) {
-            isSelect = true;
-        }
+        boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
         return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType,
             null, null, null, parameterType, resultMap, resultType,
             null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,

@@ -99,6 +99,14 @@ public interface BaseMapper<T> extends Mapper<T> {
     int deleteById(Serializable id);
 
     /**
+     * 根据实体(ID)删除
+     *
+     * @param entity 实体对象
+     * @since 3.4.4
+     */
+    int deleteById(T entity);
+
+    /**
      * 根据 columnMap 条件，删除记录
      *
      * @param columnMap 表字段 map 对象
