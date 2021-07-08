@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import org.apache.ibatis.session.RowBounds;
 
 /*
 
@@ -84,6 +85,8 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
  * @since 2016-01-23
  */
 public interface BaseMapper<T> extends Mapper<T> {
+
+    RowBounds LIMIT_TWO = new RowBounds(0, 2);
 
     /**
      * 插入一条记录
@@ -171,7 +174,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<T> ts = this.selectList(queryWrapper);
+        List<T> ts = this.selectList(queryWrapper, LIMIT_TWO);
         if (CollectionUtils.isNotEmpty(ts)) {
             if (ts.size() != 1) {
                 throw ExceptionUtils.mpe("One record is expected, but the query result is multiple records");
@@ -194,6 +197,17 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    /**
+     * 根据 entity 条件，查询全部记录
+     *
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param rowBounds    RowBounds
+     * @return 结果集
+     * @since 3.4.4
+     */
+    List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, RowBounds rowBounds);
+
 
     /**
      * 根据 Wrapper 条件，查询全部记录

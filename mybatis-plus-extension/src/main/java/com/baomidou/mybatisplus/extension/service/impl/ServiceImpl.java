@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,7 +202,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (throwEx) {
             return baseMapper.selectOne(queryWrapper);
         }
-        return SqlHelper.getObject(log, baseMapper.selectList(queryWrapper));
+        return SqlHelper.getObject(log, baseMapper.selectList(queryWrapper, BaseMapper.LIMIT_TWO));
     }
 
     @Override
