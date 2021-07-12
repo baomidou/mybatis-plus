@@ -94,7 +94,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
             WithItem withItem = (WithItem) selectBody;
-            processSelectBody(withItem.getSelectBody());
+            processSelectBody(withItem.getSubSelect().getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
             List<SelectBody> selectBodys = operationList.getSelects();
@@ -424,7 +424,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+                .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 
