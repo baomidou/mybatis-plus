@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public abstract class AbstractSqlInjector implements ISqlInjector {
 
-    private static final Log logger = LogFactory.getLog(AbstractSqlInjector.class);
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
@@ -45,9 +45,9 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             String className = mapperClass.toString();
             Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
             if (!mapperRegistryCache.contains(className)) {
-                List<AbstractMethod> methodList = this.getMethodList(mapperClass);
+                TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+                List<AbstractMethod> methodList = this.getMethodList(mapperClass, tableInfo);
                 if (CollectionUtils.isNotEmpty(methodList)) {
-                    TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                     // 循环注入自定义方法
                     methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
                 } else {
@@ -67,6 +67,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * @return 注入的方法集合
      * @since 3.1.2 add  mapperClass
      */
-    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass);
+    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass,TableInfo tableInfo);
 
 }
