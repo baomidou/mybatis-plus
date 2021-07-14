@@ -80,6 +80,8 @@ public class MergeSegments implements ISqlSegment {
      * @since 3.3.1
      */
     public void clear() {
+        sqlSegment = StringPool.EMPTY;
+        cacheSqlSegment = true;
         normal.clear();
         groupBy.clear();
         having.clear();
