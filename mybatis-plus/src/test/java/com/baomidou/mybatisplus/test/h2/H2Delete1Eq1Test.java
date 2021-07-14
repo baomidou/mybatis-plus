@@ -15,25 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -65,7 +59,7 @@ class H2Delete1Eq1Test extends BaseTest {
         h2User.setName("2");
         log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).orderByAsc("name")));
 
-        for (long i = 0; i < 10L; i++) {
+        for (long i = 30; i < 50L; i++) {
             defaultMapper.insert(new H2Student(i, "Tom长大了", 1));
         }
         log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).eq("name", "2").orderByAsc("name")));

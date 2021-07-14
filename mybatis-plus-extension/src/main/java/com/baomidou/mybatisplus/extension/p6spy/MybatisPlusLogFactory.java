@@ -22,9 +22,10 @@ import com.p6spy.engine.spy.P6LoadableOptions;
 import com.p6spy.engine.spy.option.P6OptionsRepository;
 
 /**
- * 扩展p6spy
+ * 扩展 p6spy
  *
- * @author nieqiurong 2019/11/10.
+ * @author nieqiurong
+ * @since 2019-11-10
  */
 public class MybatisPlusLogFactory implements P6Factory {
 
@@ -35,6 +36,6 @@ public class MybatisPlusLogFactory implements P6Factory {
 
     @Override
     public JdbcEventListener getJdbcEventListener() {
-        return MybatisPlusLoggingEventListener.INSTANCE;
+        return MybatisPlusLoggingEventListener.getInstance();
     }
 }

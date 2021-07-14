@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
@@ -62,7 +61,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) return;
-        if (SqlParserHelper.getSqlParserInfo(ms)) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), null));
     }
@@ -74,7 +72,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) return;
-            if (SqlParserHelper.getSqlParserInfo(ms)) return;
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
             mpBs.sql(parserMulti(mpBs.sql(), null));
         }
@@ -97,7 +94,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
             WithItem withItem = (WithItem) selectBody;
-            processSelectBody(withItem.getSelectBody());
+            processSelectBody(withItem.getSubSelect().getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
             List<SelectBody> selectBodys = operationList.getSelects();
@@ -124,6 +121,16 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return;
         }
         columns.add(new Column(tenantLineHandler.getTenantIdColumn()));
+
+        // fixed gitee pulls/141 duplicate update
+        List<Expression> duplicateUpdateColumns = insert.getDuplicateUpdateExpressionList();
+        if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
+            EqualsTo equalsTo = new EqualsTo();
+            equalsTo.setLeftExpression(new StringValue(tenantLineHandler.getTenantIdColumn()));
+            equalsTo.setRightExpression(tenantLineHandler.getTenantId());
+            duplicateUpdateColumns.add(equalsTo);
+        }
+
         Select select = insert.getSelect();
         if (select != null) {
             this.processInsertSelect(select.getSelectBody());
@@ -195,8 +202,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         PlainSelect plainSelect = (PlainSelect) selectBody;
         FromItem fromItem = plainSelect.getFromItem();
         if (fromItem instanceof Table) {
-            Table fromTable = (Table) fromItem;
-            plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
+            // fixed gitee pulls/141 duplicate update
+            processPlainSelect(plainSelect);
             appendSelectItem(plainSelect.getSelectItems());
         } else if (fromItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) fromItem;
@@ -312,15 +319,28 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             if (selectExpressionItem.getExpression() instanceof SubSelect) {
                 processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody());
             } else if (selectExpressionItem.getExpression() instanceof Function) {
-                ExpressionList parameters = ((Function) selectExpressionItem.getExpression()).getParameters();
-                if (parameters != null) {
-                    parameters.getExpressions().forEach(expression -> {
-                        if (expression instanceof SubSelect) {
-                            processSelectBody(((SubSelect) expression).getSelectBody());
-                        }
-                    });
-                }
+                processFunction((Function) selectExpressionItem.getExpression());
             }
+        }
+    }
+
+    /**
+     * 处理函数
+     * <p>支持: 1. select fun(args..) 2. select fun1(fun2(args..),args..)<p>
+     * <p> fixed gitee pulls/141</p>
+     *
+     * @param function
+     */
+    protected void processFunction(Function function) {
+        ExpressionList parameters = function.getParameters();
+        if (parameters != null) {
+            parameters.getExpressions().forEach(expression -> {
+                if (expression instanceof SubSelect) {
+                    processSelectBody(((SubSelect) expression).getSelectBody());
+                } else if (expression instanceof Function) {
+                    processFunction((Function) expression);
+                }
+            });
         }
     }
 
@@ -404,7 +424,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlack("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+                .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 

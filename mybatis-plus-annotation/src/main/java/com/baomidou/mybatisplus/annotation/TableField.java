@@ -131,8 +131,15 @@ public @interface TableField {
     boolean keepGlobalFormat() default false;
 
     /**
+     * {@link ResultMapping#property} and {@link ParameterMapping#property}
+     *
+     * @since 3.4.4
+     */
+    String property() default "";
+
+    /**
      * JDBC类型 (该默认值不代表会按照该值生效),
-     * 只生效与 mp 自动注入的 method,
+     * 只生效于 mp 自动注入的 method,
      * 建议配合 {@link TableName#autoResultMap()} 一起使用
      * <p>
      * {@link ResultMapping#jdbcType} and {@link ParameterMapping#jdbcType}
@@ -143,7 +150,7 @@ public @interface TableField {
 
     /**
      * 类型处理器 (该默认值不代表会按照该值生效),
-     * 只生效与 mp 自动注入的 method,
+     * 只生效于 mp 自动注入的 method,
      * 建议配合 {@link TableName#autoResultMap()} 一起使用
      * <p>
      * {@link ResultMapping#typeHandler} and {@link ParameterMapping#typeHandler}

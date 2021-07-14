@@ -116,6 +116,11 @@ public enum DbType {
      * Firebird
      */
     FIREBIRD("Firebird", "Firebird 数据库"),
+
+    /**
+     * HighGo
+     */
+    HIGH_GO("highgo", "瀚高数据库"),
     /**
      * UNKONWN DB
      */

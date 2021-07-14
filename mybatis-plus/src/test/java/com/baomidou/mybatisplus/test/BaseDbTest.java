@@ -65,7 +65,6 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         MybatisSqlSessionFactoryBuilder builder = new MybatisSqlSessionFactoryBuilder();
         Environment environment = new Environment("test", new ManagedTransactionFactory(), ds);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
-        configuration.setUseDeprecatedExecutor(false);
         if (consumer != null) {
             consumer.accept(configuration);
         }

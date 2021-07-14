@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -59,7 +57,6 @@ public class Page<T> implements IPage<T> {
     /**
      * 排序字段信息
      */
-    @Getter
     @Setter
     protected List<OrderItem> orders = new ArrayList<>();
 
@@ -70,21 +67,15 @@ public class Page<T> implements IPage<T> {
     /**
      * 是否进行 count 查询
      */
-    protected boolean isSearchCount = true;
-    /**
-     * 是否命中count缓存
-     */
-    protected boolean hitCount = false;
+    protected boolean searchCount = true;
     /**
      * countId
      */
-    @Getter
     @Setter
     protected String countId;
     /**
      * countId
      */
-    @Getter
     @Setter
     protected Long maxLimit;
 
@@ -105,17 +96,17 @@ public class Page<T> implements IPage<T> {
         this(current, size, total, true);
     }
 
-    public Page(long current, long size, boolean isSearchCount) {
-        this(current, size, 0, isSearchCount);
+    public Page(long current, long size, boolean searchCount) {
+        this(current, size, 0, searchCount);
     }
 
-    public Page(long current, long size, long total, boolean isSearchCount) {
+    public Page(long current, long size, long total, boolean searchCount) {
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
         this.total = total;
-        this.isSearchCount = isSearchCount;
+        this.searchCount = searchCount;
     }
 
     /**
@@ -182,12 +173,12 @@ public class Page<T> implements IPage<T> {
 
     @Override
     public String countId() {
-        return getCountId();
+        return this.countId;
     }
 
     @Override
     public Long maxLimit() {
-        return getMaxLimit();
+        return this.maxLimit;
     }
 
     /**
@@ -241,74 +232,9 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    /**
-     * 设置需要进行正序排序的字段
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param ascs 字段
-     * @return 返回自身
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setAscs(List<String> ascs) {
-        return CollectionUtils.isNotEmpty(ascs) ? setAsc(ascs.toArray(new String[0])) : this;
-    }
-
-    /**
-     * 升序
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param ascs 多个升序字段
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setAsc(String... ascs) {
-        // 保证原来方法 set 的语意
-        removeOrder(OrderItem::isAsc);
-        for (String s : ascs) {
-            addOrder(OrderItem.asc(s));
-        }
-        return this;
-    }
-
-    /**
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param descs 需要倒序排列的字段
-     * @return 自身
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setDescs(List<String> descs) {
-        // 保证原来方法 set 的语意
-        if (CollectionUtils.isNotEmpty(descs)) {
-            removeOrder(item -> !item.isAsc());
-            for (String s : descs) {
-                addOrder(OrderItem.desc(s));
-            }
-        }
-        return this;
-    }
-
-    /**
-     * 降序，这方法名不知道是谁起的
-     * <p>
-     * Replaced:{@link #addOrder(OrderItem...)}
-     *
-     * @param descs 多个降序字段
-     * @deprecated 3.2.0
-     */
-    @Deprecated
-    public Page<T> setDesc(String... descs) {
-        setDescs(Arrays.asList(descs));
-        return this;
-    }
-
     @Override
     public List<OrderItem> orders() {
-        return getOrders();
+        return this.orders;
     }
 
     @Override
@@ -316,20 +242,16 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
-    public boolean isOptimizeCountSql() {
-        return optimizeCountSql();
-    }
-
     @Override
-    public boolean isSearchCount() {
+    public boolean searchCount() {
         if (total < 0) {
             return false;
         }
-        return isSearchCount;
+        return searchCount;
     }
 
-    public Page<T> setSearchCount(boolean isSearchCount) {
-        this.isSearchCount = isSearchCount;
+    public Page<T> setSearchCount(boolean searchCount) {
+        this.searchCount = searchCount;
         return this;
     }
 
@@ -339,16 +261,56 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public void hitCount(boolean hit) {
-        this.hitCount = hit;
+    public long getPages() {
+        // 解决 github issues/3208
+        return IPage.super.getPages();
     }
 
-    public void setHitCount(boolean hit) {
-        this.hitCount = hit;
+    /* --------------- 以下为静态构造方式 --------------- */
+    public static <T> Page<T> of(long current, long size) {
+        return of(current, size, 0);
     }
 
-    @Override
-    public boolean isHitCount() {
-        return hitCount;
+    public static <T> Page<T> of(long current, long size, long total) {
+        return of(current, size, total, true);
     }
+
+    public static <T> Page<T> of(long current, long size, boolean searchCount) {
+        return of(current, size, 0, searchCount);
+    }
+
+    public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
+        return new Page(current, size, total, searchCount);
+    }
+
+    /**
+     * --begin------------- 未来抛弃移除的方法 -------------begin--
+     * 该部分属性转移至 {@link PageDTO}
+     */
+    @Deprecated
+    public String getCountId() {
+        return this.countId;
+    }
+
+    @Deprecated
+    public Long getMaxLimit() {
+        return this.maxLimit;
+    }
+
+    @Deprecated
+    public List<OrderItem> getOrders() {
+        return this.orders;
+    }
+
+    @Deprecated
+    public boolean isOptimizeCountSql() {
+        return this.optimizeCountSql;
+    }
+
+    @Deprecated
+    public boolean isSearchCount() {
+        return this.searchCount;
+    }
+    /** --end------------- 未来抛弃移除的方法 -------------end-- */
+
 }

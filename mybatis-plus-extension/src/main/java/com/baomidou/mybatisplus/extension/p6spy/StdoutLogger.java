@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.extension.p6spy;
 
 /**
- * <p>
  * 输出 SQL 日志
- * </p>
  *
  * @author hubin
  * @since 2019-02-20

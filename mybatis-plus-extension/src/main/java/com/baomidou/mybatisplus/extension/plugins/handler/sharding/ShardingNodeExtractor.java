@@ -216,8 +216,8 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
     @Override
     public void visit(InExpression inExpression) {
         inExpression.getLeftExpression().accept(this);
-        if (null != inExpression.getLeftItemsList()) {
-            inExpression.getLeftItemsList().accept(this);
+        if (null != inExpression.getLeftExpression()) {
+            inExpression.getLeftExpression().accept(this);
         }
         if (null != inExpression.getRightItemsList()) {
             inExpression.getRightItemsList().accept(this);

@@ -106,7 +106,7 @@ public class MybatisParameterHandler implements ParameterHandler {
                 tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
             }
             if (tableInfo != null) {
-                //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
+                //到这里就应该转换到实体参数对象了,因为填充和ID处理都是针对实体对象处理的,不用传递原参数对象下去.
                 MetaObject metaObject = this.configuration.newMetaObject(entity);
                 if (SqlCommandType.INSERT == this.sqlCommandType) {
                     populateKeys(tableInfo, metaObject, entity);

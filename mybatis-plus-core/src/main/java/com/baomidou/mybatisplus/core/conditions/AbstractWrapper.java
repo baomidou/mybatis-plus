@@ -27,10 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -309,6 +306,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             () -> String.format("(%s)", inValue)));
     }
 
+    @Deprecated
     @Override
     public Children groupBy(boolean condition, R column, R... columns) {
         return maybeDo(condition, () -> {
@@ -321,17 +319,49 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         });
     }
 
+    @Deprecated
     @Override
     public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
         return maybeDo(condition, () -> {
             final SqlKeyword mode = isAsc ? ASC : DESC;
-            appendSqlSegments(ORDER_BY, columnToSqlSegment(column), mode);
+            appendSqlSegments(ORDER_BY, columnToSqlSegment(columnSqlInjectFilter(column)), mode);
             if (ArrayUtils.isNotEmpty(columns)) {
-                for (R c : columns) {
-                    appendSqlSegments(ORDER_BY, columnToSqlSegment(c), mode);
-                }
+                Arrays.stream(columns).forEach(c -> appendSqlSegments(ORDER_BY,
+                    columnToSqlSegment(columnSqlInjectFilter(c)), mode));
             }
         });
+    }
+
+    @Override
+    public Children groupBy(boolean condition, R column) {
+        return maybeDo(condition, () -> appendSqlSegments(GROUP_BY, () -> columnToString(column)));
+    }
+
+    @Override
+    public Children groupBy(boolean condition, List<R> columns) {
+        return maybeDo(condition, () -> appendSqlSegments(GROUP_BY, () -> columnsToString(columns)));
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, R column) {
+        return maybeDo(condition, () -> appendSqlSegments(ORDER_BY, columnToSqlSegment(columnSqlInjectFilter(column)),
+            isAsc ? ASC : DESC));
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, List<R> columns) {
+        return maybeDo(condition, () -> columns.forEach(c -> appendSqlSegments(ORDER_BY,
+            columnToSqlSegment(columnSqlInjectFilter(c)), isAsc ? ASC : DESC)));
+    }
+
+    /**
+     * 字段 SQL 注入过滤处理，子类重写实现过滤逻辑
+     *
+     * @param column 字段内容
+     * @return
+     */
+    protected R columnSqlInjectFilter(R column) {
+        return column;
     }
 
     @Override
@@ -574,12 +604,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     /**
+     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
+     */
+    @Deprecated
+    protected String columnsToString(R... columns) {
+        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
+    }
+
+    /**
      * 多字段转换为逗号 "," 分割字符串
      *
      * @param columns 多字段
      */
-    protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
+    @Deprecated
+    protected String columnsToString(List<R> columns) {
+        return columns.stream().map(this::columnToString).collect(joining(StringPool.COMMA));
     }
 
     @Override

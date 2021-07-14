@@ -39,7 +39,7 @@ public class Insert extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        KeyGenerator keyGenerator = new NoKeyGenerator();
+        KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
@@ -50,8 +50,8 @@ public class Insert extends AbstractMethod {
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
         if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
             if (tableInfo.getIdType() == IdType.AUTO) {
-                /** 自增主键 */
-                keyGenerator = new Jdbc3KeyGenerator();
+                /* 自增主键 */
+                keyGenerator = Jdbc3KeyGenerator.INSTANCE;
                 keyProperty = tableInfo.getKeyProperty();
                 keyColumn = tableInfo.getKeyColumn();
             } else {

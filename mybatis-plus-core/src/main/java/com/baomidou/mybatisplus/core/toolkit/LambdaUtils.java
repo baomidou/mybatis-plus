@@ -15,15 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.*;
 
-import java.lang.ref.WeakReference;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Locale.ENGLISH;
@@ -42,29 +43,31 @@ public final class LambdaUtils {
     private static final Map<String, Map<String, ColumnCache>> COLUMN_CACHE_MAP = new ConcurrentHashMap<>();
 
     /**
-     * SerializedLambda 反序列化缓存
-     */
-    private static final Map<String, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
-
-    /**
-     * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction, ClassLoader)} 中的方法，在此基础上加了缓存。
      * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
-     * @see SerializedLambda#resolve(SFunction, ClassLoader)
      */
-    public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
-        Class<?> clazz = func.getClass();
-        String name = clazz.getName();
-        return Optional.ofNullable(FUNC_CACHE.get(name))
-            .map(WeakReference::get)
-            .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.resolve(func, clazz.getClassLoader());
-                FUNC_CACHE.put(name, new WeakReference<>(lambda));
-                return lambda;
-            });
+    public static <T> LambdaMeta extract(SFunction<T, ?> func) {
+        try {
+            Method method = func.getClass().getDeclaredMethod("writeReplace");
+            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
+        } catch (NoSuchMethodException e) {
+            // IDEA 调试模式下 lambda 表达式是一个代理
+            if (func instanceof Proxy) return new IdeaProxyLambdaMeta((Proxy) func);
+            String message = "Cannot find method writeReplace, please make sure that the lambda composite class is currently passed in";
+            throw new MybatisPlusException(message);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new MybatisPlusException(e);
+        } catch (RuntimeException e) {
+            // JDK 16 模块化后不能访问 java.lang.invoke.SerializedLambda 了，走序列化路线
+            // https://gitee.com/baomidou/mybatis-plus/issues/I3XDT9
+            if (e.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
+                return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
+            }
+            throw e;
+        }
     }
 
     /**
@@ -107,7 +110,7 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
+                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
         );
         return map;
     }

@@ -34,6 +34,13 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             assertThat(entity).isNotNull();
             assertThat(entity.getDeleted()).isTrue();
         });
+
+        doTest(mapper -> {
+            Entity entity = new Entity();
+            entity.setName("测试根据实体删除");
+            mapper.insert(entity);
+            assertThat(mapper.deleteById(entity)).isEqualTo(1);
+        });
     }
 
     @Override

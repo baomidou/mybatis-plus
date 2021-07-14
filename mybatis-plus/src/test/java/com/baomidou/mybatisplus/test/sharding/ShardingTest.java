@@ -1,18 +1,5 @@
 package com.baomidou.mybatisplus.test.sharding;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.plugin.Interceptor;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -22,8 +9,19 @@ import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingRuleE
 import com.baomidou.mybatisplus.extension.plugins.handler.sharding.ShardingStrategy;
 import com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.plugin.Interceptor;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author zengzhihong
@@ -71,82 +69,6 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
             assertThat(affectedRow).as("删除成功").isEqualTo(1);
         });
     }
-
-//    @Test
-//    void insertBatchTest() {
-//        ShardingOrder shardingOrder1 =
-//            new ShardingOrder().setOrderId(1L).setSubject("test1").setCreateTime(date1);
-//        ShardingOrder shardingOrder2 =
-//            new ShardingOrder().setOrderId(2L).setSubject("test2").setCreateTime(date2);
-//        ShardingOrder shardingOrder3 =
-//            new ShardingOrder().setOrderId(3L).setSubject("test3").setCreateTime(date3);
-//        List<ShardingOrder> list = new ArrayList<>();
-//        list.add(shardingOrder1);
-//        list.add(shardingOrder2);
-//        list.add(shardingOrder3);
-//        String sqlStatement = SqlHelper.getSqlStatement(ShardingOrderMapper.class, SqlMethod.INSERT_ONE);
-//        SqlHelper.executeBatch(ShardingOrder.class, log, list, 1000,
-//            (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
-//
-//    }
-
-//    @Test
-//    void selectTest() {
-//        insertBatchTest();
-//        shardingOrderMapper.selectPage(new Page<>(),
-//            Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("order_id", 1L);
-//        params.put("create_time", date1);
-//        shardingOrderMapper.selectByMap(params);
-//
-//        shardingOrderMapper.selectById(1L);
-//
-//        shardingOrderMapper.selectList(Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getCreateTime, date1)
-//            .in(ShardingOrder::getOrderId, Arrays.asList(1L, 2L)));
-//
-//        shardingOrderMapper.selectMaps(Wrappers.<ShardingOrder>lambdaQuery().in(ShardingOrder::getOrderId, 3L
-//        ).eq(ShardingOrder::getCreateTime,
-//            date1));
-//
-//        shardingOrderMapper.selectBatchIds(Arrays.asList(1L, 2L));
-//
-//        final Integer count =
-//            shardingOrderMapper.selectCount(Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L
-//            ).eq(ShardingOrder::getCreateTime,
-//                date1));
-//
-//        shardingOrderMapper.selectMapsPage(new Page<>(),
-//            Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//
-//        shardingOrderMapper.selectOne(Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//
-//        shardingOrderMapper.selectPage(new Page<>(),
-//            Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//
-//    }
-//
-//
-//    @Test
-//    void updateTest() {
-//        ShardingOrder order = new ShardingOrder();
-//        order.setOrderId(1L);
-//        order.setSubject("66");
-//        shardingOrderMapper.update(order, Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//        shardingOrderMapper.updateById(order);
-//    }
-//
-//    @Test
-//    void deleteTest() {
-//        shardingOrderMapper.delete(Wrappers.<ShardingOrder>lambdaQuery().eq(ShardingOrder::getOrderId, 1L));
-//        shardingOrderMapper.deleteById(1L);
-//        shardingOrderMapper.deleteBatchIds(Arrays.asList(1L, 2L));
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("order_id", 1L);
-//        shardingOrderMapper.deleteByMap(params);
-//    }
-
 
     @Override
     protected List<Interceptor> interceptors() {

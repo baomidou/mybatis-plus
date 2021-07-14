@@ -47,13 +47,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2017-10-11
  */
 public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
-    
+
     private static final Map<String, String> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
     private static final ReflectorFactory REFLECTOR_FACTORY = new DefaultReflectorFactory();
     private final Class<E> enumClassType;
     private final Class<?> propertyType;
     private final Invoker getInvoker;
-    
+
     public MybatisEnumTypeHandler(Class<E> enumClassType) {
         if (enumClassType == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
@@ -67,19 +67,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         this.propertyType = ReflectionKit.resolvePrimitiveIfNecessary(metaClass.getGetterType(name));
         this.getInvoker = metaClass.getGetInvoker(name);
     }
-    
-    /**
-     * 查找标记EnumValue字段
-     *
-     * @param clazz class
-     * @return EnumValue字段
-     * @deprecated 3.3.1 {@link #findEnumValueFieldName(Class)}
-     */
-    @Deprecated
-    public static Optional<Field> dealEnumType(Class<?> clazz) {
-        return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
-    }
-    
+
     /**
      * 查找标记标记EnumValue字段
      *
@@ -97,11 +85,11 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         }
         return Optional.empty();
     }
-    
+
     private static Optional<Field> findEnumValueAnnotationField(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst();
     }
-    
+
     /**
      * 判断是否为MP枚举处理
      *
@@ -112,7 +100,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     public static boolean isMpEnums(Class<?> clazz) {
         return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFieldName(clazz).isPresent());
     }
-    
+
     @SuppressWarnings("Duplicates")
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
@@ -124,7 +112,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
             ps.setObject(i, this.getValue(parameter), jdbcType.TYPE_CODE);
         }
     }
-    
+
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         Object value = rs.getObject(columnName, this.propertyType);
@@ -133,7 +121,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         }
         return this.valueOf(value);
     }
-    
+
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         Object value = rs.getObject(columnIndex, this.propertyType);
@@ -142,7 +130,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         }
         return this.valueOf(value);
     }
-    
+
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         Object value = cs.getObject(columnIndex, this.propertyType);
@@ -151,12 +139,12 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         }
         return this.valueOf(value);
     }
-    
+
     private E valueOf(Object value) {
         E[] es = this.enumClassType.getEnumConstants();
         return Arrays.stream(es).filter((e) -> equalsValue(value, getValue(e))).findAny().orElse(null);
     }
-    
+
     /**
      * 值比较
      *
@@ -174,7 +162,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
         }
         return Objects.equals(sValue, tValue);
     }
-    
+
     private Object getValue(Object object) {
         try {
             return this.getInvoker.invoke(object, new Object[0]);

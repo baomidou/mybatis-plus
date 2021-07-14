@@ -81,6 +81,12 @@ public class DataPermissionInterceptorTest {
     }
 
     @Test
+    void test3unionAll() {
+        assertSql(TEST_3, "select * from sys_role where company_id=6 union all select * from sys_role where company_id=7",
+            "SELECT * FROM sys_role WHERE company_id = 6 AND companyId IN (1, 2, 3) UNION ALL SELECT * FROM sys_role WHERE company_id = 7 AND companyId IN (1, 2, 3)");
+    }
+
+    @Test
     void test4() {
         assertSql(TEST_4, "select * from sys_role where id=3",
             "SELECT * FROM sys_role WHERE id = 3 OR username LIKE 'abc%'");

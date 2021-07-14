@@ -162,6 +162,32 @@ public class TableFieldInfo implements Constants {
     private Class<? extends TypeHandler<?>> typeHandler;
 
     /**
+     * 是否存在OrderBy注解
+     */
+    private boolean isOrderBy;
+    /**
+     * 排序类型
+     */
+    private String orderByType;
+    /**
+     * 排序顺序
+     */
+    private short orderBySort;
+
+    /**
+     * 全新的 存在 TableField 注解时使用的构造函数
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
+                          Reflector reflector, boolean existTableLogic, boolean isOrderBy) {
+        this(dbConfig, tableInfo, field, tableField, reflector, existTableLogic);
+        this.isOrderBy = isOrderBy;
+        if (isOrderBy) {
+            initOrderBy(field);
+        }
+    }
+
+    /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -181,7 +207,12 @@ public class TableFieldInfo implements Constants {
         JdbcType jdbcType = tableField.jdbcType();
         final Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
         final String numericScale = tableField.numericScale();
+        boolean needAs = false;
         String el = this.property;
+        if (StringUtils.isNotBlank(tableField.property())) {
+            el = tableField.property();
+            needAs = true;
+        }
         if (JdbcType.UNDEFINED != jdbcType) {
             this.jdbcType = jdbcType;
             el += (COMMA + SqlScriptUtils.mappingJdbcType(jdbcType));
@@ -233,7 +264,14 @@ public class TableFieldInfo implements Constants {
 
         this.column = column;
         this.sqlSelect = column;
-        if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
+        if (needAs) {
+            // 存在指定转换属性
+            String propertyFormat = dbConfig.getPropertyFormat();
+            if (StringUtils.isBlank(propertyFormat)) {
+                propertyFormat = "%s";
+            }
+            this.sqlSelect += (AS + String.format(propertyFormat, tableField.property()));
+        } else if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
             TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             /* 未设置 resultMap 也未开启自动构建 resultMap, 字段规则又不符合 mybatis 的自动封装规则 */
             String propertyFormat = dbConfig.getPropertyFormat();
@@ -246,7 +284,7 @@ public class TableFieldInfo implements Constants {
 
         this.insertStrategy = this.chooseFieldStrategy(tableField.insertStrategy(), dbConfig.getInsertStrategy());
         this.updateStrategy = this.chooseFieldStrategy(tableField.updateStrategy(), dbConfig.getUpdateStrategy());
-        this.whereStrategy = this.chooseFieldStrategy(tableField.whereStrategy(), dbConfig.getSelectStrategy());
+        this.whereStrategy = this.chooseFieldStrategy(tableField.whereStrategy(), dbConfig.getWhereStrategy());
 
         if (StringUtils.isNotBlank(tableField.condition())) {
             // 细粒度条件控制
@@ -268,6 +306,18 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
+                          boolean existTableLogic, boolean isOrderBy) {
+        this(dbConfig, tableInfo, field, reflector, existTableLogic);
+        this.isOrderBy = isOrderBy;
+        if (isOrderBy) {
+            initOrderBy(field);
+        }
+    }
+
+    /**
+     * 不存在 TableField 注解时, 使用的构造函数
+     */
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
                           boolean existTableLogic) {
         field.setAccessible(true);
         this.field = field;
@@ -280,7 +330,7 @@ public class TableFieldInfo implements Constants {
         this.mapping = null;
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
-        this.whereStrategy = dbConfig.getSelectStrategy();
+        this.whereStrategy = dbConfig.getWhereStrategy();
         this.initLogicDelete(dbConfig, field, existTableLogic);
 
         String column = this.property;
@@ -309,6 +359,22 @@ public class TableFieldInfo implements Constants {
                 asProperty = String.format(propertyFormat, this.property);
             }
             this.sqlSelect += (AS + asProperty);
+        }
+    }
+
+    /**
+     * 排序初始化
+     *
+     * @param field 字段
+     */
+    private void initOrderBy(Field field) {
+        OrderBy orderBy = field.getAnnotation(OrderBy.class);
+        if (null != orderBy) {
+            this.isOrderBy = true;
+            this.orderBySort = orderBy.sort();
+            this.orderByType = orderBy.isDesc() ? "desc" : "asc";
+        } else {
+            this.isOrderBy = false;
         }
     }
 

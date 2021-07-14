@@ -271,8 +271,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setLogPrefix(props.getProperty("logPrefix"));
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
         configuration.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
-        // TODO MybatisConfiguration 独有的属性
-        ((MybatisConfiguration) configuration).setUseDeprecatedExecutor(booleanValueOf(props.getProperty("useNewExecutor"), true));
         ((MybatisConfiguration) configuration).setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
     }
 
@@ -291,6 +289,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                         .transactionFactory(txFactory)
                         .dataSource(dataSource);
                     configuration.setEnvironment(environmentBuilder.build());
+                    break;
                 }
             }
         }
@@ -376,14 +375,16 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     String mapperClass = child.getStringAttribute("class");
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
-                        InputStream inputStream = Resources.getResourceAsStream(resource);
-                        XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
-                        mapperParser.parse();
+                        try(InputStream inputStream = Resources.getResourceAsStream(resource)) {
+                            XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+                            mapperParser.parse();
+                        }
                     } else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
-                        InputStream inputStream = Resources.getUrlAsStream(url);
-                        XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
-                        mapperParser.parse();
+                        try(InputStream inputStream = Resources.getUrlAsStream(url)){
+                            XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
+                            mapperParser.parse();
+                        }
                     } else if (resource == null && url == null && mapperClass != null) {
                         Class<?> mapperInterface = Resources.classForName(mapperClass);
                         configuration.addMapper(mapperInterface);

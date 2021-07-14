@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.config;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
@@ -28,6 +29,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -159,7 +161,7 @@ public class GlobalConfig implements Serializable {
         /**
          * 表主键生成器
          */
-        private IKeyGenerator keyGenerator;
+        private List<IKeyGenerator> keyGenerators;
         /**
          * 逻辑删除全局属性名
          */
@@ -184,11 +186,34 @@ public class GlobalConfig implements Serializable {
          * @since 3.1.2
          */
         private FieldStrategy updateStrategy = FieldStrategy.NOT_NULL;
+
         /**
          * 字段验证策略之 select
          *
          * @since 3.1.2
+         * @deprecated 3.4.4
          */
-        private FieldStrategy selectStrategy = FieldStrategy.NOT_NULL;
+        @Deprecated
+        private FieldStrategy selectStrategy;
+
+        /**
+         * 字段验证策略之 where
+         * 替代selectStrategy，保持与{@link TableField#whereStrategy()}一致
+         *
+         * @since 3.4.4
+         */
+        private FieldStrategy whereStrategy = FieldStrategy.NOT_NULL;
+
+        /**
+         * 重写whereStrategy的get方法，适配低版本：
+         * - 如果用户自定义了selectStrategy则用用户自定义的，
+         * - 后续版本移除selectStrategy后，直接删除该方法即可。
+         *
+         * @return 字段作为查询条件时的验证策略
+         * @since 3.4.4
+         */
+        public FieldStrategy getWhereStrategy() {
+            return selectStrategy == null ? whereStrategy : selectStrategy;
+        }
     }
 }

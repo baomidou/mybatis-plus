@@ -39,9 +39,11 @@ import static java.util.stream.Collectors.toList;
  * </p>
  *
  * @author miemie
+ * @deprecated 3.4.4 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
  * @since 2018-11-09
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class LogicDeleteByIdWithFill extends AbstractMethod {
 
     @Override

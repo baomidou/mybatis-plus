@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -104,4 +105,10 @@ class H2StudentMapperTest extends BaseTest {
         System.out.println(wrapper2.getSqlSegment());
     }
 
+    @Test
+    void testDeleteByIdWithEntity() {
+        H2Student h2Student = new H2Student(111L, "测试根据实体删除", 12);
+        studentMapper.insert(h2Student);
+        Assertions.assertEquals(studentMapper.deleteById(h2Student), 1);
+    }
 }

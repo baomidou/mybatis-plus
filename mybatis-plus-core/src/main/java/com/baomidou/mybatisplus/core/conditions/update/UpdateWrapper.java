@@ -91,6 +91,11 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return typedThis;
     }
 
+    @Override
+    protected String columnSqlInjectFilter(String column) {
+        return StringUtils.replaceBlank(column);
+    }
+
     /**
      * 返回一个支持 lambda 函数写法的 wrapper
      */

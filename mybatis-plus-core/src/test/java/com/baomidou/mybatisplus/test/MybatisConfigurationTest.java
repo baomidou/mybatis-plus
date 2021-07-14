@@ -25,12 +25,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.StatementType;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.type.JdbcType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,7 +39,7 @@ import java.util.stream.Stream;
  * @author nieqiurong 2019/2/23.
  */
 class MybatisConfigurationTest {
-    
+
     @Test
     void testXml() throws IOException {
         Reader reader = Resources.getResourceAsReader("mybatis-config-empty.xml");
@@ -77,9 +72,9 @@ class MybatisConfigurationTest {
         Assertions.assertNull(configuration.getVfsImpl());
         Assertions.assertTrue(configuration.isUseActualParamName());
         Assertions.assertNull(configuration.getConfigurationFactory());
-        
+
     }
-    
+
     @Test
     void testBean() {
         MybatisConfiguration configuration = new MybatisConfiguration();

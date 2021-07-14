@@ -9,18 +9,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author nieqiurong 2020/2/28.
  */
 @ExtendWith(MockitoExtension.class)
 public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
-    
+
     private static final JacksonTypeHandler JACKSON_TYPE_HANDLER = new JacksonTypeHandler(UserBean.class);
-    
+
     @Test
     @Override
     public void setParameter() throws Exception {
@@ -31,7 +29,7 @@ public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
         JACKSON_TYPE_HANDLER.setParameter(preparedStatement, 3, "{}", JdbcType.VARCHAR);
         verify(preparedStatement).setString(3, "\"{}\"");
     }
-    
+
     @Test
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
@@ -47,7 +45,7 @@ public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
         assertEquals(bean.getId(), 123L);
         assertEquals(bean.getName(), "测试");
     }
-    
+
     @Test
     @Override
     public void getResultFromResultSetByColumnIndex() throws Exception {
@@ -63,7 +61,7 @@ public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
         assertEquals(bean.getId(), 123L);
         assertEquals(bean.getName(), "测试");
     }
-    
+
     @Test
     @Override
     public void getResultFromCallableStatement() throws Exception {
@@ -79,5 +77,5 @@ public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
         assertEquals(bean.getId(), 123L);
         assertEquals(bean.getName(), "测试");
     }
-    
+
 }

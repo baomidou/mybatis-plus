@@ -121,7 +121,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     @Override
     public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
-        if (page == null || page.getSize() < 0 || !page.isSearchCount()) {
+        if (page == null || page.getSize() < 0 || !page.searchCount()) {
             return true;
         }
 
@@ -162,20 +162,21 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         boolean addOrdered = false;
         String buildSql = boundSql.getSql();
         List<OrderItem> orders = page.orders();
-        if (!CollectionUtils.isEmpty(orders)) {
+        if (CollectionUtils.isNotEmpty(orders)) {
             addOrdered = true;
             buildSql = this.concatOrderBy(buildSql, orders);
         }
 
-        // size 小于 0 不构造分页sql
-        if (page.getSize() < 0) {
+        // size 小于 0 且不限制返回值则不构造分页sql
+        Long _limit = page.maxLimit() != null ? page.maxLimit() : maxLimit;
+        if (page.getSize() < 0 && null == _limit) {
             if (addOrdered) {
                 PluginUtils.mpBoundSql(boundSql).sql(buildSql);
             }
             return;
         }
 
-        handlerLimit(page);
+        handlerLimit(page, _limit);
         IDialect dialect = findIDialect(executor);
 
         final Configuration configuration = ms.getConfiguration();
@@ -371,7 +372,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * @param originalSql 需要拼接的SQL
      * @return ignore
      */
-    protected String concatOrderBy(String originalSql, List<OrderItem> orderList) {
+    public String concatOrderBy(String originalSql, List<OrderItem> orderList) {
         try {
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
             SelectBody selectBody = select.getSelectBody();
@@ -414,8 +415,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         if (CollectionUtils.isEmpty(orderByElements)) {
             return additionalOrderBy;
         }
-        orderByElements.addAll(additionalOrderBy);
-        return orderByElements;
+        // github pull/3550 优化排序，比如：默认 order by id 前端传了name排序，设置为 order by name,id
+        additionalOrderBy.addAll(orderByElements);
+        return additionalOrderBy;
     }
 
     /**
@@ -445,11 +447,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      *
      * @param page IPage
      */
-    protected void handlerLimit(IPage<?> page) {
+    protected void handlerLimit(IPage<?> page, Long limit) {
         final long size = page.getSize();
-        Long pageMaxLimit = page.maxLimit();
-        Long limit = pageMaxLimit != null ? pageMaxLimit : maxLimit;
-        if (limit != null && limit > 0 && size > limit) {
+        if (limit != null && limit > 0 && (size > limit || size < 0)) {
             page.setSize(limit);
         }
     }
@@ -466,10 +466,10 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     @Override
     public void setProperties(Properties properties) {
         PropertyMapper.newInstance(properties)
-            .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
-            .whenNotBlack("dbType", DbType::getDbType, this::setDbType)
-            .whenNotBlack("dialect", ClassUtils::newInstance, this::setDialect)
-            .whenNotBlack("maxLimit", Long::parseLong, this::setMaxLimit)
-            .whenNotBlack("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
+            .whenNotBlank("overflow", Boolean::parseBoolean, this::setOverflow)
+            .whenNotBlank("dbType", DbType::getDbType, this::setDbType)
+            .whenNotBlank("dialect", ClassUtils::newInstance, this::setDialect)
+            .whenNotBlank("maxLimit", Long::parseLong, this::setMaxLimit)
+            .whenNotBlank("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
     }
 }

@@ -22,11 +22,12 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * 查询满足条件一条数据
+ * 查询满足条件一条数据，为了精简注入方法，该方法采用 list.get(0) 处理后续不再使用
  *
  * @author hubin
  * @since 2018-04-06
  */
+@Deprecated
 public class SelectOne extends AbstractMethod {
 
     @Override

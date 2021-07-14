@@ -486,6 +486,7 @@ class H2UserTest extends BaseTest {
     void testLambdaWrapperClear() {
         userService.save(new H2User("小红", AgeEnum.TWO));
         LambdaQueryWrapper<H2User> lambdaQueryWrapper = new QueryWrapper<H2User>().lambda().eq(H2User::getName, "小宝");
+        lambdaQueryWrapper.orderByDesc(H2User::getName);
         Assertions.assertEquals(0, userService.count(lambdaQueryWrapper));
         lambdaQueryWrapper.clear();
         lambdaQueryWrapper.eq(H2User::getName, "小红");
@@ -497,14 +498,24 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红")));
     }
 
-    /**
-     * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#resolve(SFunction)}
-     */
     @Test
+    void testLogicDelWithFill() {
+        H2User h2User = new H2User("逻辑删除(根据ID)不填充", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.removeById(h2User.getTestId());
+        Assertions.assertNull(h2User.getLastUpdatedDt());
+        h2User = new H2User("测试逻辑(根据实体)删除填充", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.removeById(h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+    }
+
+    /**
+     * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
+     */
+    @RepeatedTest(1000)
     void testLambdaCache() {
-        for (int i = 0; i < 1000; i++) {
-            lambdaCache();
-        }
+        lambdaCache();
     }
 
     private void lambdaCache() {

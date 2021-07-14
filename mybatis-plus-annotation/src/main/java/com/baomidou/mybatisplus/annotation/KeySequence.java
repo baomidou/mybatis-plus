@@ -36,9 +36,7 @@ public @interface KeySequence {
     String value() default "";
 
     /**
-     * id的类型
-     * @deprecated 3.1.2 自动匹配,无需指定
+     * 数据库类型，未配置默认使用注入 IKeyGenerator 实现，多个实现必须指定
      */
-    @Deprecated
-    Class<?> clazz() default Long.class;
+    DbType dbType() default DbType.OTHER;
 }

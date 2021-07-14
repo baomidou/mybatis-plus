@@ -1,5 +1,59 @@
 ﻿# CHANGELOG
 
+## [v3.4.3.1] 2021.06.15
+
+- 支持多重继承获取泛型
+- 应要求 pageDto 修改为 PageDTO
+- 分页排序优化
+- TableField 新增 ResultMapping#property 注解支持
+- fixed github pull/3550 优化排序
+- fix #I3T0LA
+- 开放KtUpdateChainWrapper、KtQueryChainWrapper的继承
+- 新增 exists 方法判断 count 存在
+- 优化数据方言获取方式减少对象创建
+- feat GlobalConfig增加whereStrategy属性和适配selectStrategy的getWhereStrategy()方法
+- 扩展 p6spy 优化
+- fix github#3390 SqlRunner.selectPage()方法未释放连接克隆
+- 优化 JDK 默认不推荐泛型数组
+- perf: 替换为 JVM 中本身的方法
+- 当用户指定ID时，不用自动生成，不指定时自增
+- Github Merge pull request #3549 #3555 #3565 #3571 #3587 #3591 #3592 #3595 #3599 #3605 #3606
+- 提供处理Map多key取值工具方法
+- 调整 page 注解泛型 E 为 P 方便阅读
+- Pattern定义为静态常量，优化正则匹配速度
+- Fix 主键添加@OrderBy无效
+- 去除addMappedStatement日志打印
+- NoKeyGenerator Jdbc3KeyGenerator shared instance
+
+## [v3.4.3] 2021.05.21
+
+- 增加瀚高数据库支持
+- 增加注解 Order By 支持默认排序
+- Wrapper exists notExists orderBy groupBy 支持参数绑定
+- Wrapper 支持 setParamAlias 其它优化
+- 优化 KeyGenerator 支持多实现多数据源注入
+- 增强 ServiceImpl 泛型推断，解决多继承与代理问题
+- 新增 PageDto 用于微服务对象传输序列化
+- 新增 Page 提供静态 of 构造方式
+- 增加代理 MethodHandleProxies 对 lambda 调试支持
+- 调整 ActiveRecord 日志对象初始化
+- 调整 ActiveRecord 模式 Model 类开发 pkVal 方法外部可用
+- 删除标记过时代码
+- 优化枚举值获取方式
+- 分页 count 安全处理
+- Sequence 方法支持重写支持
+- 升级 Mybatis 3.5.7
+- 修复自动配置 lazy-initialization 无属性提示
+- 修复 mysql on duplicate key update 字段名判断为表名问题
+- 修复 lambda 条件 npe 异常
+- 重构 lambda 信息提取方法
+- 获取 lambda 信息不在序列化
+- 合并 gitee pulls/ 141
+- fixed github issues/3208 3016
+- fixed github issues/3482 数据权限处理器支持 union all
+- 调整事务未启用打印提示信息
+- 单元测试优化相关依赖升级
+
 ## [v3.4.2] 2021.01.15
 
 - fix: 移除 BlockAttackInnerInterceptor 内引用的 commons 的 utils

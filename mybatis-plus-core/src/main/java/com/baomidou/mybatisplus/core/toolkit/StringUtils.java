@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +59,13 @@ public final class StringUtils {
      * 是否为大写命名
      */
     private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
+
+    /**
+     * 字符串去除空白内容
+     *
+     * <ul> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
+     */
+    private static final Pattern REPLACE_BLANK = Pattern.compile("\\s*|\t|\r|\n");
 
     /**
      * 判断字符串中是否全是空白字符
@@ -540,8 +548,8 @@ public final class StringUtils {
      * StringUtils.equals("abc", "ABC") = false
      * </pre>
      *
-     * @param cs1  第一个字符串, 可为 {@code null}
-     * @param cs2  第二个字符串, 可为 {@code null}
+     * @param cs1 第一个字符串, 可为 {@code null}
+     * @param cs2 第二个字符串, 可为 {@code null}
      * @return {@code true} 如果两个字符串相同, 或者都为 {@code null}
      * @see Object#equals(Object)
      */
@@ -566,5 +574,22 @@ public final class StringUtils {
             }
         }
         return true;
+    }
+
+    /**
+     * 字符串去除空白内容：
+     * <ul>
+     *     <li>\n 回车</li>
+     *     <li>\t 水平制表符</li>
+     *     <li>\s 空格</li>
+     *     <li>\r 换行</li>
+     * </ul>
+     *
+     * @param str 字符串
+     */
+    public static String replaceBlank(String str) {
+        Objects.requireNonNull(str);
+        Matcher matcher = REPLACE_BLANK.matcher(str);
+        return matcher.replaceAll("");
     }
 }

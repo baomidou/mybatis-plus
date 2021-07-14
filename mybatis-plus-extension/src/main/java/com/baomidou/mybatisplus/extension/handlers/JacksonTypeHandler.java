@@ -35,7 +35,7 @@ import java.io.IOException;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper OBJECT_MAPPER;
     private final Class<?> type;
 
     public JacksonTypeHandler(Class<?> type) {
@@ -49,7 +49,7 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     @Override
     protected Object parse(String json) {
         try {
-            return objectMapper.readValue(json, type);
+            return getObjectMapper().readValue(json, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -58,14 +58,21 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     @Override
     protected String toJson(Object obj) {
         try {
-            return objectMapper.writeValueAsString(obj);
+            return getObjectMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static ObjectMapper getObjectMapper() {
+        if (null == OBJECT_MAPPER) {
+            OBJECT_MAPPER = new ObjectMapper();
+        }
+        return OBJECT_MAPPER;
+    }
+
     public static void setObjectMapper(ObjectMapper objectMapper) {
         Assert.notNull(objectMapper, "ObjectMapper should not be null");
-        JacksonTypeHandler.objectMapper = objectMapper;
+        JacksonTypeHandler.OBJECT_MAPPER = objectMapper;
     }
 }

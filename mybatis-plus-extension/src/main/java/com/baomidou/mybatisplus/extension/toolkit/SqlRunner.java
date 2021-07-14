@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * SqlRunner 执行 SQL
@@ -42,7 +43,6 @@ public class SqlRunner implements ISqlRunner {
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
     // 默认FACTORY
-//    public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
 
     private Class<?> clazz;
@@ -121,7 +121,7 @@ public class SqlRunner implements ISqlRunner {
      * @param args 仅支持String
      * @return ignore
      */
-    private Map<String, Object> sqlMap(String sql, IPage page, Object... args) {
+    private Map<String, Object> sqlMap(String sql, IPage<?> page, Object... args) {
         Map<String, Object> sqlMap = CollectionUtils.newHashMapWithExpectedSize(2);
         sqlMap.put(PAGE, page);
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
@@ -208,7 +208,12 @@ public class SqlRunner implements ISqlRunner {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            page.setRecords(sqlSession.selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        } finally {
+            closeSqlSession(sqlSession);
+        }
         return page;
     }
 
@@ -216,7 +221,7 @@ public class SqlRunner implements ISqlRunner {
      * 获取Session 默认自动提交
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);
+        return SqlSessionUtils.getSqlSession(getSqlSessionFactory());
     }
 
     /**
@@ -225,12 +230,13 @@ public class SqlRunner implements ISqlRunner {
      * @param sqlSession session
      */
     private void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionFactory sqlSessionFactory;
-        if (clazz != null) {
-            sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-        } else {
-            sqlSessionFactory = DEFAULT.sqlSessionFactory;
-        }
-        SqlSessionUtils.closeSqlSession(sqlSession, sqlSessionFactory);
+        SqlSessionUtils.closeSqlSession(sqlSession, getSqlSessionFactory());
+    }
+
+    /**
+     * 获取SqlSessionFactory
+     */
+    private SqlSessionFactory getSqlSessionFactory() {
+        return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(sqlSessionFactory);
     }
 }
