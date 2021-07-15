@@ -28,7 +28,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 
 ## Links
 
-- [Documentation](https://mybatis.plus)
+- [Documentation](https://baomidou.com)
 - [Code Generator](https://github.com/baomidou/generator)
 - [Samples](https://github.com/baomidou/mybatis-plus-samples)
 -   [Showcase](https://github.com/baomidou/awesome-mybatis-plus)
