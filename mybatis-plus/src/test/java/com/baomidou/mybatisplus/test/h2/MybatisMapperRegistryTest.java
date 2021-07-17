@@ -17,7 +17,6 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
-import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.config.DBConfig;
@@ -51,31 +50,31 @@ import java.util.Map;
 @MapperScan(value = "com.baomidou.mybatisplus.test.h2")
 @ContextConfiguration(classes = {MybatisMapperRegistryTest.class, DBConfig.class})
 class MybatisMapperRegistryTest extends BaseTest {
-    
+
     private interface H2StudentChildrenMapper extends H2StudentMapper {
-    
+
     }
-    
+
     @Bean
     DBConfig dbConfig() {
         return new DBConfig();
     }
-    
+
     @Bean
     MybatisPlusConfig mybatisPlusConfig() {
         return new MybatisPlusConfig();
     }
-    
+
     @Bean
     SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
         return sqlSessionFactory.getObject();
     }
-    
+
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
-    
+
     @SuppressWarnings("unchecked")
     @Test
     void test() throws ReflectiveOperationException {
@@ -85,21 +84,21 @@ class MybatisMapperRegistryTest extends BaseTest {
             Assertions.assertTrue(mapperRegistry.hasMapper(H2UserMapper.class));
             Assertions.assertTrue(mapperRegistry.hasMapper(H2StudentChildrenMapper.class));
             H2StudentMapper studentMapper = mapperRegistry.getMapper(H2StudentMapper.class, sqlSession);
-            
+
             Assertions.assertTrue(configuration.hasStatement(H2StudentMapper.class.getName() + ".selectById"));
             studentMapper.selectById(1);
-            
+
             Field field = mapperRegistry.getClass().getDeclaredField("knownMappers");
             field.setAccessible(true);
             Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = (Map<Class<?>, MybatisMapperProxyFactory<?>>) field.get(mapperRegistry);
             MybatisMapperProxyFactory<?> mybatisMapperProxyFactory = knownMappers.get(H2StudentChildrenMapper.class);
-            
-            
+
+
             H2StudentChildrenMapper h2StudentChildrenMapper = mapperRegistry.getMapper(H2StudentChildrenMapper.class, sqlSession);
-            Assertions.assertFalse(configuration.hasStatement(H2StudentChildrenMapper.class.getName() + ".selectById"));
-            Map<Method, MybatisMapperMethod> methodCache = mybatisMapperProxyFactory.getMethodCache();
+            Assertions.assertTrue(configuration.hasStatement(H2StudentChildrenMapper.class.getName() + ".selectById"));
+            Map<Method, ?> methodCache = mybatisMapperProxyFactory.getMethodCache();
             Assertions.assertTrue(methodCache.isEmpty());
-            
+
             h2StudentChildrenMapper.selectById(2);
             methodCache = mybatisMapperProxyFactory.getMethodCache();
             Assertions.assertFalse(methodCache.isEmpty());

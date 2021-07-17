@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="false" debug="false">
+<configuration>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoder 默认配置为PatternLayoutEncoder -->
         <encoder>
@@ -7,11 +7,11 @@
         </encoder>
     </appender>
 
-    <logger name="com.baomidou.mybatisplus.test" level="debug" additivity="false">
+    <logger name="com.baomidou.mybatisplus" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

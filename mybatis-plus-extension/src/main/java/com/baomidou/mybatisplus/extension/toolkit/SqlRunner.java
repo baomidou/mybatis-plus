@@ -1,22 +1,23 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
@@ -26,9 +27,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * SqlRunner 执行 SQL
@@ -38,11 +39,10 @@ import java.util.Map;
  */
 public class SqlRunner implements ISqlRunner {
 
-    private Log log = LogFactory.getLog(SqlRunner.class);
+    private final Log log = LogFactory.getLog(SqlRunner.class);
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
     // 默认FACTORY
-//    public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
 
     private Class<?> clazz;
@@ -108,7 +108,7 @@ public class SqlRunner implements ISqlRunner {
      * @return ignore
      */
     private Map<String, String> sqlMap(String sql, Object... args) {
-        Map<String, String> sqlMap = new HashMap<>();
+        Map<String, String> sqlMap = CollectionUtils.newHashMapWithExpectedSize(1);
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;
     }
@@ -121,8 +121,8 @@ public class SqlRunner implements ISqlRunner {
      * @param args 仅支持String
      * @return ignore
      */
-    private Map<String, Object> sqlMap(String sql, IPage page, Object... args) {
-        Map<String, Object> sqlMap = new HashMap<>();
+    private Map<String, Object> sqlMap(String sql, IPage<?> page, Object... args) {
+        Map<String, Object> sqlMap = CollectionUtils.newHashMapWithExpectedSize(2);
         sqlMap.put(PAGE, page);
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;
@@ -208,7 +208,12 @@ public class SqlRunner implements ISqlRunner {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            page.setRecords(sqlSession.selectList(SELECT_LIST, sqlMap(sql, page, args)));
+        } finally {
+            closeSqlSession(sqlSession);
+        }
         return page;
     }
 
@@ -216,7 +221,7 @@ public class SqlRunner implements ISqlRunner {
      * 获取Session 默认自动提交
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);
+        return SqlSessionUtils.getSqlSession(getSqlSessionFactory());
     }
 
     /**
@@ -225,12 +230,13 @@ public class SqlRunner implements ISqlRunner {
      * @param sqlSession session
      */
     private void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionFactory sqlSessionFactory;
-        if (clazz != null) {
-            sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-        } else {
-            sqlSessionFactory = DEFAULT.sqlSessionFactory;
-        }
-        SqlSessionUtils.closeSqlSession(sqlSession, sqlSessionFactory);
+        SqlSessionUtils.closeSqlSession(sqlSession, getSqlSessionFactory());
+    }
+
+    /**
+     * 获取SqlSessionFactory
+     */
+    private SqlSessionFactory getSqlSessionFactory() {
+        return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(sqlSessionFactory);
     }
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @TableName(value = "t_id_generator_string")
 public class StringIdGeneratorModel {
 
-    @TableId(type = IdType.UUID)
+    @TableId(type = IdType.ASSIGN_UUID)
     private String id;
 
     private String name;

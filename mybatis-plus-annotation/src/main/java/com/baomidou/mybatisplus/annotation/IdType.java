@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.annotation;
 
@@ -27,6 +27,7 @@ import lombok.Getter;
 public enum IdType {
     /**
      * 数据库ID自增
+     * <p>该类型请确保数据库设置了 ID自增 否则无效</p>
      */
     AUTO(0),
     /**
@@ -51,22 +52,7 @@ public enum IdType {
      * 分配UUID (主键类型为 string)
      * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(UUID.replace("-",""))
      */
-    ASSIGN_UUID(4),
-    /**
-     * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
-     */
-    @Deprecated
-    ID_WORKER(3),
-    /**
-     * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
-     */
-    @Deprecated
-    ID_WORKER_STR(3),
-    /**
-     * @deprecated 3.3.0 please use {@link #ASSIGN_UUID}
-     */
-    @Deprecated
-    UUID(4);
+    ASSIGN_UUID(4);
 
     private final int key;
 

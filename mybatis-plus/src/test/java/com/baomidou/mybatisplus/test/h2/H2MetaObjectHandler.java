@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import java.sql.Timestamp;
-
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import java.sql.Timestamp;
+import java.util.Date;
 
 
 /**
@@ -44,8 +44,8 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         // System.out.println("testType=" + testType);
         if (testType == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setInsertFieldValByName("testType1", 3, metaObject);
-            this.setInsertFieldValByName("testType", 3, metaObject);
+            this.strictInsertFill(metaObject, "testType1", Integer.class, 3);
+            this.strictInsertFill(metaObject, "testType", Integer.class, 3);
         }
     }
 
@@ -55,8 +55,8 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         // System.out.println("update fill");
         // System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setUpdateFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject);
-        this.setUpdateFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.strictUpdateFill(metaObject, "lastUpdatedDt1", Date.class, new Timestamp(System.currentTimeMillis()));
+        this.strictUpdateFill(metaObject, "lastUpdatedDt", Date.class, new Timestamp(System.currentTimeMillis()));
     }
 }
 

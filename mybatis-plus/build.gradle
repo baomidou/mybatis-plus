@@ -1,24 +1,28 @@
+apply plugin: 'kotlin'
+
 dependencies {
     api project(":mybatis-plus-extension")
-    implementation project(":mybatis-plus-generator")
 
-    testCompile "${lib.'spring-web'}"
-    testCompile "${lib.'javax.servlet-api'}"
+    testImplementation "${lib."kotlin-stdlib-jdk8"}"
+    testImplementation "${lib.'spring-web'}"
+    testImplementation "${lib.'javax.servlet-api'}"
 
-    testCompile "${lib.'spring-test'}"
-    testCompile "${lib.fastjson}"
+    testImplementation "${lib.'spring-test'}"
 
-    testCompile "${lib.h2}"
-    testCompile "${lib.sqlserver}"
-    testCompile "${lib.postgresql}"
-    testCompile lib.oracle as ConfigurableFileTree
-    testCompile "${lib.mysql}"
-    testCompile "${lib.jackson}"
-    testCompile "${lib.'mybatis-ehcache'}"
-    testCompile "${lib.'mybatis-redis'}"
-    testCompile "${lib.'spring-context-support'}"
-    testCompile "${lib.'spring-jdbc'}"
-    testCompile 'javax.annotation:javax.annotation-api:1.3.2'
-    testCompile "${lib.cglib}"
+    testImplementation "${lib."jackson"}"
+    testImplementation "${lib."fastjson"}"
+    testImplementation "${lib."gson"}"
+
+    testImplementation "${lib.h2}"
+    testImplementation "${lib.sqlserver}"
+    testImplementation "${lib.postgresql}"
+    testImplementation lib.oracle as ConfigurableFileTree
+    testImplementation "${lib.mysql}"
+    testImplementation "${lib.'mybatis-ehcache'}"
+    testImplementation "${lib.'mybatis-redis'}"
+    testImplementation "${lib.'spring-context-support'}"
+    testImplementation "${lib.'spring-jdbc'}"
+    testImplementation "javax.annotation:javax.annotation-api:1.3.2"
+    testImplementation "${lib.cglib}"
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
 }

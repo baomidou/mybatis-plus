@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.conditions;
 
@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -38,7 +39,7 @@ import java.util.function.Consumer;
  * @since 2018-12-19
  */
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param>
+public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param extends AbstractWrapper<T, R, Param>>
     extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
 
     protected final Children typedThis = (Children) this;
@@ -53,9 +54,18 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     public AbstractChainWrapper() {
     }
 
-    @SuppressWarnings("rawtypes")
-    public AbstractWrapper getWrapper() {
-        return (AbstractWrapper) wrapperChildren;
+    public AbstractWrapper<T, R, Param> getWrapper() {
+        return wrapperChildren;
+    }
+
+    public Children setEntity(T entity) {
+        getWrapper().setEntity(entity);
+        return typedThis;
+    }
+
+    public Children setEntityClass(Class<T> entityClass) {
+        getWrapper().setEntityClass(entityClass);
+        return typedThis;
     }
 
     @Override
@@ -161,8 +171,20 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children in(boolean condition, R column, Object... values) {
+        getWrapper().in(condition, column, values);
+        return typedThis;
+    }
+
+    @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
         getWrapper().notIn(condition, column, coll);
+        return typedThis;
+    }
+
+    @Override
+    public Children notIn(boolean condition, R column, Object... values) {
+        getWrapper().notIn(condition, column, values);
         return typedThis;
     }
 
@@ -178,14 +200,40 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return typedThis;
     }
 
+    @Deprecated
     @Override
-    public Children groupBy(boolean condition, R... columns) {
-        getWrapper().groupBy(condition, columns);
+    public Children groupBy(boolean condition, R column, R... columns) {
+        getWrapper().groupBy(condition, column, columns);
         return typedThis;
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
+    public Children groupBy(boolean condition, R column) {
+        getWrapper().groupBy(condition, column);
+        return typedThis;
+    }
+
+    @Override
+    public Children groupBy(boolean condition, List<R> columns) {
+        getWrapper().groupBy(condition, columns);
+        return typedThis;
+    }
+
+    @Deprecated
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+        getWrapper().orderBy(condition, isAsc, column, columns);
+        return typedThis;
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, R column) {
+        getWrapper().orderBy(condition, isAsc, column);
+        return typedThis;
+    }
+
+    @Override
+    public Children orderBy(boolean condition, boolean isAsc, List<R> columns) {
         getWrapper().orderBy(condition, isAsc, columns);
         return typedThis;
     }
@@ -198,7 +246,9 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
 
     @Override
     public Children func(boolean condition, Consumer<Children> consumer) {
-        getWrapper().func(condition, consumer);
+        if (condition) {
+            consumer.accept(typedThis);
+        }
         return typedThis;
     }
 
@@ -209,8 +259,8 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children apply(boolean condition, String applySql, Object... value) {
-        getWrapper().apply(condition, applySql, value);
+    public Children apply(boolean condition, String applySql, Object... values) {
+        getWrapper().apply(condition, applySql, values);
         return typedThis;
     }
 
@@ -233,14 +283,14 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children exists(boolean condition, String existsSql) {
-        getWrapper().exists(condition, existsSql);
+    public Children exists(boolean condition, String existsSql, Object... values) {
+        getWrapper().exists(condition, existsSql, values);
         return typedThis;
     }
 
     @Override
-    public Children notExists(boolean condition, String notExistsSql) {
-        getWrapper().notExists(condition, notExistsSql);
+    public Children notExists(boolean condition, String existsSql, Object... values) {
+        getWrapper().notExists(condition, existsSql, values);
         return typedThis;
     }
 
@@ -259,6 +309,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children nested(boolean condition, Consumer<Param> consumer) {
         getWrapper().nested(condition, consumer);
+        return typedThis;
+    }
+
+    @Override
+    public Children not(boolean condition, Consumer<Param> consumer) {
+        getWrapper().not(condition, consumer);
         return typedThis;
     }
 

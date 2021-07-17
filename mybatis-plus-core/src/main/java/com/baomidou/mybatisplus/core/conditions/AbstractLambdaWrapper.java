@@ -1,27 +1,26 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ import static java.util.stream.Collectors.joining;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
-    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
+        extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
@@ -60,7 +59,8 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     }
 
     protected String columnToString(SFunction<T, ?> column, boolean onlyColumn) {
-        return getColumn(LambdaUtils.resolve(column), onlyColumn);
+        ColumnCache cache = getColumnCache(column);
+        return onlyColumn ? cache.getColumn() : cache.getColumnSelect();
     }
 
     /**
@@ -68,33 +68,33 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      * <p>
      * 如果获取不到列信息，那么本次条件组装将会失败
      *
-     * @param lambda     lambda 表达式
-     * @param onlyColumn 如果是，结果: "name", 如果否： "name" as "name"
      * @return 列
      * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
-     * @see SerializedLambda#getImplClass()
-     * @see SerializedLambda#getImplMethodName()
      */
-    private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
-        String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        Class<?> aClass = lambda.getInstantiatedType();
-        if (!initColumnMap) {
-            columnMap = LambdaUtils.getColumnMap(aClass);
-        }
-        Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", aClass.getName());
-        ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
-        Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
-            fieldName, aClass.getName());
-        return onlyColumn ? columnCache.getColumn() : columnCache.getColumnSelect();
+    protected ColumnCache getColumnCache(SFunction<T, ?> column) {
+        LambdaMeta meta = LambdaUtils.extract(column);
+        String fieldName = PropertyNamer.methodToProperty(meta.getImplMethodName());
+        Class<?> instantiatedClass = meta.getInstantiatedClass();
+        tryInitCache(instantiatedClass);
+        return getColumnCache(fieldName, instantiatedClass);
     }
 
-    @Override
-    protected void initNeed() {
-        super.initNeed();
-        final Class<T> entityClass = getEntityClass();
-        if (entityClass != null) {
+    private void tryInitCache(Class<?> lambdaClass) {
+        if (!initColumnMap) {
+            final Class<T> entityClass = getEntityClass();
+            if (entityClass != null) {
+                lambdaClass = entityClass;
+            }
+            columnMap = LambdaUtils.getColumnMap(lambdaClass);
+            Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", lambdaClass.getName());
             initColumnMap = true;
-            columnMap = LambdaUtils.getColumnMap(entityClass);
         }
+    }
+
+    private ColumnCache getColumnCache(String fieldName, Class<?> lambdaClass) {
+        ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
+        Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
+                fieldName, lambdaClass.getName());
+        return columnCache;
     }
 }

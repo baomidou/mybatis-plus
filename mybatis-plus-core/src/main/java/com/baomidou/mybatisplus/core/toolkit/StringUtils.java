@@ -1,29 +1,25 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
-import java.nio.charset.StandardCharsets;
-import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +28,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * String 工具类
  *
- * @author D.Yang
+ * @author D.Yang, hcl
  * @author hcl
  * @since 2016-08-18
  */
@@ -64,57 +60,23 @@ public final class StringUtils {
      */
     private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
 
-    private StringUtils() {
-    }
+    /**
+     * 字符串去除空白内容
+     *
+     * <ul> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
+     */
+    private static final Pattern REPLACE_BLANK = Pattern.compile("\\s*|\t|\r|\n");
 
     /**
-     * 安全的进行字符串 format
+     * 判断字符串中是否全是空白字符
      *
-     * @param target 目标字符串
-     * @param params format 参数
-     * @return format 后的
+     * @param cs 需要判断的字符串
+     * @return 如果字符串序列是 null 或者全是空白，返回 true
      */
-    public static String format(String target, Object... params) {
-        return String.format(target, params);
-    }
-
-
-    /**
-     * Blob 转为 String 格式
-     *
-     * @param blob Blob 对象
-     * @return 转换后的
-     */
-    public static String blob2String(Blob blob) {
-        if (null != blob) {
-            try {
-                byte[] returnValue = blob.getBytes(1, (int) blob.length());
-                return new String(returnValue, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                throw ExceptionUtils.mpe("Blob Convert To String Error!");
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 判断字符串是否为空
-     *
-     * @param cs 需要判断字符串
-     * @return 判断结果
-     */
-    @Deprecated
-    public static boolean isEmpty(CharSequence cs) {
-        return isBlank(cs);
-    }
-
-    public static boolean isBlank(final CharSequence cs) {
-        if (cs == null) {
-            return true;
-        }
-        int l = cs.length();
-        if (l > 0) {
-            for (int i = 0; i < l; i++) {
+    public static boolean isBlank(CharSequence cs) {
+        if (cs != null) {
+            int length = cs.length();
+            for (int i = 0; i < length; i++) {
                 if (!Character.isWhitespace(cs.charAt(i))) {
                     return false;
                 }
@@ -124,46 +86,21 @@ public final class StringUtils {
     }
 
     /**
-     * 判断字符串是否不为空
+     * 对象转为字符串去除左右空格
      *
-     * @param cs 需要判断字符串
-     * @return 判断结果
+     * @param o 带转换对象
+     * @return
      */
-    @Deprecated
-    public static boolean isNotEmpty(final CharSequence cs) {
-        return !isEmpty(cs);
+    public static String toStringTrim(Object o) {
+        return String.valueOf(o).trim();
     }
 
-    public static boolean isNotBlank(final CharSequence cs) {
+    /**
+     * @see #isBlank(CharSequence)
+     */
+    public static boolean isNotBlank(CharSequence cs) {
         return !isBlank(cs);
     }
-
-    /**
-     * 猜测方法属性对应的 Getter 名称，具体规则请参考 JavaBeans 规范
-     *
-     * @param name 属性名称
-     * @param type 属性类型
-     * @return 返回猜测的名称
-     * @deprecated 3.3.2
-     */
-    @Deprecated
-    public static String guessGetterName(String name, Class<?> type) {
-        return boolean.class == type ? name.startsWith("is") ? name : "is" + upperFirst(name) : "get" + upperFirst(name);
-    }
-
-    /**
-     * 大写第一个字母
-     *
-     * @param src 源字符串
-     * @return 返回第一个大写后的字符串
-     */
-    public static String upperFirst(String src) {
-        if (Character.isLowerCase(src.charAt(0))) {
-            return 1 == src.length() ? src.toUpperCase() : Character.toUpperCase(src.charAt(0)) + src.substring(1);
-        }
-        return src;
-    }
-
 
     /**
      * 判断字符串是不是驼峰命名
@@ -175,12 +112,8 @@ public final class StringUtils {
      * @return 结果
      */
     public static boolean isCamel(String str) {
-        if (str.contains(StringPool.UNDERSCORE)) {
-            return false;
-        }
-        return Character.isLowerCase(str.charAt(0));
+        return Character.isLowerCase(str.charAt(0)) && !str.contains(StringPool.UNDERSCORE);
     }
-
 
     /**
      * 判断字符串是否符合数据库字段的命名
@@ -228,23 +161,6 @@ public final class StringUtils {
     }
 
     /**
-     * 解析 getMethodName -> propertyName
-     *
-     * @param getMethodName 需要解析的
-     * @return 返回解析后的字段名称
-     */
-    public static String resolveFieldName(String getMethodName) {
-        if (getMethodName.startsWith("get")) {
-            getMethodName = getMethodName.substring(3);
-        } else if (getMethodName.startsWith(IS)) {
-            getMethodName = getMethodName.substring(2);
-        }
-        // 小写第一个字母
-        return StringUtils.firstToLowerCase(getMethodName);
-    }
-
-
-    /**
      * 字符串下划线转驼峰格式
      *
      * @param param 需要转换的字符串
@@ -281,16 +197,6 @@ public final class StringUtils {
             return EMPTY;
         }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
-    }
-
-    /**
-     * 判断字符串是否为纯大写字母
-     *
-     * @param str 要匹配的字符串
-     * @return
-     */
-    public static boolean isUpperCase(String str) {
-        return matches("^[A-Z]+$", str);
     }
 
     /**
@@ -357,9 +263,6 @@ public final class StringUtils {
 
     /**
      * 获取SQL PARAMS字符串
-     *
-     * @param obj
-     * @return
      */
     public static String sqlParam(Object obj) {
         String repStr;
@@ -394,7 +297,7 @@ public final class StringUtils {
      */
     public static String quotaMarkList(Collection<?> coll) {
         return coll.stream().map(StringUtils::quotaMark)
-                .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -415,16 +318,6 @@ public final class StringUtils {
         }
 
         return concatStr + Character.toTitleCase(firstChar) + str.substring(1);
-    }
-
-    /**
-     * 字符串第一个字母大写
-     *
-     * @param str 被处理的字符串
-     * @return 首字母大写后的字符串
-     */
-    public static String capitalize(final String str) {
-        return concatCapitalize(null, str);
     }
 
     /**
@@ -514,36 +407,6 @@ public final class StringUtils {
         return endsWith(str, suffix, false);
     }
 
-
-    /**
-     * 判断是否以某个字符串结尾（不区分大小写）
-     * Case insensitive check if a String ends with a specified suffix.
-     * <p>
-     * <code>null</code>s are handled without exceptions. Two <code>null</code>
-     * references are considered to be equal. The comparison is case
-     * insensitive.
-     * </p>
-     * <p>
-     * <pre>
-     * StringUtils.endsWithIgnoreCase(null, null)      = true
-     * StringUtils.endsWithIgnoreCase(null, "abcdef")  = false
-     * StringUtils.endsWithIgnoreCase("def", null)     = false
-     * StringUtils.endsWithIgnoreCase("def", "abcdef") = true
-     * StringUtils.endsWithIgnoreCase("def", "ABCDEF") = false
-     * </pre>
-     * </p>
-     *
-     * @param str    the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @return <code>true</code> if the String ends with the suffix, case
-     * insensitive, or both <code>null</code>
-     * @see String#endsWith(String)
-     * @since 2.4
-     */
-    public static boolean endsWithIgnoreCase(String str, String suffix) {
-        return endsWith(str, suffix, true);
-    }
-
     /**
      * Check if a String ends with a specified suffix (optionally case
      * insensitive).
@@ -568,140 +431,6 @@ public final class StringUtils {
     }
 
     /**
-     * Splits the provided text into an array, separators specified. This is an
-     * alternative to using StringTokenizer.
-     * <p>
-     * The separator is not included in the returned String array. Adjacent
-     * separators are treated as one separator. For more control over the split
-     * use the StrTokenizer class.
-     * </p>
-     * <p>
-     * A {@code null} input String returns {@code null}. A {@code null}
-     * separatorChars splits on whitespace.
-     * </p>
-     * <p>
-     * <pre>
-     * StringUtils.split(null, *)         = null
-     * StringUtils.split("", *)           = []
-     * StringUtils.split("abc def", null) = ["abc", "def"]
-     * StringUtils.split("abc def", " ")  = ["abc", "def"]
-     * StringUtils.split("abc  def", " ") = ["abc", "def"]
-     * StringUtils.split("ab:cd:ef", ":") = ["ab", "cd", "ef"]
-     * </pre>
-     * </p>
-     *
-     * @param str            the String to parse, may be null
-     * @param separatorChars the characters used as the delimiters, {@code null} splits on
-     *                       whitespace
-     * @return an array of parsed Strings, {@code null} if null String input
-     */
-    public static String[] split(final String str, final String separatorChars) {
-        List<String> strings = splitWorker(str, separatorChars, -1, false);
-        return strings.toArray(new String[0]);
-    }
-
-    /**
-     * Performs the logic for the {@code split} and
-     * {@code splitPreserveAllTokens} methods that return a maximum array
-     * length.
-     *
-     * @param str               the String to parse, may be {@code null}
-     * @param separatorChars    the separate character
-     * @param max               the maximum number of elements to include in the array. A zero
-     *                          or negative value implies no limit.
-     * @param preserveAllTokens if {@code true}, adjacent separators are treated as empty
-     *                          token separators; if {@code false}, adjacent separators are
-     *                          treated as one separator.
-     * @return an array of parsed Strings, {@code null} if null String input
-     */
-    public static List<String> splitWorker(final String str, final String separatorChars, final int max,
-                                           final boolean preserveAllTokens) {
-        // Performance tuned for 2.0 (JDK1.4)
-        // Direct code is quicker than StringTokenizer.
-        // Also, StringTokenizer uses isSpace() not isWhitespace()
-
-        if (str == null) {
-            return null;
-        }
-        final int len = str.length();
-        if (len == 0) {
-            return Collections.emptyList();
-        }
-        final List<String> list = new ArrayList<>();
-        int sizePlus1 = 1;
-        int i = 0, start = 0;
-        boolean match = false;
-        boolean lastMatch = false;
-        if (separatorChars == null) {
-            // Null separator means use whitespace
-            while (i < len) {
-                if (Character.isWhitespace(str.charAt(i))) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else if (separatorChars.length() == 1) {
-            // Optimise 1 character case
-            final char sep = separatorChars.charAt(0);
-            while (i < len) {
-                if (str.charAt(i) == sep) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else {
-            // standard case
-            while (i < len) {
-                if (separatorChars.indexOf(str.charAt(i)) >= 0) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        }
-        if (match || preserveAllTokens && lastMatch) {
-            list.add(str.substring(start, i));
-        }
-        return list;
-    }
-
-
-    /**
      * 是否为CharSequence类型
      *
      * @param clazz class
@@ -712,49 +441,6 @@ public final class StringUtils {
     }
 
     /**
-     * 去除boolean类型is开头的字符串
-     *
-     * @param propertyName 字段名
-     * @param propertyType 字段类型
-     */
-    public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
-        if (ClassUtils.isBoolean(propertyType) && propertyName.startsWith(IS)) {
-            String property = propertyName.replaceFirst(IS, EMPTY);
-            if (isBlank(property)) {
-                return propertyName;
-            } else {
-                String firstCharToLowerStr = firstCharToLower(property);
-                return property.equals(firstCharToLowerStr) ? propertyName : firstCharToLowerStr;
-            }
-        }
-        return propertyName;
-    }
-
-    /**
-     * 是否为Boolean类型(包含普通类型)
-     *
-     * @param propertyCls ignore
-     * @return ignore
-     * @deprecated 3.3.0 {@link ClassUtils#isBoolean(Class)}
-     */
-    @Deprecated
-    public static boolean isBoolean(Class<?> propertyCls) {
-        return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
-    }
-
-    /**
-     * 第一个首字母小写，之后字符大小写的不变
-     * <p>StringUtils.firstCharToLower( "UserService" )     = userService</p>
-     * <p>StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl</p>
-     *
-     * @param rawString 需要处理的字符串
-     * @return ignore
-     */
-    public static String firstCharToLower(String rawString) {
-        return prefixToLower(rawString, 1);
-    }
-
-    /**
      * 前n个首字母小写,之后字符大小写的不变
      *
      * @param rawString 需要处理的字符串
@@ -762,9 +448,10 @@ public final class StringUtils {
      * @return ignore
      */
     public static String prefixToLower(String rawString, int index) {
-        String beforeChar = rawString.substring(0, index).toLowerCase();
-        String afterChar = rawString.substring(index);
-        return beforeChar + afterChar;
+        StringBuilder field = new StringBuilder();
+        field.append(rawString.substring(0, index).toLowerCase());
+        field.append(rawString.substring(index));
+        return field.toString();
     }
 
     /**
@@ -793,21 +480,16 @@ public final class StringUtils {
     }
 
     private static String wordsAndHyphenAndCamelToConstantCase(String input) {
-        boolean betweenUpperCases = false;
-        boolean containsLowerCase = containsLowerCase(input);
-
         StringBuilder buf = new StringBuilder();
         char previousChar = ' ';
         char[] chars = input.toCharArray();
         for (char c : chars) {
-            boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
             boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
 
             boolean previousIsWhitespace = Character.isWhitespace(previousChar);
             boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
             boolean isNotUnderscore = c != '_';
-            if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
-                || (betweenUpperCases && containsLowerCase && isUpperCaseAndPreviousIsUpperCase))) {
+            if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace)) {
                 buf.append(StringPool.UNDERSCORE);
             } else if ((Character.isDigit(previousChar) && Character.isLetter(c))) {
                 buf.append('_');
@@ -825,15 +507,6 @@ public final class StringUtils {
         return buf.toString();
     }
 
-    public static boolean containsLowerCase(String s) {
-        for (char c : s.toCharArray()) {
-            if (Character.isLowerCase(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private static boolean shouldReplace(char c) {
         return (c == '.') || (c == '_') || (c == '-');
     }
@@ -843,8 +516,8 @@ public final class StringUtils {
         char lastChar = 'a';
         for (char c : s.toCharArray()) {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                    && ('-' != c) && (buf.length() > 0)
-                    && (buf.charAt(buf.length() - 1) != '-')) {
+                && ('-' != c) && (buf.length() > 0)
+                && (buf.charAt(buf.length() - 1) != '-')) {
                 buf.append(StringPool.DASH);
             }
             if ('_' == c) {
@@ -863,16 +536,60 @@ public final class StringUtils {
     }
 
     /**
-     * 从字符串中移除一个单词及随后的一个逗号
+     * <p>比较两个字符串，相同则返回true。字符串可为null</p>
      *
-     * @param s 原字符串
-     * @param p 移除的单词
-     * @return ignore
-     * @deprecated 3.1.1
+     * <p>对字符串大小写敏感</p>
+     *
+     * <pre>
+     * StringUtils.equals(null, null)   = true
+     * StringUtils.equals(null, "abc")  = false
+     * StringUtils.equals("abc", null)  = false
+     * StringUtils.equals("abc", "abc") = true
+     * StringUtils.equals("abc", "ABC") = false
+     * </pre>
+     *
+     * @param cs1 第一个字符串, 可为 {@code null}
+     * @param cs2 第二个字符串, 可为 {@code null}
+     * @return {@code true} 如果两个字符串相同, 或者都为 {@code null}
+     * @see Object#equals(Object)
      */
-    @Deprecated
-    public static String removeWordWithComma(String s, String p) {
-        String match = "\\s*" + p + "\\s*,{0,1}";
-        return s.replaceAll(match, "");
+    public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
+        if (cs1 == cs2) {
+            return true;
+        }
+        if (cs1 == null || cs2 == null) {
+            return false;
+        }
+        if (cs1.length() != cs2.length()) {
+            return false;
+        }
+        if (cs1 instanceof String && cs2 instanceof String) {
+            return cs1.equals(cs2);
+        }
+        // Step-wise comparison
+        final int length = cs1.length();
+        for (int i = 0; i < length; i++) {
+            if (cs1.charAt(i) != cs2.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 字符串去除空白内容：
+     * <ul>
+     *     <li>\n 回车</li>
+     *     <li>\t 水平制表符</li>
+     *     <li>\s 空格</li>
+     *     <li>\r 换行</li>
+     * </ul>
+     *
+     * @param str 字符串
+     */
+    public static String replaceBlank(String str) {
+        Objects.requireNonNull(str);
+        Matcher matcher = REPLACE_BLANK.matcher(str);
+        return matcher.replaceAll("");
     }
 }

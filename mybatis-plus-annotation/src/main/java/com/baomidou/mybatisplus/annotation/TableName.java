@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.annotation;
 
@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface TableName {
 
     /**
@@ -35,6 +35,8 @@ public @interface TableName {
 
     /**
      * schema
+     * <p>
+     * 配置此值将覆盖全局配置的 schema
      *
      * @since 3.1.1
      */
@@ -51,13 +53,13 @@ public @interface TableName {
 
     /**
      * 实体映射结果集,
-     * 只生效与 mp 自动注入的 method
+     * 只生效于 mp 自动注入的 method
      */
     String resultMap() default "";
 
     /**
      * 是否自动构建 resultMap 并使用,
-     * 只生效与 mp 自动注入的 method,
+     * 只生效于 mp 自动注入的 method,
      * 如果设置 resultMap 则不会进行 resultMap 的自动构建并注入,
      * 只适合个别字段 设置了 typeHandler 或 jdbcType 的情况
      *

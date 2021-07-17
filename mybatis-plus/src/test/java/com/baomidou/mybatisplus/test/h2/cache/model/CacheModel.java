@@ -25,7 +25,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "cache")
+@TableName(value = "t_cache")
 public class CacheModel implements Serializable {
 
     private Long id;

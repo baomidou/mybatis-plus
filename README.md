@@ -28,9 +28,10 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 
 ## Links
 
--   [Documentation](https://mybatis.plus)
--   [Samples](https://github.com/baomidou/mybatis-plus-samples.git)
--   [Showcase](https://github.com/baomidou/awosome-mybaits-plus)
+- [Documentation](https://mybatis.plus)
+- [Code Generator](https://github.com/baomidou/generator)
+- [Samples](https://github.com/baomidou/mybatis-plus-samples)
+-   [Showcase](https://github.com/baomidou/awesome-mybatis-plus)
 
 ## Features
 
@@ -50,18 +51,19 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 ## Getting started
 
 -   Add MyBatis-Plus dependency
-    -   Maven:
-        ```xml
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-        ```
-    -   Gradle
-        ```groovy
-        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.1.2'
-        ```
+    - Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
+    - Maven:
+      ```xml
+      <dependency>
+          <groupId>com.baomidou</groupId>
+          <artifactId>mybatis-plus-boot-starter</artifactId>
+          <version>Latest Version</version>
+      </dependency>
+      ```
+    - Gradle
+      ```groovy
+      compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+      ```
 -   Modify mapper file extends BaseMapper interface
 
     ```java
@@ -70,14 +72,14 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     }
     ```
 
--   Use it
-    ```java
-    List<User> userList = userMapper.selectList(
-            new QueryWrapper<User>()
-                    .lambda()
-                    .ge(User::getAge, 18)
-    );
-    ```
+- Use it
+  ``` java
+  List<User> userList = userMapper.selectList(
+          new QueryWrapper<User>()
+                  .lambda()
+                  .ge(User::getAge, 18)
+  );
+  ```
     MyBatis-Plus will execute the following SQL
     ```sql
     SELECT * FROM user WHERE age >= 18

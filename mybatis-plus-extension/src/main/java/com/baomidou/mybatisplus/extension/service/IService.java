@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.service;
 
@@ -21,10 +21,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +106,16 @@ public interface IService<T> {
      */
     default boolean removeById(Serializable id) {
         return SqlHelper.retBool(getBaseMapper().deleteById(id));
+    }
+
+    /**
+     * 根据实体(ID)删除
+     *
+     * @param entity 实体
+     * @since 3.4.4
+     */
+    default boolean removeById(T entity) {
+        return SqlHelper.retBool(getBaseMapper().deleteById(entity));
     }
 
     /**
@@ -385,13 +399,20 @@ public interface IService<T> {
     BaseMapper<T> getBaseMapper();
 
     /**
+     * 获取 entity 的 class
+     *
+     * @return {@link Class<T>}
+     */
+    Class<T> getEntityClass();
+
+    /**
      * 以下的方法使用介绍:
      *
      * 一. 名称介绍
      * 1. 方法名带有 query 的为对数据的查询操作, 方法名带有 update 的为对数据的修改操作
      * 2. 方法名带有 lambda 的为内部方法入参 column 支持函数式的
-     *
      * 二. 支持介绍
+     *
      * 1. 方法名带有 query 的支持以 {@link ChainQuery} 内部的方法名结尾进行数据查询操作
      * 2. 方法名带有 update 的支持以 {@link ChainUpdate} 内部的方法名为结尾进行数据修改操作
      *
@@ -418,6 +439,26 @@ public interface IService<T> {
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
         return ChainWrappers.lambdaQueryChain(getBaseMapper());
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * kotlin 使用
+     *
+     * @return KtQueryWrapper 的包装类
+     */
+    default KtQueryChainWrapper<T> ktQuery() {
+        return ChainWrappers.ktQueryChain(getBaseMapper(), getEntityClass());
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * kotlin 使用
+     *
+     * @return KtQueryWrapper 的包装类
+     */
+    default KtUpdateChainWrapper<T> ktUpdate() {
+        return ChainWrappers.ktUpdateChain(getBaseMapper(), getEntityClass());
     }
 
     /**

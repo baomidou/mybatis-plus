@@ -26,6 +26,18 @@
     ],
     "properties": [
         {
+            "defaultValue": false,
+            "name": "mybatis-plus.lazy-initialization",
+            "description": "Set whether enable lazy initialization for mapper bean.",
+            "type": "java.lang.Boolean"
+        },
+        {
+            "defaultValue": "",
+            "name": "mybatis-plus.mapper-default-scope",
+            "description": "A default scope for mapper bean that scanned by auto-configure.",
+            "type": "java.lang.String"
+        },
+        {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
             "name": "mybatis-plus.global-config.identifier-generator",
             "deprecation": {

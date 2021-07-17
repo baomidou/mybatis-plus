@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.resultmap.EntityMapper">
+
+    <resultMap id="baseResult" type="com.baomidou.mybatisplus.test.resultmap.Entity">
+        <id column="id" property="id"/>
+        <result column="gg1" property="gg1" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
+    </resultMap>
+
+    <resultMap id="resultMap" type="com.baomidou.mybatisplus.test.resultmap.Entity" extends="baseResult">
+        <result column="gg2" property="gg2" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
+    </resultMap>
+</mapper>

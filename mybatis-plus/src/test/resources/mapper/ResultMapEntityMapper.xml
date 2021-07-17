@@ -11,7 +11,7 @@
 
     <resultMap id="resultChildren1" type="com.baomidou.mybatisplus.test.mysql.entity.ResultMapEntity"
                extends="baseResult">
-        <result column="column4" property="column4"/>
+        <result column="column_1234" property="column4"/>
         <result column="list" property="list" typeHandler="com.baomidou.mybatisplus.test.mysql.type.ListTypeHandler"/>
         <result column="map" property="map" typeHandler="com.baomidou.mybatisplus.test.mysql.type.MapTypeHandler"/>
         <result column="map" property="mapp" typeHandler="com.baomidou.mybatisplus.test.mysql.type.JsonTypeHandler"/>

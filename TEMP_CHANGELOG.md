@@ -1,2 +1,0 @@
-- fix: 初始化 TableInfo 中遇到多个字段有 @TableId 注解时未能抛出异常的问题
-- feat: 初始化 TableInfo 中遇到主键字段有 @TableField 注解则打印 warn 日志进行提醒

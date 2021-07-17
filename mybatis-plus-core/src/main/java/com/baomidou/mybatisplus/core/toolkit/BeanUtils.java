@@ -1,27 +1,27 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.stream.Collectors.toList;
+import net.sf.cglib.beans.BeanMap;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.cglib.beans.BeanMap;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Bean 转换工具类
@@ -47,13 +47,13 @@ public final class BeanUtils {
     }
 
     /**
-     * map 装换为 java bean 对象
+     * map 转换为 java bean 对象
      *
      * @param map   转换 MAP
      * @param clazz 对象 Class
      * @return 返回 bean 对象
      */
-    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz) {
+    public static <T> T mapToBean(Map<String, ?> map, Class<T> clazz) {
         T bean = ClassUtils.newInstance(clazz);
         BeanMap.create(bean).putAll(map);
         return bean;
@@ -79,7 +79,7 @@ public final class BeanUtils {
      * @param clazz 对象 Class
      * @return 返回转换后的 bean 集合
      */
-    public static <T> List<T> mapsToBeans(List<Map<String, Object>> maps, Class<T> clazz) {
+    public static <T> List<T> mapsToBeans(List<? extends Map<String, ?>> maps, Class<T> clazz) {
         if (CollectionUtils.isEmpty(maps)) {
             return Collections.emptyList();
         }

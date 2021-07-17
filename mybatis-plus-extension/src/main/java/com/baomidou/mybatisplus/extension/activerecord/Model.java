@@ -1,34 +1,33 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.activerecord;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
-import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +47,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private transient Log log = LogFactory.getLog(getClass());
+    private final transient Class<?> entityClass = this.getClass();
 
     /**
      * 插入（字段选择插入）
@@ -97,7 +96,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public boolean delete(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
@@ -113,7 +112,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public boolean updateById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         // updateById
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
         SqlSession sqlSession = sqlSession();
         try {
@@ -129,7 +128,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     public boolean update(Wrapper<T> updateWrapper) {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
         // update
@@ -181,7 +180,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public List<T> selectList(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
@@ -197,7 +196,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public T selectOne(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(log, selectList(queryWrapper));
+        return SqlHelper.getObject(() -> LogFactory.getLog(this.entityClass), selectList(queryWrapper));
     }
 
     /**
@@ -207,7 +206,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(2);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
@@ -225,7 +224,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public Integer selectCount(Wrapper<T> queryWrapper) {
-        Map<String, Object> map = new HashMap<>(1);
+        Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
@@ -239,14 +238,14 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 执行 SQL
      */
     public SqlRunner sql() {
-        return new SqlRunner(getClass());
+        return new SqlRunner(this.entityClass);
     }
 
     /**
      * 获取Session 默认自动提交
      */
     protected SqlSession sqlSession() {
-        return SqlHelper.sqlSession(getClass());
+        return SqlHelper.sqlSession(this.entityClass);
     }
 
     /**
@@ -264,14 +263,16 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param sqlMethod sqlMethod
      */
     protected String sqlStatement(String sqlMethod) {
-        return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
+        //无法确定对应的mapper，只能用注入时候绑定的了。
+        return SqlHelper.table(this.entityClass).getSqlStatement(sqlMethod);
     }
 
     /**
      * 主键值
      */
-    protected Serializable pkVal() {
-        return (Serializable) ReflectionKit.getFieldValue(this, TableInfoHelper.getTableInfo(getClass()).getKeyProperty());
+    public Serializable pkVal() {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
+        return (Serializable) tableInfo.getPropertyValue(this, tableInfo.getKeyProperty());
     }
 
     /**
@@ -280,6 +281,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param sqlSession session
      */
     protected void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(getClass()));
+        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
     }
 }

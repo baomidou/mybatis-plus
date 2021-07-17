@@ -1,32 +1,23 @@
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 
-buildscript {
-    repositories {
-        maven { url "https://maven.aliyun.com/nexus/content/groups/public" }
-        maven { url "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin" }
-        mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-
-    dependencies {
-        //noinspection DifferentKotlinGradleVersion
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72'
-        classpath "gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.15.0"
-    }
+allprojects {
+    group = 'com.baomidou'
+    version = "3.4.4.3-SNAPSHOT"
 }
+
 ext {
     configuration = [
         javaVersion = JavaVersion.VERSION_1_8
     ]
 
     libraries = [
-        mybatisVersion = '3.5.4',
-        mybatisSpringVersion = '2.0.4',
-        mybatisSpringBootStarterVersion = '2.1.2',
-        springVersion = '5.2.5.RELEASE',
-        springBootVersion = '2.2.6.RELEASE',
-        jsqlparserVersion = '3.1',
-        junitVersion = '5.6.2',
+        mybatisVersion = '3.5.7',
+        mybatisSpringVersion = '2.0.6',
+        mybatisSpringBootStarterVersion = '2.2.0',
+        springVersion = '5.3.7',
+        springBootVersion = '2.4.5',
+        jsqlparserVersion = '4.1',
+        junitVersion = '5.7.2',
     ]
 
     lib = [
@@ -35,103 +26,62 @@ ext {
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
-        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.1",
-        "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.1",
+        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.2",
+        "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.2",
         "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.0",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
         "spring-jdbc"                : "org.springframework:spring-jdbc:${springVersion}",
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
         "spring-web"                 : "org.springframework:spring-web:${springVersion}",
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
-        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.5",
+        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
         "cglib"                      : "cglib:cglib:3.3.0",
-        "lombok"                     : "org.projectlombok:lombok:1.18.12",
+        "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
+        "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:3.0.3",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.5",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.30",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.3",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.15.0",
-        "junit-jupiter-api"          : "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
-        "junit-jupiter-engine"       : "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
-        "fastjson"                   : "com.alibaba:fastjson:1.2.68",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.10.3",
-        "gson"                       : "com.google.code.gson:gson:2.8.6",
-        "lagarto"                    : "org.jodd:jodd-lagarto:5.1.4",
+        "assertj-core"               : "org.assertj:assertj-core:3.19.0",
+        "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
+        "fastjson"                   : "com.alibaba:fastjson:1.2.76",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
+        "gson"                       : "com.google.code.gson:gson:2.8.7",
+        "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
-        "p6spy"                      : "p6spy:p6spy:3.9.0",
+        "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
-        "postgresql"                 : "org.postgresql:postgresql:42.2.12",
+        "postgresql"                 : "org.postgresql:postgresql:42.2.20",
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
-        "mysql"                      : "mysql:mysql-connector-java:8.0.19",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.30.1",
-        //code generator
-        "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
-        "freemarker"                 : "org.freemarker:freemarker:2.3.30",
-        "beetl"                      : "com.ibeetl:beetl:3.1.3.RELEASE",
-        "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
+        "mysql"                      : "mysql:mysql-connector-java:8.0.21",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.1",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
-        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2"
+        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0"
     ]
-}
-
-allprojects {
-    group = 'com.baomidou'
-    version = "3.3.1"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
 subprojects {
-
     apply plugin: 'java-library'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
+    apply plugin: "io.freefair.lombok"
     apply plugin: 'com.github.hierynomus.license'
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-        options.deprecation = true
-        options.compilerArgs += ["-parameters"]
-    }
-
-    jar {
-        afterEvaluate {
-            manifest {
-                attributes 'Implementation-Version': version
-                attributes 'Built-Gradle': gradle.gradleVersion
-                attributes 'Bundle-DocURL': 'https://mybatis.plus/'
-                attributes 'Build-OS': System.getProperty("os.name")
-                attributes 'Built-By': System.getProperty("user.name")
-                attributes 'Build-Jdk': System.getProperty("java.version")
-                attributes 'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
-            }
-        }
-    }
-
-    license {
-        encoding = "UTF-8"
-        header = rootProject.file("license.txt")
-        includes(["**/*.java", "**/*.kt"])
-        exclude "**/test/**/*.kt"
-        exclude "**/test/**/*.java"
-        exclude "**/*Test.java"
-        exclude "**/TableNameParser.java"
-        mapping "java", "SLASHSTAR_STYLE"
-        mapping "kt", "SLASHSTAR_STYLE"
-        ignoreFailures = true
-    }
 
     repositories {
         mavenLocal()
@@ -141,23 +91,63 @@ subprojects {
     }
 
     dependencies {
-        annotationProcessor "${lib.lombok}"
-        compileOnly "${lib.lombok}"
+        testImplementation "${lib["assertj-core"]}"
+        testImplementation "${lib["junit-jupiter"]}"
+        testImplementation "org.mockito:mockito-junit-jupiter:3.11.0"
+        testImplementation "${lib["lagarto"]}"
+        testImplementation "${lib["logback-classic"]}"
+    }
 
-        testAnnotationProcessor "${lib.lombok}"
-        testCompileOnly "${lib.lombok}"
-        testImplementation("${lib["assertj-core"]}")
-        testImplementation("${lib["junit-jupiter-api"]}")
-        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:3.3.3")
-        testImplementation("${lib["lagarto"]}")
-        testImplementation("${lib["logback-classic"]}")
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+        options.warnings = false
+        options.deprecation = true
+        options.compilerArgs += ["-parameters"]
+    }
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
+    jar {
+        into("META-INF/") {
+            from rootProject.file("LICENSE")
+        }
+        into("META-INF/maven/$project.group/$project.name") {
+            from { generatePomFileForMavenJavaPublication }
+            rename ".*", "pom.xml"
+        }
+        afterEvaluate {
+            manifest {
+                attributes 'Implementation-Title': archiveBaseName
+                attributes 'Implementation-Version': archiveVersion
+                attributes 'Built-Gradle': gradle.gradleVersion
+                attributes 'Bundle-DocURL': 'https://mybatis.plus/'
+                attributes 'Build-OS': System.getProperty("os.name")
+                attributes 'Built-By': System.getProperty("user.name")
+                attributes 'Build-Jdk': System.getProperty("java.version")
+                attributes 'Build-Timestamp': LocalDateTime.now().format("yyyy-MM-dd HH:mm:ss")
+            }
+        }
+    }
+
+    license {
+        encoding = "UTF-8"
+        header = rootProject.file("license.txt")
+        includes(["**/*.java", "**/*.kt"])
+        exclude "**/test/java/**/*.kt"
+        exclude "**/test/java/**/*.java"
+        exclude "**/*Test.java"
+        mapping "java", "SLASHSTAR_STYLE"
+        mapping "kt", "SLASHSTAR_STYLE"
+        ignoreFailures = true
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
 
     //noinspection GroovyAssignabilityCheck
     task sourcesJar(type: Jar) {
         archiveClassifier = 'sources'
-        from sourceSets.main.allJava
+        from sourceSets.main.allSource
     }
 
     javadoc {
@@ -176,7 +166,6 @@ subprojects {
     test {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
-        exclude("**/generator/**")
         exclude("**/mysql/**")
         exclude("**/phoenix/**")
     }

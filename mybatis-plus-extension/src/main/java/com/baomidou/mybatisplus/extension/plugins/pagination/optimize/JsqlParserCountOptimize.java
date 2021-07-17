@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.optimize;
 
@@ -35,7 +35,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +49,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JsqlParserCountOptimize implements ISqlParser {
-    private static final List<SelectItem> COUNT_SELECT_ITEM = countSelectItem();
+    private static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
 
     private boolean optimizeJoin = false;
@@ -57,19 +57,12 @@ public class JsqlParserCountOptimize implements ISqlParser {
     /**
      * 获取jsqlparser中count的SelectItem
      */
-    private static List<SelectItem> countSelectItem() {
+    private static SelectItem defaultCountSelectItem() {
         Function function = new Function();
+        ExpressionList expressionList = new ExpressionList(Collections.singletonList(new LongValue(1)));
         function.setName("COUNT");
-        List<Expression> expressions = new ArrayList<>();
-        LongValue longValue = new LongValue(1);
-        ExpressionList expressionList = new ExpressionList();
-        expressions.add(longValue);
-        expressionList.setExpressions(expressions);
         function.setParameters(expressionList);
-        List<SelectItem> selectItems = new ArrayList<>();
-        SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
-        selectItems.add(selectExpressionItem);
-        return selectItems;
+        return new SelectExpressionItem(function);
     }
 
     @Override
@@ -105,6 +98,8 @@ public class JsqlParserCountOptimize implements ISqlParser {
             if (optimizeJoin && CollectionUtils.isNotEmpty(joins)) {
                 boolean canRemoveJoin = true;
                 String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
+                // 不区分大小写
+                whereS = whereS.toLowerCase();
                 for (Join join : joins) {
                     if (!join.isLeft()) {
                         canRemoveJoin = false;
@@ -112,6 +107,8 @@ public class JsqlParserCountOptimize implements ISqlParser {
                     }
                     Table table = (Table) join.getRightItem();
                     String str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                    // 不区分大小写
+                    str = str.toLowerCase();
                     String onExpressionS = join.getOnExpression().toString();
                     /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
                     if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {

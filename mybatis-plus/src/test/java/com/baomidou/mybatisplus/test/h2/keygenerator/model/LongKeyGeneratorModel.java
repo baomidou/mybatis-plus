@@ -20,7 +20,7 @@ import lombok.Data;
 
 @Data
 @TableName(value = "key_generator_model")
-@KeySequence(value = "key_generator_model_seq")
+@KeySequence(value = "key_generator_model_seq", dbType = DbType.POSTGRE_SQL)
 public class LongKeyGeneratorModel {
 
     @TableId(type = IdType.INPUT)

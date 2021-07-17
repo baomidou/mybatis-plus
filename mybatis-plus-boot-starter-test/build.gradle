@@ -1,0 +1,10 @@
+// 全量 copy 自 mybatis 的 mybatis-spring-boot-starter-test
+
+dependencies {
+    api project(":mybatis-plus-boot-starter")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    api "org.springframework.boot:spring-boot-autoconfigure"
+    api "org.springframework.boot:spring-boot-starter-test"
+    api "org.springframework:spring-tx"
+    testImplementation "${lib.h2}"
+}

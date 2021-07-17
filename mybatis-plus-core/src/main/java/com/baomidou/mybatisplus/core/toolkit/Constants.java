@@ -1,19 +1,21 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
+
+import java.io.Serializable;
 
 /**
  * mybatis_plus 自用常量集中管理
@@ -21,7 +23,7 @@ package com.baomidou.mybatisplus.core.toolkit;
  * @author miemie
  * @since 2018-07-22
  */
-public interface Constants extends StringPool {
+public interface Constants extends StringPool, Serializable {
 
     /**
      * project name
@@ -32,6 +34,20 @@ public interface Constants extends StringPool {
      * MD5
      */
     String MD5 = "MD5";
+    /**
+     * AES
+     */
+    String AES = "AES";
+    /**
+     * AES 算法
+     */
+    String AES_CBC_CIPHER = "AES/CBC/PKCS5Padding";
+    /**
+     * as
+     */
+    String AS = " AS ";
+
+
     /**
      * 实体类
      */
@@ -81,6 +97,14 @@ public interface Constants extends StringPool {
      */
     String WRAPPER_ENTITY_DOT = WRAPPER_DOT + "entity" + DOT;
     /**
+     * wrapper 类的属性 expression
+     */
+    String WRAPPER_EXPRESSION = WRAPPER_DOT + "expression";
+    /**
+     * wrapper 类的属性 expression 下级属性 order
+     */
+    String WRAPPER_EXPRESSION_ORDER = WRAPPER_EXPRESSION + DOT + "orderBy";
+    /**
      * UpdateWrapper 类的属性 sqlSet
      */
     String U_WRAPPER_SQL_SET = WRAPPER_DOT + "sqlSet";
@@ -116,11 +140,11 @@ public interface Constants extends StringPool {
     /**
      * 乐观锁字段
      */
-    String MP_OPTLOCK_INTERCEPTOR = "oli";
     String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
-    String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
-    String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
 
+    /**
+     * wrapper 内部参数相关
+     */
     String WRAPPER_PARAM = "MPGENVAL";
-    String WRAPPER_PARAM_FORMAT = "#{%s.paramNameValuePairs.%s}";
+    String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
 }

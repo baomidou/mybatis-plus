@@ -1,5 +1,137 @@
 ﻿# CHANGELOG
 
+## [v3.4.3.1] 2021.06.15
+
+- 支持多重继承获取泛型
+- 应要求 pageDto 修改为 PageDTO
+- 分页排序优化
+- TableField 新增 ResultMapping#property 注解支持
+- fixed github pull/3550 优化排序
+- fix #I3T0LA
+- 开放KtUpdateChainWrapper、KtQueryChainWrapper的继承
+- 新增 exists 方法判断 count 存在
+- 优化数据方言获取方式减少对象创建
+- feat GlobalConfig增加whereStrategy属性和适配selectStrategy的getWhereStrategy()方法
+- 扩展 p6spy 优化
+- fix github#3390 SqlRunner.selectPage()方法未释放连接克隆
+- 优化 JDK 默认不推荐泛型数组
+- perf: 替换为 JVM 中本身的方法
+- 当用户指定ID时，不用自动生成，不指定时自增
+- Github Merge pull request #3549 #3555 #3565 #3571 #3587 #3591 #3592 #3595 #3599 #3605 #3606
+- 提供处理Map多key取值工具方法
+- 调整 page 注解泛型 E 为 P 方便阅读
+- Pattern定义为静态常量，优化正则匹配速度
+- Fix 主键添加@OrderBy无效
+- 去除addMappedStatement日志打印
+- NoKeyGenerator Jdbc3KeyGenerator shared instance
+
+## [v3.4.3] 2021.05.21
+
+- 增加瀚高数据库支持
+- 增加注解 Order By 支持默认排序
+- Wrapper exists notExists orderBy groupBy 支持参数绑定
+- Wrapper 支持 setParamAlias 其它优化
+- 优化 KeyGenerator 支持多实现多数据源注入
+- 增强 ServiceImpl 泛型推断，解决多继承与代理问题
+- 新增 PageDto 用于微服务对象传输序列化
+- 新增 Page 提供静态 of 构造方式
+- 增加代理 MethodHandleProxies 对 lambda 调试支持
+- 调整 ActiveRecord 日志对象初始化
+- 调整 ActiveRecord 模式 Model 类开发 pkVal 方法外部可用
+- 删除标记过时代码
+- 优化枚举值获取方式
+- 分页 count 安全处理
+- Sequence 方法支持重写支持
+- 升级 Mybatis 3.5.7
+- 修复自动配置 lazy-initialization 无属性提示
+- 修复 mysql on duplicate key update 字段名判断为表名问题
+- 修复 lambda 条件 npe 异常
+- 重构 lambda 信息提取方法
+- 获取 lambda 信息不在序列化
+- 合并 gitee pulls/ 141
+- fixed github issues/3208 3016
+- fixed github issues/3482 数据权限处理器支持 union all
+- 调整事务未启用打印提示信息
+- 单元测试优化相关依赖升级
+
+## [v3.4.2] 2021.01.15
+
+- fix: 移除 BlockAttackInnerInterceptor 内引用的 commons 的 utils
+- feat: PaginationInnerInterceptor 添加 optimizeJoin 属性控制是否在count时对sql的join进行优化
+- feat: 可通过Resources.setDefaultClassLoader设置默认类加载器.
+- feat: InterceptorIgnore 注解新增 others 属性
+- feat: IService 增加 kotlin 链式调用支持(ktQuery() 和 ktUpdate())
+- style: jsqlparser up to 4.0
+- style: 移除 com.baomidou.mybatisplus.extension.injector.methods.additional 包下的过时类
+- style: generator 模块另开仓库 [generator](https://github.com/baomidou/generator)
+
+## [v3.4.1] 2020.11.10
+
+- fix: 新多租户插件完善子查询,支持 比较符号,in,EXISTS,NOT EXISTS
+- feat: 公开 AbstractWrapper.getEntityClass
+- feat: 新增 FakeTenantLineInnerInterceptor 对 TenantSqlParser 进行过度
+- feat: 分页count识别 `left join (subSelect)` 优化
+- feat: 所有 count 从 count(1) 变更为 count(*)
+- style: mybatis up to 3.5.6
+
+## [v3.4.0] 2020.8.23
+- fix: @TableName.autoResultMap=true 情况下, 内置的 selectBody 将不会进行 as ,使用了的需要注意!!!
+- feat: 新增 mybatis-plus-boot-starter-test 模块
+- fix: MetaObjectHandler 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
+- feat: mybatis up to 3.5.5, mybatis-spring up to 2.0.5
+- feat: jsqlparser up to 3.2
+- feat: 新增 MybatisParameterHandler, 废弃 MybatisDefaultParameterHandler
+- feat: 分页插件加入 GBase,ClickHouse,oscar,OceanBase 数据库连接自动识别的支持
+- feat: Wrapper 新增api not(boolean condition, Consumer consumer)
+- feat: 新增 MybatisPlusInterceptor 解决 多租户和分页 插件一级和二级缓存不正确问题
+- feat: 新分页插件优化 size<0 时继续拼接 orderBy
+- feat: 新增 IdentifierGenerator 一个实现类 ImadcnIdentifierGenerator
+- fix: chainWrapper#func 强转异常
+- fix(mybatis-plus-generator.main): 重构生成器数据库类型转换器，修复部分支条，提交选择器测试
+- fix: 修复复杂情况中动态表名替换产生的问题：正则由空白检测转为单词边界检测
+- refactor: 重构动态表名解析器，去除正则替换程序，改为按表名位置进行替换
+- refactor: 将表名解析重构为访问者模式，现在不会对原有 SQL 做改动
+
+
+## [v3.3.2] 2020.5.26
+- 分页参数提取,单元测试用例修复
+- 达梦数据库代码生成器表过滤支持
+- 微软数据库代码生成器表过滤支持
+- 修复代码生成器属性字段规则错误
+- SelectById 支持自定义方法名
+- 修复分页插件获取数据库类型问题
+- Json转换器空值处理
+- bugfix(mybatis-plus-generator):SQL类型返回错误问题
+- 调整未知方言异常,自动识别url转换小写匹配.
+- fix: 初始化 TableInfo 中遇到多个字段有 @TableId 注解时未能抛出异常的问题
+- SuperController有Class参数的set方法
+- 增加方法StrategyConfig.setSuperServiceImplClass(java.lang.Class<?>).
+- 代码生成器命名策略调整.
+- 扩展分页缓存key值计算.
+- 去除方法推测,直接访问属性字段.
+- 修正枚举处理器类型不匹配比较.
+- 修改表前缀匹配方式
+- 修改在Mybatis全局配置文件中设置分页插件参数不生效问题
+- 修复PR未指定解析器的时候引发空指针
+- 增加分页插件limit参数配置
+- 修复指定superEntityClass重复生成父类字段问题
+- 无主键的情况无需导入IdType与TableId包
+- 调整生成BaseResultMap格式
+- 支持lombok模式下选择是否进行链式set生成
+- 修复解析器for update错误
+- 过滤PG约束列(只留下主键约束)
+- 增加生成器禁用模板生成
+- fix(kotlin): 修复动态表名 BUG，最大努力替换表名
+- 修复PG约束生成重复属性字段问题
+- fix(kotlin): 将 LambdaUtils 中缓存的 key 改为 String
+- 代码生成器增加数据库关键字处理接口
+- fix github/issues/2454 支持注解可继承
+- 新增 AES 加密数据库用户名密码
+- 优化方法入参泛型，支持更多类型
+- 修复代码生成器开启移除is前缀生成实体缺少包导入
+- fixed github issues/2470
+
+
 ## [v3.3.1] 2020.1.17
 - 新增`TableName`注解属性`excludeProperty`支持排除字段
 - 新增ServiceImpl#entityClass属性，减少泛型提取

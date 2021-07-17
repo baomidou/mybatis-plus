@@ -1,30 +1,34 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.toolkit;
+
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 /**
- * 分布式高效有序ID生产黑科技(sequence)
+ * 分布式高效有序 ID 生产黑科技(sequence)
+ *
  * <p>优化开源项目：https://gitee.com/yu120/sequence</p>
  *
  * @author hubin
@@ -71,9 +75,38 @@ public class Sequence {
      */
     private long lastTimestamp = -1L;
 
+    private InetAddress inetAddress;
+
+    /**
+     * @deprecated 3.4.3
+     */
+    @Deprecated
     public Sequence() {
+        this.inetAddress = getLocalHost();
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    public Sequence(InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
+        this.datacenterId = getDatacenterId(maxDatacenterId);
+        this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+    }
+
+    private InetAddress getLocalHost() {
+        try {
+            return InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            throw new MybatisPlusException(e);
+        }
+    }
+
+    /**
+     * @return InetAddress
+     * @since 3.4.3
+     */
+    protected InetAddress getInetAddress() {
+        return Optional.ofNullable(this.inetAddress).orElseGet(this::getLocalHost);
     }
 
     /**
@@ -84,9 +117,9 @@ public class Sequence {
      */
     public Sequence(long workerId, long datacenterId) {
         Assert.isFalse(workerId > maxWorkerId || workerId < 0,
-            String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+                String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         Assert.isFalse(datacenterId > maxDatacenterId || datacenterId < 0,
-            String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
@@ -94,7 +127,7 @@ public class Sequence {
     /**
      * 获取 maxWorkerId
      */
-    protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -113,17 +146,16 @@ public class Sequence {
     /**
      * 数据标识id部分
      */
-    protected static long getDatacenterId(long maxDatacenterId) {
+    protected long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            InetAddress ip = InetAddress.getLocalHost();
-            NetworkInterface network = NetworkInterface.getByInetAddress(ip);
+            NetworkInterface network = NetworkInterface.getByInetAddress(this.getInetAddress());
             if (network == null) {
                 id = 1L;
             } else {
                 byte[] mac = network.getHardwareAddress();
                 if (null != mac) {
-                    id = ((0x000000FF & (long) mac[mac.length - 1]) | (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+                    id = ((0x000000FF & (long) mac[mac.length - 2]) | (0x0000FF00 & (((long) mac[mac.length - 1]) << 8))) >> 6;
                     id = id % (maxDatacenterId + 1);
                 }
             }
@@ -174,9 +206,9 @@ public class Sequence {
 
         // 时间戳部分 | 数据中心部分 | 机器标识部分 | 序列号部分
         return ((timestamp - twepoch) << timestampLeftShift)
-            | (datacenterId << datacenterIdShift)
-            | (workerId << workerIdShift)
-            | sequence;
+                | (datacenterId << datacenterIdShift)
+                | (workerId << workerIdShift)
+                | sequence;
     }
 
     protected long tilNextMillis(long lastTimestamp) {
