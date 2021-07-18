@@ -122,7 +122,7 @@ subprojects {
                 attributes 'Implementation-Title': archiveBaseName
                 attributes 'Implementation-Version': archiveVersion
                 attributes 'Built-Gradle': gradle.gradleVersion
-                attributes 'Bundle-DocURL': 'https://mybatis.plus/'
+                attributes 'Bundle-DocURL': 'https://baomidou.com/guide/'
                 attributes 'Build-OS': System.getProperty("os.name")
                 attributes 'Built-By': System.getProperty("user.name")
                 attributes 'Build-Jdk': System.getProperty("java.version")
