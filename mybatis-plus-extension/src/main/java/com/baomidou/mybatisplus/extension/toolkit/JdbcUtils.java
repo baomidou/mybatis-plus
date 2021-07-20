@@ -93,6 +93,8 @@ public class JdbcUtils {
             return DbType.GAUSS;
         } else if (jdbcUrl.contains(":gbase:")) {
             return DbType.GBASE;
+        } else if (jdbcUrl.contains(":gbasedbt-sqli:")) {
+            return DbType.GBASEDBT;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {

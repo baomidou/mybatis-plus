@@ -99,7 +99,8 @@ public enum DbType {
     /**
      * GBase
      */
-    GBASE("gbase", "南大通用数据库"),
+    GBASE("gbase", "南大通用(华库)数据库"),
+    GBASEDBT("gbasedbt", "南大通用数据库"),
     /**
      * Oscar
      */
