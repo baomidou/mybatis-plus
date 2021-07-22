@@ -79,11 +79,11 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-        String insertSqlColumn = tableInfo.getKeyInsertSqlColumn(false) +
-            this.filterTableFieldInfo(fieldList, predicate, TableFieldInfo::getInsertSqlColumn, EMPTY);
+        String insertSqlColumn = tableInfo.getKeyColumn() + COMMA +
+                this.filterTableFieldInfo(fieldList, predicate, TableFieldInfo::getInsertSqlColumn, EMPTY);
         String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1) + RIGHT_BRACKET;
-        String insertSqlProperty = tableInfo.getKeyInsertSqlProperty(ENTITY_DOT, false) +
-            this.filterTableFieldInfo(fieldList, predicate, i -> i.getInsertSqlProperty(ENTITY_DOT), EMPTY);
+        String insertSqlProperty = getKeyInsertSqlProperty(tableInfo) +
+                this.filterTableFieldInfo(fieldList, predicate, i -> i.getInsertSqlProperty(ENTITY_DOT), EMPTY);
         insertSqlProperty = LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1) + RIGHT_BRACKET;
         String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
         String keyProperty = null;
@@ -112,5 +112,23 @@ public class InsertBatchSomeColumn extends AbstractMethod {
     public String getMethod(SqlMethod sqlMethod) {
         // 自定义 mapper 方法名
         return "insertBatchSomeColumn";
+    }
+
+
+    /**
+     * 批量插入自定义获取 insert 时候主键 sql 脚本片段
+     *
+     * @param tableInfo 表信息
+     * @return sql
+     */
+    private String getKeyInsertSqlProperty(TableInfo tableInfo) {
+        if (tableInfo.havePK()) {
+            String keyColumn = SqlScriptUtils.safeParam(ENTITY_DOT + tableInfo.getKeyProperty()) + COMMA;
+            if (tableInfo.getIdType() == IdType.AUTO) {
+                return SqlScriptUtils.convertChoose(String.format("%s%s == null", ENTITY_DOT, tableInfo.getKeyProperty()), "NULL,", keyColumn);
+            }
+            return keyColumn;
+        }
+        return EMPTY;
     }
 }
