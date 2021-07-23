@@ -162,6 +162,82 @@ public interface Func<Children, R> extends Serializable {
     Children inSql(boolean condition, R column, String inValue);
 
     /**
+     * 字段 &gt; ( sql语句 )
+     * <p>例1: gtSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: gtSql("id", "select id from table where name = 'JunJun'")</p>
+     *
+     * @param condition
+     * @param column
+     * @param inValue
+     * @return
+     */
+    Children gtSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
+     */
+    default Children gtSql(R column, String inValue) {
+        return gtSql(true, column, inValue);
+    }
+
+    /**
+     * 字段 >= ( sql语句 )
+     * <p>例1: geSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: geSql("id", "select id from table where name = 'JunJun'")</p>
+     *
+     * @param condition
+     * @param column
+     * @param inValue
+     * @return
+     */
+    Children geSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
+     */
+    default Children geSql(R column, String inValue) {
+        return geSql(true, column, inValue);
+    }
+
+    /**
+     * 字段 &lt; ( sql语句 )
+     * <p>例1: ltSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: ltSql("id", "select id from table where name = 'JunJun'")</p>
+     *
+     * @param condition
+     * @param column
+     * @param inValue
+     * @return
+     */
+    Children ltSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
+     */
+    default Children ltSql(R column, String inValue) {
+        return ltSql(true, column, inValue);
+    }
+
+    /**
+     * 字段 <= ( sql语句 )
+     * <p>例1: leSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: leSql("id", "select id from table where name = 'JunJun'")</p>
+     *
+     * @param condition
+     * @param column
+     * @param inValue
+     * @return
+     */
+    Children leSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
+     */
+    default Children leSql(R column, String inValue) {
+        return leSql(true, column, inValue);
+    }
+
+    /**
      * ignore
      */
     default Children notInSql(R column, String inValue) {
@@ -181,7 +257,6 @@ public interface Func<Children, R> extends Serializable {
      */
     Children notInSql(boolean condition, R column, String inValue);
 
-
     /**
      * 分组：GROUP BY 字段, ...
      * <p>例: groupBy("id")</p>
@@ -195,7 +270,6 @@ public interface Func<Children, R> extends Serializable {
     default Children groupBy(R column) {
         return groupBy(true, column);
     }
-
 
     /**
      * 分组：GROUP BY 字段, ...
@@ -268,7 +342,6 @@ public interface Func<Children, R> extends Serializable {
     default Children orderByAsc(boolean condition, R column, R... columns) {
         return orderBy(condition, true, column, columns);
     }
-
 
     /**
      * 排序：ORDER BY 字段, ... DESC

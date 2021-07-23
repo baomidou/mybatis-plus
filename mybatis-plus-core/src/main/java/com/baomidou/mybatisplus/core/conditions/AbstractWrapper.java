@@ -301,6 +301,30 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children gtSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), GT,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children geSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), GE,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children ltSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), LT,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children leSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), LE,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
     public Children notInSql(boolean condition, R column, String inValue) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN,
             () -> String.format("(%s)", inValue)));

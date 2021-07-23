@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings({"serial", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param extends AbstractWrapper<T, R, Param>>
     extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
 
@@ -191,6 +191,30 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children inSql(boolean condition, R column, String inValue) {
         getWrapper().inSql(condition, column, inValue);
+        return typedThis;
+    }
+
+    @Override
+    public Children gtSql(boolean condition, R column, String inValue) {
+        getWrapper().gtSql(condition, column, inValue);
+        return typedThis;
+    }
+
+    @Override
+    public Children geSql(boolean condition, R column, String inValue) {
+        getWrapper().geSql(condition, column, inValue);
+        return typedThis;
+    }
+
+    @Override
+    public Children ltSql(boolean condition, R column, String inValue) {
+        getWrapper().ltSql(condition, column, inValue);
+        return typedThis;
+    }
+
+    @Override
+    public Children leSql(boolean condition, R column, String inValue) {
+        getWrapper().leSql(condition, column, inValue);
         return typedThis;
     }
 
