@@ -122,6 +122,10 @@ public enum DbType {
      */
     HIGH_GO("highgo", "瀚高数据库"),
     /**
+     * CUBRID
+     */
+    CUBRID("cubrid", "CUBRID数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");

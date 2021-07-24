@@ -101,9 +101,11 @@ public class JdbcUtils {
             return DbType.SYBASE;
         } else if (jdbcUrl.contains(":oceanbase:")) {
             return DbType.OCEAN_BASE;
-        }else if (url.contains(":highgo:")) {
+        } else if (url.contains(":highgo:")) {
             return DbType.HIGH_GO;
-        }else {
+        } else if (url.contains(":cubrid:")) {
+            return DbType.CUBRID;
+        } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }
