@@ -44,7 +44,8 @@ public class DialectFactory {
                 || dbType == DbType.OSCAR
                 || dbType == DbType.XU_GU
                 || dbType == DbType.CLICK_HOUSE
-                || dbType == DbType.OCEAN_BASE) {
+                || dbType == DbType.OCEAN_BASE
+                || dbType == DbType.CUBRID) {
                 dialect = new MySqlDialect();
             }
             // oracle same type
