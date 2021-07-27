@@ -18,6 +18,8 @@
   </a>
 </p>
 
+[企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
+
 # 简介 | Intro
 
 Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
@@ -44,6 +46,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - [代码生成](https://github.com/baomidou/generator)
 - [功能示例](https://gitee.com/baomidou/mybatis-plus-samples)
 - [展示](https://github.com/baomidou/awesome-mybatis-plus)
+- [企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
 
 # 原理 | Principle
 
