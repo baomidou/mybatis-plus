@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
+import com.baomidou.mybatisplus.extension.plugins.provider.TableNameHandlerProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 动态表名
@@ -48,7 +48,7 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
 
-    private Map<String, TableNameHandler> tableNameHandlerMap;
+    private TableNameHandlerProvider tableNameHandlerProvider;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -80,7 +80,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             if (start != last) {
                 builder.append(sql, last, start);
                 String value = name.getValue();
-                TableNameHandler handler = tableNameHandlerMap.get(value);
+                TableNameHandler handler = tableNameHandlerProvider.get(value);
                 if (handler != null) {
                     builder.append(handler.dynamicTableName(sql, value));
                 } else {

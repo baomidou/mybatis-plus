@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
+import com.baomidou.mybatisplus.extension.plugins.provider.TableNameHandlerProvider;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ class DynamicTableNameInnerInterceptorTest {
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     void doIt() {
         DynamicTableNameInnerInterceptor interceptor = new DynamicTableNameInnerInterceptor();
-        interceptor.setTableNameHandlerMap(newTableNameHandlerMap());
+        interceptor.setTableNameHandlerProvider(newTableNameHandlerProvider());
         // 表名相互包含
         @Language("SQL")
         String origin = "SELECT * FROM t_user, t_user_role", replaced = "SELECT * FROM t_user_r, t_user_role";
@@ -45,6 +46,67 @@ class DynamicTableNameInnerInterceptorTest {
         // 别名被声明要替换
         origin = "SELECT t_user.* FROM t_user_real t_user";
         assertEquals(origin, interceptor.changeTable(origin));
+
+        DynamicTableNameInnerInterceptor sameInterceptor = new DynamicTableNameInnerInterceptor();
+        sameInterceptor.setTableNameHandlerProvider(newSameTableNameHandlerProvider());
+        // 表名相互包含
+        @Language("SQL")
+        String originSql = "SELECT * FROM t_user, t_user_role", replacedSql = "SELECT * FROM some_str.t_user, some_str.t_user_role";
+        assertEquals(replacedSql, sameInterceptor.changeTable(originSql));
+        // 表名在末尾
+        originSql = "SELECT * FROM t_user";
+        replacedSql = "SELECT * FROM some_str.t_user";
+        assertEquals(replacedSql, sameInterceptor.changeTable(originSql));
+        // 表名前后有注释
+        originSql = "SELECT * FROM /**/t_user/* t_user */";
+        replacedSql = "SELECT * FROM /**/some_str.t_user/* t_user */";
+        assertEquals(replacedSql, sameInterceptor.changeTable(originSql));
+        // 值中带有表名
+        originSql = "SELECT * FROM t_user WHERE name = 't_user'";
+        replacedSql = "SELECT * FROM some_str.t_user WHERE name = 't_user'";
+        assertEquals(replacedSql, sameInterceptor.changeTable(originSql));
+        // 别名被声明要替换
+        originSql = "SELECT t_user.* FROM t_user_real t_user";
+        replacedSql = "SELECT t_user.* FROM some_str.t_user_real t_user";
+        assertEquals(replacedSql, sameInterceptor.changeTable(originSql));
+
+    }
+
+
+    /**
+     * 获取表名处理器的提供者
+     * 不同表名不同处理器
+     * @return TableNameHandlerProvider
+     */
+    private static TableNameHandlerProvider newTableNameHandlerProvider() {
+        return new TableNameHandlerProvider() {
+            private Map<String, TableNameHandler> tableNameHandlerMap;
+
+            private void assertMap() {
+                if (tableNameHandlerMap == null || tableNameHandlerMap.isEmpty()) {
+                    tableNameHandlerMap = newTableNameHandlerMap();
+                }
+            }
+
+            @Override
+            public TableNameHandler get(String value) {
+                assertMap();
+                return tableNameHandlerMap.get(value);
+            }
+        };
+    }
+
+
+    /**
+     * 获取表名处理器的提供者
+     * 所有表名相同处理方式
+     * @return TableNameHandlerProvider
+     */
+    private static TableNameHandlerProvider newSameTableNameHandlerProvider() {
+        return value -> {
+            String schemaNameOrSomeFixedModifier = "some_str.";
+            return (sql, name) -> schemaNameOrSomeFixedModifier + value;
+        };
     }
 
     /**
