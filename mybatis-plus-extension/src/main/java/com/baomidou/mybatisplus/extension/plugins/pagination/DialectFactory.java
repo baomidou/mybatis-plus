@@ -74,6 +74,8 @@ public class DialectFactory {
                 dialect = new SQLServerDialect();
             } else if (dbType == DbType.SYBASE) {
                 dialect = new SybaseDialect();
+            } else if (dbType == DbType.GBASEDBT){
+                dialect = new GBasedbtDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }
