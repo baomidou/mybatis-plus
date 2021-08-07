@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
@@ -88,8 +89,8 @@ public class MybatisPlusConfig {
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
                 methodList.add(new LogicDeleteByIdWithFill());
                 // 不要逻辑删除字段, 不要乐观锁字段, 不要填充策略是 UPDATE 的字段
                 methodList.add(new InsertBatchSomeColumn(t -> !t.isLogicDelete() && !t.isVersion() && t.getFieldFill() != FieldFill.UPDATE));
