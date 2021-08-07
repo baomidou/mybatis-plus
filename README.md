@@ -88,7 +88,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     SELECT * FROM user WHERE age >= 18
     ```
 
-> This showcase is just a small part of MyBatis-Plus features. If you want to learn more, please refer to the [documentation](https://mybatis.plus).
+> This showcase is just a small part of MyBatis-Plus features. If you want to learn more, please refer to the [documentation](https://baomidou.com).
 
 ## License
 
