@@ -49,7 +49,7 @@ ext {
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
         "assertj-core"               : "org.assertj:assertj-core:3.19.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-        "fastjson"                   : "com.alibaba:fastjson:1.2.76",
+        "fastjson"                   : "com.alibaba:fastjson:1.2.78",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
         "gson"                       : "com.google.code.gson:gson:2.8.7",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
