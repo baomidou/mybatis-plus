@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.extension.plugins.handler;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Column;
+
+import java.util.List;
 
 /**
  * 租户处理器（ TenantId 行级 ）
@@ -54,5 +57,16 @@ public interface TenantLineHandler {
      */
     default boolean ignoreTable(String tableName) {
         return false;
+    }
+
+    /**
+     * 忽略插入租户字段逻辑
+     *
+     * @param columns        插入字段
+     * @param tenantIdColumn 租户 ID 字段
+     * @return
+     */
+    default boolean ignoreInsert(List<Column> columns, String tenantIdColumn) {
+        return columns.stream().map(Column::getColumnName).anyMatch(i -> i.equalsIgnoreCase(tenantIdColumn));
     }
 }

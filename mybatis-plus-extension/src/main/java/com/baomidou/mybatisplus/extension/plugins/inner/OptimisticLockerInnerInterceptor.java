@@ -57,8 +57,11 @@ import java.util.Map;
  */
 @SuppressWarnings({"unchecked"})
 public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
+    private RuntimeException exception;
 
-    private static final String PARAM_UPDATE_METHOD_NAME = "update";
+    public void setException(RuntimeException exception) {
+        this.exception = exception;
+    }
 
     @Override
     public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
@@ -87,12 +90,18 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                 // 旧的 version 值
                 Object originalVersionVal = versionField.get(et);
                 if (originalVersionVal == null) {
+                    if (null != exception) {
+                        /**
+                         * 自定义异常处理
+                         */
+                        throw exception;
+                    }
                     return;
                 }
                 String versionColumn = fieldInfo.getColumn();
                 // 新的 version 值
                 Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
-                if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
+                if ("update".equals(methodName)) {
                     AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
                     if (aw == null) {
                         UpdateWrapper<?> uw = new UpdateWrapper<>();

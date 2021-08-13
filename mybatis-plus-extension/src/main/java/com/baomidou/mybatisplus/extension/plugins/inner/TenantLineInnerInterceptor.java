@@ -116,17 +116,17 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return;
         }
         String tenantIdColumn = tenantLineHandler.getTenantIdColumn();
-        if (columns.stream().map(Column::getColumnName).anyMatch(i -> i.equals(tenantIdColumn))) {
+        if (tenantLineHandler.ignoreInsert(columns, tenantIdColumn)) {
             // 针对已给出租户列的insert 不处理
             return;
         }
-        columns.add(new Column(tenantLineHandler.getTenantIdColumn()));
+        columns.add(new Column(tenantIdColumn));
 
         // fixed gitee pulls/141 duplicate update
         List<Expression> duplicateUpdateColumns = insert.getDuplicateUpdateExpressionList();
         if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
             EqualsTo equalsTo = new EqualsTo();
-            equalsTo.setLeftExpression(new StringValue(tenantLineHandler.getTenantIdColumn()));
+            equalsTo.setLeftExpression(new StringValue(tenantIdColumn));
             equalsTo.setRightExpression(tenantLineHandler.getTenantId());
             duplicateUpdateColumns.add(equalsTo);
         }
