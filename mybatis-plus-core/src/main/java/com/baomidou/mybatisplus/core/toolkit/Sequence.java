@@ -15,15 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.UnknownHostException;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -74,7 +71,9 @@ public class Sequence {
      * 上次生产 ID 时间戳
      */
     private long lastTimestamp = -1L;
-
+    /**
+     * IP 地址
+     */
     private InetAddress inetAddress;
 
     /**
@@ -82,7 +81,6 @@ public class Sequence {
      */
     @Deprecated
     public Sequence() {
-        this.inetAddress = getLocalHost();
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
     }
@@ -93,22 +91,6 @@ public class Sequence {
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
     }
 
-    private InetAddress getLocalHost() {
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            throw new MybatisPlusException(e);
-        }
-    }
-
-    /**
-     * @return InetAddress
-     * @since 3.4.3
-     */
-    protected InetAddress getInetAddress() {
-        return Optional.ofNullable(this.inetAddress).orElseGet(this::getLocalHost);
-    }
-
     /**
      * 有参构造器
      *
@@ -117,9 +99,9 @@ public class Sequence {
      */
     public Sequence(long workerId, long datacenterId) {
         Assert.isFalse(workerId > maxWorkerId || workerId < 0,
-                String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+            String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         Assert.isFalse(datacenterId > maxDatacenterId || datacenterId < 0,
-                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+            String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }
@@ -149,8 +131,11 @@ public class Sequence {
     protected long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
         try {
-            NetworkInterface network = NetworkInterface.getByInetAddress(this.getInetAddress());
-            if (network == null) {
+            if (null == this.inetAddress) {
+                this.inetAddress = InetAddress.getLocalHost();
+            }
+            NetworkInterface network = NetworkInterface.getByInetAddress(this.inetAddress);
+            if (null == network) {
                 id = 1L;
             } else {
                 byte[] mac = network.getHardwareAddress();
@@ -206,9 +191,9 @@ public class Sequence {
 
         // 时间戳部分 | 数据中心部分 | 机器标识部分 | 序列号部分
         return ((timestamp - twepoch) << timestampLeftShift)
-                | (datacenterId << datacenterIdShift)
-                | (workerId << workerIdShift)
-                | sequence;
+            | (datacenterId << datacenterIdShift)
+            | (workerId << workerIdShift)
+            | sequence;
     }
 
     protected long tilNextMillis(long lastTimestamp) {
