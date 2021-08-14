@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -577,7 +577,7 @@ public final class StringUtils {
     }
 
     /**
-     * 字符串去除空白内容：
+     * SQL 注入字符串去除空白内容：
      * <ul>
      *     <li>\n 回车</li>
      *     <li>\t 水平制表符</li>
@@ -587,9 +587,14 @@ public final class StringUtils {
      *
      * @param str 字符串
      */
-    public static String replaceBlank(String str) {
-        Objects.requireNonNull(str);
-        Matcher matcher = REPLACE_BLANK.matcher(str);
-        return matcher.replaceAll("");
+    public static String sqlInjectionReplaceBlank(String str) {
+        if (SqlInjectionUtils.check(str)) {
+            /**
+             * 存在 SQL 注入，去除空白内容
+             */
+            Matcher matcher = REPLACE_BLANK.matcher(str);
+            return matcher.replaceAll("");
+        }
+        return str;
     }
 }

@@ -93,7 +93,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     protected String columnSqlInjectFilter(String column) {
-        return StringUtils.replaceBlank(column);
+        return StringUtils.sqlInjectionReplaceBlank(column);
     }
 
     /**
