@@ -51,7 +51,7 @@ public interface ISqlRunner {
 
     Object selectObj(String sql, Object... args);
 
-    int selectCount(String sql, Object... args);
+    long selectCount(String sql, Object... args);
 
     Map<String, Object> selectOne(String sql, Object... args);
 

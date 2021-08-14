@@ -93,7 +93,7 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(h2UserList));
 
         // 查询总数
-        int count = userMapper.selectCount(wrapper.clone());
+        long count = userMapper.selectCount(wrapper.clone());
         Assertions.assertTrue(count > 1);
 
         // 批量删除
@@ -188,7 +188,7 @@ class H2UserMapperTest extends BaseTest {
         );
         Assertions.assertNotNull(h2User);
         LambdaQueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().lambda().ge(H2User::getAge, 1);
-        int userCount = userMapper.selectCount(queryWrapper.comment("getUserCount"));
+        long userCount = userMapper.selectCount(queryWrapper.comment("getUserCount"));
         Assertions.assertEquals(1, userCount);
         List<H2User> h2UserList = userMapper.selectList(queryWrapper.comment("getUserList"));
         Assertions.assertEquals(1, h2UserList.size());
@@ -207,5 +207,11 @@ class H2UserMapperTest extends BaseTest {
         Page<H2User> page = new Page<>();
         userMapper.testPage1(new H2User(), page);
         userMapper.testPage2(page, new H2User());
+    }
+
+    @Test
+    void testCountLong(){
+        Long count = userMapper.selectCountLong();
+        System.out.println(count);
     }
 }

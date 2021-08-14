@@ -186,7 +186,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    Long selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * 根据 entity 条件，查询全部记录

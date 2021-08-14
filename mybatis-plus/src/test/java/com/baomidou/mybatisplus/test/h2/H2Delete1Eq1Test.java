@@ -77,7 +77,7 @@ class H2Delete1Eq1Test extends BaseTest {
     void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
-        Assertions.assertEquals(0, (int) logicDeleteMapper.selectCount(new QueryWrapper<>()));
+        Assertions.assertEquals(0, logicDeleteMapper.selectCount(new QueryWrapper<>()));
         List<H2User> userList = queryByName(null);
         System.out.println(userList.size());
         Assertions.assertNotEquals(0, userList.size());

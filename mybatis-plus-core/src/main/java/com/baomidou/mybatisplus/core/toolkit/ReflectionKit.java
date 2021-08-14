@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.springframework.core.GenericTypeResolver;
 
 import java.lang.reflect.AccessibleObject;
@@ -39,7 +37,6 @@ import static java.util.stream.Collectors.toMap;
  * @since 2016-09-22
  */
 public final class ReflectionKit {
-    private static final Log logger = LogFactory.getLog(ReflectionKit.class);
     /**
      * class field cache
      */

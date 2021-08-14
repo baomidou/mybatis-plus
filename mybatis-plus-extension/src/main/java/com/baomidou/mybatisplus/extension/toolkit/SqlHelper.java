@@ -111,7 +111,7 @@ public final class SqlHelper {
      * @param result ignore
      * @return int
      */
-    public static int retCount(Integer result) {
+    public static long retCount(Long result) {
         return (null == result) ? 0 : result;
     }
 

@@ -63,7 +63,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      *
      * @return count
      */
-    default Integer count() {
+    default Long count() {
         return SqlHelper.retCount(getBaseMapper().selectCount(getWrapper()));
     }
 

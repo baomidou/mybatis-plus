@@ -52,7 +52,7 @@ class SelectCountDistinctTest {
                 .or()
                 .eq("test_str", "test")
                 .first("/*Force Master*/");
-        int count = commonDataMapper.selectCount(distinct);
+        long count = commonDataMapper.selectCount(distinct);
         Assertions.assertEquals(1, count);
     }
 
@@ -62,7 +62,7 @@ class SelectCountDistinctTest {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int, test_str");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonDataMapper.selectCount(distinct);
+        long count = commonDataMapper.selectCount(distinct);
         Assertions.assertEquals(1, count);
     }
 
@@ -72,7 +72,7 @@ class SelectCountDistinctTest {
         QueryWrapper<CommonLogicData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonLogicMapper.selectCount(distinct);
+        long count = commonLogicMapper.selectCount(distinct);
         Assertions.assertEquals(1, count);
     }
 
@@ -91,7 +91,7 @@ class SelectCountDistinctTest {
     void testLogicCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonLogicData> lambdaQueryWrapper =
             new QueryWrapper<CommonLogicData>().select("distinct test_int").lambda();
-        int count = commonLogicMapper.selectCount(lambdaQueryWrapper);
+        long count = commonLogicMapper.selectCount(lambdaQueryWrapper);
         Assertions.assertEquals(1, count);
     }
 
@@ -100,7 +100,7 @@ class SelectCountDistinctTest {
     void testCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonData> lambdaQueryWrapper =
             new QueryWrapper<CommonData>().select("distinct test_int, test_str").lambda();
-        int count = commonDataMapper.selectCount(lambdaQueryWrapper);
+        long count = commonDataMapper.selectCount(lambdaQueryWrapper);
         Assertions.assertEquals(1, count);
     }
 
@@ -109,7 +109,7 @@ class SelectCountDistinctTest {
     void testLogicSelectCountWithoutDistinct() {
         QueryWrapper<CommonLogicData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonLogicMapper.selectCount(queryWrapper);
+        long count = commonLogicMapper.selectCount(queryWrapper);
         Assertions.assertEquals(2, count);
     }
 
@@ -118,7 +118,7 @@ class SelectCountDistinctTest {
     void testCountDistinctWithoutDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonDataMapper.selectCount(queryWrapper);
+        long count = commonDataMapper.selectCount(queryWrapper);
         Assertions.assertEquals(2, count);
     }
 
