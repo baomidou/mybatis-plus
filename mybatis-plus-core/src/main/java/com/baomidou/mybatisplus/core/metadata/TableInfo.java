@@ -439,7 +439,8 @@ public class TableInfo implements Constants {
         if (NULL.equalsIgnoreCase(value)) {
             return targetStr + NULL;
         } else {
-            return targetStr + String.format(logicDeleteFieldInfo.isCharSequence() ? "'%s'" : "%s", value);
+            boolean valueIsFunction = "NOW()".equalsIgnoreCase(value) || "UNIX_TIMESTAMP()".equalsIgnoreCase(value);
+            return targetStr + String.format((logicDeleteFieldInfo.isCharSequence() && !valuesIsFunction ?) "'%s'" : "%s", value);
         }
     }
 
