@@ -16,12 +16,14 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -42,13 +44,20 @@ import java.util.Map;
  * @author jobob
  * @since 3.4.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
 
+    /**
+     * 该方法废弃，避免多表使用统一策略多次注入，切换使用 TableNameHandler 自行判断表面处理逻辑
+     * 该注入方法后续版本会移除
+     */
+    @Deprecated
     private Map<String, TableNameHandler> tableNameHandlerMap;
+    private TableNameHandler tableNameHandler;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -80,9 +89,12 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             if (start != last) {
                 builder.append(sql, last, start);
                 String value = name.getValue();
-                TableNameHandler handler = tableNameHandlerMap.get(value);
-                if (handler != null) {
-                    builder.append(handler.dynamicTableName(sql, value));
+                if (null == tableNameHandler) {
+                    tableNameHandler = tableNameHandlerMap.get(value);
+                }
+                ExceptionUtils.throwMpe(null == tableNameHandler,"Please implement TableNameHandler processing logic");
+                if (null != tableNameHandler) {
+                    builder.append(tableNameHandler.dynamicTableName(sql, value));
                 } else {
                     builder.append(value);
                 }
