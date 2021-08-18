@@ -32,64 +32,97 @@ public class LastSqlTest {
 
     @Test
     @Order(1)
-    public void delete(){
+    public void delete() {
         int res = mapper.delete(new LambdaUpdateWrapper<H2Student>().last(" and 1 = 2 ").eq(H2Student::getId, 0));
         Assertions.assertTrue(res <= 0);
     }
 
     @Test
     @Order(2)
-    public void selectCount(){
+    public void selectCount() {
         long result = mapper.selectCount(new LambdaQueryWrapper<H2Student>().last("where 1 =2"));
         Assertions.assertTrue(result <= 0);
     }
 
     @Test
     @Order(3)
-    public void selectList(){
+    public void selectList() {
         List<H2Student> h2Students = mapper.selectList(new LambdaQueryWrapper<H2Student>().last("limit 1"));
         Assertions.assertTrue(h2Students.size() == 1);
     }
 
     @Test
     @Order(4)
-    public void selectMaps(){
+    public void selectMaps() {
         List<Map<String, Object>> maps = mapper.selectMaps(new LambdaQueryWrapper<H2Student>().last("limit 1"));
         Assertions.assertTrue(maps.size() == 1);
     }
 
     @Test
     @Order(5)
-    public void selectMapsPage(){
+    public void selectMapsPage() {
         IPage page = Page.of(0, 10);
-        IPage res = mapper.selectMapsPage(page,new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
+        mapper.selectMapsPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
     }
 
     @Test
     @Order(6)
-    public void selectObjs(){
+    public void selectObjs() {
         List<Object> objects = mapper.selectObjs(new QueryWrapper<H2Student>().last(" limit 1"));
         Assertions.assertTrue(objects.size() == 1);
     }
 
     @Test
     @Order(7)
-    public void SelectOne(){
+    public void SelectOne() {
         H2Student h2Student = mapper.selectOne(new QueryWrapper<H2Student>().last(" where 1 = 2"));
         Assertions.assertTrue(h2Student == null);
     }
 
     @Test
     @Order(8)
-    public void selectPage(){
+    public void selectPage() {
         IPage page = Page.of(0, 10);
-        mapper.selectPage(page,new QueryWrapper<H2Student>().last(" /* testSql */ "));
+        mapper.selectPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ "));
     }
 
     @Test
     @Order(9)
-    public void update(){
-        int res = mapper.update(null, new UpdateWrapper<H2Student>().set("name","dog").last(" where 1 =2 "));
-        Assertions.assertTrue(res <=  0);
+    public void update() {
+        int res = mapper.update(null, new UpdateWrapper<H2Student>().set("name", "dog").last(" where 1 =2 "));
+        Assertions.assertTrue(res <= 0);
+    }
+
+    @Test
+    @Order(10)
+    public void selectListOrderBy() {
+        List<H2Student> h2Students = mapper.selectList(null);
+        Assertions.assertEquals(h2Students.size(), 6);
+    }
+
+    @Test
+    @Order(11)
+    public void selectPageOrderBy() {
+        mapper.selectPage(Page.of(0, 10), null);
+    }
+
+    @Test
+    @Order(12)
+    public void selectMapsOrderBy() {
+        List<Map<String, Object>> maps = mapper.selectMaps(null);
+        Assertions.assertEquals(maps.size(), 6);
+    }
+
+    @Test
+    @Order(12)
+    public void selectMapsPageOrderBy() {
+        mapper.selectMapsPage(Page.of(0, 10), null);
+    }
+
+    @Test
+    @Order(12)
+    public void selectObjsOrderBy() {
+        List<Object> objs = mapper.selectObjs(null);
+        Assertions.assertEquals(objs.size(), 6);
     }
 }
