@@ -17,11 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -178,7 +174,7 @@ public class TableInfo implements Constants {
      */
     @Getter
     @Setter
-    private List<TableFieldInfo> orderByFields = new LinkedList<>();
+    private List<TableFieldInfo> orderByFields;
 
     /**
      * @since 3.4.4
@@ -426,7 +422,7 @@ public class TableInfo implements Constants {
      * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return sql
      */
-    private String formatLogicDeleteSql(boolean isWhere) {
+    protected String formatLogicDeleteSql(boolean isWhere) {
         final String value = isWhere ? logicDeleteFieldInfo.getLogicNotDeleteValue() : logicDeleteFieldInfo.getLogicDeleteValue();
         if (isWhere) {
             if (NULL.equalsIgnoreCase(value)) {
@@ -481,6 +477,9 @@ public class TableInfo implements Constants {
                 this.withUpdateFill = true;
             }
             if (i.isOrderBy()) {
+                if (null == this.orderByFields) {
+                    this.orderByFields = new LinkedList<>();
+                }
                 this.orderByFields.add(i);
             }
             if (i.isVersion()) {

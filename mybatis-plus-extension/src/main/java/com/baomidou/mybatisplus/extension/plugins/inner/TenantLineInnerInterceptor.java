@@ -138,7 +138,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
             if (itemsList instanceof MultiExpressionList) {
-                ((MultiExpressionList) itemsList).getExprList().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
+                ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
             } else {
                 ((ExpressionList) itemsList).getExpressions().add(tenantLineHandler.getTenantId());
             }
@@ -423,8 +423,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     public void setProperties(Properties properties) {
-        PropertyMapper.newInstance(properties)
-                .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+        PropertyMapper.newInstance(properties).whenNotBlank("tenantLineHandler",
+            ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 

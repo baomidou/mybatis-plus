@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -56,6 +59,17 @@ public class MergeSegments implements ISqlSegment {
             normal.addAll(list);
         }
         cacheSqlSegment = false;
+    }
+
+    /**
+     * 是否使用默认注解 {@link OrderBy} 排序
+     *
+     * @return true 使用 false 不使用
+     */
+    public boolean isUseAnnotationOrderBy() {
+        final String _sqlSegment = this.getSqlSegment();
+        return CollectionUtils.isEmpty(orderBy) && null != _sqlSegment
+            && _sqlSegment.toLowerCase().contains(Constants.LIMIT);
     }
 
     @Override

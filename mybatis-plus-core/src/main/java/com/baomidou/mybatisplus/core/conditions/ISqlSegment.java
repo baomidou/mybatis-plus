@@ -31,4 +31,5 @@ public interface ISqlSegment extends Serializable {
      * SQL 片段
      */
     String getSqlSegment();
+
 }

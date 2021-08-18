@@ -103,7 +103,7 @@ public interface Constants extends StringPool, Serializable {
     /**
      * wrapper 类的属性 expression 下级属性 order
      */
-    String WRAPPER_EXPRESSION_ORDER = WRAPPER_EXPRESSION + DOT + "orderBy";
+    String WRAPPER_EXPRESSION_ORDER = WRAPPER_EXPRESSION + DOT + "useAnnotationOrderBy";
     /**
      * UpdateWrapper 类的属性 sqlSet
      */
@@ -136,6 +136,10 @@ public interface Constants extends StringPool, Serializable {
      * where
      */
     String WHERE = "WHERE";
+    /**
+     * limit
+     */
+    String LIMIT = "LIMIT";
 
     /**
      * 乐观锁字段

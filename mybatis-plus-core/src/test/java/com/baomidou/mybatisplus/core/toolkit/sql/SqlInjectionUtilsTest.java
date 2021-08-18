@@ -15,10 +15,10 @@ public class SqlInjectionUtilsTest {
     public void sqlTest() {
         assertSql(false, "insert abc");
         assertSql(true, "insert user (id,name) value (1, 'qm')");
-        assertSql(true, "select * from user");
+        assertSql(true, "SELECT * FROM user");
         assertSql(true, "delete from user");
-        assertSql(true, "drop table user");
-        assertSql(true, ";truncate from user");
+        assertSql(true, "drop TABLE user");
+        assertSql(true, ";TRUNCATE from user");
         assertSql(false, "update");
         assertSql(false, "trigger");
         assertSql(true, "and name like '%s123%s'");
