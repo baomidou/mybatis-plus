@@ -153,25 +153,14 @@ public final class SqlHelper {
     @SneakyThrows
     public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
         SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
-        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
-        boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
-        if (sqlSessionHolder != null) {
-            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
-            //原生无法支持执行器切换，当存在批量操作时，会嵌套两个session的，优先commit上一个session
-            //按道理来说，这里的值应该一直为false。
-            sqlSession.commit(!transaction);
-        }
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
-        if (!transaction) {
-            log.warn("SqlSession [" + sqlSession + "] Transaction not enabled");
-        }
+
         try {
             consumer.accept(sqlSession);
-            //非事物情况下，强制commit。
-            sqlSession.commit(!transaction);
+            sqlSession.commit(true);
             return true;
         } catch (Throwable t) {
-            sqlSession.rollback();
+            sqlSession.rollback(true);
             Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
             if (unwrapped instanceof PersistenceException) {
                 MyBatisExceptionTranslator myBatisExceptionTranslator
