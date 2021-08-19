@@ -126,6 +126,15 @@ public enum DbType {
      * CUBRID
      */
     CUBRID("cubrid", "CUBRID数据库"),
+
+    /**
+     * GOLDILOCKS
+     */
+    GOLDILOCKS("goldilocks", "GOLDILOCKS数据库"),
+    /**
+     * CSIIDB
+     */
+    CSIIDB("csiidb", "CSIIDB数据库"),
     /**
      * UNKONWN DB
      */
