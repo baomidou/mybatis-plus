@@ -192,7 +192,8 @@ public class SqlRunner implements ISqlRunner {
     public long selectCount(String sql, Object... args) {
         SqlSession sqlSession = sqlSession();
         try {
-            return SqlHelper.retCount(sqlSession.<Long>selectOne(COUNT, sqlMap(sql, args)));
+            Object count = sqlSession.selectOne(COUNT, sqlMap(sql, args));
+            return null == count ? 0 : Long.valueOf(String.valueOf(count));
         } finally {
             closeSqlSession(sqlSession);
         }

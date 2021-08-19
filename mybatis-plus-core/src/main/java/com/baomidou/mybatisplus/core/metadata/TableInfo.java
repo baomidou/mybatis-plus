@@ -293,11 +293,15 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
+    public String getKeyInsertSqlProperty(final boolean batch, final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (havePK()) {
             String keyColumn = SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA;
             if (idType == IdType.AUTO) {
+                if (batch) {
+                    // 批量插入必须返回空自增情况下
+                    return EMPTY;
+                }
                 return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyProperty), newLine);
             }
             return keyColumn + (newLine ? NEWLINE : EMPTY);
@@ -312,9 +316,13 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn(final boolean newLine) {
+    public String getKeyInsertSqlColumn(final boolean batch, final boolean newLine) {
         if (havePK()) {
             if (idType == IdType.AUTO) {
+                if (batch) {
+                    // 批量插入必须返回空自增情况下
+                    return EMPTY;
+                }
                 return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine);
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
@@ -333,7 +341,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlProperty(newPrefix, true) + fieldList.stream()
+        return getKeyInsertSqlProperty(false, newPrefix, true) + fieldList.stream()
             .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
@@ -348,7 +356,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlColumnMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlColumn(true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
+        return getKeyInsertSqlColumn(false, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
