@@ -1,9 +1,6 @@
 package com.baomidou.mybatisplus.test.metadata;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
@@ -12,9 +9,11 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.mapping.ResultMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -222,5 +221,30 @@ class TableInfoHelperTest {
     @TableName(value = "xxx", keepGlobalPrefix = true)
     private static class Table2 {
 
+    }
+
+
+
+    @Test
+    void testTableAutoResultMap() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), AutoResultMapTable.class);
+        final ResultMap resultMap = tableInfo.getConfiguration().getResultMap(tableInfo.getResultMap());
+
+        assertThat(resultMap)
+            .isNotNull()
+            .extracting(ResultMap::getMappedColumns)
+            .matches((set) -> set.stream().noneMatch(StringUtils::isNotColumnName));
+    }
+
+    @Data
+    @TableName(value = "xxx", autoResultMap = true )
+    private static class AutoResultMapTable{
+
+        @TableId("`id`")
+        private Long id;
+
+        @TableField("`name`")
+        private Long name;
     }
 }

@@ -455,7 +455,7 @@ public class TableInfo implements Constants {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (havePK()) {
-                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn, keyType)
+                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, StringUtils.getTargetColumn(keyColumn), keyType)
                     .flags(Collections.singletonList(ResultFlag.ID)).build();
                 resultMappings.add(idMapping);
             }
