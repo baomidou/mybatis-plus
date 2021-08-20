@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
@@ -57,4 +58,6 @@ public interface IH2UserService extends IService<H2User> {
     void testSaveBatchNoTransactional1();
 
     void testSaveBatchNoTransactional2();
+
+    List<H2User> testCustomSqlSegment(Wrapper wrapper);
 }
