@@ -1,5 +1,32 @@
 ﻿# CHANGELOG
 
+## [v3.4.3.1] 2021.08.21
+
+- 增加 goldilocks 数据库 csiidb 数据库 的支持
+- 增加对南大通用GBase 8s数据库的支持（GBASEDBT)，区别于原有定义（GBASE)
+- 优化 selectOne 查询方式，精简 SQL 注入
+- PropertyMapper.whenNotBlack to whenNotBlank
+- BaseMapper新增deleteById(T entity)方法
+- jsqlparser 版本 4.0 升级 4.1
+- TableInfo新增原生Reflector反射操作.
+- 解决 lambda 构造器在 JDK16 中无法运行的问题
+- wrapper clear 将sqlSegment重置为空串 缓存标志重置为true
+- 注入器调整无主键不注入ById方法
+- 自动构建 resultMap 处理主键获取真正的字段名
+- Wrapper optimized: 优化警告
+- Wrapper 新增 gtSql geSql ltSql leSql 方法
+- 新增对CUBRID数据库的支持
+- fix github pull/3557 乐观锁新增版本号 null 自定义异常，租户插入忽略逻辑允许自定义
+- fix github issues/2931 解决结果集大于 Integer 异常问题
+- fix github issues/3652 k8s 网络获取失败问题
+- fix gitee issues/I3Z2RG 优化 Order By SQL 注入识别率
+- fix gitee issues/3826 优化动态表名处理器
+- fix gitee issues/I3UQH5 修复注解@OrderBy，使用limit 异常
+- fix github issues/3768 mysql 批量自增 bug
+- 修复自动构建resultMap时主键字段映射错误&OrderBySegmentList懒加载执行
+- 源代码升级相关测试依赖，构建环境 gradle 升级为 7.1 新增更多测试用例
+
+
 ## [v3.4.3.1] 2021.06.15
 
 - 支持多重继承获取泛型
