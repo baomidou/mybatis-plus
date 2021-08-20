@@ -88,6 +88,9 @@ class PaginationInnerInterceptorTest {
         assertsCountSql("SELECT f.ca, f.cb FROM table_a f LEFT JOIN " +
                 "(SELECT ca FROM table_b WHERE cc = ?) rf on rf.ca = f.ca",
             "SELECT COUNT(*) FROM table_a f LEFT JOIN (SELECT ca FROM table_b WHERE cc = ?) rf ON rf.ca = f.ca");
+
+        assertsCountSql("select * from order_info left join (select count(1) from order_info where create_time between ? and ?) tt on 1=1 WHERE equipment_id=?",
+            "SELECT COUNT(*) FROM order_info LEFT JOIN (SELECT count(1) FROM order_info WHERE create_time BETWEEN ? AND ?) tt ON 1 = 1 WHERE equipment_id = ?");
     }
 
     void assertsCountSql(String sql, String targetSql) {
