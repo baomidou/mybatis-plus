@@ -119,22 +119,6 @@ class H2UserTest extends BaseTest {
         }
     }
 
-//    @Test
-//    void testQueryWithParamInSelectStatement4Page() {
-//        Map<String, Object> param = new HashMap<>();
-//        String nameParam = "selectStmtParam";
-//        param.put("nameParam", nameParam);
-//        param.put("ageFrom", 1);
-//        param.put("ageTo", 100);
-//        Page<H2User> page = userService.queryWithParamInSelectStatememt4Page(param, new Page<H2User>(0, 10));
-//        Assert.assertNotNull(page.getRecords());
-//        for (H2User u : page.getRecords()) {
-//            Assert.assertEquals(nameParam, u.getName());
-//            Assert.assertNotNull(u.getId());
-//        }
-//        Assert.assertNotEquals(0, pagemySelectMaps.getTotal());
-//    }
-
     @Test
     @Order(10)
     void testSelectCountWithParamInSelectItems() {
@@ -409,7 +393,6 @@ class H2UserTest extends BaseTest {
         }
     }
 
-
     @Test
     @Order(31)
     void testSpaceCharacter() {
@@ -419,6 +402,15 @@ class H2UserTest extends BaseTest {
         h2User.setName(" ");
         Assertions.assertTrue(CollectionUtils.isEmpty(userService.list(new QueryWrapper<>(h2User)
             .gt("age", 1).lt("age", 5))));
+    }
+
+    @Test
+    @Order(32)
+    void testSqlInjectionByCustomSqlSegment() {
+        // Preparing: select * from h2user WHERE (name LIKE ?)
+        // Parameters: %y%%(String)
+        List<H2User> h2Users = userService.testCustomSqlSegment(new QueryWrapper<H2User>().like("name", "y%"));
+        Assertions.assertTrue(2 == h2Users.size());
     }
 
     @Test
