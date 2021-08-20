@@ -102,6 +102,14 @@ public final class StringUtils {
         return !isBlank(cs);
     }
 
+    public static boolean isEmpty(CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
+    public static boolean isNotEmpty(CharSequence cs) {
+        return !isEmpty(cs);
+    }
+
     /**
      * 判断字符串是不是驼峰命名
      *
@@ -328,7 +336,7 @@ public final class StringUtils {
      */
     public static boolean checkValNotNull(Object object) {
         if (object instanceof CharSequence) {
-            return isNotBlank((CharSequence) object);
+            return isNotEmpty((CharSequence) object);
         }
         return object != null;
     }

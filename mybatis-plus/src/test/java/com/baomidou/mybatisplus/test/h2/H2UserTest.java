@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
@@ -406,6 +407,18 @@ class H2UserTest extends BaseTest {
         } catch (Exception e) {
             Assertions.assertEquals(3, userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional2")));
         }
+    }
+
+
+    @Test
+    @Order(31)
+    void testSpaceCharacter() {
+        Assertions.assertFalse(StringUtils.isNotBlank(" "));
+        Assertions.assertTrue(StringUtils.checkValNotNull(" "));
+        H2User h2User = new H2User();
+        h2User.setName(" ");
+        Assertions.assertTrue(CollectionUtils.isEmpty(userService.list(new QueryWrapper<>(h2User)
+            .gt("age", 1).lt("age", 5))));
     }
 
     @Test
