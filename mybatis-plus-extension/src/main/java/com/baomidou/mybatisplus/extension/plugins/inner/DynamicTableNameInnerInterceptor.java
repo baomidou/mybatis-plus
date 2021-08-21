@@ -36,7 +36,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 动态表名
@@ -50,13 +49,9 @@ import java.util.Map;
 @AllArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
-
     /**
-     * 该方法废弃，避免多表使用统一策略多次注入，切换使用 TableNameHandler 自行判断表面处理逻辑
-     * 该注入方法后续版本会移除
+     * 表名处理器，是否处理表名的情况都在该处理器中自行判断
      */
-    @Deprecated
-    private Map<String, TableNameHandler> tableNameHandlerMap;
     private TableNameHandler tableNameHandler;
 
     @Override
@@ -79,6 +74,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     }
 
     protected String changeTable(String sql) {
+        ExceptionUtils.throwMpe(null == tableNameHandler, "Please implement TableNameHandler processing logic");
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();
         parser.accept(names::add);
@@ -88,16 +84,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             int start = name.getStart();
             if (start != last) {
                 builder.append(sql, last, start);
-                String value = name.getValue();
-                if (null == tableNameHandler) {
-                    tableNameHandler = tableNameHandlerMap.get(value);
-                }
-                ExceptionUtils.throwMpe(null == tableNameHandler,"Please implement TableNameHandler processing logic");
-                if (null != tableNameHandler) {
-                    builder.append(tableNameHandler.dynamicTableName(sql, value));
-                } else {
-                    builder.append(value);
-                }
+                builder.append(tableNameHandler.dynamicTableName(sql, name.getValue()));
             }
             last = name.getEnd();
         }
