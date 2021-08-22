@@ -81,18 +81,14 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Configuration configuration) {
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+
         final IdentifierGenerator identifierGenerator;
-        if (globalConfig.getIdentifierGenerator() == null) {
-            if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-                identifierGenerator = new DefaultIdentifierGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-            } else {
-                identifierGenerator = new DefaultIdentifierGenerator();
-            }
+        if (null == globalConfig.getIdentifierGenerator()) {
+            identifierGenerator = new DefaultIdentifierGenerator();
             globalConfig.setIdentifierGenerator(identifierGenerator);
         } else {
             identifierGenerator = globalConfig.getIdentifierGenerator();
         }
-        //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
         IdWorker.setIdentifierGenerator(identifierGenerator);
 
         if (globalConfig.isEnableSqlRunner()) {
