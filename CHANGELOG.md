@@ -1,6 +1,6 @@
 ﻿# CHANGELOG
 
-## [v3.4.3.1] 2021.08.21
+## [v3.4.3.2] 2021.08.21
 
 - 增加 goldilocks 数据库 csiidb 数据库 的支持
 - 增加对南大通用GBase 8s数据库的支持（GBASEDBT)，区别于原有定义（GBASE)
