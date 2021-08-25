@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.test.handlers;
 
+import java.sql.SQLFeatureNotSupportedException;
+
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
 import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
@@ -28,6 +30,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -127,6 +131,28 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 5));
         when(callableStatement.getObject(6, Integer.class)).thenReturn(null);
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6));
+    }
+
+    @Test
+    public void getResultThrowTest() throws Exception {
+        when(callableStatement.getObject(anyInt(), eq(Integer.class))).thenThrow(new SQLFeatureNotSupportedException());
+        when(callableStatement.getString(anyInt())).thenReturn("");
+        when(callableStatement.getInt(1)).thenReturn(1);
+        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1));
+        when(callableStatement.getInt(2)).thenReturn(2);
+        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 2));
+        when(callableStatement.getInt(3)).thenReturn(0);
+        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 3));
+
+        when(resultSet.getObject(anyInt(), eq(Integer.class))).thenThrow(new SQLFeatureNotSupportedException());
+        when(resultSet.getInt(4)).thenReturn(1);
+        when(resultSet.getString(eq(4))).thenReturn("4");
+        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 4));
+        when(resultSet.getInt(5)).thenReturn(2);
+        when(resultSet.getString(eq(5))).thenReturn("2");
+        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 5));
+        when(resultSet.getString(eq(6))).thenReturn(null);
+        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 6));
     }
 
     @Getter

@@ -15,6 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -28,18 +42,6 @@ import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * 自定义枚举属性转换器
  *
@@ -47,6 +49,46 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2017-10-11
  */
 public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
+
+    interface FuncWithException<T, U, R> {
+        R apply(T t, U u) throws SQLException;
+    }
+
+    private static final Map<Class<?>, FuncWithException<ResultSet, String, Object>> QUERY_RESULT_BY_NAME = new HashMap<>();
+    private static final Map<Class<?>, FuncWithException<ResultSet, Integer, Object>> QUERY_RESULT_BY_INDEX = new HashMap<>();
+    private static final Map<Class<?>, FuncWithException<CallableStatement, Integer, Object>> QUERY_RESULT_USE_CALLABLE = new HashMap<>();
+
+    static {
+        QUERY_RESULT_BY_NAME.put(Boolean.class, ResultSet::getBoolean);
+        QUERY_RESULT_BY_NAME.put(Byte.class, ResultSet::getByte);
+        QUERY_RESULT_BY_NAME.put(Character.class, ResultSet::getInt);
+        QUERY_RESULT_BY_NAME.put(Double.class, ResultSet::getDouble);
+        QUERY_RESULT_BY_NAME.put(Float.class, ResultSet::getFloat);
+        QUERY_RESULT_BY_NAME.put(Integer.class, ResultSet::getInt);
+        QUERY_RESULT_BY_NAME.put(Long.class, ResultSet::getLong);
+        QUERY_RESULT_BY_NAME.put(Short.class, ResultSet::getShort);
+        QUERY_RESULT_BY_NAME.put(String.class, ResultSet::getString);
+
+        QUERY_RESULT_BY_INDEX.put(Boolean.class, ResultSet::getBoolean);
+        QUERY_RESULT_BY_INDEX.put(Byte.class, ResultSet::getByte);
+        QUERY_RESULT_BY_INDEX.put(Character.class, ResultSet::getInt);
+        QUERY_RESULT_BY_INDEX.put(Double.class, ResultSet::getDouble);
+        QUERY_RESULT_BY_INDEX.put(Float.class, ResultSet::getFloat);
+        QUERY_RESULT_BY_INDEX.put(Integer.class, ResultSet::getInt);
+        QUERY_RESULT_BY_INDEX.put(Long.class, ResultSet::getLong);
+        QUERY_RESULT_BY_INDEX.put(Short.class, ResultSet::getShort);
+        QUERY_RESULT_BY_INDEX.put(String.class, ResultSet::getString);
+
+        QUERY_RESULT_USE_CALLABLE.put(Boolean.class, CallableStatement::getBoolean);
+        QUERY_RESULT_USE_CALLABLE.put(Byte.class, CallableStatement::getByte);
+        QUERY_RESULT_USE_CALLABLE.put(Character.class, CallableStatement::getInt);
+        QUERY_RESULT_USE_CALLABLE.put(Double.class, CallableStatement::getDouble);
+        QUERY_RESULT_USE_CALLABLE.put(Float.class, CallableStatement::getFloat);
+        QUERY_RESULT_USE_CALLABLE.put(Integer.class, CallableStatement::getInt);
+        QUERY_RESULT_USE_CALLABLE.put(Long.class, CallableStatement::getLong);
+        QUERY_RESULT_USE_CALLABLE.put(Short.class, CallableStatement::getShort);
+        QUERY_RESULT_USE_CALLABLE.put(String.class, CallableStatement::getString);
+    }
 
     private static final Map<String, String> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
     private static final ReflectorFactory REFLECTOR_FACTORY = new DefaultReflectorFactory();
@@ -115,7 +157,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
 
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        Object value = rs.getObject(columnName, this.propertyType);
+        Object value = getObject(rs, columnName);
         if (null == value && rs.wasNull()) {
             return null;
         }
@@ -124,7 +166,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
 
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        Object value = rs.getObject(columnIndex, this.propertyType);
+        Object value = getObject(rs, columnIndex);
         if (null == value && rs.wasNull()) {
             return null;
         }
@@ -133,7 +175,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        Object value = cs.getObject(columnIndex, this.propertyType);
+        Object value = getObject(cs, columnIndex);
         if (null == value && cs.wasNull()) {
             return null;
         }
@@ -168,6 +210,42 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
             return this.getInvoker.invoke(object, new Object[0]);
         } catch (ReflectiveOperationException e) {
             throw ExceptionUtils.mpe(e);
+        }
+    }
+
+    private Object getObject(ResultSet rs, String columnName) throws SQLException {
+        try {
+            return rs.getObject(columnName, this.propertyType);
+        } catch (SQLFeatureNotSupportedException e) {
+            if (QUERY_RESULT_BY_NAME.containsKey(this.propertyType)) {
+                return rs.getString(columnName) == null ? null : QUERY_RESULT_BY_NAME.get(
+                    this.propertyType).apply(rs, columnName);
+            }
+            throw e;
+        }
+    }
+
+    private Object getObject(ResultSet rs, int columnIdx) throws SQLException {
+        try {
+            return rs.getObject(columnIdx, this.propertyType);
+        } catch (SQLFeatureNotSupportedException e) {
+            if (QUERY_RESULT_BY_INDEX.containsKey(this.propertyType)) {
+                return rs.getString(columnIdx) == null ? null : QUERY_RESULT_BY_INDEX.get(
+                    this.propertyType).apply(rs, columnIdx);
+            }
+            throw e;
+        }
+    }
+
+    private Object getObject(CallableStatement cs, int columnIdx) throws SQLException {
+        try {
+            return cs.getObject(columnIdx, this.propertyType);
+        } catch (SQLFeatureNotSupportedException e) {
+            if (QUERY_RESULT_USE_CALLABLE.containsKey(this.propertyType)) {
+                return cs.getString(columnIdx) == null ? null : QUERY_RESULT_USE_CALLABLE.get(
+                    this.propertyType).apply(cs, columnIdx);
+            }
+            throw e;
         }
     }
 }
