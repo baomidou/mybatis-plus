@@ -76,15 +76,6 @@ public class Sequence {
      */
     private InetAddress inetAddress;
 
-    /**
-     * @deprecated 3.4.3
-     */
-    @Deprecated
-    public Sequence() {
-        this.datacenterId = getDatacenterId(maxDatacenterId);
-        this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
-    }
-
     public Sequence(InetAddress inetAddress) {
         this.inetAddress = inetAddress;
         this.datacenterId = getDatacenterId(maxDatacenterId);

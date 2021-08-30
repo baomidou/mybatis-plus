@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -34,32 +33,10 @@ import org.springframework.context.annotation.Lazy;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class IdentifierGeneratorAutoConfiguration {
 
-    @Configuration(proxyBeanMethods = false)
+    @Bean
     @ConditionalOnClass(InetUtils.class)
-    public static class InetUtilsAutoConfig {
-
-        private final InetUtils inetUtils;
-
-        private final MybatisPlusProperties properties;
-
-        public InetUtilsAutoConfig(InetUtils inetUtils, MybatisPlusProperties properties) {
-            this.inetUtils = inetUtils;
-            this.properties = properties;
-        }
-
-        @Bean
-        @ConditionalOnMissingBean
-        public IdentifierGenerator identifierGenerator() {
-            GlobalConfig globalConfig = properties.getGlobalConfig();
-            Long workerId = globalConfig.getWorkerId();
-            Long datacenterId = globalConfig.getDatacenterId();
-            if (workerId != null && datacenterId != null) {
-                return new DefaultIdentifierGenerator(workerId, datacenterId);
-            } else {
-                return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
-            }
-        }
-
+    @ConditionalOnMissingBean
+    public IdentifierGenerator identifierGenerator(InetUtils inetUtils) {
+        return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
     }
-
 }
