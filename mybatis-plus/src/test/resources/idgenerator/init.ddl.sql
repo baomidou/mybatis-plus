@@ -4,6 +4,18 @@ CREATE TABLE IF NOT EXISTS  t_id_generator_long (
 	PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS  t_id_generator_bigdecimal (
+	id BIGINT(20) NOT NULL,
+	name VARCHAR(30) NULL DEFAULT NULL ,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS  t_id_generator_biginteger (
+	id BIGINT(20) NOT NULL,
+	name VARCHAR(30) NULL DEFAULT NULL ,
+	PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS  t_id_generator_long_string (
 	id varchar NOT NULL,
 	name VARCHAR(30) NULL DEFAULT NULL ,

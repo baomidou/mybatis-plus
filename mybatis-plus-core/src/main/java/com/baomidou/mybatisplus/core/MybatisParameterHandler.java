@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -33,6 +34,8 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -127,8 +130,22 @@ public class MybatisParameterHandler implements ParameterHandler {
             Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
-                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
+                    Class<?> keyType = tableInfo.getKeyType();
+                    if (Number.class.isAssignableFrom(keyType)) {
+                        Number id = identifierGenerator.nextId(entity);
+                        if (keyType == id.getClass()) {
+                            metaObject.setValue(keyProperty, id);
+                        } else if (Integer.class == keyType) {
+                            metaObject.setValue(keyProperty, id.intValue());
+                        } else if (Long.class == keyType) {
+                            metaObject.setValue(keyProperty, id.longValue());
+                        } else if (BigDecimal.class.isAssignableFrom(keyType)) {
+                            metaObject.setValue(keyProperty, new BigDecimal(id.longValue()));
+                        } else if (BigInteger.class.isAssignableFrom(keyType)) {
+                            metaObject.setValue(keyProperty, new BigInteger(id.toString()));
+                        } else {
+                            throw new MybatisPlusException("Key type '" + keyType + "' not supported");
+                        }
                     } else {
                         metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
                     }
