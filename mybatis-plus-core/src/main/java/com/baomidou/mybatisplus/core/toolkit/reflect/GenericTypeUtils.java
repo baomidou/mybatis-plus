@@ -37,7 +37,7 @@ public class GenericTypeUtils {
     /**
      * 设置泛型工具助手。如果不想使用Spring封装，可以使用前替换掉
      */
-    public static void setGenericTypeHelper(IGenericTypeResolver genericTypeResolver) {
+    public static void setGenericTypeResolver(IGenericTypeResolver genericTypeResolver) {
         GENERIC_TYPE_RESOLVER = genericTypeResolver;
     }
 }
