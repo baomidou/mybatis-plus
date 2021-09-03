@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.springframework.core.GenericTypeResolver;
-
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -91,7 +89,8 @@ public final class ReflectionKit {
      * @return Class
      */
     public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
-        Class<?>[] typeArguments = GenericTypeResolver.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+        //update by noear @2021-09-03
+        Class<?>[] typeArguments = GenericTypeUtils.getGenericTypeHelper().resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
         return null == typeArguments ? null : typeArguments[index];
     }
 
