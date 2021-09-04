@@ -50,7 +50,7 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.19.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
         "gson"                       : "com.google.code.gson:gson:2.8.8",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
