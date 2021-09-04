@@ -18,15 +18,15 @@ package com.baomidou.mybatisplus.core.toolkit.reflect;
 import org.springframework.core.GenericTypeResolver;
 
 /**
- * 泛型类助手默认 spring 实现
+ * Spring 反射辅助类
  *
- * @author noear hubin
+ * @author noear
+ * @author hubin
  * @since 2021-09-03
  */
-public class SpringGenericTypeResolver implements IGenericTypeResolver {
+public class SpringReflectionHelper {
 
-    @Override
-    public Class<?>[] resolveTypeArguments(Class<?> clazz, Class<?> genericIfc) {
+    public static Class<?>[] resolveTypeArguments(Class<?> clazz, Class<?> genericIfc) {
         return GenericTypeResolver.resolveTypeArguments(clazz, genericIfc);
     }
 }

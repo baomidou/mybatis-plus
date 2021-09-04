@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -95,7 +97,7 @@ public final class ReflectionKit {
      */
     public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
         //update by noear @2021-09-03
-        Class<?>[] typeArguments = GenericTypeUtils.getGenericTypeResolver().resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+        Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
         return null == typeArguments ? null : typeArguments[index];
     }
 

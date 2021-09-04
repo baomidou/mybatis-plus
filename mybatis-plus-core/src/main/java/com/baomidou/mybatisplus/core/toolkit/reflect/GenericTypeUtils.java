@@ -18,7 +18,8 @@ package com.baomidou.mybatisplus.core.toolkit.reflect;
 /**
  * 泛型类工具（用于隔离Spring的代码）
  *
- * @author noear hubin
+ * @author noear
+ * @author hubin
  * @since 2021-09-03
  */
 public class GenericTypeUtils {
@@ -27,11 +28,12 @@ public class GenericTypeUtils {
     /**
      * 获取泛型工具助手
      */
-    public static IGenericTypeResolver getGenericTypeResolver() {
+    public static Class<?>[] resolveTypeArguments(final Class<?> clazz, final Class<?> genericIfc) {
         if (null == GENERIC_TYPE_RESOLVER) {
-            GENERIC_TYPE_RESOLVER = new SpringGenericTypeResolver();
+            // 直接使用 spring 静态方法，减少对象创建
+            return SpringReflectionHelper.resolveTypeArguments(clazz, genericIfc);
         }
-        return GENERIC_TYPE_RESOLVER;
+        return GENERIC_TYPE_RESOLVER.resolveTypeArguments(clazz, genericIfc);
     }
 
     /**
