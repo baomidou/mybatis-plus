@@ -148,7 +148,7 @@ class ReflectionKitTest {
 
     @Test
     void testIsPrimitiveOrWrapper() {
-        Assertions.assertFalse(ReflectionKit.isPrimitiveOrWrapper(String.class));
+        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(String.class));
         Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Boolean.class));
         Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(boolean.class));
         Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(byte.class));

@@ -1,5 +1,16 @@
 ﻿# CHANGELOG
 
+## [v3.4.3.3] 2021.09.05
+
+- 移除不在实用类 ISqlParserFilter AbstractJsqlParser 需要使用从旧版本复制
+- 移除全局配置workerId，datacenterId参数，推荐直接初始化identifierGenerator
+- count 方法 Integer 修改为 Long 涉及升级成本【注意】，对于涉及缺陷调整给您造成困扰表示抱歉
+- 修复主键 @0rderby 注解 bug
+- 修复 String 主键删除失败
+- 主键类型增加 BigDecimal BigInteger 支持
+- 隔离 spring 框架强依赖，非 spring 框架用 mp 注入 GenericTypeUtils.setGenericTypeResolver
+
+
 ## [v3.4.3.2] 2021.08.21
 
 - 增加 goldilocks 数据库 csiidb 数据库 的支持
