@@ -98,6 +98,10 @@ public class LastSqlTest {
     public void selectListOrderBy() {
         List<H2Student> h2Students = mapper.selectList(null);
         Assertions.assertEquals(h2Students.size(), 6);
+        Assertions.assertEquals(mapper.selectList(new LambdaQueryWrapper<H2Student>()
+            .eq(H2Student::getAge, 1)).size(), 6);
+        Assertions.assertEquals(mapper.selectList(new QueryWrapper<H2Student>()
+            .orderByAsc("age")).size(), 6);
     }
 
     @Test

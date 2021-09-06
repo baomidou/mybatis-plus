@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
@@ -564,6 +565,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected void appendSqlSegments(ISqlSegment... sqlSegments) {
         expression.add(sqlSegments);
+    }
+
+    /**
+     * 是否使用默认注解 {@link OrderBy} 排序
+     *
+     * @return true 使用 false 不使用
+     */
+    public boolean isUseAnnotationOrderBy() {
+        final String _sqlSegment = this.getSqlSegment();
+        if (StringUtils.isBlank(_sqlSegment)) {
+            return true;
+        }
+        final String _sqlSegmentToUpperCase = _sqlSegment.toUpperCase();
+        return !(_sqlSegmentToUpperCase.contains(Constants.ORDER_BY)
+            || _sqlSegmentToUpperCase.contains(Constants.LIMIT));
     }
 
     @Override

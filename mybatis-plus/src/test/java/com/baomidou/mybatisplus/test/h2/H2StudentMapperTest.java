@@ -102,7 +102,8 @@ class H2StudentMapperTest extends BaseTest {
         LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery().groupBy(H2Student::getAge);
         LambdaQueryWrapper<H2Student> wrapper2 = Wrappers.<H2Student>lambdaQuery().orderByAsc(H2Student::getAge);
         System.out.println(wrapper.getSqlSegment());
-        System.out.println(wrapper2.getSqlSegment());
+        Assertions.assertEquals(" GROUP BY age", wrapper.getSqlSegment());
+        Assertions.assertEquals(" ORDER BY age ASC", wrapper2.getSqlSegment());
     }
 
     @Test
