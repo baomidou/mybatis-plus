@@ -33,10 +33,17 @@ import org.springframework.context.annotation.Lazy;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class IdentifierGeneratorAutoConfiguration {
 
-    @Bean
+
+    @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(InetUtils.class)
-    @ConditionalOnMissingBean
-    public IdentifierGenerator identifierGenerator(InetUtils inetUtils) {
-        return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
+    public static class InetUtilsAutoConfig {
+
+        @Bean
+        @ConditionalOnMissingBean
+        public IdentifierGenerator identifierGenerator(InetUtils inetUtils) {
+            return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
+        }
+
     }
+
 }
