@@ -30,6 +30,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -73,7 +74,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null || ReflectionKit.isPrimitiveOrWrapper(clazz) || clazz == String.class || clazz.isInterface()) {
+        if (clazz == null || clazz.isPrimitive() || SimpleTypeRegistry.isSimpleType(clazz) || clazz.isInterface()) {
             return null;
         }
         // https://github.com/baomidou/mybatis-plus/issues/299
