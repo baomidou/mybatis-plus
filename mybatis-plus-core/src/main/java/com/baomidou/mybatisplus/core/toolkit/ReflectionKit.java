@@ -20,8 +20,6 @@ import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +42,7 @@ public final class ReflectionKit {
      */
     private static final Map<Class<?>, List<Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<>();
 
+    @Deprecated
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(8);
@@ -57,9 +56,6 @@ public final class ReflectionKit {
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
         PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(String.class, String.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(BigInteger.class, BigInteger.class);
-        PRIMITIVE_WRAPPER_TYPE_MAP.put(BigDecimal.class, BigDecimal.class);
         for (Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_WRAPPER_TYPE_MAP.entrySet()) {
             PRIMITIVE_TYPE_TO_WRAPPER_MAP.put(entry.getValue(), entry.getKey());
         }
@@ -175,6 +171,7 @@ public final class ReflectionKit {
      * @param clazz class
      * @return 是否基本类型或基本包装类型
      */
+    @Deprecated
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));

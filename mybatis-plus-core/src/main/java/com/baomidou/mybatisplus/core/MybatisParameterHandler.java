@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
@@ -30,6 +29,7 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.SimpleTypeRegistry;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -72,8 +72,7 @@ public class MybatisParameterHandler implements ParameterHandler {
         if (parameter != null
             && (SqlCommandType.INSERT == this.sqlCommandType || SqlCommandType.UPDATE == this.sqlCommandType)) {
             //检查 parameterObject
-            if (ReflectionKit.isPrimitiveOrWrapper(parameter.getClass())
-                || parameter.getClass() == String.class) {
+            if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
                 return parameter;
             }
             Collection<Object> parameters = getParameters(parameter);
