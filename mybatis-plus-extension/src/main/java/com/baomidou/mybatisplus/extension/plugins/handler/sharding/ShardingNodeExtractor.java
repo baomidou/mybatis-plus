@@ -250,11 +250,6 @@ public class ShardingNodeExtractor extends TablesNamesFinder {
     }
 
     @Override
-    public void visit(AllComparisonExpression allComparisonExpression) {
-        allComparisonExpression.getSubSelect().getSelectBody().accept(this);
-    }
-
-    @Override
     public void visit(AnyComparisonExpression anyComparisonExpression) {
         anyComparisonExpression.getSubSelect().getSelectBody().accept(this);
     }
