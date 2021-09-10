@@ -136,7 +136,7 @@ public class SqlRunnerInjector {
             return;
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, ISqlRunner.SQL_SCRIPT, Map.class);
-        createSelectMappedStatement(ISqlRunner.COUNT, sqlSource, Integer.class);
+        createSelectMappedStatement(ISqlRunner.COUNT, sqlSource, Long.class);
     }
 
     /**

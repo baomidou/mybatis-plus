@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.injector.methods.Upsert;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -81,8 +82,8 @@ public class MybatisPlusConfig {
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
                 methodList.add(new Upsert());
                 return methodList;
             }

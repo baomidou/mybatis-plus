@@ -83,6 +83,14 @@ class PaginationInnerInterceptorTest {
                 "group by ral.reseller_id) rlr on r.id = rlr.reseller_id " +
                 "order by r.created_at desc",
             "SELECT COUNT(*) FROM reseller r");
+
+        // 不优化
+        assertsCountSql("SELECT f.ca, f.cb FROM table_a f LEFT JOIN " +
+                "(SELECT ca FROM table_b WHERE cc = ?) rf on rf.ca = f.ca",
+            "SELECT COUNT(*) FROM table_a f LEFT JOIN (SELECT ca FROM table_b WHERE cc = ?) rf ON rf.ca = f.ca");
+
+        assertsCountSql("select * from order_info left join (select count(1) from order_info where create_time between ? and ?) tt on 1=1 WHERE equipment_id=?",
+            "SELECT COUNT(*) FROM order_info LEFT JOIN (SELECT count(1) FROM order_info WHERE create_time BETWEEN ? AND ?) tt ON 1 = 1 WHERE equipment_id = ?");
     }
 
     void assertsCountSql(String sql, String targetSql) {

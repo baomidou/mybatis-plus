@@ -46,7 +46,7 @@ class SqlRunnerTest {
     @Test
     @Order(3)
     void testSelectCount(){
-        int count = SqlRunner.db().selectCount("select count(1) from h2student");
+        long count = SqlRunner.db().selectCount("select count(1) from h2student");
         Assertions.assertTrue(count > 0);
         count = SqlRunner.db().selectCount("select count(1) from h2student where id > {0}",0);
         Assertions.assertTrue(count > 0);

@@ -15,9 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.springframework.core.GenericTypeResolver;
+import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -39,12 +37,12 @@ import static java.util.stream.Collectors.toMap;
  * @since 2016-09-22
  */
 public final class ReflectionKit {
-    private static final Log logger = LogFactory.getLog(ReflectionKit.class);
     /**
      * class field cache
      */
     private static final Map<Class<?>, List<Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<>();
 
+    @Deprecated
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_TO_WRAPPER_MAP = new IdentityHashMap<>(8);
@@ -94,7 +92,8 @@ public final class ReflectionKit {
      * @return Class
      */
     public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
-        Class<?>[] typeArguments = GenericTypeResolver.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+        //update by noear @2021-09-03
+        Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
         return null == typeArguments ? null : typeArguments[index];
     }
 
@@ -172,6 +171,7 @@ public final class ReflectionKit {
      * @param clazz class
      * @return 是否基本类型或基本包装类型
      */
+    @Deprecated
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));

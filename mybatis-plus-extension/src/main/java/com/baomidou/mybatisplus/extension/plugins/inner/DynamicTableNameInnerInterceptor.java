@@ -16,12 +16,14 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -34,7 +36,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 动态表名
@@ -42,13 +43,16 @@ import java.util.Map;
  * @author jobob
  * @since 3.4.0
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
-
-    private Map<String, TableNameHandler> tableNameHandlerMap;
+    /**
+     * 表名处理器，是否处理表名的情况都在该处理器中自行判断
+     */
+    private TableNameHandler tableNameHandler;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -70,6 +74,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     }
 
     protected String changeTable(String sql) {
+        ExceptionUtils.throwMpe(null == tableNameHandler, "Please implement TableNameHandler processing logic");
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();
         parser.accept(names::add);
@@ -79,13 +84,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             int start = name.getStart();
             if (start != last) {
                 builder.append(sql, last, start);
-                String value = name.getValue();
-                TableNameHandler handler = tableNameHandlerMap.get(value);
-                if (handler != null) {
-                    builder.append(handler.dynamicTableName(sql, value));
-                } else {
-                    builder.append(value);
-                }
+                builder.append(tableNameHandler.dynamicTableName(sql, name.getValue()));
             }
             last = name.getEnd();
         }

@@ -15,7 +15,9 @@
  */
 package com.baomidou.mybatisplus.test.h2.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Addr;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
@@ -66,22 +68,13 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     )
     int myInsertWithoutParam(H2User user1);
 
-
     @Select(" select test_id as testId, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
         " from h2user " +
         " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithParamInSelectStatememt(Map<String, Object> param);
 
-//    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
-//        " from h2user " +
-//        " where age>#{ageFrom} and age<#{ageTo} ")
-//    List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
-//
-//    @Select(" select test_id as id, power(${ageFrom},2) as age, '${nameParam}' as name " +
-//        " from h2user " +
-//        " where age>#{ageFrom} and age<#{ageTo} ")
-//    List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
-
+    @Select("select * from h2user ${ew.customSqlSegment}")
+    List<H2User> selectTestCustomSqlSegment(@Param(Constants.WRAPPER) Wrapper wrapper);
 
     @Select("select count(1) from (" +
         "select test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
@@ -91,7 +84,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
     @Select("select age,name,count(age) from h2user group by age,name order by age")
-    List<Map<?,?>> mySelectMaps(IPage<H2User> page);
+    List<Map<?, ?>> mySelectMaps(IPage<H2User> page);
 
     @Select("call 1")
     @Options(statementType = StatementType.CALLABLE)
@@ -102,4 +95,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select("select * from h2user")
     IPage<H2User> testPage2(@Param(value = "user") Page page, @Param(value = "page") H2User h2User);
+
+    @Select("select count(*) from h2user")
+    Long selectCountLong();
 }

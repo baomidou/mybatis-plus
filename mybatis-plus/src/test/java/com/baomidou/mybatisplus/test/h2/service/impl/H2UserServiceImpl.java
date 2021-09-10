@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -133,5 +134,10 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
         //非事物下，制造一个批量主键冲突
         save(new H2User(1577431655447L, "testSaveBatchNoTransactional2"));
         saveBatch(Arrays.asList(new H2User("testSaveBatchNoTransactional2", 0), new H2User("testSaveBatchNoTransactional2", 0), new H2User(1577431655447L, "testSaveBatchNoTransactional2")), 1);
+    }
+
+    @Override
+    public List<H2User> testCustomSqlSegment(Wrapper wrapper) {
+        return baseMapper.selectTestCustomSqlSegment(wrapper);
     }
 }

@@ -99,7 +99,8 @@ public enum DbType {
     /**
      * GBase
      */
-    GBASE("gbase", "南大通用数据库"),
+    GBASE("gbase", "南大通用(华库)数据库"),
+    GBASEDBT("gbasedbt", "南大通用数据库"),
     /**
      * Oscar
      */
@@ -121,6 +122,19 @@ public enum DbType {
      * HighGo
      */
     HIGH_GO("highgo", "瀚高数据库"),
+    /**
+     * CUBRID
+     */
+    CUBRID("cubrid", "CUBRID数据库"),
+
+    /**
+     * GOLDILOCKS
+     */
+    GOLDILOCKS("goldilocks", "GOLDILOCKS数据库"),
+    /**
+     * CSIIDB
+     */
+    CSIIDB("csiidb", "CSIIDB数据库"),
     /**
      * UNKONWN DB
      */

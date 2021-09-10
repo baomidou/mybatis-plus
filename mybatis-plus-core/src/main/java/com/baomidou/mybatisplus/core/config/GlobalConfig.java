@@ -43,27 +43,10 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Accessors(chain = true)
 @SuppressWarnings("serial")
 public class GlobalConfig implements Serializable {
-
     /**
      * 是否开启 LOGO
      */
     private boolean banner = true;
-    /**
-     * 机器 ID 部分
-     *
-     * @see #setIdentifierGenerator(IdentifierGenerator)
-     * @deprecated 3.3.0
-     */
-    @Deprecated
-    private Long workerId;
-    /**
-     * 数据标识 ID 部分
-     *
-     * @see #setIdentifierGenerator(IdentifierGenerator)
-     * @deprecated 3.3.0
-     */
-    @Deprecated
-    private Long datacenterId;
     /**
      * 是否初始化 SqlRunner
      */

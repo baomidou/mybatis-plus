@@ -93,6 +93,8 @@ public class JdbcUtils {
             return DbType.GAUSS;
         } else if (jdbcUrl.contains(":gbase:")) {
             return DbType.GBASE;
+        } else if (jdbcUrl.contains(":gbasedbt-sqli:")) {
+            return DbType.GBASEDBT;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {
@@ -101,9 +103,15 @@ public class JdbcUtils {
             return DbType.SYBASE;
         } else if (jdbcUrl.contains(":oceanbase:")) {
             return DbType.OCEAN_BASE;
-        }else if (url.contains(":highgo:")) {
+        } else if (url.contains(":highgo:")) {
             return DbType.HIGH_GO;
-        }else {
+        } else if (url.contains(":cubrid:")) {
+            return DbType.CUBRID;
+        } else if (url.contains(":goldilocks:")) {
+            return DbType.GOLDILOCKS;
+        } else if (url.contains(":csiidb:")) {
+            return DbType.CSIIDB;
+        } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }

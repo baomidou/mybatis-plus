@@ -59,4 +59,9 @@ public final class ExceptionUtils {
         return new MybatisPlusException(t);
     }
 
+    public static void throwMpe(boolean condition, String msg, Object... params) {
+        if (condition) {
+            throw mpe(msg, params);
+        }
+    }
 }

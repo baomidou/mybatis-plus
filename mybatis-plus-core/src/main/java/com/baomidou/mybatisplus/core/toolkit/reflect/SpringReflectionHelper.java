@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.core.toolkit.reflect;
 
-
-import java.io.Serializable;
+import org.springframework.core.GenericTypeResolver;
 
 /**
- * SQL 片段接口
+ * Spring 反射辅助类
  *
- * @author hubin miemie HCL
- * @since 2018-05-28
+ * @author noear
+ * @author hubin
+ * @since 2021-09-03
  */
-@FunctionalInterface
-public interface ISqlSegment extends Serializable {
+public class SpringReflectionHelper {
 
-    /**
-     * SQL 片段
-     */
-    String getSqlSegment();
-
+    public static Class<?>[] resolveTypeArguments(Class<?> clazz, Class<?> genericIfc) {
+        return GenericTypeResolver.resolveTypeArguments(clazz, genericIfc);
+    }
 }

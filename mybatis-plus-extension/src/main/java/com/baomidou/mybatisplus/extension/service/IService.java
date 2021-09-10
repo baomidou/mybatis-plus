@@ -267,7 +267,7 @@ public interface IService<T> {
      *
      * @see Wrappers#emptyWrapper()
      */
-    default int count() {
+    default long count() {
         return count(Wrappers.emptyWrapper());
     }
 
@@ -276,7 +276,7 @@ public interface IService<T> {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    default int count(Wrapper<T> queryWrapper) {
+    default long count(Wrapper<T> queryWrapper) {
         return SqlHelper.retCount(getBaseMapper().selectCount(queryWrapper));
     }
 

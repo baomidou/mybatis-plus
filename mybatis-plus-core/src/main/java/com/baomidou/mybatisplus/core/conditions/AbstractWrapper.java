@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.annotation.OrderBy;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
@@ -42,7 +43,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-@SuppressWarnings({"serial", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, R, Children>> extends Wrapper<T>
     implements Compare<Children, R>, Nested<Children, Children>, Join<Children>, Func<Children, R> {
 
@@ -301,6 +302,30 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children gtSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), GT,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children geSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), GE,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children ltSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), LT,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
+    public Children leSql(boolean condition, R column, String inValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), LE,
+            () -> String.format("(%s)", inValue)));
+    }
+
+    @Override
     public Children notInSql(boolean condition, R column, String inValue) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), NOT_IN,
             () -> String.format("(%s)", inValue)));
@@ -441,6 +466,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param params  参数
      * @return sql片段
      */
+    @SuppressWarnings("SameParameterValue")
     protected final String formatSqlMaybeWithParam(String sqlStr, String mapping, Object... params) {
         if (StringUtils.isBlank(sqlStr)) {
             // todo 何时会这样?
@@ -541,6 +567,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         expression.add(sqlSegments);
     }
 
+    /**
+     * 是否使用默认注解 {@link OrderBy} 排序
+     *
+     * @return true 使用 false 不使用
+     */
+    public boolean isUseAnnotationOrderBy() {
+        final String _sqlSegment = this.getSqlSegment();
+        if (StringUtils.isBlank(_sqlSegment)) {
+            return true;
+        }
+        final String _sqlSegmentToUpperCase = _sqlSegment.toUpperCase();
+        return !(_sqlSegmentToUpperCase.contains(Constants.ORDER_BY)
+            || _sqlSegmentToUpperCase.contains(Constants.LIMIT));
+    }
+
     @Override
     public String getSqlSegment() {
         return expression.getSqlSegment() + lastSql.getStringValue();
@@ -581,6 +622,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param paramAlias 参数别名
      * @return Children
      */
+    @SuppressWarnings("unused")
     public Children setParamAlias(String paramAlias) {
         Assert.notEmpty(paramAlias, "paramAlias can not be empty!");
         Assert.isEmpty(paramNameValuePairs, "Please call this method before working!");
@@ -616,7 +658,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      *
      * @param columns 多字段
      */
-    @Deprecated
     protected String columnsToString(List<R> columns) {
         return columns.stream().map(this::columnToString).collect(joining(StringPool.COMMA));
     }

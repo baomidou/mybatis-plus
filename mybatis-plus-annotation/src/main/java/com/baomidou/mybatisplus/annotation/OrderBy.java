@@ -14,8 +14,11 @@ import java.lang.annotation.*;
 public @interface OrderBy {
 
     /**
-     * 是否倒序查询，默认是
+     * 默认倒序，设置 true 顺序
      */
+    boolean asc() default false;
+
+    @Deprecated
     boolean isDesc() default true;
 
     /**

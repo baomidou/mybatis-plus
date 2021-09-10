@@ -17,11 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -176,9 +172,8 @@ public class TableInfo implements Constants {
     /**
      * 排序列表
      */
-    @Getter
     @Setter
-    private List<TableFieldInfo> orderByFields = new LinkedList<>();
+    private List<TableFieldInfo> orderByFields;
 
     /**
      * @since 3.4.4
@@ -297,11 +292,15 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
+    public String getKeyInsertSqlProperty(final boolean batch, final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (havePK()) {
             String keyColumn = SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA;
             if (idType == IdType.AUTO) {
+                if (batch) {
+                    // 批量插入必须返回空自增情况下
+                    return EMPTY;
+                }
                 return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyProperty), newLine);
             }
             return keyColumn + (newLine ? NEWLINE : EMPTY);
@@ -316,9 +315,13 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn(final boolean newLine) {
+    public String getKeyInsertSqlColumn(final boolean batch, final boolean newLine) {
         if (havePK()) {
             if (idType == IdType.AUTO) {
+                if (batch) {
+                    // 批量插入必须返回空自增情况下
+                    return EMPTY;
+                }
                 return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine);
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
@@ -337,7 +340,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlProperty(newPrefix, true) + fieldList.stream()
+        return getKeyInsertSqlProperty(false, newPrefix, true) + fieldList.stream()
             .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
@@ -352,7 +355,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlColumnMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlColumn(true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
+        return getKeyInsertSqlColumn(false, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
@@ -426,7 +429,7 @@ public class TableInfo implements Constants {
      * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return sql
      */
-    private String formatLogicDeleteSql(boolean isWhere) {
+    protected String formatLogicDeleteSql(boolean isWhere) {
         final String value = isWhere ? logicDeleteFieldInfo.getLogicNotDeleteValue() : logicDeleteFieldInfo.getLogicDeleteValue();
         if (isWhere) {
             if (NULL.equalsIgnoreCase(value)) {
@@ -451,7 +454,7 @@ public class TableInfo implements Constants {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (havePK()) {
-                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn, keyType)
+                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, StringUtils.getTargetColumn(keyColumn), keyType)
                     .flags(Collections.singletonList(ResultFlag.ID)).build();
                 resultMappings.add(idMapping);
             }
@@ -481,7 +484,7 @@ public class TableInfo implements Constants {
                 this.withUpdateFill = true;
             }
             if (i.isOrderBy()) {
-                this.orderByFields.add(i);
+                this.getOrderByFields().add(i);
             }
             if (i.isVersion()) {
                 this.withVersion = true;
@@ -496,6 +499,13 @@ public class TableInfo implements Constants {
 
     public List<TableFieldInfo> getFieldList() {
         return Collections.unmodifiableList(fieldList);
+    }
+
+    public List<TableFieldInfo> getOrderByFields() {
+        if (null == this.orderByFields) {
+            this.orderByFields = new LinkedList<>();
+        }
+        return this.orderByFields;
     }
 
     @Deprecated

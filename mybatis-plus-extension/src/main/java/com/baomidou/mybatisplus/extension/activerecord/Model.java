@@ -223,12 +223,12 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public Integer selectCount(Wrapper<T> queryWrapper) {
+    public long selectCount(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
-            return SqlHelper.retCount(sqlSession.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
+            return SqlHelper.retCount(sqlSession.<Long>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
         } finally {
             closeSqlSession(sqlSession);
         }

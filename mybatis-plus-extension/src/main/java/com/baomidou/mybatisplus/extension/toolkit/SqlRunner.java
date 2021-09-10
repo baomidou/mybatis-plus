@@ -189,10 +189,10 @@ public class SqlRunner implements ISqlRunner {
     }
 
     @Override
-    public int selectCount(String sql, Object... args) {
+    public long selectCount(String sql, Object... args) {
         SqlSession sqlSession = sqlSession();
         try {
-            return SqlHelper.retCount(sqlSession.<Integer>selectOne(COUNT, sqlMap(sql, args)));
+            return SqlHelper.retCount(sqlSession.<Long>selectOne(COUNT, sqlMap(sql, args)));
         } finally {
             closeSqlSession(sqlSession);
         }

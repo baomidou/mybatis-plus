@@ -22,16 +22,19 @@
   </a>
 </p>
 
+[企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
+
 ## What is MyBatis-Plus?
 
 MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development. This toolkit provides some efficient, useful, out-of-the-box features for MyBatis, use it can effectively save your development time.
 
 ## Links
 
-- [Documentation](https://mybatis.plus)
+- [Documentation](https://baomidou.com)
 - [Code Generator](https://github.com/baomidou/generator)
 - [Samples](https://github.com/baomidou/mybatis-plus-samples)
--   [Showcase](https://github.com/baomidou/awesome-mybatis-plus)
+- [Showcase](https://github.com/baomidou/awesome-mybatis-plus)
+- [企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
 
 ## Features
 
@@ -85,7 +88,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     SELECT * FROM user WHERE age >= 18
     ```
 
-> This showcase is just a small part of MyBatis-Plus features. If you want to learn more, please refer to the [documentation](https://mybatis.plus).
+> This showcase is just a small part of MyBatis-Plus features. If you want to learn more, please refer to the [documentation](https://baomidou.com).
 
 ## License
 

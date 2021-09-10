@@ -99,7 +99,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     protected String columnSqlInjectFilter(String column) {
-        return StringUtils.replaceBlank(column);
+        return StringUtils.sqlInjectionReplaceBlank(column);
     }
 
     /**

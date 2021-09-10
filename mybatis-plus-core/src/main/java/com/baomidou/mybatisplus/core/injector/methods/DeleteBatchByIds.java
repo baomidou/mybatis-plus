@@ -38,7 +38,7 @@ public class DeleteBatchByIds extends AbstractMethod {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach(
-                    SqlScriptUtils.convertChoose("@com.baomidou.mybatisplus.core.toolkit.ReflectionKit@isPrimitiveOrWrapper(item.getClass())",
+                    SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
@@ -48,7 +48,7 @@ public class DeleteBatchByIds extends AbstractMethod {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach(
-                    SqlScriptUtils.convertChoose("@com.baomidou.mybatisplus.core.toolkit.ReflectionKit@isPrimitiveOrWrapper(item.getClass())",
+                    SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);

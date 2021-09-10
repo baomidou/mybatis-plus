@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
@@ -79,8 +80,8 @@ public class MybatisPlusConfigLogicDelete {
              * 测试注入自定义方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
                 methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE

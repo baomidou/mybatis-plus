@@ -46,8 +46,8 @@ public class ShardingTest extends BaseDbTest<ShardingOrderMapper> {
             int affectedRow = m.update(entity, wrapper);
             assertThat(affectedRow).as("更新成功").isEqualTo(1);
 
-            affectedRow = m.selectCount(wrapper);
-            assertThat(affectedRow).as("查询记录数").isEqualTo(1);
+            long row = m.selectCount(wrapper);
+            assertThat(row).as("查询记录数").isEqualTo(1);
         });
 
         doTest(m -> {

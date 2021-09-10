@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.core.parser;
-
-import org.apache.ibatis.reflection.MetaObject;
+package com.baomidou.mybatisplus.core.toolkit.reflect;
 
 /**
- * SQL 解析过滤器
+ * 泛型类助手（用于隔离Spring的代码）
  *
+ * @author noear
  * @author hubin
- * @since 2017-09-02
+ * @since 2021-09-03
  */
-public interface ISqlParserFilter {
+public interface IGenericTypeResolver {
 
-    boolean doFilter(MetaObject metaObject);
-
+    Class<?>[] resolveTypeArguments(final Class<?> clazz, final Class<?> genericIfc);
 }

@@ -27,16 +27,10 @@ import java.net.InetAddress;
  * @since 3.3.0
  */
 public class DefaultIdentifierGenerator implements IdentifierGenerator {
-
     private final Sequence sequence;
 
-    /**
-     * @see #DefaultIdentifierGenerator(InetAddress)
-     * @deprecated 3.4.3
-     */
-    @Deprecated
     public DefaultIdentifierGenerator() {
-        this.sequence = new Sequence();
+        this.sequence = new Sequence(null);
     }
 
     public DefaultIdentifierGenerator(InetAddress inetAddress) {

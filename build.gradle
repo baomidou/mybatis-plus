@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.4.3-SNAPSHOT"
+    version = "3.4.3.3"
 }
 
 ext {
@@ -14,9 +14,9 @@ ext {
         mybatisVersion = '3.5.7',
         mybatisSpringVersion = '2.0.6',
         mybatisSpringBootStarterVersion = '2.2.0',
-        springVersion = '5.3.7',
-        springBootVersion = '2.4.5',
-        jsqlparserVersion = '4.1',
+        springVersion = '5.3.9',
+        springBootVersion = '2.5.3',
+        jsqlparserVersion = '4.2',
         junitVersion = '5.7.2',
     ]
 
@@ -41,8 +41,8 @@ ext {
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
-        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.30",
-        "logback-classic"            : "ch.qos.logback:logback-classic:1.2.3",
+        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.32",
+        "logback-classic"            : "ch.qos.logback:logback-classic:1.2.5",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
@@ -50,8 +50,8 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.19.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.11.3",
-        "gson"                       : "com.google.code.gson:gson:2.8.7",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
+        "gson"                       : "com.google.code.gson:gson:2.8.8",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
@@ -61,8 +61,8 @@ ext {
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
-        "mysql"                      : "mysql:mysql-connector-java:8.0.21",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.1",
+        "mysql"                      : "mysql:mysql-connector-java:8.0.26",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
@@ -93,7 +93,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:3.11.0"
+        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
         testImplementation "${lib["lagarto"]}"
         testImplementation "${lib["logback-classic"]}"
     }
@@ -122,7 +122,7 @@ subprojects {
                 attributes 'Implementation-Title': archiveBaseName
                 attributes 'Implementation-Version': archiveVersion
                 attributes 'Built-Gradle': gradle.gradleVersion
-                attributes 'Bundle-DocURL': 'https://mybatis.plus/'
+                attributes 'Bundle-DocURL': 'https://baomidou.com/'
                 attributes 'Build-OS': System.getProperty("os.name")
                 attributes 'Built-By': System.getProperty("user.name")
                 attributes 'Build-Jdk': System.getProperty("java.version")

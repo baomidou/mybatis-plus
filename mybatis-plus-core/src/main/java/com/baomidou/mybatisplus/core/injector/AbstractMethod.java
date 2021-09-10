@@ -254,8 +254,8 @@ public abstract class AbstractMethod implements Constants {
         sql.append(orderByFields.stream().map(tfi -> String.format("%s %s", tfi.getColumn(),
             tfi.getOrderByType())).collect(joining(",")));
         /* 当wrapper中传递了orderBy属性，@orderBy注解失效 */
-        return SqlScriptUtils.convertIf(sql.toString(), String.format("%s == null or %s == null or %s == null or %s.size() == 0",
-            WRAPPER, WRAPPER_EXPRESSION, WRAPPER_EXPRESSION_ORDER, WRAPPER_EXPRESSION_ORDER), true);
+        return SqlScriptUtils.convertIf(sql.toString(), String.format("%s == null or %s", WRAPPER,
+            WRAPPER_EXPRESSION_ORDER), true);
     }
 
     /**

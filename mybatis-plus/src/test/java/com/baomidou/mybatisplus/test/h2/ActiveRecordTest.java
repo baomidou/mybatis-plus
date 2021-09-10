@@ -108,7 +108,7 @@ class ActiveRecordTest {
     @Order(6)
     void testSelectCount() {
         H2Student student = new H2Student();
-        int count = new H2Student().selectCount(new QueryWrapper<>(student));
+        long count = new H2Student().selectCount(new QueryWrapper<>(student));
         LOGGER.info("count:{}", count);
         Assertions.assertTrue(count > 1);
     }
@@ -176,7 +176,7 @@ class ActiveRecordTest {
         );
         Assertions.assertNotNull(h2Student);
         LambdaQueryWrapper<H2Student> queryWrapper = new QueryWrapper<H2Student>().lambda().ge(H2Student::getAge, 1);
-        int userCount = student.selectCount(queryWrapper.comment("getStuCount"));
+        long userCount = student.selectCount(queryWrapper.comment("getStuCount"));
         Assertions.assertEquals(1, userCount);
         List<H2Student> h2StudentList = student.selectList(queryWrapper.comment("getStuList"));
         Assertions.assertEquals(1, h2StudentList.size());

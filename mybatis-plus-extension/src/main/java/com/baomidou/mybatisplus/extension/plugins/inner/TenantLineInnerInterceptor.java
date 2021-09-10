@@ -116,17 +116,17 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return;
         }
         String tenantIdColumn = tenantLineHandler.getTenantIdColumn();
-        if (columns.stream().map(Column::getColumnName).anyMatch(i -> i.equals(tenantIdColumn))) {
+        if (tenantLineHandler.ignoreInsert(columns, tenantIdColumn)) {
             // 针对已给出租户列的insert 不处理
             return;
         }
-        columns.add(new Column(tenantLineHandler.getTenantIdColumn()));
+        columns.add(new Column(tenantIdColumn));
 
         // fixed gitee pulls/141 duplicate update
         List<Expression> duplicateUpdateColumns = insert.getDuplicateUpdateExpressionList();
         if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
             EqualsTo equalsTo = new EqualsTo();
-            equalsTo.setLeftExpression(new StringValue(tenantLineHandler.getTenantIdColumn()));
+            equalsTo.setLeftExpression(new StringValue(tenantIdColumn));
             equalsTo.setRightExpression(tenantLineHandler.getTenantId());
             duplicateUpdateColumns.add(equalsTo);
         }
@@ -138,7 +138,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
             if (itemsList instanceof MultiExpressionList) {
-                ((MultiExpressionList) itemsList).getExprList().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
+                ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
             } else {
                 ((ExpressionList) itemsList).getExpressions().add(tenantLineHandler.getTenantId());
             }
@@ -423,8 +423,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     public void setProperties(Properties properties) {
-        PropertyMapper.newInstance(properties)
-                .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
+        PropertyMapper.newInstance(properties).whenNotBlank("tenantLineHandler",
+            ClassUtils::newInstance, this::setTenantLineHandler);
     }
 }
 
