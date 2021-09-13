@@ -34,6 +34,11 @@ public class SqlCondition {
      * % 两边 %
      */
     public static final String LIKE = "%s LIKE CONCAT('%%',#{%s},'%%')";
+
+    /**
+     * % 两边 % [oracle使用]
+     */
+    public static final String ORACLE_LIKE = "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')";
     /**
      * % 左
      */
