@@ -131,7 +131,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             countSql = countMs.getBoundSql(parameter);
         } else {
             countMs = buildAutoCountMappedStatement(ms);
-            String countSqlStr = autoCountSql(page.optimizeCountSql(), boundSql.getSql());
+            String countSqlStr = autoCountSql(page, boundSql.getSql());
             PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
             countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
             PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
@@ -258,12 +258,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 获取自动优化的 countSql
      *
-     * @param optimizeCountSql 是否进行优化
-     * @param sql              sql
+     * @param page 参数
+     * @param sql  sql
      * @return countSql
      */
-    protected String autoCountSql(boolean optimizeCountSql, String sql) {
-        if (!optimizeCountSql) {
+    protected String autoCountSql(IPage<?> page, String sql) {
+        if (!page.optimizeCountSql()) {
             return lowLevelCountSql(sql);
         }
         try {
@@ -304,7 +304,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 return lowLevelCountSql(select.toString());
             }
             // 包含 join 连表,进行判断是否移除 join 连表
-            if (optimizeJoin) {
+            if (optimizeJoin && page.optimizeJoinOfCountSql()) {
                 List<Join> joins = plainSelect.getJoins();
                 if (CollectionUtils.isNotEmpty(joins)) {
                     boolean canRemoveJoin = true;

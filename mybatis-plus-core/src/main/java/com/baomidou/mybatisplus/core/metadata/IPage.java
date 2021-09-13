@@ -46,6 +46,17 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * {@link com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor#isOptimizeJoin()}
+     * 两个参数都为 true 才会进行sql处理
+     *
+     * @return true 是 / false 否
+     * @since 3.4.4 @2021-09-13
+     */
+    default boolean optimizeJoinOfCountSql() {
+        return true;
+    }
+
+    /**
      * 进行 count 查询 【 默认: true 】
      *
      * @return true 是 / false 否

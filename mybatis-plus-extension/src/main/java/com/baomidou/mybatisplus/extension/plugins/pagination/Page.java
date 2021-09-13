@@ -69,6 +69,11 @@ public class Page<T> implements IPage<T> {
      */
     protected boolean searchCount = true;
     /**
+     * {@link #optimizeJoinOfCountSql()}
+     */
+    @Setter
+    protected boolean optimizeJoinOfCountSql = true;
+    /**
      * countId
      */
     @Setter
@@ -242,12 +247,13 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
+    public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
+        return new Page<>(current, size, total, searchCount);
+    }
+
     @Override
-    public boolean searchCount() {
-        if (total < 0) {
-            return false;
-        }
-        return searchCount;
+    public boolean optimizeJoinOfCountSql() {
+        return optimizeJoinOfCountSql;
     }
 
     public Page<T> setSearchCount(boolean searchCount) {
@@ -279,8 +285,12 @@ public class Page<T> implements IPage<T> {
         return of(current, size, 0, searchCount);
     }
 
-    public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
-        return new Page(current, size, total, searchCount);
+    @Override
+    public boolean searchCount() {
+        if (total < 0) {
+            return false;
+        }
+        return searchCount;
     }
 
     /**
