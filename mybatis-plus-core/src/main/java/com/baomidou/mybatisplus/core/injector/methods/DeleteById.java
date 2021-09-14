@@ -56,13 +56,13 @@ public class DeleteById extends AbstractMethod {
                     tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
                     tableInfo.getLogicDeleteSql(true, true));
             }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
             return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_ID;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 tableInfo.getKeyProperty());
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
             return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
     }
