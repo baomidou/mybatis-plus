@@ -60,10 +60,11 @@ public final class LambdaUtils {
             throw new MybatisPlusException(message);
         } catch (InvocationTargetException | IllegalAccessException e) {
             throw new MybatisPlusException(e);
-        } catch (RuntimeException e) {
-            // JDK 16 模块化后不能访问 java.lang.invoke.SerializedLambda 了，走序列化路线
+        } catch (Error e) {
+            // JDK 16 模块化后不能使用反射访问其他模块的字段，因此这里需要使用序列化的方式进行处理
             // https://gitee.com/baomidou/mybatis-plus/issues/I3XDT9
-            if (e.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
+            Throwable cause = e.getCause();
+            if (cause != null && cause.getClass().getName().equals("java.lang.reflect.InaccessibleObjectException")) {
                 return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
             }
             throw e;
