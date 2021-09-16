@@ -268,6 +268,11 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         }
         try {
             Select select = (Select) CCJSqlParserUtil.parse(sql);
+            SelectBody selectBody = select.getSelectBody();
+            // https://github.com/baomidou/mybatis-plus/issues/3920  分页增加union语法支持
+            if(selectBody instanceof SetOperationList) {
+                return lowLevelCountSql(sql);
+            }
             PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
             GroupByElement groupBy = plainSelect.getGroupBy();
