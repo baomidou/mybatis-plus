@@ -28,6 +28,7 @@ import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.update.Update;
@@ -76,11 +77,20 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         if (where == null) {
             return true;
         }
-        if (StringUtils.isNotBlank(logicField) && (where instanceof BinaryExpression)) {
+        if (StringUtils.isNotBlank(logicField)) {
 
-            BinaryExpression binaryExpression = (BinaryExpression) where;
-            if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField) || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
-                return true;
+            if (where instanceof BinaryExpression) {
+                BinaryExpression binaryExpression = (BinaryExpression) where;
+                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField) || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
+                    return true;
+                }
+            }
+
+            if (where instanceof IsNullExpression) {
+                IsNullExpression binaryExpression = (IsNullExpression) where;
+                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)) {
+                    return true;
+                }
             }
         }
 
