@@ -76,7 +76,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         Function function = new Function();
         function.setName("COUNT");
         function.setAllColumns(true);
-        return new SelectExpressionItem(function);
+        return new SelectExpressionItem(function).withAlias(new Alias("total"));
     }
 
     /**
