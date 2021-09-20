@@ -43,6 +43,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
@@ -156,10 +157,13 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, @Autowired(required = false) TransactionFactory transactionFactory) throws Exception {
         // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
+        if (null != transactionFactory) {
+            factory.setTransactionFactory(transactionFactory);
+        }
         factory.setVfs(SpringBootVFS.class);
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
