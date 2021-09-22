@@ -114,8 +114,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     private final List<MybatisPlusPropertiesCustomizer> mybatisPlusPropertiesCustomizers;
 
-    private final TransactionFactory transactionFactory;
-
     private final ApplicationContext applicationContext;
 
 
@@ -127,7 +125,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                                         ObjectProvider<DatabaseIdProvider> databaseIdProvider,
                                         ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
                                         ObjectProvider<List<MybatisPlusPropertiesCustomizer>> mybatisPlusPropertiesCustomizerProvider,
-                                        ObjectProvider<TransactionFactory> transactionFactoryProvider,
                                         ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
@@ -137,7 +134,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         this.databaseIdProvider = databaseIdProvider.getIfAvailable();
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.mybatisPlusPropertiesCustomizers = mybatisPlusPropertiesCustomizerProvider.getIfAvailable();
-        this.transactionFactory = transactionFactoryProvider.getIfAvailable();
         this.applicationContext = applicationContext;
     }
 
@@ -164,9 +160,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
-        if (null != transactionFactory) {
-            factory.setTransactionFactory(transactionFactory);
-        }
         factory.setVfs(SpringBootVFS.class);
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
