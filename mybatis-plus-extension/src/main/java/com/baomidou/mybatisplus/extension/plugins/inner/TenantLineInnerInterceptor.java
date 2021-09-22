@@ -41,8 +41,12 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * @author hubin
@@ -249,10 +253,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         }
         List<Join> joins = plainSelect.getJoins();
         if (CollectionUtils.isNotEmpty(joins)) {
-            joins.forEach(j -> {
-                processJoin(j);
-                processFromItem(j.getRightItem());
-            });
+            processJoins(joins);
         }
     }
 
@@ -351,7 +352,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (fromItem instanceof SubJoin) {
             SubJoin subJoin = (SubJoin) fromItem;
             if (subJoin.getJoinList() != null) {
-                subJoin.getJoinList().forEach(this::processJoin);
+                processJoins(subJoin.getJoinList());
             }
             if (subJoin.getLeft() != null) {
                 processFromItem(subJoin.getLeft());
@@ -375,6 +376,50 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
     }
 
     /**
+     * 处理 joins
+     *
+     * @param joins join 集合
+     */
+    private void processJoins(List<Join> joins) {
+        //对于 on 表达式写在最后的 join，需要记录下前面多个 on 的表名
+        Deque<Table> tables = new LinkedList<>();
+        for (Join join : joins) {
+            // 处理 on 表达式
+            FromItem fromItem = join.getRightItem();
+            if (fromItem instanceof Table) {
+                Table fromTable = (Table) fromItem;
+                // 获取 join 尾缀的 on 表达式列表
+                Collection<Expression> originOnExpressions = join.getOnExpressions();
+                // 正常 join on 表达式只有一个，立刻处理
+                if (originOnExpressions.size() == 1) {
+                    processJoin(join);
+                    continue;
+                }
+                // 当前表是否忽略
+                boolean needIgnore = tenantLineHandler.ignoreTable(fromTable.getName());
+                // 表名压栈，忽略的表压入 null，以便后续不处理
+                tables.push(needIgnore ? null : fromTable);
+                // 尾缀多个 on 表达式的时候统一处理
+                if (originOnExpressions.size() > 1) {
+                    Collection<Expression> onExpressions = new LinkedList<>();
+                    for (Expression originOnExpression : originOnExpressions) {
+                        Table currentTable = tables.poll();
+                        if (currentTable == null) {
+                            onExpressions.add(originOnExpression);
+                        } else {
+                            onExpressions.add(builderExpression(originOnExpression, currentTable));
+                        }
+                    }
+                    join.setOnExpressions(onExpressions);
+                }
+            } else {
+                // 处理右边连接的子表达式
+                processFromItem(fromItem);
+            }
+        }
+    }
+
+    /**
      * 处理联接语句
      */
     protected void processJoin(Join join) {
@@ -384,7 +429,11 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 // 过滤退出执行
                 return;
             }
-            join.setOnExpression(builderExpression(join.getOnExpression(), fromTable));
+            // 走到这里说明 on 表达式肯定只有一个
+            Collection<Expression> originOnExpressions = join.getOnExpressions();
+            List<Expression> onExpressions = new LinkedList<>();
+            onExpressions.add(builderExpression(originOnExpressions.iterator().next(), fromTable));
+            join.setOnExpressions(onExpressions);
         }
     }
 
