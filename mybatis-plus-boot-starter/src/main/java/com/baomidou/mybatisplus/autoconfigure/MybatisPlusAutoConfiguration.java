@@ -43,7 +43,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
@@ -115,6 +114,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     private final List<MybatisPlusPropertiesCustomizer> mybatisPlusPropertiesCustomizers;
 
+    private final TransactionFactory transactionFactory;
+
     private final ApplicationContext applicationContext;
 
 
@@ -126,6 +127,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                                         ObjectProvider<DatabaseIdProvider> databaseIdProvider,
                                         ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
                                         ObjectProvider<List<MybatisPlusPropertiesCustomizer>> mybatisPlusPropertiesCustomizerProvider,
+                                        ObjectProvider<TransactionFactory> transactionFactoryProvider,
                                         ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
@@ -135,6 +137,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         this.databaseIdProvider = databaseIdProvider.getIfAvailable();
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.mybatisPlusPropertiesCustomizers = mybatisPlusPropertiesCustomizerProvider.getIfAvailable();
+        this.transactionFactory = transactionFactoryProvider.getIfAvailable();
         this.applicationContext = applicationContext;
     }
 
@@ -157,7 +160,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, @Autowired(required = false) TransactionFactory transactionFactory) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
