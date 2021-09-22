@@ -1,5 +1,18 @@
 ﻿# CHANGELOG
 
+## [v3.4.3.4] 2021.09.22
+
+- order by wrapper 存在条件不排序问题处理
+- 解决引入 cloud InetUtils 类编译错误
+- 升级 sql 解析依赖 jsqlparser 版本 4.2
+- fix: 修复 JDK16 中增加模块化校验后，导致 lambda 序列化失败问题
+- fix: java 17 的支持 #I4A7I5
+- bug: fix left join 条件构造会多一个的问题
+- fix: 当逻辑删除字段默认值为null时，阻止全表更新插件失效
+- 分页 count(*) as total
+- 允许注入自定义事务工厂 TransactionFactory
+
+
 ## [v3.4.3.3] 2021.09.05
 
 - 移除不在实用类 ISqlParserFilter AbstractJsqlParser 需要使用从旧版本复制
