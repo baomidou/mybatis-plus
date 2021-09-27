@@ -49,6 +49,12 @@ import java.util.List;
 @AllArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
+    private Runnable hook;
+
+    public void setHook(Runnable hook) {
+        this.hook = hook;
+    }
+    
     /**
      * 表名处理器，是否处理表名的情况都在该处理器中自行判断
      */
@@ -90,6 +96,9 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         }
         if (last != sql.length()) {
             builder.append(sql.substring(last));
+        }
+         if(hook != null){
+            hook.run();
         }
         return builder.toString();
     }
