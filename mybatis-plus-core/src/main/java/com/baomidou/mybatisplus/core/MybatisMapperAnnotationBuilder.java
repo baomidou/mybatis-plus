@@ -400,7 +400,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         return parameterType;
     }
 
-    private Class<?> getReturnType(Method method) {
+    protected Class<?> getReturnType(Method method) {
         Class<?> returnType = method.getReturnType();
         Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, type);
         if (resolvedReturnType instanceof Class) {
