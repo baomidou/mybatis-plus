@@ -285,16 +285,13 @@ public interface Func<Children, R> extends Serializable {
         return groupBy(true, columns);
     }
 
-    @Deprecated
     default Children groupBy(R column, R... columns) {
         return groupBy(true, column, columns);
     }
 
     /**
      * 分组：GROUP BY 字段, ...
-     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
-    @Deprecated
     Children groupBy(boolean condition, R column, R... columns);
 
     /**
@@ -329,16 +326,13 @@ public interface Func<Children, R> extends Serializable {
         return orderByAsc(true, columns);
     }
 
-    @Deprecated
     default Children orderByAsc(R column, R... columns) {
         return orderByAsc(true, column, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
-    @Deprecated
     default Children orderByAsc(boolean condition, R column, R... columns) {
         return orderBy(condition, true, column, columns);
     }
@@ -375,16 +369,13 @@ public interface Func<Children, R> extends Serializable {
         return orderByDesc(true, columns);
     }
 
-    @Deprecated
     default Children orderByDesc(R column, R... columns) {
         return orderByDesc(true, column, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
-    @Deprecated
     default Children orderByDesc(boolean condition, R column, R... columns) {
         return orderBy(condition, false, column, columns);
     }
@@ -413,9 +404,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ...
-     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
      */
-    @Deprecated
     Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
 
     /**
