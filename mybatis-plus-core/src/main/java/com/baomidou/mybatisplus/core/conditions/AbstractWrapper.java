@@ -331,7 +331,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             () -> String.format("(%s)", inValue)));
     }
 
-    @Deprecated
     @Override
     public Children groupBy(boolean condition, R column, R... columns) {
         return maybeDo(condition, () -> {
@@ -344,9 +343,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         });
     }
 
-    @Deprecated
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+    @SafeVarargs
+    public final Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
         return maybeDo(condition, () -> {
             final SqlKeyword mode = isAsc ? ASC : DESC;
             appendSqlSegments(ORDER_BY, columnToSqlSegment(columnSqlInjectFilter(column)), mode);
@@ -646,9 +645,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     /**
-     * 不推荐使用， JDK 默认不推荐泛型数组，会引起 Java堆污染(Heap Pollution)
+     * 获取 columnNames
      */
-    @Deprecated
     protected String columnsToString(R... columns) {
         return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
     }

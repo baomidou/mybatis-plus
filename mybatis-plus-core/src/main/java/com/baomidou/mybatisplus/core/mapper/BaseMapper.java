@@ -15,18 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import org.apache.ibatis.annotations.Param;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /*
 
@@ -179,6 +178,17 @@ public interface BaseMapper<T> extends Mapper<T> {
             return ts.get(0);
         }
         return null;
+    }
+
+    /**
+     * 根据 Wrapper 条件，判断是否存在记录
+     *
+     * @param queryWrapper 实体对象封装操作类
+     * @return
+     */
+    default boolean exist(Wrapper<T> queryWrapper) {
+        Long count = this.selectCount(queryWrapper);
+        return null != count && count > 0;
     }
 
     /**

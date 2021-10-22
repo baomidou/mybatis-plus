@@ -1,12 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
 import org.intellij.lang.annotations.Language;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +20,7 @@ class DynamicTableNameInnerInterceptorTest {
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     void doIt() {
         DynamicTableNameInnerInterceptor interceptor = new DynamicTableNameInnerInterceptor();
-        interceptor.setTableNameHandlerMap(newTableNameHandlerMap());
+        interceptor.setTableNameHandler((sql, tableName) -> "t_user_r");
         // 表名相互包含
         @Language("SQL")
         String origin = "SELECT * FROM t_user, t_user_role", replaced = "SELECT * FROM t_user_r, t_user_role";
@@ -46,18 +41,4 @@ class DynamicTableNameInnerInterceptorTest {
         origin = "SELECT t_user.* FROM t_user_real t_user";
         assertEquals(origin, interceptor.changeTable(origin));
     }
-
-    /**
-     * 替换以下表名：
-     * t_user -> t_user_r
-     *
-     * @return 表名处理表
-     */
-    @NotNull
-    private static Map<String, TableNameHandler> newTableNameHandlerMap() {
-        Map<String, TableNameHandler> map = new HashMap<>();
-        map.put("t_user", (sql, name) -> "t_user_r");
-        return map;
-    }
-
 }

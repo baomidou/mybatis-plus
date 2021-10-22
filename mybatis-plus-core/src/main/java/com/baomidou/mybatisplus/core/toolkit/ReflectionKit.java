@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -106,7 +107,7 @@ public final class ReflectionKit {
      */
     public static Map<String, Field> getFieldMap(Class<?> clazz) {
         List<Field> fieldList = getFieldList(clazz);
-        return CollectionUtils.isNotEmpty(fieldList) ? fieldList.stream().collect(Collectors.toMap(Field::getName, field -> field)) : Collections.emptyMap();
+        return CollectionUtils.isNotEmpty(fieldList) ? fieldList.stream().collect(Collectors.toMap(Field::getName, Function.identity())) : Collections.emptyMap();
     }
 
     /**

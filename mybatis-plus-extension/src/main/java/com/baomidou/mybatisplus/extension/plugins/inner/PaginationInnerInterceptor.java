@@ -76,7 +76,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         Function function = new Function();
         function.setName("COUNT");
         function.setAllColumns(true);
-        return new SelectExpressionItem(function);
+        return new SelectExpressionItem(function).withAlias(new Alias("total"));
     }
 
     /**
@@ -131,7 +131,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             countSql = countMs.getBoundSql(parameter);
         } else {
             countMs = buildAutoCountMappedStatement(ms);
-            String countSqlStr = autoCountSql(page.optimizeCountSql(), boundSql.getSql());
+            String countSqlStr = autoCountSql(page, boundSql.getSql());
             PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
             countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
             PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
@@ -258,16 +258,21 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 获取自动优化的 countSql
      *
-     * @param optimizeCountSql 是否进行优化
-     * @param sql              sql
+     * @param page 参数
+     * @param sql  sql
      * @return countSql
      */
-    protected String autoCountSql(boolean optimizeCountSql, String sql) {
-        if (!optimizeCountSql) {
+    protected String autoCountSql(IPage<?> page, String sql) {
+        if (!page.optimizeCountSql()) {
             return lowLevelCountSql(sql);
         }
         try {
             Select select = (Select) CCJSqlParserUtil.parse(sql);
+            SelectBody selectBody = select.getSelectBody();
+            // https://github.com/baomidou/mybatis-plus/issues/3920  分页增加union语法支持
+            if(selectBody instanceof SetOperationList) {
+                return lowLevelCountSql(sql);
+            }
             PlainSelect plainSelect = (PlainSelect) select.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
             GroupByElement groupBy = plainSelect.getGroupBy();
@@ -304,7 +309,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 return lowLevelCountSql(select.toString());
             }
             // 包含 join 连表,进行判断是否移除 join 连表
-            if (optimizeJoin) {
+            if (optimizeJoin && page.optimizeJoinOfCountSql()) {
                 List<Join> joins = plainSelect.getJoins();
                 if (CollectionUtils.isNotEmpty(joins)) {
                     boolean canRemoveJoin = true;

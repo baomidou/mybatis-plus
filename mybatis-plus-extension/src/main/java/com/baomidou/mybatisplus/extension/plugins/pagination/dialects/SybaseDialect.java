@@ -37,7 +37,8 @@ public class SybaseDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        int index = originalSql.indexOf("FROM");
+        String tempSql = originalSql.toUpperCase();
+        int index = tempSql.indexOf("FROM");
         String sql = "select";
         if (hasTop) {
             sql += " top " + (offset + limit);
