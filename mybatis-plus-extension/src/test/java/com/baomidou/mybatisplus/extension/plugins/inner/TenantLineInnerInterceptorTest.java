@@ -178,6 +178,17 @@ class TenantLineInnerInterceptorTest {
             "SELECT * FROM entity e " +
                 "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
                 "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+
+        assertSql("SELECT o.id,o.add_time FROM order o " +
+                "LEFT JOIN user u ON o.user_id = u.id " +
+                "LEFT JOIN order_goods og ON o.id = og.order_id " +
+                "WHERE o.deleted = 0 AND og.deleted = 0" +
+                "GROUP BY o.id ORDER BY o.add_time DESC,o.id DESC",
+            "SELECT o.id, o.add_time FROM order o " +
+                "LEFT JOIN user u ON o.user_id = u.id AND u.tenant_id = 1 " +
+                "LEFT JOIN order_goods og ON o.id = og.order_id AND og.tenant_id = 1 " +
+                "WHERE o.deleted = 0 AND og.deleted = 0 AND o.tenant_id = 1 " +
+                "GROUP BY o.id ORDER BY o.add_time DESC, o.id DESC");
     }
 
     @Test
