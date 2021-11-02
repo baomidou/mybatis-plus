@@ -89,7 +89,7 @@ public class JdbcUtils {
             return DbType.KINGBASE_ES;
         } else if (url.contains(":phoenix:")) {
             return DbType.PHOENIX;
-        } else if (jdbcUrl.contains(":zenith:")) {
+        } else if (jdbcUrl.contains(":zenith:") || url.contains(":gauss200:")) {
             return DbType.GAUSS;
         } else if (jdbcUrl.contains(":gbase:")) {
             return DbType.GBASE;
