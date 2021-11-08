@@ -42,7 +42,7 @@ public class DeleteBatchByIds extends AbstractMethod {
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
             return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
@@ -51,7 +51,7 @@ public class DeleteBatchByIds extends AbstractMethod {
                     SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
             return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
     }
