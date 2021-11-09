@@ -41,6 +41,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -235,26 +236,37 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     protected void processPlainSelect(PlainSelect plainSelect) {
         FromItem fromItem = plainSelect.getFromItem();
-        Expression where = plainSelect.getWhere();
-        processWhereSubSelect(where);
-        if (fromItem instanceof Table) {
-            Table fromTable = (Table) fromItem;
-            if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
-                //#1186 github
-                plainSelect.setWhere(builderExpression(where, fromTable));
-            }
-        } else {
-            processFromItem(fromItem);
-        }
+
         //#3087 github
         List<SelectItem> selectItems = plainSelect.getSelectItems();
         if (CollectionUtils.isNotEmpty(selectItems)) {
             selectItems.forEach(this::processSelectItem);
         }
+
+        // #I4FP6E gitee：右连接查询时，where 条件需要过滤
+        List<Table> rightJointTables;
         List<Join> joins = plainSelect.getJoins();
         if (CollectionUtils.isNotEmpty(joins)) {
-            processJoins(joins);
+            rightJointTables = processJoins(joins);
+        }else {
+            rightJointTables = new ArrayList<>();
         }
+
+        Expression where = plainSelect.getWhere();
+        processWhereSubSelect(where);
+        if (fromItem instanceof Table) {
+            Table fromTable = (Table) fromItem;
+            boolean needIgnore = tenantLineHandler.ignoreTable(fromTable.getName());
+            if (needIgnore) {
+                plainSelect.setWhere(builderExpression(where, null, rightJointTables));
+            }else {
+                //#1186 github
+                plainSelect.setWhere(builderExpression(where, fromTable, rightJointTables));
+            }
+        } else {
+            processFromItem(fromItem);
+        }
+
     }
 
     /**
@@ -379,8 +391,12 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * 处理 joins
      *
      * @param joins join 集合
+     * @return List<Table> 右连接查询的 Table 列表
      */
-    private void processJoins(List<Join> joins) {
+    private List<Table> processJoins(List<Join> joins) {
+
+        List<Table> rightJointTables = new ArrayList<>();
+
         //对于 on 表达式写在最后的 join，需要记录下前面多个 on 的表名
         Deque<Table> tables = new LinkedList<>();
         for (Join join : joins) {
@@ -390,13 +406,20 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 Table fromTable = (Table) fromItem;
                 // 获取 join 尾缀的 on 表达式列表
                 Collection<Expression> originOnExpressions = join.getOnExpressions();
+
+                // 当前表是否忽略
+                boolean needIgnore = tenantLineHandler.ignoreTable(fromTable.getName());
+                // 如果不要忽略，且是右连接，则记录下当前表
+                if (!needIgnore && join.isRight()) {
+                    rightJointTables.add(fromTable);
+                }
+
                 // 正常 join on 表达式只有一个，立刻处理
                 if (originOnExpressions.size() == 1) {
                     processJoin(join);
                     continue;
                 }
-                // 当前表是否忽略
-                boolean needIgnore = tenantLineHandler.ignoreTable(fromTable.getName());
+
                 // 表名压栈，忽略的表压入 null，以便后续不处理
                 tables.push(needIgnore ? null : fromTable);
                 // 尾缀多个 on 表达式的时候统一处理
@@ -417,6 +440,8 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processFromItem(fromItem);
             }
         }
+
+        return rightJointTables;
     }
 
     /**
@@ -441,16 +466,47 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * 处理条件
      */
     protected Expression builderExpression(Expression currentExpression, Table table) {
-        EqualsTo equalsTo = new EqualsTo();
-        equalsTo.setLeftExpression(this.getAliasColumn(table));
-        equalsTo.setRightExpression(tenantLineHandler.getTenantId());
+        return builderExpression(currentExpression, table, new ArrayList<>());
+    }
+
+    /**
+     * 处理条件
+     */
+    protected Expression builderExpression(Expression currentExpression, Table table, List<Table> rightJointTables) {
+       // 没有表需要处理直接返回
+        if(table == null && CollectionUtils.isEmpty(rightJointTables)){
+           return currentExpression;
+       }
+
+        // 当前需要处理的表
+        List<Table> tables = new ArrayList<>();
+        if(table != null){
+            tables.add(table);
+        }
+        tables.addAll(rightJointTables);
+
+        // 租户
+        Expression tenantId = tenantLineHandler.getTenantId();
+        // 构造每张表的条件
+        List<EqualsTo> equalsTos = tables.stream()
+            .map(item -> new EqualsTo(getAliasColumn(item), tenantId))
+            .collect(Collectors.toList());
+        // 注入的表达式
+        Expression injectExpression = equalsTos.get(0);
+        // 如果有多表，则用 and 连接
+        if(equalsTos.size() > 1){
+            for (int i = 1; i < equalsTos.size(); i++) {
+                injectExpression = new AndExpression(injectExpression, equalsTos.get(i));
+            }
+        }
+
         if (currentExpression == null) {
-            return equalsTo;
+            return injectExpression;
         }
         if (currentExpression instanceof OrExpression) {
-            return new AndExpression(new Parenthesis(currentExpression), equalsTo);
+            return new AndExpression(new Parenthesis(currentExpression), injectExpression);
         } else {
-            return new AndExpression(currentExpression, equalsTo);
+            return new AndExpression(currentExpression, injectExpression);
         }
     }
 
