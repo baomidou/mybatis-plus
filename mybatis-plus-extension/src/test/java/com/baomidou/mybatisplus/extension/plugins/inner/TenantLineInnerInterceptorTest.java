@@ -178,6 +178,14 @@ class TenantLineInnerInterceptorTest {
             "SELECT * FROM entity e " +
                 "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
                 "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+
+        assertSql("SELECT * FROM entity e " +
+                "left join entity1 e1 on e1.id = e.id " +
+                "left join entity2 e2 on e1.id = e2.id",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1 " +
+                "WHERE e.tenant_id = 1");
     }
 
     @Test
@@ -186,30 +194,124 @@ class TenantLineInnerInterceptorTest {
         assertSql("SELECT * FROM entity e " +
                 "right join entity1 e1 on e1.id = e.id",
             "SELECT * FROM entity e " +
-                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "WHERE e.tenant_id = 1 AND e1.tenant_id = 1");
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 " +
+                "WHERE e1.tenant_id = 1");
 
         assertSql("SELECT * FROM with_as_1 e " +
                 "right join entity1 e1 on e1.id = e.id",
             "SELECT * FROM with_as_1 e " +
-                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id " +
                 "WHERE e1.tenant_id = 1");
 
         assertSql("SELECT * FROM entity e " +
                 "right join entity1 e1 on e1.id = e.id " +
                 "WHERE e.id = ? OR e.name = ?",
             "SELECT * FROM entity e " +
-                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1 AND e1.tenant_id = 1");
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?) AND e1.tenant_id = 1");
 
         assertSql("SELECT * FROM entity e " +
                 "right join entity1 e1 on e1.id = e.id " +
                 "right join entity2 e2 on e1.id = e2.id ",
             "SELECT * FROM entity e " +
-                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1 " +
-                "WHERE e.tenant_id = 1 AND e1.tenant_id = 1 AND e2.tenant_id = 1");
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 " +
+                "RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e1.tenant_id = 1 " +
+                "WHERE e2.tenant_id = 1");
     }
+
+    @Test
+    void selectMixJoin(){
+        assertSql("SELECT * FROM entity e " +
+                "right join entity1 e1 on e1.id = e.id " +
+                "left join entity2 e2 on e1.id = e2.id",
+            "SELECT * FROM entity e " +
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 " +
+                "LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1 " +
+                "WHERE e1.tenant_id = 1");
+
+        assertSql("SELECT * FROM entity e " +
+                "left join entity1 e1 on e1.id = e.id " +
+                "right join entity2 e2 on e1.id = e2.id",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e1.tenant_id = 1 " +
+                "WHERE e2.tenant_id = 1");
+
+        assertSql("SELECT * FROM entity e " +
+                "left join entity1 e1 on e1.id = e.id " +
+                "inner join entity2 e2 on e1.id = e2.id",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "INNER JOIN entity2 e2 ON e1.id = e2.id AND e.tenant_id = 1 AND e2.tenant_id = 1");
+    }
+
+
+    @Test
+    void selectJoinSubSelect(){
+        assertSql("select * from (select * from entity) e1 " +
+            "left join entity2 e2 on e1.id = e2.id",
+            "SELECT * FROM (SELECT * FROM entity WHERE tenant_id = 1) e1 " +
+                "LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1");
+
+        assertSql("select * from entity1 e1 " +
+                "left join (select * from entity2) e2 " +
+                "on e1.id = e2.id",
+            "SELECT * FROM entity1 e1 " +
+                "LEFT JOIN (SELECT * FROM entity2 WHERE tenant_id = 1) e2 " +
+                "ON e1.id = e2.id " +
+                "WHERE e1.tenant_id = 1");
+    }
+
+    @Test
+    void selectSubJoin(){
+
+        assertSql("select * FROM " +
+                "(entity1 e1 right JOIN entity2 e2 ON e1.id = e2.id)",
+            "SELECT * FROM " +
+                "(entity1 e1 RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e1.tenant_id = 1) " +
+                "WHERE e2.tenant_id = 1");
+
+        assertSql("select * FROM " +
+                "(entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id)",
+            "SELECT * FROM " +
+                "(entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1) " +
+                "WHERE e1.tenant_id = 1");
+
+
+        assertSql("select * FROM " +
+                "(entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id) " +
+                "right join entity3 e3 on e1.id = e3.id",
+            "SELECT * FROM " +
+                "(entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1) " +
+                "RIGHT JOIN entity3 e3 ON e1.id = e3.id AND e1.tenant_id = 1 " +
+                "WHERE e3.tenant_id = 1");
+
+
+        assertSql("select * FROM entity e " +
+                "LEFT JOIN (entity1 e1 right join entity2 e2 ON e1.id = e2.id) " +
+                "on e.id = e2.id",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN (entity1 e1 RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e1.tenant_id = 1) " +
+                "ON e.id = e2.id AND e2.tenant_id = 1 " +
+                "WHERE e.tenant_id = 1");
+
+        assertSql("select * FROM entity e " +
+                "LEFT JOIN (entity1 e1 left join entity2 e2 ON e1.id = e2.id) " +
+                "on e.id = e2.id",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN (entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1) " +
+                "ON e.id = e2.id AND e1.tenant_id = 1 " +
+                "WHERE e.tenant_id = 1");
+
+        assertSql("select * FROM entity e " +
+                "RIGHT JOIN (entity1 e1 left join entity2 e2 ON e1.id = e2.id) " +
+                "on e.id = e2.id",
+            "SELECT * FROM entity e " +
+                "RIGHT JOIN (entity1 e1 LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1) " +
+                "ON e.id = e2.id AND e.tenant_id = 1 " +
+                "WHERE e1.tenant_id = 1");
+    }
+
 
     @Test
     void selectLeftJoinMultipleTrailingOn() {
@@ -244,15 +346,15 @@ class TenantLineInnerInterceptorTest {
                 "inner join entity1 e1 on e1.id = e.id " +
                 "WHERE e.id = ? OR e.name = ?",
             "SELECT * FROM entity e " +
-                "INNER JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+                "INNER JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 AND e1.tenant_id = 1 " +
+                "WHERE e.id = ? OR e.name = ?");
 
         assertSql("SELECT * FROM entity e " +
                 "inner join entity1 e1 on e1.id = e.id " +
                 "WHERE (e.id = ? OR e.name = ?)",
             "SELECT * FROM entity e " +
-                "INNER JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+                "INNER JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 AND e1.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?)");
 
         // 垃圾 inner join todo
 //        assertSql("SELECT * FROM entity,entity1 " +
