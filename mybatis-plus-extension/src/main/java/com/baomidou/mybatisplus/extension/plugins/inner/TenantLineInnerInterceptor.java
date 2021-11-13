@@ -41,6 +41,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -248,36 +249,43 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
         // 处理 fromItem
         FromItem fromItem = plainSelect.getFromItem();
-        Table mainTable = processFromItem(fromItem);
+        List<Table> list = processFromItem(fromItem);
+        List<Table> mainTables = new ArrayList<>(list);
 
         // 处理 join
         List<Join> joins = plainSelect.getJoins();
         if (CollectionUtils.isNotEmpty(joins)) {
-            mainTable = processJoins(mainTable, joins);
+            mainTables = processJoins(mainTables, joins);
         }
 
         // 当有 mainTable 时，进行 where 条件追加
-        if (mainTable != null) {
-            plainSelect.setWhere(builderExpression(where, Collections.singletonList(mainTable)));
+        if (CollectionUtils.isNotEmpty(mainTables)) {
+            plainSelect.setWhere(builderExpression(where, mainTables));
         }
     }
 
-    private Table processFromItem(FromItem fromItem) {
-        Table mainTable = null;
+    private List<Table> processFromItem(FromItem fromItem) {
+        // 处理括号括起来的表达式
+        while (fromItem instanceof ParenthesisFromItem) {
+            fromItem = ((ParenthesisFromItem) fromItem).getFromItem();
+        }
+
+        List<Table> mainTables = new ArrayList<>();
         // 无 join 时的处理逻辑
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
             if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
-                mainTable = fromTable;
+                mainTables.add(fromTable);
             }
         } else if (fromItem instanceof SubJoin) {
             // SubJoin 类型则还需要添加上 where 条件
-            mainTable = processSubJoin((SubJoin) fromItem);
+            List<Table> tables = processSubJoin((SubJoin) fromItem);
+            mainTables.addAll(tables);
         } else {
             // 处理下 fromItem
             processOtherFromItem(fromItem);
         }
-        return mainTable;
+        return mainTables;
     }
 
     /**
@@ -372,6 +380,11 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * 处理子查询等
      */
     protected void processOtherFromItem(FromItem fromItem) {
+        // 去除括号
+        while (fromItem instanceof ParenthesisFromItem) {
+            fromItem = ((ParenthesisFromItem) fromItem).getFromItem();
+        }
+
         if (fromItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) fromItem;
             if (subSelect.getSelectBody() != null) {
@@ -396,50 +409,65 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * @param subJoin subJoin
      * @return Table subJoin 中的主表
      */
-    private Table processSubJoin(SubJoin subJoin) {
-        Table mainTable = null;
+    private List<Table> processSubJoin(SubJoin subJoin) {
+        List<Table> mainTables = new ArrayList<>();
         if (subJoin.getJoinList() != null) {
-            mainTable = processFromItem(subJoin.getLeft());
-            mainTable = processJoins(mainTable, subJoin.getJoinList());
+            List<Table> list = processFromItem(subJoin.getLeft());
+            mainTables.addAll(list);
+            mainTables = processJoins(mainTables, subJoin.getJoinList());
         }
-        return mainTable;
+        return mainTables;
     }
 
     /**
      * 处理 joins
      *
-     * @param fromTable 可以为 null
-     * @param joins     join 集合
+     * @param mainTables 可以为 null
+     * @param joins      join 集合
      * @return List<Table> 右连接查询的 Table 列表
      */
-    private Table processJoins(Table fromTable, List<Join> joins) {
+    private List<Table> processJoins(List<Table> mainTables, List<Join> joins) {
+        if (mainTables == null) {
+            mainTables = new ArrayList<>();
+        }
+
         // join 表达式中最终的主表
-        Table mainTable = fromTable;
+        Table mainTable = null;
         // 当前 join 的左表
-        Table leftTable = fromTable;
+        Table leftTable = null;
+        if (mainTables.size() == 1) {
+            mainTable = mainTables.get(0);
+            leftTable = mainTable;
+        }
 
         //对于 on 表达式写在最后的 join，需要记录下前面多个 on 的表名
         Deque<List<Table>> onTableDeque = new LinkedList<>();
         for (Join join : joins) {
-            List<Table> onTables = null;
             // 处理 on 表达式
             FromItem joinItem = join.getRightItem();
 
             // 获取当前 join 的表，subJoint 可以看作是一张表
-            Table joinTable = null;
+            List<Table> joinTables = null;
             if (joinItem instanceof Table) {
-                joinTable = (Table) joinItem;
+                joinTables = new ArrayList<>();
+                joinTables.add((Table) joinItem);
             } else if (joinItem instanceof SubJoin) {
-                joinTable = processSubJoin((SubJoin) joinItem);
+                joinTables = processSubJoin((SubJoin) joinItem);
             }
 
-            if (joinTable != null) {
-                // 获取 join 尾缀的 on 表达式列表
-                Collection<Expression> originOnExpressions = join.getOnExpressions();
+            if (joinTables != null) {
+
+                // 如果是隐式内连接
+                if (join.isSimple()) {
+                    mainTables.addAll(joinTables);
+                    continue;
+                }
 
                 // 当前表是否忽略
+                Table joinTable = joinTables.get(0);
                 boolean joinTableNeedIgnore = tenantLineHandler.ignoreTable(joinTable.getName());
 
+                List<Table> onTables = null;
                 // 如果不要忽略，且是右连接，则记录下当前表
                 if (join.isRight()) {
                     mainTable = joinTableNeedIgnore ? null : joinTable;
@@ -458,7 +486,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                     }
                     mainTable = null;
                 }
+                mainTables = new ArrayList<>();
+                if (mainTable != null) {
+                    mainTables.add(mainTable);
+                }
 
+                // 获取 join 尾缀的 on 表达式列表
+                Collection<Expression> originOnExpressions = join.getOnExpressions();
                 // 正常 join on 表达式只有一个，立刻处理
                 if (originOnExpressions.size() == 1 && onTables != null) {
                     List<Expression> onExpressions = new LinkedList<>();
@@ -467,7 +501,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                     leftTable = joinTable;
                     continue;
                 }
-
                 // 表名压栈，忽略的表压入 null，以便后续不处理
                 onTableDeque.push(onTables);
                 // 尾缀多个 on 表达式的时候统一处理
@@ -491,7 +524,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
         }
 
-        return mainTable;
+        return mainTables;
     }
 
     /**
@@ -536,10 +569,13 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     protected Column getAliasColumn(Table table) {
         StringBuilder column = new StringBuilder();
+        // 为了兼容隐式内连接，没有别名时条件就需要加上表名
         if (table.getAlias() != null) {
-            column.append(table.getAlias().getName()).append(StringPool.DOT);
+            column.append(table.getAlias().getName());
+        } else {
+            column.append(table.getName());
         }
-        column.append(tenantLineHandler.getTenantIdColumn());
+        column.append(StringPool.DOT).append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
     }
 
