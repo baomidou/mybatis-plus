@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -44,6 +45,12 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     @SafeVarargs
     @Override
     public final LambdaQueryChainWrapper<T> select(SFunction<T, ?>... columns) {
+        wrapperChildren.select(columns);
+        return typedThis;
+    }
+
+    @Override
+    public LambdaQueryChainWrapper<T> select(List<SFunction<T, ?>> columns) {
         wrapperChildren.select(columns);
         return typedThis;
     }
