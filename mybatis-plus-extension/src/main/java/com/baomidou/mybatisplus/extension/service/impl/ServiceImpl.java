@@ -192,7 +192,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
-            sqlSession.update(sqlStatement, param);
+            SqlHelper.retBool(sqlSession.update(sqlStatement, param));
         });
     }
 
