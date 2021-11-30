@@ -62,6 +62,15 @@ public class MybatisMapperRegistry extends MapperRegistry {
         return knownMappers.containsKey(type);
     }
 
+    /**
+     * 清空 Mapper 缓存信息
+     */
+    protected <T> void removeMapper(Class<T> type) {
+        // TODO
+        knownMappers.entrySet().stream().filter(t -> t.getKey().getName().equals(type.getName()))
+            .findFirst().ifPresent(t -> knownMappers.remove(t.getKey()));
+    }
+
     @Override
     public <T> void addMapper(Class<T> type) {
         if (type.isInterface()) {

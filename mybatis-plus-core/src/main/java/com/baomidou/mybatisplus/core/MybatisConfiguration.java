@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -37,7 +41,9 @@ import org.apache.ibatis.transaction.Transaction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * replace default Configuration class
@@ -117,6 +123,29 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public <T> void addMapper(Class<T> type) {
         mybatisMapperRegistry.addMapper(type);
+    }
+
+    /**
+     * 移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
+     *
+     * @param type Mapper Type
+     * @param <T>
+     */
+    public <T> void removeMapper(Class<T> type) {
+        // TODO
+        // 清空实体表信息映射信息
+        TableInfoHelper.remove(ReflectionKit.getSuperClassGenericType(type, Mapper.class, 0));
+
+        // 清空 Mapper 缓存信息
+        this.mybatisMapperRegistry.removeMapper(type);
+        this.loadedResources.remove(type.toString());
+        GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache().remove(type.toString());
+
+        // 清空 Mapper 方法 mappedStatement 缓存信息
+        Set<String> mapperSet = mappedStatements.entrySet().stream().map(t -> t.getKey()).collect(Collectors.toSet());
+        if (null != mapperSet && !mapperSet.isEmpty()) {
+            mapperSet.forEach(key -> mappedStatements.remove(key));
+        }
     }
 
     /**

@@ -123,6 +123,15 @@ public class TableInfoHelper {
     }
 
     /**
+     * 清空实体表映射缓存信息
+     *
+     * @param entityClass 实体 Class
+     */
+    public static void remove(Class<?> entityClass) {
+        TABLE_INFO_CACHE.remove(entityClass);
+    }
+
+    /**
      * <p>
      * 实体类反射获取表信息【初始化】
      * </p>
