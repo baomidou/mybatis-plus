@@ -126,6 +126,17 @@ public class MybatisConfiguration extends Configuration {
     }
 
     /**
+     * 新增注入新的 Mapper 信息，新增前会清理之前的缓存信息
+     *
+     * @param type Mapper Type
+     * @param <T>
+     */
+    public <T> void addNewMapper(Class<T> type) {
+        this.removeMapper(type);
+        this.addMapper(type);
+    }
+
+    /**
      * 移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
      *
      * @param type Mapper Type
@@ -133,18 +144,22 @@ public class MybatisConfiguration extends Configuration {
      */
     public <T> void removeMapper(Class<T> type) {
         // TODO
-        // 清空实体表信息映射信息
-        TableInfoHelper.remove(ReflectionKit.getSuperClassGenericType(type, Mapper.class, 0));
+        Set<String> mapperRegistryCache = GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache();
+        final String mapperTypeName = type.toString();
+        if (mapperRegistryCache.contains(mapperTypeName)) {
+            // 清空实体表信息映射信息
+            TableInfoHelper.remove(ReflectionKit.getSuperClassGenericType(type, Mapper.class, 0));
 
-        // 清空 Mapper 缓存信息
-        this.mybatisMapperRegistry.removeMapper(type);
-        this.loadedResources.remove(type.toString());
-        GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache().remove(type.toString());
+            // 清空 Mapper 缓存信息
+            this.mybatisMapperRegistry.removeMapper(type);
+            this.loadedResources.remove(type.toString());
+            mapperRegistryCache.remove(mapperTypeName);
 
-        // 清空 Mapper 方法 mappedStatement 缓存信息
-        Set<String> mapperSet = mappedStatements.entrySet().stream().map(t -> t.getKey()).collect(Collectors.toSet());
-        if (null != mapperSet && !mapperSet.isEmpty()) {
-            mapperSet.forEach(key -> mappedStatements.remove(key));
+            // 清空 Mapper 方法 mappedStatement 缓存信息
+            Set<String> mapperSet = mappedStatements.entrySet().stream().map(t -> t.getKey()).collect(Collectors.toSet());
+            if (null != mapperSet && !mapperSet.isEmpty()) {
+                mapperSet.forEach(key -> mappedStatements.remove(key));
+            }
         }
     }
 
