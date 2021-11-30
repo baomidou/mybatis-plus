@@ -145,18 +145,20 @@ public class MybatisConfiguration extends Configuration {
     public <T> void removeMapper(Class<T> type) {
         // TODO
         Set<String> mapperRegistryCache = GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache();
-        final String mapperTypeName = type.toString();
-        if (mapperRegistryCache.contains(mapperTypeName)) {
+        final String mapperType = type.toString();
+        if (mapperRegistryCache.contains(mapperType)) {
             // 清空实体表信息映射信息
             TableInfoHelper.remove(ReflectionKit.getSuperClassGenericType(type, Mapper.class, 0));
 
             // 清空 Mapper 缓存信息
             this.mybatisMapperRegistry.removeMapper(type);
             this.loadedResources.remove(type.toString());
-            mapperRegistryCache.remove(mapperTypeName);
+            mapperRegistryCache.remove(mapperType);
 
             // 清空 Mapper 方法 mappedStatement 缓存信息
-            Set<String> mapperSet = mappedStatements.entrySet().stream().map(t -> t.getKey()).collect(Collectors.toSet());
+            final String typeKey = type.getName() + ".";
+            Set<String> mapperSet = mappedStatements.entrySet().stream().filter(t -> t.getKey().startsWith(typeKey))
+                .map(t -> t.getKey()).collect(Collectors.toSet());
             if (null != mapperSet && !mapperSet.isEmpty()) {
                 mapperSet.forEach(key -> mappedStatements.remove(key));
             }
