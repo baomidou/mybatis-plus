@@ -181,6 +181,23 @@ class TenantLineInnerInterceptorTest {
     }
 
     @Test
+    void selectRightJoin() {
+        // right join
+        assertSql("SELECT * FROM entity e " +
+                "right join entity1 e1 on e1.id = e.id",
+            "SELECT * FROM entity e " +
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "WHERE e.tenant_id = 1");
+
+        assertSql("SELECT * FROM entity e " +
+                "right join entity1 e1 on e1.id = e.id " +
+                "WHERE e.id = ? OR e.name = ?",
+            "SELECT * FROM entity e " +
+                "RIGHT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+    }
+
+    @Test
     void selectLeftJoinMultipleTrailingOn() {
         // 多个 on 尾缀的
         assertSql("SELECT * FROM entity e " +
