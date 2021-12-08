@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -156,7 +157,7 @@ public class MybatisConfiguration extends Configuration {
             mapperRegistryCache.remove(mapperType);
 
             // 清空 Mapper 方法 mappedStatement 缓存信息
-            final String typeKey = type.getName() + ".";
+            final String typeKey = type.getName() + StringPool.DOT;
             Set<String> mapperSet = mappedStatements.entrySet().stream().filter(t -> t.getKey().startsWith(typeKey))
                 .map(t -> t.getKey()).collect(Collectors.toSet());
             if (null != mapperSet && !mapperSet.isEmpty()) {
@@ -422,10 +423,10 @@ public class MybatisConfiguration extends Configuration {
         public V put(String key, V value) {
             if (containsKey(key)) {
                 throw new IllegalArgumentException(name + " already contains value for " + key
-                    + (conflictMessageProducer == null ? "" : conflictMessageProducer.apply(super.get(key), value)));
+                    + (conflictMessageProducer == null ? StringPool.EMPTY : conflictMessageProducer.apply(super.get(key), value)));
             }
             if (useGeneratedShortKey) {
-                if (key.contains(".")) {
+                if (key.contains(StringPool.DOT)) {
                     final String shortKey = getShortName(key);
                     if (super.get(shortKey) == null) {
                         super.put(shortKey, value);

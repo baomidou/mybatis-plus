@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -127,12 +128,12 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private String getTableLogicField(String tableName) {
         if (StringUtils.isBlank(tableName)) {
-            return StringUtils.EMPTY;
+            return StringPool.EMPTY;
         }
 
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
         if (tableInfo == null || !tableInfo.isWithLogicDelete() || tableInfo.getLogicDeleteFieldInfo() == null) {
-            return StringUtils.EMPTY;
+            return StringPool.EMPTY;
         }
         return tableInfo.getLogicDeleteFieldInfo().getColumn();
     }
