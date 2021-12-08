@@ -43,8 +43,6 @@ public final class ClassUtils {
         }
     }
 
-    private static final char PACKAGE_SEPARATOR = '.';
-
     /**
      * 代理 class 的名称
      */
@@ -210,8 +208,8 @@ public final class ClassUtils {
      */
     public static String getPackageName(String fqClassName) {
         Assert.notNull(fqClassName, "Class name must not be null");
-        int lastDotIndex = fqClassName.lastIndexOf(PACKAGE_SEPARATOR);
-        return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : "");
+        int lastDotIndex = fqClassName.lastIndexOf(StringPool.DOT);
+        return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : StringPool.EMPTY);
     }
 
     /**
