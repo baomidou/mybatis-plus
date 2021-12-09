@@ -34,9 +34,9 @@ public class SelectBatchByIds extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-            SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),
-            tableInfo.getLogicDeleteSql(true, true)), Object.class);
+                sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
+                SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),
+                tableInfo.getLogicDeleteSql(true, true)), tableInfo.getKeyType());
         return addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
     }
 }

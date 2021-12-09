@@ -147,10 +147,10 @@ public abstract class InterceptorIgnoreHelper {
         if (StringUtils.isBlank(value)) {
             return null;
         }
-        if ("1".equals(value) || "true".equals(value) || "on".equals(value)) {
+        if (StringPool.ONE.equals(value) || StringPool.TRUE.equals(value) || StringPool.ON.equals(value)) {
             return true;
         }
-        if ("0".equals(value) || "false".equals(value) || "off".equals(value)) {
+        if (StringPool.ZERO.equals(value) || StringPool.FALSE.equals(value) || StringPool.OFF.equals(value)) {
             return false;
         }
         throw ExceptionUtils.mpe("unsupported value \"%s\" by `@InterceptorIgnore#%s` on top of \"%s\"", value, node, name);

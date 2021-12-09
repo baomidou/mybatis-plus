@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -23,6 +24,7 @@ import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -33,6 +35,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -114,6 +117,7 @@ public final class SqlHelper {
     public static boolean retBool(Long result) {
         return null != result && result >= 1;
     }
+
     /**
      * 返回SelectCount执行结果
      *
@@ -236,7 +240,7 @@ public final class SqlHelper {
      * @return 操作结果
      * @since 3.4.0
      */
-    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession,E> predicate, BiConsumer<SqlSession, E> consumer) {
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession, E> predicate, BiConsumer<SqlSession, E> consumer) {
         String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
         return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
             if (predicate.test(sqlSession, entity)) {
@@ -256,6 +260,31 @@ public final class SqlHelper {
      */
     public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
         return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
+    }
+
+
+    /**
+     * 获取Mapper
+     *
+     * @param entityClass 实体
+     * @param <T>         实体类型
+     * @return Mapper
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> BaseMapper<T> getMapper(Class<T> entityClass) {
+        Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
+        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
+        String namespace = tableInfo.getCurrentNamespace();
+
+        Configuration configuration = tableInfo.getConfiguration();
+        SqlSession sqlSession = sqlSession(entityClass);
+        BaseMapper<T> mapper;
+        try {
+            mapper = (BaseMapper<T>) configuration.getMapper(Class.forName(namespace), sqlSession);
+        } catch (ClassNotFoundException e) {
+            throw ExceptionUtils.mpe(e);
+        }
+        return mapper;
     }
 
 }
