@@ -36,7 +36,19 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 @SuppressWarnings("serial")
 public class Insert extends AbstractMethod {
-
+    
+    public Insert() {
+        super(SqlMethod.INSERT_ONE.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public Insert(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
@@ -56,7 +68,7 @@ public class Insert extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             } else {
                 if (null != tableInfo.getKeySequence()) {
-                    keyGenerator = TableInfoHelper.genKeyGenerator(getMethod(sqlMethod), tableInfo, builderAssistant);
+                    keyGenerator = TableInfoHelper.genKeyGenerator(this.name, tableInfo, builderAssistant);
                     keyProperty = tableInfo.getKeyProperty();
                     keyColumn = tableInfo.getKeyColumn();
                 }
@@ -64,6 +76,6 @@ public class Insert extends AbstractMethod {
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(mapperClass, modelClass, this.name, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 }

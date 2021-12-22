@@ -33,7 +33,19 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 @SuppressWarnings("serial")
 public class Upsert extends AbstractMethod {
-
+    
+    public Upsert() {
+        super(SqlMethod.UPSERT_ONE.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public Upsert(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
@@ -48,13 +60,13 @@ public class Upsert extends AbstractMethod {
         if (tableInfo.havePK()) {
             // 自增主键会造成HBase单Region数据挤压，直接移除
             if (null != tableInfo.getKeySequence()) {
-                keyGenerator = TableInfoHelper.genKeyGenerator(getMethod(sqlMethod), tableInfo, builderAssistant);
+                keyGenerator = TableInfoHelper.genKeyGenerator(this.name, tableInfo, builderAssistant);
                 keyProperty = tableInfo.getKeyProperty();
                 keyColumn = tableInfo.getKeyColumn();
             }
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(mapperClass, modelClass, this.name, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 }

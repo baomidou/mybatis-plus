@@ -28,7 +28,19 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  */
 public class Delete extends AbstractMethod {
-
+    
+    public Delete() {
+        super("delete");
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public Delete(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -38,14 +50,14 @@ public class Delete extends AbstractMethod {
                 sqlWhereEntityWrapper(true, tableInfo),
                 sqlComment());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-            return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+            return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
                 sqlWhereEntityWrapper(true, tableInfo),
                 sqlComment());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
         }
     }
 }

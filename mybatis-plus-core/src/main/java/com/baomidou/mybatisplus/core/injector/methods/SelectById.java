@@ -29,7 +29,19 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
  * @since 2018-04-06
  */
 public class SelectById extends AbstractMethod {
-
+    
+    public SelectById() {
+        super(SqlMethod.SELECT_BY_ID.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public SelectById(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
@@ -37,6 +49,6 @@ public class SelectById extends AbstractMethod {
                 sqlSelectColumns(tableInfo, false),
                 tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
                 tableInfo.getLogicDeleteSql(true, true)), tableInfo.getKeyType());
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, this.name, sqlSource, tableInfo);
     }
 }
