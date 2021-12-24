@@ -28,13 +28,25 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-08
  */
 public class SelectCount extends AbstractMethod {
-
+    
+    public SelectCount() {
+        super(SqlMethod.SELECT_COUNT.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public SelectCount(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlCount(), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForOther(mapperClass, getMethod(sqlMethod), sqlSource, Long.class);
+        return this.addSelectMappedStatementForOther(mapperClass, this.name, sqlSource, Long.class);
     }
 }

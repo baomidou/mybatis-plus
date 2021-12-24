@@ -30,7 +30,19 @@ import java.util.Map;
  * @since 2018-04-06
  */
 public class DeleteByMap extends AbstractMethod {
-
+    
+    public DeleteByMap() {
+        super("deleteByMap");
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public DeleteByMap(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -38,12 +50,12 @@ public class DeleteByMap extends AbstractMethod {
         if (tableInfo.isWithLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), sqlWhereByMap(tableInfo));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-            return addUpdateMappedStatement(mapperClass, Map.class, getMethod(sqlMethod), sqlSource);
+            return addUpdateMappedStatement(mapperClass, Map.class, this.name, sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_MAP;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlWhereByMap(tableInfo));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
         }
     }
 }

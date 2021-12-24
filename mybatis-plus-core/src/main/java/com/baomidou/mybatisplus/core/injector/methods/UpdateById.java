@@ -28,7 +28,19 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  */
 public class UpdateById extends AbstractMethod {
-
+    
+    public UpdateById() {
+        super(SqlMethod.UPDATE_BY_ID.getMethod());
+    }
+    
+    /**
+     * @since 3.4.4
+     * @param name 方法名
+     */
+    public UpdateById(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
@@ -37,6 +49,6 @@ public class UpdateById extends AbstractMethod {
             sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
     }
 }

@@ -36,7 +36,19 @@ import static java.util.stream.Collectors.toList;
  * @since 2018-04-06
  */
 public class DeleteById extends AbstractMethod {
-
+    
+    public DeleteById() {
+        super("deleteById");
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public DeleteById(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -57,13 +69,13 @@ public class DeleteById extends AbstractMethod {
                     tableInfo.getLogicDeleteSql(true, true));
             }
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
-            return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+            return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_ID;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 tableInfo.getKeyProperty());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
-            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
         }
     }
 }

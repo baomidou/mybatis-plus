@@ -29,7 +29,19 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  */
 public class DeleteBatchByIds extends AbstractMethod {
-
+    
+    public DeleteBatchByIds() {
+        super("deleteBatchIds");
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public DeleteBatchByIds(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -43,7 +55,7 @@ public class DeleteBatchByIds extends AbstractMethod {
                     COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
-            return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+            return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
@@ -52,7 +64,7 @@ public class DeleteBatchByIds extends AbstractMethod {
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
-            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
         }
     }
 }

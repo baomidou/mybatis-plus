@@ -30,13 +30,25 @@ import java.util.Map;
  * @since 2018-04-06
  */
 public class SelectByMap extends AbstractMethod {
-
+    
+    public SelectByMap() {
+        super(SqlMethod.SELECT_BY_MAP.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public SelectByMap(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, false),
             tableInfo.getTableName(), sqlWhereByMap(tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, this.name, sqlSource, tableInfo);
     }
 }

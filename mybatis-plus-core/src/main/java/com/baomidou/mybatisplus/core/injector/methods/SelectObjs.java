@@ -28,13 +28,25 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  */
 public class SelectObjs extends AbstractMethod {
-
+    
+    public SelectObjs() {
+        super(SqlMethod.SELECT_OBJS.getMethod());
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public SelectObjs(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_OBJS;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectObjsColumns(tableInfo),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo),sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForOther(mapperClass, getMethod(sqlMethod), sqlSource, Object.class);
+        return this.addSelectMappedStatementForOther(mapperClass, this.name, sqlSource, Object.class);
     }
 }
