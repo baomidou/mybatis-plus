@@ -180,7 +180,7 @@ public final class SqlHelper {
         }
         try {
             consumer.accept(sqlSession);
-            //非事物情况下，强制commit。
+            //非事务情况下，强制commit。
             sqlSession.commit(!transaction);
             return true;
         } catch (Throwable t) {
