@@ -11,7 +11,7 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.7',
+        mybatisVersion = '3.5.8',
         mybatisSpringVersion = '2.0.6',
         mybatisSpringBootStarterVersion = '2.2.0',
         springVersion = '5.3.9',
@@ -51,7 +51,7 @@ ext {
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
-        "gson"                       : "com.google.code.gson:gson:2.8.8",
+        "gson"                       : "com.google.code.gson:gson:2.8.9",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
