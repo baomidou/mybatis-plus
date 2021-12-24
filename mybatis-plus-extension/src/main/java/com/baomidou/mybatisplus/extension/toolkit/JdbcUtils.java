@@ -111,7 +111,9 @@ public class JdbcUtils {
             return DbType.GOLDILOCKS;
         } else if (url.contains(":csiidb:")) {
             return DbType.CSIIDB;
-        } else {
+        } else if (url.contains(":sap:")) {
+            return DbType.SAP_HANA;
+        }else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }

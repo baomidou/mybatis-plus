@@ -62,7 +62,8 @@ public class DialectFactory {
                 || dbType == DbType.SQLITE
                 || dbType == DbType.HSQL
                 || dbType == DbType.KINGBASE_ES
-                || dbType == DbType.PHOENIX) {
+                || dbType == DbType.PHOENIX
+                || dbType == DbType.SAP_HANA) {
                 dialect = new PostgreDialect();
             } else if (dbType == DbType.HIGH_GO) {
                 dialect = new HighGoDialect();
