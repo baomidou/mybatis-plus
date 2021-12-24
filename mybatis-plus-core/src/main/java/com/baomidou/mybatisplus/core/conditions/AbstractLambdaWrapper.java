@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
@@ -37,7 +38,7 @@ import static java.util.stream.Collectors.joining;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
-        extends AbstractWrapper<T, SFunction<T, ?>, Children> {
+    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
@@ -50,7 +51,11 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     @SafeVarargs
     protected final String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
-        return Arrays.stream(columns).map(i -> columnToString(i, onlyColumn)).collect(joining(StringPool.COMMA));
+        return columnsToString(onlyColumn, Arrays.asList(columns));
+    }
+
+    protected final String columnsToString(boolean onlyColumn, List<SFunction<T, ?>> columns) {
+        return columns.stream().map(i -> columnToString(i, onlyColumn)).collect(joining(StringPool.COMMA));
     }
 
     @Override
@@ -94,7 +99,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private ColumnCache getColumnCache(String fieldName, Class<?> lambdaClass) {
         ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
-                fieldName, lambdaClass.getName());
+            fieldName, lambdaClass.getName());
         return columnCache;
     }
 }
