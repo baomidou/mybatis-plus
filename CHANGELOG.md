@@ -1,5 +1,27 @@
 ﻿# CHANGELOG
 
+## [v3.4.4] 2022.01.01
+
+- 升级 mybatis 3.5.8
+- 添加动态表名的钩子函数 https://github.com/baomidou/mybatis-plus/pull/3965
+- 注入类 DefaultSqlInjector 优化调整
+- 反射类 ReflectionKit 优化 field -> field 改为 Function.identity()
+- baseMapper 新增方法 exist 方法
+- 解决 sysbase 小写 from 导致 index 取不到正确的索引值问题
+- 新增通过 entityClass 获取 Mapper 方法 `BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class);`
+- 注入方法 byId 注入优化
+- 多租户 right join bug https://gitee.com/baomidou/mybatis-plus/issues/I4FP6E  https://github.com/baomidou/mybatis-plus/pull/4035
+- 自定义注入方法名优化 https://github.com/baomidou/mybatis-plus/pull/4159
+- 新增 sap hana 内存数据库
+- 新增移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
+- 新增 SimpleQuery 工具栏查询
+- SQL 注入验证工具类 代码修改写法
+- 整理字符串常量的使用
+- upgrade license-gradle-plugin version
+- 自定义注入方法名优化 (不兼容)
+- 重载columnsToString方法允许子类调整
+
+
 ## [v3.4.3.4] 2021.09.22
 
 - order by wrapper 存在条件不排序问题处理

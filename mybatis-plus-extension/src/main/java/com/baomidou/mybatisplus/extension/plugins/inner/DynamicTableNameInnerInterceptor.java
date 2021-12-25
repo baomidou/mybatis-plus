@@ -54,7 +54,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     public void setHook(Runnable hook) {
         this.hook = hook;
     }
-    
+
     /**
      * 表名处理器，是否处理表名的情况都在该处理器中自行判断
      */
@@ -63,8 +63,10 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
-        mpBs.sql(this.changeTable(mpBs.sql()));
+        if (!InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
+            // 非忽略执行
+            mpBs.sql(this.changeTable(mpBs.sql()));
+        }
     }
 
     @Override
@@ -73,9 +75,11 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
-            PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            mpBs.sql(this.changeTable(mpBs.sql()));
+            if (!InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
+                // 非忽略执行
+                PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+                mpBs.sql(this.changeTable(mpBs.sql()));
+            }
         }
     }
 
@@ -97,7 +101,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         if (last != sql.length()) {
             builder.append(sql.substring(last));
         }
-         if(hook != null){
+        if (hook != null) {
             hook.run();
         }
         return builder.toString();
