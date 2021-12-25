@@ -30,7 +30,6 @@ import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -64,20 +63,15 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
-
-    protected static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
-    protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
-    protected final Log logger = LogFactory.getLog(this.getClass());
-
     /**
      * 获取jsqlparser中count的SelectItem
      */
-    private static SelectItem defaultCountSelectItem() {
-        Function function = new Function();
-        function.setName("COUNT");
-        function.setAllColumns(true);
-        return new SelectExpressionItem(function).withAlias(new Alias("total"));
-    }
+    protected static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(
+        new SelectExpressionItem(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total"))
+    );
+    protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
+    protected final Log logger = LogFactory.getLog(this.getClass());
+
 
     /**
      * 溢出总页数后是否进行处理
@@ -270,7 +264,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             Select select = (Select) CCJSqlParserUtil.parse(sql);
             SelectBody selectBody = select.getSelectBody();
             // https://github.com/baomidou/mybatis-plus/issues/3920  分页增加union语法支持
-            if(selectBody instanceof SetOperationList) {
+            if (selectBody instanceof SetOperationList) {
                 return lowLevelCountSql(sql);
             }
             PlainSelect plainSelect = (PlainSelect) select.getSelectBody();

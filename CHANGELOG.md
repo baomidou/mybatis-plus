@@ -3,6 +3,7 @@
 ## [v3.4.4] 2022.01.01
 
 - 升级 mybatis 3.5.8
+- 升级 jsqlparser 4.3
 - 添加动态表名的钩子函数 https://github.com/baomidou/mybatis-plus/pull/3965
 - 注入类 DefaultSqlInjector 优化调整
 - 反射类 ReflectionKit 优化 field -> field 改为 Function.identity()

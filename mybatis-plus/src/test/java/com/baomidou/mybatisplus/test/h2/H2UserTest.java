@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
@@ -530,7 +531,7 @@ class H2UserTest extends BaseTest {
             .eq(H2User::getPrice, 2)
             .getTargetSql();
     }
-    
+
     @Test
     void testRemove() {
         //不报错即可，无需关注返回值
@@ -545,5 +546,14 @@ class H2UserTest extends BaseTest {
         userService.removeById(h2User);
         userService.removeByIds(Arrays.asList((short) 100, 100, 100.00, (float) 100, 10000L, new BigDecimal("100"), h2User));
     }
-    
+
+    @Test
+    void testPageOrderBy() {
+        // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
+        Page page = Page.of(1, 10);
+        Assertions.assertEquals(1, userService.page(page, Wrappers.<H2User>query().select("test_id,name")
+            .orderByDesc("test_id")).getPages());
+        Assertions.assertEquals(1, userService.page(page, Wrappers.<H2User>lambdaQuery()
+            .orderByDesc(H2User::getTestId)).getPages());
+    }
 }
