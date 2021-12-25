@@ -16,13 +16,13 @@ ext {
         mybatisSpringBootStarterVersion = '2.2.0',
         springVersion = '5.3.9',
         springBootVersion = '2.5.3',
-        jsqlparserVersion = '4.2',
+        jsqlparserVersion = '4.3',
         junitVersion = '5.7.2',
     ]
 
     lib = [
         "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.3.72",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.72",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.10",
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
