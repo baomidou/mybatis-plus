@@ -36,11 +36,11 @@ import static java.util.stream.Collectors.toList;
  * @since 2018-04-06
  */
 public class DeleteById extends AbstractMethod {
-    
+
     public DeleteById() {
         super("deleteById");
     }
-    
+
     /**
      * @param name 方法名
      * @since 3.4.4
@@ -48,7 +48,7 @@ public class DeleteById extends AbstractMethod {
     public DeleteById(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -56,6 +56,7 @@ public class DeleteById extends AbstractMethod {
         if (tableInfo.isWithLogicDelete()) {
             List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
                 .filter(TableFieldInfo::isWithUpdateFill)
+                .filter(f -> !f.isLogicDelete())
                 .collect(toList());
             if (CollectionUtils.isNotEmpty(fieldInfos)) {
                 String sqlSet = "SET " + SqlScriptUtils.convertIf(fieldInfos.stream()
