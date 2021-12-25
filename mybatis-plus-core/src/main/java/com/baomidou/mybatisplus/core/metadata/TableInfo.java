@@ -295,13 +295,14 @@ public class TableInfo implements Constants {
     public String getKeyInsertSqlProperty(final boolean batch, final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (havePK()) {
-            String keyColumn = SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA;
+            final String prefixKeyProperty = newPrefix + keyProperty;
+            String keyColumn = SqlScriptUtils.safeParam(prefixKeyProperty) + COMMA;
             if (idType == IdType.AUTO) {
                 if (batch) {
                     // 批量插入必须返回空自增情况下
                     return EMPTY;
                 }
-                return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyColumn), newLine);
+                return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", prefixKeyProperty), newLine);
             }
             return keyColumn + (newLine ? NEWLINE : EMPTY);
         }

@@ -551,9 +551,9 @@ class H2UserTest extends BaseTest {
     void testPageOrderBy() {
         // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
         Page page = Page.of(1, 10);
-        Assertions.assertEquals(1, userService.page(page, Wrappers.<H2User>query().select("test_id,name")
-            .orderByDesc("test_id")).getPages());
-        Assertions.assertEquals(1, userService.page(page, Wrappers.<H2User>lambdaQuery()
-            .orderByDesc(H2User::getTestId)).getPages());
+        Assertions.assertTrue(userService.page(page, Wrappers.<H2User>query().select("test_id,name")
+            .orderByDesc("test_id")).getPages() > 0);
+        Assertions.assertTrue(userService.page(page, Wrappers.<H2User>lambdaQuery()
+            .orderByDesc(H2User::getTestId)).getPages() > 0);
     }
 }
