@@ -16,7 +16,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.2.0',
         springVersion = '5.3.9',
         springBootVersion = '2.5.3',
-        jsqlparserVersion = '4.2',
+        jsqlparserVersion = '4.3',
         junitVersion = '5.7.2',
     ]
 
@@ -49,7 +49,7 @@ ext {
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
         "assertj-core"               : "org.assertj:assertj-core:3.19.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-        "fastjson"                   : "com.alibaba:fastjson:1.2.76",
+        "fastjson"                   : "com.alibaba:fastjson:1.2.79",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
         "gson"                       : "com.google.code.gson:gson:2.8.8",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
