@@ -19,7 +19,7 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
     void logicDel() {
         doTestAutoCommit(i -> {
             int delete = i.deleteById(1L);
-            assertThat(delete).isEqualTo(1L);
+            assertThat(delete).isEqualTo(1);
 
             delete = i.delete(Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 2));
             assertThat(delete).isEqualTo(1);

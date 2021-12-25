@@ -86,7 +86,7 @@ class MybatisMapperRegistryTest extends BaseTest {
             H2StudentMapper studentMapper = mapperRegistry.getMapper(H2StudentMapper.class, sqlSession);
 
             Assertions.assertTrue(configuration.hasStatement(H2StudentMapper.class.getName() + ".selectById"));
-            studentMapper.selectById(1L);
+            studentMapper.selectById(1);
 
             Field field = mapperRegistry.getClass().getDeclaredField("knownMappers");
             field.setAccessible(true);
@@ -99,7 +99,7 @@ class MybatisMapperRegistryTest extends BaseTest {
             Map<Method, ?> methodCache = mybatisMapperProxyFactory.getMethodCache();
             Assertions.assertTrue(methodCache.isEmpty());
 
-            h2StudentChildrenMapper.selectById(2L);
+            h2StudentChildrenMapper.selectById(2);
             methodCache = mybatisMapperProxyFactory.getMethodCache();
             Assertions.assertFalse(methodCache.isEmpty());
         }
