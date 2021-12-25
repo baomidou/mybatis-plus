@@ -301,7 +301,7 @@ public class TableInfo implements Constants {
                     // 批量插入必须返回空自增情况下
                     return EMPTY;
                 }
-                return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyProperty), newLine);
+                return SqlScriptUtils.convertIf(keyColumn, String.format("%s != null", keyColumn), newLine);
             }
             return keyColumn + (newLine ? NEWLINE : EMPTY);
         }
