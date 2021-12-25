@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -124,7 +123,16 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <A, E> Map<A, List<E>> listGroupBy(List<E> list, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(Collectors.groupingBy(sFunction));
+        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(HashMap::new, (m, v) -> {
+            A key = Optional.ofNullable(v).map(sFunction).orElse(null);
+            List<E> values = m.getOrDefault(key, new ArrayList<>(list.size()));
+            values.add(v);
+            m.put(key, values);
+        }, (totalMap, nowMap) -> nowMap.forEach((k, v) -> {
+            List<E> values = totalMap.getOrDefault(k, new ArrayList<>(list.size()));
+            values.addAll(v);
+            totalMap.put(k, values);
+        }));
     }
 
 
@@ -141,7 +149,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A, P> Map<A, P> list2Map(List<E> list, SFunction<E, A> keyFunc, Function<E, P> valueFunc, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(Collectors.toMap(keyFunc, valueFunc, (l, r) -> l));
+        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(HashMap::new, (m, v) -> m.put(keyFunc.apply(v), valueFunc.apply(v)), HashMap::putAll);
     }
 
 
