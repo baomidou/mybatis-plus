@@ -215,14 +215,13 @@ public final class SqlHelper {
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
         return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
-            int size = list.size();
-            int i = 1;
+            int consumedCount = 0;
             for (E element : list) {
                 consumer.accept(sqlSession, element);
-                if ((i % batchSize == 0) || i == size) {
+                consumedCount++;
+                if ((consumedCount % batchSize == 0) || consumedCount == list.size()) {
                     sqlSession.flushStatements();
                 }
-                i++;
             }
         });
     }
