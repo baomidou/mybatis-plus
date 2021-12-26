@@ -61,21 +61,21 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("serial")
 public class InsertBatchSomeColumn extends AbstractMethod {
-    
+
     /**
      * 字段筛选条件
      */
     @Setter
     @Accessors(chain = true)
     private Predicate<TableFieldInfo> predicate;
-    
+
     /**
      * 默认方法名
      */
     public InsertBatchSomeColumn() {
         super("insertBatchSomeColumn");
     }
-    
+
     /**
      * 默认方法名
      *
@@ -85,17 +85,17 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         super("insertBatchSomeColumn");
         this.predicate = predicate;
     }
-    
+
     /**
      * @param name      方法名
      * @param predicate 字段筛选条件
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public InsertBatchSomeColumn(String name, Predicate<TableFieldInfo> predicate) {
         super(name);
         this.predicate = predicate;
     }
-    
+
     @SuppressWarnings("Duplicates")
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

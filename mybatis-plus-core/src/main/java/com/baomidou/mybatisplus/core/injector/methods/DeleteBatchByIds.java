@@ -36,7 +36,7 @@ public class DeleteBatchByIds extends AbstractMethod {
 
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public DeleteBatchByIds(String name) {
         super(name);
@@ -47,13 +47,7 @@ public class DeleteBatchByIds extends AbstractMethod {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
         if (tableInfo.isWithLogicDelete()) {
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                tableInfo.getKeyColumn(),
-                SqlScriptUtils.convertForeach(
-                    SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
-                        "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
-                    COLLECTION, null, "item", COMMA),
-                tableInfo.getLogicDeleteSql(true, true));
+            sql = logicDeleteScript(tableInfo);
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
         } else {
@@ -67,4 +61,21 @@ public class DeleteBatchByIds extends AbstractMethod {
             return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
         }
     }
+
+    /**
+     * @param tableInfo 表信息
+     * @return 逻辑删除脚本
+     * @since 3.5.0
+     */
+    public String logicDeleteScript(TableInfo tableInfo) {
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
+        return String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
+            tableInfo.getKeyColumn(),
+            SqlScriptUtils.convertForeach(
+                SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
+                    "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
+                COLLECTION, null, "item", COMMA),
+            tableInfo.getLogicDeleteSql(true, true));
+    }
+
 }

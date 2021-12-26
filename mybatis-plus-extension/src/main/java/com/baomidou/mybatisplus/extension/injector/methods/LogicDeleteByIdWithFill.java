@@ -40,7 +40,7 @@ import static java.util.stream.Collectors.toList;
  *
  * @author miemie
  * @since 2018-11-09
- * @deprecated 3.4.4 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
+ * @deprecated 3.5.0 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
  */
 @SuppressWarnings("serial")
 @Deprecated
@@ -52,7 +52,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
 
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public LogicDeleteByIdWithFill(String name) {
         super(name);

@@ -154,8 +154,8 @@ public interface IService<T> {
      *
      * @param list 主键ID或实体列表
      */
-    default boolean removeByIds(Collection<?> list) {
-        if (CollectionUtils.isEmpty(list)) {
+    default boolean removeByIds(Collection<?> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
             return false;
         }
         return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
