@@ -556,4 +556,16 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue(userService.page(page, Wrappers.<H2User>lambdaQuery()
             .orderByDesc(H2User::getTestId)).getPages() > 0);
     }
+
+    @Test
+    void testDeleteByFill() {
+        H2User h2User = new H2User(3L, "test");
+        userService.removeById(1L, true);
+        userService.removeById(1L, false);
+        userService.removeById(h2User, true);
+        userService.removeById(h2User, false);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), true);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
+    }
+
 }

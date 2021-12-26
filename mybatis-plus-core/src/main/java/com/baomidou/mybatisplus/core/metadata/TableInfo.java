@@ -30,6 +30,7 @@ import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -543,6 +544,26 @@ public class TableInfo implements Constants {
             this.reflector.getSetInvoker(property).invoke(entity, values);
         } catch (ReflectiveOperationException e) {
             throw ExceptionUtils.mpe("Error: Cannot write property in %s.  Cause:", e, entity.getClass().getSimpleName());
+        }
+    }
+
+    /**
+     * 创建实例
+     *
+     * @param <T> 泛型
+     * @return 初始化实例
+     * @since 3.5.0
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T newInstance() {
+        Constructor<?> defaultConstructor = reflector.getDefaultConstructor();
+        if (!defaultConstructor.isAccessible()) {
+            defaultConstructor.setAccessible(true);
+        }
+        try {
+            return (T) defaultConstructor.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw ExceptionUtils.mpe(e);
         }
     }
 
