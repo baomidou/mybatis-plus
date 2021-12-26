@@ -45,14 +45,12 @@ public class DeleteBatchByIds extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
         if (tableInfo.isWithLogicDelete()) {
             sql = logicDeleteScript(tableInfo);
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
         } else {
-            sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
+            sql = String.format(SqlMethod.DELETE_BATCH_BY_IDS.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach(
                     SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
@@ -68,14 +66,11 @@ public class DeleteBatchByIds extends AbstractMethod {
      * @since 3.5.0
      */
     public String logicDeleteScript(TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
-        return String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-            tableInfo.getKeyColumn(),
-            SqlScriptUtils.convertForeach(
+        return String.format(SqlMethod.LOGIC_DELETE_BATCH_BY_IDS.getSql(), tableInfo.getTableName(),
+            sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
                 SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                     "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                 COLLECTION, null, "item", COMMA),
             tableInfo.getLogicDeleteSql(true, true));
     }
-
 }
