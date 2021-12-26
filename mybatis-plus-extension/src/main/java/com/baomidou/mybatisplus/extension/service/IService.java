@@ -152,13 +152,13 @@ public interface IService<T> {
     /**
      * 删除（根据ID 批量删除）
      *
-     * @param list 主键ID或实体列表
+     * @param idList 主键ID或实体列表
      */
     default boolean removeByIds(Collection<?> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return false;
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(idList));
     }
 
     /**
