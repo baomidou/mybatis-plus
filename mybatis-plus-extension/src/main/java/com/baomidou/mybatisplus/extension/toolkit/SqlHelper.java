@@ -216,10 +216,11 @@ public final class SqlHelper {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
         return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
             int consumedCount = 0;
+            int listSize = list.size();
             for (E element : list) {
                 consumer.accept(sqlSession, element);
                 consumedCount++;
-                if ((consumedCount % batchSize == 0) || consumedCount == list.size()) {
+                if ((consumedCount % batchSize == 0) || consumedCount == listSize) {
                     sqlSession.flushStatements();
                 }
             }
