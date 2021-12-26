@@ -20,6 +20,9 @@ public class Entity implements Serializable {
     private String name;
 
     @TableField(fill = FieldFill.UPDATE)
+    private String deleteBy;
+
+    @TableField(fill = FieldFill.UPDATE)
     @TableLogic(delval = "true", value = "false")
     private Boolean deleted;
 }

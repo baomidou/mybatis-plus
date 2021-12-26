@@ -36,7 +36,7 @@ public class SelectById extends AbstractMethod {
 
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public SelectById(String name) {
         super(name);

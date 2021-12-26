@@ -129,6 +129,12 @@ public interface Constants extends StringPool, Serializable {
      */
     String COLLECTION = "coll";
     /**
+     * list
+     *
+     * @since 3.5.0
+     */
+    String LIST = "list";
+    /**
      * where
      */
     String WHERE = "WHERE";
