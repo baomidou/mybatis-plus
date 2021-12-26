@@ -30,19 +30,19 @@ import java.util.Map;
  * @since 2018-04-06
  */
 public class SelectMapsPage extends AbstractMethod {
-    
+
     public SelectMapsPage() {
         super(SqlMethod.SELECT_MAPS_PAGE.getMethod());
     }
-    
+
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public SelectMapsPage(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_MAPS_PAGE;

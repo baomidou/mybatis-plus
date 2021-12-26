@@ -123,9 +123,9 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 删除（根据ID 批量删除）
      *
-     * @param idList 主键ID列表(不能为 null 以及 empty)
+     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
-    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
+    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<?> idList);
 
     /**
      * 根据 ID 修改

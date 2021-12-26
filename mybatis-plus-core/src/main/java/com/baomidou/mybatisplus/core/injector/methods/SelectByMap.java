@@ -30,19 +30,19 @@ import java.util.Map;
  * @since 2018-04-06
  */
 public class SelectByMap extends AbstractMethod {
-    
+
     public SelectByMap() {
         super(SqlMethod.SELECT_BY_MAP.getMethod());
     }
-    
+
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public SelectByMap(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;

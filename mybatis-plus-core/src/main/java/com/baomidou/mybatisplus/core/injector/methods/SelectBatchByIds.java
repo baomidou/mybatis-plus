@@ -36,7 +36,7 @@ public class SelectBatchByIds extends AbstractMethod {
 
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public SelectBatchByIds(String name) {
         super(name);

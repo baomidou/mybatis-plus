@@ -33,19 +33,19 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 @SuppressWarnings("serial")
 public class Upsert extends AbstractMethod {
-    
+
     public Upsert() {
         super(SqlMethod.UPSERT_ONE.getMethod());
     }
-    
+
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public Upsert(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;

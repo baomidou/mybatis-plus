@@ -51,21 +51,21 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     @Setter
     @Accessors(chain = true)
     private Predicate<TableFieldInfo> predicate;
-    
+
     /**
      * @param name      方法名
      * @param predicate 筛选条件
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public AlwaysUpdateSomeColumnById(String name, Predicate<TableFieldInfo> predicate) {
         super(name);
         this.predicate = predicate;
     }
-    
+
     public AlwaysUpdateSomeColumnById() {
         super("alwaysUpdateSomeColumnById");
     }
-    
+
     /**
      * @param predicate 筛选条件
      */
@@ -73,7 +73,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
         super("alwaysUpdateSomeColumnById");
         this.predicate = predicate;
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;

@@ -142,7 +142,7 @@ public interface IService<T> {
      *
      * @param idList 主键ID列表
      */
-    default boolean removeByIds(Collection<? extends Serializable> idList) {
+    default boolean removeByIds(Collection<?> idList) {
         if (CollectionUtils.isEmpty(idList)) {
             return false;
         }
