@@ -253,4 +253,35 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
 
+    @Override
+    public boolean removeById(Serializable id, boolean useFill) {
+        if (useFill && !entityClass.isAssignableFrom(id.getClass())) {
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+            T instance = tableInfo.newInstance();
+            tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), id);
+            return removeById(instance);
+        }
+        return removeById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
+        String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return executeBatch(list, batchSize, (sqlSession, e) -> {
+            if (useFill) {
+                if (entityClass.isAssignableFrom(e.getClass())) {
+                    sqlSession.update(sqlStatement, e);
+                } else {
+                    T instance = tableInfo.newInstance();
+                    tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), e);
+                    sqlSession.update(sqlStatement, instance);
+                }
+            } else {
+                sqlSession.update(sqlStatement, e);
+            }
+        });
+    }
+
 }

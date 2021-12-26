@@ -121,7 +121,7 @@ public interface BaseMapper<T> extends Mapper<T> {
     int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
-     * 删除（根据ID 批量删除）
+     * 删除（根据ID或实体 批量删除）
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
