@@ -45,18 +45,20 @@ public class DeleteBatchByIds extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
         if (tableInfo.isWithLogicDelete()) {
-            sql = logicDeleteScript(tableInfo);
+            sql = logicDeleteScript(tableInfo, sqlMethod);
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
-            return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
+            return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
-            sql = String.format(SqlMethod.DELETE_BATCH_BY_IDS.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
+            sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach(
                     SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
-            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
     }
 
@@ -65,8 +67,8 @@ public class DeleteBatchByIds extends AbstractMethod {
      * @return 逻辑删除脚本
      * @since 3.5.0
      */
-    public String logicDeleteScript(TableInfo tableInfo) {
-        return String.format(SqlMethod.LOGIC_DELETE_BATCH_BY_IDS.getSql(), tableInfo.getTableName(),
+    public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
+        return String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
                 SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                     "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),

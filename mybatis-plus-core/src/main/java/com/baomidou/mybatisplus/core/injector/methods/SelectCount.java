@@ -47,6 +47,6 @@ public class SelectCount extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlCount(), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForOther(mapperClass, this.name, sqlSource, Long.class);
+        return this.addSelectMappedStatementForOther(mapperClass, getMethod(sqlMethod), sqlSource, Long.class);
     }
 }

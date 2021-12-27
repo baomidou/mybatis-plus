@@ -45,8 +45,7 @@ public class LogicDeleteBatchByIds extends DeleteBatchByIds {
     }
 
     @Override
-    public String logicDeleteScript(TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
+    public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
         List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
             .filter(TableFieldInfo::isWithUpdateFill)
             .filter(f -> !f.isLogicDelete())
@@ -63,7 +62,7 @@ public class LogicDeleteBatchByIds extends DeleteBatchByIds {
                     COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
         } else {
-            return super.logicDeleteScript(tableInfo);
+            return super.logicDeleteScript(tableInfo, sqlMethod);
         }
     }
 

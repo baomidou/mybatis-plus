@@ -152,13 +152,13 @@ public interface IService<T> {
     /**
      * 删除（根据ID 批量删除）
      *
-     * @param idList 主键ID或实体列表
+     * @param list 主键ID或实体列表
      */
-    default boolean removeByIds(Collection<?> idList) {
-        if (CollectionUtils.isEmpty(idList)) {
+    default boolean removeByIds(Collection<?> list) {
+        if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(idList));
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
     }
 
     /**
@@ -172,6 +172,19 @@ public interface IService<T> {
     @Transactional(rollbackFor = Exception.class)
     default boolean removeBatchByIds(Collection<?> list, boolean useFill) {
         return removeBatchByIds(list, DEFAULT_BATCH_SIZE, useFill);
+    }
+
+    /**
+     * 批量删除(jdbc批量提交)
+     *
+     * @param list      主键ID或实体列表
+     * @param batchSize 批次大小
+     * @return 删除结果
+     * @since 3.5.0
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean removeBatchByIds(Collection<?> list, int batchSize) {
+        return removeBatchByIds(list, batchSize, false);
     }
 
     /**
