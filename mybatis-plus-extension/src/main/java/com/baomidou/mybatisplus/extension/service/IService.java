@@ -162,6 +162,25 @@ public interface IService<T> {
     }
 
     /**
+     * 批量删除
+     *
+     * @param list    主键ID或实体列表
+     * @param useFill 是否填充(为true的情况,会将入参转换实体进行delete删除)
+     * @return 删除结果
+     * @since 3.5.0
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean removeByIds(Collection<?> list, boolean useFill) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+        if (useFill) {
+            return removeBatchByIds(list, true);
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+    }
+
+    /**
      * 批量删除(jdbc批量提交)
      *
      * @param list    主键ID或实体列表(主键ID类型必须与实体类型字段保持一致)

@@ -545,6 +545,7 @@ class H2UserTest extends BaseTest {
 //        userService.removeById("100000");
         userService.removeById(h2User);
         userService.removeByIds(Arrays.asList(10000L, h2User));
+        userService.removeByIds(Arrays.asList(10000L, h2User),false);
     }
 
     @Test
