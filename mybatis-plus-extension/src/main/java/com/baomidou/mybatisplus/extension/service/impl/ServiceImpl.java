@@ -254,14 +254,38 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public boolean removeById(Serializable id, boolean useFill) {
-        if (useFill && !entityClass.isAssignableFrom(id.getClass())) {
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-            T instance = tableInfo.newInstance();
-            tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), id);
-            return removeById(instance);
+    public boolean removeById(Serializable id) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
+        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            return removeById(id, true);
         }
-        return removeById(id);
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(Collection<?> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
+        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            return removeBatchByIds(list, true);
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+    }
+
+    @Override
+    public boolean removeById(Serializable id, boolean useFill) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        if (useFill && tableInfo.isWithLogicDelete()) {
+            if (!entityClass.isAssignableFrom(id.getClass())) {
+                T instance = tableInfo.newInstance();
+                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), id);
+                return removeById(instance);
+            }
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
     @Override
@@ -270,7 +294,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         return executeBatch(list, batchSize, (sqlSession, e) -> {
-            if (useFill) {
+            if (useFill && tableInfo.isWithLogicDelete()) {
                 if (entityClass.isAssignableFrom(e.getClass())) {
                     sqlSession.update(sqlStatement, e);
                 } else {

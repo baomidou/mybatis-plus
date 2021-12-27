@@ -536,15 +536,15 @@ class H2UserTest extends BaseTest {
     void testRemove() {
         //不报错即可，无需关注返回值
         H2User h2User = new H2User(12L, "test");
-        userService.removeById((short) 100);
-        userService.removeById(100.00);
-        userService.removeById((float) 100);
-        userService.removeById(100);
+//        userService.removeById((short) 100);
+//        userService.removeById(100.00);
+//        userService.removeById((float) 100);
+//        userService.removeById(100);
         userService.removeById(100000L);
-        userService.removeById(new BigDecimal("100"));
-        userService.removeById("100000");
+//        userService.removeById(new BigDecimal("100"));
+//        userService.removeById("100000");
         userService.removeById(h2User);
-        userService.removeByIds(Arrays.asList((short) 100, 100, 100.00, (float) 100, 10000L, new BigDecimal("100"), h2User));
+        userService.removeByIds(Arrays.asList(10000L, h2User));
     }
 
     @Test
