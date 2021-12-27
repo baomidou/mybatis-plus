@@ -47,6 +47,6 @@ public class SelectList extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForTable(mapperClass, this.name, sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
     }
 }
