@@ -2,8 +2,9 @@
 
 ## [v3.4.4] 2022.01.01
 
-- 升级 mybatis 3.5.8
+- 升级 mybatis 3.5.9
 - 升级 jsqlparser 4.3
+- 新增移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
 - 添加动态表名的钩子函数 https://github.com/baomidou/mybatis-plus/pull/3965
 - 注入类 DefaultSqlInjector 优化调整
 - 反射类 ReflectionKit 优化 field -> field 改为 Function.identity()
@@ -14,13 +15,15 @@
 - 多租户 right join bug https://gitee.com/baomidou/mybatis-plus/issues/I4FP6E  https://github.com/baomidou/mybatis-plus/pull/4035
 - 自定义注入方法名优化 https://github.com/baomidou/mybatis-plus/pull/4159
 - 新增 sap hana 内存数据库
-- 新增移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
 - 新增 SimpleQuery 工具栏查询
 - SQL 注入验证工具类 代码修改写法
 - 整理字符串常量的使用
 - upgrade license-gradle-plugin version
 - 自定义注入方法名优化 (不兼容)
 - 重载columnsToString方法允许子类调整
+- 修复 et 判断逻辑 fixed gitee issues/I4L4XV
+- 逻辑删除 byId 支持转换为实体删除填充
+
 
 
 ## [v3.4.3.4] 2021.09.22
