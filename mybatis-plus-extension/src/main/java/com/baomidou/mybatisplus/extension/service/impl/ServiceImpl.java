@@ -290,6 +290,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public boolean removeBatchByIds(Collection<?> list, int batchSize) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return removeBatchByIds(list, batchSize, tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
         String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
