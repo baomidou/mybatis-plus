@@ -66,7 +66,7 @@ public abstract class AbstractMethod implements Constants {
      */
     @Deprecated
     public AbstractMethod() {
-        methodName = "";
+        methodName = null;
     }
 
     /**
