@@ -148,7 +148,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * TableId 注解存在更新记录，否插入一条记录
+     * 根据 主键ID 进行查询，存在则修改，不存在则插入
      *
      * @param entity 实体对象
      * @return boolean
