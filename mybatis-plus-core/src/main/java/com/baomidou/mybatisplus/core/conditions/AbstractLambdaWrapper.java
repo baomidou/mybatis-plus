@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.joining;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
-        extends AbstractWrapper<T, SFunction<T, ?>, Children> {
+    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
