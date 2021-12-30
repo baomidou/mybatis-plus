@@ -31,15 +31,13 @@ import java.util.regex.Pattern;
  * @since 2019-04-22
  */
 public final class TableNameParser {
-    private static final String TOKEN_GROUP_START = "(";
-    private static final String TOKEN_COMMA = ",";
+
     private static final String TOKEN_SET = "set";
     private static final String TOKEN_OF = "of";
     private static final String TOKEN_DUAL = "dual";
     private static final String TOKEN_DELETE = "delete";
     private static final String TOKEN_CREATE = "create";
     private static final String TOKEN_INDEX = "index";
-    private static final String TOKEN_ALL = "*";
 
     private static final String KEYWORD_JOIN = "join";
     private static final String KEYWORD_INTO = "into";
@@ -50,7 +48,7 @@ public final class TableNameParser {
     private static final String KEYWORD_DUPLICATE = "duplicate";
 
     private static final List<String> concerned = Arrays.asList(KEYWORD_TABLE, KEYWORD_INTO, KEYWORD_JOIN, KEYWORD_USING, KEYWORD_UPDATE);
-    private static final List<String> ignored = Arrays.asList(TOKEN_GROUP_START, TOKEN_SET, TOKEN_OF, TOKEN_DUAL);
+    private static final List<String> ignored = Arrays.asList(StringPool.LEFT_BRACKET, TOKEN_SET, TOKEN_OF, TOKEN_DUAL);
 
     /**
      * 该表达式会匹配 SQL 中不是 SQL TOKEN 的部分，比如换行符，注释信息，结尾的 {@code ;} 等。
@@ -154,7 +152,7 @@ public final class TableNameParser {
         if (TOKEN_DELETE.equalsIgnoreCase(current)) {
             if (hasMoreTokens(tokens, index++)) {
                 String next = tokens.get(index).getValue();
-                return !KEYWORD_FROM.equalsIgnoreCase(next) && !TOKEN_ALL.equals(next);
+                return !KEYWORD_FROM.equalsIgnoreCase(next) && !StringPool.ASTERISK.equals(next);
             }
         }
         return false;
@@ -214,7 +212,7 @@ public final class TableNameParser {
     }
 
     private static void processNonAliasedMultiTables(List<SqlToken> tokens, int index, String nextToken, TableNameVisitor visitor) {
-        while (nextToken.equals(TOKEN_COMMA)) {
+        while (nextToken.equals(StringPool.COMMA)) {
             visitNameToken(tokens.get(index++), visitor);
             if (hasMoreTokens(tokens, index)) {
                 nextToken = tokens.get(index++).getValue();
@@ -231,7 +229,7 @@ public final class TableNameParser {
         }
 
         if (shouldProcessMultipleTables(nextNextToken)) {
-            while (hasMoreTokens(tokens, index) && nextNextToken.equals(TOKEN_COMMA)) {
+            while (hasMoreTokens(tokens, index) && nextNextToken.equals(StringPool.COMMA)) {
                 if (hasMoreTokens(tokens, index)) {
                     current = tokens.get(index++);
                 }
@@ -247,7 +245,7 @@ public final class TableNameParser {
     }
 
     private static boolean shouldProcessMultipleTables(final String nextToken) {
-        return nextToken != null && nextToken.equals(TOKEN_COMMA);
+        return nextToken != null && nextToken.equals(StringPool.COMMA);
     }
 
     private static boolean hasMoreTokens(List<SqlToken> tokens, int index) {

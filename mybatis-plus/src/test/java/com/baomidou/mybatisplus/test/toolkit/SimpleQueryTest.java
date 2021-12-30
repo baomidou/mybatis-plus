@@ -29,7 +29,7 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         // 可叠加后续操作
         List<String> names = SimpleQuery.list(Wrappers.lambdaQuery(), Entity::getName, e -> Optional.ofNullable(e.getName()).map(String::toUpperCase).ifPresent(e::setName));
 
-        Assert.isTrue(names.equals(Arrays.asList("RUBEN", "A CHAO")), "Ops!");
+        Assert.isTrue(names.equals(Arrays.asList("RUBEN", null)), "Ops!");
     }
 
     @Test
@@ -47,12 +47,8 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         // 校验结果
         Map<Long, String> map = new HashMap<>(1 << 2);
         map.put(1L, "ruben");
-        map.put(2L, "a chao");
+        map.put(2L, null);
         Assert.isTrue(idNameMap.equals(map), "Ops!");
-
-        // 同样支持叠加后续操作
-//        SimpleQuery.keyMap(Wrappers.lambdaQuery(), Entity::getId, System.out::println, System.out::println);
-
     }
 
     @Test
@@ -71,8 +67,8 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         Map<String, List<Entity>> map = new HashMap<>(1 << 2);
         Entity chao = new Entity();
         chao.setId(2L);
-        chao.setName("a chao");
-        map.put("a chao", Collections.singletonList(chao));
+        chao.setName(null);
+        map.put(null, Collections.singletonList(chao));
 
         Entity ruben = new Entity();
         ruben.setId(1L);
@@ -87,7 +83,7 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'ruben'),(2,'a chao');";
+        return "insert into entity(id,name) values(1,'ruben'),(2,null);";
     }
 
     @Override

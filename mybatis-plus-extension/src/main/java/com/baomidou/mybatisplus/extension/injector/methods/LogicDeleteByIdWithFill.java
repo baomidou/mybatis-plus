@@ -45,7 +45,19 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("serial")
 @Deprecated
 public class LogicDeleteByIdWithFill extends AbstractMethod {
-
+    
+    public LogicDeleteByIdWithFill() {
+        super("deleteByIdWithFill");
+    }
+    
+    /**
+     * @param name 方法名
+     * @since 3.4.4
+     */
+    public LogicDeleteByIdWithFill(String name) {
+        super(name);
+    }
+    
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -70,12 +82,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
                 tableInfo.getKeyProperty());
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
     }
 
-    @Override
-    public String getMethod(SqlMethod sqlMethod) {
-        // 自定义 mapper 方法名
-        return "deleteByIdWithFill";
-    }
 }

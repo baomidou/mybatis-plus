@@ -15,6 +15,11 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -37,7 +42,9 @@ import org.apache.ibatis.transaction.Transaction;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * replace default Configuration class
@@ -117,6 +124,46 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public <T> void addMapper(Class<T> type) {
         mybatisMapperRegistry.addMapper(type);
+    }
+
+    /**
+     * 新增注入新的 Mapper 信息，新增前会清理之前的缓存信息
+     *
+     * @param type Mapper Type
+     * @param <T>
+     */
+    public <T> void addNewMapper(Class<T> type) {
+        this.removeMapper(type);
+        this.addMapper(type);
+    }
+
+    /**
+     * 移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
+     *
+     * @param type Mapper Type
+     * @param <T>
+     */
+    public <T> void removeMapper(Class<T> type) {
+        // TODO
+        Set<String> mapperRegistryCache = GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache();
+        final String mapperType = type.toString();
+        if (mapperRegistryCache.contains(mapperType)) {
+            // 清空实体表信息映射信息
+            TableInfoHelper.remove(ReflectionKit.getSuperClassGenericType(type, Mapper.class, 0));
+
+            // 清空 Mapper 缓存信息
+            this.mybatisMapperRegistry.removeMapper(type);
+            this.loadedResources.remove(type.toString());
+            mapperRegistryCache.remove(mapperType);
+
+            // 清空 Mapper 方法 mappedStatement 缓存信息
+            final String typeKey = type.getName() + StringPool.DOT;
+            Set<String> mapperSet = mappedStatements.entrySet().stream().filter(t -> t.getKey().startsWith(typeKey))
+                .map(t -> t.getKey()).collect(Collectors.toSet());
+            if (null != mapperSet && !mapperSet.isEmpty()) {
+                mapperSet.forEach(key -> mappedStatements.remove(key));
+            }
+        }
     }
 
     /**
@@ -376,10 +423,10 @@ public class MybatisConfiguration extends Configuration {
         public V put(String key, V value) {
             if (containsKey(key)) {
                 throw new IllegalArgumentException(name + " already contains value for " + key
-                    + (conflictMessageProducer == null ? "" : conflictMessageProducer.apply(super.get(key), value)));
+                    + (conflictMessageProducer == null ? StringPool.EMPTY : conflictMessageProducer.apply(super.get(key), value)));
             }
             if (useGeneratedShortKey) {
-                if (key.contains(".")) {
+                if (key.contains(StringPool.DOT)) {
                     final String shortKey = getShortName(key);
                     if (super.get(shortKey) == null) {
                         super.put(shortKey, value);

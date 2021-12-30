@@ -136,6 +136,10 @@ public enum DbType {
      */
     CSIIDB("csiidb", "CSIIDB数据库"),
     /**
+     * CSIIDB
+     */
+    SAP_HANA("hana", "SAP_HANA数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
