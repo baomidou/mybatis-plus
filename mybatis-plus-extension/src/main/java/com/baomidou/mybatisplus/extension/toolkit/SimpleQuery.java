@@ -9,16 +9,31 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * simple-query 让简单的查询更简单
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao
  * @since 2021/11/9 18:27
  */
 public class SimpleQuery {
     private SimpleQuery() {
         /* Do not new me! */
+    }
+
+    /**
+     * 是否并行流
+     */
+    public static boolean isParallel = true;
+
+    /**
+     * 切换是串行流还是并行流
+     *
+     * @param isParallel 是否并行流 true为并行流 false为串行流
+     */
+    public static void setIsParallel(boolean isParallel) {
+        SimpleQuery.isParallel = isParallel;
     }
 
     /**
@@ -123,7 +138,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <A, E> Map<A, List<E>> listGroupBy(List<E> list, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(HashMap::new, (m, v) -> {
+        return peekStream(list, peeks).collect(HashMap::new, (m, v) -> {
             A key = Optional.ofNullable(v).map(sFunction).orElse(null);
             List<E> values = m.getOrDefault(key, new ArrayList<>(list.size()));
             values.add(v);
@@ -149,7 +164,20 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A, P> Map<A, P> list2Map(List<E> list, SFunction<E, A> keyFunc, Function<E, P> valueFunc, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(HashMap::new, (m, v) -> m.put(keyFunc.apply(v), valueFunc.apply(v)), HashMap::putAll);
+        return peekStream(list, peeks).collect(HashMap::new, (m, v) -> m.put(keyFunc.apply(v), valueFunc.apply(v)), HashMap::putAll);
+    }
+
+    /**
+     * 将list转为Stream流，然后再叠加peek操作
+     *
+     * @param list  数据
+     * @param peeks 叠加的peek操作
+     * @param <E>   数据元素类型
+     * @return 转换后的流
+     */
+    @SafeVarargs
+    public static <E> Stream<E> peekStream(List<E> list, Consumer<E>... peeks) {
+        return Stream.of(peeks).reduce(StreamSupport.stream(list.spliterator(), isParallel), Stream::peek, Stream::concat);
     }
 
 
