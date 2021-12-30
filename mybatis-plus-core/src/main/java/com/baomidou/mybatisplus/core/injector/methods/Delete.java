@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,19 +28,19 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  */
 public class Delete extends AbstractMethod {
-    
+
     public Delete() {
         super("delete");
     }
-    
+
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public Delete(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -50,14 +50,14 @@ public class Delete extends AbstractMethod {
                 sqlWhereEntityWrapper(true, tableInfo),
                 sqlComment());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-            return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
+            return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
                 sqlWhereEntityWrapper(true, tableInfo),
                 sqlComment());
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-            return this.addDeleteMappedStatement(mapperClass, this.name, sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
     }
 }

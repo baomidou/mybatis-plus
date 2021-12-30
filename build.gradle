@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.3.4"
+    version = "3.5.0"
 }
 
 ext {
@@ -11,12 +11,12 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.8',
+        mybatisVersion = '3.5.9',
         mybatisSpringVersion = '2.0.6',
         mybatisSpringBootStarterVersion = '2.2.0',
         springVersion = '5.3.9',
         springBootVersion = '2.5.3',
-        jsqlparserVersion = '4.2',
+        jsqlparserVersion = '4.3',
         junitVersion = '5.7.2',
     ]
 
@@ -63,7 +63,7 @@ ext {
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.26",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
-        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.4.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
@@ -93,7 +93,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+        testImplementation "org.mockito:mockito-junit-jupiter:4.2.0"
         testImplementation "${lib["lagarto"]}"
         testImplementation "${lib["logback-classic"]}"
     }

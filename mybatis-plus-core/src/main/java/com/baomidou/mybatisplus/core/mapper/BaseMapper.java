@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -121,11 +121,11 @@ public interface BaseMapper<T> extends Mapper<T> {
     int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
-     * 删除（根据ID 批量删除）
+     * 删除（根据ID或实体 批量删除）
      *
-     * @param idList 主键ID列表(不能为 null 以及 empty)
+     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
-    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
+    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<?> idList);
 
     /**
      * 根据 ID 修改

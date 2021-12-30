@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,21 +61,21 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("serial")
 public class InsertBatchSomeColumn extends AbstractMethod {
-    
+
     /**
      * 字段筛选条件
      */
     @Setter
     @Accessors(chain = true)
     private Predicate<TableFieldInfo> predicate;
-    
+
     /**
      * 默认方法名
      */
     public InsertBatchSomeColumn() {
         super("insertBatchSomeColumn");
     }
-    
+
     /**
      * 默认方法名
      *
@@ -85,17 +85,17 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         super("insertBatchSomeColumn");
         this.predicate = predicate;
     }
-    
+
     /**
      * @param name      方法名
      * @param predicate 字段筛选条件
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public InsertBatchSomeColumn(String name, Predicate<TableFieldInfo> predicate) {
         super(name);
         this.predicate = predicate;
     }
-    
+
     @SuppressWarnings("Duplicates")
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
@@ -120,7 +120,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             } else {
                 if (null != tableInfo.getKeySequence()) {
-                    keyGenerator = TableInfoHelper.genKeyGenerator(this.name, tableInfo, builderAssistant);
+                    keyGenerator = TableInfoHelper.genKeyGenerator(this.methodName, tableInfo, builderAssistant);
                     keyProperty = tableInfo.getKeyProperty();
                     keyColumn = tableInfo.getKeyColumn();
                 }
@@ -128,7 +128,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, this.name, sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) return;
+            if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
+                return;
+            }
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
             mpBs.sql(parserMulti(mpBs.sql(), null));
         }
@@ -225,10 +227,14 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * @param selectItems SelectItem
      */
     protected void appendSelectItem(List<SelectItem> selectItems) {
-        if (CollectionUtils.isEmpty(selectItems)) return;
+        if (CollectionUtils.isEmpty(selectItems)) {
+            return;
+        }
         if (selectItems.size() == 1) {
             SelectItem item = selectItems.get(0);
-            if (item instanceof AllColumns || item instanceof AllTableColumns) return;
+            if (item instanceof AllColumns || item instanceof AllTableColumns) {
+                return;
+            }
         }
         selectItems.add(new SelectExpressionItem(new Column(tenantLineHandler.getTenantIdColumn())));
     }
@@ -326,9 +332,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             } else if (where instanceof InExpression) {
                 // in
                 InExpression expression = (InExpression) where;
-                ItemsList itemsList = expression.getRightItemsList();
-                if (itemsList instanceof SubSelect) {
-                    processSelectBody(((SubSelect) itemsList).getSelectBody());
+                Expression inExpression = expression.getRightExpression();
+                if (inExpression instanceof SubSelect) {
+                    processSelectBody(((SubSelect) inExpression).getSelectBody());
                 }
             } else if (where instanceof ExistsExpression) {
                 // exists

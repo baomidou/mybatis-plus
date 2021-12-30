@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
@@ -427,7 +428,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         notNull(dataSource, "Property 'dataSource' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
             "Property 'configuration' and 'configLocation' can not specified with together");
-
+        //TODO 清理掉资源  建议不要保留这个玩意了
+        SqlRunner.DEFAULT.close();
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
 
@@ -604,7 +606,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
 
         final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
-
+        System.out.println(sqlSessionFactory);
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 

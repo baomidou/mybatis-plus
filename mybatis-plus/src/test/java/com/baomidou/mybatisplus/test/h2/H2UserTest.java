@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
@@ -530,20 +531,48 @@ class H2UserTest extends BaseTest {
             .eq(H2User::getPrice, 2)
             .getTargetSql();
     }
-    
+
     @Test
     void testRemove() {
         //不报错即可，无需关注返回值
         H2User h2User = new H2User(12L, "test");
-        userService.removeById((short) 100);
-        userService.removeById(100.00);
-        userService.removeById((float) 100);
-        userService.removeById(100);
+//        userService.removeById((short) 100);
+//        userService.removeById(100.00);
+//        userService.removeById((float) 100);
+//        userService.removeById(100);
         userService.removeById(100000L);
-        userService.removeById(new BigDecimal("100"));
-        userService.removeById("100000");
+//        userService.removeById(new BigDecimal("100"));
+//        userService.removeById("100000");
         userService.removeById(h2User);
-        userService.removeByIds(Arrays.asList((short) 100, 100, 100.00, (float) 100, 10000L, new BigDecimal("100"), h2User));
+        userService.removeByIds(Arrays.asList(10000L, h2User));
+        userService.removeByIds(Arrays.asList(10000L, h2User),false);
     }
-    
+
+    @Test
+    void testPageOrderBy() {
+        // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
+        Page page = Page.of(1, 10);
+        Assertions.assertTrue(userService.page(page, Wrappers.<H2User>query().select("test_id,name")
+            .orderByDesc("test_id")).getPages() > 0);
+        Assertions.assertTrue(userService.page(page, Wrappers.<H2User>lambdaQuery()
+            .orderByDesc(H2User::getTestId)).getPages() > 0);
+    }
+
+    @Test
+    void testDeleteByFill() {
+        H2User h2User = new H2User(3L, "test");
+        userService.removeById(1L);
+        userService.removeById(1L, true);
+        userService.removeById(1L, false);
+        userService.removeById(h2User);
+        userService.removeById(h2User, true);
+        userService.removeById(h2User, false);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User));
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), true);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,true);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,false);
+    }
+
 }

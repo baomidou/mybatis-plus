@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,25 +39,25 @@ import static java.util.stream.Collectors.toList;
  * </p>
  *
  * @author miemie
- * @deprecated 3.4.4 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
  * @since 2018-11-09
+ * @deprecated 3.5.0 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
  */
 @SuppressWarnings("serial")
 @Deprecated
 public class LogicDeleteByIdWithFill extends AbstractMethod {
-    
+
     public LogicDeleteByIdWithFill() {
         super("deleteByIdWithFill");
     }
-    
+
     /**
      * @param name 方法名
-     * @since 3.4.4
+     * @since 3.5.0
      */
     public LogicDeleteByIdWithFill(String name) {
         super(name);
     }
-    
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -65,6 +65,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
         if (tableInfo.isWithLogicDelete()) {
             List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
                 .filter(TableFieldInfo::isWithUpdateFill)
+                .filter(f -> !f.isLogicDelete())
                 .collect(toList());
             if (CollectionUtils.isNotEmpty(fieldInfos)) {
                 String sqlSet = "SET " + fieldInfos.stream().map(i -> i.getSqlSet(EMPTY)).collect(joining(EMPTY))
@@ -82,7 +83,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
                 tableInfo.getKeyProperty());
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, this.name, sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
     }
 
 }

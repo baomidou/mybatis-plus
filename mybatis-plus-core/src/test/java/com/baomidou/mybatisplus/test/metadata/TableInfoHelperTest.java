@@ -247,4 +247,13 @@ class TableInfoHelperTest {
         @TableField("`name`")
         private Long name;
     }
+
+    @Test
+    void testNewInstance() throws ReflectiveOperationException {
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelOne.class);
+        ModelOne entity = tableInfo.newInstance();
+        tableInfo.setPropertyValue(entity, tableInfo.getKeyColumn(), 1L);
+        assertThat(entity.id).isNotNull().isEqualTo(1L);
+    }
+
 }
