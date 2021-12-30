@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
@@ -74,14 +73,6 @@ open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Qu
     override fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
         if (ArrayUtils.isNotEmpty(columns)) {
             this.sqlSelect.stringValue = columnsToString(false, *columns)
-        }
-        return typedThis
-    }
-
-
-    override fun select(columns: MutableList<KProperty<*>>): KtQueryWrapper<T> {
-        if (CollectionUtils.isNotEmpty(columns)) {
-            this.sqlSelect.stringValue = columnsToString(false, columns)
         }
         return typedThis
     }

@@ -56,9 +56,6 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
     fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty<*>): String =
         columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
 
-    fun columnsToString(onlyColumn: Boolean, columns: MutableList<KProperty<*>>): String =
-        columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
-
     override fun initNeed() {
         super.initNeed()
         if (!::columnMap.isInitialized) {

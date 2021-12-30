@@ -55,9 +55,4 @@ open class KtQueryChainWrapper<T : Any>(
         return baseMapper
     }
 
-    override fun select(columns: MutableList<KProperty<*>>): KtQueryChainWrapper<T> {
-        wrapperChildren.select(columns)
-        return typedThis
-    }
-
 }

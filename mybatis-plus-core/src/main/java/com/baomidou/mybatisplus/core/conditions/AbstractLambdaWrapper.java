@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
@@ -38,7 +37,7 @@ import static java.util.stream.Collectors.joining;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
-    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
+        extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
@@ -52,10 +51,6 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     @SafeVarargs
     protected final String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
         return columnsToString(onlyColumn, Arrays.asList(columns));
-    }
-
-    protected final String columnsToString(boolean onlyColumn, List<SFunction<T, ?>> columns) {
-        return columns.stream().map(i -> columnToString(i, onlyColumn)).collect(joining(StringPool.COMMA));
     }
 
     protected final String columnsToString(boolean onlyColumn, List<SFunction<T, ?>> columns) {

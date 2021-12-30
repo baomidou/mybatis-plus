@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -32,9 +31,6 @@ public interface Query<Children, T, R> extends Serializable {
      */
     @SuppressWarnings("unchecked")
     Children select(R... columns);
-
-
-    Children select(List<R> columns);
 
     /**
      * ignore

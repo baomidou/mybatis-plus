@@ -22,10 +22,8 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -83,19 +81,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setStringValue(columnsToString(false, columns));
-        }
-        return typedThis;
-    }
-
-    /**
-     * SELECT 部分 SQL 设置
-     *
-     * @param columns 查询字段
-     */
-    @Override
-    public LambdaQueryWrapper<T> select(List<SFunction<T, ?>> columns) {
-        if (CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.setStringValue(columnsToString(false, columns));
         }
         return typedThis;
