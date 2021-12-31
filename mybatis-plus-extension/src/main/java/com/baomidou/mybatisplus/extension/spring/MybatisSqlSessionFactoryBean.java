@@ -606,7 +606,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
 
         final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
-        System.out.println(sqlSessionFactory);
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
