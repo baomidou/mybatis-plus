@@ -26,7 +26,7 @@ ext {
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
-        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.2",
+        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
         "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.2",
         "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.0",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
