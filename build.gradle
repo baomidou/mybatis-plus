@@ -28,7 +28,7 @@ ext {
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
         "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.3",
-        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.0",
+        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.1",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
         "spring-jdbc"                : "org.springframework:spring-jdbc:${springVersion}",
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
