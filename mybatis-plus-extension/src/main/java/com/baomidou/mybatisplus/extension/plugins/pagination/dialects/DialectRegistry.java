@@ -59,6 +59,7 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.SQL_SERVER2005, new SQLServer2005Dialect());
         dialect_enum_map.put(DbType.SQL_SERVER, new SQLServerDialect());
         dialect_enum_map.put(DbType.SYBASE, new SybaseDialect());
+        dialect_enum_map.put(DbType.IMPALA, new ImpalaDialect());
     }
 
     public IDialect getDialect(DbType dbType) {

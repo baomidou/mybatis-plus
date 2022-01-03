@@ -103,6 +103,8 @@ public class JdbcUtils {
             return DbType.OCEAN_BASE;
         }else if (url.contains(":highgo:")) {
             return DbType.HighGo;
+        }else if (url.contains(":impala:")) {
+            return DbType.IMPALA;
         }else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
