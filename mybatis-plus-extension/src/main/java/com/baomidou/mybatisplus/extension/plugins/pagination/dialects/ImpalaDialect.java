@@ -29,8 +29,8 @@ public class ImpalaDialect implements IDialect {
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder sql = new StringBuilder(originalSql).append(" LIMIT ").append(FIRST_MARK);
         if (offset != 0L) {
-            sql.append(StringPool.COMMA).append(SECOND_MARK);
-            return new DialectModel(sql.toString(), offset, limit).setConsumerChain();
+            sql.append(" OFFSET ").append(SECOND_MARK);
+            return new DialectModel(sql.toString(), limit, offset).setConsumerChain();
         } else {
             return new DialectModel(sql.toString(), limit).setConsumer(true);
         }
