@@ -367,6 +367,17 @@ class TenantLineInnerInterceptorTest {
             "SELECT * FROM entity, entity1 " +
                 "WHERE entity.id = entity1.id AND entity.tenant_id = 1 AND entity1.tenant_id = 1");
 
+        // 隐式内连接
+        assertSql("SELECT * FROM entity a, with_as_entity1 b " +
+                "WHERE a.id = b.id",
+            "SELECT * FROM entity a, with_as_entity1 b " +
+                "WHERE a.id = b.id AND a.tenant_id = 1");
+
+        assertSql("SELECT * FROM with_as_entity a, with_as_entity1 b " +
+                "WHERE a.id = b.id",
+            "SELECT * FROM with_as_entity a, with_as_entity1 b " +
+                "WHERE a.id = b.id");
+
         // SubJoin with 隐式内连接
         assertSql("SELECT * FROM (entity,entity1) " +
                 "WHERE entity.id = entity1.id",
