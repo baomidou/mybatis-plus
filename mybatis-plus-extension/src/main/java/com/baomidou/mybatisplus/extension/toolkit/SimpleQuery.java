@@ -178,13 +178,11 @@ public class SimpleQuery {
     public static <A, E> Map<A, List<E>> listGroupBy(List<E> list, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
         return peekStream(list, isParallel, peeks).collect(HashMap::new, (m, v) -> {
             A key = Optional.ofNullable(v).map(sFunction).orElse(null);
-            List<E> values = m.getOrDefault(key, new ArrayList<>(list.size()));
+            List<E> values = m.computeIfAbsent(key, k -> new ArrayList<>(list.size()));
             values.add(v);
-            m.put(key, values);
-        }, (totalMap, nowMap) -> nowMap.forEach((k, v) -> {
-            List<E> values = totalMap.getOrDefault(k, new ArrayList<>(list.size()));
+        }, (totalMap, nowMap) -> nowMap.forEach((key, v) -> {
+            List<E> values = totalMap.computeIfAbsent(key, k -> new ArrayList<>(list.size()));
             values.addAll(v);
-            totalMap.put(k, values);
         }));
     }
 
