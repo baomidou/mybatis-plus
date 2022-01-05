@@ -63,7 +63,7 @@ ext {
         "h2"                         : "com.h2database:h2:2.0.206",
         "mysql"                      : "mysql:mysql-connector-java:8.0.26",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
-        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.4.java8",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.5.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
