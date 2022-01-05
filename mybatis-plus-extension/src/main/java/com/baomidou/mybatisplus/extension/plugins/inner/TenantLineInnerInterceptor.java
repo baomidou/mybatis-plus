@@ -273,9 +273,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         // 无 join 时的处理逻辑
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
-            if (!tenantLineHandler.ignoreTable(fromTable.getName())) {
-                mainTables.add(fromTable);
-            }
+            mainTables.add(fromTable);
         } else if (fromItem instanceof SubJoin) {
             // SubJoin 类型则还需要添加上 where 条件
             List<Table> tables = processSubJoin((SubJoin) fromItem);
@@ -463,26 +461,18 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
                 // 当前表是否忽略
                 Table joinTable = joinTables.get(0);
-                boolean joinTableNeedIgnore = tenantLineHandler.ignoreTable(joinTable.getName());
 
                 List<Table> onTables = null;
                 // 如果不要忽略，且是右连接，则记录下当前表
                 if (join.isRight()) {
-                    mainTable = joinTableNeedIgnore ? null : joinTable;
+                    mainTable = joinTable;
                     if (leftTable != null) {
                         onTables = Collections.singletonList(leftTable);
                     }
                 } else if (join.isLeft()) {
-                    if (!joinTableNeedIgnore) {
-                        onTables = Collections.singletonList(joinTable);
-                    }
+                     onTables = Collections.singletonList(joinTable);
                 } else if (join.isInner()) {
-                    if (joinTableNeedIgnore) {
-                        if (mainTable != null) {
-                            onTables = Collections.singletonList(mainTable);
-                        }
-                    } else
-                        if (mainTable == null) {
+                    if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
                     } else {
                         onTables = Arrays.asList(mainTable, joinTable);
@@ -542,8 +532,14 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         Expression tenantId = tenantLineHandler.getTenantId();
         // 构造每张表的条件
         List<EqualsTo> equalsTos = tables.stream()
+            .filter(x -> !tenantLineHandler.ignoreTable(x.getName()))
             .map(item -> new EqualsTo(getAliasColumn(item), tenantId))
             .collect(Collectors.toList());
+
+        if(CollectionUtils.isEmpty(equalsTos)){
+            return currentExpression;
+        }
+
         // 注入的表达式
         Expression injectExpression = equalsTos.get(0);
         // 如果有多表，则用 and 连接
