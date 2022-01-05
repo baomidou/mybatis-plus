@@ -41,14 +41,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -106,9 +99,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             processSelectBody(withItem.getSubSelect().getSelectBody());
         } else {
             SetOperationList operationList = (SetOperationList) selectBody;
-            List<SelectBody> selectBodys = operationList.getSelects();
-            if (CollectionUtils.isNotEmpty(selectBodys)) {
-                selectBodys.forEach(this::processSelectBody);
+            List<SelectBody> selectBodyList = operationList.getSelects();
+            if (CollectionUtils.isNotEmpty(selectBodyList)) {
+                selectBodyList.forEach(this::processSelectBody);
             }
         }
     }
@@ -397,7 +390,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processSelectBody(subSelect.getSelectBody());
             }
         } else if (fromItem instanceof ValuesList) {
-            logger.debug("Perform a subquery, if you do not give us feedback");
+            logger.debug("Perform a subQuery, if you do not give us feedback");
         } else if (fromItem instanceof LateralSubSelect) {
             LateralSubSelect lateralSubSelect = (LateralSubSelect) fromItem;
             if (lateralSubSelect.getSubSelect() != null) {
@@ -433,15 +426,14 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      * @return List<Table> 右连接查询的 Table 列表
      */
     private List<Table> processJoins(List<Table> mainTables, List<Join> joins) {
-        if (mainTables == null) {
-            mainTables = new ArrayList<>();
-        }
-
         // join 表达式中最终的主表
         Table mainTable = null;
         // 当前 join 的左表
         Table leftTable = null;
-        if (mainTables.size() == 1) {
+
+        if (mainTables == null) {
+            mainTables = new ArrayList<>();
+        } else if (mainTables.size() == 1) {
             mainTable = mainTables.get(0);
             leftTable = mainTable;
         }
@@ -485,13 +477,19 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                         onTables = Collections.singletonList(joinTable);
                     }
                 } else if (join.isInner()) {
-                    if (mainTable == null) {
+                    if (joinTableNeedIgnore) {
+                        if (mainTable != null) {
+                            onTables = Collections.singletonList(mainTable);
+                        }
+                    } else
+                        if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
                     } else {
                         onTables = Arrays.asList(mainTable, joinTable);
                     }
                     mainTable = null;
                 }
+
                 mainTables = new ArrayList<>();
                 if (mainTable != null) {
                     mainTables.add(mainTable);
@@ -527,7 +525,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                 processOtherFromItem(joinItem);
                 leftTable = null;
             }
-
         }
 
         return mainTables;

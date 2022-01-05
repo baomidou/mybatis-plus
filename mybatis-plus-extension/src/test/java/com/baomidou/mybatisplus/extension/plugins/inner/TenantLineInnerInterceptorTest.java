@@ -5,6 +5,8 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.junit.jupiter.api.Test;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -21,6 +23,9 @@ class TenantLineInnerInterceptorTest {
 
         @Override
         public boolean ignoreTable(String tableName) {
+            if (Objects.equals(tableName, "sys_dict")) {
+                return true;
+            }
             return tableName.startsWith("with_as");
         }
     });
@@ -395,6 +400,13 @@ class TenantLineInnerInterceptorTest {
     void selectWithAs() {
         assertSql("with with_as_A as (select * from entity) select * from with_as_A",
             "WITH with_as_A AS (SELECT * FROM entity WHERE entity.tenant_id = 1) SELECT * FROM with_as_A");
+    }
+
+
+    @Test
+    void selectIgnoreTable() {
+        assertSql(" SELECT dict.dict_code, item.item_text AS \"text\", item.item_value AS \"value\" FROM sys_dict_item item INNER JOIN sys_dict dict ON dict.id = item.dict_id WHERE dict.dict_code IN (1, 2, 3) AND item.item_value IN (1, 2, 3)",
+            "SELECT dict.dict_code, item.item_text AS \"text\", item.item_value AS \"value\" FROM sys_dict_item item INNER JOIN sys_dict dict ON dict.id = item.dict_id AND item.tenant_id = 1 WHERE dict.dict_code IN (1, 2, 3) AND item.item_value IN (1, 2, 3)");
     }
 
     void assertSql(String sql, String targetSql) {
