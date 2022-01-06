@@ -94,7 +94,7 @@ public final class SqlHelper {
      */
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        Assert.notNull(tableInfo, "Error: Cannot execute table Method, ClassGenricType not found .");
+        Assert.notNull(tableInfo, "Error: Cannot execute table Method, ClassGenericType not found.");
         return tableInfo;
     }
 
