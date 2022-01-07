@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.5.0"
+    version = "3.5.0.2-SNAPSHOT"
 }
 
 ext {
@@ -13,7 +13,7 @@ ext {
     libraries = [
         mybatisVersion = '3.5.9',
         mybatisSpringVersion = '2.0.6',
-        mybatisSpringBootStarterVersion = '2.2.0',
+        mybatisSpringBootStarterVersion = '2.2.1',
         springVersion = '5.3.9',
         springBootVersion = '2.5.3',
         jsqlparserVersion = '4.3',
@@ -47,7 +47,7 @@ ext {
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.19.0",
+        "assertj-core"               : "org.assertj:assertj-core:3.22.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
@@ -60,10 +60,10 @@ ext {
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
-        "h2"                         : "com.h2database:h2:1.4.200",
+        "h2"                         : "com.h2database:h2:2.0.206",
         "mysql"                      : "mysql:mysql-connector-java:8.0.26",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
-        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.4.java8",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.5.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",

@@ -140,6 +140,10 @@ public enum DbType {
      */
     SAP_HANA("hana", "SAP_HANA数据库"),
     /**
+     * Impala
+     */
+    IMPALA("impala", "impala数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");

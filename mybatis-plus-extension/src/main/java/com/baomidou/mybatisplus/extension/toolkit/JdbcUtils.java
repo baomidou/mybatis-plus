@@ -25,6 +25,8 @@ import org.apache.ibatis.logging.LogFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -36,6 +38,7 @@ import java.util.regex.Pattern;
 public class JdbcUtils {
 
     private static final Log logger = LogFactory.getLog(JdbcUtils.class);
+    private static final Map<String, DbType> JDBC_DB_TYPE_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 不关闭 Connection,因为是从事务里获取的,sqlSession会负责关闭
@@ -46,7 +49,7 @@ public class JdbcUtils {
     public static DbType getDbType(Executor executor) {
         try {
             Connection conn = executor.getTransaction().getConnection();
-            return getDbType(conn.getMetaData().getURL());
+            return JDBC_DB_TYPE_CACHE.computeIfAbsent(conn.getMetaData().getURL(), k -> getDbType(k));
         } catch (SQLException e) {
             throw ExceptionUtils.mpe(e);
         }
@@ -113,6 +116,8 @@ public class JdbcUtils {
             return DbType.CSIIDB;
         } else if (url.contains(":sap:")) {
             return DbType.SAP_HANA;
+        } else if (url.contains(":impala:")) {
+            return DbType.IMPALA;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
