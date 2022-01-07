@@ -6,3 +6,7 @@ logging:
     level:
         org.springframework.jdbc: debug
         com.baomidou.mybatisplus.test.autoconfigure: debug
+mybatis-plus:
+    global-config:
+        db-config:
+            override-zero-id: true

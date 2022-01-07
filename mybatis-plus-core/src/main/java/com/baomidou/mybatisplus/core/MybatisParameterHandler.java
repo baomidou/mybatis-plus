@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -28,11 +29,7 @@ import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.SimpleTypeRegistry;
-import org.apache.ibatis.type.TypeException;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.type.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -125,12 +122,16 @@ public class MybatisParameterHandler implements ParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
+            final GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(this.configuration);
+            final IdentifierGenerator identifierGenerator = globalConfig.getIdentifierGenerator();
+            final boolean rewriteZeroId = globalConfig.getDbConfig().isOverrideZeroId();
             Object idValue = metaObject.getValue(keyProperty);
-            if (StringUtils.checkValNull(idValue)) {
-                if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
-                    Class<?> keyType = tableInfo.getKeyType();
-                    if (Number.class.isAssignableFrom(keyType)) {
+            Class<?> keyType = tableInfo.getKeyType();
+            // ASSIGN_ID 需要区分是否为数字类型
+            if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
+                //如为数字类型，且 id 值为空，或为零且允许覆盖零值，则赋值
+                if (Number.class.isAssignableFrom(keyType)) {
+                    if (StringUtils.checkValNull(idValue) || (isZeroValue(idValue, keyType) && rewriteZeroId)) {
                         Number id = identifierGenerator.nextId(entity);
                         if (keyType == id.getClass()) {
                             metaObject.setValue(keyProperty, id);
@@ -145,16 +146,31 @@ public class MybatisParameterHandler implements ParameterHandler {
                         } else {
                             throw new MybatisPlusException("Key type '" + keyType + "' not supported");
                         }
-                    } else {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
                     }
-                } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
-                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
                 }
+                //不为数字类型，但 id 值为空，允许赋值
+                else if (StringUtils.checkValNull(idValue)) {
+                    metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
+                }
+            }
+            //ASSIGN_UUID 只在 id 值为空时生效
+            else if (idType.getKey() == IdType.ASSIGN_UUID.getKey() && StringUtils.checkValNull(idValue)) {
+                metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
             }
         }
     }
 
+    private boolean isZeroValue(Object idValue, Class<?> keyType) {
+        Class<?> clz = idValue.getClass();
+        if (!Number.class.isAssignableFrom(clz)) {
+            return false;
+        }
+        Number numberId = (Number) idValue;
+        return (keyType == Integer.class && numberId.intValue() == 0)
+            || (keyType == Long.class && numberId.longValue() == 0L)
+            || (keyType == BigInteger.class && BigInteger.ZERO.compareTo(new BigInteger(String.valueOf(numberId.longValue()))) == 0)
+            || (keyType == BigDecimal.class && BigDecimal.ZERO.compareTo(new BigDecimal(String.valueOf(numberId.doubleValue()))) == 0);
+    }
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {

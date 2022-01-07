@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.autoconfigure;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,5 +22,13 @@ class MybatisPlusSampleTest {
         Sample sample = new Sample();
         sampleMapper.insert(sample);
         assertThat(sample.getId()).isNotNull();
+    }
+
+    @Test
+    void testInsertZeroId() {
+        Sample sample = new Sample();
+        sample.setId(0L);
+        sampleMapper.insert(sample);
+        Assertions.assertTrue(sample.getId() != 0);
     }
 }

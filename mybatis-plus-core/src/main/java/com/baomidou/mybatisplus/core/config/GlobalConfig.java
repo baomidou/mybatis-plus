@@ -86,6 +86,12 @@ public class GlobalConfig implements Serializable {
          * 主键类型
          */
         private IdType idType = IdType.ASSIGN_ID;
+
+        /**
+         * 是否覆盖值为 0 的 ID。仅当主键类型为 IdType.ASSIGN_ID 且 ID 为数字类型时才生效。
+         */
+        private boolean overrideZeroId = false;
+
         /**
          * 表名前缀
          */
