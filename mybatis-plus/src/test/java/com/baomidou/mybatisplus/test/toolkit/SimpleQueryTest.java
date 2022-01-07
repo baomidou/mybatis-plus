@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 简单查询工具类测试
@@ -79,6 +80,12 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         map.put("ruben", Arrays.asList(ruben, ruben2));
         Assert.isTrue(nameUsersMap.equals(map), "Ops!");
 
+        // 解锁高级玩法：
+        // 获取Map<name,List<id>>
+        Map<String, List<Long>> nameIdMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName, Collectors.mapping(Entity::getId, Collectors.toList()));
+        // 获取Map<name,个数>
+        Map<String, Long> nameCountMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName, Collectors.counting());
+        // ...超多花样
     }
 
     @Override
