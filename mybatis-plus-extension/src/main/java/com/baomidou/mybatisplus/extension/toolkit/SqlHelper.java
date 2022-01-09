@@ -216,11 +216,13 @@ public final class SqlHelper {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
         return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
             int size = list.size();
+            int idxLimit = Math.min(batchSize, size);
             int i = 1;
             for (E element : list) {
                 consumer.accept(sqlSession, element);
-                if ((i % batchSize == 0) || i == size) {
+                if (i == idxLimit) {
                     sqlSession.flushStatements();
+                    idxLimit = Math.min(idxLimit + batchSize, size);
                 }
                 i++;
             }
