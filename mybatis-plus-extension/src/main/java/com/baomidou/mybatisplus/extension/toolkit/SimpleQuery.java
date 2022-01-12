@@ -1,9 +1,11 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.*;
 import java.util.function.*;
@@ -40,7 +42,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A> Map<A, E> keyMap(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, Function.identity(), peeks);
+        return list2Map(selectList(getType(sFunction), wrapper), sFunction, Function.identity(), peeks);
     }
 
     /**
@@ -56,7 +58,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A> Map<A, E> keyMap(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, Function.identity(), isParallel, peeks);
+        return list2Map(selectList(getType(sFunction), wrapper), sFunction, Function.identity(), isParallel, peeks);
     }
 
     /**
@@ -64,7 +66,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A, P> Map<A, P> map(LambdaQueryWrapper<E> wrapper, SFunction<E, A> keyFunc, SFunction<E, P> valueFunc, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(keyFunc)).selectList(wrapper), keyFunc, valueFunc, peeks);
+        return list2Map(selectList(getType(keyFunc), wrapper), keyFunc, valueFunc, peeks);
     }
 
     /**
@@ -82,7 +84,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A, P> Map<A, P> map(LambdaQueryWrapper<E> wrapper, SFunction<E, A> keyFunc, SFunction<E, P> valueFunc, boolean isParallel, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(keyFunc)).selectList(wrapper), keyFunc, valueFunc, isParallel, peeks);
+        return list2Map(selectList(getType(keyFunc), wrapper), keyFunc, valueFunc, isParallel, peeks);
     }
 
     /**
@@ -90,7 +92,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A> Map<A, List<E>> group(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return listGroupBy(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, peeks);
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, peeks);
     }
 
     /**
@@ -98,7 +100,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <T, K> Map<K, List<T>> group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, boolean isParallel, Consumer<T>... peeks) {
-        return listGroupBy(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, isParallel, peeks);
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, isParallel, peeks);
     }
 
     /**
@@ -106,7 +108,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, Consumer<T>... peeks) {
-        return listGroupBy(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, downstream, false, peeks);
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, false, peeks);
     }
 
     /**
@@ -126,7 +128,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
-        return listGroupBy(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, downstream, isParallel, peeks);
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, isParallel, peeks);
     }
 
     /**
@@ -134,7 +136,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A> List<A> list(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return list2List(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, peeks);
+        return list2List(selectList(getType(sFunction), wrapper), sFunction, peeks);
     }
 
     /**
@@ -149,7 +151,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     public static <E, A> List<A> list(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
-        return list2List(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, isParallel, peeks);
+        return list2List(selectList(getType(sFunction), wrapper), sFunction, isParallel, peeks);
     }
 
     /**
@@ -304,5 +306,24 @@ public class SimpleQuery {
         return Stream.of(peeks).reduce(StreamSupport.stream(list.spliterator(), isParallel), Stream::peek, Stream::concat);
     }
 
+    /**
+     * 通过entityClass查询列表，并关闭sqlSession
+     *
+     * @param entityClass 表对应实体
+     * @param wrapper     条件构造器
+     * @param <E>         实体类型
+     * @return 查询列表结果
+     */
+    private static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
+        SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+        List<E> result;
+        try {
+            BaseMapper<E> userMapper = SqlHelper.getMapper(entityClass, sqlSession);
+            result = userMapper.selectList(wrapper);
+        } finally {
+            sqlSession.close();
+        }
+        return result;
+    }
 
 }
