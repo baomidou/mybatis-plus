@@ -295,10 +295,10 @@ public final class SqlHelper {
      * 通过entityClass获取Mapper，记得要释放连接
      * 例： {@code
      * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
-     * try{
-     * BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
-     * }finally{
-     * sqlSession.close();
+     * try {
+     *     BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
+     * } finally {
+     *     sqlSession.close();
      * }
      * }
      *
@@ -310,16 +310,11 @@ public final class SqlHelper {
     public static <T> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
         Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
-        String namespace = tableInfo.getCurrentNamespace();
-
-        Configuration configuration = tableInfo.getConfiguration();
-        BaseMapper<T> mapper;
         try {
-            mapper = (BaseMapper<T>) configuration.getMapper(Class.forName(namespace), sqlSession);
+            Configuration configuration = tableInfo.getConfiguration();
+            return (BaseMapper<T>) configuration.getMapper(Class.forName(tableInfo.getCurrentNamespace()), sqlSession);
         } catch (ClassNotFoundException e) {
             throw ExceptionUtils.mpe(e);
         }
-        return mapper;
     }
-
 }
