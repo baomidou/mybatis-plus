@@ -17,16 +17,27 @@ package com.baomidou.mybatisplus.core.incrementer;
 
 
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
 /**
  * Id生成器接口
  *
- * @author  nieqiuqiu
+ * @author nieqiuqiu
  * @since 2019-10-15
  * @since 3.3.0
  */
 public interface IdentifierGenerator {
+
+    /**
+     * 判断是否分配 ID
+     *
+     * @param idValue 主键值
+     * @return true 分配 false 无需分配
+     */
+    default boolean assignId(Object idValue) {
+        return StringUtils.checkValNull(idValue);
+    }
 
     /**
      * 生成Id
