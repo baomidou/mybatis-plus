@@ -475,41 +475,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO 初始化 id-work 以及 打印骚东西
         GlobalConfigUtils.setGlobalConfig(targetConfiguration, this.globalConfig);
 
-        // TODO 自定义枚举类扫描处理
-        if (hasLength(this.typeEnumsPackage)) {
-            Set<Class<?>> classes;
-            if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
-                && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
-                classes = scanClasses(typeEnumsPackage, null);
-                if (classes.isEmpty()) {
-                    LOGGER.warn(() -> "Can't find class in '[" + typeEnumsPackage + "]' package. Please check your configuration.");
-                }
-            } else {
-                classes = new HashSet<>();
-                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
-                Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
-                    try {
-                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, null);
-                        if (scanTypePackage.isEmpty()) {
-                            LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
-                        } else {
-                            classes.addAll(scanTypePackage);
-                        }
-                    } catch (IOException e) {
-                        throw new MybatisPlusException("Cannot scan class in '[" + typePackage + "]' package", e);
-                    }
-                });
-            }
-            // 取得类型转换注册器
-            TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
-            classes.stream()
-                .filter(Class::isEnum)
-                .filter(MybatisEnumTypeHandler::isMpEnums)
-                .forEach(cls -> typeHandlerRegistry.register(cls, MybatisEnumTypeHandler.class));
-        }
-
         Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
         Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
         Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
@@ -604,9 +569,41 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         } else {
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
+        //延迟处理，如果需要注册，必须放置在mapper文件处理解析后.
+        if (hasLength(this.typeEnumsPackage)) {
+            Set<Class<?>> classes;
+            if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
+                && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
+                classes = scanClasses(typeEnumsPackage, null);
+                if (classes.isEmpty()) {
+                    LOGGER.warn(() -> "Can't find class in '[" + typeEnumsPackage + "]' package. Please check your configuration.");
+                }
+            } else {
+                classes = new HashSet<>();
+                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
+                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
+                Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
+                    try {
+                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, null);
+                        if (scanTypePackage.isEmpty()) {
+                            LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
+                        } else {
+                            classes.addAll(scanTypePackage);
+                        }
+                    } catch (IOException e) {
+                        throw new MybatisPlusException("Cannot scan class in '[" + typePackage + "]' package", e);
+                    }
+                });
+            }
+            TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
+            classes.stream()
+                .filter(Class::isEnum)
+                .filter(MybatisEnumTypeHandler::isMpEnums)
+                .forEach(cls -> typeHandlerRegistry.register(cls, MybatisEnumTypeHandler.class));
+        }
 
         final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
-        System.out.println(sqlSessionFactory);
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
