@@ -314,7 +314,7 @@ public class SimpleQuery {
      * @param <E>         实体类型
      * @return 查询列表结果
      */
-    private static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
+    public static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         List<E> result;
         try {
