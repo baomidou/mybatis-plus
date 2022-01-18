@@ -3,9 +3,11 @@ package com.baomidou.mybatisplus.extension.toolkit;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 
 import java.util.*;
 import java.util.function.*;
@@ -314,14 +316,14 @@ public class SimpleQuery {
      * @param <E>         实体类型
      * @return 查询列表结果
      */
-    private static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
+    public static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         List<E> result;
         try {
             BaseMapper<E> userMapper = SqlHelper.getMapper(entityClass, sqlSession);
             result = userMapper.selectList(wrapper);
         } finally {
-            sqlSession.close();
+            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
         return result;
     }
