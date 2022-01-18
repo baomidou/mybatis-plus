@@ -604,10 +604,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
 
         final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
+
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
-        // TODO 打印骚东西 Banner
+        // TODO 打印 Banner
         if (globalConfig.isBanner()) {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
