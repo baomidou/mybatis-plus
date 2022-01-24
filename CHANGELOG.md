@@ -1,5 +1,18 @@
 ﻿# CHANGELOG
 
+## [v3.5.1] 2022.01.25
+
+- 新增 impala 数据库支~~持
+- 缓存动态获取数据库类型~~
+- 新增可控分配 id 方法 fixed github pull/4231
+- 延迟枚举扫描注册
+- 乐观锁插件支持根据wrapper填充 github pull/3664
+- H2KeyGenerator 语法修改
+- SimpleQuery 优化及Bug修改
+- fixed gitee issues/I4P9EN
+- SybaseDialect 关键词替换优化
+
+
 ## [v3.5.0] 2022.01.01
 
 - 升级 mybatis 3.5.9
