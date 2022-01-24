@@ -22,15 +22,13 @@ import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
 import com.baomidou.mybatisplus.test.mysql.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.mysql.enums.TestEnum;
 import com.baomidou.mybatisplus.test.mysql.mapper.MysqlDataMapper;
-import com.baomidou.mybatisplus.test.mysql.mapper.children.CommonDataChildrenMapper;
-import com.baomidou.mybatisplus.test.mysql.mapper.children.CommonLogicDataChildrenMapper;
-import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonDataCopyMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.commons.ResultMapEntityMapper;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -66,14 +64,8 @@ class MysqlTestDataMapperTest {
     private static final int fail = 0;
     @Resource(name = "commonDataMapper")
     protected CommonDataMapper commonDataMapper;
-    @Resource(name = "commonDataChildrenMapper")
-    protected CommonDataChildrenMapper commonDataChildrenMapper;
     @Resource(name = "commonLogicDataMapper")
     protected CommonLogicDataMapper commonLogicDataMapper;
-    @Resource(name = "commonLogicDataChildrenMapper")
-    protected CommonLogicDataChildrenMapper commonLogicDataChildrenMapper;
-    @Resource
-    protected CommonDataCopyMapper commonDataCopyMapper;
     @Resource
     protected ResultMapEntityMapper resultMapEntityMapper;
     @Autowired
@@ -103,6 +95,19 @@ class MysqlTestDataMapperTest {
             mysqlMapper.insert(data);
             assertThat(data.getId()).isNotNull();
         }
+    }
+
+    @Test
+    void a011_insertIdAuto() {
+        commonDataMapper.delete(null);
+        for (int i = 0; i < 20; i++) {
+            String str = String.format("第%s条数据", i);
+            commonDataMapper.insert(new CommonData().setTestInt(i).setTestStr(str)
+                    .setId(Long.valueOf(i))
+                .setTestEnum(TestEnum.ONE));
+        }
+        Assertions.assertEquals(20, commonDataMapper.selectCount(null));
+        commonDataMapper.delete(null);
     }
 
     @Test
