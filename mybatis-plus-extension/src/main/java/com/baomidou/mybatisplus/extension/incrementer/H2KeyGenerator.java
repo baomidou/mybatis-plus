@@ -28,7 +28,7 @@ public class H2KeyGenerator implements IKeyGenerator {
 
     @Override
     public String executeSql(String incrementerName) {
-        return "select " + incrementerName + ".nextval";
+        return "select nextval('" + incrementerName + "')";
     }
 
     @Override

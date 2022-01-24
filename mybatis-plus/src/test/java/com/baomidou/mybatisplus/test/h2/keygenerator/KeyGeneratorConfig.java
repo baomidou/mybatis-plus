@@ -68,7 +68,7 @@ public class KeyGeneratorConfig {
 
                 @Override
                 public String executeSql(String incrementerName) {
-                    return "select " + incrementerName + ".nextval";
+                    return "select nextval('" + incrementerName + "')";
                 }
 
                 @Override
