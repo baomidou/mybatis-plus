@@ -491,6 +491,7 @@ public class TableInfoHelper {
     /**
      * <p>
      * 获取该类的所有属性列表
+     * 将父类不可继承的字段排除
      * </p>
      *
      * @param clazz 反射类
@@ -502,7 +503,15 @@ public class TableInfoHelper {
             .filter(field -> {
                 /* 过滤注解非表字段属性 */
                 TableField tableField = field.getAnnotation(TableField.class);
-                return (tableField == null || tableField.exist());
+                boolean result = tableField == null || tableField.exist();
+                if (result) {
+                    Class<?> targetClazz = field.getDeclaringClass();
+                    if (targetClazz != clazz) {
+                        // 父类的字段
+                        result =  tableField == null || tableField.canExtends();
+                    }
+                }
+                return result;
             }).collect(toList());
     }
 

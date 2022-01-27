@@ -179,4 +179,60 @@ public @interface TableField {
      * @since 3.1.2
      */
     String numericScale() default "";
+
+    /**
+     *
+     * 指定字段是否可以被继承（物理表的继承，继承时子类的表中需要定义父类的字段。否则不需要定义）
+     * <br></br>
+     * 适用于基础表+多子类扩展表设计
+     * <p></p>
+     *
+     * <pre class="code">
+     * 例子:
+     * &#064;TableName("cu_user_base")
+     * public class UserModel extends Model<UserModel>  {
+     *
+     *     &#064;TableId(type = IdType.AUTO)
+     *     private Long id;
+     *
+     *     &#064;TableField(canExtends = false)
+     *     private String name;
+     *
+     *     &#064;TableField(canExtends = false)
+     *     private String header;
+     * }
+     * </pre>
+     * <pre class="code">
+     * // admin用户属于用户，所以继承UserModel，通过id相同关联cu_user_base，
+     * // 使用cu_user_base维护管理员用户的name和header，cu_user_admin维护admin用户独有的position字段
+     * &#064;TableName("cu_user_admin")
+     * public class AdminUser extends UserModel  {
+     *
+     *     private String position;
+     * }
+     * </pre>
+     * <pre class="code">
+     * // member与admin逻辑一样，只是特有的字段与admin不一致
+     * &#064;TableName("cu_user_member")
+     * public class MemberUser extends UserModel  {
+     *
+     *     private String email;
+     * }
+     * </pre>
+     * <pre class="code">
+     * 产生的表结构
+     * cu_user_base(id, name, header)
+     * cu_user_admin(id, position)
+     * cu_user_member(id, email)
+     * </pre>
+     * <p>
+     *     在数据设计中 cu_user_base 包含用户基础的id，name，header。<br></br>
+     *     cu_user_admin 表只会存在id和position。通过id相同与cu_user_base关联起来。保证在逻辑上admin是用户。cu_user_member同理。<br></br>
+     *     在这样的设计中会出现三个Mapper。对于基础用户会出现的功能我们都直接通过cu_user_base去实现。只有特定于amdin或者member时我们才通过对应的表实现。<br></br>
+     *     在默认情况下父类的字段可以直接被子类继承
+     * </p>
+     * <p></p>
+     * @since 3.5.2
+     */
+    boolean canExtends() default true;
 }
