@@ -141,7 +141,7 @@ public final class ReflectionKit {
                 /* 过滤静态属性 */
                 .filter(f -> !Modifier.isStatic(f.getModifiers()))
                 /* 过滤 transient关键字修饰的属性 */
-                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .filter(f -> f.getDeclaringClass() == clazz || !Modifier.isTransient(f.getModifiers()))
                 .collect(Collectors.toList());
         });
     }
