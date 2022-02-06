@@ -344,6 +344,16 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
+
+        // #4291 插入语句至少需要一个字段
+        if (havePK()) {
+            if (CollectionUtils.isEmpty(fieldList)) {
+                return SqlScriptUtils.safeParam(newPrefix + keyProperty);
+            }
+        } else if (CollectionUtils.isNotEmpty(fieldList)) {
+            return fieldList.get(0).getInsertSqlProperty(newPrefix);
+        }
+
         return getKeyInsertSqlProperty(false, newPrefix, true) + fieldList.stream()
             .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
@@ -358,6 +368,15 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getAllInsertSqlColumnMaybeIf(final String prefix) {
+        // #4291 插入语句至少需要一个字段
+        if (havePK()) {
+            if (CollectionUtils.isEmpty(fieldList)) {
+                return keyColumn;
+            }
+        } else if (CollectionUtils.isNotEmpty(fieldList)) {
+            return fieldList.get(0).getColumn();
+        }
+
         final String newPrefix = prefix == null ? EMPTY : prefix;
         return getKeyInsertSqlColumn(false, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
