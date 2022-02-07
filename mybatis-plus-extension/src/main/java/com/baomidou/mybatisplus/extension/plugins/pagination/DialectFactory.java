@@ -43,6 +43,7 @@ public class DialectFactory {
                 || dbType == DbType.GBASE
                 || dbType == DbType.OSCAR
                 || dbType == DbType.XU_GU
+                || dbType == DbType.VERTICA
                 || dbType == DbType.CLICK_HOUSE
                 || dbType == DbType.OCEAN_BASE
                 || dbType == DbType.CUBRID
@@ -78,7 +79,7 @@ public class DialectFactory {
                 dialect = new SQLServerDialect();
             } else if (dbType == DbType.SYBASE) {
                 dialect = new SybaseDialect();
-            } else if (dbType == DbType.GBASEDBT){
+            } else if (dbType == DbType.GBASEDBT) {
                 dialect = new GBasedbtDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
