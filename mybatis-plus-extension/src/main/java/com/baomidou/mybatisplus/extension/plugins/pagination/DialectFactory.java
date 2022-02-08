@@ -80,6 +80,8 @@ public class DialectFactory {
                 dialect = new SybaseDialect();
             } else if (dbType == DbType.GBASEDBT){
                 dialect = new GBasedbtDialect();
+            } else if (dbType == DbType.VERTICA) {
+                dialect = new VerticaDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

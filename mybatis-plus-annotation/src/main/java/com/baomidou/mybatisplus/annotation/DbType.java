@@ -144,6 +144,10 @@ public enum DbType {
      */
     IMPALA("impala", "impala数据库"),
     /**
+     * Vertica
+     */
+    VERTICA("vertica", "vertica数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
