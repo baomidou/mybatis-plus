@@ -118,6 +118,8 @@ public class JdbcUtils {
             return DbType.SAP_HANA;
         } else if (url.contains(":impala:")) {
             return DbType.IMPALA;
+        } else if (url.contains(":vertica:")) {
+            return DbType.VERTICA;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
