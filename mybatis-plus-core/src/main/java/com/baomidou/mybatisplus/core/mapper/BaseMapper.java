@@ -184,7 +184,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 根据 Wrapper 条件，判断是否存在记录
      *
      * @param queryWrapper 实体对象封装操作类
-     * @return
+     * @return 是否存在记录
      */
     default boolean exists(Wrapper<T> queryWrapper) {
         Long count = this.selectCount(queryWrapper);
