@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
@@ -288,6 +289,25 @@ public final class SqlHelper {
             return (BaseMapper<T>) configuration.getMapper(Class.forName(tableInfo.getCurrentNamespace()), sqlSession);
         } catch (ClassNotFoundException e) {
             throw ExceptionUtils.mpe(e);
+        }
+    }
+
+    /**
+     * 通过entityClass获取BaseMapper，再传入lambda使用该mapper，本方法自动释放链接
+     *
+     * @param entityClass 实体类
+     * @param sFunction   lambda操作，例如 {@code m->m.selectList(wrapper)}
+     * @param <T>         实体类的类型
+     * @param <R>         返回值类型
+     * @return 返回lambda执行结果
+     */
+    public static <T, R> R execute(Class<T> entityClass, SFunction<BaseMapper<T>, R> sFunction) {
+        SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+        try {
+            BaseMapper<T> baseMapper = SqlHelper.getMapper(entityClass, sqlSession);
+            return sFunction.apply(baseMapper);
+        } finally {
+            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
     }
 }

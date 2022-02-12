@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
@@ -23,11 +24,12 @@ import java.util.List;
 public class SqlHelperTest extends BaseDbTest<EntityMapper> {
 
     @Test
-    public void testGetMapper() {
+    public void testGetMapperAndExecute() {
         SqlSession sqlSession = SqlHelper.sqlSession(Entity.class);
         try {
             BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class, sqlSession);
-            System.out.println(mapper.selectList(Wrappers.lambdaQuery()));
+            List<Entity> entityList = SqlHelper.execute(Entity.class, m -> m.selectList(Wrappers.lambdaQuery()));
+            Assert.isTrue(entityList.equals(mapper.selectList(Wrappers.lambdaQuery())), "There is something wrong,please check your environment!");
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(Entity.class));
         }
