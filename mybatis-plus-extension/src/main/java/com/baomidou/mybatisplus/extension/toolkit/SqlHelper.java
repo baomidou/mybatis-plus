@@ -264,33 +264,6 @@ public final class SqlHelper {
         return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
     }
 
-
-    /**
-     * 通过entityClass获取Mapper
-     *
-     * @param entityClass 实体
-     * @param <T>         实体类型
-     * @return Mapper
-     * @deprecated 使用后未释放连接 {@link SqlHelper#getMapper(Class, SqlSession)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public static <T> BaseMapper<T> getMapper(Class<T> entityClass) {
-        Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
-        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
-        String namespace = tableInfo.getCurrentNamespace();
-
-        Configuration configuration = tableInfo.getConfiguration();
-        SqlSession sqlSession = sqlSession(entityClass);
-        BaseMapper<T> mapper;
-        try {
-            mapper = (BaseMapper<T>) configuration.getMapper(Class.forName(namespace), sqlSession);
-        } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.mpe(e);
-        }
-        return mapper;
-    }
-
     /**
      * 通过entityClass获取Mapper，记得要释放连接
      * 例： {@code

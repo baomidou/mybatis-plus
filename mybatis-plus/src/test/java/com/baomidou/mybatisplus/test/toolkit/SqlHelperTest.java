@@ -1,12 +1,15 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
+import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.Test;
+import org.mybatis.spring.SqlSessionUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +24,14 @@ public class SqlHelperTest extends BaseDbTest<EntityMapper> {
 
     @Test
     public void testGetMapper() {
-        BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class);
-        System.out.println(mapper.selectList(Wrappers.lambdaQuery()));
+        SqlSession sqlSession = SqlHelper.sqlSession(Entity.class);
+        try {
+            BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class, sqlSession);
+            System.out.println(mapper.selectList(Wrappers.lambdaQuery()));
+        } finally {
+            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(Entity.class));
+        }
+
     }
 
     @Override

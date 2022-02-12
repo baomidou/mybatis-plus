@@ -1,10 +1,8 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
@@ -55,11 +53,12 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
     @Test
     public void testGroup() {
         // 我需要相同名字的用户的分为一组，再造一条数据
-        BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class);
-        Entity entity = new Entity();
-        entity.setId(3L);
-        entity.setName("ruben");
-        mapper.insert(entity);
+        doTestAutoCommit(m -> {
+            Entity entity = new Entity();
+            entity.setId(3L);
+            entity.setName("ruben");
+            m.insert(entity);
+        });
 
         // 简单查询
         Map<String, List<Entity>> nameUsersMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName);
