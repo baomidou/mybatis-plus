@@ -127,6 +127,7 @@ subprojects {
                 attributes 'Built-By': System.getProperty("user.name")
                 attributes 'Build-Jdk': System.getProperty("java.version")
                 attributes 'Build-Timestamp': LocalDateTime.now().format("yyyy-MM-dd HH:mm:ss")
+                attributes 'Automatic-Module-Name': "${project.group}.${project.name.replaceAll("-",".")}"
             }
         }
     }
