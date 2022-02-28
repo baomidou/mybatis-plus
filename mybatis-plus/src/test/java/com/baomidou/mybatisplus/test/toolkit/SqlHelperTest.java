@@ -1,19 +1,16 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
-import org.apache.ibatis.session.SqlSession;
-import org.junit.jupiter.api.Test;
-import org.mybatis.spring.SqlSessionUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * SqlHelper 工具类测试
@@ -25,15 +22,16 @@ public class SqlHelperTest extends BaseDbTest<EntityMapper> {
 
     @Test
     public void testGetMapperAndExecute() {
-        SqlSession sqlSession = SqlHelper.sqlSession(Entity.class);
-        try {
-            BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class, sqlSession);
-            List<Entity> entityList = SqlHelper.execute(Entity.class, m -> m.selectList(Wrappers.lambdaQuery()));
-            Assert.isTrue(entityList.equals(mapper.selectList(Wrappers.lambdaQuery())), "There is something wrong,please check your environment!");
-        } finally {
-            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(Entity.class));
-        }
 
+        List<Entity> entityList = SqlHelper.execute(Entity.class, m -> m.selectList(Wrappers.lambdaQuery()));
+
+        Entity ruben = new Entity();
+        ruben.setId(1L);
+        ruben.setName("ruben");
+        Entity aChao = new Entity();
+        aChao.setId(2L);
+        aChao.setName("a chao");
+        Assert.isTrue(entityList.equals(Arrays.asList(ruben, aChao)), "There is something wrong,please check your environment!");
     }
 
     @Override
