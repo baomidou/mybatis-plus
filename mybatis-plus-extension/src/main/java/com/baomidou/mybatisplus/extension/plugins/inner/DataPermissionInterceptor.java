@@ -29,11 +29,14 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -59,6 +62,20 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
         }
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), ms.getId()));
+    }
+
+    @Override
+    public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+        PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
+        MappedStatement ms = mpSh.mappedStatement();
+        SqlCommandType sct = ms.getSqlCommandType();
+        if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+            if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
+                return;
+            }
+            PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+            mpBs.sql(parserMulti(mpBs.sql(), ms.getId()));
+        }
     }
 
     @Override
@@ -101,7 +118,6 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
             update.setWhere(sqlSegment);
         }
     }
-
 
     /**
      * delete 语句处理
