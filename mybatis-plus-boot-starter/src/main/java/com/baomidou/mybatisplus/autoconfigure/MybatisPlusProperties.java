@@ -106,8 +106,11 @@ public class MybatisPlusProperties {
     private MybatisConfiguration configuration;
 
     /**
-     * TODO 枚举包扫描
+     * 不再需要这个配置,放心删除
+     *
+     * @deprecated 2022-03-07
      */
+    @Deprecated
     private String typeEnumsPackage;
 
     /**

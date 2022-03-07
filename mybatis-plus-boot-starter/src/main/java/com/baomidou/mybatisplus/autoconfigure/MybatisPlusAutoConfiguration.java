@@ -200,10 +200,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
         Optional.ofNullable(defaultLanguageDriver).ifPresent(factory::setDefaultScriptingLanguageDriver);
 
-        // TODO 自定义枚举包
-        if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
-            factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
-        }
         // TODO 此处必为非 NULL
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
         // TODO 注入填充器

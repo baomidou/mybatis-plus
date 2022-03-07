@@ -1,10 +1,8 @@
 package com.baomidou.mybatisplus.test.enums;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 
 import java.io.Serializable;
 
@@ -23,7 +21,8 @@ public class Entity implements Serializable {
     private EnumStr enumStr;
 
     private EnumInt enumInt;
-
-    @TableField(typeHandler = EnumOrdinalTypeHandler.class, javaType = true)
+    /**
+     * 使用 EnumOrdinalTypeHandler
+     */
     private EnumOrdinal enumOrdinal;
 }

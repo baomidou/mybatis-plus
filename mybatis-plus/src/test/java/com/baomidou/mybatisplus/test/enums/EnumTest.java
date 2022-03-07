@@ -1,8 +1,8 @@
 package com.baomidou.mybatisplus.test.enums;
 
-import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -47,7 +47,10 @@ class EnumTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected Consumer<Configuration> consumer() {
-        return i -> i.setDefaultEnumTypeHandler(MybatisEnumTypeHandler.class);
+        /**
+         * see {@link Entity#enumOrdinal}
+         */
+        return i -> i.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
     }
 
     @Override
