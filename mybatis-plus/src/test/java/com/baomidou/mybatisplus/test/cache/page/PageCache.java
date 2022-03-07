@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.pagecache;
+package com.baomidou.mybatisplus.test.cache.page;
 
 import lombok.Data;
 
@@ -11,8 +11,6 @@ import java.io.Serializable;
 @Data
 public class PageCache implements Serializable {
     private static final long serialVersionUID = 6962439201546719734L;
-
     private Long id;
-
     private String name;
 }
