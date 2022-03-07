@@ -26,7 +26,7 @@ class EnumTest extends BaseDbTest<EntityMapper> {
             assertThat(insert).as("插入成功").isEqualTo(1);
         });
 
-        doTest(m -> {
+        doTestAutoCommit(m -> {
             Entity entity = m.selectById(id);
             assertThat(entity).as("查出刚刚插入的数据").isNotNull();
             assertThat(entity.getEnumInt()).as("枚举正确").isEqualTo(EnumInt.ONE);
@@ -34,6 +34,14 @@ class EnumTest extends BaseDbTest<EntityMapper> {
             assertThat(entity.getEnumOrdinal()).as("枚举正确").isEqualTo(EnumOrdinal.TWO);
             entity.setEnumOrdinal(EnumOrdinal.ONE);
             m.updateById(entity);
+        });
+
+        doTest(m -> {
+            Entity entity = m.findById(id);
+            assertThat(entity).as("查出刚刚插入的数据").isNotNull();
+            assertThat(entity.getEnumInt()).as("枚举正确").isEqualTo(EnumInt.ONE);
+            assertThat(entity.getEnumStr()).as("枚举正确").isEqualTo(EnumStr.TWO);
+            assertThat(entity.getEnumOrdinal()).as("枚举正确").isEqualTo(EnumOrdinal.ONE);
         });
     }
 

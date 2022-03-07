@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.enums.EntityMapper">
+
+    <resultMap id="result" type="com.baomidou.mybatisplus.test.enums.Entity" autoMapping="true">
+        <result property="enumOrdinal" column="enum_ordinal"
+                typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+    </resultMap>
+
+    <select id="findById" resultMap="result">
+        select *
+        from entity
+        where id = #{id}
+    </select>
+</mapper>

@@ -7,4 +7,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2020-06-23
  */
 public interface EntityMapper extends BaseMapper<Entity> {
+
+    Entity findById(Long id);
 }
