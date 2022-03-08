@@ -45,7 +45,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @author hubin
+ * @author hubin hccake
  * @since 3.4.0
  */
 @Data
@@ -470,7 +470,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                         onTables = Collections.singletonList(leftTable);
                     }
                 } else if (join.isLeft()) {
-                     onTables = Collections.singletonList(joinTable);
+                    onTables = Collections.singletonList(joinTable);
                 } else if (join.isInner()) {
                     if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
@@ -528,17 +528,20 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         if (CollectionUtils.isEmpty(tables)) {
             return currentExpression;
         }
-        // 租户
-        Expression tenantId = tenantLineHandler.getTenantId();
-        // 构造每张表的条件
-        List<EqualsTo> equalsTos = tables.stream()
-            .filter(x -> !tenantLineHandler.ignoreTable(x.getName()))
-            .map(item -> new EqualsTo(getAliasColumn(item), tenantId))
-            .collect(Collectors.toList());
 
-        if(CollectionUtils.isEmpty(equalsTos)){
+        // 获取到需要处理的租户表
+        List<Table> tenantTables = tables.stream()
+            .filter(x -> !tenantLineHandler.ignoreTable(x.getName()))
+            .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(tenantTables)) {
             return currentExpression;
         }
+
+        // 获取 租户 id，拼接条件
+        Expression tenantId = tenantLineHandler.getTenantId();
+        List<Expression> equalsTos = tenantTables.stream()
+            .map(item -> new EqualsTo(getAliasColumn(item), tenantId))
+            .collect(Collectors.toList());
 
         // 注入的表达式
         Expression injectExpression = equalsTos.get(0);
