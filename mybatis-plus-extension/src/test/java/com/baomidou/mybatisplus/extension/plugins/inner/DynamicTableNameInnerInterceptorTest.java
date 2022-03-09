@@ -20,25 +20,27 @@ class DynamicTableNameInnerInterceptorTest {
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     void doIt() {
         DynamicTableNameInnerInterceptor interceptor = new DynamicTableNameInnerInterceptor();
-        interceptor.setTableNameHandler((sql, tableName) -> "t_user_r");
+        interceptor.setTableNameHandler((sql, tableName) -> tableName + "_r");
+
         // 表名相互包含
         @Language("SQL")
-        String origin = "SELECT * FROM t_user, t_user_role", replaced = "SELECT * FROM t_user_r, t_user_role";
-        assertEquals(replaced, interceptor.changeTable(origin));
+        String origin = "SELECT * FROM t_user, t_user_role";
+        assertEquals("SELECT * FROM t_user_r, t_user_role_r", interceptor.changeTable(origin));
+
         // 表名在末尾
         origin = "SELECT * FROM t_user";
-        replaced = "SELECT * FROM t_user_r";
-        assertEquals(replaced, interceptor.changeTable(origin));
+        assertEquals("SELECT * FROM t_user_r", interceptor.changeTable(origin));
+
         // 表名前后有注释
         origin = "SELECT * FROM /**/t_user/* t_user */";
-        replaced = "SELECT * FROM /**/t_user_r/* t_user */";
-        assertEquals(replaced, interceptor.changeTable(origin));
+        assertEquals("SELECT * FROM /**/t_user_r/* t_user */", interceptor.changeTable(origin));
+
         // 值中带有表名
         origin = "SELECT * FROM t_user WHERE name = 't_user'";
-        replaced = "SELECT * FROM t_user_r WHERE name = 't_user'";
-        assertEquals(replaced, interceptor.changeTable(origin));
+        assertEquals("SELECT * FROM t_user_r WHERE name = 't_user'", interceptor.changeTable(origin));
+
         // 别名被声明要替换
         origin = "SELECT t_user.* FROM t_user_real t_user";
-        assertEquals(origin, interceptor.changeTable(origin));
+        assertEquals("SELECT t_user.* FROM t_user_real_r t_user", interceptor.changeTable(origin));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -200,10 +200,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
         Optional.ofNullable(defaultLanguageDriver).ifPresent(factory::setDefaultScriptingLanguageDriver);
 
-        // TODO 自定义枚举包
-        if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
-            factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
-        }
         // TODO 此处必为非 NULL
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
         // TODO 注入填充器

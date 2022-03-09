@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,19 +30,25 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 public class DeleteBatchByIds extends AbstractMethod {
 
+    public DeleteBatchByIds() {
+        super("deleteBatchIds");
+    }
+
+    /**
+     * @param name 方法名
+     * @since 3.5.0
+     */
+    public DeleteBatchByIds(String name) {
+        super(name);
+    }
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
         if (tableInfo.isWithLogicDelete()) {
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                tableInfo.getKeyColumn(),
-                SqlScriptUtils.convertForeach(
-                    SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
-                        "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
-                    COLLECTION, null, "item", COMMA),
-                tableInfo.getLogicDeleteSql(true, true));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
+            sql = logicDeleteScript(tableInfo, sqlMethod);
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
@@ -51,8 +57,22 @@ public class DeleteBatchByIds extends AbstractMethod {
                     SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                     COLLECTION, null, "item", COMMA));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, tableInfo.getKeyType());
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             return this.addDeleteMappedStatement(mapperClass, getMethod(sqlMethod), sqlSource);
         }
+    }
+
+    /**
+     * @param tableInfo 表信息
+     * @return 逻辑删除脚本
+     * @since 3.5.0
+     */
+    public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
+        return String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+            sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
+                SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
+                    "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
+                COLLECTION, null, "item", COMMA),
+            tableInfo.getLogicDeleteSql(true, true));
     }
 }

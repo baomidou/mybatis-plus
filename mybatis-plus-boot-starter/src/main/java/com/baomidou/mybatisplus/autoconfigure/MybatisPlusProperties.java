@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,8 +106,11 @@ public class MybatisPlusProperties {
     private MybatisConfiguration configuration;
 
     /**
-     * TODO 枚举包扫描
+     * 不再需要这个配置,放心删除
+     *
+     * @deprecated 2022-03-07
      */
+    @Deprecated
     private String typeEnumsPackage;
 
     /**

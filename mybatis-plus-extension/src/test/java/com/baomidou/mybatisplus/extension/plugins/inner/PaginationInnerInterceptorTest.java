@@ -20,47 +20,47 @@ class PaginationInnerInterceptorTest {
     void optimizeCount() {
         /* 能进行优化的 SQL */
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id",
-            "SELECT COUNT(*) FROM user u");
+            "SELECT COUNT(*) AS total FROM user u");
 
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xx = ?",
-            "SELECT COUNT(*) FROM user u WHERE u.xx = ?");
+            "SELECT COUNT(*) AS total FROM user u WHERE u.xx = ?");
 
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id LEFT JOIN permission p on p.id = u.per_id",
-            "SELECT COUNT(*) FROM user u");
+            "SELECT COUNT(*) AS total FROM user u");
 
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id LEFT JOIN permission p on p.id = u.per_id WHERE u.xx = ?",
-            "SELECT COUNT(*) FROM user u WHERE u.xx = ?");
+            "SELECT COUNT(*) AS total FROM user u WHERE u.xx = ?");
     }
 
     @Test
     void notOptimizeCount() {
         /* 不能进行优化的 SQL */
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? where u.xx = ?",
-            "SELECT COUNT(*) FROM user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? WHERE u.xx = ?");
+            "SELECT COUNT(*) AS total FROM user u LEFT JOIN role r ON r.id = u.role_id AND r.name = ? WHERE u.xx = ?");
 
         /* join 表与 where 条件大小写不同的情况 */
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id where R.NAME = ?",
-            "SELECT COUNT(*) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE R.NAME = ?");
+            "SELECT COUNT(*) AS total FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE R.NAME = ?");
 
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?",
-            "SELECT COUNT(*) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?");
+            "SELECT COUNT(*) AS total FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?");
     }
 
     @Test
     void optimizeCountOrderBy() {
         /* order by 里不带参数,去除order by */
         assertsCountSql("SELECT * FROM comment ORDER BY name",
-            "SELECT COUNT(*) FROM comment");
+            "SELECT COUNT(*) AS total FROM comment");
 
         /* order by 里带参数,不去除order by */
         assertsCountSql("SELECT * FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)",
-            "SELECT COUNT(*) FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)");
+            "SELECT COUNT(*) AS total FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)");
     }
 
     @Test
     void withAsCount() {
         assertsCountSql("with A as (select * from class) select * from A",
-            "WITH A AS (SELECT * FROM class) SELECT COUNT(*) FROM A");
+            "WITH A AS (SELECT * FROM class) SELECT COUNT(*) AS total FROM A");
     }
 
     @Test
@@ -83,15 +83,15 @@ class PaginationInnerInterceptorTest {
                 "from reseller_acquire_log ral " +
                 "group by ral.reseller_id) rlr on r.id = rlr.reseller_id " +
                 "order by r.created_at desc",
-            "SELECT COUNT(*) FROM reseller r");
+            "SELECT COUNT(*) AS total FROM reseller r");
 
         // 不优化
         assertsCountSql("SELECT f.ca, f.cb FROM table_a f LEFT JOIN " +
                 "(SELECT ca FROM table_b WHERE cc = ?) rf on rf.ca = f.ca",
-            "SELECT COUNT(*) FROM table_a f LEFT JOIN (SELECT ca FROM table_b WHERE cc = ?) rf ON rf.ca = f.ca");
+            "SELECT COUNT(*) AS total FROM table_a f LEFT JOIN (SELECT ca FROM table_b WHERE cc = ?) rf ON rf.ca = f.ca");
 
         assertsCountSql("select * from order_info left join (select count(1) from order_info where create_time between ? and ?) tt on 1=1 WHERE equipment_id=?",
-            "SELECT COUNT(*) FROM order_info LEFT JOIN (SELECT count(1) FROM order_info WHERE create_time BETWEEN ? AND ?) tt ON 1 = 1 WHERE equipment_id = ?");
+            "SELECT COUNT(*) AS total FROM order_info LEFT JOIN (SELECT count(1) FROM order_info WHERE create_time BETWEEN ? AND ?) tt ON 1 = 1 WHERE equipment_id = ?");
     }
 
     void assertsCountSql(String sql, String targetSql) {

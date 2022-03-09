@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,12 @@ import java.util.List;
 @AllArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
+    private Runnable hook;
+
+    public void setHook(Runnable hook) {
+        this.hook = hook;
+    }
+
     /**
      * 表名处理器，是否处理表名的情况都在该处理器中自行判断
      */
@@ -57,8 +63,10 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
-        mpBs.sql(this.changeTable(mpBs.sql()));
+        if (!InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
+            // 非忽略执行
+            mpBs.sql(this.changeTable(mpBs.sql()));
+        }
     }
 
     @Override
@@ -67,9 +75,11 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
-            PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            mpBs.sql(this.changeTable(mpBs.sql()));
+            if (!InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
+                // 非忽略执行
+                PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+                mpBs.sql(this.changeTable(mpBs.sql()));
+            }
         }
     }
 
@@ -90,6 +100,9 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         }
         if (last != sql.length()) {
             builder.append(sql.substring(last));
+        }
+        if (hook != null) {
+            hook.run();
         }
         return builder.toString();
     }

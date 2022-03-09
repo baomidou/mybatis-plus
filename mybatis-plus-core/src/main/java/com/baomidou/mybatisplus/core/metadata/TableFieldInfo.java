@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,7 @@ public class TableFieldInfo implements Constants {
     /**
      * 是否是逻辑删除字段
      */
+    @Getter
     private boolean logicDelete = false;
     /**
      * 逻辑删除值

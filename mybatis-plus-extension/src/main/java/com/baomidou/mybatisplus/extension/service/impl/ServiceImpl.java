@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -251,6 +251,68 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
+    }
+
+    @Override
+    public boolean removeById(Serializable id) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
+        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            return removeById(id, true);
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeByIds(Collection<?> list) {
+        if (CollectionUtils.isEmpty(list)) {
+            return false;
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
+        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            return removeBatchByIds(list, true);
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+    }
+
+    @Override
+    public boolean removeById(Serializable id, boolean useFill) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        if (useFill && tableInfo.isWithLogicDelete()) {
+            if (!entityClass.isAssignableFrom(id.getClass())) {
+                T instance = tableInfo.newInstance();
+                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), id);
+                return removeById(instance);
+            }
+        }
+        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeBatchByIds(Collection<?> list, int batchSize) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return removeBatchByIds(list, batchSize, tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
+        String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        return executeBatch(list, batchSize, (sqlSession, e) -> {
+            if (useFill && tableInfo.isWithLogicDelete()) {
+                if (entityClass.isAssignableFrom(e.getClass())) {
+                    sqlSession.update(sqlStatement, e);
+                } else {
+                    T instance = tableInfo.newInstance();
+                    tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), e);
+                    sqlSession.update(sqlStatement, instance);
+                }
+            } else {
+                sqlSession.update(sqlStatement, e);
+            }
+        });
     }
 
 }

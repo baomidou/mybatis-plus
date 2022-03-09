@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
@@ -41,6 +42,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     @SuppressWarnings("unchecked")
     public BaseDbTest() {
+        SqlRunner.DEFAULT.close();
         DataSource ds = dataSource();
         List<String> tableSql = tableSql();
         String tableDataSql = tableDataSql();

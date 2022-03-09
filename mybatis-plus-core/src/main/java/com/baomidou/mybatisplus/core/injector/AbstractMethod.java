@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.injector;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -55,6 +53,30 @@ public abstract class AbstractMethod implements Constants {
     protected Configuration configuration;
     protected LanguageDriver languageDriver;
     protected MapperBuilderAssistant builderAssistant;
+
+    /**
+     * 方法名称
+     * @since 3.5.0
+     */
+    protected final String methodName;
+
+    /**
+     * @see AbstractMethod#AbstractMethod(java.lang.String)
+     * @since 3.5.0
+     */
+    @Deprecated
+    public AbstractMethod() {
+        methodName = null;
+    }
+
+    /**
+     * @param methodName 方法名
+     * @since 3.5.0
+     */
+    protected AbstractMethod(String methodName) {
+        Assert.notNull(methodName, "方法名不能为空");
+        this.methodName = methodName;
+    }
 
     /**
      * 注入自定义方法
@@ -301,11 +323,28 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 查询
+     * @since 3.5.0
+     */
+    protected MappedStatement addSelectMappedStatementForTable(Class<?> mapperClass, SqlSource sqlSource, TableInfo table) {
+        return addSelectMappedStatementForTable(mapperClass, this.methodName, sqlSource, table);
+    }
+
+    /**
+     * 查询
      */
     protected MappedStatement addSelectMappedStatementForOther(Class<?> mapperClass, String id, SqlSource sqlSource,
                                                                Class<?> resultType) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
             null, resultType, NoKeyGenerator.INSTANCE, null, null);
+    }
+
+    /**
+     * 查询
+     *
+     * @since 3.5.0
+     */
+    protected MappedStatement addSelectMappedStatementForOther(Class<?> mapperClass, SqlSource sqlSource, Class<?> resultType) {
+        return addSelectMappedStatementForOther(mapperClass, this.methodName, sqlSource, resultType);
     }
 
     /**
@@ -319,11 +358,29 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
+     * 插入
+     * @since 3.5.0
+     */
+    protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> parameterType,
+                                                       SqlSource sqlSource, KeyGenerator keyGenerator,
+                                                       String keyProperty, String keyColumn) {
+        return addInsertMappedStatement(mapperClass, parameterType, this.methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
+    }
+
+
+    /**
      * 删除
      */
     protected MappedStatement addDeleteMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.DELETE, null,
             null, Integer.class, NoKeyGenerator.INSTANCE, null, null);
+    }
+
+    /**
+     * @since 3.5.0
+     */
+    protected MappedStatement addDeleteMappedStatement(Class<?> mapperClass, SqlSource sqlSource) {
+        return addDeleteMappedStatement(mapperClass, this.methodName, sqlSource);
     }
 
     /**
@@ -333,6 +390,16 @@ public abstract class AbstractMethod implements Constants {
                                                        SqlSource sqlSource) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, parameterType, null,
             Integer.class, NoKeyGenerator.INSTANCE, null, null);
+    }
+
+    /**
+     * 更新
+     *
+     * @since 3.5.0
+     */
+    protected MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> parameterType,
+                                                       SqlSource sqlSource) {
+        return addUpdateMappedStatement(mapperClass, parameterType, this.methodName, sqlSource);
     }
 
     /**
@@ -356,6 +423,16 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
+     * @since 3.5.0
+     */
+    protected MappedStatement addMappedStatement(Class<?> mapperClass, SqlSource sqlSource,
+                                                 SqlCommandType sqlCommandType, Class<?> parameterType,
+                                                 String resultMap, Class<?> resultType, KeyGenerator keyGenerator,
+                                                 String keyProperty, String keyColumn) {
+        return addMappedStatement(mapperClass, this.methodName, sqlSource, sqlCommandType, parameterType, resultMap, resultType, keyGenerator, keyProperty, keyColumn);
+    }
+
+    /**
      * 注入自定义 MappedStatement
      *
      * @param mapperClass mapper 接口
@@ -371,8 +448,12 @@ public abstract class AbstractMethod implements Constants {
      *
      * @return method
      * @author 义陆无忧
+     * @see AbstractMethod#AbstractMethod(java.lang.String)
+     * @deprecated 3.5.0
      */
+    @Deprecated
     public String getMethod(SqlMethod sqlMethod) {
-        return sqlMethod.getMethod();
+        return StringUtils.isBlank(methodName) ? sqlMethod.getMethod() : this.methodName;
     }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -135,6 +135,18 @@ public enum DbType {
      * CSIIDB
      */
     CSIIDB("csiidb", "CSIIDB数据库"),
+    /**
+     * CSIIDB
+     */
+    SAP_HANA("hana", "SAP_HANA数据库"),
+    /**
+     * Impala
+     */
+    IMPALA("impala", "impala数据库"),
+    /**
+     * Vertica
+     */
+    VERTICA("vertica", "vertica数据库"),
     /**
      * UNKONWN DB
      */

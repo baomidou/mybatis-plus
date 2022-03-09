@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,9 +46,12 @@ public class MybatisMapperRegistry extends MapperRegistry {
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         // TODO 这里换成 MybatisMapperProxyFactory 而不是 MapperProxyFactory
-        final MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
+        // fix https://github.com/baomidou/mybatis-plus/issues/4247
+        MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
-            throw new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry.");
+            mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.entrySet().stream()
+                .filter(t -> t.getKey().getName().equals(type.getName())).findFirst()
+                .orElseThrow(() -> new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry."));
         }
         try {
             return mapperProxyFactory.newInstance(sqlSession);

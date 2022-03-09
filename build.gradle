@@ -2,7 +2,7 @@ import java.time.LocalDateTime
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.4.3.4"
+    version = "3.5.1"
 }
 
 ext {
@@ -11,12 +11,12 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.7',
+        mybatisVersion = '3.5.9',
         mybatisSpringVersion = '2.0.6',
-        mybatisSpringBootStarterVersion = '2.2.0',
-        springVersion = '5.3.9',
+        mybatisSpringBootStarterVersion = '2.2.1',
+        springVersion = '5.3.15',
         springBootVersion = '2.5.3',
-        jsqlparserVersion = '4.2',
+        jsqlparserVersion = '4.3',
         junitVersion = '5.7.2',
     ]
 
@@ -26,9 +26,9 @@ ext {
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
-        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.2",
-        "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.2",
-        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.0",
+        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
+        "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.3",
+        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.1",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
         "spring-jdbc"                : "org.springframework:spring-jdbc:${springVersion}",
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
@@ -41,13 +41,13 @@ ext {
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
-        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.32",
+        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.33",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.5",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.19.0",
+        "assertj-core"               : "org.assertj:assertj-core:3.22.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.76",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
@@ -60,10 +60,10 @@ ext {
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
-        "h2"                         : "com.h2database:h2:1.4.200",
-        "mysql"                      : "mysql:mysql-connector-java:8.0.26",
+        "h2"                         : "com.h2database:h2:2.1.210",
+        "mysql"                      : "mysql:mysql-connector-java:8.0.28",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
-        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.3.java8",
+        "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.5.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
@@ -93,7 +93,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+        testImplementation "org.mockito:mockito-junit-jupiter:4.2.0"
         testImplementation "${lib["lagarto"]}"
         testImplementation "${lib["logback-classic"]}"
     }

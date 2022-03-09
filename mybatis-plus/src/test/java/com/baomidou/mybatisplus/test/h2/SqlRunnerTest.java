@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +36,9 @@ import java.util.List;
  * SqlRunner测试
  * @author nieqiurong 2018/8/25 11:05.
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class SqlRunnerTest {
 

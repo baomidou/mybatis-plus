@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class SybaseDialect implements IDialect {
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         String tempSql = originalSql.toUpperCase();
-        int index = tempSql.indexOf("FROM");
+        int index = tempSql.indexOf(" FROM ");
         String sql = "select";
         if (hasTop) {
             sql += " top " + (offset + limit);

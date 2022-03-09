@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -38,6 +39,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -88,6 +90,7 @@ public class MybatisConfiguration extends Configuration {
     public MybatisConfiguration() {
         super();
         this.mapUnderscoreToCamelCase = true;
+        typeHandlerRegistry.setDefaultEnumTypeHandler(CompositeEnumTypeHandler.class);
         languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
     }
 
@@ -210,6 +213,13 @@ public class MybatisConfiguration extends Configuration {
             driver = MybatisXMLLanguageDriver.class;
         }
         getLanguageRegistry().setDefaultDriverClass(driver);
+    }
+
+    @Override
+    public void setDefaultEnumTypeHandler(Class<? extends TypeHandler> typeHandler) {
+        if (typeHandler != null) {
+            CompositeEnumTypeHandler.setDefaultEnumTypeHandler(typeHandler);
+        }
     }
 
     @Override

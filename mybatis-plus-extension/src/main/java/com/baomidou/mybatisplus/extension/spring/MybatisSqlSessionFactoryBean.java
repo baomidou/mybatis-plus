@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,9 @@ import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
@@ -42,7 +39,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -140,9 +136,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private ObjectWrapperFactory objectWrapperFactory;
 
     /**
-     * TODO 自定义枚举包
+     * 不再需要这个配置,放心删除
+     *
+     * @deprecated 2022-03-07
      */
     @Setter
+    @Deprecated
     private String typeEnumsPackage;
 
     // TODO 自定义全局配置
@@ -427,7 +426,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         notNull(dataSource, "Property 'dataSource' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
             "Property 'configuration' and 'configLocation' can not specified with together");
-
+        //TODO 清理掉资源  建议不要保留这个玩意了
+        SqlRunner.DEFAULT.close();
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
 
@@ -472,41 +472,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         // TODO 初始化 id-work 以及 打印骚东西
         GlobalConfigUtils.setGlobalConfig(targetConfiguration, this.globalConfig);
-
-        // TODO 自定义枚举类扫描处理
-        if (hasLength(this.typeEnumsPackage)) {
-            Set<Class<?>> classes;
-            if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
-                && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
-                classes = scanClasses(typeEnumsPackage, null);
-                if (classes.isEmpty()) {
-                    LOGGER.warn(() -> "Can't find class in '[" + typeEnumsPackage + "]' package. Please check your configuration.");
-                }
-            } else {
-                classes = new HashSet<>();
-                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
-                Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
-                    try {
-                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, null);
-                        if (scanTypePackage.isEmpty()) {
-                            LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
-                        } else {
-                            classes.addAll(scanTypePackage);
-                        }
-                    } catch (IOException e) {
-                        throw new MybatisPlusException("Cannot scan class in '[" + typePackage + "]' package", e);
-                    }
-                });
-            }
-            // 取得类型转换注册器
-            TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
-            classes.stream()
-                .filter(Class::isEnum)
-                .filter(MybatisEnumTypeHandler::isMpEnums)
-                .forEach(cls -> typeHandlerRegistry.register(cls, MybatisEnumTypeHandler.class));
-        }
 
         Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
         Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
@@ -608,7 +573,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
-        // TODO 打印骚东西 Banner
+        // TODO 打印 Banner
         if (globalConfig.isBanner()) {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");

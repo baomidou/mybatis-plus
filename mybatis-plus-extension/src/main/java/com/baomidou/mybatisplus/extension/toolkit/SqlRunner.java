@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +38,7 @@ import java.util.Optional;
  * @author Caratacus
  * @since 2016-12-11
  */
-public class SqlRunner implements ISqlRunner {
+public class SqlRunner implements ISqlRunner, Closeable {
 
     private final Log log = LogFactory.getLog(SqlRunner.class);
     // 单例Query
@@ -239,4 +240,10 @@ public class SqlRunner implements ISqlRunner {
     private SqlSessionFactory getSqlSessionFactory() {
         return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(sqlSessionFactory);
     }
+
+    @Override
+    public void close() {
+        DEFAULT.sqlSessionFactory = null;
+    }
+
 }

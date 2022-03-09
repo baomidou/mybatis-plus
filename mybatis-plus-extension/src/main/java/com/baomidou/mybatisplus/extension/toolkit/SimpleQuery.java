@@ -1,20 +1,25 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * simple-query 让简单的查询更简单
  *
- * @author <achao1441470436@gmail.com>
+ * @author VampireAchao
  * @since 2021/11/9 18:27
  */
 public class SimpleQuery {
@@ -35,114 +40,292 @@ public class SimpleQuery {
     }
 
     /**
-     * 传入Wrappers和key，从数据库中根据条件查询出对应的列表，封装成Map
-     *
-     * @param wrapper   条件构造器
-     * @param sFunction key
-     * @param peeks     封装成map时可能需要的后续操作，不需要可以不传
-     * @param <E>       实体类型
-     * @param <A>       实体中的属性类型
-     * @return Map<实体中的属性, 实体>
+     * ignore
      */
     @SafeVarargs
     public static <E, A> Map<A, E> keyMap(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, Function.identity(), peeks);
+        return list2Map(selectList(getType(sFunction), wrapper), sFunction, Function.identity(), peeks);
     }
 
     /**
      * 传入Wrappers和key，从数据库中根据条件查询出对应的列表，封装成Map
      *
-     * @param wrapper   条件构造器
-     * @param keyFunc   key
-     * @param valueFunc value
-     * @param peeks     封装成map时可能需要的后续操作，不需要可以不传
-     * @param <E>       实体类型
-     * @param <A>       实体中的属性类型
-     * @param <P>       实体中的属性类型
+     * @param wrapper    条件构造器
+     * @param sFunction  key
+     * @param isParallel 是否并行流
+     * @param peeks      封装成map时可能需要的后续操作，不需要可以不传
+     * @param <E>        实体类型
+     * @param <A>        实体中的属性类型
      * @return Map<实体中的属性, 实体>
      */
     @SafeVarargs
+    public static <E, A> Map<A, E> keyMap(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
+        return list2Map(selectList(getType(sFunction), wrapper), sFunction, Function.identity(), isParallel, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
     public static <E, A, P> Map<A, P> map(LambdaQueryWrapper<E> wrapper, SFunction<E, A> keyFunc, SFunction<E, P> valueFunc, Consumer<E>... peeks) {
-        return list2Map(SqlHelper.getMapper(getType(keyFunc)).selectList(wrapper), keyFunc, valueFunc, peeks);
+        return list2Map(selectList(getType(keyFunc), wrapper), keyFunc, valueFunc, peeks);
     }
 
     /**
      * 传入Wrappers和key，从数据库中根据条件查询出对应的列表，封装成Map
      *
-     * @param wrapper   条件构造器
-     * @param sFunction 分组依据
-     * @param peeks     后续操作
-     * @param <E>       实体类型
-     * @param <A>       实体中的属性类型
-     * @return Map<实体中的属性, List < 实体>>
+     * @param wrapper    条件构造器
+     * @param keyFunc    key
+     * @param valueFunc  value
+     * @param isParallel 是否并行流
+     * @param peeks      封装成map时可能需要的后续操作，不需要可以不传
+     * @param <E>        实体类型
+     * @param <A>        实体中的属性类型
+     * @param <P>        实体中的属性类型
+     * @return Map<实体中的属性, 实体>
+     */
+    @SafeVarargs
+    public static <E, A, P> Map<A, P> map(LambdaQueryWrapper<E> wrapper, SFunction<E, A> keyFunc, SFunction<E, P> valueFunc, boolean isParallel, Consumer<E>... peeks) {
+        return list2Map(selectList(getType(keyFunc), wrapper), keyFunc, valueFunc, isParallel, peeks);
+    }
+
+    /**
+     * ignore
      */
     @SafeVarargs
     public static <E, A> Map<A, List<E>> group(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return listGroupBy(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, peeks);
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <T, K> Map<K, List<T>> group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, boolean isParallel, Consumer<T>... peeks) {
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, isParallel, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, Consumer<T>... peeks) {
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, false, peeks);
+    }
+
+    /**
+     * 传入Wrappers和key，从数据库中根据条件查询出对应的列表，封装成Map
+     *
+     * @param wrapper    条件构造器
+     * @param sFunction  分组依据
+     * @param downstream 下游操作
+     * @param isParallel 是否并行流
+     * @param peeks      后续操作
+     * @param <T>        实体类型
+     * @param <K>        实体中的分组依据对应类型，也是Map中key的类型
+     * @param <D>        下游操作对应返回类型，也是Map中value的类型
+     * @param <A>        下游操作在进行中间操作时对应类型
+     * @param <M>        最后返回结果Map类型
+     * @return Map<实体中的属性, List < 实体>>
+     */
+    @SafeVarargs
+    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
+        return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, isParallel, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <E, A> List<A> list(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
+        return list2List(selectList(getType(sFunction), wrapper), sFunction, peeks);
     }
 
     /**
      * 传入wrappers和需要的某一列，从数据中根据条件查询出对应的列，转换成list
      *
-     * @param wrapper   条件构造器
-     * @param sFunction 需要的列
-     * @param peeks     后续操作
+     * @param wrapper    条件构造器
+     * @param sFunction  需要的列
+     * @param isParallel 是否并行流
+     * @param peeks      后续操作
      * @return java.util.List<A>
-     * @author <achao1441470436@gmail.com>
      * @since 2021/11/9 17:59
      */
     @SafeVarargs
-    public static <E, A> List<A> list(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return list2List(SqlHelper.getMapper(getType(sFunction)).selectList(wrapper), sFunction, peeks);
+    public static <E, A> List<A> list(LambdaQueryWrapper<E> wrapper, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
+        return list2List(selectList(getType(sFunction), wrapper), sFunction, isParallel, peeks);
     }
 
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <A, E> List<A> list2List(List<E> list, SFunction<E, A> sFunction, Consumer<E>... peeks) {
+        return list2List(list, sFunction, false, peeks);
+    }
 
     /**
      * 对list进行map、peek操作
      *
-     * @param list      数据
-     * @param sFunction 需要的列
-     * @param peeks     后续操作
+     * @param list       数据
+     * @param sFunction  需要的列
+     * @param isParallel 是否并行流
+     * @param peeks      后续操作
      * @return java.util.List<A>
-     * @author <achao1441470436@gmail.com>
      * @since 2021/11/9 18:01
      */
     @SafeVarargs
-    public static <A, E> List<A> list2List(List<E> list, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).map(sFunction).collect(Collectors.toList());
+    public static <A, E> List<A> list2List(List<E> list, SFunction<E, A> sFunction, boolean isParallel, Consumer<E>... peeks) {
+        return peekStream(list, isParallel, peeks).map(sFunction).collect(Collectors.toList());
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <K, T> Map<K, List<T>> listGroupBy(List<T> list, SFunction<T, K> sFunction, Consumer<T>... peeks) {
+        return listGroupBy(list, sFunction, false, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <K, T> Map<K, List<T>> listGroupBy(List<T> list, SFunction<T, K> sFunction, boolean isParallel, Consumer<T>... peeks) {
+        return listGroupBy(list, sFunction, Collectors.toList(), isParallel, peeks);
+    }
+
+    /**
+     * ignore
+     */
+    @SafeVarargs
+    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, Consumer<T>... peeks) {
+        return listGroupBy(list, sFunction, downstream, false, peeks);
     }
 
     /**
      * 对list进行groupBy操作
      *
-     * @param list      数据
-     * @param sFunction 分组的key，依据
-     * @param peeks     封装成map时可能需要的后续操作，不需要可以不传
-     * @param <E>       实体类型
-     * @param <A>       实体中的属性类型
+     * @param list       数据
+     * @param sFunction  分组的key，依据
+     * @param downstream 下游操作
+     * @param isParallel 是否并行流
+     * @param peeks      封装成map时可能需要的后续操作，不需要可以不传
+     * @param <T>        实体类型
+     * @param <K>        实体中的分组依据对应类型，也是Map中key的类型
+     * @param <D>        下游操作对应返回类型，也是Map中value的类型
+     * @param <A>        下游操作在进行中间操作时对应类型
+     * @param <M>        最后返回结果Map类型
      * @return Map<实体中的属性, List < 实体>>
      */
     @SafeVarargs
-    public static <A, E> Map<A, List<E>> listGroupBy(List<E> list, SFunction<E, A> sFunction, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(Collectors.groupingBy(sFunction));
+    @SuppressWarnings("unchecked")
+    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
+        boolean hasFinished = downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH);
+        return peekStream(list, isParallel, peeks).collect(new Collector<T, HashMap<K, A>, M>() {
+            @Override
+            public Supplier<HashMap<K, A>> supplier() {
+                return HashMap::new;
+            }
+
+            @Override
+            public BiConsumer<HashMap<K, A>, T> accumulator() {
+                return (m, t) -> {
+                    // 只此一处，和原版groupingBy修改只此一处，成功在支持下游操作的情况下支持null值
+                    K key = Optional.ofNullable(t).map(sFunction).orElse(null);
+                    A container = m.computeIfAbsent(key, k -> downstream.supplier().get());
+                    downstream.accumulator().accept(container, t);
+                };
+            }
+
+            @Override
+            public BinaryOperator<HashMap<K, A>> combiner() {
+                return (m1, m2) -> {
+                    for (Map.Entry<K, A> e : m2.entrySet()) {
+                        m1.merge(e.getKey(), e.getValue(), downstream.combiner());
+                    }
+                    return m1;
+                };
+            }
+
+            @Override
+            public Function<HashMap<K, A>, M> finisher() {
+                return hasFinished ? i -> (M) i : intermediate -> {
+                    intermediate.replaceAll((k, v) -> (A) downstream.finisher().apply(v));
+                    @SuppressWarnings("unchecked")
+                    M castResult = (M) intermediate;
+                    return castResult;
+                };
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return hasFinished ? Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH)) : Collections.emptySet();
+            }
+        });
     }
 
 
     /**
-     * list转换为map
-     *
-     * @param <E>     实体类型
-     * @param <A>     实体中的属性类型
-     * @param <P>     实体中的属性类型
-     * @param list    数据
-     * @param keyFunc key
-     * @param peeks   封装成map时可能需要的后续操作，不需要可以不传
-     * @return Map<实体中的属性, 实体>
+     * ignore
      */
     @SafeVarargs
     public static <E, A, P> Map<A, P> list2Map(List<E> list, SFunction<E, A> keyFunc, Function<E, P> valueFunc, Consumer<E>... peeks) {
-        return Stream.of(peeks).reduce(list.parallelStream(), Stream::peek, Stream::concat).collect(Collectors.toMap(keyFunc, valueFunc, (l, r) -> l));
+        return list2Map(list, keyFunc, valueFunc, false, peeks);
     }
 
+    /**
+     * list转换为map
+     *
+     * @param <E>        实体类型
+     * @param <A>        实体中的属性类型
+     * @param <P>        实体中的属性类型
+     * @param list       数据
+     * @param keyFunc    key
+     * @param isParallel 是否并行流
+     * @param peeks      封装成map时可能需要的后续操作，不需要可以不传
+     * @return Map<实体中的属性, 实体>
+     */
+    @SafeVarargs
+    public static <E, A, P> Map<A, P> list2Map(List<E> list, SFunction<E, A> keyFunc, Function<E, P> valueFunc, boolean isParallel, Consumer<E>... peeks) {
+        return peekStream(list, isParallel, peeks).collect(HashMap::new, (m, v) -> m.put(keyFunc.apply(v), valueFunc.apply(v)), HashMap::putAll);
+    }
+
+    /**
+     * 将list转为Stream流，然后再叠加peek操作
+     *
+     * @param list       数据
+     * @param isParallel 是否并行流
+     * @param peeks      叠加的peek操作
+     * @param <E>        数据元素类型
+     * @return 转换后的流
+     */
+    @SafeVarargs
+    public static <E> Stream<E> peekStream(List<E> list, boolean isParallel, Consumer<E>... peeks) {
+        if (CollectionUtils.isEmpty(list)) {
+            return Stream.empty();
+        }
+        return Stream.of(peeks).reduce(StreamSupport.stream(list.spliterator(), isParallel), Stream::peek, Stream::concat);
+    }
+
+    /**
+     * 通过entityClass查询列表，并关闭sqlSession
+     *
+     * @param entityClass 表对应实体
+     * @param wrapper     条件构造器
+     * @param <E>         实体类型
+     * @return 查询列表结果
+     */
+    public static <E> List<E> selectList(Class<E> entityClass, LambdaQueryWrapper<E> wrapper) {
+        SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+        List<E> result;
+        try {
+            BaseMapper<E> userMapper = SqlHelper.getMapper(entityClass, sqlSession);
+            result = userMapper.selectList(wrapper);
+        } finally {
+            SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+        }
+        return result;
+    }
 
 }

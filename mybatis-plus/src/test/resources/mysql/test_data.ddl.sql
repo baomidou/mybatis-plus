@@ -5,7 +5,7 @@ drop table if exists result_map_entity;
 
 CREATE TABLE common_data
 (
-    id         BIGINT primary key,
+    id         BIGINT primary key NOT NULL AUTO_INCREMENT,
     test_int   integer,
     test_str   varchar(50),
     c_time     datetime,

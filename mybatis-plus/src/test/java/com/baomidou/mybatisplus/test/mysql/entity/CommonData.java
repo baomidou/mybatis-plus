@@ -15,9 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.test.mysql.enums.TestEnum;
 import lombok.Data;
@@ -46,7 +44,7 @@ public class CommonData extends Model<CommonData> {
      * serialVersionUID
      */
     private static final long serialVersionUID = 5651603508613034190L;
-
+    @TableId(type = IdType.AUTO)
     private Long id;
     @TableField(jdbcType = JdbcType.INTEGER)
     private Integer testInt;

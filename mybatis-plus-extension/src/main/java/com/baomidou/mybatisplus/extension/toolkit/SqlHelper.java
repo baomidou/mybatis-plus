@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public final class SqlHelper {
      */
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        Assert.notNull(tableInfo, "Error: Cannot execute table Method, ClassGenricType not found .");
+        Assert.notNull(tableInfo, "Error: Cannot execute table Method, ClassGenericType not found.");
         return tableInfo;
     }
 
@@ -180,7 +180,7 @@ public final class SqlHelper {
         }
         try {
             consumer.accept(sqlSession);
-            //非事物情况下，强制commit。
+            //非事务情况下，强制commit。
             sqlSession.commit(!transaction);
             return true;
         } catch (Throwable t) {
@@ -216,11 +216,13 @@ public final class SqlHelper {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
         return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
             int size = list.size();
+            int idxLimit = Math.min(batchSize, size);
             int i = 1;
             for (E element : list) {
                 consumer.accept(sqlSession, element);
-                if ((i % batchSize == 0) || i == size) {
+                if (i == idxLimit) {
                     sqlSession.flushStatements();
+                    idxLimit = Math.min(idxLimit + batchSize, size);
                 }
                 i++;
             }
@@ -264,13 +266,15 @@ public final class SqlHelper {
 
 
     /**
-     * 获取Mapper
+     * 通过entityClass获取Mapper
      *
      * @param entityClass 实体
      * @param <T>         实体类型
      * @return Mapper
+     * @deprecated 使用后未释放连接 {@link SqlHelper#getMapper(Class, SqlSession)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T> BaseMapper<T> getMapper(Class<T> entityClass) {
         Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
@@ -287,4 +291,30 @@ public final class SqlHelper {
         return mapper;
     }
 
+    /**
+     * 通过entityClass获取Mapper，记得要释放连接
+     * 例： {@code
+     * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+     * try {
+     *     BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
+     * } finally {
+     *     sqlSession.close();
+     * }
+     * }
+     *
+     * @param entityClass 实体
+     * @param <T>         实体类型
+     * @return Mapper
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
+        Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
+        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
+        try {
+            Configuration configuration = tableInfo.getConfiguration();
+            return (BaseMapper<T>) configuration.getMapper(Class.forName(tableInfo.getCurrentNamespace()), sqlSession);
+        } catch (ClassNotFoundException e) {
+            throw ExceptionUtils.mpe(e);
+        }
+    }
 }

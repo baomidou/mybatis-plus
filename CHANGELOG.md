@@ -1,5 +1,44 @@
 ﻿# CHANGELOG
 
+## [v3.5.1] 2022.01.25
+
+- 新增 impala 数据库支~~持
+- 缓存动态获取数据库类型~~
+- 新增可控分配 id 方法 fixed github pull/4231
+- 延迟枚举扫描注册
+- 乐观锁插件支持根据wrapper填充 github pull/3664
+- H2KeyGenerator 语法修改
+- SimpleQuery 优化及Bug修改
+- fixed gitee issues/I4P9EN
+- SybaseDialect 关键词替换优化
+
+
+## [v3.5.0] 2022.01.01
+
+- 升级 mybatis 3.5.9
+- 升级 jsqlparser 4.3
+- 新增移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
+- 添加动态表名的钩子函数 https://github.com/baomidou/mybatis-plus/pull/3965
+- 注入类 DefaultSqlInjector 优化调整
+- 反射类 ReflectionKit 优化 field -> field 改为 Function.identity()
+- baseMapper 新增方法 exist 方法
+- 解决 sysbase 小写 from 导致 index 取不到正确的索引值问题
+- 新增通过 entityClass 获取 Mapper 方法 `BaseMapper<Entity> mapper = SqlHelper.getMapper(Entity.class);`
+- 注入方法 byId 注入优化
+- 多租户 right join bug https://gitee.com/baomidou/mybatis-plus/issues/I4FP6E  https://github.com/baomidou/mybatis-plus/pull/4035
+- 自定义注入方法名优化 https://github.com/baomidou/mybatis-plus/pull/4159
+- 新增 sap hana 内存数据库
+- 新增 SimpleQuery 工具栏查询
+- SQL 注入验证工具类 代码修改写法
+- 整理字符串常量的使用
+- upgrade license-gradle-plugin version
+- 自定义注入方法名优化 (不兼容)
+- 重载columnsToString方法允许子类调整
+- 修复 et 判断逻辑 fixed gitee issues/I4L4XV
+- 逻辑删除 byId 支持转换为实体删除填充
+
+
+
 ## [v3.4.3.4] 2021.09.22
 
 - order by wrapper 存在条件不排序问题处理

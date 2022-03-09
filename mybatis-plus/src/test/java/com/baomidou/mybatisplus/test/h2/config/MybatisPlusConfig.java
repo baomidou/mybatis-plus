@@ -88,7 +88,6 @@ public class MybatisPlusConfig {
             }
         });
         sqlSessionFactory.setGlobalConfig(globalConfig);
-        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
     }
 

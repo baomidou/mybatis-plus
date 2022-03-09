@@ -13,11 +13,49 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author miemie
+ * @author raylax
  * @since 2020-07-04
  */
+@Slf4j
 public class VersionTest extends BaseDbTest<EntityMapper> {
+
+
+    @Test
+    void testWrapperMode() {
+        log.info("[wrapper mode] test");
+
+        doTestAutoCommit(i -> {
+            int result = i.update(null, Wrappers.<Entity>update()
+                .eq("id", 3)
+                .set("version", 1)
+            );
+            assertThat(result).as("[wrapper mode] 设置version值成功").isEqualTo(1);
+        });
+
+        doTestAutoCommit(i -> {
+            int result = i.update(null, Wrappers.<Entity>update()
+                .eq("id", 3)
+                .eq("version", 1)
+            );
+            assertThat(result).as("[wrapper mode] 设置version值匹配更新成功").isEqualTo(1);
+            final Entity entity = i.selectById(3);
+            assertThat(entity.getVersion()).isEqualTo(2);
+        });
+
+        doTestAutoCommit(i -> {
+            int result = i.update(null, Wrappers.<Entity>update()
+                .eq("id", 3)
+                .eq("version", 1)
+            );
+            assertThat(result).as("[wrapper mode] 设置version值匹配更新失败").isEqualTo(0);
+            final Entity entity = i.selectById(3);
+            assertThat(entity.getVersion()).isEqualTo(2);
+        });
+    }
 
     @Test
     void test() {
@@ -59,13 +97,13 @@ public class VersionTest extends BaseDbTest<EntityMapper> {
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor(true));
         return Collections.singletonList(interceptor);
     }
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'老王'),(2,'老李')";
+        return "insert into entity(id,name) values(1,'老王'),(2,'老李'),(3,'老赵')";
     }
 
     @Override

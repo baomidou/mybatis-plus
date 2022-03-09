@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,18 @@ import java.util.Map;
  * @since 2018-04-06
  */
 public class DeleteByMap extends AbstractMethod {
+
+    public DeleteByMap() {
+        super("deleteByMap");
+    }
+
+    /**
+     * @param name 方法名
+     * @since 3.5.0
+     */
+    public DeleteByMap(String name) {
+        super(name);
+    }
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

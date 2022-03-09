@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.pagecache;
+package com.baomidou.mybatisplus.test.cache.page;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
