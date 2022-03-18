@@ -84,6 +84,22 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
+    public LambdaUpdateWrapper<T> incrField(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(String.format("%s =  %s + %s", columnToString(column), columnToString(column), sql));
+        });
+    }
+
+    @Override
+    public LambdaUpdateWrapper<T> decrField(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(String.format("%s =  %s - %s", columnToString(column), columnToString(column), sql));
+        });
+    }
+
+    @Override
     public LambdaUpdateWrapper<T> setSql(boolean condition, String sql) {
         if (condition && StringUtils.isNotBlank(sql)) {
             sqlSet.add(sql);

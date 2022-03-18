@@ -516,6 +516,24 @@ class H2UserTest extends BaseTest {
         Assertions.assertNotNull(h2User.getLastUpdatedDt());
     }
 
+    @Test
+    void testIncrField() {
+        H2User h2User = new H2User("字段自增", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.update(Wrappers.<H2User>lambdaUpdate().incrField(H2User::getAge, AgeEnum.ONE).eq(H2User::getName,"字段自增"));
+        H2User serviceOne = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, "字段自增"));
+        Assertions.assertEquals(serviceOne.getAge().getValue(),3);
+    }
+
+    @Test
+    void testDecrField() {
+        H2User h2User = new H2User("字段自减", AgeEnum.TWO);
+        userService.save(h2User);
+        userService.update(Wrappers.<H2User>lambdaUpdate().decrField(H2User::getAge, AgeEnum.ONE).eq(H2User::getName,"字段自减"));
+        H2User serviceOne = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, "字段自减"));
+        Assertions.assertEquals(serviceOne.getAge().getValue(),1);
+    }
+
     /**
      * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
      */

@@ -49,6 +49,16 @@ open class KtUpdateChainWrapper<T : Any>(
         return typedThis
     }
 
+    override fun incrField(condition: Boolean, column: KProperty<*>?, `val`: Any?, mapping: String?): KtUpdateChainWrapper<T> {
+        wrapperChildren.incrField(condition, column, `val`, mapping)
+        return typedThis
+    }
+
+    override fun decrField(condition: Boolean, column: KProperty<*>?, `val`: Any?, mapping: String?): KtUpdateChainWrapper<T> {
+        wrapperChildren.decrField(condition, column, `val`, mapping)
+        return typedThis
+    }
+
     override fun getBaseMapper(): BaseMapper<T> {
         return baseMapper
     }
