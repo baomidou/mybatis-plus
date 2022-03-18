@@ -61,6 +61,64 @@ public interface Update<Children, R> extends Serializable {
     Children set(boolean condition, R column, Object val, String mapping);
 
     /**
+     * 字段自增
+     *
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default Children incrField(R column, Object val) {
+        return incrField(true, column, val, null);
+    }
+
+    /**
+     * ignore
+     */
+    default Children incrField(R column, Object val, String mapping) {
+        return incrField(true, column, val, mapping);
+    }
+
+    /**
+     * 字段自增
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       值
+     * @param mapping   例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
+     * @return children
+     */
+    Children incrField(boolean condition, R column, Object val, String mapping);
+
+    /**
+     * 字段自减
+     *
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default Children decrField(R column, Object val) {
+        return decrField(true, column, val, null);
+    }
+
+    /**
+     * ignore
+     */
+    default Children decrField(R column, Object val, String mapping) {
+        return decrField(true, column, val, mapping);
+    }
+
+    /**
+     * 字段自减
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       值
+     * @param mapping   例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
+     * @return children
+     */
+    Children decrField(boolean condition, R column, Object val, String mapping);
+
+    /**
      * ignore
      */
     default Children setSql(String sql) {

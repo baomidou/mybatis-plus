@@ -52,6 +52,18 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     }
 
     @Override
+    public UpdateChainWrapper<T> incrField(boolean condition, String column, Object val, String mapping) {
+        wrapperChildren.incrField(condition, column, val, mapping);
+        return typedThis;
+    }
+
+    @Override
+    public UpdateChainWrapper<T> decrField(boolean condition, String column, Object val, String mapping) {
+        wrapperChildren.decrField(condition, column, val, mapping);
+        return typedThis;
+    }
+
+    @Override
     public String getSqlSet() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
     }
