@@ -470,7 +470,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                         onTables = Collections.singletonList(leftTable);
                     }
                 } else if (join.isLeft()) {
-                     onTables = Collections.singletonList(joinTable);
+                    onTables = Collections.singletonList(joinTable);
                 } else if (join.isInner()) {
                     if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
@@ -529,14 +529,16 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
             return currentExpression;
         }
         // 租户
-        Expression tenantId = tenantLineHandler.getTenantId();
         // 构造每张表的条件
         List<EqualsTo> equalsTos = tables.stream()
             .filter(x -> !tenantLineHandler.ignoreTable(x.getName()))
-            .map(item -> new EqualsTo(getAliasColumn(item), tenantId))
+            .map(item -> {
+                Expression tenantId = tenantLineHandler.getTenantId();
+                return new EqualsTo(getAliasColumn(item), tenantId);
+            })
             .collect(Collectors.toList());
 
-        if(CollectionUtils.isEmpty(equalsTos)){
+        if (CollectionUtils.isEmpty(equalsTos)) {
             return currentExpression;
         }
 
