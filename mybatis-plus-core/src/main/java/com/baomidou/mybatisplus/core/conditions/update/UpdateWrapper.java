@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,22 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
             sqlSet.add(sql);
         }
         return typedThis;
+    }
+
+    @Override
+    public UpdateWrapper<T> incrField(boolean condition, String column, Object val, String mapping) {
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(String.format("%s =  %s + %s", column, column, sql));
+        });
+    }
+
+    @Override
+    public UpdateWrapper<T> decrField(boolean condition, String column, Object val, String mapping) {
+        return maybeDo(condition, () -> {
+            String sql = formatParam(mapping, val);
+            sqlSet.add(String.format("%s =  %s - %s", column, column, sql));
+        });
     }
 
     @Override

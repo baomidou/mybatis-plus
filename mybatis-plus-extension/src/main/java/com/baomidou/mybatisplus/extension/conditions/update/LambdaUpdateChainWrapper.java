@@ -53,6 +53,18 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
     }
 
     @Override
+    public LambdaUpdateChainWrapper<T> incrField(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
+        wrapperChildren.incrField(condition, column, val, mapping);
+        return typedThis;
+    }
+
+    @Override
+    public LambdaUpdateChainWrapper<T> decrField(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
+        wrapperChildren.decrField(condition, column, val, mapping);
+        return typedThis;
+    }
+
+    @Override
     public String getSqlSet() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
     }

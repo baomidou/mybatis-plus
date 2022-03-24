@@ -82,6 +82,20 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         }
     }
 
+    override fun incrField(condition: Boolean, column: KProperty<*>?, `val`: Any?, mapping: String?): KtUpdateWrapper<T> {
+        return maybeDo(condition) {
+            val sql = formatParam(mapping, `val`)
+            sqlSet.add(String.format("%s =  %s + %s", column, column, sql))
+        }
+    }
+
+    override fun decrField(condition: Boolean, column: KProperty<*>?, `val`: Any?, mapping: String?): KtUpdateWrapper<T> {
+        return maybeDo(condition) {
+            val sql = formatParam(mapping, `val`)
+            sqlSet.add(String.format("%s =  %s - %s", column, column, sql))
+        }
+    }
+
     override fun instance(): KtUpdateWrapper<T> {
         return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
