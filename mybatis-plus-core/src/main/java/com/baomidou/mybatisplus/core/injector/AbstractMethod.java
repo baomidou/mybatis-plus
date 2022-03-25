@@ -54,6 +54,8 @@ public abstract class AbstractMethod implements Constants {
     protected LanguageDriver languageDriver;
     protected MapperBuilderAssistant builderAssistant;
 
+    private static final String STRING_FORMAT_NOT_NULL = "%s != null";
+
     /**
      * 方法名称
      * @since 3.5.0
@@ -123,7 +125,7 @@ public abstract class AbstractMethod implements Constants {
                             final String prefix) {
         String sqlScript = table.getAllSqlSet(logic, prefix);
         if (judgeAliasNull) {
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL, alias), true);
         }
         if (ew) {
             sqlScript += NEWLINE;
@@ -153,7 +155,7 @@ public abstract class AbstractMethod implements Constants {
 
     protected String convertIfEwParam(final String param, final boolean newLine) {
         return SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(param),
-            String.format("%s != null and %s != null", WRAPPER, param), newLine);
+            String.format(STRING_FORMAT_NOT_NULL + " and " + STRING_FORMAT_NOT_NULL, WRAPPER, param), newLine);
     }
 
     /**
@@ -195,7 +197,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     protected String convertChooseEwSelect(final String otherwise) {
-        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
+        return SqlScriptUtils.convertChoose(String.format(STRING_FORMAT_NOT_NULL + " and " + STRING_FORMAT_NOT_NULL, WRAPPER, Q_WRAPPER_SQL_SELECT),
             SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), otherwise);
     }
 
@@ -208,7 +210,7 @@ public abstract class AbstractMethod implements Constants {
             String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s.isEmpty", COLUMN_MAP, COLUMN_MAP), true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL + " and !%s.isEmpty", COLUMN_MAP, COLUMN_MAP), true);
             sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
@@ -217,7 +219,7 @@ public abstract class AbstractMethod implements Constants {
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s", COLUMN_MAP,
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL + " and !%s", COLUMN_MAP,
                 COLUMN_MAP_IS_EMPTY), true);
             return sqlScript;
         }
@@ -233,33 +235,33 @@ public abstract class AbstractMethod implements Constants {
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         if (table.isWithLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_DOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL, WRAPPER_ENTITY),
                 true);
             sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true) + NEWLINE);
             String normalSqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                String.format(STRING_FORMAT_NOT_NULL + " and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                     WRAPPER_NONEMPTYOFNORMAL), true);
             normalSqlScript += NEWLINE;
             normalSqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                String.format(STRING_FORMAT_NOT_NULL + " and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                     WRAPPER_EMPTYOFNORMAL), true);
             sqlScript += normalSqlScript;
-            sqlScript = SqlScriptUtils.convertChoose(String.format("%s != null", WRAPPER), sqlScript,
+            sqlScript = SqlScriptUtils.convertChoose(String.format(STRING_FORMAT_NOT_NULL, WRAPPER), sqlScript,
                 table.getLogicDeleteSql(false, true));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         } else {
             String sqlScript = table.getAllSqlWhere(false, true, WRAPPER_ENTITY_DOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL, WRAPPER_ENTITY), true);
             sqlScript += NEWLINE;
             sqlScript += SqlScriptUtils.convertIf(String.format(SqlScriptUtils.convertIf(" AND", String.format("%s and %s", WRAPPER_NONEMPTYOFENTITY, WRAPPER_NONEMPTYOFNORMAL), false) + " ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                String.format(STRING_FORMAT_NOT_NULL + " and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                     WRAPPER_NONEMPTYOFWHERE), true);
             sqlScript = SqlScriptUtils.convertWhere(sqlScript) + NEWLINE;
             sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                String.format(STRING_FORMAT_NOT_NULL + " and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                     WRAPPER_EMPTYOFWHERE), true);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER), true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format(STRING_FORMAT_NOT_NULL, WRAPPER), true);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
     }
