@@ -105,7 +105,7 @@ public class SimpleQuery {
      * ignore
      */
     @SafeVarargs
-    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, Consumer<T>... peeks) {
+    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<T, A, D> downstream, Consumer<T>... peeks) {
         return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, false, peeks);
     }
 
@@ -125,7 +125,7 @@ public class SimpleQuery {
      * @return Map<实体中的属性, List < 实体>>
      */
     @SafeVarargs
-    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
+    public static <T, K, D, A, M extends Map<K, D>> M group(LambdaQueryWrapper<T> wrapper, SFunction<T, K> sFunction, Collector<T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
         return listGroupBy(selectList(getType(sFunction), wrapper), sFunction, downstream, isParallel, peeks);
     }
 
@@ -195,7 +195,7 @@ public class SimpleQuery {
      * ignore
      */
     @SafeVarargs
-    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, Consumer<T>... peeks) {
+    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<T, A, D> downstream, Consumer<T>... peeks) {
         return listGroupBy(list, sFunction, downstream, false, peeks);
     }
 
@@ -216,7 +216,7 @@ public class SimpleQuery {
      */
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<? super T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
+    public static <T, K, D, A, M extends Map<K, D>> M listGroupBy(List<T> list, SFunction<T, K> sFunction, Collector<T, A, D> downstream, boolean isParallel, Consumer<T>... peeks) {
         boolean hasFinished = downstream.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH);
         return peekStream(list, isParallel, peeks).collect(new Collector<T, HashMap<K, A>, M>() {
             @Override
