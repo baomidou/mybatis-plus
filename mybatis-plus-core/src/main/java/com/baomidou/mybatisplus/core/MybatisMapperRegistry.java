@@ -51,7 +51,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
             mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.entrySet().stream()
-                .filter(t -> t.getKey().isAssignableFrom(type)).findFirst().map(Map.Entry::getValue)
+                .filter(t -> t.getKey().getName().equals(type.getName())).findFirst().map(Map.Entry::getValue)
                 .orElseThrow(() -> new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry."));
         }
         try {
@@ -63,14 +63,14 @@ public class MybatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> boolean hasMapper(Class<T> type) {
-        return knownMappers.containsKey(type) || knownMappers.keySet().stream().anyMatch(t -> t.isAssignableFrom(type));
+        return knownMappers.containsKey(type) || knownMappers.keySet().stream().anyMatch(t -> t.getName().equals(type.getName()));
     }
 
     /**
      * 清空 Mapper 缓存信息
      */
     protected <T> void removeMapper(Class<T> type) {
-        knownMappers.entrySet().stream().filter(t -> t.getKey().isAssignableFrom(type))
+        knownMappers.entrySet().stream().filter(t -> t.getKey().getName().equals(type.getName()))
             .findFirst().ifPresent(t -> knownMappers.remove(t.getKey()));
     }
 
