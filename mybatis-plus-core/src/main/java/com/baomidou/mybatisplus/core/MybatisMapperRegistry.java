@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 
 /**
  * 继承至MapperRegistry
@@ -62,7 +63,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
 
     @Override
     public <T> boolean hasMapper(Class<T> type) {
-        return knownMappers.containsKey(type)|| knownMappers.entrySet().stream().anyMatch(t -> t.getKey().isAssignableFrom(type));
+        return knownMappers.containsKey(type) || knownMappers.keySet().stream().anyMatch(t -> t.isAssignableFrom(type));
     }
 
     /**
