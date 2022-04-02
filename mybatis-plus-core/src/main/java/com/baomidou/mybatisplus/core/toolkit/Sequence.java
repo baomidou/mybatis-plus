@@ -149,7 +149,7 @@ public class Sequence {
     public synchronized long nextId() {
         long timestamp = timeGen();
         //闰秒
-        if (timestamp < lastTimestamp) {
+        while (timestamp < lastTimestamp) {
             long offset = lastTimestamp - timestamp;
             if (offset <= 5) {
                 try {
@@ -158,6 +158,7 @@ public class Sequence {
                     if (timestamp < lastTimestamp) {
                         throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
                     }
+                    break;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
