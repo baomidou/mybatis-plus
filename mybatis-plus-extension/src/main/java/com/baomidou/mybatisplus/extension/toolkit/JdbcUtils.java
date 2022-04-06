@@ -98,6 +98,8 @@ public class JdbcUtils {
             return DbType.GBASE;
         } else if (jdbcUrl.contains(":gbasedbt-sqli:")) {
             return DbType.GBASEDBT;
+        } else if (jdbcUrl.contains(":informix-sqli:")) {
+            return DbType.GBASE_INFORMIX;
         } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else if (jdbcUrl.contains(":oscar:")) {
