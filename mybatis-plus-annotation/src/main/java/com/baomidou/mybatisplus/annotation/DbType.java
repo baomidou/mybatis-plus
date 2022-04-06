@@ -101,6 +101,7 @@ public enum DbType {
      */
     GBASE("gbase", "南大通用(华库)数据库"),
     GBASEDBT("gbasedbt", "南大通用数据库"),
+    GBASE_INFORMIX("gbase 8s", "南大通用数据库 GBase 8s"),
     /**
      * Oscar
      */

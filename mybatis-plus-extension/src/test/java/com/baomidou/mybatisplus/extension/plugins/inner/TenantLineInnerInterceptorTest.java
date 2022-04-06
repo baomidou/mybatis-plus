@@ -16,13 +16,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TenantLineInnerInterceptorTest {
 
     private final TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(new TenantLineHandler() {
+        private boolean ignoreFirst;// 需要执行 getTenantId 前必须先执行 ignoreTable
+
         @Override
         public Expression getTenantId() {
+            assertThat(ignoreFirst).isEqualTo(true);
+            ignoreFirst = false;
             return new LongValue(1);
         }
 
         @Override
         public boolean ignoreTable(String tableName) {
+            ignoreFirst = true;
             if (Objects.equals(tableName, "sys_dict")) {
                 return true;
             }

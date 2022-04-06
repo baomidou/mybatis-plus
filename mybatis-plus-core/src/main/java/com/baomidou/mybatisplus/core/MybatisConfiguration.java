@@ -161,10 +161,9 @@ public class MybatisConfiguration extends Configuration {
 
             // 清空 Mapper 方法 mappedStatement 缓存信息
             final String typeKey = type.getName() + StringPool.DOT;
-            Set<String> mapperSet = mappedStatements.entrySet().stream().filter(t -> t.getKey().startsWith(typeKey))
-                .map(t -> t.getKey()).collect(Collectors.toSet());
-            if (null != mapperSet && !mapperSet.isEmpty()) {
-                mapperSet.forEach(key -> mappedStatements.remove(key));
+            Set<String> mapperSet = mappedStatements.keySet().stream().filter(ms -> ms.startsWith(typeKey)).collect(Collectors.toSet());
+            if (!mapperSet.isEmpty()) {
+                mapperSet.forEach(mappedStatements::remove);
             }
         }
     }
