@@ -25,7 +25,6 @@ import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -284,12 +283,8 @@ public final class SqlHelper {
     public static <T> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
         Assert.notNull(entityClass, "entityClass can't be null!");
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
-        try {
-            Configuration configuration = tableInfo.getConfiguration();
-            return (BaseMapper<T>) configuration.getMapper(Class.forName(tableInfo.getCurrentNamespace()), sqlSession);
-        } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.mpe(e);
-        }
+        Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
+        return (BaseMapper<T>) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
 
     /**
