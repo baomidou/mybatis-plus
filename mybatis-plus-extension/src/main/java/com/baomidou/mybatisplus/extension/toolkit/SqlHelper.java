@@ -282,7 +282,7 @@ public final class SqlHelper {
      */
     @SuppressWarnings("unchecked")
     public static <T> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
-        Optional.ofNullable(entityClass).orElseThrow(() -> ExceptionUtils.mpe("entityClass can't be null!"));
+        Assert.notNull(entityClass, "entityClass can't be null!");
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
         try {
             Configuration configuration = tableInfo.getConfiguration();
