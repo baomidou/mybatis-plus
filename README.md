@@ -24,7 +24,7 @@
 
 [企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
 
-添加 `微信 wx15366` 备注进 mp 群
+添加 `微信 wx153666` 备注进 mp 群
 
 # Special user
 
