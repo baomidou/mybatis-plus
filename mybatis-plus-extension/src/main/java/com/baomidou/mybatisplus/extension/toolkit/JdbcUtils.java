@@ -122,7 +122,9 @@ public class JdbcUtils {
             return DbType.IMPALA;
         } else if (url.contains(":vertica:")) {
             return DbType.VERTICA;
-        } else {
+        } else if (url.contains(":xcloud:")) {
+            return DbType.XCloud;
+        }else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }

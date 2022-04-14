@@ -82,6 +82,8 @@ public class DialectFactory {
                 dialect = new GBasedbtDialect();
             } else if (dbType == DbType.GBASE_INFORMIX){
                 dialect = new GBaseInfromixDialect();
+            }else if (dbType == DbType.XCloud){
+                dialect = new XCloudDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

@@ -149,6 +149,10 @@ public enum DbType {
      */
     VERTICA("vertica", "vertica数据库"),
     /**
+     * xcloud
+     */
+    XCloud("xcloud", "行云数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
