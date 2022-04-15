@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/baomidou/mybatis-plus">
+  <a href="https://github.com/baomidou/mybatis-plus" target="_blank">
    <img alt="Mybatis-Plus-Logo" src="https://raw.githubusercontent.com/baomidou/logo/master/mybatis-plus-logo-new-mini.png">
   </a>
 </p>
@@ -24,7 +24,19 @@
 
 Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
-技术讨论 QQ 群 ： 183066216 、  576493122 🈵  、  648281531 🈵 、  643509491 🈵
+添加 `微信 wx153666` 备注进 mp 群
+
+# 特别用户
+
+<p>
+  <a href="https://www.diboot.com/?from=mp" target="_blank">
+   <img alt="Mybatis-Plus-Logo" src="https://www.diboot.com/diboot_slogon.png" width="210px" height="75px">
+  </a>
+  <a href="http://aizuda.com/?from=mp" target="_blank">
+   <img alt="Mybatis-Plus-Logo" src="https://baomidou.com/img/aizuda.png" width="210px" height="75px">
+  </a>
+</p>
+
 
 # 优点 | Advantages
 

@@ -24,6 +24,19 @@
 
 [企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
 
+添加 `微信 wx153666` 备注进 mp 群
+
+# Special user
+
+<p>
+  <a href="https://www.diboot.com/?from=mp" target="_blank">
+   <img alt="Mybatis-Plus-Logo" src="https://www.diboot.com/diboot_slogon.png" width="210px" height="75px">
+  </a>
+  <a href="http://aizuda.com/?from=mp" target="_blank">
+   <img alt="Mybatis-Plus-Logo" src="https://baomidou.com/img/aizuda.png" width="210px" height="75px">
+  </a>
+</p>
+
 ## What is MyBatis-Plus?
 
 MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development. This toolkit provides some efficient, useful, out-of-the-box features for MyBatis, use it can effectively save your development time.
