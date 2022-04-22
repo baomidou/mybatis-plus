@@ -1,0 +1,22 @@
+package com.baomidou.mybatisplus.extension.incrementer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+
+public class FirebirdKeyGenerator implements IKeyGenerator {
+	@Override
+	public String executeSql(String incrementerName) {
+		// TODO Auto-generated method stub	
+		return "SELECT next value for " + incrementerName + " from rdb$database";
+	}
+
+	@Override
+	public DbType dbType() {
+		// TODO Auto-generated method stub	
+		return DbType.FIREBIRD;
+	}
+}
