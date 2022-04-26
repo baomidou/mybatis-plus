@@ -269,7 +269,7 @@ public class TableFieldInfo implements Constants {
             // 存在指定转换属性
             String propertyFormat = dbConfig.getPropertyFormat();
             if (StringUtils.isBlank(propertyFormat)) {
-                propertyFormat = "%s";
+                propertyFormat = "\"%s\"";
             }
             this.sqlSelect += (AS + String.format(propertyFormat, tableField.property()));
         } else if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
