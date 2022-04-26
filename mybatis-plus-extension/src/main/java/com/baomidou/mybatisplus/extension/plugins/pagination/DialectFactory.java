@@ -82,6 +82,8 @@ public class DialectFactory {
                 dialect = new GBasedbtDialect();
             } else if (dbType == DbType.GBASE_INFORMIX){
                 dialect = new GBaseInfromixDialect();
+            } else if (dbType == DbType.FIREBIRD){
+                dialect = new FirebirdDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }
