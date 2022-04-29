@@ -143,6 +143,21 @@ public interface BaseMapper<T> extends Mapper<T> {
     int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
 
     /**
+     * 根据 whereEntity 条件，更新记录（包含全部字段）
+     *
+     * @param entity        实体对象 (set 条件值,可以为 null)
+     * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
+     */
+    int updateAllColumn(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
+
+    /**
+     * 根据 ID 更新记录（包含全部字段）
+     *
+     * @param entity 实体对象
+     */
+    int updateAllColumnById(@Param(Constants.ENTITY) T entity);
+
+    /**
      * 根据 ID 查询
      *
      * @param id 主键ID

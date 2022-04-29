@@ -34,8 +34,8 @@ public class UpdateById extends AbstractMethod {
     }
 
     /**
-     * @since 3.5.0
      * @param name 方法名
+     * @since 3.5.0
      */
     public UpdateById(String name) {
         super(name);
@@ -45,8 +45,8 @@ public class UpdateById extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
         final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
+        String sqlSet = sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT, true);
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet,
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);

@@ -39,6 +39,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             .add(new Delete())
             .add(new DeleteByMap())
             .add(new Update())
+            .add(new UpdateAllColumn())
             .add(new SelectByMap())
             .add(new SelectCount())
             .add(new SelectMaps())
@@ -50,6 +51,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             builder.add(new DeleteById())
                 .add(new DeleteBatchByIds())
                 .add(new UpdateById())
+                .add(new UpdateAllColumnById())
                 .add(new SelectById())
                 .add(new SelectBatchByIds());
         } else {

@@ -34,8 +34,8 @@ public class Update extends AbstractMethod {
     }
 
     /**
-     * @since 3.5.0
      * @param name 方法名
+     * @since 3.5.0
      */
     public Update(String name) {
         super(name);
@@ -44,9 +44,8 @@ public class Update extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT),
-            sqlWhereEntityWrapper(true, tableInfo), sqlComment());
+        String sqlSet = sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT, true);
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet, sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
     }

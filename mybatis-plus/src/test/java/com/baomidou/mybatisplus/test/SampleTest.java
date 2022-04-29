@@ -37,7 +37,7 @@ class SampleTest {
 //        System.out.println("----------- AllInsertSqlProperty -----------");
 //        System.out.println(info.getAllInsertSqlProperty());
         System.out.println("----------- AllSqlSet -----------");
-        System.out.println(info.getAllSqlSet(true, "ew.entity."));
+        System.out.println(info.getAllSqlSet(true, "ew.entity.", false));
         System.out.println("----------- AllSqlWhere -----------");
         System.out.println(info.getAllSqlWhere(false, true, "ew.entity."));
     }

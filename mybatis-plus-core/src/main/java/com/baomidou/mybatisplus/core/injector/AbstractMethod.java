@@ -56,6 +56,7 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 方法名称
+     *
      * @since 3.5.0
      */
     protected final String methodName;
@@ -112,16 +113,18 @@ public abstract class AbstractMethod implements Constants {
     /**
      * SQL 更新 set 语句
      *
-     * @param logic  是否逻辑删除注入器
-     * @param ew     是否存在 UpdateWrapper 条件
-     * @param table  表信息
-     * @param alias  别名
-     * @param prefix 前缀
+     * @param logic           是否逻辑删除注入器
+     * @param ew              是否存在 UpdateWrapper 条件
+     * @param table           表信息
+     * @param judgeAliasNull  需要判断别名是否为null
+     * @param alias           别名
+     * @param prefix          前缀
+     * @param judgeColumnNull 需要判断字段是否为null
      * @return sql
      */
     protected String sqlSet(boolean logic, boolean ew, TableInfo table, boolean judgeAliasNull, final String alias,
-                            final String prefix) {
-        String sqlScript = table.getAllSqlSet(logic, prefix);
+                            final String prefix, boolean judgeColumnNull) {
+        String sqlScript = table.getAllSqlSet(logic, prefix, !judgeColumnNull);
         if (judgeAliasNull) {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
         }
@@ -323,6 +326,7 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 查询
+     *
      * @since 3.5.0
      */
     protected MappedStatement addSelectMappedStatementForTable(Class<?> mapperClass, SqlSource sqlSource, TableInfo table) {
@@ -359,6 +363,7 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 插入
+     *
      * @since 3.5.0
      */
     protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> parameterType,
