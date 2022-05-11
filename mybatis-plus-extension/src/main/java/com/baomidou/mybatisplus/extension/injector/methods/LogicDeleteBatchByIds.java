@@ -52,14 +52,14 @@ public class LogicDeleteBatchByIds extends DeleteBatchByIds {
             .collect(toList());
         if (CollectionUtils.isNotEmpty(fieldInfos)) {
             String sqlScript = fieldInfos.stream()
-                .map(i -> i.getSqlSet(COLLECTION + "[0].")).collect(joining(EMPTY));
+                .map(i -> i.getSqlSet(COLL + "[0].")).collect(joining(EMPTY));
             String sqlSet = "SET " + SqlScriptUtils.convertIf(sqlScript, "!@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(_parameter.getClass())", true)
                 + tableInfo.getLogicDeleteSql(false, false);
             return String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach(
                     SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                         "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
-                    COLLECTION, null, "item", COMMA),
+                    COLL, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true));
         } else {
             return super.logicDeleteScript(tableInfo, sqlMethod);
