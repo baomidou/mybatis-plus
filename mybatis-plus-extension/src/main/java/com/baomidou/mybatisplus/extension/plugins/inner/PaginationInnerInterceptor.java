@@ -331,13 +331,22 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                         }
                         // 不区分大小写
                         str = str.toLowerCase();
-                        String onExpressionS = join.getOnExpression().toString();
-                        /* 如果 join 里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
-                        if (onExpressionS.contains(StringPool.QUESTION_MARK) || whereS.contains(str)) {
+
+                        if (whereS.contains(str)) {
+                            /* 如果 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
                             canRemoveJoin = false;
                             break;
                         }
+
+                        for (Expression expression : join.getOnExpressions()) {
+                            if (expression.toString().contains(StringPool.QUESTION_MARK)) {
+                                /* 如果 join 里包含 ?(代表有入参) 就不移除 join */
+                                canRemoveJoin = false;
+                                break;
+                            }
+                        }
                     }
+
                     if (canRemoveJoin) {
                         plainSelect.setJoins(null);
                     }

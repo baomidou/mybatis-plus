@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.puginsome.AMapper">
+
+    <resultMap id="xxp" type="com.baomidou.mybatisplus.test.puginsome.A" autoMapping="true">
+        <association property="b" column="id" javaType="com.baomidou.mybatisplus.test.puginsome.B"
+                     select="com.baomidou.mybatisplus.test.puginsome.BMapper.selectById"/>
+    </resultMap>
+
+    <select id="list" resultMap="xxp">
+        select *
+        from a
+    </select>
+</mapper>
