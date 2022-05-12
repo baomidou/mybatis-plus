@@ -126,8 +126,17 @@ public interface Constants extends StringPool, Serializable {
     String COLUMN_MAP_IS_EMPTY = COLUMN_MAP + DOT + "isEmpty";
     /**
      * collection
+     *
+     * @see #COLL
+     * @deprecated 3.5.2 后面修改成collection
      */
+    @Deprecated
     String COLLECTION = "coll";
+
+    /**
+     * @since 3.5.2
+     */
+    String COLL = "coll";
     /**
      * list
      *
@@ -142,6 +151,11 @@ public interface Constants extends StringPool, Serializable {
      * limit
      */
     String LIMIT = "LIMIT";
+
+    /**
+     * @since 3.5.2
+     */
+    String ARRAY = "array";
     /**
      * order by
      */
