@@ -27,6 +27,7 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -83,6 +84,8 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
             }
         }
         configuration.addMapper(mapper);
+        otherMapper().forEach(configuration::addMapper);
+
         if (CollectionUtils.isNotEmpty(interceptors)) {
             interceptors.forEach(configuration::addInterceptor);
         }
@@ -154,5 +157,9 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     protected Consumer<Configuration> consumer() {
         return null;
+    }
+
+    protected List<Class<?>> otherMapper() {
+        return Collections.emptyList();
     }
 }
