@@ -173,21 +173,19 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
 
     @Override
     public Children in(boolean condition, R column, Object... values) {
-        condition = condition && values.length > 0;
         getWrapper().in(condition, column, values);
         return typedThis;
     }
 
     @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
-    condition = condition && !coll.isEmpty();
+        condition = condition && !coll.isEmpty();
         getWrapper().notIn(condition, column, coll);
         return typedThis;
     }
 
     @Override
     public Children notIn(boolean condition, R column, Object... values) {
-        condition = condition && values.length > 0;
         getWrapper().notIn(condition, column, values);
         return typedThis;
     }
