@@ -125,7 +125,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
-    int deleteBatchIds(@Param(Constants.COLLECTION) Collection<?> idList);
+    int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList);
 
     /**
      * 根据 ID 修改
@@ -154,7 +154,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
+    List<T> selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList);
 
     /**
      * 查询（根据 columnMap 条件）

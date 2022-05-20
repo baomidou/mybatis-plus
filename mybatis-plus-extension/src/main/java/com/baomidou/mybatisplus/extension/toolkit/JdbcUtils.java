@@ -125,6 +125,9 @@ public class JdbcUtils {
         } else if (url.contains(":xcloud:")) {
             return DbType.XCloud;
         }else {
+        } else if (url.contains(":firebirdsql:")) {
+            return DbType.FIREBIRD;
+        } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }

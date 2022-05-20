@@ -80,10 +80,12 @@ public class DialectFactory {
                 dialect = new SybaseDialect();
             } else if (dbType == DbType.GBASEDBT) {
                 dialect = new GBasedbtDialect();
-            } else if (dbType == DbType.GBASE_INFORMIX){
+            } else if (dbType == DbType.GBASE_INFORMIX) {
                 dialect = new GBaseInfromixDialect();
             }else if (dbType == DbType.XCloud){
                 dialect = new XCloudDialect();
+            } else if (dbType == DbType.FIREBIRD) {
+                dialect = new FirebirdDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

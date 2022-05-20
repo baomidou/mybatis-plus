@@ -16,7 +16,7 @@ public interface EntityMapper extends BaseMapper<Entity> {
     @Select("select * from entity where id = #{id}")
     Entity byId(Long id);
 
-    int testDeleteBatch(@Param(Constants.COLLECTION) List<Entity> entityList);
+    int testDeleteBatch(@Param(Constants.COLL) List<Entity> entityList);
 
 
 }
