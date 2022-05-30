@@ -133,6 +133,7 @@ subprojects {
 
     // 控制台直接执行 `gradle licenseMain` 或者 `gradle licenseFormatMain`
     // 前者是检查 main 源码的 licence 情况,后者是在 main 源码文件上 format license
+    // 因为不打算在 test 代码上添加 licence, 所以不使用 licenseTest 和 licenseFormatTest 这俩
     license {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
