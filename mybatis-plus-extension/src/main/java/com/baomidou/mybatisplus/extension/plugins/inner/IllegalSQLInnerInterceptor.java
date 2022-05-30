@@ -186,8 +186,10 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         if (joins != null) {
             for (Join join : joins) {
                 Table rightTable = (Table) join.getRightItem();
-                Expression expression = join.getOnExpression();
-                validWhere(expression, table, rightTable, connection);
+                Collection<Expression> onExpressions = join.getOnExpressions();
+                for (Expression expression : onExpressions) {
+                    validWhere(expression, table, rightTable, connection);
+                }
             }
         }
     }

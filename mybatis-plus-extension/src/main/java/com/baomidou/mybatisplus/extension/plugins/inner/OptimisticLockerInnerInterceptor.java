@@ -169,7 +169,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
 
     private void setVersionByWrapper(Map<String, Object> map, String msId) {
         Object ew = map.get(Constants.WRAPPER);
-        if (null != ew && ew instanceof AbstractWrapper && ew instanceof Update) {
+        if (ew instanceof AbstractWrapper && ew instanceof Update) {
             Class<?> entityClass = ENTITY_CLASS_CACHE.get(msId);
             if (null == entityClass) {
                 try {
