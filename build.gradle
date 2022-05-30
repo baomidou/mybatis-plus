@@ -131,15 +131,16 @@ subprojects {
         }
     }
 
+    // 控制台直接执行 `gradle licenseMain` 或者 `gradle licenseFormatMain`
+    // 前者是检查 main 源码的 licence 情况,后者是在 main 源码文件上 format license
     license {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
-        exclude "**/test/java/**/*.kt"
-        exclude "**/test/java/**/*.java"
-        exclude "**/*Test.java"
-        mapping "java", "SLASHSTAR_STYLE"
-        mapping "kt", "SLASHSTAR_STYLE"
+        mapping {
+            java = "SLASHSTAR_STYLE"
+            kt = "SLASHSTAR_STYLE"
+        }
         ignoreFailures = true
         ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
