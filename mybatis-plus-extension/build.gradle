@@ -17,4 +17,5 @@ dependencies {
     implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
     testImplementation "com.github.pagehelper:pagehelper:5.1.11"
+    testImplementation "com.google.guava:guava:27.0.1-jre"
 }

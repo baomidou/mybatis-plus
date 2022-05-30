@@ -27,6 +27,8 @@ import java.util.function.Function;
 
 /**
  * 分页参数动态化所需 model
+ * <p>
+ * 动态入参的模式暂只支持在sql末端如: select * from x limit ?,?
  *
  * @author miemie
  * @since 2018-10-31

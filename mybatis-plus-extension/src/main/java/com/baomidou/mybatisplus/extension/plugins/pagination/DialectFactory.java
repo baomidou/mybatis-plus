@@ -68,22 +68,26 @@ public class DialectFactory {
                 || dbType == DbType.HIGH_GO
                 || dbType == DbType.VERTICA) {
                 dialect = new PostgreDialect();
-            } else if (dbType == DbType.ORACLE_12C) {
+            }
+            // other types
+            else if (dbType == DbType.ORACLE_12C) {
                 dialect = new Oracle12cDialect();
             } else if (dbType == DbType.DB2) {
                 dialect = new DB2Dialect();
             } else if (dbType == DbType.SQL_SERVER2005) {
                 dialect = new SQLServer2005Dialect();
             } else if (dbType == DbType.SQL_SERVER) {
-                dialect = new SQLServerDialect();
+                dialect = new Oracle12cDialect();
             } else if (dbType == DbType.SYBASE) {
                 dialect = new SybaseDialect();
+            } else if (dbType == DbType.GBASE_8S) {
+                dialect = new GBase8sDialect();
             } else if (dbType == DbType.GBASEDBT) {
-                dialect = new GBasedbtDialect();
+                dialect = new GBase8sDialect();
             } else if (dbType == DbType.GBASE_INFORMIX) {
-                dialect = new GBaseInfromixDialect();
+                dialect = new GBase8sDialect();
             } else if (dbType == DbType.FIREBIRD) {
-                dialect = new FirebirdDialect();
+                dialect = new Oracle12cDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }
