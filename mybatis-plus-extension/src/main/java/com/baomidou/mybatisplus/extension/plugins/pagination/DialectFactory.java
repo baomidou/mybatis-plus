@@ -80,6 +80,14 @@ public class DialectFactory {
                 dialect = new SQLServer2005Dialect();
             } else if (dbType == DbType.SYBASE) {
                 dialect = new SybaseDialect();
+            } else if (dbType == DbType.GBASEDBT) {
+                dialect = new GBasedbtDialect();
+            } else if (dbType == DbType.GBASE_INFORMIX) {
+                dialect = new GBaseInfromixDialect();
+            }else if (dbType == DbType.XCloud){
+                dialect = new XCloudDialect();
+            } else if (dbType == DbType.FIREBIRD) {
+                dialect = new FirebirdDialect();
             } else if (dbType == DbType.GBASE_8S
                 || dbType == DbType.GBASEDBT
                 || dbType == DbType.GBASE_INFORMIX) {
