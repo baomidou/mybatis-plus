@@ -1,2 +1,2 @@
 - 枚举处理器优化-现在无需在配置文件里指定枚举包
-- DbType 以及 IDialect 实现类的清理
+- DbType 清理以及 IDialect 实现类的清理
