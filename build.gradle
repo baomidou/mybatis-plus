@@ -51,7 +51,7 @@ ext {
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.5",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
-        "gson"                       : "com.google.code.gson:gson:2.8.8",
+        "gson"                       : "com.google.code.gson:gson:2.9.0",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
@@ -60,7 +60,7 @@ ext {
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
-        "h2"                         : "com.h2database:h2:2.1.210",
+        "h2"                         : "com.h2database:h2:2.1.212",
         "mysql"                      : "mysql:mysql-connector-java:8.0.28",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.5.java8",
