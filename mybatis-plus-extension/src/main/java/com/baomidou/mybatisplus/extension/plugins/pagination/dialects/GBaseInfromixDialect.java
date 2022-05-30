@@ -15,34 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-
 /**
  * GBase 8s V8.8 数据库分页语句组装实现
  * 通用分页版本
  *
  * @author lix lixhbs@163.com
  * @since 2022年03月28日19:25:46
+ * @deprecated 2022-05-30
  */
-public class GBaseInfromixDialect implements IDialect
-{
-
-    @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit)
-    {
-        int slot = originalSql.toLowerCase().indexOf("select");
-        StringBuilder sql = new StringBuilder();
-        if (slot == 0)
-        {
-            sql.append("SELECT");
-            sql.append(" SKIP ").append(offset);
-            sql.append(" FIRST ").append(limit);
-            sql.append(originalSql.substring(6));
-            return new DialectModel(sql.toString());
-        } else
-        {
-            return null;
-        }
-
-    }
+@Deprecated
+public class GBaseInfromixDialect extends GBase8sDialect {
 }

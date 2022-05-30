@@ -87,7 +87,7 @@ subprojects {
         mavenLocal()
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {

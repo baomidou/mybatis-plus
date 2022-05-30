@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import lombok.Data;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.executor.result.DefaultResultHandler;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
 
@@ -76,6 +77,15 @@ class PageCacheTest extends BaseDbTest<PageCacheMapper> {
             Page<?> page = new Page<>(1, size);
             page.setCountId("otherCount");
             i.otherPage(page, new Tj());
+        });
+    }
+
+    @Test
+    void handlerTest() {
+        doTest(i -> {
+            Page<PageCache> page = new Page<>(1, 2);
+            i.otherPageHandler(page, new Tj(), new DefaultResultHandler());
+            System.out.println(page);
         });
     }
 

@@ -49,7 +49,7 @@ public class JdbcUtils {
     public static DbType getDbType(Executor executor) {
         try {
             Connection conn = executor.getTransaction().getConnection();
-            return JDBC_DB_TYPE_CACHE.computeIfAbsent(conn.getMetaData().getURL(), k -> getDbType(k));
+            return JDBC_DB_TYPE_CACHE.computeIfAbsent(conn.getMetaData().getURL(), JdbcUtils::getDbType);
         } catch (SQLException e) {
             throw ExceptionUtils.mpe(e);
         }
@@ -92,21 +92,19 @@ public class JdbcUtils {
             return DbType.KINGBASE_ES;
         } else if (url.contains(":phoenix:")) {
             return DbType.PHOENIX;
-        } else if (jdbcUrl.contains(":zenith:")) {
+        } else if (url.contains(":zenith:")) {
             return DbType.GAUSS;
-        } else if (jdbcUrl.contains(":gbase:")) {
+        } else if (url.contains(":gbase:")) {
             return DbType.GBASE;
-        } else if (jdbcUrl.contains(":gbasedbt-sqli:")) {
-            return DbType.GBASEDBT;
-        } else if (jdbcUrl.contains(":informix-sqli:")) {
-            return DbType.GBASE_INFORMIX;
-        } else if (jdbcUrl.contains(":clickhouse:")) {
+        } else if (url.contains(":gbasedbt-sqli:") || url.contains(":informix-sqli:")) {
+            return DbType.GBASE_8S;
+        } else if (url.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
-        } else if (jdbcUrl.contains(":oscar:")) {
+        } else if (url.contains(":oscar:")) {
             return DbType.OSCAR;
-        } else if (jdbcUrl.contains(":sybase:")) {
+        } else if (url.contains(":sybase:")) {
             return DbType.SYBASE;
-        } else if (jdbcUrl.contains(":oceanbase:")) {
+        } else if (url.contains(":oceanbase:")) {
             return DbType.OCEAN_BASE;
         } else if (url.contains(":highgo:")) {
             return DbType.HIGH_GO;
