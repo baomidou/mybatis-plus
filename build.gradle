@@ -21,7 +21,7 @@ ext {
     ]
 
     lib = [
-        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.3.72",
+        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.6.21",
         "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.72",
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
@@ -40,7 +40,7 @@ ext {
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:3.0.3",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.9.1",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.11",
         //copy
@@ -56,12 +56,12 @@ ext {
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
-        "postgresql"                 : "org.postgresql:postgresql:42.2.20",
+        "postgresql"                 : "org.postgresql:postgresql:42.3.6",
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:2.1.212",
-        "mysql"                      : "mysql:mysql-connector-java:8.0.28",
+        "mysql"                      : "mysql:mysql-connector-java:8.0.29",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.5.java8",
         //cache
