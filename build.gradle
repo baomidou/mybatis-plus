@@ -42,7 +42,7 @@ ext {
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.7",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
-        "logback-classic"            : "ch.qos.logback:logback-classic:1.2.5",
+        "logback-classic"            : "ch.qos.logback:logback-classic:1.2.11",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
@@ -50,7 +50,7 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.22.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.5",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
         "gson"                       : "com.google.code.gson:gson:2.9.0",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
