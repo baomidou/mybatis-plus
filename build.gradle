@@ -34,7 +34,7 @@ ext {
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
         "spring-web"                 : "org.springframework:spring-web:${springVersion}",
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
-        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.6",
+        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.9.1",
         "cglib"                      : "cglib:cglib:3.3.0",
         "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:3.0.3",
