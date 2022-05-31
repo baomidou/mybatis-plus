@@ -169,7 +169,6 @@ subprojects {
     test {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
-        exclude("**/mysql/**")
         exclude("**/phoenix/**")
     }
 
