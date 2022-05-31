@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -143,7 +142,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     private void loadCustomVfs(Properties props) throws ClassNotFoundException {
         String value = props.getProperty("vfsImpl");
         if (value != null) {
-            String[] clazzes = value.split(StringPool.COMMA);
+            String[] clazzes = value.split(",");
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")
@@ -257,8 +256,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
         configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
         configuration.setDefaultResultSetType(resolveResultSetType(props.getProperty("defaultResultSetType")));
-        // TODO 统一 mapUnderscoreToCamelCase 属性默认值为 true
-        configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
         configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
         configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
         configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
@@ -272,6 +269,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setLogPrefix(props.getProperty("logPrefix"));
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
         configuration.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
+        configuration.setArgNameBasedConstructorAutoMapping(booleanValueOf(props.getProperty("argNameBasedConstructorAutoMapping"), false));
+        configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
+        configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));
+        // TODO 下面俩: 1.统一 mapUnderscoreToCamelCase 属性默认值为 true 2.新增`useGeneratedShortKey`属性
+        configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
         ((MybatisConfiguration) configuration).setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
     }
 
@@ -376,13 +378,13 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     String mapperClass = child.getStringAttribute("class");
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
-                        try(InputStream inputStream = Resources.getResourceAsStream(resource)) {
+                        try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
                             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
                             mapperParser.parse();
                         }
                     } else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
-                        try(InputStream inputStream = Resources.getUrlAsStream(url)){
+                        try (InputStream inputStream = Resources.getUrlAsStream(url)) {
                             XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
                             mapperParser.parse();
                         }
@@ -400,11 +402,10 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     private boolean isSpecifiedEnvironment(String id) {
         if (environment == null) {
             throw new BuilderException("No environment specified.");
-        } else if (id == null) {
-            throw new BuilderException("Environment requires an id attribute.");
-        } else if (environment.equals(id)) {
-            return true;
         }
-        return false;
+        if (id == null) {
+            throw new BuilderException("Environment requires an id attribute.");
+        }
+        return environment.equals(id);
     }
 }
