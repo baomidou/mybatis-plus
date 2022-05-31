@@ -1,5 +1,25 @@
 ﻿# CHANGELOG
 
+## [v3.5.2] 2022.06.01
+
+- 升级 mybatis 3.5.10
+- 升级 jsqlparser 4.4
+- 添加 vertical 数据库分页支持
+- 添加对Gbase 8s 数据库支持
+- 添加对 行云 数据库分页的支持
+- 添加对 Firebird 数据库分页的支持
+- 修复参数填充判断错误，标记替换字段常量
+- DbType 清理以及 IDialect 实现类的清理
+- 新增SqlHelper.execute，通过entityClass获取BaseMapper
+- 枚举处理优化,不再需要'typeEnumsPackage'这个配置
+- fix 租户id获取的执行顺序
+- 新增Firebird数据库的KeyGenerator
+- 新增达梦Dm数据库的KeyGenerator
+- Merge pull request #4343 from LK820/fix-IdType.java
+- Merge pull request #4495 from nieqiurong/fix-parameter
+- Merge pull request #4314 from tomalloc/3.0
+
+
 ## [v3.5.1] 2022.01.25
 
 - 新增 impala 数据库支~~持
