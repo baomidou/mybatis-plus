@@ -114,6 +114,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private String typeHandlersPackage;
 
+    @SuppressWarnings("rawtypes")
+    private Class<? extends TypeHandler> defaultEnumTypeHandler;
+
     private Class<?>[] typeAliases;
 
     private String typeAliasesPackage;
@@ -269,6 +272,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     public void setTypeHandlersPackage(String typeHandlersPackage) {
         this.typeHandlersPackage = typeHandlersPackage;
+    }
+
+    /**
+     * Set the default type handler class for enum.
+     *
+     * @param defaultEnumTypeHandler The default type handler class for enum
+     * @since 2.0.5
+     */
+    public void setDefaultEnumTypeHandler(
+        @SuppressWarnings("rawtypes") Class<? extends TypeHandler> defaultEnumTypeHandler) {
+        this.defaultEnumTypeHandler = defaultEnumTypeHandler;
     }
 
     /**
@@ -510,14 +524,16 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             });
         }
 
+        targetConfiguration.setDefaultEnumTypeHandler(defaultEnumTypeHandler);
+
         if (!isEmpty(this.scriptingLanguageDrivers)) {
             Stream.of(this.scriptingLanguageDrivers).forEach(languageDriver -> {
                 targetConfiguration.getLanguageRegistry().register(languageDriver);
                 LOGGER.debug(() -> "Registered scripting language driver: '" + languageDriver + "'");
             });
         }
-
-        Optional.ofNullable(this.defaultScriptingLanguageDriver).ifPresent(targetConfiguration::setDefaultScriptingLanguage);
+        Optional.ofNullable(this.defaultScriptingLanguageDriver)
+            .ifPresent(targetConfiguration::setDefaultScriptingLanguage);
 
         if (this.databaseIdProvider != null) {// fix #64 set databaseId before parse mapper xmls
             try {

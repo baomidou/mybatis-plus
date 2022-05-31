@@ -49,10 +49,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
 
     private static final String CONFIGURATION_PROPERTY_PREFIX = Constants.MYBATIS_PLUS + ".scripting-language-driver";
 
-    /**
-     * Configuration class for mybatis-freemarker 1.1.x or under.
-     */
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnClass(FreeMarkerLanguageDriver.class)
     @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
     public static class LegacyFreeMarkerConfiguration {
@@ -66,7 +63,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     /**
      * Configuration class for mybatis-freemarker 1.2.x or above.
      */
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnClass({FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class})
     public static class FreeMarkerConfiguration {
         @Bean
@@ -86,7 +83,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     /**
      * Configuration class for mybatis-velocity 2.1.x or above.
      */
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnClass({VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class})
     public static class VelocityConfiguration {
         @Bean
@@ -103,7 +100,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @Configuration
     @ConditionalOnClass(ThymeleafLanguageDriver.class)
     public static class ThymeleafConfiguration {
         @Bean

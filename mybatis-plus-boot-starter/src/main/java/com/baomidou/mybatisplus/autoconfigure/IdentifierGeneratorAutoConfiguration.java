@@ -30,9 +30,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Lazy
 @Configuration(proxyBeanMethods = false)
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 public class IdentifierGeneratorAutoConfiguration {
-
 
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(InetUtils.class)
@@ -43,7 +41,5 @@ public class IdentifierGeneratorAutoConfiguration {
         public IdentifierGenerator identifierGenerator(InetUtils inetUtils) {
             return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
         }
-
     }
-
 }
