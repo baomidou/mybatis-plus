@@ -22,7 +22,9 @@ import org.apache.ibatis.reflection.MetaObject;
  *
  * @author hubin
  * @since 2017-09-01
+ * @deprecated 2022-05-31
  */
+@Deprecated
 public interface ISqlParser {
 
     /**

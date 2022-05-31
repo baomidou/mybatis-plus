@@ -122,7 +122,6 @@ public class JdbcUtils {
             return DbType.VERTICA;
         } else if (url.contains(":xcloud:")) {
             return DbType.XCloud;
-        }else {
         } else if (url.contains(":firebirdsql:")) {
             return DbType.FIREBIRD;
         } else {

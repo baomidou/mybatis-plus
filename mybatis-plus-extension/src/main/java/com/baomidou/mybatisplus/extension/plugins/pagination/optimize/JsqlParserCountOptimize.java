@@ -44,10 +44,12 @@ import java.util.Optional;
  *
  * @author hubin
  * @since 2017-06-20
+ * @deprecated 2022-05-31
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class JsqlParserCountOptimize implements ISqlParser {
     private static final List<SelectItem> COUNT_SELECT_ITEM = Collections.singletonList(defaultCountSelectItem());
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
