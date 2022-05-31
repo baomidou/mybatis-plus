@@ -11,12 +11,12 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.9',
-        mybatisSpringVersion = '2.0.6',
-        mybatisSpringBootStarterVersion = '2.2.1',
+        mybatisVersion = '3.5.10',
+        mybatisSpringVersion = '2.0.7',
+        mybatisSpringBootStarterVersion = '2.2.2',
         springVersion = '5.3.15',
         springBootVersion = '2.5.3',
-        jsqlparserVersion = '4.3',
+        jsqlparserVersion = '4.4',
         junitVersion = '5.7.2',
     ]
 
@@ -50,8 +50,8 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.22.0",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.5",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.12.5",
-        "gson"                       : "com.google.code.gson:gson:2.8.8",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
+        "gson"                       : "com.google.code.gson:gson:2.9.0",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.5",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
@@ -131,15 +131,17 @@ subprojects {
         }
     }
 
+    // 控制台直接执行 `gradle licenseMain` 或者 `gradle licenseFormatMain`
+    // 前者是检查 main 源码的 licence 情况,后者是在 main 源码文件上 format license
+    // 因为不打算在 test 代码上添加 licence, 所以不使用 licenseTest 和 licenseFormatTest 这俩
     license {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
-        exclude "**/test/java/**/*.kt"
-        exclude "**/test/java/**/*.java"
-        exclude "**/*Test.java"
-        mapping "java", "SLASHSTAR_STYLE"
-        mapping "kt", "SLASHSTAR_STYLE"
+        mapping {
+            java = "SLASHSTAR_STYLE"
+            kt = "SLASHSTAR_STYLE"
+        }
         ignoreFailures = true
         ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
