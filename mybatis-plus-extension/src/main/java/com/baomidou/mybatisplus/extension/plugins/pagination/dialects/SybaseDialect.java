@@ -64,7 +64,7 @@ public class SybaseDialect implements IDialect {
      * @author lroyia
      * @since  2022年6月15日 17:57:28
      */
-    private static int findMainFROM(String sql){
+    private int findMainFROM(String sql){
         String tempSql = sql.toUpperCase();
         tempSql = tempSql.replace("\n", " ").replace("\t", " ").replace("\r", " ");
         Matcher select_ = Pattern.compile("SELECT ").matcher(tempSql);
