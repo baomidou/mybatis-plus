@@ -74,15 +74,15 @@ public class Page<T> implements IPage<T> {
     @Setter
     protected boolean optimizeJoinOfCountSql = true;
     /**
-     * countId
+     * 单页分页条数限制
      */
     @Setter
-    protected String countId;
+    protected Long maxLimit;
     /**
      * countId
      */
     @Setter
-    protected Long maxLimit;
+    protected String countId;
 
     public Page() {
     }
