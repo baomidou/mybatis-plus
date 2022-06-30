@@ -30,7 +30,7 @@ import org.apache.ibatis.mapping.SqlSource;
 public class SelectPage extends AbstractMethod {
 
     public SelectPage() {
-        super(SqlMethod.SELECT_PAGE.getMethod());
+        this(SqlMethod.SELECT_PAGE.getMethod());
     }
 
     /**
@@ -47,6 +47,6 @@ public class SelectPage extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

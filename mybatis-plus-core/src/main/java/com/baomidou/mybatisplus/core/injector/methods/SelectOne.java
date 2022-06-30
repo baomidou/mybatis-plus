@@ -31,7 +31,7 @@ import org.apache.ibatis.mapping.SqlSource;
 public class SelectOne extends AbstractMethod {
 
     public SelectOne() {
-        super(SqlMethod.SELECT_ONE.getMethod());
+        this(SqlMethod.SELECT_ONE.getMethod());
     }
 
     /**
@@ -48,6 +48,6 @@ public class SelectOne extends AbstractMethod {
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlComment()), modelClass);
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

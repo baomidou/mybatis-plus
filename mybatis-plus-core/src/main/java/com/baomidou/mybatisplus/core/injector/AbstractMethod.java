@@ -61,15 +61,6 @@ public abstract class AbstractMethod implements Constants {
     protected final String methodName;
 
     /**
-     * @see AbstractMethod#AbstractMethod(java.lang.String)
-     * @since 3.5.0
-     */
-    @Deprecated
-    public AbstractMethod() {
-        methodName = null;
-    }
-
-    /**
      * @param methodName 方法名
      * @since 3.5.0
      */
@@ -441,19 +432,6 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
-
-    /**
-     * 获取自定义方法名，未设置采用默认方法名
-     * https://gitee.com/baomidou/mybatis-plus/pulls/88
-     *
-     * @return method
-     * @author 义陆无忧
-     * @see AbstractMethod#AbstractMethod(java.lang.String)
-     * @deprecated 3.5.0
-     */
-    @Deprecated
-    public String getMethod(SqlMethod sqlMethod) {
-        return StringUtils.isBlank(methodName) ? sqlMethod.getMethod() : this.methodName;
-    }
+    
 
 }

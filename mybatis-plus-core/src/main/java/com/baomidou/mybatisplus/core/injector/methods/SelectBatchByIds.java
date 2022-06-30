@@ -31,7 +31,7 @@ import org.apache.ibatis.mapping.SqlSource;
 public class SelectBatchByIds extends AbstractMethod {
 
     public SelectBatchByIds() {
-        super(SqlMethod.SELECT_BATCH_BY_IDS.getMethod());
+        this(SqlMethod.SELECT_BATCH_BY_IDS.getMethod());
     }
 
     /**
@@ -49,6 +49,6 @@ public class SelectBatchByIds extends AbstractMethod {
                 sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach("#{item}", COLL, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, true)), Object.class);
-        return addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

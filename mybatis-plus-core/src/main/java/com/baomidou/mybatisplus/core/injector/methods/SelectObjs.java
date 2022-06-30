@@ -30,7 +30,7 @@ import org.apache.ibatis.mapping.SqlSource;
 public class SelectObjs extends AbstractMethod {
 
     public SelectObjs() {
-        super(SqlMethod.SELECT_OBJS.getMethod());
+        this(SqlMethod.SELECT_OBJS.getMethod());
     }
 
     /**
@@ -47,6 +47,6 @@ public class SelectObjs extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectObjsColumns(tableInfo),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo),sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForOther(mapperClass, getMethod(sqlMethod), sqlSource, Object.class);
+        return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Object.class);
     }
 }
