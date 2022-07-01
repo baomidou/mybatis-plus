@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-05-27
  */
-//@MybatisPlusTest(properties = "spring.datasource.schema=classpath:schema.sql")
 @MybatisPlusTest
 class MybatisPlusSampleTest {
 

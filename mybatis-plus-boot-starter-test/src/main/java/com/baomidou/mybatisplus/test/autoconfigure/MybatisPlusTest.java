@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureJdbc;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -62,6 +63,7 @@ import java.lang.annotation.*;
 @TypeExcludeFilters(MybatisPlusTypeExcludeFilter.class)
 @Transactional
 @AutoConfigureCache
+@AutoConfigureJdbc
 @AutoConfigureMybatisPlus
 @AutoConfigureTestDatabase
 @ImportAutoConfiguration

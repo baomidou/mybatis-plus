@@ -1,6 +1,3 @@
-spring:
-    datasource:
-        schema: classpath:schema.sql
 
 logging:
     level:
