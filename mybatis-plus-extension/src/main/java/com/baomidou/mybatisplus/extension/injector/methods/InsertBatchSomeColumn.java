@@ -128,7 +128,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 
 }

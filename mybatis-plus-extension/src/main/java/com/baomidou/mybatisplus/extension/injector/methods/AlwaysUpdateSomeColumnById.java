@@ -84,7 +84,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet,
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }
 
     private Predicate<TableFieldInfo> getPredicate() {

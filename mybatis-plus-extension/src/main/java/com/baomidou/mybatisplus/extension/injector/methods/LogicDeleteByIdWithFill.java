@@ -83,7 +83,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
                 tableInfo.getKeyProperty());
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }
 
 }
