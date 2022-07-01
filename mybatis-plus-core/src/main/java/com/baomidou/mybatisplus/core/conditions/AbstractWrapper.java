@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.conditions.segments.ColumnSegment;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -633,7 +634,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     /**
      * 获取 columnName
      */
-    protected final ISqlSegment columnToSqlSegment(R column) {
+    protected final ColumnSegment columnToSqlSegment(R column) {
         return () -> columnToString(column);
     }
 
