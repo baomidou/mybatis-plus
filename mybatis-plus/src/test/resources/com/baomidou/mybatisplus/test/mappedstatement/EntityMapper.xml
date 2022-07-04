@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.mappedstatement.EntityMapper">
+
+    <sql id="userTable">
+        (
+            select '3' as `id`,'ZhangSan' as `name` UNION ALL
+            select '4' as `id`,'LiSi' as `name` UNION ALL
+            select '5' as `id`,'WangWu' as `name` UNION ALL
+            select '6' as `id`,'ZhaoLiu' as `name`
+        ) entity
+    </sql>
+
+    <select id="selectEntityList" resultType="com.baomidou.mybatisplus.test.mappedstatement.Entity">
+        select
+            id, name
+        from
+            <include refid="userTable"/>
+    </select>
+
+    <select id="selectZhangSan" resultType="com.baomidou.mybatisplus.test.mappedstatement.Entity">
+        select
+            id, name
+        from
+            <include refid="userTable"/>
+        where
+            name = 'ZhangSan'
+    </select>
+
+    <select id="selectWangWu" resultType="com.baomidou.mybatisplus.test.mappedstatement.Entity">
+        select
+            id, name
+        from
+            <include refid="userTable"/>
+        where
+            name = 'WangWu'
+    </select>
+
+    <select id="selectZhaoLiu" resultType="com.baomidou.mybatisplus.test.mappedstatement.Entity">
+        select
+            id, name
+        from
+            <include refid="userTable"/>
+        where
+            name = 'ZhaoLiu'
+    </select>
+</mapper>

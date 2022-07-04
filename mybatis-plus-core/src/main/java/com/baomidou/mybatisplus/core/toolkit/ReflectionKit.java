@@ -83,6 +83,20 @@ public final class ReflectionKit {
     }
 
     /**
+     * 获取字段
+     *
+     * @param clazz     对象
+     * @param fieldName 字段
+     * @return Field
+     */
+    public static Field getField(Class<?> clazz, String fieldName) {
+        Field field = getFieldMap(clazz).get(fieldName);
+        Assert.notNull(field, "Error: NoSuchField in %s for %s.  Cause:", clazz.getSimpleName(), fieldName);
+        field.setAccessible(true);
+        return field;
+    }
+
+    /**
      * <p>
      * 反射对象获取泛型
      * </p>

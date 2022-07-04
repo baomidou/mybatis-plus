@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MappedStatementXMLHandler;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
@@ -96,6 +97,10 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         }
 
         SqlSessionFactory sqlSessionFactory = super.build(configuration);
+
+        //MappedStatementXML 注解处理程序
+        MappedStatementXMLHandler mappedStatementXMLHandler = new MappedStatementXMLHandler(configuration);
+        mappedStatementXMLHandler.apply();
 
         // 缓存 sqlSessionFactory
         globalConfig.setSqlSessionFactory(sqlSessionFactory);
