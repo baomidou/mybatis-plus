@@ -571,13 +571,12 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
      */
     protected Column getAliasColumn(Table table) {
         StringBuilder column = new StringBuilder();
-        // 为了兼容隐式内连接，没有别名时条件就需要加上表名
+        // 禁止 `为了兼容隐式内连接，没有别名时条件就需要加上表名`
+        // 该起别名就要起别名
         if (table.getAlias() != null) {
-            column.append(table.getAlias().getName());
-        } else {
-            column.append(table.getName());
+            column.append(table.getAlias().getName()).append(StringPool.DOT);
         }
-        column.append(StringPool.DOT).append(tenantLineHandler.getTenantIdColumn());
+        column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
     }
 

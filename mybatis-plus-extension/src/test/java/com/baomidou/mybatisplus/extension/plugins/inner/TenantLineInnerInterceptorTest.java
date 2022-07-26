@@ -48,48 +48,48 @@ class TenantLineInnerInterceptorTest {
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, ?)");
         // insert into select
         assertSql("insert into entity (id,name) select id,name from entity2",
-            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM entity2 WHERE entity2.tenant_id = 1");
+            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM entity2 WHERE tenant_id = 1");
 
-        assertSql("insert into entity (id,name) select * from entity2",
-            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM entity2 WHERE entity2.tenant_id = 1");
+        assertSql("insert into entity (id,name) select * from entity2 e2",
+            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM entity2 e2 WHERE e2.tenant_id = 1");
 
-        assertSql("insert into entity (id,name) select id,name from (select id,name from entity3) t",
-            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM (SELECT id, name, tenant_id FROM entity3 WHERE entity3.tenant_id = 1) t");
+        assertSql("insert into entity (id,name) select id,name from (select id,name from entity3 e3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM (SELECT id, name, tenant_id FROM entity3 e3 WHERE e3.tenant_id = 1) t");
 
-        assertSql("insert into entity (id,name) select * from (select id,name from entity3) t",
-            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM (SELECT id, name, tenant_id FROM entity3 WHERE entity3.tenant_id = 1) t");
+        assertSql("insert into entity (id,name) select * from (select id,name from entity3 e3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT * FROM (SELECT id, name, tenant_id FROM entity3 e3 WHERE e3.tenant_id = 1) t");
 
-        assertSql("insert into entity (id,name) select t.* from (select id,name from entity3) t",
-            "INSERT INTO entity (id, name, tenant_id) SELECT t.* FROM (SELECT id, name, tenant_id FROM entity3 WHERE entity3.tenant_id = 1) t");
+        assertSql("insert into entity (id,name) select t.* from (select id,name from entity3 e3) t",
+            "INSERT INTO entity (id, name, tenant_id) SELECT t.* FROM (SELECT id, name, tenant_id FROM entity3 e3 WHERE e3.tenant_id = 1) t");
     }
 
     @Test
     void delete() {
         assertSql("delete from entity where id = ?",
-            "DELETE FROM entity WHERE entity.tenant_id = 1 AND id = ?");
+            "DELETE FROM entity WHERE tenant_id = 1 AND id = ?");
     }
 
     @Test
     void update() {
         assertSql("update entity set name = ? where id = ?",
-            "UPDATE entity SET name = ? WHERE entity.tenant_id = 1 AND id = ?");
+            "UPDATE entity SET name = ? WHERE tenant_id = 1 AND id = ?");
     }
 
     @Test
     void selectSingle() {
         // 单表
         assertSql("select * from entity where id = ?",
-            "SELECT * FROM entity WHERE id = ? AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE id = ? AND tenant_id = 1");
 
         assertSql("select * from entity where id = ? or name = ?",
-            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND tenant_id = 1");
 
         assertSql("SELECT * FROM entity WHERE (id = ? OR name = ?)",
-            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND tenant_id = 1");
 
         /* not */
         assertSql("SELECT * FROM entity WHERE not (id = ? OR name = ?)",
-            "SELECT * FROM entity WHERE NOT (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE NOT (id = ? OR name = ?) AND tenant_id = 1");
     }
 
     @Test
@@ -258,17 +258,17 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void selectJoinSubSelect() {
-        assertSql("select * from (select * from entity) e1 " +
+        assertSql("select * from (select * from entity e) e1 " +
                 "left join entity2 e2 on e1.id = e2.id",
-            "SELECT * FROM (SELECT * FROM entity WHERE entity.tenant_id = 1) e1 " +
+            "SELECT * FROM (SELECT * FROM entity e WHERE e.tenant_id = 1) e1 " +
                 "LEFT JOIN entity2 e2 ON e1.id = e2.id AND e2.tenant_id = 1");
 
         assertSql("select * from entity1 e1 " +
-                "left join (select * from entity2) e2 " +
-                "on e1.id = e2.id",
+                "left join (select * from entity2 e2) e22 " +
+                "on e1.id = e22.id",
             "SELECT * FROM entity1 e1 " +
-                "LEFT JOIN (SELECT * FROM entity2 WHERE entity2.tenant_id = 1) e2 " +
-                "ON e1.id = e2.id " +
+                "LEFT JOIN (SELECT * FROM entity2 e2 WHERE e2.tenant_id = 1) e22 " +
+                "ON e1.id = e22.id " +
                 "WHERE e1.tenant_id = 1");
     }
 
@@ -367,10 +367,10 @@ class TenantLineInnerInterceptorTest {
                 "WHERE (e.id = ? OR e.name = ?)");
 
         // 隐式内连接
-        assertSql("SELECT * FROM entity,entity1 " +
-                "WHERE entity.id = entity1.id",
-            "SELECT * FROM entity, entity1 " +
-                "WHERE entity.id = entity1.id AND entity.tenant_id = 1 AND entity1.tenant_id = 1");
+        assertSql("SELECT * FROM entity e,entity1 e1 " +
+                "WHERE e.id = e1.id",
+            "SELECT * FROM entity e, entity1 e1 " +
+                "WHERE e.id = e1.id AND e.tenant_id = 1 AND e1.tenant_id = 1");
 
         // 隐式内连接
         assertSql("SELECT * FROM entity a, with_as_entity1 b " +
@@ -384,30 +384,30 @@ class TenantLineInnerInterceptorTest {
                 "WHERE a.id = b.id");
 
         // SubJoin with 隐式内连接
-        assertSql("SELECT * FROM (entity,entity1) " +
-                "WHERE entity.id = entity1.id",
-            "SELECT * FROM (entity, entity1) " +
-                "WHERE entity.id = entity1.id " +
-                "AND entity.tenant_id = 1 AND entity1.tenant_id = 1");
+        assertSql("SELECT * FROM (entity e,entity1 e1) " +
+                "WHERE e.id = e1.id",
+            "SELECT * FROM (entity e, entity1 e1) " +
+                "WHERE e.id = e1.id " +
+                "AND e.tenant_id = 1 AND e1.tenant_id = 1");
 
-        assertSql("SELECT * FROM ((entity,entity1),entity2) " +
-                "WHERE entity.id = entity1.id and entity.id = entity2.id",
-            "SELECT * FROM ((entity, entity1), entity2) " +
-                "WHERE entity.id = entity1.id AND entity.id = entity2.id " +
-                "AND entity.tenant_id = 1 AND entity1.tenant_id = 1 AND entity2.tenant_id = 1");
+        assertSql("SELECT * FROM ((entity e,entity1 e1),entity2 e2) " +
+                "WHERE e.id = e1.id and e.id = e2.id",
+            "SELECT * FROM ((entity e, entity1 e1), entity2 e2) " +
+                "WHERE e.id = e1.id AND e.id = e2.id " +
+                "AND e.tenant_id = 1 AND e1.tenant_id = 1 AND e2.tenant_id = 1");
 
-        assertSql("SELECT * FROM (entity,(entity1,entity2)) " +
-                "WHERE entity.id = entity1.id and entity.id = entity2.id",
-            "SELECT * FROM (entity, (entity1, entity2)) " +
-                "WHERE entity.id = entity1.id AND entity.id = entity2.id " +
-                "AND entity.tenant_id = 1 AND entity1.tenant_id = 1 AND entity2.tenant_id = 1");
+        assertSql("SELECT * FROM (entity e,(entity1 e1,entity2 e2)) " +
+                "WHERE e.id = e1.id and e.id = e2.id",
+            "SELECT * FROM (entity e, (entity1 e1, entity2 e2)) " +
+                "WHERE e.id = e1.id AND e.id = e2.id " +
+                "AND e.tenant_id = 1 AND e1.tenant_id = 1 AND e2.tenant_id = 1");
 
         // 沙雕的括号写法
-        assertSql("SELECT * FROM (((entity,entity1))) " +
-                "WHERE entity.id = entity1.id",
-            "SELECT * FROM (((entity, entity1))) " +
-                "WHERE entity.id = entity1.id " +
-                "AND entity.tenant_id = 1 AND entity1.tenant_id = 1");
+        assertSql("SELECT * FROM (((entity e,entity1 e1))) " +
+                "WHERE e.id = e1.id",
+            "SELECT * FROM (((entity e, entity1 e1))) " +
+                "WHERE e.id = e1.id " +
+                "AND e.tenant_id = 1 AND e1.tenant_id = 1");
 
     }
 
@@ -415,7 +415,7 @@ class TenantLineInnerInterceptorTest {
     @Test
     void selectWithAs() {
         assertSql("with with_as_A as (select * from entity) select * from with_as_A",
-            "WITH with_as_A AS (SELECT * FROM entity WHERE entity.tenant_id = 1) SELECT * FROM with_as_A");
+            "WITH with_as_A AS (SELECT * FROM entity WHERE tenant_id = 1) SELECT * FROM with_as_A");
     }
 
 
