@@ -1,20 +1,24 @@
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.injector.methods.Insert;
+import com.baomidou.mybatisplus.core.injector.methods.*;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class MethodTest {
 
     static class TestMethod extends AbstractMethod {
 
-        public TestMethod() {
+        public TestMethod(){
+            this("TestMethod");
         }
-
         public TestMethod(String methodName) {
             super(methodName);
         }
@@ -24,20 +28,18 @@ public class MethodTest {
             return null;
         }
 
-        @Override
-        public String getMethod(SqlMethod sqlMethod) {
-            return "testMethod";
-        }
-
     }
 
     @Test
     void test(){
-        Assertions.assertEquals(new Insert().getMethod(SqlMethod.INSERT_ONE),"insert");
-        Assertions.assertEquals(new Insert("testInsert").getMethod(SqlMethod.INSERT_ONE),"testInsert");
-        Assertions.assertEquals(new TestMethod().getMethod(SqlMethod.INSERT_ONE),"testMethod");
-        //这里方法被复写了,用复写的方法为准
-        Assertions.assertEquals(new TestMethod("xxxx").getMethod(SqlMethod.INSERT_ONE),"testMethod");
+        Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
+            .add(new Insert())
+            .add(new Delete())
+            .add(new Update())
+            .add(new SelectPage())
+            .add(new TestMethod());
+        List<AbstractMethod> collect = builder.build().collect(toList());
+        Assert.isTrue(collect.size() == 5, "创建失败！");
     }
 
 }

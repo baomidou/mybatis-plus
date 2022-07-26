@@ -32,7 +32,7 @@ import java.util.Map;
 public class SelectMapsPage extends AbstractMethod {
 
     public SelectMapsPage() {
-        super(SqlMethod.SELECT_MAPS_PAGE.getMethod());
+        this(SqlMethod.SELECT_MAPS_PAGE.getMethod());
     }
 
     /**
@@ -49,6 +49,6 @@ public class SelectMapsPage extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForOther(mapperClass, getMethod(sqlMethod), sqlSource, Map.class);
+        return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Map.class);
     }
 }

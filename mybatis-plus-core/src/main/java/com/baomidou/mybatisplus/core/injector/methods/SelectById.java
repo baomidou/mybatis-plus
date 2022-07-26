@@ -31,7 +31,7 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 public class SelectById extends AbstractMethod {
 
     public SelectById() {
-        super(SqlMethod.SELECT_BY_ID.getMethod());
+        this(SqlMethod.SELECT_BY_ID.getMethod());
     }
 
     /**
@@ -49,6 +49,6 @@ public class SelectById extends AbstractMethod {
                 sqlSelectColumns(tableInfo, false),
                 tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
                 tableInfo.getLogicDeleteSql(true, true)), Object.class);
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }
