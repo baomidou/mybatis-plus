@@ -181,6 +181,15 @@ public interface BaseMapper<T> extends Mapper<T> {
     }
 
     /**
+     * 根据 ID 判断是否存在记录
+     *
+     * @param id 实体id
+     * @return 是否存在记录
+     */
+    default boolean existsById(Serializable id) {
+        return null != this.selectById(id);
+    }
+    /**
      * 根据 Wrapper 条件，判断是否存在记录
      *
      * @param queryWrapper 实体对象封装操作类

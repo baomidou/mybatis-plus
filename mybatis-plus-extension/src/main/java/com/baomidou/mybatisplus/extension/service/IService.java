@@ -329,6 +329,26 @@ public interface IService<T> {
     T getOne(Wrapper<T> queryWrapper, boolean throwEx);
 
     /**
+     * 根据 ID 判断是否存在记录
+     *
+     * @param id 实体id
+     * @return 是否存在记录
+     */
+    default boolean haveById(Serializable id){
+        return getBaseMapper().existsById(id);
+    }
+
+    /**
+     * 根据 Wrapper 条件，判断是否存在记录
+     *
+     * @param queryWrapper 实体对象封装操作类
+     * @return 是否存在记录
+     */
+    default boolean have(Wrapper<T> queryWrapper){
+        return getBaseMapper().exists(queryWrapper);
+    }
+
+    /**
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
