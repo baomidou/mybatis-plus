@@ -30,7 +30,7 @@ public class OracleDialect implements IDialect {
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         limit = (offset >= 1) ? (offset + limit) : limit;
         String sql = "SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM ( " +
-            originalSql + " ) TMP ) WHERE ROW_ID<="+FIRST_MARK+"AND ROW_ID > " + SECOND_MARK;
+            originalSql + " ) TMP ) WHERE ROW_ID<="+FIRST_MARK+" AND ROW_ID > " + SECOND_MARK;
         return new DialectModel(sql, limit, offset).setConsumerChain();
     }
 }
