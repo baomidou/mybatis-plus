@@ -51,7 +51,7 @@ ext {
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.10",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
-        "gson"                       : "com.google.code.gson:gson:2.9.0",
+        "gson"                       : "com.google.code.gson:gson:2.9.1",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
