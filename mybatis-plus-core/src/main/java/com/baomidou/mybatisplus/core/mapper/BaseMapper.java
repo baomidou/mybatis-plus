@@ -17,10 +17,9 @@ package com.baomidou.mybatisplus.core.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -170,14 +169,15 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<T> ts = this.selectList(queryWrapper);
-        if (CollectionUtils.isNotEmpty(ts)) {
-            if (ts.size() != 1) {
-                throw ExceptionUtils.mpe("One record is expected, but the query result is multiple records");
-            }
-            return ts.get(0);
+        List<T> list = this.selectList(queryWrapper);
+        // 抄自 DefaultSqlSession#selectOne
+        if (list.size() == 1) {
+            return list.get(0);
+        } else if (list.size() > 1) {
+            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
