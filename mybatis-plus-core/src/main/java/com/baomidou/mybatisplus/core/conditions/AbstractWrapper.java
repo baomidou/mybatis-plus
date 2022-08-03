@@ -450,6 +450,17 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             appendSqlSegments(APPLY, instance);
         });
     }
+    
+    /**
+     * <p>限制查询1条</p>
+     * <p>调用: last("LIMIT 1")</p>
+     * <p>注意只能最后调用一次</p>
+     *
+     * @return children
+     */
+    protected Children limitOne() {
+        return last("LIMIT 1");
+    }
 
     /**
      * 子类返回一个自己的新对象
