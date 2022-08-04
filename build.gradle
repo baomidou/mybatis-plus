@@ -62,7 +62,7 @@ ext {
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:2.1.214",
         "mysql"                      : "mysql:mysql-connector-java:8.0.30",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.36.0.3",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.39.2.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.6.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
