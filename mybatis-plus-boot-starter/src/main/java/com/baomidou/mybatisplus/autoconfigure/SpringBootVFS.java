@@ -38,7 +38,8 @@ public class SpringBootVFS extends VFS {
     private final ResourcePatternResolver resourceResolver;
 
     public SpringBootVFS() {
-        this.resourceResolver = new PathMatchingResourcePatternResolver(getClass().getClassLoader());
+        this.resourceResolver = new PathMatchingResourcePatternResolver(Thread.currentThread()
+            .getContextClassLoader());
     }
 
     @Override
