@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -99,16 +100,16 @@ public abstract class InterceptorIgnoreHelper {
         return willIgnore(id, InterceptorIgnoreCache::getDataPermission);
     }
 
-    public static boolean willIgnoreSharding(String id) {
-        return willIgnore(id, InterceptorIgnoreCache::getSharding);
-    }
-
     public static boolean willIgnoreOthersByKey(String id, String key) {
         return willIgnore(id, i -> CollectionUtils.isNotEmpty(i.getOthers()) && i.getOthers().getOrDefault(key, false));
     }
 
     public static boolean willIgnore(String id, Function<InterceptorIgnoreCache, Boolean> function) {
         InterceptorIgnoreCache cache = INTERCEPTOR_IGNORE_CACHE.get(id);
+        if (cache == null && id.endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
+            // 支持一下 selectKey
+            cache = INTERCEPTOR_IGNORE_CACHE.get(id.substring(0, id.length() - SelectKeyGenerator.SELECT_KEY_SUFFIX.length()));
+        }
         if (cache == null) {
             cache = INTERCEPTOR_IGNORE_CACHE.get(id.substring(0, id.lastIndexOf(StringPool.DOT)));
         }
@@ -126,7 +127,6 @@ public abstract class InterceptorIgnoreHelper {
             .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
             .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
             .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
-            .sharding(chooseBoolean(mapper.getSharding(), method.getSharding()))
             .others(chooseOthers(mapper.getOthers(), method.getOthers()))
             .build();
     }
@@ -138,7 +138,6 @@ public abstract class InterceptorIgnoreHelper {
             .blockAttack(getBoolean("blockAttack", name, ignore.blockAttack()))
             .illegalSql(getBoolean("illegalSql", name, ignore.illegalSql()))
             .dataPermission(getBoolean("dataPermission", name, ignore.dataPermission()))
-            .sharding(getBoolean("sharding", name, ignore.sharding()))
             .others(getOthers(name, ignore.others()))
             .build();
     }
@@ -214,7 +213,6 @@ public abstract class InterceptorIgnoreHelper {
         private Boolean blockAttack;
         private Boolean illegalSql;
         private Boolean dataPermission;
-        private Boolean sharding;
         private Map<String, Boolean> others;
     }
 }

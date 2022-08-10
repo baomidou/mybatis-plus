@@ -64,11 +64,6 @@ public @interface InterceptorIgnore {
     String dataPermission() default "1";
 
     /**
-     * 分表 {@link com.baomidou.mybatisplus.extension.plugins.inner.ShardingInnerInterceptor}
-     */
-    String sharding() default "";
-
-    /**
      * 其他的
      * <p>
      * 格式应该为:  "key"+"@"+可选项[false,true,1,0,on,off]

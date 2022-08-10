@@ -135,7 +135,7 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
 
         Select select = insert.getSelect();
         if (select != null) {
-            this.processInsertSelect(select.getSelectBody());
+            processInsertSelect(select.getSelectBody());
         } else if (insert.getItemsList() != null) {
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
