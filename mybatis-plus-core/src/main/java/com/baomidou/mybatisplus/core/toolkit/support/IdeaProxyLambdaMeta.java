@@ -30,7 +30,6 @@ import java.lang.reflect.Proxy;
  * Create by hcl at 2021/5/17
  */
 public class IdeaProxyLambdaMeta implements LambdaMeta {
-
     private final Class<?> clazz;
     private final String name;
 
