@@ -18,15 +18,17 @@ package com.baomidou.mybatisplus.core.toolkit.support;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
+import java.lang.invoke.SerializedLambda;
+
 /**
- * 基于 {@link SerializedLambda} 创建的元信息
- * <p>
- * Create by hcl at 2021/7/7
+ * 使用 {@link com.baomidou.mybatisplus.core.toolkit.SerializedLambdaExtractor} 创建的元信息
+ *
+ * @author WangHeng
  */
-public class ShadowLambdaMeta implements LambdaMeta {
+public class ExtractedLambdaMeta implements LambdaMeta {
     private final SerializedLambda lambda;
 
-    public ShadowLambdaMeta(SerializedLambda lambda) {
+    public ExtractedLambdaMeta(SerializedLambda lambda) {
         this.lambda = lambda;
     }
 
@@ -37,9 +39,14 @@ public class ShadowLambdaMeta implements LambdaMeta {
 
     @Override
     public Class<?> getInstantiatedClass() {
+        // ex. (Lcom/baomidou/mybatisplus/test/toolkit/LambdaUtilsTest$TestModel;)Ljava/lang/Object;
         String instantiatedMethodType = lambda.getInstantiatedMethodType();
-        String instantiatedType = instantiatedMethodType.substring(2, instantiatedMethodType.indexOf(StringPool.SEMICOLON)).replace(StringPool.SLASH, StringPool.DOT);
-        return ClassUtils.toClassConfident(instantiatedType, lambda.getCapturingClass().getClassLoader());
+        // ex. com.baomidou.mybatisplus.test.toolkit.LambdaUtilsTest$TestModel
+        String instantiatedType = instantiatedMethodType
+            .substring(2, instantiatedMethodType.indexOf(StringPool.SEMICOLON))
+            .replace(StringPool.SLASH, StringPool.DOT);
+
+        return ClassUtils.toClassConfident(instantiatedType);
     }
 
 }

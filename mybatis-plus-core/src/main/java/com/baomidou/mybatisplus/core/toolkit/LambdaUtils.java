@@ -19,8 +19,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.*;
 
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,14 +50,9 @@ public final class LambdaUtils {
         if (func instanceof Proxy) {
             return new IdeaProxyLambdaMeta((Proxy) func);
         }
-        // 2. 反射读取
-        try {
-            Method method = func.getClass().getDeclaredMethod("writeReplace");
-            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
-        } catch (Throwable e) {
-            // 3. 反射失败使用序列化的方式读取
-            return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
-        }
+
+        // 2. 使用提取器获取
+        return new ExtractedLambdaMeta(SerializedLambdaExtractor.extract(func));
     }
 
     /**
