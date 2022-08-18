@@ -49,12 +49,27 @@ public abstract class SqlUtils implements Constants {
     public static String concatLike(Object str, SqlLike type) {
         switch (type) {
             case LEFT:
-                return PERCENT + str;
+                return PERCENT + escapeChar(String.valueOf(str));
             case RIGHT:
-                return str + PERCENT;
+                return escapeChar(String.valueOf(str)) + PERCENT;
             default:
-                return PERCENT + str + PERCENT;
+                return PERCENT + escapeChar(String.valueOf(str)) + PERCENT;
         }
+    }
+
+    /**
+     * 转义字符
+     *
+     * @param before 转义前字符
+     * @return 转义后字符
+     */
+    public static String escapeChar(String before) {
+        if (StringUtils.isNotBlank(before)) {
+            before = before.replaceAll("\\\\", "\\\\\\\\");
+            before = before.replaceAll("_", "\\\\_");
+            before = before.replaceAll("%", "\\\\%");
+        }
+        return before;
     }
 
     public static List<String> findPlaceholder(String sql) {
