@@ -15,17 +15,22 @@
  */
 package com.baomidou.mybatisplus.test.h2.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.mapping.StatementType;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Addr;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
-import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.mapping.StatementType;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 这里继承自定义父类 SuperMapper
@@ -53,7 +58,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     int myInsertWithNameVersion(@Param("name") String name, @Param("version") int version);
 
     @Update(
-        "update h2user set name=#{name} where test_id=#{id}"
+        "update h2user set version=version+1, name=#{name} where test_id=#{id} and test_type=1"
     )
     int myUpdateWithNameId(@Param("id") Long id, @Param("name") String name);
 
