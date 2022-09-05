@@ -57,6 +57,26 @@ public final class ChainWrappers {
 
     /**
      * 链式查询 lambda 式
+     * <p>注意：不支持 Kotlin </p>
+     *
+     * @return LambdaQueryWrapper 的包装类
+     */
+    public static <T> LambdaQueryChainWrapper<T> lambdaQueryChain(BaseMapper<T> mapper, T entity) {
+        return new LambdaQueryChainWrapper<>(mapper, entity);
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * <p>注意：不支持 Kotlin </p>
+     *
+     * @return LambdaQueryWrapper 的包装类
+     */
+    public static <T> LambdaQueryChainWrapper<T> lambdaQueryChain(BaseMapper<T> mapper, Class<T> entityClass) {
+        return new LambdaQueryChainWrapper<>(mapper, entityClass);
+    }
+
+    /**
+     * 链式查询 lambda 式
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类

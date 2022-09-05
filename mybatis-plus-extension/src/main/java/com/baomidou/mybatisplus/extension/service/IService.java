@@ -519,7 +519,18 @@ public interface IService<T> {
      * @return LambdaQueryWrapper 的包装类
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
-        return ChainWrappers.lambdaQueryChain(getBaseMapper());
+        return ChainWrappers.lambdaQueryChain(getBaseMapper(), getEntityClass());
+    }
+
+    /**
+     * 链式查询 lambda 式
+     * <p>注意：不支持 Kotlin </p>
+     *
+     * @param entity 实体对象
+     * @return LambdaQueryWrapper 的包装类
+     */
+    default LambdaQueryChainWrapper<T> lambdaQuery(T entity) {
+        return ChainWrappers.lambdaQueryChain(getBaseMapper(), entity);
     }
 
     /**
