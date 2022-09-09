@@ -38,8 +38,11 @@ class TenantLineInnerInterceptorTest {
     @Test
     void insert() {
         // plain
-        assertSql("insert into entity (id,name) value (?,?)",
+        assertSql("insert into entity (id,name) values (?,?)",
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1)");
+        // batch
+        assertSql("insert into entity (id,name) values (?,?),(?,?)",
+            "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1), (?, ?, 1)");
         // 无 insert的列
         assertSql("insert into entity value (?,?)",
             "INSERT INTO entity VALUES (?, ?)");
