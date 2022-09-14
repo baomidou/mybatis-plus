@@ -139,10 +139,11 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
         } else if (insert.getItemsList() != null) {
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
+            Expression tenantId = tenantLineHandler.getTenantId();
             if (itemsList instanceof MultiExpressionList) {
-                ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantLineHandler.getTenantId()));
+                ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
             } else {
-                ((ExpressionList) itemsList).getExpressions().add(tenantLineHandler.getTenantId());
+                ((ExpressionList) itemsList).getExpressions().add(tenantId);
             }
         } else {
             throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
