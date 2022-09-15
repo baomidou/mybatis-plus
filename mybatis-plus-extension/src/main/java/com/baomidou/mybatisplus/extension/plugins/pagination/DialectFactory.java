@@ -66,7 +66,8 @@ public class DialectFactory {
                 || dbType == DbType.SAP_HANA
                 || dbType == DbType.IMPALA
                 || dbType == DbType.HIGH_GO
-                || dbType == DbType.VERTICA) {
+                || dbType == DbType.VERTICA
+                || dbType == DbType.REDSHIFT) {
                 dialect = new PostgreDialect();
             }
             // other types

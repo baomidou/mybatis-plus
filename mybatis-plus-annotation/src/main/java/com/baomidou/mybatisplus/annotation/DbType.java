@@ -169,6 +169,10 @@ public enum DbType {
      */
     XCloud("xcloud", "行云数据库"),
     /**
+     * xcloud
+     */
+    REDSHIFT("redshift", "亚马逊redshift数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
