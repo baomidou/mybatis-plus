@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.Executor;
@@ -49,7 +50,7 @@ public class JdbcUtils {
     public static DbType getDbType(Executor executor) {
         try {
             Connection conn = executor.getTransaction().getConnection();
-            return JDBC_DB_TYPE_CACHE.computeIfAbsent(conn.getMetaData().getURL(), JdbcUtils::getDbType);
+            return CollectionUtils.computeIfAbsent(JDBC_DB_TYPE_CACHE, conn.getMetaData().getURL(), JdbcUtils::getDbType);
         } catch (SQLException e) {
             throw ExceptionUtils.mpe(e);
         }
