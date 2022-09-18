@@ -47,7 +47,8 @@ public class DialectFactory {
                 || dbType == DbType.OCEAN_BASE
                 || dbType == DbType.CUBRID
                 || dbType == DbType.GOLDILOCKS
-                || dbType == DbType.CSIIDB) {
+                || dbType == DbType.CSIIDB
+                || dbType == DbType.TIDB) {
                 dialect = new MySqlDialect();
             }
             // oracle same type
@@ -85,7 +86,7 @@ public class DialectFactory {
                 dialect = new GBasedbtDialect();
             } else if (dbType == DbType.GBASE_INFORMIX) {
                 dialect = new GBaseInfromixDialect();
-            }else if (dbType == DbType.XCloud){
+            } else if (dbType == DbType.XCloud) {
                 dialect = new XCloudDialect();
             } else if (dbType == DbType.FIREBIRD) {
                 dialect = new FirebirdDialect();

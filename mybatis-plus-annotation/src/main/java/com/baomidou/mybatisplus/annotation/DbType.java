@@ -173,6 +173,10 @@ public enum DbType {
      */
     REDSHIFT("redshift", "亚马逊redshift数据库"),
     /**
+     * TiDB
+     */
+    TIDB("tidb", "tidb数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库");
