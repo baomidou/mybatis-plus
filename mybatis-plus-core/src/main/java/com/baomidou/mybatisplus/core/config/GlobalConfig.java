@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.config;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.handlers.JoinTableInfoInitHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
@@ -75,6 +76,10 @@ public class GlobalConfig implements Serializable {
      * 元对象字段填充控制器
      */
     private MetaObjectHandler metaObjectHandler;
+    /**
+     * 参与 TableInfo 的初始化
+     */
+    private JoinTableInfoInitHandler joinTableInfoInitHandler;
     /**
      * 主键生成器
      */
