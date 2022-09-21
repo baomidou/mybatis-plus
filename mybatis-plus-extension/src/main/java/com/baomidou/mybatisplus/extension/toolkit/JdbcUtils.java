@@ -127,6 +127,8 @@ public class JdbcUtils {
             return DbType.FIREBIRD;
         } else if (url.contains(":redshift:")) {
             return DbType.REDSHIFT;
+        } else if (url.contains(":opengauss:")) {
+            return DbType.OPENGAUSS;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
