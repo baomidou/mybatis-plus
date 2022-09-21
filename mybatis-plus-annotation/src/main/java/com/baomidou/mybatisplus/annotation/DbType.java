@@ -176,7 +176,13 @@ public enum DbType {
     /**
      * openGauss
      */
-    OPENGAUSS("openGauss","华为 opengauss 数据库"),
+    OPENGAUSS("openGauss", "华为 opengauss 数据库"),
+
+    /**
+     * TDengine
+     */
+    TDENGINE("TDengine", "TDengine数据库"),
+
     /**
      * UNKONWN DB
      */

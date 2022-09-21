@@ -68,7 +68,8 @@ public class DialectFactory {
                 || dbType == DbType.HIGH_GO
                 || dbType == DbType.VERTICA
                 || dbType == DbType.REDSHIFT
-                || dbType ==DbType.OPENGAUSS ) {
+                || dbType == DbType.OPENGAUSS
+                || dbType == DbType.TDENGINE) {
                 dialect = new PostgreDialect();
             }
             // other types
@@ -86,7 +87,7 @@ public class DialectFactory {
                 dialect = new GBasedbtDialect();
             } else if (dbType == DbType.GBASE_INFORMIX) {
                 dialect = new GBaseInfromixDialect();
-            }else if (dbType == DbType.XCloud){
+            } else if (dbType == DbType.XCloud) {
                 dialect = new XCloudDialect();
             } else if (dbType == DbType.FIREBIRD) {
                 dialect = new FirebirdDialect();
