@@ -172,6 +172,11 @@ public enum DbType {
      * redshift
      */
     REDSHIFT("redshift", "亚马逊redshift数据库"),
+
+    /**
+     * openGauss
+     */
+    OPENGAUSS("openGauss","华为 opengauss 数据库"),
     /**
      * UNKONWN DB
      */
