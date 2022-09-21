@@ -179,9 +179,7 @@ public class TableInfoHelper {
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
         JoinTableInfoInitHandler joinTableInfoInitHandler = globalConfig.getJoinTableInfoInitHandler();
-        if (joinTableInfoInitHandler != null) {
-            joinTableInfoInitHandler.joinTableInfo(tableInfo, configuration);
-        }
+        joinTableInfoInitHandler.joinTableInfo(tableInfo, configuration);
         TABLE_INFO_CACHE.put(clazz, tableInfo);
         TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
@@ -332,19 +330,15 @@ public class TableInfoHelper {
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
                 TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, isOrderBy);
-                if (initTableInfoHandler != null) {
-                    initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
-                }
                 fieldList.add(tableFieldInfo);
+                initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
             TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, isOrderBy);
-            if (initTableInfoHandler != null) {
-                initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
-            }
             fieldList.add(tableFieldInfo);
+            initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
         }
 
         /* 字段列表 */

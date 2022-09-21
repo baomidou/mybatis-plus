@@ -79,7 +79,8 @@ public class GlobalConfig implements Serializable {
     /**
      * 参与 TableInfo 的初始化
      */
-    private JoinTableInfoInitHandler joinTableInfoInitHandler;
+    private JoinTableInfoInitHandler joinTableInfoInitHandler = new JoinTableInfoInitHandler() {
+    };
     /**
      * 主键生成器
      */
