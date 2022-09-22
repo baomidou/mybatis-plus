@@ -414,6 +414,23 @@ class TenantLineInnerInterceptorTest {
 
     }
 
+    @Test
+    void selectJoin() {
+        // join
+        assertSql("SELECT * FROM entity e " +
+                "join entity1 e1 on e1.id = e.id " +
+                "WHERE e.id = ? OR e.name = ?",
+            "SELECT * FROM entity e " +
+                "JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+
+        assertSql("SELECT * FROM entity e " +
+                "join entity1 e1 on e1.id = e.id " +
+                "WHERE (e.id = ? OR e.name = ?)",
+            "SELECT * FROM entity e " +
+                "JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
+    }
 
     @Test
     void selectWithAs() {

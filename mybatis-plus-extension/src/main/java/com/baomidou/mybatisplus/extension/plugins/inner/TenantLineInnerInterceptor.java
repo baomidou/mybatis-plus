@@ -470,8 +470,6 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                     if (leftTable != null) {
                         onTables = Collections.singletonList(leftTable);
                     }
-                } else if (join.isLeft()) {
-                    onTables = Collections.singletonList(joinTable);
                 } else if (join.isInner()) {
                     if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
@@ -479,6 +477,9 @@ public class TenantLineInnerInterceptor extends JsqlParserSupport implements Inn
                         onTables = Arrays.asList(mainTable, joinTable);
                     }
                     mainTable = null;
+                } else {
+                    // 如果是left join或者join直接走默认逻辑，保持与3.4.3.x版本逻辑一致
+                    onTables = Collections.singletonList(joinTable);
                 }
 
                 mainTables = new ArrayList<>();
