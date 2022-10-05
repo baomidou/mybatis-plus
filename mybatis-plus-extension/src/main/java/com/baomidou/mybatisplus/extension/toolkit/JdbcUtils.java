@@ -131,7 +131,9 @@ public class JdbcUtils {
             return DbType.OPENGAUSS;
         } else if (url.contains(":TAOS:")) {
             return DbType.TDENGINE;
-        } else {
+        }else if (url.contains(":informix")) {
+           return DbType.INFORMIX;
+        }  else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }
