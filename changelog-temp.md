@@ -1,3 +1,5 @@
 - 多租户插件:多表join表名必需起别名,否则追加的过滤条件不带前缀
 - fix: InterceptorIgnore 不能过滤 selectKey 的问题
 - fix: 补全`mybatis-plus-boot-starter-test`遗漏配置
+- feat: 分页新增informix数据库支持
+- feat: 支持spring-boot 2.7以上版本
