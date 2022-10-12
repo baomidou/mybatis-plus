@@ -174,7 +174,11 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         IDialect dialect = findIDialect(executor);
 
         final Configuration configuration = ms.getConfiguration();
-        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
+        // 计算实际PageSize的值
+        long pageSize = page.getSize();
+        long leftCount = page.getTotal() - (page.getCurrent() - 1) * pageSize;
+        long rows = Math.min(leftCount, pageSize);
+        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), rows);
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
 
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
