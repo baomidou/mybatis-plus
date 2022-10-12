@@ -42,5 +42,9 @@ class DynamicTableNameInnerInterceptorTest {
         // 别名被声明要替换
         origin = "SELECT t_user.* FROM t_user_real t_user";
         assertEquals("SELECT t_user.* FROM t_user_real_r t_user", interceptor.changeTable(origin));
+
+        // 别名被声明要替换
+        origin = "SELECT t.* FROM t_user_real t left join entity e on e.id = t.id";
+        assertEquals("SELECT t.* FROM t_user_real_r t left join entity e on e.id = t.id", interceptor.changeTable(origin));
     }
 }
