@@ -37,7 +37,7 @@ public class Sequence {
     /**
      * 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）
      */
-    private final long twepoch = 1288834974657L;
+    private static final long twepoch = 1288834974657L;
     /**
      * 机器标识位数
      */
@@ -199,4 +199,20 @@ public class Sequence {
         return SystemClock.now();
     }
 
+    /**
+     * 反解id的时间戳部分
+     */
+    public static long parseIdTimestamp(long id) {
+        String s = Long.toBinaryString(id);
+        int x = 64 - s.length();
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < x; i++) {
+            b.append("0");
+        }
+        s = b + s;
+        s = s.substring(1, 42);
+        long l = Long.parseUnsignedLong(s, 2);
+        l += twepoch;
+        return l;
+    }
 }
