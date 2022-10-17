@@ -3,3 +3,4 @@
 - fix: 补全`mybatis-plus-boot-starter-test`遗漏配置
 - feat: 分页新增informix数据库支持
 - feat: 支持spring-boot 2.7以上版本
+- feat: 雪花id新增反解时间戳方法`Sequence#parseIdTimestamp`
