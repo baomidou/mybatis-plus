@@ -28,13 +28,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 public class SQLServer2005Dialect implements IDialect {
 
     private static String getOrderByPart(String sql) {
-        String loweredString = sql.toLowerCase();
-        int orderByIndex = loweredString.indexOf("order by");
-        if (orderByIndex != -1) {
-            return sql.substring(orderByIndex);
-        } else {
-            return StringPool.EMPTY;
+        final String loweredString = sql.toLowerCase();
+        final int partitionByIndex = loweredString.lastIndexOf("partition by");
+        final int orderByIndex = loweredString.indexOf("order by", partitionByIndex);
+        final int lastOrderByIndex = loweredString.lastIndexOf("order by");
+        if (partitionByIndex >= 0 && orderByIndex != lastOrderByIndex) {
+            return sql.substring(lastOrderByIndex);
+        } else if(lastOrderByIndex >= 0) {
+            return sql.substring(lastOrderByIndex);
         }
+        return StringPool.EMPTY;
     }
 
     @Override
