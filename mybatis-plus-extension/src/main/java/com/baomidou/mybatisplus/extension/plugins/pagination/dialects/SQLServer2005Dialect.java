@@ -32,8 +32,10 @@ public class SQLServer2005Dialect implements IDialect {
         final int rowNumberIndex = loweredString.lastIndexOf("row_number");
         final int orderByIndex = loweredString.indexOf("order by", rowNumberIndex);
         final int lastOrderByIndex = loweredString.lastIndexOf("order by");
-        if (rowNumberIndex >= 0 && orderByIndex != lastOrderByIndex) {
-            return sql.substring(lastOrderByIndex);
+        if (rowNumberIndex >= 0) {
+            if(orderByIndex != lastOrderByIndex) {
+               return sql.substring(lastOrderByIndex);
+            }
         } else if(lastOrderByIndex >= 0) {
             return sql.substring(lastOrderByIndex);
         }
