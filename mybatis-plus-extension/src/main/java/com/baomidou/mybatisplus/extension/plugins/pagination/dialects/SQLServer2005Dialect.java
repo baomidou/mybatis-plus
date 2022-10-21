@@ -29,10 +29,10 @@ public class SQLServer2005Dialect implements IDialect {
 
     private static String getOrderByPart(String sql) {
         final String loweredString = sql.toLowerCase();
-        final int partitionByIndex = loweredString.lastIndexOf("partition by");
-        final int orderByIndex = loweredString.indexOf("order by", partitionByIndex);
+        final int rowNumberIndex = loweredString.lastIndexOf("row_number");
+        final int orderByIndex = loweredString.indexOf("order by", rowNumberIndex);
         final int lastOrderByIndex = loweredString.lastIndexOf("order by");
-        if (partitionByIndex >= 0 && orderByIndex != lastOrderByIndex) {
+        if (rowNumberIndex >= 0 && orderByIndex != lastOrderByIndex) {
             return sql.substring(lastOrderByIndex);
         } else if(lastOrderByIndex >= 0) {
             return sql.substring(lastOrderByIndex);
