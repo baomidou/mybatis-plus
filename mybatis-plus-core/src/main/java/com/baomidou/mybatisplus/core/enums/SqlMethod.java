@@ -63,7 +63,7 @@ public enum SqlMethod {
     SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s </script>"),
     @Deprecated
     SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>%s SELECT %s FROM %s %s %s\n</script>"),
-    SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>%s SELECT COUNT(%s) FROM %s %s %s\n</script>"),
+    SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>%s SELECT COUNT(%s) AS total FROM %s %s %s\n</script>"),
     SELECT_LIST("selectList", "查询满足条件所有数据", "<script>%s SELECT %s FROM %s %s %s %s\n</script>"),
     SELECT_PAGE("selectPage", "查询满足条件所有数据（并翻页）", "<script>%s SELECT %s FROM %s %s %s %s\n</script>"),
     SELECT_MAPS("selectMaps", "查询满足条件所有数据", "<script>%s SELECT %s FROM %s %s %s %s\n</script>"),
@@ -91,5 +91,4 @@ public enum SqlMethod {
     public String getSql() {
         return sql;
     }
-
 }
