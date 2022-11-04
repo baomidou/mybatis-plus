@@ -69,7 +69,8 @@ public class DialectFactory {
                 || dbType == DbType.VERTICA
                 || dbType == DbType.REDSHIFT
                 || dbType == DbType.OPENGAUSS
-                || dbType == DbType.TDENGINE) {
+                || dbType == DbType.TDENGINE
+                || dbType == DbType.UXDB) {
                 dialect = new PostgreDialect();
             }
             // other types
