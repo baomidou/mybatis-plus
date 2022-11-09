@@ -23,6 +23,23 @@ public class SqlInjectionUtilsTest {
         assertSql(false, "trigger");
         assertSql(true, "and name like '%s123%s'");
         assertSql(false, "convert(name using GBK)");
+
+        // 无空格
+        assertSql(false, "insert_into");
+        assertSql(true, "SELECT aa FROM user");
+        // 无空格
+        assertSql(true, "SELECT*FROM user");
+        // 左空格
+        assertSql(true, "SELECT *FROM user");
+        // 右空格
+        assertSql(true, "SELECT* FROM user");
+        // 左tab
+        assertSql(true, "SELECT                 *FROM user");
+        // 右tab
+        assertSql(true, "SELECT*        FROM user");
+        assertSql(false, "SELECT*FROMuser");
+        // 该字符串里包含 setT or
+        assertSql(false, "databaseType desc,orderNum desc)");
     }
 
     private void assertSql(boolean injection, String sql) {
