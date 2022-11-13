@@ -186,14 +186,14 @@ public enum DbType {
      * Informix
      */
     INFORMIX("informix", "Informix数据库"),
-    
+
     /**
      * uxdb
      */
     UXDB("uxdb", "优炫数据库"),
 
     /**
-     * UNKONWN DB
+     * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
 
