@@ -92,7 +92,6 @@ class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         Map<String, List<Long>> nameIdMap = SimpleQuery.group(lambdaQuery(), Entity::getName,
             mapping(Entity::getId, toList()));
         assertThat(nameIdMap).containsExactly(entry(null, Arrays.asList(2L)), entry("ruben", Arrays.asList(1L, 3L)));
-        System.out.println("nameIdMap:" + nameIdMap);
 
         // 获取Map<name,个数>
         Map<String, Long> nameCountMap = SimpleQuery.group(lambdaQuery(), Entity::getName, counting());
