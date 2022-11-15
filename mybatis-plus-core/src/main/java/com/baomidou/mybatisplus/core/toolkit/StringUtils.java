@@ -59,15 +59,9 @@ public final class StringUtils {
     /**
      * 字符串去除空白内容
      *
-     * <ul> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
+     * <ul> <li>'"<>&*+=#-; sql注入黑名单</li> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
      */
-    private static final Pattern REPLACE_BLANK = Pattern.compile("\\s*|\t|\r|\n");
-
-    /**
-     * sql注入黑名单关键词
-     * '"<>&*+=#-;
-     */
-    private static final Pattern SQL_INJECTION_BLACK = Pattern.compile("'|\"|\\<|\\>|&|\\*|\\+|=|#|-|;") ;
+    private static final Pattern REPLACE_BLANK = Pattern.compile("'|\"|\\<|\\>|&|\\*|\\+|=|#|-|;|\\s*|\t|\r|\n");
 
     /**
      * 判断字符串中是否全是空白字符
@@ -600,16 +594,11 @@ public final class StringUtils {
     public static String sqlInjectionReplaceBlank(String str) {
         if (SqlInjectionUtils.check(str)) {
             /**
-             * 1，一次过滤过滤空白字符，存在 SQL 注入，去除空白内容
+             * 过滤sql黑名单字符，存在 SQL 注入，去除空白内容
              */
             Matcher matcher = REPLACE_BLANK.matcher(str);
             str = matcher.replaceAll("");
 
-            /**
-             * 2，二次过滤，过滤sql黑名单字符，存在 SQL 注入，去除空白内容
-             */
-            matcher = SQL_INJECTION_BLACK.matcher(str);
-            str = matcher.replaceAll("");
         }
         return str;
     }
