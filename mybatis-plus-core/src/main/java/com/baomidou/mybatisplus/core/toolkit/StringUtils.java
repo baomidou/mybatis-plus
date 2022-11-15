@@ -64,6 +64,12 @@ public final class StringUtils {
     private static final Pattern REPLACE_BLANK = Pattern.compile("\\s*|\t|\r|\n");
 
     /**
+     * sql注入黑名单关键词
+     * '"<>&*+=#-;
+     */
+    private static final Pattern SQL_INJECTION_BLACK = Pattern.compile("'|\"|\\<|\\>|&|\\*|\\+|=|#|-|;") ;
+
+    /**
      * 判断字符串中是否全是空白字符
      *
      * @param cs 需要判断的字符串
@@ -594,10 +600,16 @@ public final class StringUtils {
     public static String sqlInjectionReplaceBlank(String str) {
         if (SqlInjectionUtils.check(str)) {
             /**
-             * 存在 SQL 注入，去除空白内容
+             * 1，一次过滤过滤空白字符，存在 SQL 注入，去除空白内容
              */
             Matcher matcher = REPLACE_BLANK.matcher(str);
-            return matcher.replaceAll("");
+            str = matcher.replaceAll("");
+
+            /**
+             * 2，二次过滤，过滤sql黑名单字符，存在 SQL 注入，去除空白内容
+             */
+            matcher = SQL_INJECTION_BLACK.matcher(str);
+            str = matcher.replaceAll("");
         }
         return str;
     }
