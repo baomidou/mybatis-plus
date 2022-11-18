@@ -329,7 +329,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
                     indexInfoMap.put(key, indexInfos);
                 }
             } catch (SQLException e) {
-                logger.error(String.format("getIndexInfo fault, with key:{}, dbName:{}, tableName:{}", key, dbName, tableName), e);
+                logger.error(String.format("getIndexInfo fault, with key:%s, dbName:%s, tableName:%s", key, dbName, tableName), e);
             }
         }
         return indexInfos;
