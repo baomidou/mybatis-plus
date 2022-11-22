@@ -42,7 +42,7 @@ ext {
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.9.1",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
-        "logback-classic"            : "ch.qos.logback:logback-classic:1.2.11",
+        "logback-classic"            : "ch.qos.logback:logback-classic:1.4.5",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
