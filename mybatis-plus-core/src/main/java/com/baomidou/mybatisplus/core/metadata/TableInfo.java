@@ -28,7 +28,6 @@ import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Constructor;
@@ -102,6 +101,7 @@ public class TableInfo implements Constants {
      * MybatisConfiguration 标记 (Configuration内存地址值)
      */
     @Getter
+    @Setter(AccessLevel.NONE)
     private Configuration configuration;
     /**
      * 是否开启下划线转驼峰
@@ -183,16 +183,6 @@ public class TableInfo implements Constants {
     private Reflector reflector;
 
     /**
-     * @param entityType 实体类型
-     * @deprecated 3.4.4 {@link #TableInfo(Configuration, Class)}
-     */
-    @Deprecated
-    public TableInfo(Class<?> entityType) {
-        this.entityType = entityType;
-        this.reflector = SystemMetaObject.NULL_META_OBJECT.getReflectorFactory().findForClass(entityType);
-    }
-
-    /**
      * @param configuration 配置对象
      * @param entityType    实体类型
      * @since 3.4.4
@@ -214,18 +204,6 @@ public class TableInfo implements Constants {
     @Deprecated
     public String getSqlStatement(String sqlMethod) {
         return currentNamespace + DOT + sqlMethod;
-    }
-
-    /**
-     * @deprecated 3.4.4 {@link #TableInfo(Configuration, Class)}
-     * 设置 Configuration
-     */
-    @Deprecated
-    void setConfiguration(Configuration configuration) {
-        Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        this.configuration = configuration;
-        this.underCamel = configuration.isMapUnderscoreToCamelCase();
-        this.reflector = configuration.getReflectorFactory().findForClass(this.entityType);
     }
 
     /**

@@ -1,9 +1,6 @@
-apply plugin: 'kotlin'
-
 dependencies {
     api project(":mybatis-plus-extension")
 
-    testImplementation "${lib."kotlin-stdlib-jdk8"}"
     testImplementation "${lib.'spring-web'}"
     testImplementation "${lib.'javax.servlet-api'}"
 
