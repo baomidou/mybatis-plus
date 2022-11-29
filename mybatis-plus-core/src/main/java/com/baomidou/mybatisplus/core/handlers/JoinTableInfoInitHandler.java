@@ -18,7 +18,7 @@ public interface JoinTableInfoInitHandler {
      * @param fieldInfo     TableFieldInfo
      * @param configuration Configuration
      */
-    default void joinTableFieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
+    default void fieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
         // ignore
     }
 
@@ -28,7 +28,7 @@ public interface JoinTableInfoInitHandler {
      * @param tableInfo     TableInfo
      * @param configuration Configuration
      */
-    default void joinTableInfo(TableInfo tableInfo, Configuration configuration) {
+    default void tableInfo(TableInfo tableInfo, Configuration configuration) {
         // ignore
     }
 }

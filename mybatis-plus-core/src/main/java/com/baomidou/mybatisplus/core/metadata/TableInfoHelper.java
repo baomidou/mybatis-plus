@@ -48,7 +48,6 @@ import static java.util.stream.Collectors.toList;
  * @since 2016-09-09
  */
 public class TableInfoHelper {
-
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
     /**
@@ -178,8 +177,7 @@ public class TableInfoHelper {
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
-        JoinTableInfoInitHandler joinTableInfoInitHandler = globalConfig.getJoinTableInfoInitHandler();
-        joinTableInfoInitHandler.joinTableInfo(tableInfo, configuration);
+        globalConfig.getJoinTableInfoInitHandler().tableInfo(tableInfo, configuration);
         TABLE_INFO_CACHE.put(clazz, tableInfo);
         TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
@@ -331,14 +329,14 @@ public class TableInfoHelper {
             if (tableField != null) {
                 TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, isOrderBy);
                 fieldList.add(tableFieldInfo);
-                initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
+                initTableInfoHandler.fieldInfo(tableFieldInfo, configuration);
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
             TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, isOrderBy);
             fieldList.add(tableFieldInfo);
-            initTableInfoHandler.joinTableFieldInfo(tableFieldInfo, configuration);
+            initTableInfoHandler.fieldInfo(tableFieldInfo, configuration);
         }
 
         /* 字段列表 */
