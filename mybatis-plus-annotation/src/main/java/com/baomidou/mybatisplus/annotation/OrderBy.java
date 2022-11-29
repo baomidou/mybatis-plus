@@ -33,12 +33,8 @@ public @interface OrderBy {
      */
     boolean asc() default false;
 
-    @Deprecated
-    boolean isDesc() default true;
-
     /**
      * 数字越小越靠前
      */
     short sort() default Short.MAX_VALUE;
-
 }

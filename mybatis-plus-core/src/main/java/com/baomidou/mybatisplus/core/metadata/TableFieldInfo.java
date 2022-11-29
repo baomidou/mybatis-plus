@@ -374,7 +374,7 @@ public class TableFieldInfo implements Constants {
             this.isOrderBy = true;
             this.orderBySort = orderBy.sort();
             String _orderBy = Constants.DESC;
-            if (orderBy.asc() || !orderBy.isDesc()) {
+            if (orderBy.asc()) {
                 _orderBy = Constants.ASC;
             }
             this.orderByType = _orderBy;
