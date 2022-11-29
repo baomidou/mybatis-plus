@@ -13,6 +13,7 @@ dependencies {
     implementation "${lib.'spring-cloud-commons'}"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "${lib.'mybatis-spring-boot-starter'}"
+    testImplementation "${lib.h2}"
 }
 
 compileJava.dependsOn(processResources)
