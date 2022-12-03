@@ -575,4 +575,16 @@ class H2UserTest extends BaseTest {
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,false);
     }
 
+    @Test
+    void testServiceImplInnerLambdaQueryConstructorSetEntity() {
+        H2User condition = new H2User();
+        condition.setName("Tomcat");
+        H2User user = userService.lambdaQuery(condition).one();
+        Assertions.assertNotNull(user);
+        Assertions.assertTrue("Tomcat".equals(user.getName()));
+        H2User h2User = userService.lambdaQuery().setEntity(condition).one();
+        Assertions.assertNotNull(h2User);
+        Assertions.assertTrue("Tomcat".equals(h2User.getName()));
+    }
+
 }

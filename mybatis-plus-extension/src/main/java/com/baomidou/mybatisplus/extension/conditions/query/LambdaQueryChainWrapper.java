@@ -41,6 +41,18 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
         super.wrapperChildren = new LambdaQueryWrapper<>();
     }
 
+    public LambdaQueryChainWrapper(BaseMapper<T> baseMapper, T entity) {
+        super();
+        this.baseMapper = baseMapper;
+        super.wrapperChildren = new LambdaQueryWrapper<>(entity);
+    }
+
+    public LambdaQueryChainWrapper(BaseMapper<T> baseMapper, Class<T> entityClass) {
+        super();
+        this.baseMapper = baseMapper;
+        super.wrapperChildren = new LambdaQueryWrapper<>(entityClass);
+    }
+
     @SafeVarargs
     @Override
     public final LambdaQueryChainWrapper<T> select(SFunction<T, ?>... columns) {
