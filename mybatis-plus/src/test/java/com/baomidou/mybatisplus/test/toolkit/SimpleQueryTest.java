@@ -1,5 +1,11 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
+import static com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery;
+import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.mapping;
+import static org.apache.ibatis.util.MapUtil.entry;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
@@ -9,7 +15,6 @@ import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 简单查询工具类测试
@@ -17,24 +22,27 @@ import java.util.stream.Collectors;
  * @author <achao1441470436@gmail.com>
  * @since 2021/11/9 18:30
  */
-public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
+class SimpleQueryTest extends BaseDbTest<EntityMapper> {
 
     @Test
-    public void testList() {
+    void testList() {
         // 我要这张表里的ids
-        List<Long> entityIds = SimpleQuery.list(Wrappers.lambdaQuery(), Entity::getId);
+        List<Long> entityIds = SimpleQuery.list(lambdaQuery(), Entity::getId);
+        assertThat(entityIds).containsExactly(1L, 2L);
 
-        Assert.isTrue(entityIds.equals(Arrays.asList(1L, 2L)), "Ops!");
         // 可叠加后续操作
-        List<String> names = SimpleQuery.list(Wrappers.lambdaQuery(), Entity::getName, e -> Optional.ofNullable(e.getName()).map(String::toUpperCase).ifPresent(e::setName));
-
-        Assert.isTrue(names.equals(Arrays.asList("RUBEN", null)), "Ops!");
+        List<String> names = SimpleQuery.list(lambdaQuery(), Entity::getName,
+            e -> Optional.ofNullable(e.getName())
+                .map(String::toUpperCase)
+                .ifPresent(e::setName));
+        assertThat(names).containsExactly("RUBEN", null);
     }
 
     @Test
-    public void testMap() {
+    void testMap() {
         // 我要这个表里对应条件的用户，用id作为key给我一个map
-        Map<Long, Entity> idEntityMap = SimpleQuery.keyMap(Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1L), Entity::getId);
+        Map<Long, Entity> idEntityMap = SimpleQuery.keyMap(
+            Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1L), Entity::getId);
         // 校验结果
         Entity entity = new Entity();
         entity.setId(1L);
@@ -42,7 +50,7 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         Assert.isTrue(idEntityMap.equals(Collections.singletonMap(1L, entity)), "Ops!");
 
         // 如果我只想要id和name组成的map
-        Map<Long, String> idNameMap = SimpleQuery.map(Wrappers.lambdaQuery(), Entity::getId, Entity::getName);
+        Map<Long, String> idNameMap = SimpleQuery.map(lambdaQuery(), Entity::getId, Entity::getName);
         // 校验结果
         Map<Long, String> map = new HashMap<>(1 << 2);
         map.put(1L, "ruben");
@@ -51,7 +59,7 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
     }
 
     @Test
-    public void testGroup() {
+    void testGroup() {
         // 我需要相同名字的用户的分为一组，再造一条数据
         doTestAutoCommit(m -> {
             Entity entity = new Entity();
@@ -61,7 +69,7 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         });
 
         // 简单查询
-        Map<String, List<Entity>> nameUsersMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName);
+        Map<String, List<Entity>> nameUsersMap = SimpleQuery.group(lambdaQuery(), Entity::getName);
 
         // 校验结果
         Map<String, List<Entity>> map = new HashMap<>(1 << 2);
@@ -81,15 +89,19 @@ public class SimpleQueryTest extends BaseDbTest<EntityMapper> {
 
         // 解锁高级玩法：
         // 获取Map<name,List<id>>
-        Map<String, List<Long>> nameIdMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName, Collectors.mapping(Entity::getId, Collectors.toList()));
+        Map<String, List<Long>> nameIdMap = SimpleQuery.group(lambdaQuery(), Entity::getName,
+            mapping(Entity::getId, toList()));
+        assertThat(nameIdMap).containsExactly(entry(null, Arrays.asList(2L)), entry("ruben", Arrays.asList(1L, 3L)));
+
         // 获取Map<name,个数>
-        Map<String, Long> nameCountMap = SimpleQuery.group(Wrappers.lambdaQuery(), Entity::getName, Collectors.counting());
+        Map<String, Long> nameCountMap = SimpleQuery.group(lambdaQuery(), Entity::getName, counting());
+        assertThat(nameCountMap).containsExactly(entry(null, 1L), entry("ruben", 2L));
         // ...超多花样
     }
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'ruben'),(2,null);";
+        return "insert into entity(id,name) values(1, 'ruben'), (2, null);";
     }
 
     @Override
