@@ -17,7 +17,10 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -67,9 +70,6 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     protected Expression andExpression(Table table, Expression where, final String whereSegment) {
         //获得where条件表达式
         final Expression expression = buildTableExpression(table, whereSegment);
-        if (expression == null) {
-            return where;
-        }
         if (null != where) {
             if (where instanceof OrExpression) {
                 return new AndExpression(expression, new Parenthesis(where));
@@ -137,15 +137,17 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * 处理where条件内的子查询
      * <p>
      * 支持如下:
-     * 1. in
-     * 2. =
-     * 3. >
-     * 4. <
-     * 5. >=
-     * 6. <=
-     * 7. <>
-     * 8. EXISTS
-     * 9. NOT EXISTS
+     * <ol>
+     *     <li>in</li>
+     *     <li>=</li>
+     *     <li>&gt;</li>
+     *     <li>&lt;</li>
+     *     <li>&gt;=</li>
+     *     <li>&lt;=</li>
+     *     <li>&lt;&gt;</li>
+     *     <li>EXISTS</li>
+     *     <li>NOT EXISTS</li>
+     * </ol>
      * <p>
      * 前提条件:
      * 1. 子查询必须放在小括号中
@@ -193,10 +195,11 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     protected void processSelectItem(SelectItem selectItem, final String whereSegment) {
         if (selectItem instanceof SelectExpressionItem) {
             SelectExpressionItem selectExpressionItem = (SelectExpressionItem) selectItem;
-            if (selectExpressionItem.getExpression() instanceof SubSelect) {
-                processSelectBody(((SubSelect) selectExpressionItem.getExpression()).getSelectBody(), whereSegment);
-            } else if (selectExpressionItem.getExpression() instanceof Function) {
-                processFunction((Function) selectExpressionItem.getExpression(), whereSegment);
+            final Expression expression = selectExpressionItem.getExpression();
+            if (expression instanceof SubSelect) {
+                processSelectBody(((SubSelect) expression).getSelectBody(), whereSegment);
+            } else if (expression instanceof Function) {
+                processFunction((Function) expression, whereSegment);
             }
         }
     }
@@ -382,6 +385,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
+        // 没有表需要处理直接返回
         if (CollectionUtils.isEmpty(expressions)) {
             return currentExpression;
         }

@@ -40,7 +40,9 @@ public interface MultiDataPermissionHandler extends DataPermissionHandler {
     }
 
     /**
-     * 获取数据权限 SQL 片段
+     * 获取数据权限 SQL 片段。
+     * <p>旧的 {@link MultiDataPermissionHandler#getSqlSegment(Expression, String)} 方法第一个参数包含所有的 where 条件信息，如果 return 了 null 会覆盖原有的 where 数据，</p>
+     * <p>新版的 {@link MultiDataPermissionHandler#getSqlSegment(Table, String)} 方法不能覆盖原有的 where 数据，如果 return 了 null 则表示不追加任何 where 条件</p>
      *
      * @param table             所执行的数据库表信息，可以通过此参数获取表名和表别名
      * @param mappedStatementId Mybatis MappedStatement Id 根据该参数可以判断具体执行方法
