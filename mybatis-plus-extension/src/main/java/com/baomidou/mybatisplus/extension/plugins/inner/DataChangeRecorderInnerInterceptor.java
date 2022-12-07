@@ -1,45 +1,8 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import static com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInterceptor.convertDoubleQuotes;
-
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-
 import lombok.Data;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.JdbcParameter;
@@ -49,13 +12,26 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SelectItem;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.update.UpdateSet;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -63,50 +39,45 @@ import net.sf.jsqlparser.statement.update.UpdateSet;
  * 默认会生成一条log，格式：
  * ----------------------INSERT LOG------------------------------
  * {
- *   "tableName": "h2user",
- *   "operation": "insert",
- *   "recordStatus": "true",
- *   "changedData": [
- *     {
- *       "LAST_UPDATED_DT": "null->2022-08-22 18:49:16.512",
- *       "TEST_ID": "null->1561666810058739714",
- *       "AGE": "null->THREE"
- *     }
- *   ],
- *   "cost(ms)": 0
+ * "tableName": "h2user",
+ * "operation": "insert",
+ * "recordStatus": "true",
+ * "changedData": [
+ * {
+ * "LAST_UPDATED_DT": "null->2022-08-22 18:49:16.512",
+ * "TEST_ID": "null->1561666810058739714",
+ * "AGE": "null->THREE"
+ * }
+ * ],
+ * "cost(ms)": 0
  * }
  * </p>
  * <p>
- *  * ----------------------UPDATE LOG------------------------------
- *
+ * * ----------------------UPDATE LOG------------------------------
+ * <p>
  * {
- *   "tableName": "h2user",
- *   "operation": "update",
- *   "recordStatus": "true",
- *   "changedData": [
- *     {
- *       "TEST_ID": "102",
- *       "AGE": "2->THREE",
- *       "FIRSTNAME": "DOU.HAO->{\"json\":\"abc\"}",
- *       "LAST_UPDATED_DT": "null->2022-08-22 18:49:16.512"
- *     }
- *   ],
- *   "cost(ms)": 0
+ * "tableName": "h2user",
+ * "operation": "update",
+ * "recordStatus": "true",
+ * "changedData": [
+ * {
+ * "TEST_ID": "102",
+ * "AGE": "2->THREE",
+ * "FIRSTNAME": "DOU.HAO->{\"json\":\"abc\"}",
+ * "LAST_UPDATED_DT": "null->2022-08-22 18:49:16.512"
+ * }
+ * ],
+ * "cost(ms)": 0
  * }
  * </p>
  *
  * @author yuxiaobin
  * @date 2022-8-21
  */
-@Intercepts({
-    @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})
-})
-public class DataChangeRecorderInterceptor implements InnerInterceptor {
-
+public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     @SuppressWarnings("unused")
     public static final String IGNORED_TABLE_COLUMN_PROPERTIES = "ignoredTableColumns";
-
-    private final Logger logger = LoggerFactory.getLogger("DataChangeRecorder");
 
     private final Map<String, Set<String>> ignoredTableColumns = new ConcurrentHashMap<>();
     private final Set<String> ignoreAllColumns = new HashSet<>();//全部表的这些字段名，INSERT/UPDATE都忽略，delete暂时保留
@@ -515,13 +486,6 @@ public class DataChangeRecorderInterceptor implements InnerInterceptor {
         }
     }
 
-    public static String convertDoubleQuotes(Object obj) {
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString().replace("\"", "\\\"");
-    }
-
     @Data
     public static class OperationResult {
 
@@ -585,160 +549,168 @@ public class DataChangeRecorderInterceptor implements InnerInterceptor {
             sb.append("}");
             return sb.toString();
         }
-
     }
 
-}
+    @Data
+    public static class Columns2SelectItemsResult {
 
+        private Column pk;
+        /**
+         * all column with additional columns: ID, etc.
+         */
+        private List<SelectItem> selectItems;
+        /**
+         * newly added column count from meta data.
+         */
+        private int additionalItemCount;
 
-@Data
-class Columns2SelectItemsResult {
-
-    private Column pk;
-    /**
-     * all column with additional columns: ID, etc.
-     */
-    private List<SelectItem> selectItems;
-    /**
-     * newly added column count from meta data.
-     */
-    private int additionalItemCount;
-
-    public static Columns2SelectItemsResult build(List<SelectItem> selectItems, int additionalItemCount) {
-        Columns2SelectItemsResult result = new Columns2SelectItemsResult();
-        result.setSelectItems(selectItems);
-        result.setAdditionalItemCount(additionalItemCount);
-        return result;
-    }
-
-}
-
-@Data
-class OriginalDataObj {
-
-    private List<DataChangedRecord> originalDataObj;
-
-    public boolean isEmpty() {
-        return originalDataObj == null || originalDataObj.isEmpty();
-    }
-
-}
-
-@Data
-class DataColumnChangeResult {
-
-    private String columnName;
-    private Object originalValue;
-    private Object updateValue;
-
-    @SuppressWarnings("rawtypes")
-    public boolean isDataChanged(Object updateValue) {
-        if (!Objects.equals(originalValue, updateValue)) {
-            if (updateValue instanceof Number && originalValue instanceof Number) {
-                BigDecimal update = new BigDecimal(updateValue.toString());
-                BigDecimal original = new BigDecimal(originalValue.toString());
-                return update.compareTo(original) != 0;
-            }
-            if (updateValue instanceof Date && originalValue instanceof Date) {
-                Date update = (Date) updateValue;
-                Date original = (Date) originalValue;
-                return update.compareTo(original) != 0;
-            }
-            if (originalValue instanceof Clob) {
-                String originalStr = convertClob((Clob) originalValue);
-                setOriginalValue(originalStr);
-                return !originalStr.equals(updateValue);
-            }
-            return true;
+        public static Columns2SelectItemsResult build(List<SelectItem> selectItems, int additionalItemCount) {
+            Columns2SelectItemsResult result = new Columns2SelectItemsResult();
+            result.setSelectItems(selectItems);
+            result.setAdditionalItemCount(additionalItemCount);
+            return result;
         }
-        if (originalValue instanceof Comparable) {
-            Comparable original = (Comparable) originalValue;
-            Comparable update = (Comparable) updateValue;
-            return original.compareTo(update) != 0;
-        }
-        return false;
     }
 
-    public static String convertClob(Clob clobObj) {
-        try {
-            return clobObj.getSubString(0, (int) clobObj.length());
-        } catch (Exception e) {
-            try (Reader is = clobObj.getCharacterStream()) {
-                char[] chars = new char[64];
-                int readChars;
-                StringBuilder sb = new StringBuilder();
-                while ((readChars = is.read(chars)) != -1) {
-                    sb.append(chars, 0, readChars);
+    @Data
+    public static class OriginalDataObj {
+
+        private List<DataChangedRecord> originalDataObj;
+
+        public boolean isEmpty() {
+            return originalDataObj == null || originalDataObj.isEmpty();
+        }
+
+    }
+
+    @Data
+    public static class DataColumnChangeResult {
+
+        private String columnName;
+        private Object originalValue;
+        private Object updateValue;
+
+        @SuppressWarnings("rawtypes")
+        public boolean isDataChanged(Object updateValue) {
+            if (!Objects.equals(originalValue, updateValue)) {
+                if (updateValue instanceof Number && originalValue instanceof Number) {
+                    BigDecimal update = new BigDecimal(updateValue.toString());
+                    BigDecimal original = new BigDecimal(originalValue.toString());
+                    return update.compareTo(original) != 0;
                 }
-                return sb.toString();
-            } catch (Exception e2) {
-                //ignored
-                return "unknown clobObj";
+                if (updateValue instanceof Date && originalValue instanceof Date) {
+                    Date update = (Date) updateValue;
+                    Date original = (Date) originalValue;
+                    return update.compareTo(original) != 0;
+                }
+                if (originalValue instanceof Clob) {
+                    String originalStr = convertClob((Clob) originalValue);
+                    setOriginalValue(originalStr);
+                    return !originalStr.equals(updateValue);
+                }
+                return true;
+            }
+            if (originalValue instanceof Comparable) {
+                Comparable original = (Comparable) originalValue;
+                Comparable update = (Comparable) updateValue;
+                return original.compareTo(update) != 0;
+            }
+            return false;
+        }
+
+        public static String convertClob(Clob clobObj) {
+            try {
+                return clobObj.getSubString(0, (int) clobObj.length());
+            } catch (Exception e) {
+                try (Reader is = clobObj.getCharacterStream()) {
+                    char[] chars = new char[64];
+                    int readChars;
+                    StringBuilder sb = new StringBuilder();
+                    while ((readChars = is.read(chars)) != -1) {
+                        sb.append(chars, 0, readChars);
+                    }
+                    return sb.toString();
+                } catch (Exception e2) {
+                    //ignored
+                    return "unknown clobObj";
+                }
             }
         }
-    }
 
-    public static DataColumnChangeResult constrcutByUpdateVal(String columnName, Object updateValue) {
-        DataColumnChangeResult res = new DataColumnChangeResult();
-        res.setColumnName(columnName);
-        res.setUpdateValue(updateValue);
-        return res;
-    }
-
-    public static DataColumnChangeResult constrcutByOriginalVal(String columnName, Object originalValue) {
-        DataColumnChangeResult res = new DataColumnChangeResult();
-        res.setColumnName(columnName);
-        res.setOriginalValue(originalValue);
-        return res;
-    }
-
-    public String generateDataStr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\"").append(columnName).append("\"").append(":").append("\"").append(convertDoubleQuotes(originalValue)).append("->").append(convertDoubleQuotes(updateValue)).append("\"").append(",");
-        return sb.toString();
-    }
-}
-
-@Data
-class DataChangedRecord {
-    private String pkColumnName;
-    private Object pkColumnVal;
-    private List<DataColumnChangeResult> originalColumnDatas;
-    private List<DataColumnChangeResult> updatedColumns;
-
-    public boolean hasUpdate(Map<String, Object> columnNameValMap, Set<String> ignoredColumns, Set<String> ignoreAllColumns) {
-        if (originalColumnDatas == null) {
-            return true;
+        public static DataColumnChangeResult constrcutByUpdateVal(String columnName, Object updateValue) {
+            DataColumnChangeResult res = new DataColumnChangeResult();
+            res.setColumnName(columnName);
+            res.setUpdateValue(updateValue);
+            return res;
         }
-        boolean hasUpdate = false;
-        updatedColumns = new ArrayList<>(originalColumnDatas.size());
-        for (DataColumnChangeResult originalColumn : originalColumnDatas) {
-            final String columnName = originalColumn.getColumnName().toUpperCase();
-            if (ignoredColumns != null && ignoredColumns.contains(columnName) || ignoreAllColumns.contains(columnName)) {
-                continue;
+
+        public static DataColumnChangeResult constrcutByOriginalVal(String columnName, Object originalValue) {
+            DataColumnChangeResult res = new DataColumnChangeResult();
+            res.setColumnName(columnName);
+            res.setOriginalValue(originalValue);
+            return res;
+        }
+
+        public String generateDataStr() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("\"").append(columnName).append("\"").append(":").append("\"").append(convertDoubleQuotes(originalValue)).append("->").append(convertDoubleQuotes(updateValue)).append("\"").append(",");
+            return sb.toString();
+        }
+
+        public String convertDoubleQuotes(Object obj) {
+            if (obj == null) {
+                return null;
             }
-            Object updatedValue = columnNameValMap.get(columnName);
-            if (originalColumn.isDataChanged(updatedValue)) {
-                hasUpdate = true;
-                originalColumn.setUpdateValue(updatedValue);
-                updatedColumns.add(originalColumn);
+            return obj.toString().replace("\"", "\\\"");
+        }
+    }
+
+    @Data
+    public static class DataChangedRecord {
+        private String pkColumnName;
+        private Object pkColumnVal;
+        private List<DataColumnChangeResult> originalColumnDatas;
+        private List<DataColumnChangeResult> updatedColumns;
+
+        public boolean hasUpdate(Map<String, Object> columnNameValMap, Set<String> ignoredColumns, Set<String> ignoreAllColumns) {
+            if (originalColumnDatas == null) {
+                return true;
             }
+            boolean hasUpdate = false;
+            updatedColumns = new ArrayList<>(originalColumnDatas.size());
+            for (DataColumnChangeResult originalColumn : originalColumnDatas) {
+                final String columnName = originalColumn.getColumnName().toUpperCase();
+                if (ignoredColumns != null && ignoredColumns.contains(columnName) || ignoreAllColumns.contains(columnName)) {
+                    continue;
+                }
+                Object updatedValue = columnNameValMap.get(columnName);
+                if (originalColumn.isDataChanged(updatedValue)) {
+                    hasUpdate = true;
+                    originalColumn.setUpdateValue(updatedValue);
+                    updatedColumns.add(originalColumn);
+                }
+            }
+            return hasUpdate;
         }
-        return hasUpdate;
+
+        public String generateUpdatedDataStr() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{");
+            if (pkColumnName != null) {
+                sb.append("\"").append(pkColumnName).append("\"").append(":").append("\"").append(convertDoubleQuotes(pkColumnVal)).append("\"").append(",");
+            }
+            for (DataColumnChangeResult update : updatedColumns) {
+                sb.append(update.generateDataStr());
+            }
+            sb.replace(sb.length() - 1, sb.length(), "}");
+            return sb.toString();
+        }
+
+        public String convertDoubleQuotes(Object obj) {
+            if (obj == null) {
+                return null;
+            }
+            return obj.toString().replace("\"", "\\\"");
+        }
     }
-
-    public String generateUpdatedDataStr() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        if (pkColumnName != null) {
-            sb.append("\"").append(pkColumnName).append("\"").append(":").append("\"").append(convertDoubleQuotes(pkColumnVal)).append("\"").append(",");
-        }
-        for (DataColumnChangeResult update : updatedColumns) {
-            sb.append(update.generateDataStr());
-        }
-        sb.replace(sb.length() - 1, sb.length(), "}");
-        return sb.toString();
-    }
-
-
 }
