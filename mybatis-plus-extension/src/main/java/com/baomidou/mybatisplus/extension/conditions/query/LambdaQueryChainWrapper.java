@@ -34,7 +34,7 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 
     private final BaseMapper<T> baseMapper;
-    private final Class<T> entityClass;
+    private Class<T> entityClass;
 
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper) {
         super();

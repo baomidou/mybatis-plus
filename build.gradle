@@ -68,7 +68,14 @@ ext {
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
-        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0"
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
+        //code generator
+//        "mybatis-plus"        : "com.baomidou:mybatis-plus:${mybatisPlusVersion}",
+        "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
+        "freemarker"          : "org.freemarker:freemarker:2.3.31",
+        "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
+        "swagger-annotations" : "io.swagger:swagger-annotations:1.6.2",
+        "enjoy"               : "com.jfinal:enjoy:5.0.0",
     ]
 }
 

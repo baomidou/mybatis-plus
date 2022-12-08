@@ -1,0 +1,132 @@
+package ${package.Entity}
+
+<% for(pkg in table.importPackages){ %>
+import ${pkg}
+<% } %>
+<% if(springdoc){ %>
+import io.swagger.v3.oas.annotations.media.Schema;
+<% }else if(swagger){ %>
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+<% } %>
+
+/**
+ * <p>
+ * ${table.comment!}
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(table.convert){ %>
+@TableName("${schemaName}${table.name}")
+<% } %>
+<% if(springdoc){ %>
+@Schema(name = "${entity}", description = "$!{table.comment}")
+<% }else if(swagger){ %>
+@ApiModel(value = "${entity}对象", description = "${table.comment!''}")
+<% } %>
+<% if(isNotEmpty(superEntityClass)){ %>
+class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+<% }else if(activeRecord){ %>
+class ${entity} : Model<${entity}> {
+<% }else if(entitySerialVersionUID){ %>
+class ${entity} : Serializable {
+<% }else{ %>
+class ${entity} {
+<% } %>
+
+<% /** -----------BEGIN 字段循环遍历----------- **/ %>
+<% for(field in table.fields){ %>
+    <%
+    if(field.keyFlag){
+        var keyPropertyName = field.propertyName;
+    }
+    %>
+    <% if(isNotEmpty(field.comment)){ %>
+        <% if(springdoc){ %>
+    @Schema(description = "${field.comment}")
+        <% }else if(swagger){ %>
+    @ApiModelProperty(value = "${field.comment}")
+        <% }else{ %>
+    /**
+     * ${field.comment}
+     */
+        <% } %>
+    <% } %>
+    <% if(field.keyFlag){ %>
+    <%
+    /*主键*/
+    %>
+        <% if(field.keyIdentityFlag){ %>
+    @TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
+        <% }else if(isNotEmpty(idType)){ %>
+    @TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
+        <% }else if(field.convert){ %>
+    @TableId("${field.columnName}")
+         <% } %>
+    <%
+    /*普通字段*/
+    %>
+    <% }else if(isNotEmpty(field.fill)){ %>
+        <% if(field.convert){ %>
+    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
+        <% }else{ %>
+    @TableField(fill = FieldFill.${field.fill})
+        <% } %>
+    <% }else if(field.convert){ %>
+    @TableField("${field.annotationColumnName}")
+    <% } %>
+    <%
+    /*乐观锁注解*/
+    %>
+    <% if(field.versionField){ %>
+    @Version
+    <% } %>
+    <%
+    /*逻辑删除注解*/
+    %>
+    <% if(field.logicDeleteField){ %>
+    @TableLogic
+    <% } %>
+    <% if(field.propertyType == 'Integer'){ %>
+    var ${field.propertyName}: Int ? = null
+    <% }else{ %>
+    var ${field.propertyName}: ${field.propertyType} ? = null
+    <% } %>
+
+<% } %>
+<% /** -----------END 字段循环遍历----------- **/ %>
+<% if(entityColumnConstant){ %>
+    companion object {
+   <% for(field in table.fields){ %>
+    const val ${strutil.toUpperCase(field.name)} : String = "${field.name}"
+   <% } %>
+    }
+<% } %>
+<% if(activeRecord){ %>
+    @Override
+    override fun pkVal(): Serializable? {
+    <% if(isNotEmpty(keyPropertyName)){ %>
+        return this.${keyPropertyName}
+    <% }else{ %>
+        return null;
+    <% } %>
+    }
+
+<% } %>
+<% if(!entityLombokModel){ %>
+    @Override
+    override fun toString(): String  {
+        return "${entity}{" +
+    <% for(field in table.fields){ %>
+       <% if(fieldLP.index==0){ %>
+        "${field.propertyName}=" + ${field.propertyName} +
+       <% }else{ %>
+        ", ${field.propertyName}=" + ${field.propertyName} +
+       <% } %>
+    <% } %>
+        "}"
+    }
+<% } %>
+}
