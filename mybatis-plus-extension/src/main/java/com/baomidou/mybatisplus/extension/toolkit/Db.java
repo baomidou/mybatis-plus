@@ -36,15 +36,15 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
  * @author VampireAchao
  * @since 2022-05-03
  */
-public class StaticService {
+public class Db {
 
     /**
      * 默认批次提交数量
      */
     public static final int DEFAULT_BATCH_SIZE = 1000;
-    private static final Log log = LogFactory.getLog(StaticService.class);
+    private static final Log log = LogFactory.getLog(Db.class);
 
-    private StaticService() {
+    private Db() {
         /* Do not new me! */
     }
 
@@ -85,7 +85,7 @@ public class StaticService {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(StaticService.class), entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
 
     /**
@@ -112,7 +112,7 @@ public class StaticService {
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, LogFactory.getLog(StaticService.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal)
                 || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass, SqlMethod.SELECT_BY_ID), entity));
@@ -208,7 +208,7 @@ public class StaticService {
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(StaticService.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
