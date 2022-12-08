@@ -1,34 +1,24 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 以静态方式调用Service中的函数
@@ -38,10 +28,6 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
  */
 public class Db {
 
-    /**
-     * 默认批次提交数量
-     */
-    public static final int DEFAULT_BATCH_SIZE = 1000;
     private static final Log log = LogFactory.getLog(Db.class);
 
     private Db() {
@@ -69,7 +55,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, DEFAULT_BATCH_SIZE);
+        return saveBatch(entityList, IService.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -94,7 +80,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, DEFAULT_BATCH_SIZE);
+        return saveOrUpdateBatch(entityList, IService.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -195,7 +181,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, DEFAULT_BATCH_SIZE);
+        return updateBatchById(entityList, IService.DEFAULT_BATCH_SIZE);
     }
 
     /**
