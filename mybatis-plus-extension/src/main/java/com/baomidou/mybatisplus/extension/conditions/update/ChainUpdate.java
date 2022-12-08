@@ -42,7 +42,7 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
      * @return 是否成功
      */
     default boolean update(T entity) {
-        return SqlHelper.retBool(getBaseMapper().update(entity, getWrapper()));
+        return execute(mapper -> SqlHelper.retBool(mapper.update(entity, getWrapper())));
     }
 
     /**
@@ -51,6 +51,6 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
      * @return 是否成功
      */
     default boolean remove() {
-        return SqlHelper.retBool(getBaseMapper().delete(getWrapper()));
+        return execute(mapper -> SqlHelper.retBool(mapper.delete(getWrapper())));
     }
 }

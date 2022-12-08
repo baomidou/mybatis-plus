@@ -33,10 +33,19 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
     implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
     private final BaseMapper<T> baseMapper;
+    private final Class<T> entityClass;
 
     public LambdaUpdateChainWrapper(BaseMapper<T> baseMapper) {
         super();
         this.baseMapper = baseMapper;
+        this.entityClass = null;
+        super.wrapperChildren = new LambdaUpdateWrapper<>();
+    }
+
+    public LambdaUpdateChainWrapper(Class<T> entityClass) {
+        super();
+        this.baseMapper = null;
+        this.entityClass = entityClass;
         super.wrapperChildren = new LambdaUpdateWrapper<>();
     }
 
@@ -60,5 +69,10 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
     @Override
     public BaseMapper<T> getBaseMapper() {
         return baseMapper;
+    }
+
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 }

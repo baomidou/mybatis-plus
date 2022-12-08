@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.conditions.query;
 
+import java.util.function.Predicate;
+
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
-
-import java.util.function.Predicate;
 
 /**
  * Query Chain Wrapper
@@ -35,10 +35,19 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
     private final BaseMapper<T> baseMapper;
+    private final Class<T> entityClass;
 
     public QueryChainWrapper(BaseMapper<T> baseMapper) {
         super();
         this.baseMapper = baseMapper;
+        this.entityClass = null;
+        super.wrapperChildren = new QueryWrapper<>();
+    }
+
+    public QueryChainWrapper(Class<T> entityClass) {
+        super();
+        this.baseMapper = null;
+        this.entityClass = entityClass;
         super.wrapperChildren = new QueryWrapper<>();
     }
 
@@ -62,5 +71,15 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     @Override
     public BaseMapper<T> getBaseMapper() {
         return baseMapper;
+    }
+
+    /**
+     * 获取当前实体Class
+     *
+     * @return Class
+     */
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 }
