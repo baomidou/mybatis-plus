@@ -66,7 +66,7 @@ ext {
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.39.2.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.6.java8",
         //cache
-        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
+        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.3",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
         //code generator
