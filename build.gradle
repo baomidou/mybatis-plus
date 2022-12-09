@@ -43,7 +43,6 @@ ext {
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.9.1",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
-        "logback-classic"            : "ch.qos.logback:logback-classic:1.4.5",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
@@ -70,7 +69,6 @@ ext {
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
         //code generator
-//        "mybatis-plus"        : "com.baomidou:mybatis-plus:${mybatisPlusVersion}",
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
         "freemarker"          : "org.freemarker:freemarker:2.3.31",
         "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
@@ -103,7 +101,6 @@ subprojects {
         testImplementation "${lib["junit-jupiter"]}"
         testImplementation "org.mockito:mockito-junit-jupiter:4.6.1"
         testImplementation "${lib["lagarto"]}"
-        testImplementation "${lib["logback-classic"]}"
     }
 
     tasks.withType(JavaCompile) {
