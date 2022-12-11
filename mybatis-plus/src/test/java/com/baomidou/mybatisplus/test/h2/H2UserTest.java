@@ -576,6 +576,7 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(25)
     void testServiceImplInnerLambdaQueryConstructorSetEntity() {
         H2User condition = new H2User();
         condition.setName("Tomcat");

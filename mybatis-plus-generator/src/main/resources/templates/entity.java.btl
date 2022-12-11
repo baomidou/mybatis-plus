@@ -1,0 +1,173 @@
+package ${package.Entity};
+
+<% for(pkg in table.importPackages){ %>
+import ${pkg};
+<% } %>
+<% if(springdoc){ %>
+import io.swagger.v3.oas.annotations.media.Schema;
+<% }else if(swagger){ %>
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+<% } %>
+<% if(entityLombokModel){ %>
+import lombok.Getter;
+import lombok.Setter;
+<% if(chainModel){ %>
+import lombok.experimental.Accessors;
+<% } %>
+<% } %>
+
+/**
+ * <p>
+ * ${table.comment!}
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(entityLombokModel){ %>
+@Getter
+@Setter
+    <% if(chainModel){ %>
+@Accessors(chain = true)
+    <% } %>
+<% } %>
+<% if(table.convert){ %>
+@TableName("${schemaName}${table.name}")
+<% } %>
+<% if(springdoc){ %>
+@Schema(name = "${entity}", description = "$!{table.comment}")
+<% }else if(swagger){ %>
+@ApiModel(value = "${entity}对象", description = "${table.comment!''}")
+<% } %>
+<% if(isNotEmpty(superEntityClass)){ %>
+public class ${entity} extends ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+<% }else if(activeRecord){ %>
+public class ${entity} extends Model<${entity}> {
+<% }else if(entitySerialVersionUID){ %>
+public class ${entity} implements Serializable {
+<% }else{ %>
+public class ${entity} {
+<% } %>
+<% if(entitySerialVersionUID){ %>
+
+    private static final long serialVersionUID = 1L;
+<% } %>
+<% var keyPropertyName; %>
+<% /** -----------BEGIN 字段循环遍历----------- **/ %>
+<% for(field in table.fields){ %>
+    <%
+    if(field.keyFlag){
+        keyPropertyName = field.propertyName;
+    }
+    %>
+    <% if(isNotEmpty(field.comment)){ %>
+
+        <% if(springdoc){ %>
+    @Schema(description = "${field.comment}")
+        <% }else if(swagger){ %>
+    @ApiModelProperty(value = "${field.comment}")
+        <% }else{ %>
+    /**
+     * ${field.comment}
+     */
+        <% } %>
+    <% } %>
+    <% if(field.keyFlag){ %>
+    <%
+    /*主键*/
+    %>
+        <% if(field.keyIdentityFlag){ %>
+    @TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
+        <% }else if(isNotEmpty(idType)){ %>
+    @TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
+        <% }else if(field.convert){ %>
+    @TableId("${field.annotationColumnName}")
+         <% } %>
+    <%
+    /*普通字段*/
+    %>
+    <% }else if(isNotEmpty(field.fill)){ %>
+        <% if(field.convert){ %>
+    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
+        <% }else{ %>
+    @TableField(fill = FieldFill.${field.fill})
+        <% } %>
+    <% }else if(field.convert){ %>
+    @TableField("${field.annotationColumnName}")
+    <% } %>
+    <%
+    /*乐观锁注解*/
+    %>
+    <% if(field.versionField){ %>
+    @Version
+    <% } %>
+    <%
+    /*逻辑删除注解*/
+    %>
+    <% if(field.logicDeleteField){ %>
+    @TableLogic
+    <% } %>
+    private ${field.propertyType} ${field.propertyName};
+<% } %>
+<% /** -----------END 字段循环遍历----------- **/ %>
+<% if(!entityLombokModel){ %>
+    <% for(field in table.fields){ %>
+        <%
+        var getprefix ='';
+        if(field.propertyType=='boolean'){
+            getprefix='is';
+        }else{
+            getprefix='get';
+        }
+        %>
+
+    public ${field.propertyType} ${getprefix}${field.capitalName}() {
+        return ${field.propertyName};
+    }
+
+        <% if(chainModel){ %>
+    public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+        <% }else{ %>
+    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+        <% } %>
+        this.${field.propertyName} = ${field.propertyName};
+        <% if(chainModel){ %>
+        return this;
+        <% } %>
+    }
+    <% } %>
+<% } %>
+<% if(entityColumnConstant){ %>
+   <% for(field in table.fields){ %>
+
+    public static final String ${strutil.toUpperCase(field.name)} = "${field.name}";
+   <% } %>
+<% } %>
+<% if(activeRecord){ %>
+
+    @Override
+    public Serializable pkVal() {
+    <% if(isNotEmpty(keyPropertyName)){ %>
+        return this.${keyPropertyName};
+    <% }else{ %>
+        return null;
+    <% } %>
+    }
+<% } %>
+<% if(!entityLombokModel){ %>
+
+    @Override
+    public String toString() {
+        return "${entity}{" +
+    <% for(field in table.fields){ %>
+       <% if(fieldLP.index==0){ %>
+        "${field.propertyName} = " + ${field.propertyName} +
+       <% }else{ %>
+        ", ${field.propertyName} = " + ${field.propertyName} +
+       <% } %>
+    <% } %>
+        "}";
+    }
+<% } %>
+}

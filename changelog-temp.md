@@ -1,7 +1,16 @@
 - 多租户插件:多表join表名必需起别名,否则追加的过滤条件不带前缀
-- fix: InterceptorIgnore 不能过滤 selectKey 的问题
-- fix: 补全`mybatis-plus-boot-starter-test`遗漏配置
-- feat: 分页新增informix数据库支持
-- feat: 支持spring-boot 2.7以上版本
-- feat: 雪花id新增反解时间戳方法`Sequence#parseIdTimestamp`
-- feat: BaseMapper.selectCount生成语句加入中`AS total`
+- InterceptorIgnore 不能过滤 selectKey 的问题
+- 分页新增`informix数据库`支持
+- 分页新增`优炫数据库`支持
+- 分页新增`TDengine数据库`支持
+- 分页新增`亚马逊redshift数据库`支持
+- 支持spring-boot 2.7以上版本
+- 雪花id新增反解时间戳方法`Sequence#parseIdTimestamp`
+- BaseMapper.selectCount生成语句加入中`AS total`
+- 修复IllegalSQLInnerInterceptor类ClassCastException异常，并优化日志
+- 移除注解`OrderBy`的过时属性`isDesc`
+- 移除`TableInfo`过时方法
+- 加入`JoinTableInfoInitHandler`类参与`TableInfo`初始化
+- 修复StringUtils.sqlInjectionReplaceBlank方法过滤sql不全，可能会导致sql注入的情况
+- 增加IService.lambdaQuery(entity)支持，写法更便捷
+- 新增数据变更记录（数据审计）插件`DataChangeRecorderInnerInterceptor`

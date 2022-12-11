@@ -345,8 +345,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    @SafeVarargs
-    public final Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
         return maybeDo(condition, () -> {
             final SqlKeyword mode = isAsc ? ASC : DESC;
             appendSqlSegments(ORDER_BY, columnToSqlSegment(columnSqlInjectFilter(column)), mode);
