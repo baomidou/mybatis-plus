@@ -428,6 +428,20 @@ class TenantLineInnerInterceptorTest {
             "SELECT dict.dict_code, item.item_text AS \"text\", item.item_value AS \"value\" FROM sys_dict_item item INNER JOIN sys_dict dict ON dict.id = item.dict_id AND item.tenant_id = 1 WHERE dict.dict_code IN (1, 2, 3) AND item.item_value IN (1, 2, 3)");
     }
 
+    @Test
+    void test6() {
+        // 不显式指定 JOIN 类型时 JOIN 右侧表无法识进行拼接条件（在未改动之前就已经有这个问题）
+        assertSql("select u.username from sys_user u join sys_user_role r on u.id=r.user_id",
+            "SELECT u.username FROM sys_user u JOIN sys_user_role r ON u.id = r.user_id WHERE u.tenant_id = 1");
+    }
+
+    @Test
+    void test7() {
+        // 显式指定 JOIN 类型时 JOIN 右侧表才能进行拼接条件
+        assertSql("select u.username from sys_user u LEFT join sys_user_role r on u.id=r.user_id",
+            "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.tenant_id = 1 WHERE u.tenant_id = 1");
+    }
+
     void assertSql(String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, null)).isEqualTo(targetSql);
     }
