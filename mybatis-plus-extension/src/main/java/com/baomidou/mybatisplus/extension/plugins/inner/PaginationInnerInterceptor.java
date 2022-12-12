@@ -180,6 +180,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
         Map<String, Object> additionalParameter = mpBoundSql.additionalParameters();
         model.consumers(mappings, configuration, additionalParameter);
+        // 修复数据库类型为GBASEDBT时，分页绑定参数顺序问题
+        if(dbType.equals(DbType.GBASEDBT)){
+            mappings.add(0,mappings.get(mappings.size()-1));
+            mappings.add(0,mappings.get(mappings.size()-2));
+            mappings.remove(mappings.size()-1);
+            mappings.remove(mappings.size()-1);
+        }
         mpBoundSql.sql(model.getDialectSql());
         mpBoundSql.parameterMappings(mappings);
     }
