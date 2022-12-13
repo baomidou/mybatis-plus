@@ -189,6 +189,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children notLikeLeft(boolean condition, R column, Object val) {
+        return likeValue(condition, NOT_LIKE, column, val, SqlLike.LEFT);
+    }
+
+    @Override
+    public Children notLikeRight(boolean condition, R column, Object val) {
+        return likeValue(condition, NOT_LIKE, column, val, SqlLike.RIGHT);
+    }
+
+    @Override
     public Children between(boolean condition, R column, Object val1, Object val2) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), BETWEEN,
             () -> formatParam(null, val1), AND, () -> formatParam(null, val2)));
