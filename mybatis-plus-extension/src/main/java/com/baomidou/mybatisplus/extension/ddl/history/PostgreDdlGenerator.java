@@ -19,17 +19,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Function;
 
+
 /**
- * Mysql DDL 生成器
+ * Postgres DDL 生成器
  *
  * @author hubin
  * @since 2021-06-22
  */
-public class PostgresDdlGenerator implements IDdlGenerator {
+public class PostgreDdlGenerator implements IDdlGenerator {
 
     public static IDdlGenerator newInstance() {
-        return new PostgresDdlGenerator();
+        return new PostgreDdlGenerator();
     }
+
     @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
         StringBuffer sql = new StringBuffer();

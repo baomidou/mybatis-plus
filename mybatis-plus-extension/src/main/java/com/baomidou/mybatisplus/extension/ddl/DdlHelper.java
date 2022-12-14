@@ -19,7 +19,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.MysqlDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.OracleDdlGenerator;
-import com.baomidou.mybatisplus.extension.ddl.history.PostgresDdlGenerator;
+import com.baomidou.mybatisplus.extension.ddl.history.PostgreDdlGenerator;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.jdbc.SqlRunner;
@@ -53,9 +56,8 @@ public class DdlHelper {
      * @throws Exception
      */
     public static void runScript(IDdlGenerator ddlGenerator, DataSource dataSource, List<String> sqlFiles, boolean autoCommit) {
-        try {
+        try (Connection connection = dataSource.getConnection()) {
             // 执行自定义 DDL 信息
-            Connection connection = dataSource.getConnection();
             final String jdbcUrl = connection.getMetaData().getURL();
             final String schema = DdlHelper.getDatabase(jdbcUrl);
             SqlRunner sqlRunner = new SqlRunner(connection);
@@ -114,25 +116,15 @@ public class DdlHelper {
         return scriptRunner;
     }
 
-    protected static IDdlGenerator getDdlGenerator(String jdbcUrl) throws Exception {
-        jdbcUrl = jdbcUrl.toLowerCase();
-        if (jdbcUrl.contains(":mysql:")
-                || jdbcUrl.contains(":mariadb:")
-                || jdbcUrl.contains(":gbase:")
-                || jdbcUrl.contains(":oscar:")
-                || jdbcUrl.contains(":xugu:")
-                || jdbcUrl.contains(":clickhouse:")
-                || jdbcUrl.contains(":oceanbase:")
-                || jdbcUrl.contains(":cobar:")) {
+    protected static IDdlGenerator getDdlGenerator(String jdbcUrl) throws RuntimeException {
+        IDialect dialect = DialectFactory.getDialect(JdbcUtils.getDbType(jdbcUrl));
+        if (dialect instanceof MySqlDialect) {
             return MysqlDdlGenerator.newInstance();
-        } else if (jdbcUrl.contains(":postgresql:")
-                || jdbcUrl.contains(":h2:")
-                || jdbcUrl.contains(":sqlite:")
-                || jdbcUrl.contains(":hsqldb:")
-                || jdbcUrl.contains(":kingbase\\d*:")
-                || jdbcUrl.contains(":phoenix:")) {
-            return PostgresDdlGenerator.newInstance();
-        } else if (jdbcUrl.contains(":oracle:")) {
+        }
+        if (dialect instanceof PostgreDialect) {
+            return PostgreDdlGenerator.newInstance();
+        }
+        if (dialect instanceof OracleDialect || dialect instanceof Oracle12cDialect) {
             return OracleDdlGenerator.newInstance();
         }
         throw new RuntimeException("The database is not supported");
