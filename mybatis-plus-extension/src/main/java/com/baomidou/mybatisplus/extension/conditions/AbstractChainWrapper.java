@@ -135,12 +135,6 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children notLike(boolean condition, R column, Object val) {
-        getWrapper().notLike(condition, column, val);
-        return typedThis;
-    }
-
-    @Override
     public Children likeLeft(boolean condition, R column, Object val) {
         getWrapper().likeLeft(condition, column, val);
         return typedThis;
@@ -149,6 +143,24 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children likeRight(boolean condition, R column, Object val) {
         getWrapper().likeRight(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
+    public Children notLike(boolean condition, R column, Object val) {
+        getWrapper().notLike(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
+    public Children notLikeLeft(boolean condition, R column, Object val) {
+        getWrapper().notLikeLeft(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
+    public Children notLikeRight(boolean condition, R column, Object val) {
+        getWrapper().notLikeRight(condition, column, val);
         return typedThis;
     }
 
