@@ -21,7 +21,7 @@ import java.util.function.Function;
 
 
 /**
- * Postgres DDL 生成器
+ * PostgreSQL DDL 生成器
  *
  * @author hubin
  * @since 2021-06-22

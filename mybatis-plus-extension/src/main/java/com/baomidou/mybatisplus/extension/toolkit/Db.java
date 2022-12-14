@@ -509,7 +509,7 @@ public class Db {
      * @return 实体类型
      */
     @SuppressWarnings("unchecked")
-    private static <T> Class<T> getEntityClass(Collection<T> entityList) {
+    protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
         Class<T> entityClass = null;
         for (T entity : entityList) {
             if (entity != null && entity.getClass() != null) {
@@ -529,7 +529,7 @@ public class Db {
      * @return 实体类型
      */
     @SuppressWarnings("unchecked")
-    private static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
+    protected static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
         Class<T> entityClass = queryWrapper.getEntityClass();
         if (entityClass == null) {
             T entity = queryWrapper.getEntity();
@@ -548,7 +548,7 @@ public class Db {
      * @param <T>         实体类型
      * @return 对应表信息
      */
-    private static <T> TableInfo getTableInfo(Class<T> entityClass) {
+    protected static <T> TableInfo getTableInfo(Class<T> entityClass) {
         return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
     }
 }
