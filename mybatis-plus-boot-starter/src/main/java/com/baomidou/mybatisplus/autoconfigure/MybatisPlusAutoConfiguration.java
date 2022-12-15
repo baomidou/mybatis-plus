@@ -385,6 +385,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     @Order
     @Bean
+    @ConditionalOnMissingBean
     public DdlApplicationRunner ddlApplicationRunner(@Autowired(required = false) List<IDdl> ddlList) {
         if (ObjectUtils.isEmpty(ddlList)) {
             return null;
