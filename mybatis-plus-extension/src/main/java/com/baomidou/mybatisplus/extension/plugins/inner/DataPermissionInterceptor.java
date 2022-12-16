@@ -140,9 +140,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
     }
 
     @Override
-    public Expression buildTableExpression(final Table table, final String whereSegment) {
+    public Expression buildTableExpression(final Table table, final Expression where, final String whereSegment) {
         // 只有新版数据权限处理器才会执行到这里
         final MultiDataPermissionHandler handler = (MultiDataPermissionHandler) dataPermissionHandler;
-        return handler.getSqlSegment(table, whereSegment);
+        return handler.getSqlSegment(table, where, whereSegment);
     }
 }

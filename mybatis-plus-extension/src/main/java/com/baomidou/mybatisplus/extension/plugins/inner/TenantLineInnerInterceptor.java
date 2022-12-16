@@ -230,11 +230,13 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      * 构建租户条件表达式
      *
      * @param table        表对象
+     * @param where        当前where条件
      * @param whereSegment 所属Mapper对象全路径（在原租户拦截器功能中，这个参数并不需要参与相关判断）
      * @return 租户条件表达式
+     * @see BaseMultiTableInnerInterceptor#buildTableExpression(Table, Expression, String)
      */
     @Override
-    public Expression buildTableExpression(final Table table, final String whereSegment) {
+    public Expression buildTableExpression(final Table table, final Expression where, final String whereSegment) {
         if (tenantLineHandler.ignoreTable(table.getName())) {
             return null;
         }
