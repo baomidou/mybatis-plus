@@ -559,6 +559,13 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    void testPageNegativeSize() {
+        Page page = Page.of(1, -1);
+        userService.lambdaQuery().page(page);
+        Assertions.assertEquals(page.getTotal(), 0);
+    }
+
+    @Test
     void testDeleteByFill() {
         H2User h2User = new H2User(3L, "test");
         userService.removeById(1L);

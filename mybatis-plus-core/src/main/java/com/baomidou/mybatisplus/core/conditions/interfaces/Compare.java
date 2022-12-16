@@ -252,6 +252,40 @@ public interface Compare<Children, R> extends Serializable {
     /**
      * ignore
      */
+    default Children notLikeLeft(R column, Object val) {
+        return notLikeLeft(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '%值'
+     *
+     * @param condition
+     * @param column
+     * @param val
+     * @return children
+     */
+    Children notLikeLeft(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     */
+    default Children notLikeRight(R column, Object val) {
+        return notLikeRight(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '值%'
+     *
+     * @param condition
+     * @param column
+     * @param val
+     * @return children
+     */
+    Children notLikeRight(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     */
     default Children likeLeft(R column, Object val) {
         return likeLeft(true, column, val);
     }

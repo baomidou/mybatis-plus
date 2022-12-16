@@ -320,8 +320,6 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                     if (leftTable != null) {
                         onTables = Collections.singletonList(leftTable);
                     }
-                } else if (join.isLeft()) {
-                    onTables = Collections.singletonList(joinTable);
                 } else if (join.isInner()) {
                     if (mainTable == null) {
                         onTables = Collections.singletonList(joinTable);
@@ -329,6 +327,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                         onTables = Arrays.asList(mainTable, joinTable);
                     }
                     mainTable = null;
+                } else {
+                    onTables = Collections.singletonList(joinTable);
                 }
 
                 mainTables = new ArrayList<>();
