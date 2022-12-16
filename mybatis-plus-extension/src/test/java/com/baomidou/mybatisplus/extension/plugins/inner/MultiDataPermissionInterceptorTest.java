@@ -47,7 +47,7 @@ public class MultiDataPermissionInterceptorTest {
         interceptor = new DataPermissionInterceptor(new MultiDataPermissionHandler() {
 
             @Override
-            public Expression getSqlSegment(final Table table, final String mappedStatementId) {
+            public Expression getSqlSegment(final Table table, final Expression where, final String mappedStatementId) {
                 try {
                     String sqlSegment = sqlSegmentMap.get(mappedStatementId, table.getName());
                     if (sqlSegment == null) {

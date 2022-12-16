@@ -69,7 +69,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      */
     protected Expression andExpression(Table table, Expression where, final String whereSegment) {
         //获得where条件表达式
-        final Expression expression = buildTableExpression(table, whereSegment);
+        final Expression expression = buildTableExpression(table, where, whereSegment);
         if (null != where) {
             if (where instanceof OrExpression) {
                 return new AndExpression(expression, new Parenthesis(where));
@@ -381,7 +381,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         // 构造每张表的条件
         List<Expression> expressions = tables.stream()
-            .map(item -> buildTableExpression(item, whereSegment))
+            .map(item -> buildTableExpression(item, currentExpression, whereSegment))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
@@ -413,8 +413,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * 构建数据库表的查询条件
      *
      * @param table        表对象
+     * @param where        当前where条件
      * @param whereSegment 所属Mapper对象全路径
      * @return 需要拼接的新条件（不会覆盖原有的where条件，只会在原有条件上再加条件），为 null 则不加入新的条件
      */
-    public abstract Expression buildTableExpression(final Table table, final String whereSegment);
+    public abstract Expression buildTableExpression(final Table table, final Expression where, final String whereSegment);
 }
