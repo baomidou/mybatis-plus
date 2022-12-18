@@ -135,10 +135,9 @@ public abstract class AbstractTemplateEngine {
     protected void outputService(@NotNull TableInfo tableInfo, @NotNull Map<String, Object> objectMap) {
         // IMpService.java
         String entityName = tableInfo.getEntityName();
-        String servicePath = getPathInfo(OutputFile.service);
         // 判断是否要生成service接口
-        boolean serviceInterface = tableInfo.isServiceInterface();
-        if(serviceInterface) {
+        if(tableInfo.isServiceInterface()) {
+            String servicePath = getPathInfo(OutputFile.service);
             if (StringUtils.isNotBlank(tableInfo.getServiceName()) && StringUtils.isNotBlank(servicePath)) {
                 getTemplateFilePath(TemplateConfig::getService).ifPresent(service -> {
                     String serviceFile = String.format((servicePath + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
@@ -268,10 +267,6 @@ public abstract class AbstractTemplateEngine {
      * @throws Exception 异常
      * @since 3.5.0
      */
-//    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {
-//        this.writer(objectMap, templatePath, outputFile.getPath());
-//        logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
-//    }
     @NotNull
     public abstract void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception;
 
