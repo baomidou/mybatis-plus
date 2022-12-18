@@ -50,17 +50,12 @@ public abstract class AbstractDatabaseQuery implements IDatabaseQuery {
 
     protected final GlobalConfig globalConfig;
 
-    protected final DbQueryDecorator dbQuery;
-
-    protected final DatabaseMetaDataWrapper databaseMetaDataWrapper;
 
     public AbstractDatabaseQuery(@NotNull ConfigBuilder configBuilder) {
         this.configBuilder = configBuilder;
         this.dataSourceConfig = configBuilder.getDataSourceConfig();
         this.strategyConfig = configBuilder.getStrategyConfig();
-        this.dbQuery = new DbQueryDecorator(dataSourceConfig, strategyConfig);
         this.globalConfig = configBuilder.getGlobalConfig();
-        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig);
     }
 
     @NotNull

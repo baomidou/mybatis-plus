@@ -13,7 +13,7 @@ public class DatabaseMetaDataWrapperTest {
     @Test
     void test() throws SQLException {
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "").build();
-        DatabaseMetaDataWrapper databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig);
+        DatabaseMetaDataWrapper databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig.getConn(), dataSourceConfig.getSchemaName());
         Map<String, DatabaseMetaDataWrapper.Column> columnsInfo = databaseMetaDataWrapper.getColumnsInfo(null, null, "USERS",true);
         Assertions.assertNotNull(columnsInfo);
         DatabaseMetaDataWrapper.Column name = columnsInfo.get("name");

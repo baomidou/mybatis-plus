@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.querys.DbQueryDecorator;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
@@ -41,8 +42,13 @@ import java.util.*;
  */
 public class SQLQuery extends AbstractDatabaseQuery {
 
+    protected final DbQueryDecorator dbQuery;
+    protected final DatabaseMetaDataWrapper databaseMetaDataWrapper;
+
     public SQLQuery(@NotNull ConfigBuilder configBuilder) {
         super(configBuilder);
+        this.dbQuery = new DbQueryDecorator(dataSourceConfig, strategyConfig);
+        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dbQuery.getConnection(), dataSourceConfig.getSchemaName());
     }
 
     @NotNull

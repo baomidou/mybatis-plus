@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.generator.jdbc;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +37,8 @@ public class DatabaseMetaDataWrapper {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseMetaDataWrapper.class);
 
+    private Connection connection;
+
     private final DatabaseMetaData databaseMetaData;
 
     //TODO 暂时只支持一种
@@ -46,15 +47,32 @@ public class DatabaseMetaDataWrapper {
     //TODO 暂时只支持一种
     private final String schema;
 
-    public DatabaseMetaDataWrapper(DataSourceConfig dataSourceConfig) {
+    public DatabaseMetaDataWrapper(Connection connection, String schemaName) {
         try {
-            Connection connection = dataSourceConfig.getConn();
+            if (null == connection) {
+                throw new RuntimeException("数据库连接不能为空");
+            }
+            this.connection = connection;
             this.databaseMetaData = connection.getMetaData();
             this.catalog = connection.getCatalog();
-            this.schema = dataSourceConfig.getSchemaName();
+            this.schema = schemaName;
         } catch (SQLException e) {
             throw new RuntimeException("获取元数据错误:", e);
         }
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public void closeConnection() {
+        Optional.ofNullable(connection).ifPresent((con) -> {
+            try {
+                con.close();
+            } catch (SQLException sqlException) {
+                sqlException.printStackTrace();
+            }
+        });
     }
 
     public Map<String, Column> getColumnsInfo(String tableNamePattern, boolean queryPrimaryKey) {

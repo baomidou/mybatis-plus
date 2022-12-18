@@ -50,6 +50,57 @@ public class DdlHelper {
      * 允许 SQL 脚本文件
      *
      * @param ddlGenerator DDL 生成器
+     * @param connection   数据库连接
+     * @param sqlFiles     SQL 文件列表
+     * @param autoCommit   字段提交事务
+     * @throws Exception
+     */
+    public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles, boolean autoCommit) throws SQLException {
+        // 执行自定义 DDL 信息
+        final String jdbcUrl = connection.getMetaData().getURL();
+        final String schema = DdlHelper.getDatabase(jdbcUrl);
+        SqlRunner sqlRunner = new SqlRunner(connection);
+        ScriptRunner scriptRunner = getScriptRunner(connection, autoCommit);
+        if (null == ddlGenerator) {
+            ddlGenerator = getDdlGenerator(jdbcUrl);
+        }
+        if (!ddlGenerator.existTable(schema, sql -> {
+            try {
+                Map<String, Object> resultMap = sqlRunner.selectOne(sql);
+                if (null != resultMap && !StringPool.ZERO.equals(String.valueOf(resultMap.get(StringPool.NUM)))) {
+                    return true;
+                }
+            } catch (SQLException e) {
+                log.error("run script sql:{} , error: {}", sql, e.getMessage());
+            }
+            return false;
+        })) {
+            scriptRunner.runScript(new StringReader(ddlGenerator.createDdlHistory()));
+        }
+        // 执行 SQL 脚本
+        for (String sqlFile : sqlFiles) {
+            try {
+                List<Map<String, Object>> objectMap = sqlRunner.selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
+                if (null == objectMap || objectMap.isEmpty()) {
+                    log.debug("run script file: {}", sqlFile);
+                    File file = new File(sqlFile);
+                    if (file.exists()) {
+                        scriptRunner.runScript(new FileReader(file));
+                    } else {
+                        scriptRunner.runScript(new InputStreamReader(getInputStream(sqlFile)));
+                    }
+                    sqlRunner.insert(ddlGenerator.insertDdlHistory(sqlFile, StringPool.SQL, getNowTime()));
+                }
+            } catch (Exception e) {
+                log.error("run script sql:{} , error: {} , Please check if the table `ddl_history` exists", sqlFile, e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * 允许 SQL 脚本文件
+     *
+     * @param ddlGenerator DDL 生成器
      * @param dataSource   数据源
      * @param sqlFiles     SQL 文件列表
      * @param autoCommit   字段提交事务
@@ -57,45 +108,7 @@ public class DdlHelper {
      */
     public static void runScript(IDdlGenerator ddlGenerator, DataSource dataSource, List<String> sqlFiles, boolean autoCommit) {
         try (Connection connection = dataSource.getConnection()) {
-            // 执行自定义 DDL 信息
-            final String jdbcUrl = connection.getMetaData().getURL();
-            final String schema = DdlHelper.getDatabase(jdbcUrl);
-            SqlRunner sqlRunner = new SqlRunner(connection);
-            ScriptRunner scriptRunner = getScriptRunner(connection, autoCommit);
-            if (null == ddlGenerator) {
-                ddlGenerator = getDdlGenerator(jdbcUrl);
-            }
-            if (!ddlGenerator.existTable(schema, sql -> {
-                try {
-                    Map<String, Object> resultMap = sqlRunner.selectOne(sql);
-                    if (null != resultMap && !StringPool.ZERO.equals(String.valueOf(resultMap.get(StringPool.NUM)))) {
-                        return true;
-                    }
-                } catch (SQLException e) {
-                    log.error("run script sql:{} , error: {}", sql, e.getMessage());
-                }
-                return false;
-            })) {
-                scriptRunner.runScript(new StringReader(ddlGenerator.createDdlHistory()));
-            }
-            // 执行 SQL 脚本
-            for (String sqlFile : sqlFiles) {
-                try {
-                    List<Map<String, Object>> objectMap = sqlRunner.selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
-                    if (null == objectMap || objectMap.isEmpty()) {
-                        log.debug("run script file: {}", sqlFile);
-                        File file = new File(sqlFile);
-                        if (file.exists()) {
-                            scriptRunner.runScript(new FileReader(file));
-                        } else {
-                            scriptRunner.runScript(new InputStreamReader(getInputStream(sqlFile)));
-                        }
-                        sqlRunner.insert(ddlGenerator.insertDdlHistory(sqlFile, StringPool.SQL, getNowTime()));
-                    }
-                } catch (Exception e) {
-                    log.error("run script sql:{} , error: {} , Please check if the table `ddl_history` exists", sqlFile, e.getMessage());
-                }
-            }
+            runScript(ddlGenerator, connection, sqlFiles, autoCommit);
         } catch (Exception e) {
             log.error("run script error: {}", e.getMessage());
         }
