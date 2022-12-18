@@ -174,7 +174,7 @@ public class Sequence {
                 timestamp = tilNextMillis(lastTimestamp);
             }
         } else {
-            // 不同毫秒内，序列号置为 1 - 3 随机数
+            // 不同毫秒内，序列号置为 1 - 2 随机数
             sequence = ThreadLocalRandom.current().nextLong(1, 3);
         }
 
@@ -203,16 +203,6 @@ public class Sequence {
      * 反解id的时间戳部分
      */
     public static long parseIdTimestamp(long id) {
-        String s = Long.toBinaryString(id);
-        int x = 64 - s.length();
-        StringBuilder b = new StringBuilder();
-        for (int i = 0; i < x; i++) {
-            b.append("0");
-        }
-        s = b + s;
-        s = s.substring(1, 42);
-        long l = Long.parseUnsignedLong(s, 2);
-        l += twepoch;
-        return l;
+        return (id>>22)+twepoch;
     }
 }
