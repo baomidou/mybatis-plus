@@ -354,4 +354,12 @@ public class TableInfo {
     public List<TableField> getCommonFields() {
         return commonFields;
     }
+
+    /**
+     * 获取是否生成service接口
+     * @return
+     */
+    public boolean isServiceInterface() {
+        return globalConfig.isServiceInterface();
+    }
 }

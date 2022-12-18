@@ -136,11 +136,15 @@ public abstract class AbstractTemplateEngine {
         // IMpService.java
         String entityName = tableInfo.getEntityName();
         String servicePath = getPathInfo(OutputFile.service);
-        if (StringUtils.isNotBlank(tableInfo.getServiceName()) && StringUtils.isNotBlank(servicePath)) {
-            getTemplateFilePath(TemplateConfig::getService).ifPresent(service -> {
-                String serviceFile = String.format((servicePath + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
-                outputFile(new File(serviceFile), objectMap, service, getConfigBuilder().getStrategyConfig().service().isFileOverride());
-            });
+        // 判断是否要生成service接口
+        boolean serviceInterface = tableInfo.isServiceInterface();
+        if(serviceInterface) {
+            if (StringUtils.isNotBlank(tableInfo.getServiceName()) && StringUtils.isNotBlank(servicePath)) {
+                getTemplateFilePath(TemplateConfig::getService).ifPresent(service -> {
+                    String serviceFile = String.format((servicePath + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
+                    outputFile(new File(serviceFile), objectMap, service, getConfigBuilder().getStrategyConfig().service().isFileOverride());
+                });
+            }
         }
         // MpServiceImpl.java
         String serviceImplPath = getPathInfo(OutputFile.serviceImpl);
