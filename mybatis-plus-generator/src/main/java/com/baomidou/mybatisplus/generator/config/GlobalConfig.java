@@ -85,6 +85,13 @@ public class GlobalConfig {
      */
     private Supplier<String> commentDate = () -> new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
+    /**
+     * 是否生成service 接口（默认 true）
+     * 增加此开关的原因：在某些项目实践中，只需要生成service实现类，不需要抽象sevice接口
+     * 针对某些项目，生成service接口，开发时反而麻烦，这种情况，可以将该属性设置为false
+     */
+    private boolean serviceInterface = true;
+
     public String getOutputDir() {
         return outputDir;
     }
@@ -126,6 +133,14 @@ public class GlobalConfig {
     @NotNull
     public String getCommentDate() {
         return commentDate.get();
+    }
+
+    public boolean isServiceInterface() {
+        return serviceInterface;
+    }
+
+    public void setServiceInterface(boolean serviceInterface) {
+        this.serviceInterface = serviceInterface;
     }
 
     /**
@@ -197,6 +212,15 @@ public class GlobalConfig {
          */
         public Builder enableSpringdoc() {
             this.globalConfig.springdoc = true;
+            return this;
+        }
+
+        /**
+         * 不生成service接口
+         * @return
+         */
+        public Builder disableServiceInterface() {
+            this.globalConfig.serviceInterface = false;
             return this;
         }
 

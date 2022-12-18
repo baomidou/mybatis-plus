@@ -20,6 +20,7 @@ public class GlobalConfigTest {
         Assertions.assertEquals(globalConfig.getAuthor(), "mp");
         Assertions.assertEquals(globalConfig.getOutputDir(), "/temp/code");
         Assertions.assertEquals(globalConfig.getDateType(), DateType.SQL_PACK);
+        Assertions.assertTrue(globalConfig.isServiceInterface());
     }
 
     @Test
