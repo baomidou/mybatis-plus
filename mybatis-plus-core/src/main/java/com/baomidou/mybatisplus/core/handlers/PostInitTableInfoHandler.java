@@ -10,7 +10,7 @@ import org.apache.ibatis.session.Configuration;
  * @author miemie
  * @since 2022-09-20
  */
-public interface JoinTableInfoInitHandler {
+public interface PostInitTableInfoHandler {
 
     /**
      * 参与 TableFieldInfo 初始化
@@ -18,7 +18,7 @@ public interface JoinTableInfoInitHandler {
      * @param fieldInfo     TableFieldInfo
      * @param configuration Configuration
      */
-    default void fieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
+    default void postFieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
         // ignore
     }
 
@@ -28,7 +28,7 @@ public interface JoinTableInfoInitHandler {
      * @param tableInfo     TableInfo
      * @param configuration Configuration
      */
-    default void tableInfo(TableInfo tableInfo, Configuration configuration) {
+    default void postTableInfo(TableInfo tableInfo, Configuration configuration) {
         // ignore
     }
 }

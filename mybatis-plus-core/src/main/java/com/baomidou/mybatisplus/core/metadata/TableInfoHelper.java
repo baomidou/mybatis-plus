@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.JoinTableInfoInitHandler;
+import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -177,7 +177,7 @@ public class TableInfoHelper {
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
-        globalConfig.getJoinTableInfoInitHandler().tableInfo(tableInfo, configuration);
+        globalConfig.getPostInitTableInfoHandler().postTableInfo(tableInfo, configuration);
         TABLE_INFO_CACHE.put(clazz, tableInfo);
         TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
@@ -281,7 +281,7 @@ public class TableInfoHelper {
     private static void initTableFields(Configuration configuration, Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        JoinTableInfoInitHandler initTableInfoHandler = globalConfig.getJoinTableInfoInitHandler();
+        PostInitTableInfoHandler postInitTableInfoHandler = globalConfig.getPostInitTableInfoHandler();
         Reflector reflector = tableInfo.getReflector();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
@@ -329,14 +329,14 @@ public class TableInfoHelper {
             if (tableField != null) {
                 TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector, existTableLogic, isOrderBy);
                 fieldList.add(tableFieldInfo);
-                initTableInfoHandler.fieldInfo(tableFieldInfo, configuration);
+                postInitTableInfoHandler.postFieldInfo(tableFieldInfo, configuration);
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
             TableFieldInfo tableFieldInfo = new TableFieldInfo(dbConfig, tableInfo, field, reflector, existTableLogic, isOrderBy);
             fieldList.add(tableFieldInfo);
-            initTableInfoHandler.fieldInfo(tableFieldInfo, configuration);
+            postInitTableInfoHandler.postFieldInfo(tableFieldInfo, configuration);
         }
 
         /* 字段列表 */
