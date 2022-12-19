@@ -75,9 +75,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         if (where != null) {
             if (where instanceof OrExpression) {
-                return new AndExpression(expression, new Parenthesis(where));
+                return new AndExpression(new Parenthesis(where), expression);
             } else {
-                return new AndExpression(expression, where);
+                return new AndExpression(where, expression);
             }
         }
         return expression;
