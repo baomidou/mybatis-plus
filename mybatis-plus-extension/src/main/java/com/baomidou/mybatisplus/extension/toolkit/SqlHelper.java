@@ -277,14 +277,15 @@ public final class SqlHelper {
      *
      * @param entityClass 实体
      * @param <T>         实体类型
+     * @param <Mapper>    Mapper类型
      * @return Mapper
      */
     @SuppressWarnings("unchecked")
-    public static <T> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
+    public static <T,Mapper extends BaseMapper<T>> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
         Assert.notNull(entityClass, "entityClass can't be null!");
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
-        return (BaseMapper<T>) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
+        return (Mapper) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
 
     /**
