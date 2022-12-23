@@ -46,4 +46,15 @@ public class SqlInjectionUtils {
         // 处理是否包含SQL注释字符 || 检查是否包含SQL注入敏感字符
         return SQL_COMMENT_PATTERN.matcher(value).find() || SQL_SYNTAX_PATTERN.matcher(value).find();
     }
+
+    /**
+     * 刪除字段转义符单引号双引号
+     *
+     * @param text 待处理字段
+     * @return
+     */
+    public static String removeEscapeCharacter(String text) {
+        Objects.nonNull(text);
+        return text.replaceAll("\"", "").replaceAll("'", "");
+    }
 }
