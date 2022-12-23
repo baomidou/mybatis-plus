@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.postgresql;
 
 import com.baomidou.mybatisplus.test.postgresql.entity.Pgtable;
 import com.baomidou.mybatisplus.test.postgresql.mapper.PgtableMappper;
+import com.baomidou.mybatisplus.test.postgresql.service.IPgtableService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +15,10 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:postgresql/spring-test-postgresql.xml"})
 public class PostgresqlTest {
-
     @Resource
     private PgtableMappper mapper;
+    @Resource
+    private IPgtableService pgtableService;
 
     @Test
     void test() {
@@ -27,5 +29,13 @@ public class PostgresqlTest {
         List<Pgtable> pgtableList = mapper.selectList(null);
         Assertions.assertNotNull(pgtableList);
         Assertions.assertTrue(pgtableList.size() > 0);
+    }
+
+    @Test
+    void testTask() throws InterruptedException {
+        // 测试线程
+        pgtableService.testTask();
+        // 主线程休眠
+        Thread.sleep(10000);
     }
 }
