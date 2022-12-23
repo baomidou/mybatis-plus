@@ -18,8 +18,8 @@ package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.JoinTableInfoInitHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
@@ -212,7 +212,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         // TODO 注入填充器
         this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
         // TODO 注入参与器
-        this.getBeanThen(JoinTableInfoInitHandler.class, globalConfig::setJoinTableInfoInitHandler);
+        this.getBeanThen(PostInitTableInfoHandler.class, globalConfig::setPostInitTableInfoHandler);
         // TODO 注入主键生成器
         this.getBeansThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerators(i));
         // TODO 注入sql注入器

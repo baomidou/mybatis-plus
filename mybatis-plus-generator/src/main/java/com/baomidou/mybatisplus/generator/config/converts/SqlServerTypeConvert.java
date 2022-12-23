@@ -1,41 +1,27 @@
 /*
- * Copyright (c) 2011-2021, baomidou (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * https://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.baomidou.mybatisplus.generator.config.converts;
-
-import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
-import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DATE;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DATE_SQL;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.INTEGER;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE_TIME;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_TIME;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIME;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIMESTAMP;
 
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+
+import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
+import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 
 /**
  * SQLServer 字段类型转换
