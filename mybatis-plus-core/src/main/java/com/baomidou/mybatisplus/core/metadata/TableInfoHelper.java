@@ -428,6 +428,12 @@ public class TableInfoHelper {
             logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
                 property, tableInfo.getEntityType().getName()));
         }
+        if (StringUtils.isEmpty(tableId.value())) {
+            String columnFormat = dbConfig.getColumnFormat();
+            if (StringUtils.isNotBlank(columnFormat)) {
+                column = String.format(columnFormat, column);
+            }
+        }
         tableInfo.setKeyRelated(checkRelated(underCamel, property, column))
             .setKeyColumn(column)
             .setKeyProperty(property)
@@ -458,6 +464,10 @@ public class TableInfoHelper {
             if (keyType.isPrimitive()) {
                 logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
                     property, tableInfo.getEntityType().getName()));
+            }
+            String columnFormat = dbConfig.getColumnFormat();
+            if (StringUtils.isNotBlank(columnFormat)) {
+                column = String.format(columnFormat, column);
             }
             tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), property, column))
                 .setIdType(dbConfig.getIdType())
