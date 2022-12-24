@@ -15,7 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.ddl;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.function.Consumer;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
  * @since 2021-09-23
  */
 public class SimpleDdl implements IDdl {
-    @Resource
+    @Autowired
     private DataSource dataSource;
 
     @Override
