@@ -1,5 +1,3 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
-
 dependencies {
     api project(":mybatis-plus-annotation")
     api "${lib.'jsqlparser'}"
