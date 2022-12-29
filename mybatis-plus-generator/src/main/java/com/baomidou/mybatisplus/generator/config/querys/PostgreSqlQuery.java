@@ -49,14 +49,15 @@ public class PostgreSqlQuery extends AbstractDbQuery {
             "        pg_class,\n" +
             "        pg_attribute\n" +
             "    WHERE\n" +
-            "        pg_class.oid ='\"%s\"' :: regclass\n" +
+            "        pg_class.oid ='%s' :: regclass\n" +
             "    AND pg_index.indrelid = pg_class.oid\n" +
             "    AND pg_attribute.attrelid = pg_class.oid\n" +
             "    AND pg_attribute.attnum = ANY (pg_index.indkey)\n" +
             ") B ON A.attname = b.attname\n" +
             "INNER JOIN pg_class C on A.attrelid = C.oid\n" +
             "INNER JOIN information_schema.columns D on A.attname = D.column_name\n" +
-            "WHERE A.attrelid ='\"%s\"' :: regclass AND A.attnum> 0 AND NOT A.attisdropped AND D.table_name = '%s'\n" +
+            "WHERE A.attrelid ='%s' :: regclass AND A.attnum> 0 AND NOT A.attisdropped AND D.table_name = '%s'\n" +
+            " and table_schema='%s'\n" +
             "ORDER BY A.attnum;";
     }
 

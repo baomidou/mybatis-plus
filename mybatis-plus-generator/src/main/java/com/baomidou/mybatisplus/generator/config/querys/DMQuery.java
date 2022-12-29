@@ -26,7 +26,7 @@ public class DMQuery extends AbstractDbQuery {
     @Override
     public String tablesSql() {
         return "SELECT * FROM (SELECT DISTINCT T1.TABLE_NAME AS TABLE_NAME,T2.COMMENTS AS TABLE_COMMENT FROM USER_TAB_COLUMNS T1 " +
-            "INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME) WHERE 1=1 ";
+            "INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME and owner='%s') WHERE 1=1 ";
     }
 
     @Override
@@ -44,7 +44,7 @@ public class DMQuery extends AbstractDbQuery {
                         "T1.COLUMN_NAME=T2.COLUMN_NAME AND " +
                         "T1.TABLE_NAME = T3.TABLE_NAME(+) AND " +
                         "T1.COLUMN_NAME=T3.COLUMN_NAME(+)   AND " +
-                        "T1.TABLE_NAME = '%s' " +
+                        "T1.TABLE_NAME = '%s' and owner='%s' " +
                         "ORDER BY T2.TABLE_NAME,T2.COLUMN_ID";
     }
 
