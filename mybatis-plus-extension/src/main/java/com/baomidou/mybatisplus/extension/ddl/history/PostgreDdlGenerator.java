@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.ddl.history;
 
-import org.apache.commons.lang3.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.function.Function;
 
@@ -36,15 +36,17 @@ public class PostgreDdlGenerator implements IDdlGenerator {
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT COUNT(1) AS NUM from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='ddl_history' AND TABLE_TYPE='BASE TABLE'");
-        if (StringUtils.isNoneBlank(this.getSchema())) {
+        if (StringUtils.isNotBlank(this.getSchema())) {
             sql.append(" AND TABLE_SCHEMA='").append(this.getSchema()).append("'");
         }
         return executeFunction.apply(sql.toString());
     }
+
     @Override
     public String getDdlHistory() {
         return "\"" + this.getSchema() + "\".\"ddl_history\"";
     }
+
     @Override
     public String createDdlHistory() {
         StringBuffer sql = new StringBuffer();
