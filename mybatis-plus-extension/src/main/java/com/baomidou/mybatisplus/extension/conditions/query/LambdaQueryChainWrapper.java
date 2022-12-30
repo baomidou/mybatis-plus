@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.conditions.query;
 
-import java.util.function.Predicate;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -24,6 +22,8 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
+
+import java.util.function.Predicate;
 
 /**
  * @author miemie
@@ -34,20 +34,17 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 
     private final BaseMapper<T> baseMapper;
-    private Class<T> entityClass;
 
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper) {
         super();
         this.baseMapper = baseMapper;
-        this.entityClass = null;
         super.wrapperChildren = new LambdaQueryWrapper<>();
     }
 
     public LambdaQueryChainWrapper(Class<T> entityClass) {
         super();
         this.baseMapper = null;
-        this.entityClass = entityClass;
-        super.wrapperChildren = new LambdaQueryWrapper<>();
+        super.wrapperChildren = new LambdaQueryWrapper<>(entityClass);
     }
 
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper, T entity) {
@@ -87,6 +84,6 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
 
     @Override
     public Class<T> getEntityClass() {
-        return entityClass;
+        return super.wrapperChildren.getEntityClass();
     }
 }
