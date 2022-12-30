@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.conditions;
 
-import java.util.Optional;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
@@ -60,6 +58,10 @@ public interface ChainWrapper<T> {
      * @return 结果
      */
     default <R> R execute(SFunction<BaseMapper<T>, R> function) {
-        return Optional.ofNullable(getBaseMapper()).map(function).orElseGet(() -> SqlHelper.execute(getEntityClass(), function));
+        BaseMapper<T> baseMapper = getBaseMapper();
+        if (baseMapper != null) {
+            return function.apply(baseMapper);
+        }
+        return SqlHelper.execute(getEntityClass(), function);
     }
 }
