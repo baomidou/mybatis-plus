@@ -175,6 +175,8 @@ subprojects {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
         exclude("**/phoenix/**")
+        exclude("**/postgresql/**")
+        exclude("**/generator/**")
     }
 
     task javadocJar(type: Jar) {

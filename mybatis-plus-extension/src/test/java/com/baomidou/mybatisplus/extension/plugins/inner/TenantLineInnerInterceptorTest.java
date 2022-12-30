@@ -51,7 +51,7 @@ class TenantLineInnerInterceptorTest {
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, ?)");
         // insert into select
         assertSql("insert into entity (id,name) select id,name from entity2",
-            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM entity2 WHERE entity2.tenant_id = 1");
+            "INSERT INTO entity (id, name, tenant_id) SELECT id, name, tenant_id FROM entity2 WHERE tenant_id = 1");
 
         assertSql("insert into entity (id,name) select * from entity2 e2",
             "INSERT INTO entity (id, name, tenant_id) SELECT * FROM entity2 e2 WHERE e2.tenant_id = 1");
@@ -69,30 +69,30 @@ class TenantLineInnerInterceptorTest {
     @Test
     void delete() {
         assertSql("delete from entity where id = ?",
-            "DELETE FROM entity WHERE entity.tenant_id = 1 AND id = ?");
+            "DELETE FROM entity WHERE id = ? AND tenant_id = 1");
     }
 
     @Test
     void update() {
         assertSql("update entity set name = ? where id = ?",
-            "UPDATE entity SET name = ? WHERE entity.tenant_id = 1 AND id = ?");
+            "UPDATE entity SET name = ? WHERE id = ? AND tenant_id = 1");
     }
 
     @Test
     void selectSingle() {
         // 单表
         assertSql("select * from entity where id = ?",
-            "SELECT * FROM entity WHERE id = ? AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE id = ? AND tenant_id = 1");
 
         assertSql("select * from entity where id = ? or name = ?",
-            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND tenant_id = 1");
 
         assertSql("SELECT * FROM entity WHERE (id = ? OR name = ?)",
-            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE (id = ? OR name = ?) AND tenant_id = 1");
 
         /* not */
         assertSql("SELECT * FROM entity WHERE not (id = ? OR name = ?)",
-            "SELECT * FROM entity WHERE NOT (id = ? OR name = ?) AND entity.tenant_id = 1");
+            "SELECT * FROM entity WHERE NOT (id = ? OR name = ?) AND tenant_id = 1");
 
         assertSql("SELECT * FROM entity u WHERE not (u.id = ? OR u.name = ?)",
             "SELECT * FROM entity u WHERE NOT (u.id = ? OR u.name = ?) AND u.tenant_id = 1");
@@ -430,7 +430,7 @@ class TenantLineInnerInterceptorTest {
     @Test
     void selectWithAs() {
         assertSql("with with_as_A as (select * from entity) select * from with_as_A",
-            "WITH with_as_A AS (SELECT * FROM entity WHERE entity.tenant_id = 1) SELECT * FROM with_as_A");
+            "WITH with_as_A AS (SELECT * FROM entity WHERE tenant_id = 1) SELECT * FROM with_as_A");
     }
 
 
