@@ -281,7 +281,7 @@ public final class SqlHelper {
      * @return Mapper
      */
     @SuppressWarnings("unchecked")
-    public static <T,Mapper extends BaseMapper<T>> BaseMapper<T> getMapper(Class<T> entityClass, SqlSession sqlSession) {
+    public static <T,Mapper extends BaseMapper<T>> Mapper getMapper(Class<T> entityClass, SqlSession sqlSession) {
         Assert.notNull(entityClass, "entityClass can't be null!");
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
@@ -297,11 +297,10 @@ public final class SqlHelper {
      * @param <R>         返回值类型
      * @return 返回lambda执行结果
      */
-    public static <T, R> R execute(Class<T> entityClass, SFunction<BaseMapper<T>, R> sFunction) {
+    public static <T, R,Mapper extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<Mapper, R> sFunction) {
         SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
         try {
-            BaseMapper<T> baseMapper = SqlHelper.getMapper(entityClass, sqlSession);
-            return sFunction.apply(baseMapper);
+            return sFunction.apply(SqlHelper.getMapper(entityClass, sqlSession));
         } finally {
             SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
