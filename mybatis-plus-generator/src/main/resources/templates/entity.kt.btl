@@ -27,9 +27,9 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "${entity}对象", description = "${table.comment!''}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>() {
 <% }else if(activeRecord){ %>
-class ${entity} : Model<${entity}> {
+class ${entity} : Model<${entity}>() {
 <% }else if(entitySerialVersionUID){ %>
 class ${entity} : Serializable {
 <% }else{ %>
