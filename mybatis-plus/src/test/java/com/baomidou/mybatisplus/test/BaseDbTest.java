@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.Interceptor;
@@ -71,7 +72,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
             consumer.accept(configuration);
         }
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
-        configuration.setLogImpl(Slf4jImpl.class);
+        configuration.setLogImpl(logImpl());
         if (StringUtils.isNotBlank(mapperXml)) {
             try {
                 InputStream inputStream = Resources.getResourceAsStream(mapperXml);
@@ -89,6 +90,10 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
             interceptors.forEach(configuration::addInterceptor);
         }
         sqlSessionFactory = builder.build(configuration);
+    }
+
+    protected Class<? extends Log> logImpl() {
+        return Slf4jImpl.class;
     }
 
     private DataSource dataSource() {

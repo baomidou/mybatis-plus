@@ -5,7 +5,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.CacheNamespaceRef;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
  * @author miemie
@@ -20,7 +23,8 @@ class MybatisMapperAnnotationBuilderTest {
         a.parse();
         MybatisMapperAnnotationBuilder b = new MybatisMapperAnnotationBuilder(configuration, BMapper.class);
         b.parse();
-        configuration.getMappedStatement(AMapper.class.getName() + ".insert");
+        MappedStatement mappedStatement = configuration.getMappedStatement(AMapper.class.getName() + ".insert");
+        assertThat(mappedStatement).isNotNull();
     }
 
     @CacheNamespaceRef(BMapper.class)

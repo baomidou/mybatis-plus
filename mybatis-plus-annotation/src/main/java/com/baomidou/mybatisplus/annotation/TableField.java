@@ -26,7 +26,7 @@ import java.lang.annotation.*;
 /**
  * 表字段标识
  *
- * @author hubin sjy tantan
+ * @author hubin sjy tantan yangbo
  * @since 2016-09-09
  */
 @Documented
@@ -136,6 +136,14 @@ public @interface TableField {
      * @since 3.4.4
      */
     String property() default "";
+
+    /**
+     * 参数映射使用的‘属性名’，会设置到 ParameterMapping.property。
+     * <p>不为空表示取该’对象属性访问表达式‘代表的值做为参数映射值，并且会自动创建’嵌套的ResultMap‘。</p>
+     * <p>使用例子请参考{@link com.baomidou.mybatisplus.test.association.AssociationTest}。</p>
+     * @since 3.5.3.1
+     */
+    String propertyIn() default "";
 
     /**
      * JDBC类型 (该默认值不代表会按照该值生效),

@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * 数据库表字段反射信息
  *
- * @author hubin sjy willenfoo tantan
+ * @author hubin sjy willenfoo tantan yangbo
  * @since 2016-09-09
  */
 @Getter
@@ -55,6 +55,10 @@ public class TableFieldInfo implements Constants {
      * 属性名
      */
     private final String property;
+    /**
+     * 用作输入参数时的属性名，支持多级对象访问，如: "project.id" 表示访问 project 属性的 id 属性
+     */
+    private final String propertyIn;
     /**
      * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
      */
@@ -198,6 +202,7 @@ public class TableFieldInfo implements Constants {
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
+        this.propertyIn = tableField.propertyIn();
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -210,7 +215,10 @@ public class TableFieldInfo implements Constants {
         final String numericScale = tableField.numericScale();
         boolean needAs = false;
         String el = this.property;
-        if (StringUtils.isNotBlank(tableField.property())) {
+        if (StringUtils.isNotBlank(this.propertyIn)) {
+            el = this.propertyIn;
+            needAs = true;
+        } else if (StringUtils.isNotBlank(tableField.property())) {
             el = tableField.property();
             needAs = true;
         }
@@ -271,7 +279,12 @@ public class TableFieldInfo implements Constants {
             if (StringUtils.isBlank(propertyFormat)) {
                 propertyFormat = "%s";
             }
-            this.sqlSelect += (AS + String.format(propertyFormat, tableField.property()));
+            // 将 parent.id 形式转换为 parent_dot_id 形式，以便做 resultMapping
+            if (StringUtils.isNotBlank(this.propertyIn)) {
+                this.sqlSelect += (AS + this.propertyIn.replace(".", "_dot_"));
+            } else {
+                this.sqlSelect += (AS + String.format(propertyFormat, tableField.property()));
+            }
         } else if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
             TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             /* 未设置 resultMap 也未开启自动构建 resultMap, 字段规则又不符合 mybatis 的自动封装规则 */
@@ -324,6 +337,7 @@ public class TableFieldInfo implements Constants {
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
+        this.propertyIn = "";
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -539,21 +553,32 @@ public class TableFieldInfo implements Constants {
      * @return ResultMapping
      */
     ResultMapping getResultMapping(final Configuration configuration) {
-        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-            StringUtils.getTargetColumn(column), propertyType);
-        TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
-        if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
-            builder.jdbcType(jdbcType);
-        }
-        if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
-            TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
-            if (typeHandler == null) {
-                typeHandler = registry.getInstance(propertyType, this.typeHandler);
-                // todo 这会有影响 registry.register(typeHandler);
+        if (StringUtils.isNotEmpty(this.propertyIn)) {
+            // 创建'嵌套的resultMap'
+            ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
+                TableInfo.prefixNestProperty(column, this.property), this.propertyType);
+            // 不要求‘嵌套类’设置'TableName.autoResultMap=true'，因为这里会自动创建
+            TableInfo nestTableInfo = TableInfoHelper.getTableInfo(this.propertyType);
+            String nestResultMap = nestTableInfo.createNestResultMap(this.property);
+            builder.nestedResultMapId(nestResultMap);
+            return builder.build();
+        } else {
+            ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
+                StringUtils.getTargetColumn(column), propertyType);
+            TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
+            if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
+                builder.jdbcType(jdbcType);
             }
-            builder.typeHandler(typeHandler);
+            if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
+                TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
+                if (typeHandler == null) {
+                    typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                    // todo 这会有影响 registry.register(typeHandler);
+                }
+                builder.typeHandler(typeHandler);
+            }
+            return builder.build();
         }
-        return builder.build();
     }
 
     public String getVersionOli(final String alias, final String prefix) {

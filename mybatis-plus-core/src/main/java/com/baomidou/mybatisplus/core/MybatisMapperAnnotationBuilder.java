@@ -60,10 +60,10 @@ import java.util.stream.Stream;
 
 
 /**
- * 继承
+ * 继承 MapperAnnotationBuilder。
  * <p>
- * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType
- * 没有XML配置文件注入基础CRUD方法
+ * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType。
+ * 没有XML配置文件注入基础CRUD方法。
  * </p>
  *
  * @author Caratacus

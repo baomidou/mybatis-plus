@@ -40,7 +40,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * 数据库表反射信息
  *
- * @author hubin
+ * @author hubin yangbo
  * @since 2016-01-23
  */
 @Data
@@ -61,7 +61,7 @@ public class TableInfo implements Constants {
      */
     private String tableName;
     /**
-     * 表映射结果集
+     * 结果映射的 id
      */
     private String resultMap;
     /**
@@ -441,12 +441,46 @@ public class TableInfo implements Constants {
                 resultMappings.add(idMapping);
             }
             if (CollectionUtils.isNotEmpty(fieldList)) {
-                fieldList.forEach(i -> resultMappings.add(i.getResultMapping(configuration)));
+                fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration)));
             }
             ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
             configuration.addResultMap(resultMap);
             this.resultMap = id;
         }
+    }
+
+    /**
+     * 用本 TableInfo 信息创建嵌套的 ResultMap。
+     *
+     * @param nestInProperty 嵌套的父属性名。
+     * @return 嵌套的ResultMap
+     */
+    String createNestResultMap(String nestInProperty) {
+        String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + nestInProperty + UNDERSCORE + entityType.getSimpleName();
+        List<ResultMapping> resultMappings = new ArrayList<>();
+        if (havePK()) {
+            ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty,
+                // 因为包含下横线，所以不调用函数 StringUtils.getTargetColumn() 了
+                prefixNestProperty(keyColumn, nestInProperty), keyType)
+                .flags(Collections.singletonList(ResultFlag.ID)).build();
+            resultMappings.add(idMapping);
+        }
+        if (CollectionUtils.isNotEmpty(fieldList)) {
+            fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration)));
+        }
+        ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
+        configuration.addResultMap(resultMap);
+        return id;
+    }
+
+    /**
+     * 生成带属性前缀的列名
+     * @param column 列名
+     * @param nestInProperty 属性前缀
+     * @return 带属性前缀的列名
+     */
+    public static String prefixNestProperty(String column, String nestInProperty) {
+        return String.format("%s_dot_%s", nestInProperty, column);
     }
 
     void setFieldList(List<TableFieldInfo> fieldList) {
