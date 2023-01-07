@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 反工具类测试
+ * 反射工具类测试
  */
 public class ReflectionKitTest {
 
