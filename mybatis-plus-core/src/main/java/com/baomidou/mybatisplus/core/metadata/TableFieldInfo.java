@@ -18,9 +18,11 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.*;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
@@ -556,10 +558,16 @@ public class TableFieldInfo implements Constants {
     ResultMapping getResultMapping(final Configuration configuration, String nestInProperty) {
         if (StringUtils.isNotEmpty(this.propertyIn)) {
             // 创建'嵌套的resultMap'
+            Class<?> propertyType = this.propertyType;
             ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-                TableInfo.prefixNestProperty(column, this.property), this.propertyType);
+                TableInfo.prefixNestProperty(column, this.property), propertyType);
             // 不要求‘嵌套类’设置'TableName.autoResultMap=true'，因为这里会自动创建
-            TableInfo nestTableInfo = TableInfoHelper.getTableInfo(this.propertyType);
+            TableInfo nestTableInfo = TableInfoHelper.getTableInfo(propertyType);
+            if (nestTableInfo == null) {
+                String resource = propertyType.getName().replace(StringPool.DOT, StringPool.SLASH) + ".java (best guess)";
+                MapperBuilderAssistant assistant = new MapperBuilderAssistant(configuration, resource);
+                nestTableInfo = TableInfoHelper.initTableInfo(assistant, propertyType);
+            }
             String nestResultMap = nestTableInfo.createNestResultMap(this.property);
             builder.nestedResultMapId(nestResultMap);
             return builder.build();
