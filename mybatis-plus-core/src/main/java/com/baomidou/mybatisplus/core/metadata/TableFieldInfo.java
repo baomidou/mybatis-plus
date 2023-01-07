@@ -549,10 +549,11 @@ public class TableFieldInfo implements Constants {
     /**
      * 获取 ResultMapping
      *
-     * @param configuration MybatisConfiguration
+     * @param configuration  MybatisConfiguration
+     * @param nestInProperty 嵌套映射器所属的属性名
      * @return ResultMapping
      */
-    ResultMapping getResultMapping(final Configuration configuration) {
+    ResultMapping getResultMapping(final Configuration configuration, String nestInProperty) {
         if (StringUtils.isNotEmpty(this.propertyIn)) {
             // 创建'嵌套的resultMap'
             ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
@@ -563,8 +564,10 @@ public class TableFieldInfo implements Constants {
             builder.nestedResultMapId(nestResultMap);
             return builder.build();
         } else {
-            ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-                StringUtils.getTargetColumn(column), propertyType);
+            ResultMapping.Builder builder = new ResultMapping.Builder(
+                configuration, property,
+                resolveColumnName(column, nestInProperty),
+                propertyType);
             TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
             if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
                 builder.jdbcType(jdbcType);
@@ -578,6 +581,14 @@ public class TableFieldInfo implements Constants {
                 builder.typeHandler(typeHandler);
             }
             return builder.build();
+        }
+    }
+
+    private String resolveColumnName(String column, String nestInProperty) {
+        if (StringUtils.isNotEmpty(nestInProperty)) {
+            return TableInfo.prefixNestProperty(column, nestInProperty);
+        } else {
+            return StringUtils.getTargetColumn(column);
         }
     }
 

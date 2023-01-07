@@ -1,7 +1,6 @@
 package com.baomidou.mybatisplus.test.association;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.util.List;
@@ -22,5 +21,5 @@ public class Entity {
      * 需要手工编写 mapper 来获取
      */
     @TableField(exist = false)
-    private List<SubEntity> subEntity;
+    private List<SubEntity> subEntityList;
 }

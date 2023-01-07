@@ -441,7 +441,7 @@ public class TableInfo implements Constants {
                 resultMappings.add(idMapping);
             }
             if (CollectionUtils.isNotEmpty(fieldList)) {
-                fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration)));
+                fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration, null)));
             }
             ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
             configuration.addResultMap(resultMap);
@@ -466,7 +466,7 @@ public class TableInfo implements Constants {
             resultMappings.add(idMapping);
         }
         if (CollectionUtils.isNotEmpty(fieldList)) {
-            fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration)));
+            fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration, nestInProperty)));
         }
         ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
         configuration.addResultMap(resultMap);

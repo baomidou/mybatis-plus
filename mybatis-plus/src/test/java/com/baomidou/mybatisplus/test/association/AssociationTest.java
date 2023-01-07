@@ -77,6 +77,7 @@ public class AssociationTest extends BaseDbTest<EntityMapper> {
             subEntity = subMapper.selectById(subId + 1);
             assertThat(subEntity.getParent().getId()).isNotNull();
             assertThat(subEntity.getParent().getId()).isEqualTo(123L);
+            assertThat(subEntity.getParent().getName()).isNull();
 
             sqlSession.commit();
         }
