@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.association;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
@@ -13,6 +14,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * 测试关联属性、注解属性 {@link TableField#propertyIn()} 的功能。
+ *
  * @author yangbo
  * @since 2023-01-07
  */
