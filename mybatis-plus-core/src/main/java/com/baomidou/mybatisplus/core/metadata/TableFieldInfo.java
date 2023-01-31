@@ -566,6 +566,8 @@ public class TableFieldInfo implements Constants {
             if (nestTableInfo == null) {
                 String resource = propertyType.getName().replace(StringPool.DOT, StringPool.SLASH) + ".java (best guess)";
                 MapperBuilderAssistant assistant = new MapperBuilderAssistant(configuration, resource);
+                // 设置 namespace 为属性类全名
+                assistant.setCurrentNamespace(propertyType.getName());
                 nestTableInfo = TableInfoHelper.initTableInfo(assistant, propertyType);
             }
             String nestResultMap = nestTableInfo.createNestResultMap(this.property);

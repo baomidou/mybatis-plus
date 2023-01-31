@@ -444,7 +444,10 @@ public class TableInfo implements Constants {
                 fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration, null)));
             }
             ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
-            configuration.addResultMap(resultMap);
+            // 如果已经存在不要重复添加，否则抛异常
+            if (!configuration.hasResultMap(id)) {
+                configuration.addResultMap(resultMap);
+            }
             this.resultMap = id;
         }
     }
@@ -475,7 +478,8 @@ public class TableInfo implements Constants {
 
     /**
      * 生成带属性前缀的列名
-     * @param column 列名
+     *
+     * @param column         列名
      * @param nestInProperty 属性前缀
      * @return 带属性前缀的列名
      */

@@ -109,3 +109,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 # 关注我 | About Me
 
 ![程序员日记](https://images.gitee.com/uploads/images/2019/0619/181933_46d5b802_12260.png "程序员日记")
+
+# TODO
+
+* @TableField(propertyIn="") 属性支持自动生成属性对象（如果属性为null），或者用子查询生成关联属性。
