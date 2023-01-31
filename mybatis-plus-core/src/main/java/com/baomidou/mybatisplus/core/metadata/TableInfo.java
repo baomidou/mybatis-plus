@@ -472,7 +472,9 @@ public class TableInfo implements Constants {
             fieldList.forEach(tableFieldInfo -> resultMappings.add(tableFieldInfo.getResultMapping(configuration, nestInProperty)));
         }
         ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
-        configuration.addResultMap(resultMap);
+        if (!configuration.hasResultMap(id)) {
+            configuration.addResultMap(resultMap);
+        }
         return id;
     }
 
