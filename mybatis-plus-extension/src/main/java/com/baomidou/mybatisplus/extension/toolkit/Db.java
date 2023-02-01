@@ -15,25 +15,36 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 以静态方式调用Service中的函数
@@ -58,9 +69,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
-        Integer result = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entity));
+        Integer result = SqlHelper.execute(getEntityClass(entity), baseMapper -> baseMapper.insert(entity));
         return SqlHelper.retBool(result);
     }
 
@@ -143,9 +152,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
+        return SqlHelper.execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
     }
 
     /**
@@ -166,9 +173,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
+        return SqlHelper.execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
     }
 
     /**
@@ -245,8 +250,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        @SuppressWarnings("unchecked")
-        Class<T> entityClass = (Class<T>) entity.getClass();
+        Class<T> entityClass = getEntityClass(entity);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
@@ -273,6 +277,26 @@ public class Db {
      */
     public static <T> T getOne(AbstractWrapper<T, ?, ?> queryWrapper) {
         return getOne(queryWrapper, true);
+    }
+
+    /**
+     * 根据 entity里不为空的字段，查询一条记录 <br/>
+     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     *
+     * @param entity 实体对象
+     */
+    public static <T> T getOne(T entity) {
+        return getOne(Wrappers.lambdaQuery(entity), true);
+    }
+
+    /**
+     * 根据 entity里不为空的字段，查询一条记录
+     *
+     * @param entity  实体对象
+     * @param throwEx 有多个 result 是否抛出异常
+     */
+    public static <T> T getOne(T entity, boolean throwEx) {
+        return getOne(Wrappers.lambdaQuery(entity), throwEx);
     }
 
     /**
@@ -319,6 +343,15 @@ public class Db {
     }
 
     /**
+     * 根据 entity不为空条件，查询一条记录
+     *
+     * @param entity 实体对象
+     */
+    public static <T> Map<String, Object> getMap(T entity) {
+        return getMap(Wrappers.lambdaQuery(entity));
+    }
+
+    /**
      * 查询总记录数
      *
      * @param entityClass 实体类
@@ -326,6 +359,15 @@ public class Db {
      */
     public static <T> long count(Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectCount(null));
+    }
+
+    /**
+     * 根据entity中不为空的数据查询记录数
+     *
+     * @param entity 实体类
+     */
+    public static <T> long count(T entity) {
+        return count(Wrappers.lambdaQuery(entity));
     }
 
     /**
@@ -343,8 +385,7 @@ public class Db {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<T> list(AbstractWrapper<T, ?, ?> queryWrapper) {
-        Class<T> entityClass = getEntityClass(queryWrapper);
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(queryWrapper));
+        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper));
     }
 
     /**
@@ -355,6 +396,16 @@ public class Db {
      */
     public static <T> List<T> list(Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null));
+    }
+
+    /**
+     * 根据entity中不为空的字段进行查询
+     *
+     * @param entity 实体类
+     * @see Wrappers#emptyWrapper()
+     */
+    public static <T> List<T> list(T entity) {
+        return list(Wrappers.lambdaQuery(entity));
     }
 
     /**
@@ -374,6 +425,15 @@ public class Db {
      */
     public static <T> List<Map<String, Object>> listMaps(Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectMaps(null));
+    }
+
+    /**
+     * 根据entity不为空的条件查询列表
+     *
+     * @param entity 实体类
+     */
+    public static <T> List<Map<String, Object>> listMaps(T entity) {
+        return listMaps(Wrappers.lambdaQuery(entity));
     }
 
     /**
@@ -523,12 +583,11 @@ public class Db {
      * @param <T>        实体类型
      * @return 实体类型
      */
-    @SuppressWarnings("unchecked")
     protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
         Class<T> entityClass = null;
         for (T entity : entityList) {
             if (entity != null && entity.getClass() != null) {
-                entityClass = (Class<T>) entity.getClass();
+                entityClass = getEntityClass(entity);
                 break;
             }
         }
@@ -543,18 +602,30 @@ public class Db {
      * @param <T>          实体类型
      * @return 实体类型
      */
-    @SuppressWarnings("unchecked")
     protected static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
         Class<T> entityClass = queryWrapper.getEntityClass();
         if (entityClass == null) {
             T entity = queryWrapper.getEntity();
             if (entity != null) {
-                entityClass = (Class<T>) entity.getClass();
+                entityClass = getEntityClass(entity);
             }
         }
         Assert.notNull(entityClass, "error: can not get entityClass from wrapper");
         return entityClass;
     }
+
+    /**
+     * 从entity中尝试获取实体类型
+     *
+     * @param entity 实体
+     * @param <T>    实体类型
+     * @return 实体类型
+     */
+    @SuppressWarnings("unchecked")
+    protected static <T> Class<T> getEntityClass(T entity) {
+        return (Class<T>) entity.getClass();
+    }
+
 
     /**
      * 获取表信息，获取不到报错提示

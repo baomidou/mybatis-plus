@@ -1,5 +1,16 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,12 +26,6 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import com.baomidou.mybatisplus.test.sqlrunner.Entity;
 import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
-import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.apache.ibatis.plugin.Interceptor;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.util.*;
 
 /**
  * 以静态方式调用Service中的函数
@@ -151,6 +156,10 @@ class DbTest extends BaseDbTest<EntityMapper> {
         Assertions.assertThrows(TooManyResultsException.class, () -> Db.getOne(wrapper));
         Entity one = Db.getOne(wrapper, false);
         Assertions.assertNotNull(one);
+        Entity entity = new Entity();
+        entity.setId(1L);
+        one = Db.getOne(entity);
+        Assertions.assertNotNull(one);
     }
 
     @Test
@@ -172,6 +181,11 @@ class DbTest extends BaseDbTest<EntityMapper> {
     void testGetMap() {
         Map<String, Object> map = Db.getMap(Wrappers.lambdaQuery(Entity.class));
         Assertions.assertNotNull(map);
+
+        Entity entity = new Entity();
+        entity.setId(1L);
+        map = Db.getMap(entity);
+        Assertions.assertNotNull(map);
     }
 
     @Test
@@ -181,6 +195,11 @@ class DbTest extends BaseDbTest<EntityMapper> {
 
         list = Db.list(Entity.class);
         Assertions.assertEquals(2, list.size());
+
+        Entity entity = new Entity();
+        entity.setId(1L);
+        list = Db.list(entity);
+        Assertions.assertEquals(1, list.size());
     }
 
     @Test
@@ -190,6 +209,11 @@ class DbTest extends BaseDbTest<EntityMapper> {
 
         list = Db.listMaps(Entity.class);
         Assertions.assertEquals(2, list.size());
+
+        Entity entity = new Entity();
+        entity.setId(1L);
+        list = Db.listMaps(entity);
+        Assertions.assertEquals(1, list.size());
     }
 
     @Test
@@ -224,7 +248,6 @@ class DbTest extends BaseDbTest<EntityMapper> {
     void testPage() {
         IPage<Entity> page = Db.page(new Page<>(1, 1), Entity.class);
         Assertions.assertEquals(2, page.getTotal());
-
         page = Db.page(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
         Assertions.assertEquals(1, page.getRecords().size());
     }
