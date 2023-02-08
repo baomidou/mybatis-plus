@@ -338,6 +338,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                             break;
                         }
 
+                        // 如果select中包含join表的字段则不优化
+                        for (SelectItem item : plainSelect.getSelectItems()) {
+                            if (item.toString().contains(str)) {
+                                return lowLevelCountSql(select.toString());
+                            }
+                        }
+
                         for (Expression expression : join.getOnExpressions()) {
                             if (expression.toString().contains(StringPool.QUESTION_MARK)) {
                                 /* 如果 join 里包含 ?(代表有入参) 就不移除 join */
