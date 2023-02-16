@@ -120,7 +120,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         }
 
         Select select = insert.getSelect();
-        if (select != null) {
+        if (select != null && (select.getSelectBody() instanceof PlainSelect)) { //fix github issue 4998  修复升级到4.5版本的问题
             this.processInsertSelect(select.getSelectBody(), (String) obj);
         } else if (insert.getItemsList() != null) {
             // fixed github pull/295
