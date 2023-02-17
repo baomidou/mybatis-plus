@@ -15,10 +15,7 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -61,6 +58,7 @@ class EncryptTest {
 
     @Data
     private static class Xx {
+        @TableId(type = IdType.AUTO)
         private Long id;
         @TableField(fill = FieldFill.INSERT)
         private String x1;
