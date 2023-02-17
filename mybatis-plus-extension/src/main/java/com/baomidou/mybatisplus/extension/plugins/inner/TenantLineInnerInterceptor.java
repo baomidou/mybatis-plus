@@ -132,7 +132,6 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             }else if(itemsList instanceof ExpressionList){//fix github issue 4998
                 List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
                 expressions.forEach(it-> ((RowConstructor)it).getExprList().addExpressions(tenantId));
-
             } else {
                 ((ExpressionList) itemsList).getExpressions().add(tenantId);
             }
