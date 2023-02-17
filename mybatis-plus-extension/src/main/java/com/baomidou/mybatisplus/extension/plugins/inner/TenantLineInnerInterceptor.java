@@ -129,11 +129,18 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             Expression tenantId = tenantLineHandler.getTenantId();
             if (itemsList instanceof MultiExpressionList) {
                 ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
-            }else if(itemsList instanceof ExpressionList){//fix github issue 4998
+            }else {
                 List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
-                expressions.forEach(it-> ((RowConstructor)it).getExprList().addExpressions(tenantId));
-            } else {
-                ((ExpressionList) itemsList).getExpressions().add(tenantId);
+                if(CollectionUtils.isNotEmpty(expressions)){//fix github issue 4998 jsqlparse 4.5 批量insert ItemsList不是MultiExpressionList 了，需要特殊处理
+                    Expression expression = expressions.get(0);
+                    if( expression instanceof RowConstructor){
+                        expressions.forEach(it->((RowConstructor)it).getExprList().getExpressions().add(tenantId));
+                    }else{
+                        expressions.add(tenantId);
+                    }
+                }else{
+                    expressions.add(tenantId);
+                }
             }
         } else {
             throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
