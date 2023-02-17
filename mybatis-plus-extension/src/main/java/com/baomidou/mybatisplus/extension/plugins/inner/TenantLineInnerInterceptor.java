@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.RowConstructor;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -128,6 +129,10 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             Expression tenantId = tenantLineHandler.getTenantId();
             if (itemsList instanceof MultiExpressionList) {
                 ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
+            }else if(itemsList instanceof ExpressionList){//fix github issue 4998
+                List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
+                expressions.forEach(it-> ((RowConstructor)it).getExprList().addExpressions(tenantId));
+
             } else {
                 ((ExpressionList) itemsList).getExpressions().add(tenantId);
             }
