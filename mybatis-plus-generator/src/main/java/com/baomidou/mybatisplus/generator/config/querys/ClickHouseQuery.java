@@ -43,7 +43,7 @@ public class ClickHouseQuery extends AbstractDbQuery {
 
     @Override
     public String tableComment() {
-        return "name";
+        return "comment";
     }
 
     @Override
