@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.junit.jupiter.api.Test;
@@ -36,4 +37,14 @@ class MybatisPlusInterceptorTest {
         assertThat(pii.getMaxLimit()).isEqualTo(10);
         assertThat(pii.getDbType()).isEqualTo(DbType.H2);
     }
+
+    @Test
+    void testInterceptorOrder() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        interceptor.addInnerInterceptor(new DynamicTableNameInnerInterceptor());
+        assertThat(interceptor.getInterceptors().get(0)).isInstanceOf(DynamicTableNameInnerInterceptor.class);
+    }
+
+
 }
