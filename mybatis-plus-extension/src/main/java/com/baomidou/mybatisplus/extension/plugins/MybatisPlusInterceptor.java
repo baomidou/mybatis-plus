@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.Setter;
@@ -116,6 +117,13 @@ public class MybatisPlusInterceptor implements Interceptor {
 
     public void addInnerInterceptor(InnerInterceptor innerInterceptor) {
         this.interceptors.add(innerInterceptor);
+        Collections.sort(this.interceptors,(interceptor0,interceptor1)->{
+            if (interceptor0 instanceof DynamicTableNameInnerInterceptor) {
+                return Integer.MIN_VALUE;
+            } else {
+                return Integer.MAX_VALUE;
+            }
+        });
     }
 
     public List<InnerInterceptor> getInterceptors() {
