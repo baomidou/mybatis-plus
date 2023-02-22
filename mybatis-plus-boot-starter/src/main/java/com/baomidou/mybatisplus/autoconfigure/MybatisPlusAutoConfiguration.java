@@ -31,6 +31,7 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -197,6 +198,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
         // TODO 修改源码支持定义 TransactionFactory
         this.getBeanThen(TransactionFactory.class, factory::setTransactionFactory);
+        // TODO 通过自定义sqlSessionFactoryBuilder，重写其build方法，从而达到自定义sqlSessionFactory
+        this.getBeanThen(SqlSessionFactoryBuilder.class, factory::setSqlSessionFactoryBuilder);
 
         // TODO 对源码做了一定的修改(因为源码适配了老旧的mybatis版本,但我们不需要适配)
         Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();

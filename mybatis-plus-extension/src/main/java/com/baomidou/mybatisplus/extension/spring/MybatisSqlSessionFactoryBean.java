@@ -37,6 +37,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.logging.Logger;
@@ -149,6 +150,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     // TODO 自定义全局配置
     @Setter
     private GlobalConfig globalConfig;
+
+    @Setter
+    private SqlSessionFactoryBuilder sqlSessionFactoryBuilder;
 
     /**
      * Sets the ObjectFactory.
@@ -583,7 +587,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
 
-        final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
+        SqlSessionFactoryBuilder sessionFactoryBuilder = this.sqlSessionFactoryBuilder == null ?
+            new MybatisSqlSessionFactoryBuilder() : this.sqlSessionFactoryBuilder;
+        final SqlSessionFactory sqlSessionFactory = sessionFactoryBuilder.build(targetConfiguration);
 
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
