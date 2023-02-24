@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.RowConstructor;
-import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
@@ -43,6 +41,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -135,6 +134,13 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                     Expression expression = expressions.get(0);
                     if( expression instanceof RowConstructor){
                         expressions.forEach(it->((RowConstructor)it).getExprList().getExpressions().add(tenantId));
+                    }else if(expression instanceof Parenthesis){
+                        //Parenthesis 没办法添加新的value了 重置为jdbcParameter  Parenthesis应该只会有1个参数 固定写死
+                        //支持 insert into entity (id) values (?) 这种style
+                        List expressList = new ArrayList();
+                        expressList.add( new JdbcParameter());
+                        ((ExpressionList) itemsList).withExpressions(expressList).withUsingBrackets(true);
+                        ((ExpressionList) itemsList).getExpressions().add(tenantId);
                     }else{
                         expressions.add(tenantId);
                     }

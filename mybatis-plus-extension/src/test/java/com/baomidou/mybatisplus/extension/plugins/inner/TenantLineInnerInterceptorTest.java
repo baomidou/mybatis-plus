@@ -37,6 +37,8 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void insert() {
+        assertSql("insert into entity (id) values (?)",
+            "INSERT INTO entity (id, tenant_id) VALUES (?, 1)");
         // plain
         assertSql("insert into entity (id,name) values (?,?)",
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1)");
