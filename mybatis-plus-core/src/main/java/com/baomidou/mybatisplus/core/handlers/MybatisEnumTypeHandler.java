@@ -17,10 +17,9 @@ package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
@@ -87,7 +86,9 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     }
 
     private static Optional<Field> findEnumValueAnnotationField(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        return Arrays.stream(clazz.getDeclaredFields()).filter(field -> annotationHandler.isAnnotationPresent(field, EnumValue.class)).findFirst();
     }
 
     /**

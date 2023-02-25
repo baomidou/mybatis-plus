@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.generator.config.builder;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.IFill;
 import com.baomidou.mybatisplus.generator.ITemplate;
@@ -187,13 +189,15 @@ public class Entity implements ITemplate {
      * @param clazz 实体父类 Class
      */
     public void convertSuperEntityColumns(Class<?> clazz) {
+        com.baomidou.mybatisplus.core.metadata.TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
         List<Field> fields = TableInfoHelper.getAllFields(clazz);
         this.superEntityColumns.addAll(fields.stream().map(field -> {
-            TableId tableId = field.getAnnotation(TableId.class);
+            TableId tableId = annotationHandler.getAnnotation(field, TableId.class);
             if (tableId != null && StringUtils.isNotBlank(tableId.value())) {
                 return tableId.value();
             }
-            TableField tableField = field.getAnnotation(TableField.class);
+            TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
             if (tableField != null && StringUtils.isNotBlank(tableField.value())) {
                 return tableField.value();
             }

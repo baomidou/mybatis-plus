@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -211,6 +212,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
         // TODO 注入填充器
         this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
+        // TODO 注入注解控制器
+        this.getBeanThen(AnnotationHandler.class, globalConfig::setAnnotationHandler);
         // TODO 注入参与器
         this.getBeanThen(PostInitTableInfoHandler.class, globalConfig::setPostInitTableInfoHandler);
         // TODO 注入主键生成器
