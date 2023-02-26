@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.RowConstructor;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -42,6 +44,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -121,16 +124,13 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
         Select select = insert.getSelect();
         if (select != null) {
-            this.processInsertSelect(select.getSelectBody(), (String) obj);
-        } else if (insert.getItemsList() != null) {
-            // fixed github pull/295
-            ItemsList itemsList = insert.getItemsList();
-            Expression tenantId = tenantLineHandler.getTenantId();
-            if (itemsList instanceof MultiExpressionList) {
-                ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
-            } else {
-                ((ExpressionList) itemsList).getExpressions().add(tenantId);
+            SelectBody selectBody = select.getSelectBody();
+            if (selectBody instanceof PlainSelect) {
+                this.processInsertSelect(select.getSelectBody(), (String) obj);
+            } else if (insert.getItemsList() != null) {
+                this.processInsertItemList(insert.getItemsList());
             }
+
         } else {
             throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
         }
@@ -198,6 +198,45 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             }
         }
         selectItems.add(new SelectExpressionItem(new Column(tenantLineHandler.getTenantIdColumn())));
+    }
+
+    /**
+     * 处理 insert values
+     * @param itemsList itemList
+     */
+    protected void processInsertItemList(ItemsList itemsList) {
+        Expression tenantId = tenantLineHandler.getTenantId();
+        if (itemsList instanceof MultiExpressionList) {
+            ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
+        } else {
+            //fix github issue 4998
+            List<Expression> itemExpressions = ((ExpressionList) itemsList).getExpressions();
+            int size = itemExpressions.size();
+
+            List<Expression> innerExpressList = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Expression expression = itemExpressions.get(i);
+                if (expression instanceof RowConstructor) {
+                    ((RowConstructor) expression).getExprList().getExpressions().add(tenantId);
+                } else if (expression instanceof Parenthesis) {
+                    Expression parentesisInnerExpression = ((Parenthesis) expression).getExpression();
+                    RowConstructor rowConstructor = new RowConstructor();
+                    rowConstructor.withExprList(new ExpressionList(parentesisInnerExpression, tenantId));
+                    innerExpressList.add(rowConstructor);
+
+                    ExpressionList expressionList = (ExpressionList) itemsList;
+                    expressionList.withExpressions(innerExpressList);
+                } else {
+                    // itemExpressions为单值列表，只需要在最后一次处理
+                    if (i == size - 1) {
+                        itemExpressions.add(tenantId);
+                    }
+                }
+            }
+            if (itemExpressions.isEmpty()) {
+                itemExpressions.add(tenantId);
+            }
+        }
     }
 
     /**
