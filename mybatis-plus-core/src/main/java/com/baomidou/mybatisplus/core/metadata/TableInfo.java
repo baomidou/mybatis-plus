@@ -297,14 +297,16 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn(final boolean batch, final boolean newLine) {
+    public String getKeyInsertSqlColumn(final boolean batch, final String prefix, final boolean newLine) {
         if (havePK()) {
+            final String newPrefix = prefix == null ? EMPTY : prefix;
+            final String prefixKeyProperty = newPrefix + keyProperty;
             if (idType == IdType.AUTO) {
                 if (batch) {
                     // 批量插入必须返回空自增情况下
                     return EMPTY;
                 }
-                return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", keyProperty), newLine);
+                return SqlScriptUtils.convertIf(keyColumn + COMMA, String.format("%s != null", prefixKeyProperty), newLine);
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
@@ -337,7 +339,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlColumnMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlColumn(false, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
+        return getKeyInsertSqlColumn(false, newPrefix, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
