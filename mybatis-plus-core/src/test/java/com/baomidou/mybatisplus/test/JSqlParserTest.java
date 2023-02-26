@@ -17,7 +17,9 @@ package com.baomidou.mybatisplus.test;
 
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
@@ -62,4 +64,13 @@ class JSqlParserTest {
         Delete delete = (Delete) CCJSqlParserUtil.parse("delete from tableName t");
         Assertions.assertNull(delete.getWhere());
     }
+
+    @Test
+    void isolationKeywordParser() throws Exception {
+        Select select = (Select) CCJSqlParserUtil.parse("SELECT a FROM tableName cs");
+
+        PlainSelect ps = (PlainSelect) select.getSelectBody();
+        Assertions.assertEquals("a", ps.getSelectItems().get(0).toString());
+    }
+
 }
