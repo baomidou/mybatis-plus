@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerI
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.h2.H2AnnotationHandler;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -73,6 +74,7 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
 
         globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        globalConfig.setAnnotationHandler(new H2AnnotationHandler());
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
 
             /**
