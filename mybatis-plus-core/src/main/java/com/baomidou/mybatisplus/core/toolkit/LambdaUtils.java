@@ -55,7 +55,7 @@ public final class LambdaUtils {
         // 2. 反射读取
         try {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
-            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func));
+            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func), func.getClass().getClassLoader());
         } catch (Throwable e) {
             // 3. 反射失败使用序列化的方式读取
             return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
