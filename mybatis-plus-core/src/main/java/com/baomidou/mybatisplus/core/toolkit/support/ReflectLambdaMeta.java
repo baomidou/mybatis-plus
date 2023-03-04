@@ -32,14 +32,12 @@ public class ReflectLambdaMeta implements LambdaMeta {
     private static final Field FIELD_CAPTURING_CLASS;
 
     static {
-        Field fieldCapturingClass;
+        Field fieldCapturingClass = null;
         try {
             Class<SerializedLambda> aClass = SerializedLambda.class;
             fieldCapturingClass = ReflectionKit.setAccessible(aClass.getDeclaredField("capturingClass"));
         } catch (Throwable e) {
-            // 解决高版本 jdk 的问题 gitee: https://gitee.com/baomidou/mybatis-plus/issues/I4A7I5
-            log.warn(e.getMessage());
-            fieldCapturingClass = null;
+            // ignore
         }
         FIELD_CAPTURING_CLASS = fieldCapturingClass;
     }
