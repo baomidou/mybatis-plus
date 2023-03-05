@@ -1,8 +1,12 @@
 package com.baomidou.mybatisplus.test.h2.fillperformance;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -16,6 +20,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.fillperformance.mapper")
@@ -45,6 +53,19 @@ public class FillPerformanceConfig {
         return new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {
+
+                Object object = metaObject.getOriginalObject();
+                Class<?> clazz = object.getClass();
+
+                Field[] declaredFields = clazz.getDeclaredFields();
+                List<Field> fieldList = Arrays.stream(declaredFields)
+                    .filter(field -> metaObject.hasSetter(field.getName()))
+                    .filter(field -> {
+                        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(TableInfoHelper.getTableInfo(clazz).getConfiguration()).getAnnotationHandler();
+                        return annotationHandler.isAnnotationPresent(field, TableField.class);
+                    })
+                    .collect(Collectors.toList());
+
 //                strictInsertFill(metaObject,"c",String.class,"1234567890");
 //                strictInsertFill(metaObject,"d",String.class,"1234567890");
 //                strictInsertFill(metaObject,"e",String.class,"1234567890");
@@ -55,16 +76,21 @@ public class FillPerformanceConfig {
 //                strictInsertFill(metaObject,"j",String.class,"1234567890");
 //                strictInsertFill(metaObject,"l",String.class,"1234567890");
 //                strictInsertFill(metaObject,"m",String.class,"1234567890");
-                setFieldValByName("c", "1234567890", metaObject);
-                setFieldValByName("d", "1234567890", metaObject);
-                setFieldValByName("e", "1234567890", metaObject);
-                setFieldValByName("f", "1234567890", metaObject);
-                setFieldValByName("g", "1234567890", metaObject);
-                setFieldValByName("h", "1234567890", metaObject);
-                setFieldValByName("i", "1234567890", metaObject);
-                setFieldValByName("j", "1234567890", metaObject);
-                setFieldValByName("l", "1234567890", metaObject);
-                setFieldValByName("m", "1234567890", metaObject);
+                for (Field field : fieldList) {
+                    // 此处没有做字段与列的自动转化
+                    String columnName = field.getName();
+                    setFieldValByName(columnName, "1234567890", metaObject);
+                }
+                // setFieldValByName("c", "1234567890", metaObject);
+                // setFieldValByName("d", "1234567890", metaObject);
+                // setFieldValByName("e", "1234567890", metaObject);
+                // setFieldValByName("f", "1234567890", metaObject);
+                // setFieldValByName("g", "1234567890", metaObject);
+                // setFieldValByName("h", "1234567890", metaObject);
+                // setFieldValByName("i", "1234567890", metaObject);
+                // setFieldValByName("j", "1234567890", metaObject);
+                // setFieldValByName("l", "1234567890", metaObject);
+                // setFieldValByName("m", "1234567890", metaObject);
 //                setInsertFieldValByName("c","1234567890",metaObject);
 //                setInsertFieldValByName("d","1234567890",metaObject);
 //                setInsertFieldValByName("e","1234567890",metaObject);
