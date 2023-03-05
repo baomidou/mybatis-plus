@@ -198,7 +198,7 @@ public class Entity implements ITemplate {
     public void convertSuperEntityColumns(Class<?> clazz) {
         com.baomidou.mybatisplus.core.metadata.TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
-        List<Field> fields = TableInfoHelper.getAllFields(clazz);
+        List<Field> fields = TableInfoHelper.getAllFields(clazz, annotationHandler);
         this.superEntityColumns.addAll(fields.stream().map(field -> {
             TableId tableId = annotationHandler.getAnnotation(field, TableId.class);
             if (tableId != null && StringUtils.isNotBlank(tableId.value())) {

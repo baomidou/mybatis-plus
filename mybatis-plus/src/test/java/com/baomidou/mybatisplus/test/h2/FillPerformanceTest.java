@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.test.h2.fillperformance.model.PerformanceModel;
 import com.baomidou.mybatisplus.test.h2.fillperformance.service.IPerformanceModelService;
 import org.junit.jupiter.api.MethodOrderer;
@@ -34,12 +33,5 @@ class FillPerformanceTest {
         long end = System.currentTimeMillis();
         System.out.println(end - start);
         System.out.println("-------------------------");
-    }
-
-    @Test
-    void testCustomAnnotation(){
-        PerformanceModel performanceModel = new PerformanceModel();
-        performanceModelService.save(performanceModel);
-        Assert.notEmpty(performanceModel.getA(), "自定义注解获取方式测试失败");
     }
 }

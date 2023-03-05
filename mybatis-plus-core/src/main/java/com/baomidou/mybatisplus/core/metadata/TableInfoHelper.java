@@ -303,13 +303,13 @@ public class TableInfoHelper {
         AnnotationHandler annotationHandler = globalConfig.getAnnotationHandler();
         PostInitTableInfoHandler postInitTableInfoHandler = globalConfig.getPostInitTableInfoHandler();
         Reflector reflector = tableInfo.getReflector();
-        List<Field> list = getAllFields(clazz);
+        List<Field> list = getAllFields(clazz, annotationHandler);
         // 标记是否读取到主键
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
-        boolean existTableId = isExistTableId(clazz, list);
+        boolean existTableId = isExistTableId(list, annotationHandler);
         // 是否存在 @TableLogic 注解
-        boolean existTableLogic = isExistTableLogic(clazz, list);
+        boolean existTableLogic = isExistTableLogic(list, annotationHandler);
 
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
@@ -379,6 +379,18 @@ public class TableInfoHelper {
     public static boolean isExistTableId(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        return isExistTableId(list, annotationHandler);
+    }
+
+    /**
+     * <p>
+     * 判断主键注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return true 为存在 {@link TableId} 注解;
+     */
+    public static boolean isExistTableId(List<Field> list, AnnotationHandler annotationHandler) {
         return list.stream().anyMatch(field -> annotationHandler.isAnnotationPresent(field, TableId.class));
     }
 
@@ -394,6 +406,18 @@ public class TableInfoHelper {
     public static boolean isExistTableLogic(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        return isExistTableLogic(list, annotationHandler);
+    }
+
+    /**
+     * <p>
+     * 判断逻辑删除注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @return true 为存在 {@link TableLogic} 注解;
+     */
+    public static boolean isExistTableLogic(List<Field> list, AnnotationHandler annotationHandler) {
         return list.stream().anyMatch(field -> annotationHandler.isAnnotationPresent(field, TableLogic.class));
     }
 
@@ -409,6 +433,19 @@ public class TableInfoHelper {
     public static boolean isExistOrderBy(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        return isExistOrderBy(list, annotationHandler);
+    }
+
+    /**
+     * <p>
+     * 判断排序注解是否存在
+     * </p>
+     *
+     * @param list 字段列表
+     * @param annotationHandler 注解处理类
+     * @return true 为存在 {@link OrderBy} 注解;
+     */
+    public static boolean isExistOrderBy(List<Field> list, AnnotationHandler annotationHandler) {
         return list.stream().anyMatch(field -> annotationHandler.isAnnotationPresent(field, OrderBy.class));
     }
 
@@ -545,6 +582,19 @@ public class TableInfoHelper {
     public static List<Field> getAllFields(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        return getAllFields(clazz, annotationHandler);
+    }
+
+    /**
+     * <p>
+     * 获取该类的所有属性列表
+     * </p>
+     *
+     * @param clazz             反射类
+     * @param annotationHandler 注解处理类
+     * @return 属性集合
+     */
+    public static List<Field> getAllFields(Class<?> clazz, AnnotationHandler annotationHandler) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
         return fieldList.stream()
             .filter(field -> {
