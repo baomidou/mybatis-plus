@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  */
 public class Entity implements ITemplate {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Entity.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Entity.class);
 
     private Entity() {
     }

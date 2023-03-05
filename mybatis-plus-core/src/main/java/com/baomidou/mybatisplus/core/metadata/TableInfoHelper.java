@@ -159,7 +159,7 @@ public class TableInfoHelper {
      * @param clazz 反射实体类
      * @return 数据库表反射信息
      */
-    public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
+    public static synchronized TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo targetTableInfo = TABLE_INFO_CACHE.get(clazz);
         final Configuration configuration = builderAssistant.getConfiguration();
         if (targetTableInfo != null) {
@@ -181,7 +181,7 @@ public class TableInfoHelper {
      * @param clazz 反射实体类
      * @return 数据库表反射信息
      */
-    private synchronized static TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
+    private static synchronized TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
         /* 没有获取到缓存信息,则初始化 */
         TableInfo tableInfo = new TableInfo(configuration, clazz);
         tableInfo.setCurrentNamespace(currentNamespace);
