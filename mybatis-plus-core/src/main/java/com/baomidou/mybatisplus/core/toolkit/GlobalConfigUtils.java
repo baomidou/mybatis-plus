@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
@@ -106,6 +107,10 @@ public class GlobalConfigUtils {
 
     public static Optional<MetaObjectHandler> getMetaObjectHandler(Configuration configuration) {
         return Optional.ofNullable(getGlobalConfig(configuration).getMetaObjectHandler());
+    }
+
+    public static Optional<AnnotationHandler> getAnnotationHandler(Configuration configuration) {
+        return Optional.ofNullable(getGlobalConfig(configuration).getAnnotationHandler());
     }
 
     public static Class<?> getSuperMapperClass(Configuration configuration) {

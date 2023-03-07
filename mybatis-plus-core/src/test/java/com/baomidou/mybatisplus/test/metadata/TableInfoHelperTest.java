@@ -74,8 +74,8 @@ class TableInfoHelperTest {
 
     @Test
     void testIsExistTableId() {
-        Assertions.assertThat(TableInfoHelper.isExistTableId(Arrays.asList(ModelOne.class.getDeclaredFields()))).isTrue();
-        assertThat(TableInfoHelper.isExistTableId(Arrays.asList(ModelTwo.class.getDeclaredFields()))).isFalse();
+        Assertions.assertThat(TableInfoHelper.isExistTableId(ModelOne.class, Arrays.asList(ModelOne.class.getDeclaredFields()))).isTrue();
+        assertThat(TableInfoHelper.isExistTableId(ModelTwo.class, Arrays.asList(ModelTwo.class.getDeclaredFields()))).isFalse();
     }
 
     @Test
