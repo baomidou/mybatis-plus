@@ -131,18 +131,20 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             }else {
                 List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
                 if(CollectionUtils.isNotEmpty(expressions)){//fix github issue 4998 jsqlparse 4.5 批量insert ItemsList不是MultiExpressionList 了，需要特殊处理
-                    Expression expression = expressions.get(0);
-                    if( expression instanceof RowConstructor){
-                        expressions.forEach(it->((RowConstructor)it).getExprList().getExpressions().add(tenantId));
-                    }else if(expression instanceof Parenthesis){
-                        //Parenthesis 没办法添加新的value了 重置为jdbcParameter  Parenthesis应该只会有1个参数 固定写死
-                        //支持 insert into entity (id) values (?) 这种style
-                        List expressList = new ArrayList();
-                        expressList.add( new JdbcParameter());
-                        ((ExpressionList) itemsList).withExpressions(expressList).withUsingBrackets(true);
-                        ((ExpressionList) itemsList).getExpressions().add(tenantId);
-                    }else{
-                        expressions.add(tenantId);
+                    int len=expressions.size();
+                    for(int i=0;i<len;i++){
+                        Expression expression=expressions.get(i);
+                        if( expression instanceof RowConstructor){
+                            ((RowConstructor) expression).getExprList().getExpressions().add(tenantId);
+                        }else if (expression instanceof Parenthesis){
+                            RowConstructor rowConstructor=new RowConstructor()
+                                .withExprList(new ExpressionList(((Parenthesis) expression).getExpression(),tenantId));
+                            expressions.set(i,rowConstructor);
+                        }else {
+                            if(len-1==i){ // (?,?) 只有最后一个expre的时候才拼接tenantId
+                                expressions.add(tenantId);
+                            }
+                        }
                     }
                 }else{
                     expressions.add(tenantId);
