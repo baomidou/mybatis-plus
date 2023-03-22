@@ -63,14 +63,20 @@ public class MergeSegments implements ISqlSegment {
         if (cacheSqlSegment) {
             return sqlSegment;
         }
-        cacheSqlSegment = true;
-        if (normal.isEmpty()) {
-            if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
-                sqlSegment = groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+        synchronized (this) {
+            if (cacheSqlSegment) {
+                return sqlSegment;
             }
-        } else {
-            sqlSegment = normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+            if (normal.isEmpty()) {
+                if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
+                    sqlSegment = groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+                }
+            } else {
+                sqlSegment = normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+            }
+            cacheSqlSegment = true;
         }
+
         return sqlSegment;
     }
 
