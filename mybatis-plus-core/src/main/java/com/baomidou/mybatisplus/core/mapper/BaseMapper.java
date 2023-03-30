@@ -17,12 +17,16 @@ package com.baomidou.mybatisplus.core.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import lombok.Setter;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -187,8 +191,75 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @return 是否存在记录
      */
     default boolean exists(Wrapper<T> queryWrapper) {
-        Long count = this.selectCount(queryWrapper);
-        return null != count && count > 0;
+        IPage<T> iPage = this.selectPage(new IPage<T>() {
+            private List<T> records = Collections.emptyList();
+            private final long size = 1;
+            @Setter
+            private String countId;
+
+            @Override
+            public List<T> getRecords() {
+                return this.records;
+            }
+
+            @Override
+            public IPage<T> setRecords(List<T> records) {
+                this.records = records;
+                return this;
+            }
+
+            @Override
+            public long getTotal() {
+                return 0;
+            }
+
+            @Override
+            public IPage<T> setTotal(long total) {
+                return this;
+            }
+
+            @Override
+            public long getSize() {
+                return this.size;
+            }
+
+            @Override
+            public IPage<T> setSize(long size) {
+                return this;
+            }
+
+            @Override
+            public long getCurrent() {
+                return 1;
+            }
+
+            @Override
+            public IPage<T> setCurrent(long current) {
+                return this;
+            }
+
+            @Override
+            public String countId() {
+                return this.countId;
+            }
+
+            @Override
+            public Long maxLimit() {
+                return this.size;
+            }
+
+            @Override
+            public List<OrderItem> orders() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public boolean searchCount() {
+                return false;
+            }
+
+        }, queryWrapper);
+        return CollectionUtils.isNotEmpty(iPage.getRecords());
     }
 
     /**

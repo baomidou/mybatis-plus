@@ -79,6 +79,7 @@ class MybatisTest {
         Assertions.assertEquals(user.getAge(), AgeEnum.THREE);
         Assertions.assertNotNull(user.getTestType());
         Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
+        Assertions.assertTrue(mapper.exists(new QueryWrapper<H2User>().lambda().eq(H2User::getTestId, 66L)));
         Assertions.assertEquals(mapper.deleteById(66L), 1);
         Assertions.assertNull(mapper.selectById(66L));
     }
