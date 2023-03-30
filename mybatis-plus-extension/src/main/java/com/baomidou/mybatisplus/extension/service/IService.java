@@ -283,6 +283,9 @@ public interface IService<T> {
      */
     boolean saveOrUpdate(T entity);
 
+
+    boolean exists(Wrapper<T> queryWrapper);
+
     /**
      * 根据 ID 查询
      *

@@ -559,6 +559,12 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    void testExist() {
+        Assertions.assertTrue(userService.exists(Wrappers.<H2User>lambdaQuery().ge(H2User::getAge, 0)));
+        Assertions.assertFalse(userService.exists(Wrappers.<H2User>lambdaQuery().le(H2User::getAge, -1)));
+    }
+
+    @Test
     void testPageNegativeSize() {
         Page page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
