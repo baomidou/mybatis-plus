@@ -39,7 +39,9 @@ import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
+import org.apache.ibatis.type.TypeException;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -565,7 +567,16 @@ public class TableFieldInfo implements Constants {
         if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (typeHandler == null) {
-                typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                try {
+                    typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                }catch (Exception e){
+                    try {
+                        Constructor c = this.typeHandler.getConstructor(Field.class);
+                        typeHandler =  (TypeHandler)c.newInstance(this.field);
+                    } catch (Exception var6) {
+                        throw new TypeException("Failed invoking constructor for handler " + this.typeHandler, var6);
+                    }
+                }
                 // todo 这会有影响 registry.register(typeHandler);
             }
             builder.typeHandler(typeHandler);
