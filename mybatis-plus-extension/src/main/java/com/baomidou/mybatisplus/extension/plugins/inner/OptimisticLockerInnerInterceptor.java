@@ -38,6 +38,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
@@ -292,6 +293,8 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
         } else if (Timestamp.class.equals(clazz)) {
             return new Timestamp(System.currentTimeMillis());
         } else if (LocalDateTime.class.equals(clazz)) {
+            return LocalDateTime.now();
+        } else if (Instant.class.equals(clazz)) {
             return LocalDateTime.now();
         }
         //not supported type, return original val.
