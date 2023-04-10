@@ -46,11 +46,16 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     private final SharedString sqlSelect = new SharedString();
 
     public QueryWrapper() {
-        this(null);
+        this((T) null);
     }
 
     public QueryWrapper(T entity) {
         super.setEntity(entity);
+        super.initNeed();
+    }
+
+    public QueryWrapper(Class<T> entityClass) {
+        super.setEntityClass(entityClass);
         super.initNeed();
     }
 
