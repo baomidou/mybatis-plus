@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.extension.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -29,6 +31,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -582,5 +586,71 @@ public interface IService<T> {
      */
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
+    }
+
+    /**
+     * 查询列表 {@link UnaryOperator}<{@link LambdaQueryWrapper}>
+     *
+     * @param operator 处理流程
+     * @return {@link List}<{@link T}>
+     */
+    default List<T> list(UnaryOperator<LambdaQueryWrapper<T>> operator) {
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>(getEntityClass());
+        if(Objects.nonNull(operator)){
+            wrapper = operator.apply(wrapper);
+        }
+        return this.list(wrapper);
+    }
+
+    /**
+     * 条件删除 {@link UnaryOperator}<{@link LambdaQueryWrapper}>
+     *
+     * @param operator 处理流程
+     */
+    default boolean remove(UnaryOperator<LambdaQueryWrapper<T>> operator) {
+        LambdaQueryWrapper<T>  wrapper = new LambdaQueryWrapper<>(getEntityClass());
+        if(Objects.nonNull(operator)){
+            wrapper = operator.apply(wrapper);
+        }
+        return this.remove(wrapper);
+    }
+
+    /**
+     * 条件更新
+     *
+     * @param operator {@link UnaryOperator}<{@link LambdaUpdateWrapper}>
+     */
+    default boolean update(UnaryOperator<LambdaUpdateWrapper<T>> operator) {
+        LambdaUpdateWrapper<T> wrapper = new LambdaUpdateWrapper<>(getEntityClass());
+        if (Objects.nonNull(operator)) {
+            wrapper = operator.apply(wrapper);
+        }
+        return this.update(wrapper);
+    }
+
+    /**
+     * 查询一条记录，多个不返回异常
+     *
+     * @param operator 处理流程 {@link UnaryOperator}<{@link LambdaQueryWrapper}>
+     */
+    default T getOne(UnaryOperator<LambdaQueryWrapper<T>> operator) {
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>(getEntityClass());
+        if (Objects.nonNull(operator)) {
+            wrapper = operator.apply(wrapper);
+        }
+        return this.getOne(wrapper, false);
+    }
+
+    /**
+     * 条件统计
+     *
+     * @param operator 处理流程 {@link UnaryOperator}<{@link LambdaQueryWrapper}>
+     */
+    default long count(UnaryOperator<LambdaQueryWrapper<T>> operator) {
+        LambdaQueryWrapper<T> wrapper = new LambdaQueryWrapper<>(getEntityClass());
+        if (Objects.nonNull(operator)) {
+            wrapper = operator.apply(wrapper);
+        }
+        return this.count(wrapper);
     }
 }
