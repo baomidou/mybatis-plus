@@ -443,8 +443,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param val        条件值
      */
     protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
-        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), sqlKeyword,
-            () -> formatParam(null, val)));
+        ISqlSegment segment = columnToSqlSegment(column);
+        String mapping = this.fieldMappings.get(segment.getSqlSegment());
+        return maybeDo(condition, () -> appendSqlSegments(segment, sqlKeyword, () -> formatParam(mapping, val)));
     }
 
     /**
