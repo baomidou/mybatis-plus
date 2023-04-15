@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings("serial")
 public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>>
-    implements Update<UpdateWrapper<T>, String> {
+        implements Update<UpdateWrapper<T>, String> {
 
     /**
      * SQL 更新字段内容，例如：name='1', age=2
@@ -54,8 +54,8 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     private UpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
-                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
-                          SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
+            Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
+            SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
@@ -73,6 +73,12 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
             return null;
         }
         return String.join(Constants.COMMA, sqlSet);
+    }
+
+    @Override
+    public UpdateWrapper<T> set(boolean condition, String column, Object val) {
+        String mapping = this.fieldMappings.get(column);
+        return set(condition, column, val, mapping);
     }
 
     @Override
@@ -101,13 +107,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), sqlSet, paramNameSeq, paramNameValuePairs,
-            expression, paramAlias, lastSql, sqlComment, sqlFirst);
+                expression, paramAlias, lastSql, sqlComment, sqlFirst);
     }
 
     @Override
     protected UpdateWrapper<T> instance() {
         return new UpdateWrapper<>(getEntity(), null, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+                paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 
     @Override
