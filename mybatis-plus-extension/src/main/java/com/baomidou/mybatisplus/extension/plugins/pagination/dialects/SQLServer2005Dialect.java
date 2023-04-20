@@ -29,7 +29,7 @@ public class SQLServer2005Dialect implements IDialect {
 
     private static String getOrderByPart(String sql) {
         String loweredString = sql.toLowerCase();
-        int orderByIndex = loweredString.indexOf("order by");
+        int orderByIndex = loweredString.lastIndexOf("order by");
         if (orderByIndex != -1) {
             return sql.substring(orderByIndex);
         } else {

@@ -1,0 +1,19 @@
+dependencies {
+    implementation project(":mybatis-plus-extension")
+    implementation "${lib.velocity}"
+    implementation "${lib.freemarker}"
+    implementation "${lib.beetl}"
+    implementation "${lib.enjoy}"
+
+    compileOnly "org.jetbrains:annotations:22.0.0"
+    testImplementation "${lib.sqlserver}"
+    testImplementation "${lib.postgresql}"
+    testImplementation lib.oracle as ConfigurableFileTree
+    testImplementation lib.dm as ConfigurableFileTree
+    testImplementation "${lib.h2}"
+    testImplementation "${lib.mysql}"
+    testImplementation "${lib.sqlite}"
+    testImplementation "${lib.firebird}"
+    testImplementation "${lib.'swagger-annotations'}"
+    testCompileOnly "org.jetbrains:annotations:22.0.0"
+}

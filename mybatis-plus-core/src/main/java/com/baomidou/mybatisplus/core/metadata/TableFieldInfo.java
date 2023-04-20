@@ -15,16 +15,30 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.OrderBy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.*;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeAliasRegistry;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -179,12 +193,12 @@ public class TableFieldInfo implements Constants {
      * 全新的 存在 TableField 注解时使用的构造函数
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
+    public TableFieldInfo(GlobalConfig globalConfig, TableInfo tableInfo, Field field, TableField tableField,
                           Reflector reflector, boolean existTableLogic, boolean isOrderBy) {
-        this(dbConfig, tableInfo, field, tableField, reflector, existTableLogic);
+        this(globalConfig, tableInfo, field, tableField, reflector, existTableLogic);
         this.isOrderBy = isOrderBy;
         if (isOrderBy) {
-            initOrderBy(field);
+            initOrderBy(globalConfig.getAnnotationHandler().getAnnotation(field, OrderBy.class));
         }
     }
 
@@ -192,11 +206,13 @@ public class TableFieldInfo implements Constants {
      * 全新的 存在 TableField 注解时使用的构造函数
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
+    public TableFieldInfo(GlobalConfig globalConfig, TableInfo tableInfo, Field field, TableField tableField,
                           Reflector reflector, boolean existTableLogic) {
+
+        GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         field.setAccessible(true);
         this.field = field;
-        this.version = field.getAnnotation(Version.class) != null;
+        this.version = globalConfig.getAnnotationHandler().isAnnotationPresent(field, Version.class);
         this.property = field.getName();
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
@@ -244,7 +260,7 @@ public class TableFieldInfo implements Constants {
         this.el = el;
         int index = el.indexOf(COMMA);
         this.mapping = index > 0 ? el.substring(++index) : null;
-        this.initLogicDelete(dbConfig, field, existTableLogic);
+        this.initLogicDelete(globalConfig, field, existTableLogic);
 
         String column = tableField.value();
         if (StringUtils.isBlank(column)) {
@@ -306,33 +322,34 @@ public class TableFieldInfo implements Constants {
     /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
+    public TableFieldInfo(GlobalConfig globalConfig, TableInfo tableInfo, Field field, Reflector reflector,
                           boolean existTableLogic, boolean isOrderBy) {
-        this(dbConfig, tableInfo, field, reflector, existTableLogic);
+        this(globalConfig, tableInfo, field, reflector, existTableLogic);
         this.isOrderBy = isOrderBy;
         if (isOrderBy) {
-            initOrderBy(field);
+            initOrderBy(globalConfig.getAnnotationHandler().getAnnotation(field, OrderBy.class));
         }
     }
 
     /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector,
+    public TableFieldInfo(GlobalConfig globalConfig, TableInfo tableInfo, Field field, Reflector reflector,
                           boolean existTableLogic) {
         field.setAccessible(true);
         this.field = field;
-        this.version = field.getAnnotation(Version.class) != null;
+        this.version = globalConfig.getAnnotationHandler().isAnnotationPresent(field, Version.class);
         this.property = field.getName();
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = this.property;
         this.mapping = null;
+        GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
         this.whereStrategy = dbConfig.getWhereStrategy();
-        this.initLogicDelete(dbConfig, field, existTableLogic);
+        this.initLogicDelete(globalConfig, field, existTableLogic);
 
         String column = this.property;
         if (tableInfo.isUnderCamel()) {
@@ -366,15 +383,14 @@ public class TableFieldInfo implements Constants {
     /**
      * 排序初始化
      *
-     * @param field 字段
+     * @param orderBy 排序注解
      */
-    private void initOrderBy(Field field) {
-        OrderBy orderBy = field.getAnnotation(OrderBy.class);
+    private void initOrderBy(OrderBy orderBy) {
         if (null != orderBy) {
             this.isOrderBy = true;
             this.orderBySort = orderBy.sort();
             String _orderBy = Constants.DESC;
-            if (orderBy.asc() || !orderBy.isDesc()) {
+            if (orderBy.asc()) {
                 _orderBy = Constants.ASC;
             }
             this.orderByType = _orderBy;
@@ -386,12 +402,13 @@ public class TableFieldInfo implements Constants {
     /**
      * 逻辑删除初始化
      *
-     * @param dbConfig 数据库全局配置
+     * @param globalConfig 全局配置
      * @param field    字段属性对象
      */
-    private void initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field, boolean existTableLogic) {
+    private void initLogicDelete(GlobalConfig globalConfig, Field field, boolean existTableLogic) {
+        GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         /* 获取注解属性，逻辑处理字段 */
-        TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+        TableLogic tableLogic = globalConfig.getAnnotationHandler().getAnnotation(field, TableLogic.class);
         if (null != tableLogic) {
             if (StringUtils.isNotBlank(tableLogic.value())) {
                 this.logicNotDeleteValue = tableLogic.value();

@@ -20,10 +20,12 @@ import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -80,7 +82,11 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @SafeVarargs
     @Override
     public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
-        if (ArrayUtils.isNotEmpty(columns)) {
+        return select(Arrays.asList(columns));
+    }
+
+    public LambdaQueryWrapper<T> select(List<SFunction<T, ?>> columns) {
+        if (CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.setStringValue(columnsToString(false, columns));
         }
         return typedThis;

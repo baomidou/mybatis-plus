@@ -18,8 +18,9 @@ package com.baomidou.mybatisplus.core.config;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.core.handlers.JoinTableInfoInitHandler;
+import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
@@ -77,9 +78,13 @@ public class GlobalConfig implements Serializable {
      */
     private MetaObjectHandler metaObjectHandler;
     /**
+     * 注解控制器
+     */
+    private AnnotationHandler annotationHandler = new AnnotationHandler(){};
+    /**
      * 参与 TableInfo 的初始化
      */
-    private JoinTableInfoInitHandler joinTableInfoInitHandler = new JoinTableInfoInitHandler() {
+    private PostInitTableInfoHandler postInitTableInfoHandler = new PostInitTableInfoHandler() {
     };
     /**
      * 主键生成器

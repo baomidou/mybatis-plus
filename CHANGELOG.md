@@ -1,5 +1,38 @@
 ﻿# CHANGELOG
 
+## [v3.5.3] 2022.12.29
+- bug:生成模块pg和dm语句模式名增加
+
+
+## [v3.5.3] 2022.12.28
+
+- 多租户插件:多表join表名必需起别名,否则追加的过滤条件不带前缀
+- InterceptorIgnore 不能过滤 selectKey 的问题
+- 分页新增`informix数据库`支持
+- 分页新增`优炫数据库`支持
+- 分页新增`TDengine数据库`支持
+- 分页新增`亚马逊redshift数据库`支持
+- 支持spring-boot 2.7以上版本
+- 雪花id新增反解时间戳方法`Sequence#parseIdTimestamp`
+- BaseMapper.selectCount生成语句加入中`AS total`
+- 修复IllegalSQLInnerInterceptor类ClassCastException异常，并优化日志
+- 移除注解`OrderBy`的过时属性`isDesc`
+- 移除`TableInfo`过时方法
+- 加入`JoinTableInfoInitHandler`类参与`TableInfo`初始化
+- 修复StringUtils.sqlInjectionReplaceBlank方法过滤sql不全，可能会导致sql注入的情况
+- 增加IService.lambdaQuery(entity)支持，写法更便捷
+- 新增数据变更记录（数据审计）插件`DataChangeRecorderInnerInterceptor`
+- 新增查询条件方法 notLikeLeft 和 notLikeRight
+- 数据权限多表解析部分处理优化
+- 允许子类重写 orderBy 基础方法 gitee issues/I61F51
+- 新增Db类，调整 SimpleQuery 类
+- 新增脚本自动维护功能
+- 新增支持手动拦截器忽略策略，例如 `InterceptorIgnoreHelper.handle(IgnoreStrategy.builder().tenantLine(true).build());`
+- 支持 PG 数据字段大写 ID 自增 fixed issues/I4T0YJ
+- 代码生成器重构完成，合并回 MP 核心代码库
+- 代码生成器增加是否生成service接口的开关
+
+
 ## [v3.5.2] 2022.06.01
 
 - 升级 mybatis 3.5.10

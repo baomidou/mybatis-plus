@@ -559,6 +559,13 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    void testPageNegativeSize() {
+        Page page = Page.of(1, -1);
+        userService.lambdaQuery().page(page);
+        Assertions.assertEquals(page.getTotal(), 0);
+    }
+
+    @Test
     void testDeleteByFill() {
         H2User h2User = new H2User(3L, "test");
         userService.removeById(1L);
@@ -573,6 +580,19 @@ class H2UserTest extends BaseTest {
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,true);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,false);
+    }
+
+    @Test
+    @Order(25)
+    void testServiceImplInnerLambdaQueryConstructorSetEntity() {
+        H2User condition = new H2User();
+        condition.setName("Tomcat");
+        H2User user = userService.lambdaQuery(condition).one();
+        Assertions.assertNotNull(user);
+        Assertions.assertTrue("Tomcat".equals(user.getName()));
+        H2User h2User = userService.lambdaQuery().setEntity(condition).one();
+        Assertions.assertNotNull(h2User);
+        Assertions.assertTrue("Tomcat".equals(h2User.getName()));
     }
 
 }

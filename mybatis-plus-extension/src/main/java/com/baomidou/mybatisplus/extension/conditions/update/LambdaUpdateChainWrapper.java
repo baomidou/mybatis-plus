@@ -40,6 +40,12 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
         super.wrapperChildren = new LambdaUpdateWrapper<>();
     }
 
+    public LambdaUpdateChainWrapper(Class<T> entityClass) {
+        super();
+        this.baseMapper = null;
+        super.wrapperChildren = new LambdaUpdateWrapper<>(entityClass);
+    }
+
     @Override
     public LambdaUpdateChainWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
         wrapperChildren.set(condition, column, val, mapping);
@@ -60,5 +66,10 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
     @Override
     public BaseMapper<T> getBaseMapper() {
         return baseMapper;
+    }
+
+    @Override
+    public Class<T> getEntityClass() {
+        return super.wrapperChildren.getEntityClass();
     }
 }

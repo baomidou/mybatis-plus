@@ -17,20 +17,26 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
+import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SetOperationList;
+import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -38,7 +44,7 @@ import java.util.List;
  * 数据权限处理器
  *
  * @author hubin
- * @since 3.4.1 +
+ * @since 3.5.2
  */
 @Data
 @NoArgsConstructor
@@ -46,14 +52,30 @@ import java.util.List;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @SuppressWarnings({"rawtypes"})
-public class DataPermissionInterceptor extends JsqlParserSupport implements InnerInterceptor {
+public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor implements InnerInterceptor {
     private DataPermissionHandler dataPermissionHandler;
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) return;
+        if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
+            return;
+        }
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), ms.getId()));
+    }
+
+    @Override
+    public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+        PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
+        MappedStatement ms = mpSh.mappedStatement();
+        SqlCommandType sct = ms.getSqlCommandType();
+        if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+            if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
+                return;
+            }
+            PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+            mpBs.sql(parserMulti(mpBs.sql(), ms.getId()));
+        }
     }
 
     @Override
@@ -75,9 +97,52 @@ public class DataPermissionInterceptor extends JsqlParserSupport implements Inne
      * @param whereSegment 查询条件片段
      */
     protected void setWhere(PlainSelect plainSelect, String whereSegment) {
-        Expression sqlSegment = dataPermissionHandler.getSqlSegment(plainSelect.getWhere(), whereSegment);
+        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
+            processPlainSelect(plainSelect, whereSegment);
+            return;
+        }
+        // 兼容旧版的数据权限处理
+        final Expression sqlSegment = dataPermissionHandler.getSqlSegment(plainSelect.getWhere(), whereSegment);
         if (null != sqlSegment) {
             plainSelect.setWhere(sqlSegment);
         }
+    }
+
+    /**
+     * update 语句处理
+     */
+    @Override
+    protected void processUpdate(Update update, int index, String sql, Object obj) {
+        final Expression sqlSegment = getUpdateOrDeleteExpression(update.getTable(), update.getWhere(), (String) obj);
+        if (null != sqlSegment) {
+            update.setWhere(sqlSegment);
+        }
+    }
+
+    /**
+     * delete 语句处理
+     */
+    @Override
+    protected void processDelete(Delete delete, int index, String sql, Object obj) {
+        final Expression sqlSegment = getUpdateOrDeleteExpression(delete.getTable(), delete.getWhere(), (String) obj);
+        if (null != sqlSegment) {
+            delete.setWhere(sqlSegment);
+        }
+    }
+
+    protected Expression getUpdateOrDeleteExpression(final Table table, final Expression where, final String whereSegment) {
+        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
+            return andExpression(table, where, whereSegment);
+        } else {
+            // 兼容旧版的数据权限处理
+            return dataPermissionHandler.getSqlSegment(where, whereSegment);
+        }
+    }
+
+    @Override
+    public Expression buildTableExpression(final Table table, final Expression where, final String whereSegment) {
+        // 只有新版数据权限处理器才会执行到这里
+        final MultiDataPermissionHandler handler = (MultiDataPermissionHandler) dataPermissionHandler;
+        return handler.getSqlSegment(table, where, whereSegment);
     }
 }

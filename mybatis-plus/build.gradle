@@ -1,9 +1,6 @@
-apply plugin: 'kotlin'
-
 dependencies {
     api project(":mybatis-plus-extension")
 
-    testImplementation "${lib."kotlin-stdlib-jdk8"}"
     testImplementation "${lib.'spring-web'}"
     testImplementation "${lib.'javax.servlet-api'}"
 
@@ -24,5 +21,6 @@ dependencies {
     testImplementation "${lib.'spring-jdbc'}"
     testImplementation "javax.annotation:javax.annotation-api:1.3.2"
     testImplementation "${lib.cglib}"
+    testImplementation "${lib.postgresql}"
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
 }

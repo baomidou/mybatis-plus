@@ -32,10 +32,19 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
 
     private final BaseMapper<T> baseMapper;
+    private final Class<T> entityClass;
 
     public UpdateChainWrapper(BaseMapper<T> baseMapper) {
         super();
         this.baseMapper = baseMapper;
+        this.entityClass = null;
+        super.wrapperChildren = new UpdateWrapper<>();
+    }
+
+    public UpdateChainWrapper(Class<T> entityClass) {
+        super();
+        this.baseMapper = null;
+        this.entityClass = entityClass;
         super.wrapperChildren = new UpdateWrapper<>();
     }
 
@@ -59,5 +68,10 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     @Override
     public BaseMapper<T> getBaseMapper() {
         return baseMapper;
+    }
+
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
     }
 }

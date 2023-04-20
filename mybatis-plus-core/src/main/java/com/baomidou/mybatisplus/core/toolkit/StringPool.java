@@ -64,6 +64,7 @@ public interface StringPool {
     String N = "n";
     String NO = "no";
     String NULL = "null";
+    String NUM = "NUM";
     String OFF = "off";
     String ON = "on";
     String PERCENT = "%";
@@ -81,6 +82,7 @@ public interface StringPool {
     String SINGLE_QUOTE = "'";
     String BACKTICK = "`";
     String SPACE = " ";
+    String SQL = "sql";
     String TILDA = "~";
     String LEFT_SQ_BRACKET = "[";
     String RIGHT_SQ_BRACKET = "]";

@@ -28,6 +28,7 @@ import java.lang.annotation.*;
  * java.util.Date,
  * java.sql.Timestamp,
  * java.time.LocalDateTime
+ * java.time.Instant
  *
  * @author TaoYu
  * @since 2016-01-23

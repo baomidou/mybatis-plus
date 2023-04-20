@@ -90,9 +90,9 @@ class QueryWrapperTest extends BaseWrapperTest {
             .or().gt("id", 1).ge("id", 1)
             .lt("id", 1).le("id", 1)
             .or().between("id", 1, 2).notBetween("id", 1, 3)
-            .like("id", 1).notLike("id", 1)
+            .like("id", 1).notLike("id", 1).notLikeLeft("id", 3).notLikeRight("id", 4)
             .or().likeLeft("id", 1).likeRight("id", 1);
-        logSqlWhere("测试 Compare 下的方法", queryWrapper, "(column1 = ? AND column0 = ? AND nullColumn IS NULL AND column1 = ? AND column0 = ? AND nullColumn IS NULL AND id = ? AND id <> ? OR id > ? AND id >= ? AND id < ? AND id <= ? OR id BETWEEN ? AND ? AND id NOT BETWEEN ? AND ? AND id LIKE ? AND id NOT LIKE ? OR id LIKE ? AND id LIKE ?)");
+        logSqlWhere("测试 Compare 下的方法", queryWrapper, "(column1 = ? AND column0 = ? AND nullColumn IS NULL AND column1 = ? AND column0 = ? AND nullColumn IS NULL AND id = ? AND id <> ? OR id > ? AND id >= ? AND id < ? AND id <= ? OR id BETWEEN ? AND ? AND id NOT BETWEEN ? AND ? AND id LIKE ? AND id NOT LIKE ? AND id NOT LIKE ? AND id NOT LIKE ? OR id LIKE ? AND id LIKE ?)");
         logParams(queryWrapper);
     }
 
