@@ -170,6 +170,7 @@ public class TableField {
         }
         this.propertyName = propertyName;
         if (this.isLogicDeleteField()) {
+            this.convert = true;
             this.propertyName = this.entity.getLogicDeletePropertyName();
         }
         return this;
