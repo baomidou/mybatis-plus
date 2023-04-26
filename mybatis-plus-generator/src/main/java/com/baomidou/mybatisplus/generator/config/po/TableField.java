@@ -169,6 +169,10 @@ public class TableField {
             this.convert = true;
         }
         this.propertyName = propertyName;
+        if (this.isLogicDeleteField() && StringUtils.isNotBlank(this.entity.getLogicDeletePropertyName())) {
+            this.convert = true;
+            this.propertyName = this.entity.getLogicDeletePropertyName();
+        }
         return this;
     }
 
