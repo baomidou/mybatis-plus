@@ -129,6 +129,13 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6));
     }
 
+    @Test
+    public void testNullButReturnZero() throws Exception {
+        when(callableStatement.getObject(1, Integer.class)).thenReturn(0);
+        when(callableStatement.wasNull()).thenReturn(true);
+        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1));
+    }
+
     @Getter
     @AllArgsConstructor
     enum SexEnum implements IEnum<Integer> {
