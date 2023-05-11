@@ -175,6 +175,7 @@ subprojects {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
         // 解决 IdeaProxyLambdaMetaTest 和 LambdaUtilsTest 测试失败问题
+        //JDK 8测试，请删除以下两行 jvmArgs
         jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
                     "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
         exclude("**/phoenix/**")
