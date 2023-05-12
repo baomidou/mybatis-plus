@@ -27,14 +27,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
  */
 public class SQLServer2005Dialect implements IDialect {
 
-    private static String getOrderByPart(String sql) {
-        String loweredString = sql.toLowerCase();
-        int orderByIndex = loweredString.lastIndexOf("order by");
-        if (orderByIndex != -1) {
-            return sql.substring(orderByIndex);
-        } else {
+    private static final Pattern pattern = Pattern.compile("\\((.)*order by(.)*\\)");
+
+    public String getOrderByPart(String sql) {
+        String order_by = "order by";
+        int lastIndex = sql.toLowerCase().lastIndexOf(order_by);
+        if (lastIndex == -1) {
             return StringPool.EMPTY;
         }
+        Matcher matcher = pattern.matcher(sql);
+        if (!matcher.find()) {
+            return sql.substring(lastIndex);
+        }
+        int end = matcher.end();
+        return lastIndex < end ? StringPool.EMPTY : sql.substring(lastIndex);
     }
 
     @Override
