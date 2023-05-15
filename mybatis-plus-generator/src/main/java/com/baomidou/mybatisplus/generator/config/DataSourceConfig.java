@@ -175,6 +175,8 @@ public class DataSourceConfig {
             return DbType.SQLITE;
         } else if (str.contains(":h2:")) {
             return DbType.H2;
+        } else if (str.contains(":lealone:")) {
+            return DbType.LEALONE;
         } else if (str.contains(":kingbase:") || str.contains(":kingbase8:")) {
             return DbType.KINGBASE_ES;
         } else if (str.contains(":dm:")) {
