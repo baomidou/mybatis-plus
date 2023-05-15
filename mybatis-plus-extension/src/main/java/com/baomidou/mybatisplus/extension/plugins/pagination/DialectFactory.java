@@ -59,6 +59,7 @@ public class DialectFactory {
             // postgresql same type
             else if (dbType == DbType.POSTGRE_SQL
                 || dbType == DbType.H2
+                || dbType == DbType.LEALONE
                 || dbType == DbType.SQLITE
                 || dbType == DbType.HSQL
                 || dbType == DbType.KINGBASE_ES
