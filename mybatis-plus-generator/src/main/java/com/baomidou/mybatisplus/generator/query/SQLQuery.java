@@ -99,7 +99,7 @@ public class SQLQuery extends AbstractDatabaseQuery {
             Map<String, DatabaseMetaDataWrapper.Column> columnsInfoMap = databaseMetaDataWrapper.getColumnsInfo(tableName, false);
             String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
             Set<String> h2PkColumns = new HashSet<>();
-            if (DbType.H2 == dbType) {
+            if (DbType.H2 == dbType || DbType.LEALONE == dbType) {
                 dbQuery.execute(String.format(H2Query.PK_QUERY_SQL, tableName), result -> {
                     String primaryKey = result.getStringResult(dbQuery.fieldKey());
                     if (Boolean.parseBoolean(primaryKey)) {
@@ -115,7 +115,7 @@ public class SQLQuery extends AbstractDatabaseQuery {
                 // 设置字段的元数据信息
                 TableField.MetaInfo metaInfo = new TableField.MetaInfo(columnInfo, tableInfo);
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                boolean isId = DbType.H2 == dbType ? h2PkColumns.contains(columnName) : result.isPrimaryKey();
+                boolean isId = (DbType.H2 == dbType || DbType.LEALONE == dbType) ? h2PkColumns.contains(columnName) : result.isPrimaryKey();
                 // 处理ID
                 if (isId) {
                     field.primaryKey(dbQuery.isKeyIdentity(result.getResultSet()));

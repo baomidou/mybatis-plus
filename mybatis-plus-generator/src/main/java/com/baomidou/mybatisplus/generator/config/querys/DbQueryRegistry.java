@@ -37,6 +37,7 @@ public class DbQueryRegistry {
         db_query_enum_map.put(DbType.DB2, new DB2Query());
         db_query_enum_map.put(DbType.MARIADB, new MariadbQuery());
         db_query_enum_map.put(DbType.H2, new H2Query());
+        db_query_enum_map.put(DbType.LEALONE, new H2Query());
         db_query_enum_map.put(DbType.SQLITE, new SqliteQuery());
         db_query_enum_map.put(DbType.DM, new DMQuery());
         db_query_enum_map.put(DbType.KINGBASE_ES, new KingbaseESQuery());

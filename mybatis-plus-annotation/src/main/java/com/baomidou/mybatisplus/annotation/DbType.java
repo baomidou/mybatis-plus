@@ -193,6 +193,11 @@ public enum DbType {
     UXDB("uxdb", "优炫数据库"),
 
     /**
+     * lealone
+     */
+    LEALONE("lealone", "Lealone数据库"),
+
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
