@@ -15,6 +15,32 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -24,26 +50,26 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
 
 /**
  * Mybatis Plus H2 Junit Test
+ * JDK 8 run test:
+ * <p>"Error: Could not create the Java Virtual Machine."</p>
+ * <p>Go to build.gradle: remove below configuration:</p>
+ * <p>
+ * //  jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
+ * //                    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
+ * </p>
  *
  * @author Caratacus
  * @since 2017/4/1
@@ -55,6 +81,24 @@ class H2UserTest extends BaseTest {
 
     @Autowired
     protected IH2UserService userService;
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+
+    public void initBatchLimitation(int limitation) {
+        if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
+            Configuration configuration = sqlSessionFactory.getConfiguration();
+            for (Interceptor interceptor : configuration.getInterceptors()) {
+                if (interceptor instanceof MybatisPlusInterceptor) {
+                    List<InnerInterceptor> innerInterceptors = ((MybatisPlusInterceptor) interceptor).getInterceptors();
+                    for (InnerInterceptor innerInterceptor : innerInterceptors) {
+                        if (innerInterceptor instanceof DataChangeRecorderInnerInterceptor) {
+                            ((DataChangeRecorderInnerInterceptor) innerInterceptor).setBatchUpdateLimit(limitation).openBatchUpdateLimitation();
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     @Order(1)
@@ -231,7 +275,24 @@ class H2UserTest extends BaseTest {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             Assertions.assertEquals(u.getPrice().setScale(2, RoundingMode.HALF_UP).intValue(), BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP).intValue(), "all records should be updated");
         }
+        try {
+            initBatchLimitation(3);
+            userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
+            Assertions.fail("SHOULD NOT REACH HERE");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assertions.assertTrue(checkIsDataUpdateLimitationException(e));
+        }
+    }
 
+    private boolean checkIsDataUpdateLimitationException(Throwable e) {
+        if (e instanceof DataChangeRecorderInnerInterceptor.DataUpdateLimitationException) {
+            return true;
+        }
+        if (e.getCause() == null) {
+            return false;
+        }
+        return checkIsDataUpdateLimitationException(e.getCause());
     }
 
     @Test
@@ -545,7 +606,7 @@ class H2UserTest extends BaseTest {
 //        userService.removeById("100000");
         userService.removeById(h2User);
         userService.removeByIds(Arrays.asList(10000L, h2User));
-        userService.removeByIds(Arrays.asList(10000L, h2User),false);
+        userService.removeByIds(Arrays.asList(10000L, h2User), false);
     }
 
     @Test
@@ -575,11 +636,11 @@ class H2UserTest extends BaseTest {
         userService.removeById(h2User, true);
         userService.removeById(h2User, false);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User));
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), true);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,true);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User),2,false);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2, true);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2, false);
     }
 
     @Test
