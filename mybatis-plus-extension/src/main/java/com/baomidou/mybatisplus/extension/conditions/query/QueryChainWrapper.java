@@ -53,8 +53,8 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     }
 
     @Override
-    public QueryChainWrapper<T> select(List<String> columns) {
-        wrapperChildren.select(columns);
+    public QueryChainWrapper<T> select(boolean condition, List<String> columns) {
+        wrapperChildren.select(condition, columns);
         return typedThis;
     }
 

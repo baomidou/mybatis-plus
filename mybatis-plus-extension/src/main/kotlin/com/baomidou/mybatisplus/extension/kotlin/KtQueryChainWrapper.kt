@@ -41,8 +41,8 @@ open class KtQueryChainWrapper<T : Any>(
         super.wrapperChildren = KtQueryWrapper(entity)
     }
 
-    override fun select(vararg columns: KProperty<*>): KtQueryChainWrapper<T> {
-        wrapperChildren.select(*columns)
+    override fun select(condition: Boolean, columns: MutableList<KProperty<*>>): KtQueryChainWrapper<T> {
+        wrapperChildren.select(condition, columns)
         return typedThis
     }
 

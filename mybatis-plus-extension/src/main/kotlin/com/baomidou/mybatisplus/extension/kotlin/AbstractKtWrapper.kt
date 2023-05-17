@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
+import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
 
 /**
@@ -55,6 +56,14 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
      */
     fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty<*>): String =
         columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
+
+    /**
+     * 批量处理传入的属性，正常情况下的输出就像：
+     *
+     * "user_id" AS "userId" , "user_name" AS "userName"
+     */
+    fun columnsToString(onlyColumn: Boolean, columns: MutableList<KProperty<*>>): String =
+        columns.stream().map { columnToString(it, onlyColumn) }.collect(joining(StringPool.COMMA));
 
     override fun initNeed() {
         super.initNeed()

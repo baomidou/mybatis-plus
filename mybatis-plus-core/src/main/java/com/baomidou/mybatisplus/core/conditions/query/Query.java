@@ -33,13 +33,28 @@ public interface Query<Children, T, R> extends Serializable {
      */
     @SuppressWarnings("unchecked")
     default Children select(R... columns) {
-        return select(Arrays.asList(columns));
+        return select(true, columns);
     }
 
     /**
      * ignore
      */
-    Children select(List<R> columns);
+    @SuppressWarnings("unchecked")
+    default Children select(boolean condition, R... columns) {
+        return select(condition, Arrays.asList(columns));
+    }
+
+    /**
+     * ignore
+     */
+    default Children select(List<R> columns) {
+        return select(true, columns);
+    }
+
+    /**
+     * ignore
+     */
+    Children select(boolean condition, List<R> columns);
 
     /**
      * ignore

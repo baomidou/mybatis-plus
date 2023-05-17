@@ -61,8 +61,8 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     }
 
     @Override
-    public LambdaQueryChainWrapper<T> select(List<SFunction<T, ?>> columns) {
-        wrapperChildren.select(columns);
+    public LambdaQueryChainWrapper<T> select(boolean condition, List<SFunction<T, ?>> columns) {
+        wrapperChildren.select(condition, columns);
         return typedThis;
     }
 

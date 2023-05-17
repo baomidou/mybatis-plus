@@ -79,8 +79,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     @Override
-    public QueryWrapper<T> select(List<String> columns) {
-        if (CollectionUtils.isNotEmpty(columns)) {
+    public QueryWrapper<T> select(boolean condition, List<String> columns) {
+        if (condition && CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.setStringValue(String.join(StringPool.COMMA, columns));
         }
         return typedThis;
