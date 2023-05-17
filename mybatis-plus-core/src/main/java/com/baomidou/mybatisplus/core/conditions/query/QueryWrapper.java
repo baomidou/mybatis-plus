@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,11 +79,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     @Override
-    @SafeVarargs
-    public final QueryWrapper<T> select(String... columns) {
-        return select(Arrays.asList(columns));
-    }
-
     public QueryWrapper<T> select(List<String> columns) {
         if (CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.setStringValue(String.join(StringPool.COMMA, columns));
