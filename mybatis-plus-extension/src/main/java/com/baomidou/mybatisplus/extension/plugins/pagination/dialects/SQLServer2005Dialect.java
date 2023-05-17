@@ -19,6 +19,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * SQLServer 2005 数据库分页方言
  *
