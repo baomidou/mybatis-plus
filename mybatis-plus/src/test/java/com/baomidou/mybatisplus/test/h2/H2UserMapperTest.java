@@ -210,8 +210,28 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
-    void testCountLong(){
+    void testCountLong() {
         Long count = userMapper.selectCountLong();
         System.out.println(count);
+    }
+
+    @Test
+    void testSelectOne() {
+        // 新增两条数据，测试selectOne方法
+        H2User h2User = new H2User();
+        h2User.setTestId(1L);
+        h2User.setName("测试1");
+
+        H2User h2User2 = new H2User();
+        h2User2.setTestId(2L);
+        h2User2.setName("测试1");
+
+        userMapper.insert(h2User);
+        userMapper.insert(h2User2);
+
+        LambdaQueryWrapper<H2User> wrapper = new LambdaQueryWrapper<>();
+//        H2User user = userMapper.selectOne(wrapper.eq(H2User::getName, "测试1"), false);
+        H2User user = userMapper.selectOne(wrapper.eq(H2User::getName, "测试1"), true);
+        log(user.toString());
     }
 }

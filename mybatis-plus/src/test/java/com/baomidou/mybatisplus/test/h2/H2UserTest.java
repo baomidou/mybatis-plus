@@ -15,32 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -57,9 +31,23 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
-
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -656,4 +644,41 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue("Tomcat".equals(h2User.getName()));
     }
 
+    @Test
+    @Order(26)
+    void testServiceGetNullById() {
+        H2User user = new H2User(1L, "Evan");
+        userService.save(user);
+        Optional<H2User> optional = userService.getNonNullById(1L);
+        optional.ifPresent(u -> log(u.toString()));
+    }
+
+    @Test
+    @Order(27)
+    void testServiceGetNonNullOne() {
+        H2User user = new H2User(1L, "David");
+        userService.save(user);
+        Optional<H2User> optional = userService.getNonNullOne(
+            new LambdaQueryWrapper<H2User>().eq(H2User::getName, "David"));
+        optional.ifPresent(u -> log(u.toString()));
+    }
+
+    @Test
+    @Order(28)
+    void testServiceGetNonNullOneThrowEx() {
+        H2User user1 = new H2User(1L, "test1");
+        H2User user2 = new H2User(2L, "test1");
+        List<H2User> h2Users = Arrays.asList(user1, user2);
+        userService.saveBatch(h2Users);
+//        Optional<H2User> optional = userService.getNonNullOne(
+//            new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), true);
+        Optional<H2User> optional1 = userService.getNonNullOne(
+            new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), false);
+        Optional<H2User> optional2 = userService.getNonNullOne(
+            new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test"), false);
+
+//        optional.ifPresent(u -> log(u.toString()));
+        optional1.ifPresent(u -> log(u.toString()));
+        optional2.ifPresent(u -> log(u.toString()));
+    }
 }
