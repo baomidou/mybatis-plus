@@ -295,7 +295,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
         } else if (LocalDateTime.class.equals(clazz)) {
             return LocalDateTime.now();
         } else if (Instant.class.equals(clazz)) {
-            return LocalDateTime.now();
+            return Instant.now();
         }
         //not supported type, return original val.
         return originalVersionVal;
