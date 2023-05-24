@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/plugins-release" }
+    }
+    dependencies {
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.0"
+    }
+}
+
+apply plugin: "io.spring.dependency-management"
+
+dependencyManagement {
+    dependencies {
+        dependency "com.baomidou:mybatis-plus-annotation:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-boot-starter:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-boot-starter-test:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-core:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-extension:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-generator:${APP_VERSION}"
+
+    }
+}

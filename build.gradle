@@ -1,8 +1,8 @@
 import java.time.LocalDateTime
 
 allprojects {
-    group = 'com.baomidou'
-    version = "3.5.3.2-SNAPSHOT"
+    group APP_GROUP
+    version APP_VERSION
 }
 
 ext {
