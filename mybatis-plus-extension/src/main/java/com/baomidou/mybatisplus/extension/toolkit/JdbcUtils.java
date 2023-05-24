@@ -135,7 +135,9 @@ public class JdbcUtils {
             return DbType.TDENGINE;
         } else if (url.contains(":informix")) {
             return DbType.INFORMIX;
-        } else if (url.contains(":uxdb:")) {
+        } else if (url.contains(":informix")) {  //目前sinodb的连接用informix的连接串
+            return DbType.SINODB;
+        }else if (url.contains(":uxdb:")) {
             return DbType.UXDB;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
