@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -46,12 +45,14 @@ import static java.util.stream.Collectors.joining;
  * @author hubin
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 public abstract class AbstractMethod implements Constants {
-    protected static final Log logger = LogFactory.getLog(AbstractMethod.class);
+
+    protected final Log logger = LogFactory.getLog(getClass());
 
     protected Configuration configuration;
+
     protected LanguageDriver languageDriver;
+
     protected MapperBuilderAssistant builderAssistant;
 
     /**
@@ -432,6 +433,5 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
-    
 
 }
