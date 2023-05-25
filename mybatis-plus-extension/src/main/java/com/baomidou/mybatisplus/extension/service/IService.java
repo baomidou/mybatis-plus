@@ -299,7 +299,7 @@ public interface IService<T> {
      * @param id 主键ID
      * @return {@link Optional}
      */
-    default Optional<T> getNonNullById(Serializable id) {
+    default Optional<T> getOptById(Serializable id) {
         return Optional.ofNullable(getBaseMapper().selectById(id));
     }
 
