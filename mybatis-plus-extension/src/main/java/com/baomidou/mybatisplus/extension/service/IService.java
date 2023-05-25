@@ -338,7 +338,7 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @return {@link Optional} 返回一个Optional对象
      */
-    default Optional<T> getNonNullOne(Wrapper<T> queryWrapper) {
+    default Optional<T> getOneOpt(Wrapper<T> queryWrapper) {
         return getNonNullOne(queryWrapper, true);
     }
 
