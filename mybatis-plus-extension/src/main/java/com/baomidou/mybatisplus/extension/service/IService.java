@@ -339,7 +339,7 @@ public interface IService<T> {
      * @return {@link Optional} 返回一个Optional对象
      */
     default Optional<T> getOneOpt(Wrapper<T> queryWrapper) {
-        return getNonNullOne(queryWrapper, true);
+        return getOneOpt(queryWrapper, true);
     }
 
     /**
@@ -357,7 +357,7 @@ public interface IService<T> {
      * @param throwEx      有多个 result 是否抛出异常
      * @return {@link Optional} 返回一个Optional对象
      */
-    Optional<T> getNonNullOne(Wrapper<T> queryWrapper, boolean throwEx);
+    Optional<T> getOneOpt(Wrapper<T> queryWrapper, boolean throwEx);
 
     /**
      * 根据 Wrapper，查询一条记录

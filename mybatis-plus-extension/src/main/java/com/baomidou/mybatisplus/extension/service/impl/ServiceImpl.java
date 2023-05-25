@@ -211,7 +211,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Optional<T> getNonNullOne(Wrapper<T> queryWrapper, boolean throwEx) {
+    public Optional<T> getOneOpt(Wrapper<T> queryWrapper, boolean throwEx) {
         if (throwEx) {
             return Optional.ofNullable(baseMapper.selectOne(queryWrapper));
         }

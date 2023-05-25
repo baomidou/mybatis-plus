@@ -37,7 +37,12 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -47,7 +52,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -649,7 +660,7 @@ class H2UserTest extends BaseTest {
     void testServiceGetNullById() {
         H2User user = new H2User(1L, "Evan");
         userService.save(user);
-        Optional<H2User> optional = userService.getNonNullById(1L);
+        Optional<H2User> optional = userService.getOptById(1L);
         optional.ifPresent(u -> log(u.toString()));
     }
 
@@ -658,7 +669,7 @@ class H2UserTest extends BaseTest {
     void testServiceGetNonNullOne() {
         H2User user = new H2User(1L, "David");
         userService.save(user);
-        Optional<H2User> optional = userService.getNonNullOne(
+        Optional<H2User> optional = userService.getOneOpt(
             new LambdaQueryWrapper<H2User>().eq(H2User::getName, "David"));
         optional.ifPresent(u -> log(u.toString()));
     }
@@ -672,9 +683,9 @@ class H2UserTest extends BaseTest {
         userService.saveBatch(h2Users);
 //        Optional<H2User> optional = userService.getNonNullOne(
 //            new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), true);
-        Optional<H2User> optional1 = userService.getNonNullOne(
+        Optional<H2User> optional1 = userService.getOneOpt(
             new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), false);
-        Optional<H2User> optional2 = userService.getNonNullOne(
+        Optional<H2User> optional2 = userService.getOneOpt(
             new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test"), false);
 
 //        optional.ifPresent(u -> log(u.toString()));
