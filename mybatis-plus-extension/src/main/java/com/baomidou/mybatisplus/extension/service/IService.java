@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -293,6 +294,16 @@ public interface IService<T> {
     }
 
     /**
+     * 根据 ID 查询，返回一个Option对象
+     *
+     * @param id 主键ID
+     * @return {@link Optional}
+     */
+    default Optional<T> getOptById(Serializable id) {
+        return Optional.ofNullable(getBaseMapper().selectById(id));
+    }
+
+    /**
      * 查询（根据ID 批量查询）
      *
      * @param idList 主键ID列表
@@ -321,12 +332,32 @@ public interface IService<T> {
     }
 
     /**
+     * 根据 Wrapper，查询一条记录 <br/>
+     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @return {@link Optional} 返回一个Optional对象
+     */
+    default Optional<T> getOneOpt(Wrapper<T> queryWrapper) {
+        return getOneOpt(queryWrapper, true);
+    }
+
+    /**
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @param throwEx      有多个 result 是否抛出异常
      */
     T getOne(Wrapper<T> queryWrapper, boolean throwEx);
+
+    /**
+     * 根据 Wrapper，查询一条记录
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param throwEx      有多个 result 是否抛出异常
+     * @return {@link Optional} 返回一个Optional对象
+     */
+    Optional<T> getOneOpt(Wrapper<T> queryWrapper, boolean throwEx);
 
     /**
      * 根据 Wrapper，查询一条记录

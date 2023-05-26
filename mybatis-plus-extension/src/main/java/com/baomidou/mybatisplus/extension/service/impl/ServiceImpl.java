@@ -20,7 +20,12 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
@@ -35,6 +40,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -202,6 +208,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             return baseMapper.selectOne(queryWrapper);
         }
         return SqlHelper.getObject(log, baseMapper.selectList(queryWrapper));
+    }
+
+    @Override
+    public Optional<T> getOneOpt(Wrapper<T> queryWrapper, boolean throwEx) {
+        if (throwEx) {
+            return Optional.ofNullable(baseMapper.selectOne(queryWrapper));
+        }
+        return Optional.ofNullable(SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
     }
 
     @Override
