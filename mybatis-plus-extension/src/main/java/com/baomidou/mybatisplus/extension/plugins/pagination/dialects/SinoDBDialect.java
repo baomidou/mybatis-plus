@@ -18,8 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * GBase 8s V8.8 数据库分页语句组装实现
- * 通用分页版本
+ * 星瑞格数据库分页语句组装实现
  *
  * @author wujl
  * @since 2023-05-23

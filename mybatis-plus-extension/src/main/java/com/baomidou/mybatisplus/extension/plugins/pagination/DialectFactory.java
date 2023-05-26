@@ -97,9 +97,9 @@ public class DialectFactory {
                 || dbType == DbType.GBASEDBT
                 || dbType == DbType.GBASE_INFORMIX) {
                 dialect = new GBase8sDialect();
-            }else if(dbType==DbType.INFORMIX){
+            } else if (dbType == DbType.INFORMIX) {
                 dialect = new InformixDialect();
-            }else if (dbType==DbType.SINODB){
+            } else if (dbType == DbType.SINODB) {
                 dialect = new SinoDBDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
