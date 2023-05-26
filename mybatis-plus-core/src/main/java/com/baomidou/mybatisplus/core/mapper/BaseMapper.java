@@ -169,33 +169,29 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<T> list = this.selectList(queryWrapper);
-        // 抄自 DefaultSqlSession#selectOne
-        if (list.size() == 1) {
-            return list.get(0);
-        } else if (list.size() > 1) {
-            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
-        } else {
-            return null;
-        }
+        return this.selectOne(queryWrapper, true);
     }
 
     /**
      * 根据 entity 条件，查询一条记录，现在会根据{@code throwEx}参数判断是否抛出异常，如果为false就直接返回一条数据
      * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
      *
-     * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
      * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, boolean throwEx) {
         List<T> list = this.selectList(queryWrapper);
-        if (list.size() == 1) {
+        // 抄自 DefaultSqlSession#selectOne
+        int size = list.size();
+        if (size == 1) {
             return list.get(0);
-        } else if (list.size() > 0 && throwEx) {
-            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
-        } else {
-            return list.size() == 0 ? null : list.get(0);
+        } else if (size > 1) {
+            if (throwEx) {
+                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+            }
+            return list.get(0);
         }
+        return null;
     }
 
     /**

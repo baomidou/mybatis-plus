@@ -20,16 +20,6 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
         executeBatch(idList, (sqlSession, id) -> sqlSession.delete(sqlStatement, id));
     }
 
-//    @Override
-//    @Transactional
-//    public boolean testCustomSaveOrUpdateBatch() {
-//        CacheModel model1 = new CacheModel();
-//        CacheModel model2 = new CacheModel("旺仔");
-//        //name为空写入，不为空按条件更新
-//        boolean result = saveOrUpdateBatch(Arrays.asList(model1, model2), entity -> entity.getName() == null, (entity) -> new QueryWrapper<CacheModel>().lambda().eq(CacheModel::getName, entity.getName()));
-//        return model1.getId() != null && model2.getId() == null && result;
-//    }
-
     @Override
     @Transactional
     public long testBatchTransactionalClear1() {
