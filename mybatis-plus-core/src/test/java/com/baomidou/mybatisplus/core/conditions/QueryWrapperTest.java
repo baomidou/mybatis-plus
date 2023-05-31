@@ -2,8 +2,10 @@ package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -163,6 +165,15 @@ class QueryWrapperTest extends BaseWrapperTest {
             .notExists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
         logSqlWhere("testNotExistsValue", wrapper, "(a = ? AND NOT EXISTS (select 1 from xxx where id = ? and name = ?))");
         logParams(wrapper);
+    }
+
+    @Test
+    void testCheckSqlInjection() {
+        QueryWrapper qw = new QueryWrapper<Entity>().checkSqlInjection().eq("a", "b");
+        Assertions.assertEquals("WHERE (a = #{ew.paramNameValuePairs.MPGENVAL1})", qw.getCustomSqlSegment());
+
+        qw.orderByAsc("select 1 from xxx");
+        Assertions.assertThrows(MybatisPlusException.class, () -> qw.getCustomSqlSegment());
     }
 
     private List<Object> getList() {

@@ -18,10 +18,12 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -75,6 +77,28 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
         this.sqlFirst = sqlFirst;
+    }
+
+
+    /**
+     * 检查 SQL 注入过滤
+     */
+    private boolean checkSqlInjection;
+
+    /**
+     * 开启检查 SQL 注入
+     */
+    public QueryWrapper<T> checkSqlInjection() {
+        this.checkSqlInjection = true;
+        return this;
+    }
+
+    @Override
+    protected String columnToString(String column) {
+        if (checkSqlInjection && SqlInjectionUtils.check(column)) {
+            throw new MybatisPlusException("Discovering SQL injection column: " + column);
+        }
+        return column;
     }
 
     @Override
