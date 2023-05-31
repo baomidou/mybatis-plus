@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Created date: 2019/12/21 16:35
  */
 @DirtiesContext
-@TestMethodOrder(MethodOrderer.Alphanumeric.class)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:phoenix/spring-test-phoenix.xml"})
 public class PhoenixTest {

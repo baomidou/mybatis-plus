@@ -136,7 +136,6 @@ public enum DbType {
      * Firebird
      */
     FIREBIRD("Firebird", "Firebird 数据库"),
-
     /**
      * HighGo
      */
@@ -145,7 +144,6 @@ public enum DbType {
      * CUBRID
      */
     CUBRID("cubrid", "CUBRID数据库"),
-
     /**
      * GOLDILOCKS
      */
@@ -174,12 +172,10 @@ public enum DbType {
      * redshift
      */
     REDSHIFT("redshift", "亚马逊redshift数据库"),
-
     /**
      * openGauss
      */
     OPENGAUSS("openGauss", "华为 opengauss 数据库"),
-
     /**
      * TDengine
      */
@@ -188,17 +184,14 @@ public enum DbType {
      * Informix
      */
     INFORMIX("informix", "Informix数据库"),
-
     /**
      * uxdb
      */
     UXDB("uxdb", "优炫数据库"),
-
     /**
      * lealone
      */
     LEALONE("lealone", "Lealone数据库"),
-
     /**
      * UNKNOWN DB
      */

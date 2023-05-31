@@ -657,8 +657,6 @@ class H2UserTest extends BaseTest {
     @Test
     @Order(27)
     void testServiceGetOneOpt() {
-        H2User user = new H2User(1L, "David");
-        userService.save(user);
         userService.getOneOpt(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, "David"))
             .ifPresent(u -> log(u.toString()));
     }
@@ -666,11 +664,6 @@ class H2UserTest extends BaseTest {
     @Test
     @Order(28)
     void testServiceGetOneOptThrowEx() {
-        H2User user1 = new H2User(1L, "test1");
-        H2User user2 = new H2User(2L, "test1");
-        List<H2User> h2Users = Arrays.asList(user1, user2);
-        userService.saveBatch(h2Users);
-
         userService.getOneOpt(new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), false)
             .ifPresent(u -> log(u.toString()));
 
