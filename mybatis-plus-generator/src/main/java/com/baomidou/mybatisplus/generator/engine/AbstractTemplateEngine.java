@@ -72,8 +72,7 @@ public abstract class AbstractTemplateEngine {
         customFiles.forEach(file -> {
             String filePath = StringUtils.isNotBlank(file.getFilePath()) ? file.getFilePath() : parentPath;
             if (StringUtils.isNotBlank(file.getPackageName())) {
-                filePath = filePath + File.separator + file.getPackageName();
-                filePath = filePath.replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
+                filePath = filePath + File.separator + file.getPackageName().replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
             }
             String fileName = filePath + File.separator + entityName + file.getFileName();
             outputFile(new File(fileName), objectMap, file.getTemplatePath(), file.isFileOverride());
