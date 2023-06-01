@@ -49,4 +49,15 @@ public final class ArrayUtils {
         return !isEmpty(array);
     }
 
+
+    /**
+     * 判断是否为数组
+     *
+     * @param obj 对象
+     * @return 是否为数组
+     */
+    public static boolean isArray(Object obj) {
+        return obj != null && obj.getClass().isArray();
+    }
+
 }

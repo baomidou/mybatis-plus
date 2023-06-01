@@ -23,6 +23,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -116,7 +117,115 @@ class MybatisParameterHandlerTest {
 //        Assertions.assertNotNull(model3.getInsertOperator());
 //        Assertions.assertNull(model3.getUpdateOperator());
 
+        params1 = new HashMap<>();
+        Model model1 = new Model();
+        Model model2 = new Model();
+        params1.put("arrays", new Model[]{model1, model2});
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNull();
+        assertThat(model2.getId()).isNull();
+        assertThat(model1.getInsertOperator()).isNull();
+        assertThat(model1.getUpdateOperator()).isNull();
 
+        model1 = new Model();
+        model2 = new Model();
+        params1 = new HashMap<>();
+        params1.put(Constants.ARRAY, new Model[]{model1, model2});
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
+        assertThat(model1.getUpdateOperator()).isNull();
+
+        model1 = new Model();
+        model2 = new Model();
+        params1 = new HashMap<>();
+        params1.put(Constants.ARRAY, new Object[]{model1, model2});
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
+        assertThat(model1.getUpdateOperator()).isNull();
+
+
+        model1 = new Model();
+        model2 = new Model();
+        params1 = new HashMap<>();
+        params1.put(Constants.LIST, Arrays.asList(model1, model2));
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
+        assertThat(model1.getUpdateOperator()).isNull();
+
+
+        model1 = new Model();
+        model2 = new Model();
+        params1 = new HashMap<>();
+        params1.put(Constants.COLL, Arrays.asList(model1, model2));
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
+        assertThat(model1.getUpdateOperator()).isNull();
+
+        model1 = new Model();
+        model2 = new Model();
+        params1 = new HashMap<>();
+        params1.put("collection", Arrays.asList(model1, model2));
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
+        assertThat(model1.getUpdateOperator()).isNull();
+
+
+        params1 = new HashMap<>();
+        params1.put(Constants.ARRAY, new Object());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put(Constants.ARRAY, new HashMap<>());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put(Constants.ARRAY, new Object[]{});
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+
+        params1.put(Constants.ARRAY, null);
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+
+        params1 = new HashMap<>();
+        params1.put(Constants.COLL, new Object());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1 = new HashMap<>();
+        params1.put(Constants.COLL, new HashMap<>());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put(Constants.COLL, null);
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put(Constants.COLL, new ArrayList<>());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1 = new HashMap<>();
+        params1.put("collection", new Object());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1 = new HashMap<>();
+        params1.put("collection", new Object());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1 = new HashMap<>();
+        params1.put("collection", new HashMap<>());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put("collection", null);
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+
+        params1.put("collection", new ArrayList<>());
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
         //普通更新
         model = new Model(1L, "坦克");
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();

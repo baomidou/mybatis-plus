@@ -191,19 +191,34 @@ public class MybatisParameterHandler implements ParameterHandler {
             parameters = (Collection) parameterObject;
         } else if (parameterObject instanceof Map) {
             Map parameterMap = (Map) parameterObject;
+            // 约定 coll collection list array 这四个特殊key值处理批量.
             // 尝试提取参数进行填充，如果是多参数时，在使用注解时，请注意使用collection，list，array进行声明
             if (parameterMap.containsKey("collection")) {
-                parameters = (Collection) parameterMap.get("collection");
+                return toCollection(parameterMap.get("collection"));
             } else if (parameterMap.containsKey(Constants.COLL)) {
                 // 兼容逻辑删除对象填充，这里的集合字段后面重构的时候应该和原生保持一致，使用collection
-                parameters = (Collection) parameterMap.get(Constants.COLL);
+                parameters = toCollection(parameterMap.get(Constants.COLL));
             } else if (parameterMap.containsKey(Constants.LIST)) {
-                parameters = (List) parameterMap.get(Constants.LIST);
+                parameters = toCollection(parameterMap.get(Constants.LIST));
             } else if (parameterMap.containsKey(Constants.ARRAY)) {
-                parameters = Arrays.asList((Object[]) parameterMap.get(Constants.ARRAY));
+                parameters = toCollection(parameterMap.get(Constants.ARRAY));
             }
         }
         return parameters;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Collection<Object> toCollection(Object value) {
+        if (value == null) {
+            return null;
+        }
+        // 只处理array和collection
+        if (value.getClass().isArray()) {
+            return Arrays.asList((Object[]) value);
+        } else if (Collection.class.isAssignableFrom(value.getClass())) {
+            return (Collection<Object>) value;
+        }
+        return null;
     }
 
     @Override
