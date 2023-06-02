@@ -120,15 +120,23 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         }
 
         BoundSql countSql;
+        // 1. 手动配置自定义 Count 查询 MappedStatement
         MappedStatement countMs = buildCountMappedStatement(ms, page.countId());
         if (countMs != null) {
             countSql = countMs.getBoundSql(parameter);
-        } else {
-            countMs = buildAutoCountMappedStatement(ms);
-            String countSqlStr = autoCountSql(page, boundSql.getSql());
-            PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
-            countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
-            PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
+        }else {
+            // 2. 默认的自定义查询 Count 查询 MappedStatement
+            countMs = buildCountMappedStatement(ms, ms.getId() + "_COUNT");
+            if (countMs != null){
+                countSql = countMs.getBoundSql(parameter);
+            }else {
+                // 3. 自动生成的 Count 查询 MappedStatement
+                countMs = buildAutoCountMappedStatement(ms);
+                String countSqlStr = autoCountSql(page, boundSql.getSql());
+                PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+                countSql = new BoundSql(countMs.getConfiguration(), countSqlStr, mpBoundSql.parameterMappings(), parameter);
+                PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
+            }
         }
 
         CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
