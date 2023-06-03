@@ -211,7 +211,7 @@ public final class Wrappers {
         }
 
         @Override
-        public boolean nonEmptyOfEntity() {
+        public boolean isNonEmptyOfEntity() {
             return !isEmptyOfEntity();
         }
 

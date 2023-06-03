@@ -98,7 +98,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
     /**
      * 查询条件不为空(包含entity)
      */
-    public boolean nonEmptyOfWhere() {
+    public boolean isNonEmptyOfWhere() {
         return !isEmptyOfWhere();
     }
 
@@ -112,7 +112,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
     /**
      * 查询条件为空(不包含entity)
      */
-    public boolean nonEmptyOfNormal() {
+    public boolean isNonEmptyOfNormal() {
         return !isEmptyOfNormal();
     }
 
@@ -121,7 +121,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      *
      * @return true 不为空
      */
-    public boolean nonEmptyOfEntity() {
+    public boolean isNonEmptyOfEntity() {
         T entity = getEntity();
         if (entity == null) {
             return false;
@@ -160,7 +160,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * @return true 为空
      */
     public boolean isEmptyOfEntity() {
-        return !nonEmptyOfEntity();
+        return !isNonEmptyOfEntity();
     }
 
     /**
