@@ -15,7 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -27,6 +35,18 @@ import java.util.function.Function;
 public class CollectionUtils {
 
     private static final int MAX_POWER_OF_TWO = 1 << (Integer.SIZE - 2);
+
+    private static boolean isJdk8;
+
+    static {
+        // Java 8
+        // Java 9+: 9,11,17
+        try {
+            isJdk8 = System.getProperty("java.version").startsWith("1.8.");
+        } catch (Exception ignore) {
+            isJdk8 = true;
+        }
+    }
 
     /**
      * 校验集合是否为空
@@ -99,6 +119,9 @@ public class CollectionUtils {
      * 用来过渡下Jdk1.8下ConcurrentHashMap的性能bug
      * https://bugs.openjdk.java.net/browse/JDK-8161372
      *
+     *  A temporary workaround for Java 8 ConcurrentHashMap#computeIfAbsent specific performance issue: JDK-8161372.</br>
+     *  @see <a href="https://bugs.openjdk.java.net/browse/JDK-8161372">https://bugs.openjdk.java.net/browse/JDK-8161372</a>
+     *
      * @param concurrentHashMap ConcurrentHashMap 没限制类型了，非ConcurrentHashMap就别调用这方法了
      * @param key               key
      * @param mappingFunction   function
@@ -108,11 +131,31 @@ public class CollectionUtils {
      * @since 3.4.0
      */
     public static <K, V> V computeIfAbsent(Map<K, V> concurrentHashMap, K key, Function<? super K, ? extends V> mappingFunction) {
-        V v = concurrentHashMap.get(key);
-        if (v != null) {
+        Objects.requireNonNull(mappingFunction);
+        if (isJdk8) {
+            V v = concurrentHashMap.get(key);
+            if (null == v) {
+                // issue#11986 lock bug
+                // v = map.computeIfAbsent(key, func);
+
+                // this bug fix methods maybe cause `func.apply` multiple calls.
+                v = mappingFunction.apply(key);
+                if (null == v) {
+                    return null;
+                }
+                final V res = concurrentHashMap.putIfAbsent(key, v);
+                if (null != res) {
+                    // if pre value present, means other thread put value already, and putIfAbsent not effect
+                    // return exist value
+                    return res;
+                }
+                // if pre value is null, means putIfAbsent effected, return current value
+            }
             return v;
+        } else {
+            return concurrentHashMap.computeIfAbsent(key, mappingFunction);
         }
-        return concurrentHashMap.computeIfAbsent(key, mappingFunction);
+
     }
 
     /**
