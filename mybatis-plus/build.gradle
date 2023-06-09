@@ -19,6 +19,8 @@ dependencies {
     testImplementation "${lib.'mybatis-redis'}"
     testImplementation "${lib.'spring-context-support'}"
     testImplementation "${lib.'spring-jdbc'}"
+    testImplementation "${lib.'slf4j-api'}"
+    testImplementation "${lib.'logback-classic'}"
     testImplementation "javax.annotation:javax.annotation-api:1.3.2"
     testImplementation "${lib.cglib}"
     testImplementation "${lib.postgresql}"

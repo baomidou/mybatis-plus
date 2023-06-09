@@ -74,6 +74,7 @@ ext {
         "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.2",
         "enjoy"               : "com.jfinal:enjoy:5.0.0",
+        "logback-classic"     : "ch.qos.logback:logback-classic:1.2.3",
     ]
 }
 
