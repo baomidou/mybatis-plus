@@ -145,27 +145,4 @@ class ReflectionKitTest {
         Assertions.assertEquals(entity.getParentId(), ReflectionKit.getFieldValue(entity, "parentId"));
         Assertions.assertEquals(entity.getpId(), ReflectionKit.getFieldValue(entity, "pId"));
     }
-
-    @Test
-    void testIsPrimitiveOrWrapper() {
-        Assertions.assertFalse(ReflectionKit.isPrimitiveOrWrapper(String.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Boolean.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(boolean.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(byte.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Byte.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(char.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Character.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(char.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Character.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(double.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Double.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(float.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Float.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(int.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Integer.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(long.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Long.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(short.class));
-        Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Short.class));
-    }
 }

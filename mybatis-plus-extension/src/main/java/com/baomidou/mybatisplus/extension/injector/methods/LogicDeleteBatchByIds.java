@@ -49,6 +49,7 @@ import static java.util.stream.Collectors.toList;
  * @author nieqiurong
  * @since 3.5.0
  */
+@SuppressWarnings("serial")
 public class LogicDeleteBatchByIds extends DeleteBatchByIds {
 
     public LogicDeleteBatchByIds() {

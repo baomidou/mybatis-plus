@@ -27,6 +27,7 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author hubin
  * @since 2018-04-06
  */
+@SuppressWarnings("serial")
 public class Delete extends AbstractMethod {
 
     public Delete() {

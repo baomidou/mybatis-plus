@@ -28,6 +28,7 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
  * @author hubin
  * @since 2018-04-06
  */
+@SuppressWarnings("serial")
 public class SelectById extends AbstractMethod {
 
     public SelectById() {

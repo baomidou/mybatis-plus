@@ -28,6 +28,7 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author hubin
  * @since 2018-04-06
  */
+@SuppressWarnings("serial")
 public class SelectBatchByIds extends AbstractMethod {
 
     public SelectBatchByIds() {
