@@ -316,4 +316,40 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children likeRight(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     */
+    default Children likeWithoutPercent(R column, Object val) {
+        return likeWithoutPercent(true, column, val);
+    }
+
+    /**
+     * LIKE '值'
+     * 针对想使用'like'但不想在两边拼接%的情况
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    Children likeWithoutPercent(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     */
+    default Children notLikeWithoutPercent(R column, Object val) {
+        return notLikeWithoutPercent(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '值'
+     * 针对想使用'not like'但不想在两边拼接%的情况
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    Children notLikeWithoutPercent(boolean condition, R column, Object val);
 }

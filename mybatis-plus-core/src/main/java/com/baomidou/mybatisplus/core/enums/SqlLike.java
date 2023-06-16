@@ -31,6 +31,11 @@ public enum SqlLike {
      */
     RIGHT,
     /**
+     * 值
+     * （针对想使用like但不想在两边拼接%的情况）
+     */
+    WITHOUT_PERCENT,
+    /**
      * %值%
      */
     DEFAULT

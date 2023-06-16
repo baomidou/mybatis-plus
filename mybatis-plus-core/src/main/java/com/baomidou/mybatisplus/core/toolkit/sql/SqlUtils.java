@@ -52,6 +52,8 @@ public abstract class SqlUtils implements Constants {
                 return PERCENT + str;
             case RIGHT:
                 return str + PERCENT;
+            case WITHOUT_PERCENT:
+                return String.valueOf(str);
             default:
                 return PERCENT + str + PERCENT;
         }
