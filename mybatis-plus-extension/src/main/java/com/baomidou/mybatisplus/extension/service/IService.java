@@ -614,4 +614,16 @@ public interface IService<T> {
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
+
+    /**
+     * <p>
+     * 根据updateWrapper尝试更新，否继续执行save(T)方法
+     * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的save操作）
+     * </p>
+     *
+     * @param entity 实体对象
+     */
+    default boolean updateOrSave(Wrapper<T> updateWrapper, T entity) {
+        return update(updateWrapper) || save(entity);
+    }
 }
