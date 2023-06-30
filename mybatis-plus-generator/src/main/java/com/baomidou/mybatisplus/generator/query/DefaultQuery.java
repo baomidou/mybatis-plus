@@ -48,8 +48,8 @@ import java.util.Map;
  */
 public class DefaultQuery extends AbstractDatabaseQuery {
 
-    private final TypeRegistry typeRegistry;
     protected final DatabaseMetaDataWrapper databaseMetaDataWrapper;
+    private final TypeRegistry typeRegistry;
 
     public DefaultQuery(@NotNull ConfigBuilder configBuilder) {
         super(configBuilder);
@@ -60,12 +60,12 @@ public class DefaultQuery extends AbstractDatabaseQuery {
     @Override
     public @NotNull List<TableInfo> queryTables() {
         try {
-            boolean isInclude = strategyConfig.getInclude().size() > 0;
-            boolean isExclude = strategyConfig.getExclude().size() > 0;
-            //所有的表信息
+            boolean isInclude = !strategyConfig.getInclude().isEmpty();
+            boolean isExclude = !strategyConfig.getExclude().isEmpty();
+            // 所有的表信息
             List<TableInfo> tableList = new ArrayList<>();
             List<DatabaseMetaDataWrapper.Table> tables = this.getTables();
-            //需要反向生成或排除的表信息
+            // 需要反向生成或排除的表信息
             List<TableInfo> includeTableList = new ArrayList<>();
             List<TableInfo> excludeTableList = new ArrayList<>();
             tables.forEach(table -> {
@@ -99,7 +99,21 @@ public class DefaultQuery extends AbstractDatabaseQuery {
         if (strategyConfig.getLikeTable() != null) {
             tableNamePattern = strategyConfig.getLikeTable().getValue();
         }
-        return databaseMetaDataWrapper.getTables(tableNamePattern, skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"});
+        List<DatabaseMetaDataWrapper.Table> tables = databaseMetaDataWrapper.getTables(tableNamePattern, skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"});
+        // 使用Java正则表达式，不支持SQL的模糊匹配规则
+        if (strategyConfig.getNotLikeTable() != null) {
+            final String tableNameNotLikePattern = strategyConfig.getNotLikeTable().getValue();
+            List<DatabaseMetaDataWrapper.Table> resultTables = new ArrayList<>();
+            tables.forEach(table -> {
+                String tableName = table.getName();
+                // strategyConfig,matchTable是private的，参考实现
+                if (!tableNameNotLikePattern.equalsIgnoreCase(tableName) && !StringUtils.matches(tableNameNotLikePattern, tableName)) {
+                    resultTables.add(table);
+                }
+            });
+            return resultTables;
+        }
+        return tables;
     }
 
     protected void convertTableFields(@NotNull TableInfo tableInfo) {
