@@ -252,7 +252,7 @@ class TenantLineInnerInterceptorTest {
                 "right join entity2 e2 on e1.id = e2.id",
             "SELECT * FROM entity e " +
                 "LEFT JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 " +
-                "RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e1.tenant_id = 1 " +
+                "RIGHT JOIN entity2 e2 ON e1.id = e2.id AND e.tenant_id = 1 " +
                 "WHERE e2.tenant_id = 1");
 
         assertSql("SELECT * FROM entity e " +
