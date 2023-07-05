@@ -44,7 +44,7 @@ public class TypeRegistry {
         typeMap.put(Types.LONGVARBINARY, DbColumnType.BYTE_ARRAY);
         typeMap.put(Types.VARBINARY, DbColumnType.BYTE_ARRAY);
         //byte
-        typeMap.put(Types.TINYINT, DbColumnType.BYTE);
+        typeMap.put(Types.TINYINT, DbColumnType.INTEGER);
         //long
         typeMap.put(Types.BIGINT, DbColumnType.LONG);
         //boolean
