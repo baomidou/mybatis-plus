@@ -87,4 +87,8 @@ public interface ConstVal {
     String SUPER_SERVICE_CLASS = "com.baomidou.mybatisplus.extension.service.IService";
     String SUPER_SERVICE_IMPL_CLASS = "com.baomidou.mybatisplus.extension.service.impl.ServiceImpl";
 
+    /**
+     * @see com.baomidou.mybatisplus.core.metadata.TableInfoHelper.DEFAULT_ID_NAME
+     */
+    String DEFAULT_ID_NAME = "id";
 }
