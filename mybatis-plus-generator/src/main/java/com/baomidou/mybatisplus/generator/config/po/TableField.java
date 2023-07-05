@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.IKeyWordsHandler;
@@ -167,6 +168,10 @@ public class TableField {
         }
         if (entity.isTableFieldAnnotationEnable()) {
             this.convert = true;
+        } else {
+            if (this.keyFlag) {
+                this.convert = !ConstVal.DEFAULT_ID_NAME.equals(propertyName);
+            }
         }
         this.propertyName = propertyName;
         return this;
