@@ -40,6 +40,18 @@ public class SqlInjectionUtilsTest {
         assertSql(false, "SELECT*FROMuser");
         // 该字符串里包含 setT or
         assertSql(false, "databaseType desc,orderNum desc)");
+
+        assertSql(false, "insert");
+        assertSql(true, "insert user (id,age) values (1, 18)");
+        assertSql(false, "union");
+        assertSql(false, "or");
+        assertSql(false, "delete");
+        assertSql(false, "drop");
+        assertSql(true, "and age not in (1,2,3)");
+        assertSql(true, "and age <> 1");
+        assertSql(false,"ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
+        assertSql(true,"ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
+        assertSql(true, "or 1 = 1");
     }
 
     private void assertSql(boolean injection, String sql) {
