@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
@@ -72,6 +73,9 @@ class H2UserTest extends BaseTest {
     protected IH2UserService userService;
     @Autowired
     SqlSessionFactory sqlSessionFactory;
+
+    @Autowired
+    private H2StudentMapper h2StudentMapper;
 
     public void initBatchLimitation(int limitation) {
         if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
@@ -673,5 +677,72 @@ class H2UserTest extends BaseTest {
         // 异常情况
         Assertions.assertThrows(TooManyResultsException.class, () -> userService.getOneOpt(Wrappers.<H2User>lambdaQuery()
             .like(H2User::getName, "tes")));
+    }
+
+    @Test
+    void testInsertFill() {
+        H2User h2User;
+        h2User = new H2User("insertFillByCustomMethod1", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod1(h2User);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        h2User = new H2User("insertFillByCustomMethod2", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod2(h2User);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        h2User = new H2User("insertFillByCustomMethod3", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod3(h2User, "fillByCustomMethod3");
+        Assertions.assertNotNull(h2User.getTestType());
+
+        List<H2User> list;
+        list = Arrays.asList(new H2User("insertFillByCustomMethod4-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod4-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod4(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod5-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod5-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod5(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod6-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod6-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod6(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod7-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod7-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod7(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        H2User[] h2Users;
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod8-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod8-2", AgeEnum.ONE)};
+        h2StudentMapper.insertFillByCustomMethod8(h2Users);
+        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod9-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod9-2", AgeEnum.ONE)};
+        h2StudentMapper.insertFillByCustomMethod9(h2Users);
+        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        Map<String, Object> map;
+        h2User = new H2User("insertFillByCustomMethod10", AgeEnum.ONE);
+        map = new HashMap<>();
+        map.put("et", h2User);
+        h2StudentMapper.insertFillByCustomMethod10(map);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod11-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod11-2", AgeEnum.ONE));
+        map = new HashMap<>();
+        map.put("list", list);
+        h2StudentMapper.insertFillByCustomMethod11(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod12-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod12-2", AgeEnum.ONE));
+        map = new HashMap<>();
+        map.put("coll", list);
+        h2StudentMapper.insertFillByCustomMethod12(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod13-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod13-2", AgeEnum.ONE)};
+        map = new HashMap<>();
+        map.put("array", h2Users);
+        h2StudentMapper.insertFillByCustomMethod13(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
     }
 }

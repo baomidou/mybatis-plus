@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -34,6 +35,7 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
@@ -189,6 +191,8 @@ public class MybatisParameterHandler implements ParameterHandler {
         Collection<Object> parameters = null;
         if (parameterObject instanceof Collection) {
             parameters = (Collection) parameterObject;
+        } else if (ArrayUtils.isArray(parameterObject)) {
+            parameters = toCollection(parameterObject);
         } else if (parameterObject instanceof Map) {
             Map parameterMap = (Map) parameterObject;
             // 约定 coll collection list array 这四个特殊key值处理批量.
@@ -213,7 +217,7 @@ public class MybatisParameterHandler implements ParameterHandler {
             return null;
         }
         // 只处理array和collection
-        if (value.getClass().isArray()) {
+        if (ArrayUtils.isArray(value)) {
             return Arrays.asList((Object[]) value);
         } else if (Collection.class.isAssignableFrom(value.getClass())) {
             return (Collection<Object>) value;
