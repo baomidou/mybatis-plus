@@ -75,13 +75,7 @@ public class MybatisParameterHandler implements ParameterHandler {
             if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
                 return parameter;
             }
-            Collection<Object> parameters = getParameters(parameter);
-            if (null != parameters) {
-                // 感觉这里可以稍微优化一下，理论上都是同一个.
-                parameters.forEach(this::process);
-            } else {
-                process(parameter);
-            }
+            process(parameter);
         }
         return parameter;
     }
@@ -93,34 +87,66 @@ public class MybatisParameterHandler implements ParameterHandler {
 
     private void process(Object parameter) {
         if (parameter != null) {
-            TableInfo tableInfo = null;
-            Object entity = parameter;
-            if (parameter instanceof Map) {
-                // 处理单参数使用注解标记的时候，尝试提取et来获取实体参数
+            if (parameter instanceof Collection) {
+                processCollection(parameter);
+            } else if (parameter instanceof Map) {
+                // 尝试提取参数进行填充，如果是多参数时，在使用注解时，请注意使用et coll collection list array进行声明
                 Map<?, ?> map = (Map<?, ?>) parameter;
                 if (map.containsKey(Constants.ENTITY)) {
-                    Object et = map.get(Constants.ENTITY);
-                    if (et != null) {
-                        entity = et;
-                        tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
-                    }
+                    doProcess(map.get(Constants.ENTITY));
+                }
+                if (map.containsKey("collection")) {
+                    processCollection(map.get("collection"));
+                }
+                if (map.containsKey(Constants.COLL)) {
+                    // 兼容逻辑删除对象填充，这里的集合字段后面重构的时候应该和原生保持一致，使用collection
+                    processCollection(map.get(Constants.COLL));
+                }
+                if (map.containsKey(Constants.LIST)) {
+                    processCollection(map.get(Constants.LIST));
+                }
+                if (map.containsKey(Constants.ARRAY)) {
+                    processCollection(map.get(Constants.ARRAY));
                 }
             } else {
-                tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-            }
-            if (tableInfo != null) {
-                //到这里就应该转换到实体参数对象了,因为填充和ID处理都是针对实体对象处理的,不用传递原参数对象下去.
-                MetaObject metaObject = this.configuration.newMetaObject(entity);
-                if (SqlCommandType.INSERT == this.sqlCommandType) {
-                    populateKeys(tableInfo, metaObject, entity);
-                    insertFill(metaObject, tableInfo);
-                } else {
-                    updateFill(metaObject, tableInfo);
-                }
+                doProcess(parameter);
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private void processCollection(Object value) {
+        if (value == null) {
+            return;
+        }
+        Collection<Object> collection = null;
+        // 只处理array和collection
+        if (value.getClass().isArray()) {
+            collection = Arrays.asList((Object[]) value);
+        } else if (Collection.class.isAssignableFrom(value.getClass())) {
+            collection = (Collection<Object>) value;
+        }
+        if (collection != null) {
+            collection.forEach(this::doProcess);
+        }
+    }
+
+    private void doProcess(Object entity) {
+        if (entity == null) {
+            return;
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+        if (tableInfo != null) {
+            // 到这里就应该转换到实体参数对象了,因为填充和ID处理都是针对实体对象处理的,不用传递原参数对象下去.
+            MetaObject metaObject = this.configuration.newMetaObject(entity);
+            if (SqlCommandType.INSERT == this.sqlCommandType) {
+                populateKeys(tableInfo, metaObject, entity);
+                insertFill(metaObject, tableInfo);
+            } else {
+                updateFill(metaObject, tableInfo);
+            }
+        }
+    }
 
     protected void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
         final IdType idType = tableInfo.getIdType();
@@ -173,52 +199,6 @@ public class MybatisParameterHandler implements ParameterHandler {
                 metaObjectHandler.updateFill(metaObject);
             }
         });
-    }
-
-    /**
-     * 处理正常批量插入逻辑
-     * <p>
-     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
-     * wrapCollection 实现 StrictMap 封装逻辑
-     * </p>
-     *
-     * @return 集合参数
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Collection<Object> getParameters(Object parameterObject) {
-        Collection<Object> parameters = null;
-        if (parameterObject instanceof Collection) {
-            parameters = (Collection) parameterObject;
-        } else if (parameterObject instanceof Map) {
-            Map parameterMap = (Map) parameterObject;
-            // 约定 coll collection list array 这四个特殊key值处理批量.
-            // 尝试提取参数进行填充，如果是多参数时，在使用注解时，请注意使用collection，list，array进行声明
-            if (parameterMap.containsKey("collection")) {
-                return toCollection(parameterMap.get("collection"));
-            } else if (parameterMap.containsKey(Constants.COLL)) {
-                // 兼容逻辑删除对象填充，这里的集合字段后面重构的时候应该和原生保持一致，使用collection
-                parameters = toCollection(parameterMap.get(Constants.COLL));
-            } else if (parameterMap.containsKey(Constants.LIST)) {
-                parameters = toCollection(parameterMap.get(Constants.LIST));
-            } else if (parameterMap.containsKey(Constants.ARRAY)) {
-                parameters = toCollection(parameterMap.get(Constants.ARRAY));
-            }
-        }
-        return parameters;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Collection<Object> toCollection(Object value) {
-        if (value == null) {
-            return null;
-        }
-        // 只处理array和collection
-        if (value.getClass().isArray()) {
-            return Arrays.asList((Object[]) value);
-        } else if (Collection.class.isAssignableFrom(value.getClass())) {
-            return (Collection<Object>) value;
-        }
-        return null;
     }
 
     @Override

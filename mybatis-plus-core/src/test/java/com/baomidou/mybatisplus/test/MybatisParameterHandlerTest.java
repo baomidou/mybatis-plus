@@ -233,6 +233,19 @@ class MybatisParameterHandlerTest {
         assertThat(model.getId()).isNotNull();
         assertThat(model.getUpdateOperator()).isNotNull();
 
+        //多参数更新
+        model = new Model(100L, "坦克");
+        model1 = new Model(1L, "坦克一号");
+        model2 = new Model(2L, "坦克二号");
+        params1 = new HashMap<>();
+        params1.put(Constants.ENTITY, model);
+        params1.put(Constants.COLL, Arrays.asList(model1, model2));
+        params1.put(Constants.LIST, Arrays.asList(1, 2));
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();
+        new MybatisParameterHandler(mappedStatement, params1, boundSql);
+        assertThat(model.getUpdateOperator()).isNotNull();
+        assertThat(model2.getUpdateOperator()).isNotNull();
+        assertThat(model2.getUpdateOperator()).isNotNull();
 
         //批量插入
         List<Model> list = Arrays.asList(new Model("坦克一号"), new Model("坦克二号"));
