@@ -55,4 +55,12 @@ public interface H2StudentMapper extends SuperMapper<H2Student> {
 
     long insertFillByCustomMethod13(Map<String, Object> paramMap);
 
+    long updateFillByCustomMethod1(Map<String, Object> paramMap);
+
+    long updateFillByCustomMethod2(@Param("coll") Collection<Long> ids, @Param("et") H2User h2User);
+
+    long updateFillByCustomMethod3(@Param("coll") Collection<Long> ids, @Param("user") H2User h2User);
+
+    long updateFillByCustomMethod4(@Param("colls") Collection<Long> ids, @Param("et") H2User h2User);
+
 }

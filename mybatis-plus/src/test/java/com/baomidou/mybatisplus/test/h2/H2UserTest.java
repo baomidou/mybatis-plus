@@ -745,4 +745,30 @@ class H2UserTest extends BaseTest {
         h2StudentMapper.insertFillByCustomMethod13(map);
         list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
     }
+
+    @Test
+    void testUpdateFill(){
+        Map<String, Object> map;
+        H2User h2User;
+        h2User = new H2User();
+        map = new HashMap<>();
+        map.put("et", h2User);
+        map.put("list", Arrays.asList(1L, 2L, 3L));
+        h2StudentMapper.updateFillByCustomMethod1(map);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod2(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod3(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod4(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+    }
+
 }

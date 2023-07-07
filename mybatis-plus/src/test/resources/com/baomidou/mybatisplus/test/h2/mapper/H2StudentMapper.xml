@@ -86,4 +86,36 @@
         </foreach>
     </insert>
 
+    <update id="updateFillByCustomMethod1">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="list" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod2">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="coll" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod3">
+        update h2user set deleted = 1,last_updated_dt = #{user.lastUpdatedDt} where test_id in (
+        <foreach collection="coll" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod4">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="colls" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
 </mapper>
