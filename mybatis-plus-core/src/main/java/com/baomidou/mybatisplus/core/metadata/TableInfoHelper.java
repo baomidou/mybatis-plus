@@ -68,6 +68,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2016-09-09
  */
 public class TableInfoHelper {
+
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
     /**
@@ -631,6 +632,11 @@ public class TableInfoHelper {
             .build();
         configuration.addMappedStatement(mappedStatement);
         return new SelectKeyGenerator(mappedStatement, true);
+    }
+
+    public static void clearCache(){
+        TABLE_INFO_CACHE.clear();
+        TABLE_NAME_INFO_CACHE.clear();
     }
 
 }

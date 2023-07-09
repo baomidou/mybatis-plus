@@ -67,7 +67,10 @@ public class GlobalConfig implements Serializable {
     private Class<?> superMapperClass = Mapper.class;
     /**
      * 仅用于缓存 SqlSessionFactory(外部勿进行set,set了也没用)
+     *
+     * @deprecated 3.5.3
      */
+    @Deprecated
     private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息
