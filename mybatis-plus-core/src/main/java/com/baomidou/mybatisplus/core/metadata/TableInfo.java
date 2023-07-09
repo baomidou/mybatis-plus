@@ -99,9 +99,12 @@ public class TableInfo implements Constants {
     private String currentNamespace;
     /**
      * MybatisConfiguration 标记 (Configuration内存地址值)
+     *
+     * @deprecated 3.5.3 初始化阶段可以使用一下,后期尽量避免在容器初始化完成之后再继续调用此方法
      */
     @Getter
     @Setter(AccessLevel.NONE)
+    @Deprecated
     private Configuration configuration;
     /**
      * 是否开启下划线转驼峰

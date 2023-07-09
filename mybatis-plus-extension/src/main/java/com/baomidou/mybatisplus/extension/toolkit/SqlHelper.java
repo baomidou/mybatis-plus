@@ -71,7 +71,9 @@ public final class SqlHelper {
      * @param clazz 实体类
      * @return SqlSessionFactory
      * @since 3.3.0
+     * @deprecated 3.5.3 尽量少用,后期取消此方法获取实例
      */
+    @Deprecated
     public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
         return GlobalConfigUtils.currentSessionFactory(clazz);
     }
@@ -81,7 +83,9 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      * @return SqlSession
+     * @deprecated 3.5.3 尽量少用,后期取消打开session方法
      */
+    @Deprecated
     public static SqlSession sqlSession(Class<?> clazz) {
         return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
@@ -163,9 +167,13 @@ public final class SqlHelper {
      * @return 操作结果
      * @since 3.4.0
      */
-    @SneakyThrows
+    @Deprecated
     public static boolean executeBatch(Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
-        SqlSessionFactory sqlSessionFactory = sqlSessionFactory(entityClass);
+        return executeBatch(sqlSessionFactory(entityClass), entityClass, log, consumer);
+    }
+
+    @SneakyThrows
+    public static boolean executeBatch(SqlSessionFactory sqlSessionFactory, Class<?> entityClass, Log log, Consumer<SqlSession> consumer) {
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
         boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
         if (sqlSessionHolder != null) {
@@ -211,10 +219,16 @@ public final class SqlHelper {
      * @param <E>         T
      * @return 操作结果
      * @since 3.4.0
+     * @deprecated {@link #executeBatch(SqlSessionFactory, Class, Log, Collection, int, BiConsumer)}
      */
+    @Deprecated
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        return executeBatch(sqlSessionFactory(entityClass), entityClass, log, list, batchSize, consumer);
+    }
+
+    public static <E> boolean executeBatch(SqlSessionFactory sqlSessionFactory, Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
-        return !CollectionUtils.isEmpty(list) && executeBatch(entityClass, log, sqlSession -> {
+        return !CollectionUtils.isEmpty(list) && executeBatch(sqlSessionFactory, entityClass, log, sqlSession -> {
             int size = list.size();
             int idxLimit = Math.min(batchSize, size);
             int i = 1;
