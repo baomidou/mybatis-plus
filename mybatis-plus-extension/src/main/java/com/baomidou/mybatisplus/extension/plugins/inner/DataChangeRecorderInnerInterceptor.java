@@ -42,7 +42,6 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +219,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(), selectStmt.toString(),
             prepareParameterMapping4Select(boundSql.getParameterMappings(), updateStmt),
             boundSql.getParameterObject());
-        MetaObject metaObject = SystemMetaObject.forObject(boundSql);
+        MetaObject metaObject = PluginUtils.getMetaObject(boundSql);
         Map<String, Object> additionalParameters = (Map<String, Object>) metaObject.getValue("additionalParameters");
         if (additionalParameters != null && !additionalParameters.isEmpty()) {
             for (Map.Entry<String, Object> ety : additionalParameters.entrySet()) {
@@ -285,7 +284,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             //FIRSTNAME: FIRST_NAME/FIRST-NAME/FIRST$NAME/FIRST.NAME
             relatedColumnsUpperCaseWithoutUnderline.put(item.toString().replaceAll("[._\\-$]", "").toUpperCase(), item.toString().toUpperCase());
         }
-        MetaObject metaObject = SystemMetaObject.forObject(updateSql.getParameterObject());
+        MetaObject metaObject = PluginUtils.getMetaObject(updateSql.getParameterObject());
 
         for (ParameterMapping parameterMapping : updateSql.getParameterMappings()) {
             String propertyName = parameterMapping.getProperty();
@@ -324,7 +323,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
 
     private Map<String, Object> buildParameterObjectMap(BoundSql boundSql) {
-        MetaObject metaObject = SystemMetaObject.forObject(boundSql.getParameterObject());
+        MetaObject metaObject = PluginUtils.getMetaObject(boundSql.getParameterObject());
         Map<String, Object> propertyValMap = new HashMap<>(boundSql.getParameterMappings().size());
         for (ParameterMapping parameterMapping : boundSql.getParameterMappings()) {
             String propertyName = parameterMapping.getProperty();
