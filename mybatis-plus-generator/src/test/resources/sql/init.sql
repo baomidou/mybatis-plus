@@ -1,7 +1,7 @@
 drop table if exists `t_simple`;
 create table `t_simple`
 (
-    id          int IDENTITY primary key comment 'id',
+    id          int auto_increment comment 'id',
     name        varchar(50) comment '姓名',
     age         int comment '年龄',
     delete_flag tinyint(1) comment '删除标识1',
