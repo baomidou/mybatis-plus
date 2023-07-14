@@ -68,6 +68,7 @@ public class TypeRegistry {
         //double
         typeMap.put(Types.FLOAT, DbColumnType.DOUBLE);
         typeMap.put(Types.REAL, DbColumnType.DOUBLE);
+        typeMap.put(Types.DOUBLE, DbColumnType.DOUBLE);
         //int
         typeMap.put(Types.INTEGER, DbColumnType.INTEGER);
         //bigDecimal
