@@ -37,7 +37,7 @@ public class DatabaseMetaDataWrapper {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseMetaDataWrapper.class);
 
-    private Connection connection;
+    private final Connection connection;
 
     private final DatabaseMetaData databaseMetaData;
 
@@ -106,6 +106,7 @@ public class DatabaseMetaDataWrapper {
                 String name = resultSet.getString("COLUMN_NAME");
                 column.name = name;
                 column.primaryKey = primaryKeys.contains(name);
+                column.typeName = resultSet.getString("TYPE_NAME");
                 column.jdbcType = JdbcType.forCode(resultSet.getInt("DATA_TYPE"));
                 column.length = resultSet.getInt("COLUMN_SIZE");
                 column.scale = resultSet.getInt("DECIMAL_DIGITS");
@@ -216,6 +217,8 @@ public class DatabaseMetaDataWrapper {
 
         private JdbcType jdbcType;
 
+        private String typeName;
+
         public String getName() {
             return name;
         }
@@ -252,5 +255,12 @@ public class DatabaseMetaDataWrapper {
             return autoIncrement;
         }
 
+        public String getTypeName() {
+            return typeName;
+        }
+
+        public void setTypeName(String typeName) {
+            this.typeName = typeName;
+        }
     }
 }
