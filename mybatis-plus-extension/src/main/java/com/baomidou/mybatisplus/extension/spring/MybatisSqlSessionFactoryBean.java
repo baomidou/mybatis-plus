@@ -439,15 +439,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         notNull(dataSource, "Property 'dataSource' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
             "Property 'configuration' and 'configLocation' can not specified with together");
-        clearCache();
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
 
-    protected void clearCache() throws IOException {
-        //TODO 清理掉资源  建议不要保留这个玩意了
-        SqlRunner.DEFAULT.close();
-        TableInfoHelper.clearCache();
-    }
 
     /**
      * Build a {@code SqlSessionFactory} instance.

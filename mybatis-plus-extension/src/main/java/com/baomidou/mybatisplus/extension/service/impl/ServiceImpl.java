@@ -230,7 +230,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected boolean executeBatch(Consumer<SqlSession> consumer) {
-        return SqlHelper.executeBatch(this.sqlSessionFactory, this.entityClass, this.log, consumer);
+        return SqlHelper.executeBatch(this.sqlSessionFactory, this.log, consumer);
     }
 
     /**
@@ -244,7 +244,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @since 3.3.1
      */
     protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
-        return SqlHelper.executeBatch(this.sqlSessionFactory, this.entityClass, this.log, list, batchSize, consumer);
+        return SqlHelper.executeBatch(this.sqlSessionFactory, this.log, list, batchSize, consumer);
     }
 
     /**

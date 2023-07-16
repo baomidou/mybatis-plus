@@ -634,9 +634,4 @@ public class TableInfoHelper {
         return new SelectKeyGenerator(mappedStatement, true);
     }
 
-    public static void clearCache(){
-        TABLE_INFO_CACHE.clear();
-        TABLE_NAME_INFO_CACHE.clear();
-    }
-
 }
