@@ -42,7 +42,6 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     @SuppressWarnings("unchecked")
     public BaseDbTest() {
-        SqlRunner.DEFAULT.close();
         DataSource ds = dataSource();
         List<String> tableSql = tableSql();
         String tableDataSql = tableDataSql();

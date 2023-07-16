@@ -95,7 +95,7 @@ public class Db {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
 
     /**
@@ -122,7 +122,7 @@ public class Db {
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal)
                 || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass, SqlMethod.SELECT_BY_ID), entity));
@@ -214,7 +214,7 @@ public class Db {
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
