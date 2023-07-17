@@ -33,7 +33,8 @@ public class SqlInjectionUtils {
     /**
      * 使用'、;或注释截断SQL检查正则
      */
-    private static final Pattern SQL_COMMENT_PATTERN = Pattern.compile("'.*(or|union|--|#|/*|;)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SQL_COMMENT_PATTERN = Pattern.compile("(['\"]?.*(\\bor\\b|\\bunion\\b|--|#|/\\*|;))", Pattern.CASE_INSENSITIVE);
+
 
     /**
      * 检查参数是否存在 SQL 注入
