@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
     @Test
      void sqlTest() {
         assertSql(false, "insert abc");
+        assertSql(true, "insert into user (id,name) value (1, 'qm')");
         assertSql(true, "SELECT * FROM user");
         assertSql(true, "delete from user");
         assertSql(true, "drop TABLE user");
