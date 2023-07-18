@@ -43,6 +43,18 @@ import org.junit.jupiter.api.Test;
         assertSql(true, "\\\" or 1=1 and \\\"123\\\"=\\\"123\\\"");
         //Wrapper的apply情况
         assertSql(true, "1 = 1) OR 1 = 1 --");
+
+        // https://github.com/baomidou/mybatis-plus/pull/5438/files
+        assertSql(false, "insert");
+        assertSql(false, "union");
+        assertSql(false, "or");
+        assertSql(false, "delete");
+        assertSql(false, "drop");
+        assertSql(true, "AND age not in (1,2,3)");
+        assertSql(true, "and age <> 1");
+        assertSql(false,"ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
+        assertSql(true,"ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
+        assertSql(true, "or 1 = 1");
     }
 
     private void assertSql(boolean injection, String sql) {
