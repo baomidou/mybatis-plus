@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author nieqiuqiu 2020/7/2
@@ -38,6 +39,8 @@ class CollectionUtilsTest {
         map = newHashMap(16);
         Assertions.assertEquals(16, getTableSize(map));
         Assertions.assertEquals(12, getThresholdValue(map));
+
+        computeIfAbsent();
     }
 
     private Map<String, String> newHashMapWithExpectedSize(int size) {
@@ -63,6 +66,13 @@ class CollectionUtilsTest {
         Field field = map.getClass().getDeclaredField("threshold");
         field.setAccessible(true);
         return (int) field.get(map);
+    }
+
+    private void computeIfAbsent() {
+
+        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        CollectionUtils.computeIfAbsent(map, "AaAa", key -> map.computeIfAbsent("BBBB", key2 -> "noah"));
+        System.out.println("i can return");
     }
 
 }
