@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.generator.samples;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import org.junit.jupiter.api.Test;
 
 /**
  * PostgreSQL 代码生成
@@ -19,11 +18,11 @@ public class PostgreSQLGeneratorTest extends BaseGeneratorTest {
         .Builder("jdbc:postgresql://xxxx:5432/postgres", "postgres", "postgres")
         .build();
 
-    @Test
-    public void testSimple() {
+    public static void main(String[] args) {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         generator.global(globalConfig().build());
         generator.execute();
     }
+
 }

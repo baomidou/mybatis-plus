@@ -185,7 +185,7 @@ subprojects {
         }
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
-        exclude("**/generator/**")
+//        exclude("**/generator/**")
     }
 
     task javadocJar(type: Jar) {

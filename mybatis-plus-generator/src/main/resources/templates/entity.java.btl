@@ -36,7 +36,7 @@ import lombok.experimental.Accessors;
 @TableName("${schemaName}${table.name}")
 <% } %>
 <% if(springdoc){ %>
-@Schema(name = "${entity}", description = "$!{table.comment}")
+@Schema(name = "${entity}", description = "${table.comment!''}")
 <% }else if(swagger){ %>
 @ApiModel(value = "${entity}对象", description = "${table.comment!''}")
 <% } %>
