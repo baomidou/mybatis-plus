@@ -119,7 +119,7 @@ public enum DbType {
     @Deprecated
     GBASE_INFORMIX("gbase 8s", "南大通用数据库 GBase 8s"),
 
-    SINODB("sinodb","星瑞格数据库"),
+    SINODB("sinodb","SinoDB 数据库"),
     /**
      * Oscar
      */
