@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 import java.util.List;
 
@@ -76,8 +77,7 @@ public class DeleteById extends AbstractMethod {
             sqlMethod = SqlMethod.DELETE_BY_ID;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 tableInfo.getKeyProperty());
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
-            return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, methodName, new RawSqlSource(configuration, sql, Object.class));
         }
     }
 }
