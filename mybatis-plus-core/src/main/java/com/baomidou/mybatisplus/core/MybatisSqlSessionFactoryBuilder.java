@@ -84,7 +84,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
         final IdentifierGenerator identifierGenerator;
         if (null == globalConfig.getIdentifierGenerator()) {
-            identifierGenerator = new DefaultIdentifierGenerator();
+            identifierGenerator = DefaultIdentifierGenerator.getInstance();
             globalConfig.setIdentifierGenerator(identifierGenerator);
         } else {
             identifierGenerator = globalConfig.getIdentifierGenerator();
