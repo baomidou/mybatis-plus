@@ -220,11 +220,31 @@ public interface BaseMapper<T> extends Mapper<T> {
     List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
+     * 根据 entity 条件，查询全部记录（并翻页）
+     *
+     * @param page         分页查询条件
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @since 3.5.3
+     */
+    List<T> selectList(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+
+    /**
      * 根据 Wrapper 条件，查询全部记录
      *
-     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类
      */
     List<Map<String, Object>> selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    /**
+     * 根据 Wrapper 条件，查询全部记录（并翻页）
+     *
+     * @param page         分页查询条件
+     * @param queryWrapper 实体对象封装操作类
+     * @since 3.5.3
+     */
+    List<Map<String, Object>> selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
 
     /**
      * 根据 Wrapper 条件，查询全部记录
@@ -237,10 +257,14 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    default <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
+        List<T> list = selectList(page, queryWrapper);
+        page.setRecords(list);
+        return page;
+    }
 
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
@@ -248,5 +272,10 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
      */
-    <P extends IPage<Map<String, Object>>> P selectMapsPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    default <P extends IPage<Map<String, Object>>> P selectMapsPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
+        List<Map<String, Object>> list = selectMaps(page, queryWrapper);
+        page.setRecords(list);
+        return page;
+    }
+
 }

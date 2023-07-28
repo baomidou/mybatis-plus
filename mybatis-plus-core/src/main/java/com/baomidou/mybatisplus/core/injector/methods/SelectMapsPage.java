@@ -27,9 +27,11 @@ import java.util.Map;
  * 查询满足条件所有数据（并翻页）
  *
  * @author hubin
+ * @deprecated 3.5.3 {@link  com.baomidou.mybatisplus.core.mapper.BaseMapper#selectMaps(com.baomidou.mybatisplus.core.metadata.IPage, com.baomidou.mybatisplus.core.conditions.Wrapper)}
  * @since 2018-04-06
  */
 @SuppressWarnings("serial")
+@Deprecated
 public class SelectMapsPage extends AbstractMethod {
 
     public SelectMapsPage() {
