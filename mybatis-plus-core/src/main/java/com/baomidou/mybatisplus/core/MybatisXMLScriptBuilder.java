@@ -145,20 +145,6 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
         return new MixedSqlNode(contents);
     }
 
-    static class WrapperXnode {
-
-        private final XNode xNode;
-
-        WrapperXnode(XNode xNode) {
-            this.xNode = xNode;
-        }
-
-        public String getStringBody(String def) {
-            return xNode.getStringBody(def);
-        }
-
-    }
-
     private interface NodeHandler {
         void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);
     }

@@ -211,7 +211,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
         try {
-            page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
+            page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST), map));
         } finally {
             closeSqlSession(sqlSession);
         }
