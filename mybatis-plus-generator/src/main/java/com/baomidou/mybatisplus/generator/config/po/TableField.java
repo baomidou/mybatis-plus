@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.IKeyWordsHandler;
@@ -167,6 +168,10 @@ public class TableField {
         }
         if (entity.isTableFieldAnnotationEnable()) {
             this.convert = true;
+        } else {
+            if (this.keyFlag) {
+                this.convert = !ConstVal.DEFAULT_ID_NAME.equals(propertyName);
+            }
         }
         this.propertyName = propertyName;
         return this;
@@ -394,6 +399,13 @@ public class TableField {
          */
         private JdbcType jdbcType;
 
+        /**
+         * 类型名称(可用做额外判断处理,例如在pg下,json,uuid,jsonb,tsquery这种都认为是OHTER 1111)
+         *
+         * @since 3.5.3
+         */
+        private String typeName;
+
         public MetaInfo(DatabaseMetaDataWrapper.Column column, TableInfo tableInfo) {
             if (column != null) {
                 this.tableName = tableInfo.getName();
@@ -404,6 +416,7 @@ public class TableField {
                 this.defaultValue = column.getDefaultValue();
                 this.scale = column.getScale();
                 this.jdbcType = column.getJdbcType();
+                this.typeName = column.getTypeName();
             }
         }
 
@@ -431,17 +444,22 @@ public class TableField {
             return jdbcType;
         }
 
+        public String getTypeName() {
+            return typeName;
+        }
+
         @Override
         public String toString() {
             return "MetaInfo{" +
-                "tableName=" + tableName +
-                ", columnName=" + columnName +
+                "tableName='" + tableName + '\'' +
+                ", columnName='" + columnName + '\'' +
                 ", length=" + length +
                 ", nullable=" + nullable +
                 ", remarks='" + remarks + '\'' +
                 ", defaultValue='" + defaultValue + '\'' +
                 ", scale=" + scale +
                 ", jdbcType=" + jdbcType +
+                ", typeName='" + typeName + '\'' +
                 '}';
         }
     }

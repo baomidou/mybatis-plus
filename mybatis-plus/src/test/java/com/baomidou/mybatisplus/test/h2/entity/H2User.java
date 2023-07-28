@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -53,7 +54,7 @@ public class H2User extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField
+    @TableField(fill = FieldFill.INSERT)
     private Integer testType;
 
     /**

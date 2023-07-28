@@ -9,19 +9,18 @@ import org.junit.jupiter.api.Test;
  * @author hubin
  * @since 2021-08-15
  */
-public class SqlInjectionUtilsTest {
+ class SqlInjectionUtilsTest {
 
     @Test
-    public void sqlTest() {
+     void sqlTest() {
         assertSql(false, "insert abc");
-        assertSql(true, "insert user (id,name) value (1, 'qm')");
+        assertSql(true, "insert into user (id,name) value (1, 'qm')");
         assertSql(true, "SELECT * FROM user");
         assertSql(true, "delete from user");
         assertSql(true, "drop TABLE user");
         assertSql(true, ";TRUNCATE from user");
         assertSql(false, "update");
         assertSql(false, "trigger");
-        assertSql(true, "and name like '%s123%s'");
         assertSql(false, "convert(name using GBK)");
 
         // 无空格
@@ -40,6 +39,22 @@ public class SqlInjectionUtilsTest {
         assertSql(false, "SELECT*FROMuser");
         // 该字符串里包含 setT or
         assertSql(false, "databaseType desc,orderNum desc)");
+        // 双引号情况
+        assertSql(true, "\\\" or 1=1 and \\\"123\\\"=\\\"123\\\"");
+        //Wrapper的apply情况
+        assertSql(true, "1 = 1) OR 1 = 1 --");
+
+        // https://github.com/baomidou/mybatis-plus/pull/5438/files
+        assertSql(false, "insert");
+        assertSql(false, "union");
+        assertSql(false, "or");
+        assertSql(false, "delete");
+        assertSql(false, "drop");
+        assertSql(true, "AND age not in (1,2,3)");
+        assertSql(true, "and age <> 1");
+        assertSql(false,"ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
+        assertSql(true,"ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
+        assertSql(true, "or 1 = 1");
     }
 
     private void assertSql(boolean injection, String sql) {

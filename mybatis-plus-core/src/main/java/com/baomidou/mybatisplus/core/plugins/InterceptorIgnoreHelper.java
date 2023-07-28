@@ -140,7 +140,9 @@ public abstract class InterceptorIgnoreHelper {
             ignoreStrategy = IGNORE_STRATEGY_CACHE.get(id.substring(0, id.length() - SelectKeyGenerator.SELECT_KEY_SUFFIX.length()));
         }
         if (ignoreStrategy == null) {
-            ignoreStrategy = IGNORE_STRATEGY_CACHE.get(id.substring(0, id.lastIndexOf(StringPool.DOT)));
+            // fixed github issues/5342
+            int index = id.lastIndexOf(StringPool.DOT);
+            ignoreStrategy = IGNORE_STRATEGY_CACHE.get(index > 0 ? id.substring(0, index) : id);
         }
         if (ignoreStrategy != null) {
             Boolean apply = function.apply(ignoreStrategy);

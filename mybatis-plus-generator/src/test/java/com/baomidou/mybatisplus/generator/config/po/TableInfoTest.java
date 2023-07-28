@@ -127,7 +127,7 @@ public class TableInfoTest {
         strategyConfig = GeneratorBuilder.strategyConfig();
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, strategyConfig, null, GeneratorBuilder.globalConfig(), null);
         tableInfo = new TableInfo(configBuilder, "user");
-        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").setPropertyName("uid", DbColumnType.LONG).primaryKey(true));
+        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").primaryKey(true).setPropertyName("uid", DbColumnType.LONG));
         tableInfo.importPackage();
         Assertions.assertEquals(3, tableInfo.getImportPackages().size());
         Assertions.assertTrue(tableInfo.getImportPackages().contains(Serializable.class.getName()));
@@ -147,7 +147,7 @@ public class TableInfoTest {
         strategyConfig = GeneratorBuilder.strategyConfigBuilder().entityBuilder().logicDeleteColumnName("delete_flag").build();
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, strategyConfig, null, GeneratorBuilder.globalConfig(), null);
         tableInfo = new TableInfo(configBuilder, "user");
-        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").setPropertyName("uid", DbColumnType.LONG).primaryKey(true));
+        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").primaryKey(true).setPropertyName("uid", DbColumnType.LONG));
         tableInfo.addField(new TableField(configBuilder, "delete_flag").setColumnName("delete_flag").setPropertyName("deleteFlag", DbColumnType.BOOLEAN));
         tableInfo.importPackage();
         Assertions.assertEquals(4, tableInfo.getImportPackages().size());
@@ -167,7 +167,7 @@ public class TableInfoTest {
         strategyConfig = GeneratorBuilder.strategyConfig();
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, strategyConfig.entityBuilder().idType(IdType.ASSIGN_ID).build(), null, null, null);
         tableInfo = new TableInfo(configBuilder, "user").setHavePrimaryKey(true);
-        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").setPropertyName("uid", DbColumnType.LONG).primaryKey(true));
+        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").primaryKey(true).setPropertyName("uid", DbColumnType.LONG));
         tableInfo.importPackage();
         Assertions.assertEquals(3, tableInfo.getImportPackages().size());
         Assertions.assertTrue(tableInfo.getImportPackages().contains(Serializable.class.getName()));
@@ -177,7 +177,7 @@ public class TableInfoTest {
         strategyConfig = GeneratorBuilder.strategyConfig().entityBuilder().addTableFills(new Column("create_time", FieldFill.DEFAULT)).build();
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, strategyConfig, null, GeneratorBuilder.globalConfig(), null);
         tableInfo = new TableInfo(configBuilder, "user").setHavePrimaryKey(true);
-        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").setPropertyName("uid", DbColumnType.LONG).primaryKey(true));
+        tableInfo.addField(new TableField(configBuilder, "u_id").setColumnName("u_id").primaryKey(true).setPropertyName("uid", DbColumnType.LONG));
         tableInfo.addField(new TableField(configBuilder, "create_time").setColumnName("create_time").setPropertyName("createTime", DbColumnType.DATE));
         tableInfo.importPackage();
         Assertions.assertEquals(6, tableInfo.getImportPackages().size());
@@ -191,7 +191,7 @@ public class TableInfoTest {
         strategyConfig = GeneratorBuilder.strategyConfigBuilder().entityBuilder().versionColumnName("version").build();
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, strategyConfig, null, GeneratorBuilder.globalConfig(), null);
         tableInfo = new TableInfo(configBuilder, "user").setHavePrimaryKey(true);
-        tableInfo.addField(new TableField(configBuilder, "u_id").setPropertyName("uid", DbColumnType.LONG).primaryKey(true));
+        tableInfo.addField(new TableField(configBuilder, "u_id").primaryKey(true).setPropertyName("uid", DbColumnType.LONG));
         tableInfo.addField(new TableField(configBuilder, "version").setPropertyName("version", DbColumnType.LONG));
         tableInfo.importPackage();
         Assertions.assertEquals(4, tableInfo.getImportPackages().size());

@@ -35,7 +35,7 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static IdentifierGenerator IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator();
+    private static IdentifierGenerator IDENTIFIER_GENERATOR = entity -> DefaultIdentifierGenerator.getInstance().nextId(entity);
 
     /**
      * 毫秒格式化时间

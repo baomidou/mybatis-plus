@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
@@ -438,10 +439,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         notNull(dataSource, "Property 'dataSource' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
             "Property 'configuration' and 'configLocation' can not specified with together");
-        //TODO 清理掉资源  建议不要保留这个玩意了
-        SqlRunner.DEFAULT.close();
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
+
 
     /**
      * Build a {@code SqlSessionFactory} instance.

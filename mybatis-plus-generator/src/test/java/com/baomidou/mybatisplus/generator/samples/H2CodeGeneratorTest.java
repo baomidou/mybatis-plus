@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
+import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import com.baomidou.mybatisplus.generator.query.SQLQuery;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
      * 数据源配置
      */
     private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig
-        .Builder("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL", "sa", "")
-        .databaseQueryClass(SQLQuery.class) // 设置SQL查询方式，默认的是元数据查询方式
+        .Builder("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE", "sa", "")
+        .databaseQueryClass(DefaultQuery.class) // 设置SQL查询方式，默认的是元数据查询方式
         .build();
 
     /**
@@ -210,7 +211,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testCustomFileBySingle() {
         // 设置自定义输出文件
-        CustomFile customFile = new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build();
+        CustomFile customFile = new CustomFile.Builder().fileName("DTO.java").templatePath("templates/dto.java.vm").packageName("dto").build();
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         generator.injection(injectionConfig().customFile(customFile).build());

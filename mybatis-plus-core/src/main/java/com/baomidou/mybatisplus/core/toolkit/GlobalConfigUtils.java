@@ -49,7 +49,9 @@ public class GlobalConfigUtils {
      * 获取当前的SqlSessionFactory
      *
      * @param clazz 实体类
+     * @deprecated 3.5.3 尽量少用,后期取消此方法获取实例
      */
+    @Deprecated
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);

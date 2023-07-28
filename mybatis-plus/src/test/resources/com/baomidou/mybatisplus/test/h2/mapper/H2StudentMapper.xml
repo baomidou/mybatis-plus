@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper">
+
+    <insert id="insertFillByCustomMethod1">
+        insert into h2user(test_id, name, age, test_type)
+        values (#{testId}, #{name}, #{age}, #{testType})
+    </insert>
+
+    <insert id="insertFillByCustomMethod2">
+        insert into h2user(test_id, name, age, test_type)
+        values (#{et.testId}, #{et.name}, #{et.age}, #{et.testType})
+    </insert>
+
+    <insert id="insertFillByCustomMethod3">
+        insert into h2user(test_id, name, age, test_type)
+        values (#{et.testId}, #{test}, #{et.age}, #{et.testType})
+    </insert>
+
+    <insert id="insertFillByCustomMethod4">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="collection" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod5">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="collection" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod6">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="coll" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod7">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="list" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod8">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="array" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod9">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="array" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod10">
+        insert into h2user(test_id, name, age, test_type)
+        values (#{et.testId}, #{et.name}, #{et.age}, #{et.testType})
+    </insert>
+
+    <insert id="insertFillByCustomMethod11">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="list" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+
+    <insert id="insertFillByCustomMethod12">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="coll" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <insert id="insertFillByCustomMethod13">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="array" item="col" separator=",">
+            (#{col.testId}, #{col.name}, #{col.age}, #{col.testType})
+        </foreach>
+    </insert>
+
+    <update id="updateFillByCustomMethod1">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="list" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod2">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="coll" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod3">
+        update h2user set deleted = 1,last_updated_dt = #{user.lastUpdatedDt} where test_id in (
+        <foreach collection="coll" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateFillByCustomMethod4">
+        update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
+        <foreach collection="colls" item="col" separator=",">
+            #{col}
+        </foreach>
+        )
+    </update>
+
+</mapper>

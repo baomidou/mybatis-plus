@@ -68,6 +68,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2016-09-09
  */
 public class TableInfoHelper {
+
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
     /**

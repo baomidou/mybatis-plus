@@ -19,7 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * H2Database 表数据查询
+ * H2Database 表数据查询 (只适用H2 1.X版本)
  *
  * @author yuxiaobin
  * @since 2019-01-8
