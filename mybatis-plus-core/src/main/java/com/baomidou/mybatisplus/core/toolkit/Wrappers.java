@@ -62,6 +62,17 @@ public final class Wrappers {
     }
 
     /**
+     * 获取 QueryWrapper&lt;T&gt;
+     *
+     * @param entityClass 实体类class
+     * @param <T>    实体类泛型
+     * @return QueryWrapper&lt;T&gt;
+     */
+    public static <T> QueryWrapper<T> query(Class<T> entityClass) {
+        return new QueryWrapper<>(entityClass);
+    }
+
+    /**
      * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
