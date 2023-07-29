@@ -234,7 +234,7 @@ public class SqlRunner implements ISqlRunner {
     }
 
     /**
-     * @deprecated 3.5.3
+     * @deprecated 3.5.3.2
      */
     @Deprecated
     public void close() {

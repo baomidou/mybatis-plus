@@ -182,7 +182,7 @@ public class MybatisParameterHandler implements ParameterHandler {
      * </p>
      *
      * @return 集合参数
-     * @deprecated 3.5.3
+     * @deprecated 3.5.3.2
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Deprecated

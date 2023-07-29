@@ -43,7 +43,7 @@ public abstract class PluginUtils {
     /**
      * 缓存内置的插件对象反射信息
      *
-     * @since 3.5.3
+     * @since 3.5.3.2
      */
     public static final DefaultReflectorFactory DEFAULT_REFLECTOR_FACTORY = new DefaultReflectorFactory();
 

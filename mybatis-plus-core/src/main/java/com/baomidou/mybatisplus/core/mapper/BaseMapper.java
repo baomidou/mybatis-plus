@@ -224,7 +224,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @since 3.5.3
+     * @since 3.5.3.2
      */
     List<T> selectList(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
@@ -241,7 +241,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
-     * @since 3.5.3
+     * @since 3.5.3.2
      */
     List<Map<String, Object>> selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 

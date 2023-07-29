@@ -68,7 +68,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 仅用于缓存 SqlSessionFactory(外部勿进行set,set了也没用)
      *
-     * @deprecated 3.5.3
+     * @deprecated 3.5.3.2
      */
     @Deprecated
     private SqlSessionFactory sqlSessionFactory;
