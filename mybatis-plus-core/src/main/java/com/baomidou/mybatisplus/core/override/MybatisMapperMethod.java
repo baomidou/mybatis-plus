@@ -118,7 +118,9 @@ public class MybatisMapperMethod {
         }
         Assert.notNull(result, "can't found IPage for args!");
         Object param = method.convertArgsToSqlCommandParam(args);
-        List<E> list = sqlSession.selectList(command.getName(), param);
+        // 如果当前处于事务中，循环查询分页时结果将会被错误缓存，添加rowBounds来解决错误缓存
+        RowBounds rowBounds = new RowBounds((int)(result.getCurrent() * result.getSize()), (int)result.getSize());
+        List<E> list = sqlSession.selectList(command.getName(), param, rowBounds);
         result.setRecords(list);
         return result;
     }
