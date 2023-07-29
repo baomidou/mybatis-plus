@@ -29,17 +29,12 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -564,20 +559,6 @@ public interface IService<T> {
      * @return {@link Class<T>}
      */
     Class<T> getEntityClass();
-
-    /**
-     * 判断是否存在满足 Wrapper 条件的数据
-     *
-     * @param queryWrapper 查询条件
-     * @return
-     */
-    default boolean exists(Wrapper<T> queryWrapper) {
-        return !this.page(Page.of(0, 1, false), queryWrapper).getRecords().isEmpty();
-    }
-
-    default Optional<Boolean> existsOpt(Wrapper<T> queryWrapper) {
-        return Optional.of(this.exists(queryWrapper));
-    }
 
     /**
      * 以下的方法使用介绍:
