@@ -71,7 +71,7 @@ public final class SqlHelper {
      * @param clazz 实体类
      * @return SqlSessionFactory
      * @since 3.3.0
-     * @deprecated 3.5.3 尽量少用,后期取消此方法获取实例
+     * @deprecated 3.5.3.2 尽量少用,后期取消此方法获取实例
      */
     @Deprecated
     public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
@@ -83,7 +83,7 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      * @return SqlSession
-     * @deprecated 3.5.3 尽量少用,后期取消打开session方法
+     * @deprecated 3.5.3.2 尽量少用,后期取消打开session方法
      */
     @Deprecated
     public static SqlSession sqlSession(Class<?> clazz) {

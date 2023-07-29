@@ -63,7 +63,7 @@ import java.util.WeakHashMap;
  *
  * @author nieqiurong
  * @see XMLScriptBuilder
- * @since 3.5.3
+ * @since 3.5.3.2
  */
 public class MybatisXMLScriptBuilder extends BaseBuilder {
 

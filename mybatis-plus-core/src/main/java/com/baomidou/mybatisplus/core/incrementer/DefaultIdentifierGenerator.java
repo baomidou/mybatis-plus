@@ -32,7 +32,7 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
 
     /**
      * @see #getInstance()
-     * @deprecated 3.5.3 共享默认单例
+     * @deprecated 3.5.3.2 共享默认单例
      */
     @Deprecated
     public DefaultIdentifierGenerator() {
