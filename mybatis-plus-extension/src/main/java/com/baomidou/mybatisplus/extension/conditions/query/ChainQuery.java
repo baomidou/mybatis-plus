@@ -40,6 +40,17 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
+     * 获取集合
+     *
+     * @param page 分页条件
+     * @return 集合记录
+     * @since 3.5.3.2
+     */
+    default List<T> list(IPage<T> page) {
+        return execute(mapper -> mapper.selectList(page, getWrapper()));
+    }
+
+    /**
      * 获取单个
      *
      * @return 单个
