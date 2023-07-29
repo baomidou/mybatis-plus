@@ -251,10 +251,19 @@ public class TableInfoHelper {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
 
+        // 表追加前缀
         String targetTableName = tableName;
         if (StringUtils.isNotBlank(tablePrefix) && tablePrefixEffect) {
             targetTableName = tablePrefix + targetTableName;
         }
+
+        // 表格式化
+        String tableFormat = dbConfig.getTableFormat();
+        if (StringUtils.isNotBlank(tableFormat)) {
+            targetTableName = String.format(tableFormat, targetTableName);
+        }
+
+        // 表追加 schema 信息
         if (StringUtils.isNotBlank(schema)) {
             targetTableName = schema + StringPool.DOT + targetTableName;
         }

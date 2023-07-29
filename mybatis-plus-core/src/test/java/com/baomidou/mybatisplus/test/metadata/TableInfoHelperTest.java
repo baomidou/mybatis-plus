@@ -145,13 +145,16 @@ class TableInfoHelperTest {
     void testColumnFormat() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         GlobalConfig config = GlobalConfigUtils.defaults();
-        config.getDbConfig().setColumnFormat("pxx_%s");
+        GlobalConfig.DbConfig dbConfig = config.getDbConfig();
+        dbConfig.setColumnFormat("pxx_%s");
+        dbConfig.setTableFormat("mp_%s");
         GlobalConfigUtils.setGlobalConfig(configuration, config);
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Logic.class);
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         fieldList.forEach(i -> {
             assertThat(i.getColumn()).startsWith("pxx_");
         });
+        assertThat(tableInfo.getTableName()).startsWith("mp_");
     }
 
     @Data

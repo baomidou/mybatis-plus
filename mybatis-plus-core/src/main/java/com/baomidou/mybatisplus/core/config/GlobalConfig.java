@@ -121,6 +121,15 @@ public class GlobalConfig implements Serializable {
          */
         private String columnFormat;
         /**
+         * db 表 format
+         * <p>
+         * 例: `%s`
+         * <p>
+         *
+         * @since 3.5.3.2
+         */
+        private String tableFormat;
+        /**
          * entity 的字段(property)的 format,只有在 column as property 这种情况下生效
          * <p>
          * 例: `%s`
