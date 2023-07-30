@@ -16,8 +16,10 @@
 package com.baomidou.mybatisplus.core.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 
@@ -160,7 +162,10 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param columnMap 表字段 map 对象
      */
-    List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);
+    default List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap) {
+        QueryWrapper<T> qw = Wrappers.query();
+        return this.selectList(qw.allEq(columnMap));
+    }
 
     /**
      * 根据 entity 条件，查询一条记录

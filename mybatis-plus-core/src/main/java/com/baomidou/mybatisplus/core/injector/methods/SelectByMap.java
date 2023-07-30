@@ -29,6 +29,7 @@ import java.util.Map;
  * @author hubin
  * @since 2018-04-06
  */
+@Deprecated
 @SuppressWarnings("serial")
 public class SelectByMap extends AbstractMethod {
 

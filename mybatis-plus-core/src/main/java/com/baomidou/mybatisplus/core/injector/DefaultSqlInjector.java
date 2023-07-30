@@ -39,7 +39,6 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             .add(new Delete())
             .add(new DeleteByMap())
             .add(new Update())
-            .add(new SelectByMap())
             .add(new SelectCount())
             .add(new SelectMaps())
             .add(new SelectObjs())
