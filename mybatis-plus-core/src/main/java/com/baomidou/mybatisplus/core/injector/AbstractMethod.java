@@ -199,6 +199,7 @@ public abstract class AbstractMethod implements Constants {
     /**
      * SQL map 查询条件
      */
+    @Deprecated
     protected String sqlWhereByMap(TableInfo table) {
         if (table.isWithLogicDelete()) {
             // 逻辑删除

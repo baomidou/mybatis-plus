@@ -119,6 +119,7 @@ public interface Constants extends StringPool, Serializable {
     /**
      * columnMap
      */
+    @Deprecated
     String COLUMN_MAP = "cm";
     /**
      * columnMap.isEmpty

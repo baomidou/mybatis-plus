@@ -37,7 +37,6 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
         Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
             .add(new Insert())
             .add(new Delete())
-            .add(new DeleteByMap())
             .add(new Update())
             .add(new SelectCount())
             .add(new SelectMaps())

@@ -112,7 +112,10 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param columnMap 表字段 map 对象
      */
-    int deleteByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);
+    default int deleteByMap(Map<String, Object> columnMap) {
+        QueryWrapper<T> qw = Wrappers.query();
+        return this.delete(qw.allEq(columnMap));
+    }
 
     /**
      * 根据 entity 条件，删除记录
@@ -162,7 +165,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param columnMap 表字段 map 对象
      */
-    default List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap) {
+    default List<T> selectByMap(Map<String, Object> columnMap) {
         QueryWrapper<T> qw = Wrappers.query();
         return this.selectList(qw.allEq(columnMap));
     }
