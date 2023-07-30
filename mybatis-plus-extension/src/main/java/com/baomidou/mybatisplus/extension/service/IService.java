@@ -651,22 +651,17 @@ public interface IService<T> {
      * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法
      * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的saveOrUpdate操作）
      * </p>
-     *
-     * @param entity 实体对象
-     */
-    default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
-        return update(entity, updateWrapper) || saveOrUpdate(entity);
-    }
-
-    /**
      * <p>
-     * 根据updateWrapper尝试更新，否继续执行save(T)方法
-     * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的save操作）
+     * 该方法不推荐在多线程并发下使用，并发可能存在间隙锁的问题，可以采用先查询后判断是否更新或保存。
+     * </p>
+     * <p>
+     * 该方法存在安全隐患将在后续大版本删除
      * </p>
      *
      * @param entity 实体对象
      */
-    default boolean updateOrSave(Wrapper<T> updateWrapper, T entity) {
-        return update(updateWrapper) || save(entity);
+    @Deprecated
+    default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
+        return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
 }
