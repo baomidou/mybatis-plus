@@ -371,6 +371,15 @@ public interface IService<T> {
     <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
     /**
+     * 查询指定条件是否存在数据
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default boolean exists(Wrapper<T> queryWrapper) {
+        return getBaseMapper().exists(queryWrapper);
+    }
+
+    /**
      * 查询总记录数
      *
      * @see Wrappers#emptyWrapper()
