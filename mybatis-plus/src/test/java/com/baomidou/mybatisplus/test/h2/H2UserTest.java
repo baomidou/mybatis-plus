@@ -51,6 +51,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+
 /**
  * Mybatis Plus H2 Junit Test
  * JDK 8 run test:
@@ -125,6 +127,17 @@ class H2UserTest extends BaseTest {
     @Order(6)
     void testSelectLambdaById() {
         H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getTestId, 101));
+        Assertions.assertNotNull(h2User);
+    }
+
+
+    @Test
+    @Order(7)
+    void testLambdaTypeHandler() {
+        // 演示 json 格式 Wrapper TypeHandler 查询
+        H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery()
+                .addTypeHandlerCondition(true, H2userNameJsonTypeHandler.class, H2User::getName,
+                    EQ, "{\"id\":101,\"name\":\"Tomcat\"}"));
         Assertions.assertNotNull(h2User);
     }
 

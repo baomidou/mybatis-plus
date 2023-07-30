@@ -11,18 +11,25 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
+ * LambdaQueryWrapper 测试
+ *
  * @author miemie
  * @since 2021-01-27
  */
 class LambdaQueryWrapperTest extends BaseWrapperTest {
 
-    @Test
-    void testLambdaOrderBySqlSegment() {
+    @BeforeAll
+    static void initTableInfo() {
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Table.class);
         Assertions.assertEquals("xxx", tableInfo.getTableName());
+    }
+
+    @Test
+    void testLambdaOrderBySqlSegment() {
         LambdaQueryWrapper lqw = Wrappers.<Table>lambdaQuery().orderByDesc(Table::getId);
         Assertions.assertEquals(lqw.getSqlSegment(), " ORDER BY `id` DESC");
         lqw.clear();

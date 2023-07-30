@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import org.apache.ibatis.type.TypeHandler;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -433,8 +434,34 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param val        条件值
      */
     protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
+        return this.addMappingCondition(condition, null, column, sqlKeyword, val);
+    }
+
+    /**
+     * 添加映射查询条件
+     *
+     * @param condition  是否执行
+     * @param mapping    映射条件，例如: "javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler"
+     * @param column     属性
+     * @param sqlKeyword SQL 关键词
+     * @param val        条件值
+     */
+    public Children addMappingCondition(boolean condition, String mapping, R column, SqlKeyword sqlKeyword, Object val) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), sqlKeyword,
-            () -> formatParam(null, val)));
+            () -> formatParam(mapping, val)));
+    }
+
+    /**
+     * 添加 TypeHandler 映射查询条件
+     *
+     * @param condition        是否执行
+     * @param typeHandlerClass Mybatis TypeHandler 具体实现类
+     * @param column           属性
+     * @param sqlKeyword       SQL 关键词
+     * @param val              条件值
+     */
+    public Children addTypeHandlerCondition(boolean condition, Class<? extends TypeHandler> typeHandlerClass, R column, SqlKeyword sqlKeyword, Object val) {
+        return this.addMappingCondition(condition, "typeHandler=" + typeHandlerClass.getCanonicalName(), column, sqlKeyword, val);
     }
 
     /**
