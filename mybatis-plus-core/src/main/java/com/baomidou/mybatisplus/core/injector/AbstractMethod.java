@@ -232,7 +232,7 @@ public abstract class AbstractMethod implements Constants {
         /**
          * Wrapper SQL
          */
-        String ewEmptyOfNormal = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
+        String _sgEs_ = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
         String andSqlSegment = SqlScriptUtils.convertIf(String.format(" AND ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_NONEMPTYOFNORMAL), true);
         String lastSqlSegment = SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_EMPTYOFNORMAL), true);
 
@@ -242,7 +242,7 @@ public abstract class AbstractMethod implements Constants {
         if (table.isWithLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, true, WRAPPER_ENTITY_DOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
-            sqlScript = SqlScriptUtils.convertIf(ewEmptyOfNormal + NEWLINE + sqlScript + NEWLINE + andSqlSegment + NEWLINE + lastSqlSegment,
+            sqlScript = SqlScriptUtils.convertIf(_sgEs_ + NEWLINE + sqlScript + NEWLINE + andSqlSegment + NEWLINE + lastSqlSegment,
                 String.format("%s != null", WRAPPER), true);
             sqlScript = SqlScriptUtils.convertWhere(table.getLogicDeleteSql(false, true) + NEWLINE + sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
@@ -254,7 +254,7 @@ public abstract class AbstractMethod implements Constants {
         String sqlScript = table.getAllSqlWhere(false, false, true, WRAPPER_ENTITY_DOT);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
         sqlScript = SqlScriptUtils.convertWhere(sqlScript + NEWLINE + andSqlSegment) + NEWLINE + lastSqlSegment;
-        sqlScript = SqlScriptUtils.convertIf(ewEmptyOfNormal + NEWLINE + sqlScript, String.format("%s != null", WRAPPER), true);
+        sqlScript = SqlScriptUtils.convertIf(_sgEs_ + NEWLINE + sqlScript, String.format("%s != null", WRAPPER), true);
         return newLine ? NEWLINE + sqlScript : sqlScript;
     }
 
