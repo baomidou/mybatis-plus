@@ -23,7 +23,7 @@ ext {
 
     lib = [
         "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.7.10",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0",
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
