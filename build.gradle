@@ -11,13 +11,13 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.10',
-        mybatisSpringVersion = '2.0.7',
-        mybatisSpringBootStarterVersion = '2.2.2',
+        mybatisVersion = '3.5.13',
+        mybatisSpringVersion = '3.0.2',
+        mybatisSpringBootStarterVersion = '3.0.2',
         springVersion = '5.3.15',
         springBootVersion = '2.5.3',
         springCloudVersion = '3.1.1',
-        jsqlparserVersion = '4.4', // 4.5 有bug
+        jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
     ]
 
