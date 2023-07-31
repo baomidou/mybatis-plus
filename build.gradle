@@ -60,7 +60,7 @@ ext {
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
-        "h2"                         : "com.h2database:h2:2.1.214",
+        "h2"                         : "com.h2database:h2:2.2.220",
         "mysql"                      : "mysql:mysql-connector-java:8.0.30",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.39.2.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.6.java8",
