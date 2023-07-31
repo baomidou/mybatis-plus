@@ -53,7 +53,7 @@ class EncryptTest {
         System.out.println("----------- AllSqlSet -----------");
         System.out.println(info.getAllSqlSet(true, "ew.entity."));
         System.out.println("----------- AllSqlWhere -----------");
-        System.out.println(info.getAllSqlWhere(true, true, "ew.entity."));
+        System.out.println(info.getAllSqlWhere(false, true, true, "ew.entity."));
     }
 
     @Data

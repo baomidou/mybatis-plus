@@ -349,12 +349,13 @@ public class TableInfo implements Constants {
     /**
      * 获取所有的查询的 sql 片段
      *
+     * @param fistAnd             首个条件是否添加 AND 关键字
      * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
      * @param withId              是否包含 id 项
      * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
+    public String getAllSqlWhere(boolean fistAnd, boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
@@ -369,7 +370,7 @@ public class TableInfo implements Constants {
         }
         String newKeyProperty = newPrefix + keyProperty;
         String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false)
+        return SqlScriptUtils.convertIf(fistAnd ? " AND " + keySqlScript : keySqlScript, String.format("%s != null", newKeyProperty), false)
             + NEWLINE + filedSqlScript;
     }
 

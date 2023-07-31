@@ -229,37 +229,33 @@ public abstract class AbstractMethod implements Constants {
      * @return String
      */
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
+        /**
+         * Wrapper SQL
+         */
+        String ewEmptyOfNormal = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
+        String andSqlSegment = SqlScriptUtils.convertIf(String.format(" AND ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_NONEMPTYOFNORMAL), true);
+        String lastSqlSegment = SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_EMPTYOFNORMAL), true);
+
+        /**
+         * 存在逻辑删除 SQL 注入
+         */
         if (table.isWithLogicDelete()) {
-            String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_DOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
-                true);
-            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true) + NEWLINE);
-            String normalSqlScript = SqlScriptUtils.convertIf(String.format(" AND ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
-                    WRAPPER_NONEMPTYOFNORMAL), true);
-            normalSqlScript += NEWLINE;
-            normalSqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
-                    WRAPPER_EMPTYOFNORMAL), true);
-            sqlScript += normalSqlScript;
-            sqlScript = SqlScriptUtils.convertChoose(String.format("%s != null", WRAPPER), sqlScript,
-                table.getLogicDeleteSql(false, true));
-            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            return newLine ? NEWLINE + sqlScript : sqlScript;
-        } else {
-            String sqlScript = table.getAllSqlWhere(false, true, WRAPPER_ENTITY_DOT);
+            String sqlScript = table.getAllSqlWhere(true, true, true, WRAPPER_ENTITY_DOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
-            sqlScript += NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(String.format(SqlScriptUtils.convertIf(" AND", String.format("%s and %s", WRAPPER_NONEMPTYOFENTITY, WRAPPER_NONEMPTYOFNORMAL), false) + " ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
-                    WRAPPER_NONEMPTYOFWHERE), true);
-            sqlScript = SqlScriptUtils.convertWhere(sqlScript) + NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
-                    WRAPPER_EMPTYOFWHERE), true);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER), true);
+            sqlScript = SqlScriptUtils.convertIf(ewEmptyOfNormal + NEWLINE + sqlScript + NEWLINE + andSqlSegment + NEWLINE + lastSqlSegment,
+                String.format("%s != null", WRAPPER), true);
+            sqlScript = SqlScriptUtils.convertWhere(table.getLogicDeleteSql(false, true) + NEWLINE + sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
+
+        /**
+         * 普通 SQL 注入
+         */
+        String sqlScript = table.getAllSqlWhere(false, false, true, WRAPPER_ENTITY_DOT);
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
+        sqlScript = SqlScriptUtils.convertWhere(sqlScript + NEWLINE + andSqlSegment) + NEWLINE + lastSqlSegment;
+        sqlScript = SqlScriptUtils.convertIf(ewEmptyOfNormal + NEWLINE + sqlScript, String.format("%s != null", WRAPPER), true);
+        return newLine ? NEWLINE + sqlScript : sqlScript;
     }
 
     protected String sqlOrderBy(TableInfo tableInfo) {
