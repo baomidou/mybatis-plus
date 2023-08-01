@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.mapping.SqlSource;
@@ -114,7 +115,12 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
         if (str == null) {
             return null;
         }
-        return CACHE_STRING.computeIfAbsent(str, WeakReference::new).get();
+        String value = CACHE_STRING.computeIfAbsent(str, WeakReference::new).get();
+        //增强安全处理一下,如果实在是GC处理掉了(可能性小),就返回原来.
+        if (StringUtils.isNotBlank(value)) {
+            return value;
+        }
+        return str;
     }
 
 
