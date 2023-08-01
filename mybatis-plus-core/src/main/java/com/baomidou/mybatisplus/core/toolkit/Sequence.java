@@ -80,6 +80,13 @@ public class Sequence {
         this.inetAddress = inetAddress;
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+        initLog();
+    }
+
+    private void initLog() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Initialization Sequence datacenterId:" + this.datacenterId + " workerId:" + this.workerId);
+        }
     }
 
     /**
@@ -95,6 +102,7 @@ public class Sequence {
             String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
+        initLog();
     }
 
     /**
