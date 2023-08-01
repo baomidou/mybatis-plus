@@ -51,8 +51,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-
 /**
  * Mybatis Plus H2 Junit Test
  * JDK 8 run test:
@@ -136,8 +134,8 @@ class H2UserTest extends BaseTest {
     void testLambdaTypeHandler() {
         // 演示 json 格式 Wrapper TypeHandler 查询
         H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery()
-                .addTypeHandlerCondition(true, H2userNameJsonTypeHandler.class, H2User::getName,
-                    EQ, "{\"id\":101,\"name\":\"Tomcat\"}"));
+            .apply("name={0,typeHandler=" + H2userNameJsonTypeHandler.class.getCanonicalName() + "}",
+                "{\"id\":101,\"name\":\"Tomcat\"}"));
         Assertions.assertNotNull(h2User);
     }
 
@@ -761,7 +759,7 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    void testUpdateFill(){
+    void testUpdateFill() {
         Map<String, Object> map;
         H2User h2User;
         h2User = new H2User();
@@ -811,7 +809,7 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    void testListByPage(){
+    void testListByPage() {
         Assertions.assertEquals(userService.list().size(), userService.count());
         Assertions.assertEquals(userService.list(new Page<>(1, 2)).size(), userService.page(new Page<>(1, 2)).getRecords().size());
         Assertions.assertEquals(userService.list(new Page<>(2, 2)).size(), userService.page(new Page<>(2, 2)).getRecords().size());

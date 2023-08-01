@@ -470,7 +470,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @SuppressWarnings("SameParameterValue")
     protected final String formatSqlMaybeWithParam(String sqlStr, Object... params) {
         if (StringUtils.isBlank(sqlStr)) {
-            // todo 何时会这样?
             return null;
         }
         if (ArrayUtils.isNotEmpty(params)) {
