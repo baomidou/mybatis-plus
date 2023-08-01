@@ -15,10 +15,14 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
+import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.scripting.MybatisFreeMarkerLanguageDriver;
 import com.baomidou.mybatisplus.extension.scripting.MybatisThymeleafLanguageDriver;
 import com.baomidou.mybatisplus.extension.scripting.MybatisVelocityLanguageDriver;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig;
@@ -49,6 +53,9 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
 
     private static final String CONFIGURATION_PROPERTY_PREFIX = Constants.MYBATIS_PLUS + ".scripting-language-driver";
 
+    /**
+     * Configuration class for mybatis-freemarker 1.1.x or under.
+     */
     @Configuration
     @ConditionalOnClass(FreeMarkerLanguageDriver.class)
     @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
@@ -78,6 +85,28 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         public FreeMarkerLanguageDriverConfig freeMarkerLanguageDriverConfig() {
             return FreeMarkerLanguageDriverConfig.newInstance();
         }
+    }
+
+    /**
+     * Configuration class for mybatis-velocity 2.0 or under.
+     */
+    @Configuration
+    @ConditionalOnClass(org.mybatis.scripting.velocity.Driver.class)
+    @ConditionalOnMissingClass("org.mybatis.scripting.velocity.VelocityLanguageDriverConfig")
+    @SuppressWarnings("deprecation")
+    public static class LegacyVelocityConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean
+        org.mybatis.scripting.velocity.Driver velocityLanguageDriver() {
+            return new org.mybatis.scripting.velocity.Driver() {
+                @Override
+                public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+                    return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
+                }
+            };
+        }
+
     }
 
     /**
