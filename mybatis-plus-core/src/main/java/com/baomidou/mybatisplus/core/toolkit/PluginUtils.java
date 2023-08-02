@@ -21,6 +21,7 @@ import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
@@ -55,8 +56,9 @@ public abstract class PluginUtils {
     @SuppressWarnings("unchecked")
     public static <T> T realTarget(Object target) {
         if (Proxy.isProxyClass(target.getClass())) {
-            MetaObject metaObject = getMetaObject(target);
-            return realTarget(metaObject.getValue("h.target"));
+            Plugin plugin = (Plugin) Proxy.getInvocationHandler(target);
+            MetaObject metaObject = getMetaObject(plugin);
+            return realTarget(metaObject.getValue("target"));
         }
         return (T) target;
     }
