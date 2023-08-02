@@ -20,7 +20,10 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
-import net.sf.jsqlparser.expression.*;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.RowConstructor;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
@@ -31,6 +34,7 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.update.UpdateSet;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -128,25 +132,25 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             Expression tenantId = tenantLineHandler.getTenantId();
             if (itemsList instanceof MultiExpressionList) {
                 ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
-            }else {
+            } else {
                 List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
-                if(CollectionUtils.isNotEmpty(expressions)){//fix github issue 4998 jsqlparse 4.5 批量insert ItemsList不是MultiExpressionList 了，需要特殊处理
-                    int len=expressions.size();
-                    for(int i=0;i<len;i++){
-                        Expression expression=expressions.get(i);
-                        if( expression instanceof RowConstructor){
+                if (CollectionUtils.isNotEmpty(expressions)) {//fix github issue 4998 jsqlparse 4.5 批量insert ItemsList不是MultiExpressionList 了，需要特殊处理
+                    int len = expressions.size();
+                    for (int i = 0; i < len; i++) {
+                        Expression expression = expressions.get(i);
+                        if (expression instanceof RowConstructor) {
                             ((RowConstructor) expression).getExprList().getExpressions().add(tenantId);
-                        }else if (expression instanceof Parenthesis){
-                            RowConstructor rowConstructor=new RowConstructor()
-                                .withExprList(new ExpressionList(((Parenthesis) expression).getExpression(),tenantId));
-                            expressions.set(i,rowConstructor);
-                        }else {
-                            if(len-1==i){ // (?,?) 只有最后一个expre的时候才拼接tenantId
+                        } else if (expression instanceof Parenthesis) {
+                            RowConstructor rowConstructor = new RowConstructor()
+                                .withExprList(new ExpressionList(((Parenthesis) expression).getExpression(), tenantId));
+                            expressions.set(i, rowConstructor);
+                        } else {
+                            if (len - 1 == i) { // (?,?) 只有最后一个expre的时候才拼接tenantId
                                 expressions.add(tenantId);
                             }
                         }
                     }
-                }else{
+                } else {
                     expressions.add(tenantId);
                 }
             }
@@ -164,6 +168,14 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         if (tenantLineHandler.ignoreTable(table.getName())) {
             // 过滤退出执行
             return;
+        }
+        ArrayList<UpdateSet> sets = update.getUpdateSets();
+        if (!CollectionUtils.isEmpty(sets)) {
+            sets.forEach(us -> us.getExpressions().forEach(ex -> {
+                if (ex instanceof SubSelect) {
+                    processSelectBody(((SubSelect) ex).getSelectBody(), (String) obj);
+                }
+            }));
         }
         update.setWhere(this.andExpression(table, update.getWhere(), (String) obj));
     }

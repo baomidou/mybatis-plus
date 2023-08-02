@@ -37,18 +37,14 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void insert() {
-        assertSql("insert into entity (id) values (?)",
-            "INSERT INTO entity (id, tenant_id) VALUES (?, 1)");
-        assertSql("insert into entity (id) values (?),(?) ",
-            "INSERT INTO entity (id, tenant_id) VALUES (?, 1), (?, 1)");
-        assertSql("insert into entity (id) values (?),(?) ",
-            "INSERT INTO entity (id, tenant_id) VALUES (?, 1),(?, 1)");
         // plain
         assertSql("insert into entity (id) values (?)",
             "INSERT INTO entity (id, tenant_id) VALUES (?, 1)");
         assertSql("insert into entity (id,name) values (?,?)",
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1)");
         // batch
+        assertSql("insert into entity (id) values (?),(?)",
+            "INSERT INTO entity (id, tenant_id) VALUES (?, 1), (?, 1)");
         assertSql("insert into entity (id,name) values (?,?),(?,?)",
             "INSERT INTO entity (id, name, tenant_id) VALUES (?, ?, 1), (?, ?, 1)");
         // 无 insert的列
@@ -84,6 +80,11 @@ class TenantLineInnerInterceptorTest {
     void update() {
         assertSql("update entity set name = ? where id = ?",
             "UPDATE entity SET name = ? WHERE id = ? AND tenant_id = 1");
+
+        // set subSelect
+        assertSql("UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ?) WHERE e.id = ?",
+            "UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ? AND e1.tenant_id = 1) " +
+                "WHERE e.id = ? AND e.tenant_id = 1");
     }
 
     @Test
