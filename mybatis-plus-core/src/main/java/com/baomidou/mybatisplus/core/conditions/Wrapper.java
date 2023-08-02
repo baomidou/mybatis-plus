@@ -160,6 +160,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
                 return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
             case IGNORED:
                 return true;
+            case ALWAYS:
+                return true;
             case NOT_EMPTY:
                 return StringUtils.checkValNotNull(tableInfo.getPropertyValue(entity, e.getProperty()));
             case NEVER:

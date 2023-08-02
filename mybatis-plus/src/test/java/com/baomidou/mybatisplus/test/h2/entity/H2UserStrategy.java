@@ -44,7 +44,7 @@ public class H2UserStrategy extends SuperEntity {
     /**
      * whereStrategy = FieldStrategy.IGNORED 在拼接where条件时是在带上该条件
      */
-    @TableField(value = "name", whereStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "name", whereStrategy = FieldStrategy.ALWAYS)
     private String name;
 
     private AgeEnum age;
@@ -53,7 +53,7 @@ public class H2UserStrategy extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.IGNORED)
+    @TableField(fill = FieldFill.INSERT, updateStrategy = FieldStrategy.ALWAYS)
     private Integer testType;
 
     /**
@@ -61,7 +61,7 @@ public class H2UserStrategy extends SuperEntity {
      *
      * @since 2019-5-7 测试updateStrategy
      */
-    @TableField(value = "`desc`", updateStrategy = FieldStrategy.IGNORED)
+    @TableField(value = "`desc`", updateStrategy = FieldStrategy.ALWAYS)
     private String desc;
 
     /**
