@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.generator.config.IConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+
+import java.util.function.Function;
 
 /**
  * 自定义模板文件配置
@@ -24,6 +27,11 @@ import com.baomidou.mybatisplus.generator.config.IConfigBuilder;
  * @since 3.5.3
  */
 public class CustomFile {
+
+    /**
+     * 文件名称格式化函数
+     */
+    private Function<TableInfo, String> formatNameFunction;
 
     /**
      * 文件名称
@@ -54,6 +62,10 @@ public class CustomFile {
         return fileOverride;
     }
 
+    public Function<TableInfo, String> getFormatNameFunction() {
+        return formatNameFunction;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -82,7 +94,15 @@ public class CustomFile {
         }
 
         /**
-         * 文件名
+         * 文件名称格式化函数
+         */
+        public CustomFile.Builder formatNameFunction(Function<TableInfo, String> formatNameFunction) {
+            this.customFile.formatNameFunction = formatNameFunction;
+            return this;
+        }
+
+        /**
+         * 文件名称
          */
         public CustomFile.Builder fileName(String fileName) {
             this.customFile.fileName = fileName;

@@ -5,18 +5,17 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateType;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
-import com.baomidou.mybatisplus.generator.query.SQLQuery;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -225,12 +224,17 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testCustomFileByList() {
         // 设置自定义输出文件
-        List<CustomFile> customFiles = new ArrayList<>();
-        customFiles.add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build());
-        customFiles.add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo").build());
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
-        generator.injection(injectionConfig().customFile(customFiles).build());
+        // 警用默认模板
+        generator.template(templateConfig().disable(TemplateType.CONTROLLER).build());
+        generator.injection(injectionConfig().customFile(new ArrayList<CustomFile>() {{
+            add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build());
+            add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo").build());
+            // 通过格式化函数添加文件最后缀
+            add(new CustomFile.Builder().formatNameFunction(tableInfo -> "Prefix" + tableInfo.getEntityName() + "Suffix")
+                .fileName("Controller.java").templatePath("/templates/controller.java.vm").packageName("controller").build());
+        }}).build());
         generator.global(globalConfig().build());
         generator.execute();
     }

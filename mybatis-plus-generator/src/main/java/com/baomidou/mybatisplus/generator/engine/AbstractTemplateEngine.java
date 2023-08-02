@@ -74,7 +74,8 @@ public abstract class AbstractTemplateEngine {
             if (StringUtils.isNotBlank(file.getPackageName())) {
                 filePath = filePath + File.separator + file.getPackageName().replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
             }
-            String fileName = filePath + File.separator + entityName + file.getFileName();
+            Function<TableInfo, String> formatNameFunction = file.getFormatNameFunction();
+            String fileName = filePath + File.separator + (null != formatNameFunction ? formatNameFunction.apply(tableInfo) : entityName) + file.getFileName();
             outputFile(new File(fileName), objectMap, file.getTemplatePath(), file.isFileOverride());
         });
     }
@@ -135,7 +136,7 @@ public abstract class AbstractTemplateEngine {
         // IMpService.java
         String entityName = tableInfo.getEntityName();
         // 判断是否要生成service接口
-        if(tableInfo.isServiceInterface()) {
+        if (tableInfo.isServiceInterface()) {
             String servicePath = getPathInfo(OutputFile.service);
             if (StringUtils.isNotBlank(tableInfo.getServiceName()) && StringUtils.isNotBlank(servicePath)) {
                 getTemplateFilePath(TemplateConfig::getService).ifPresent(service -> {
