@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateType;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
@@ -167,6 +168,26 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
             .entity("/templates/entity1.java")
             .build());
         generator.global(globalConfig().build());
+        generator.execute();
+    }
+
+    /**
+     * 测试日期类型
+     */
+    @Test
+    public void testDateType() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(strategyConfig().build());
+        // 关闭其它模块生成只生成实体
+        generator.template(templateConfig().disable(
+            TemplateType.CONTROLLER,
+            TemplateType.SERVICE,
+            TemplateType.SERVICE_IMPL,
+            TemplateType.XML,
+            TemplateType.MAPPER
+        ).build());
+        // 日期类型强制设置为 Date 类型
+        generator.global(globalConfig().dateType(DateType.ONLY_DATE).build());
         generator.execute();
     }
 
