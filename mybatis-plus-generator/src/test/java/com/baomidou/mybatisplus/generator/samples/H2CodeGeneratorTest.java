@@ -172,6 +172,25 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     }
 
     /**
+     * 测试文件覆盖
+     */
+    @Test
+    public void testFileOverride() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(strategyConfig()
+            // 实体文件覆盖
+            .entityBuilder().enableFileOverride()
+            // Mapper文件覆盖
+            .mapperBuilder().enableFileOverride()
+            // Service文件覆盖
+            .serviceBuilder().enableFileOverride()
+            // Controller文件覆盖
+            .controllerBuilder().enableFileOverride()
+            .build());
+        generator.execute();
+    }
+
+    /**
      * 测试日期类型
      */
     @Test
