@@ -18,7 +18,7 @@ ext {
         springBootVersion = '2.5.3',
         springCloudVersion = '3.1.1',
         jsqlparserVersion = '4.6',
-        junitVersion = '5.9.0',
+        junitVersion = '5.10.0',
     ]
 
     lib = [
