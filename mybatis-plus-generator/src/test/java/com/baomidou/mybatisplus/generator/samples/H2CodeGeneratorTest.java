@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -276,6 +277,23 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
                 .fileName("Controller.java").templatePath("/templates/controller.java.vm").packageName("controller").build());
         }}).build());
         generator.global(globalConfig().build());
+        generator.execute();
+    }
+
+    /**
+     * 测试内置模板路径自定义输出
+     */
+    @Test
+    public void testOutputFile() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(strategyConfig().outputFile(((filePath, outputFile) -> {
+            File file = new File(filePath);
+            if(outputFile == OutputFile.controller) {
+                // 调整输出路径为当前目录
+                return new File("." + File.separator + file.getName());
+            }
+            return file;
+        })).build());
         generator.execute();
     }
 
