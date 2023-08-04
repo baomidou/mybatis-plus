@@ -14,7 +14,7 @@ fix: 修复生成器无法通过cfg.取值
 fix: 修复单元测试下MockBean时事务回滚失败
 fix: 修复Warpper类nonEmptyOfWhere方法命名不规范,导致Ognl未正确缓存带来的执行开销
 opt: 增强参数填充处理器,防止因参数名称与填充名称一致类型不匹配导致转换错误
-opt: 减少方法注入,去除SelectPage,SelectMapsPage,SelectByMap,SelectByMap注入
+opt: 优化方法注入,去除SelectPage,SelectMapsPage,SelectByMap,DeleteByMap注入
 opt: 减少MappedStatement堆内存占用
 opt: 解决PluginUtils重复获取元数据带来的性能消耗
 opt: 注入方法去除多余的换行符
