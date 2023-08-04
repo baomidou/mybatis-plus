@@ -16,7 +16,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.3.1',
         springVersion = '5.3.15',
         springBootVersion = '2.5.3',
-        springCloudVersion = '3.1.1',
+        springCloudVersion = '4.0.4',
         jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
     ]
