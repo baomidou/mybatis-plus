@@ -33,6 +33,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
+@Suppress("serial")
 open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
 
     /**
@@ -68,9 +69,9 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         else sqlSet.stream().collect(joining(StringPool.COMMA))
     }
 
-    override fun setSql(condition: Boolean, sql: String): KtUpdateWrapper<T> {
-        if (condition && StringUtils.isNotBlank(sql)) {
-            sqlSet.add(sql)
+    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateWrapper<T> {
+        if (condition && StringUtils.isNotBlank(setSql)) {
+            sqlSet.add(formatSqlMaybeWithParam(setSql, *params))
         }
         return typedThis
     }

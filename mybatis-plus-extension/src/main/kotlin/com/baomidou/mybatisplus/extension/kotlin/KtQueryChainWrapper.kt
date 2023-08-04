@@ -27,11 +27,11 @@ import kotlin.reflect.KProperty
  * @author FlyInWind
  * @since 2020-10-18
  */
+@Suppress("serial")
 open class KtQueryChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>
 ) : AbstractChainWrapper<T, KProperty<*>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
     ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty<*>> {
-
 
     constructor(baseMapper: BaseMapper<T>, entityClass: Class<T>) : this(baseMapper) {
         super.wrapperChildren = KtQueryWrapper(entityClass)

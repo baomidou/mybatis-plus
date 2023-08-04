@@ -30,6 +30,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan,MieMie,HanChunLin
  * @since 2018-11-07
  */
+@Suppress("serial")
 abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty<*>, Children>() {
 
     /**

@@ -54,6 +54,7 @@ public interface Join<Children> extends Serializable {
      * <p>例1: apply("id = 1")</p>
      * <p>例2: apply("date_format(dateColumn,'%Y-%m-%d') = '2008-08-08'")</p>
      * <p>例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())</p>
+     * <p>例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")</p>
      *
      * @param condition 执行条件
      * @param values    数据数组

@@ -84,9 +84,9 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     @Override
-    public UpdateWrapper<T> setSql(boolean condition, String sql) {
-        if (condition && StringUtils.isNotBlank(sql)) {
-            sqlSet.add(sql);
+    public UpdateWrapper<T> setSql(boolean condition, String setSql, Object... params) {
+        if (condition && StringUtils.isNotBlank(setSql)) {
+            sqlSet.add(formatSqlMaybeWithParam(setSql, params));
         }
         return typedThis;
     }

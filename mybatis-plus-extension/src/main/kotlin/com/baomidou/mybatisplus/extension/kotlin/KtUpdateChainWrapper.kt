@@ -25,11 +25,11 @@ import kotlin.reflect.KProperty
  * @author FlyInWind
  * @since 2020-10-18
  */
+@Suppress("serial")
 open class KtUpdateChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>
 ) : AbstractChainWrapper<T, KProperty<*>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
     ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KProperty<*>> {
-
 
     constructor(baseMapper: BaseMapper<T>, entityClass: Class<T>) : this(baseMapper) {
         super.wrapperChildren = KtUpdateWrapper(entityClass)
@@ -44,8 +44,8 @@ open class KtUpdateChainWrapper<T : Any>(
         return typedThis
     }
 
-    override fun setSql(condition: Boolean, sql: String): KtUpdateChainWrapper<T> {
-        wrapperChildren.setSql(condition, sql)
+    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateChainWrapper<T> {
+        wrapperChildren.setSql(condition, setSql, params)
         return typedThis
     }
 

@@ -84,9 +84,9 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
-    public LambdaUpdateWrapper<T> setSql(boolean condition, String sql) {
-        if (condition && StringUtils.isNotBlank(sql)) {
-            sqlSet.add(sql);
+    public LambdaUpdateWrapper<T> setSql(boolean condition, String setSql, Object... params) {
+        if (condition && StringUtils.isNotBlank(setSql)) {
+            sqlSet.add(formatSqlMaybeWithParam(setSql, params));
         }
         return typedThis;
     }

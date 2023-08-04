@@ -102,6 +102,7 @@ subprojects {
         testImplementation "${lib["junit-jupiter"]}"
         testImplementation "org.mockito:mockito-junit-jupiter:4.6.1"
         testImplementation "${lib["lagarto"]}"
+        testImplementation "${lib["logback-classic"]}"
     }
 
     tasks.withType(JavaCompile) {

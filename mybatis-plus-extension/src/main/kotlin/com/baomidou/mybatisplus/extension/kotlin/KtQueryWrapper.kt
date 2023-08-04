@@ -32,6 +32,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
+@Suppress("serial")
 open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KProperty<*>> {
 
     /**
