@@ -3,3 +3,4 @@ fix: 在主键的`IdType`为`AUTO`的情况下,`Table#getAllInsertSqlColumnMaybe
 feat: `wrapper#apply`支持配置`mapping`比如`column={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}`
 fix: 租户插件支持`update set subSelect`的情况
 feat: `updateWrapper#setSql`方法支持`动态入参`参考`wrapper#apply`方法
+perf: `ktWrapper`加强泛型限制
