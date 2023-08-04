@@ -30,7 +30,6 @@ import java.util.Map;
  * @since 2018-04-06
  */
 @Deprecated
-@SuppressWarnings("serial")
 public class DeleteByMap extends AbstractMethod {
 
     public DeleteByMap() {
@@ -51,12 +50,12 @@ public class DeleteByMap extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
         if (tableInfo.isWithLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), sqlWhereByMap(tableInfo));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
+            SqlSource sqlSource = super.createSqlSource(configuration, sql, Map.class);
             return addUpdateMappedStatement(mapperClass, Map.class, methodName, sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_MAP;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlWhereByMap(tableInfo));
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
+            SqlSource sqlSource = super.createSqlSource(configuration, sql, Map.class);
             return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
         }
     }

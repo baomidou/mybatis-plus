@@ -31,7 +31,6 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-04-06
  * @deprecated 3.5.3.2 {@link BaseMapper#selectList(IPage, Wrapper)}
  */
-@SuppressWarnings("serial")
 @Deprecated
 public class SelectPage extends AbstractMethod {
 
@@ -52,7 +51,7 @@ public class SelectPage extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_PAGE;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

@@ -30,7 +30,6 @@ import java.util.Map;
  * @deprecated 3.5.3.2 {@link  com.baomidou.mybatisplus.core.mapper.BaseMapper#selectMaps(com.baomidou.mybatisplus.core.metadata.IPage, com.baomidou.mybatisplus.core.conditions.Wrapper)}
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 @Deprecated
 public class SelectMapsPage extends AbstractMethod {
 
@@ -51,7 +50,7 @@ public class SelectMapsPage extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_MAPS_PAGE;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Map.class);
     }
 }

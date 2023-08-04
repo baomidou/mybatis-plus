@@ -30,7 +30,6 @@ import java.util.Map;
  * @since 2018-04-06
  */
 @Deprecated
-@SuppressWarnings("serial")
 public class SelectByMap extends AbstractMethod {
 
     public SelectByMap() {
@@ -50,7 +49,7 @@ public class SelectByMap extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, false),
             tableInfo.getTableName(), sqlWhereByMap(tableInfo));
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, Map.class);
         return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

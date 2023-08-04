@@ -27,7 +27,6 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author hubin
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 public class SelectList extends AbstractMethod {
 
     public SelectList() {
@@ -47,7 +46,7 @@ public class SelectList extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_LIST;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

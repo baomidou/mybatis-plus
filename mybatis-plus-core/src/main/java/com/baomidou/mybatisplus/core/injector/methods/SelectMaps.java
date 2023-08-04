@@ -29,7 +29,6 @@ import java.util.Map;
  * @author hubin
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 public class SelectMaps extends AbstractMethod {
 
     public SelectMaps() {
@@ -49,7 +48,7 @@ public class SelectMaps extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_MAPS;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo),sqlOrderBy(tableInfo), sqlComment());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Map.class);
     }
 }

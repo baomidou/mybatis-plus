@@ -27,7 +27,6 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author hubin
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 public class UpdateById extends AbstractMethod {
 
     public UpdateById() {
@@ -49,7 +48,7 @@ public class UpdateById extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }
 }

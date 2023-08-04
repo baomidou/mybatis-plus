@@ -42,7 +42,6 @@ import static java.util.stream.Collectors.toList;
  * @since 2018-11-09
  * @deprecated 3.5.0 {@link com.baomidou.mybatisplus.core.injector.methods.DeleteById}
  */
-@SuppressWarnings("serial")
 @Deprecated
 public class LogicDeleteByIdWithFill extends AbstractMethod {
 
@@ -82,7 +81,7 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 tableInfo.getKeyProperty());
         }
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }
 

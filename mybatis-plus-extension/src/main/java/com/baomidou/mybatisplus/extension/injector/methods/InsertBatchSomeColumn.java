@@ -59,8 +59,6 @@ import java.util.function.Predicate;
  * @author miemie
  * @since 2018-11-29
  */
-
-@SuppressWarnings("serial")
 public class InsertBatchSomeColumn extends AbstractMethod {
 
     /**
@@ -129,7 +127,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
             }
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 

@@ -42,7 +42,6 @@ import java.util.function.Predicate;
  * @author hubin
  * @since 2019-04-12
  */
-@SuppressWarnings("serial")
 public class AlwaysUpdateSomeColumnById extends AbstractMethod {
 
     /**
@@ -83,7 +82,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
         sqlSet = SqlScriptUtils.convertSet(sqlSet);
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet,
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }
 

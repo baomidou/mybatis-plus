@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.logging.Log;
@@ -48,7 +49,6 @@ import static java.util.stream.Collectors.joining;
  * @author hubin
  * @since 2018-04-06
  */
-@SuppressWarnings("serial")
 public abstract class AbstractMethod implements Constants {
 
     protected final Log logger = LogFactory.getLog(getClass());
@@ -437,5 +437,17 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
+
+
+    /**
+     * @param configuration 配置对象
+     * @param script        (统一去除空白行)
+     * @param parameterType 参数类型
+     * @return SqlSource
+     * @since 3.5.3.2
+     */
+    public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
+        return languageDriver.createSqlSource(configuration, SqlSourceBuilder.removeExtraWhitespaces(script), parameterType);
+    }
 
 }

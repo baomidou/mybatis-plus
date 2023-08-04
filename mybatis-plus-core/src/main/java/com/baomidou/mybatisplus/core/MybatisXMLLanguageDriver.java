@@ -55,7 +55,6 @@ public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
     @Override
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
         GlobalConfig.DbConfig config = GlobalConfigUtils.getDbConfig(configuration);
-        script = script.replaceAll("\r", "").replaceAll("\n", "");
         if (config.isReplacePlaceholder()) {
             List<String> find = SqlUtils.findPlaceholder(script);
             if (CollectionUtils.isNotEmpty(find)) {
