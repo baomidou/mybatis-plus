@@ -189,6 +189,11 @@ subprojects {
 //        exclude("**/generator/**")
     }
 
+    task cleanBuildDir(type: Delete) {
+        delete "${projectDir}/out"
+    }
+    tasks.clean.dependsOn(cleanBuildDir)
+
     task javadocJar(type: Jar) {
         archiveClassifier = 'javadoc'
         from javadoc

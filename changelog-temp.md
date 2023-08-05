@@ -25,3 +25,4 @@ feat: 参数填充器支持多参数填充
 feat: BaseMapper新增selectMaps(page, wrapper)与selectList(page, wrapper)方法
 feat: 升级mybatis至3.5.13,mybatis-spring至2.1.1
 docs: 修正DdlHelper注释错误
+feat: jsqlparser提供统一解析类,可配置解析函数,并加入缓存选项
