@@ -6,6 +6,7 @@ create table `t_simple`
     age         int comment '年龄',
     delete_flag tinyint(1) comment '删除标识1',
     deleted tinyint(1) comment '删除标识2',
+    is_ok     tinyint(1) comment '测试布尔类型',
     version     bigint comment '版本',
     create_time datetime comment '创建时间',
     update_time datetime comment '更新时间',

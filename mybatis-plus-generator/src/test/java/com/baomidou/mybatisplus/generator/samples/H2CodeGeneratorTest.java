@@ -2,15 +2,18 @@ package com.baomidou.mybatisplus.generator.samples;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.OutputFile;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateType;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
+import com.baomidou.mybatisplus.generator.type.ITypeConvertHandler;
+import com.baomidou.mybatisplus.generator.type.TypeRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -43,13 +46,14 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         return new StrategyConfig.Builder().addInclude("t_simple"); // 设置需要生成的表名
     }
 
+    private static final String H2URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";
+
     /**
      * 数据源配置
      */
-    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig
-        .Builder("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE", "sa", "")
-        .databaseQueryClass(DefaultQuery.class) // 设置SQL查询方式，默认的是元数据查询方式
-        .build();
+    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(H2URL, "sa", "")
+        // 设置SQL查询方式，默认的是元数据查询方式
+        .databaseQueryClass(DefaultQuery.class).build();
 
     /**
      * 简单生成
@@ -288,7 +292,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().outputFile(((filePath, outputFile) -> {
             File file = new File(filePath);
-            if(outputFile == OutputFile.controller) {
+            if (outputFile == OutputFile.controller) {
                 // 调整输出路径为当前目录
                 return new File("." + File.separator + file.getName());
             }
@@ -304,6 +308,27 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testEnableTableFieldAnnotation() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().entityBuilder().enableTableFieldAnnotation().build());
+        generator.execute();
+    }
+
+    /**
+     * 测试开启Boolean类型字段移除is前缀
+     */
+    @Test
+    public void testEnableRemoveIsPrefix() {
+        AutoGenerator generator = new AutoGenerator(new DataSourceConfig.Builder(H2URL, "sa", "")
+            .typeConvertHandler(new ITypeConvertHandler() {
+                @Override
+                public @NotNull IColumnType convert(GlobalConfig globalConfig, TypeRegistry typeRegistry, TableField.MetaInfo metaInfo) {
+                    IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
+                    if (dbColumnType == DbColumnType.BYTE) {
+                        // 这里按照自己的要求转换为指定类型
+                        return DbColumnType.BOOLEAN;
+                    }
+                    return dbColumnType;
+                }
+            }).build());
+        generator.strategy(strategyConfig().entityBuilder().enableRemoveIsPrefix().build());
         generator.execute();
     }
 
