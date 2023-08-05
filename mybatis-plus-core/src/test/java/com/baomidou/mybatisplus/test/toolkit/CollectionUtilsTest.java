@@ -3,6 +3,8 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 class CollectionUtilsTest {
 
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void testCreateHashMap() throws ReflectiveOperationException {
         Map<String, String> hashMap = newHashMapWithExpectedSize(4);
         Assertions.assertEquals(8, getTableSize(hashMap));

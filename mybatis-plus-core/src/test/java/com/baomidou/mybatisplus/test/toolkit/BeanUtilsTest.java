@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.util.Map;
 
@@ -35,6 +37,7 @@ class BeanUtilsTest {
      * 测试 beanToMap
      */
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void beanMapConvertTest() {
         Map<String, Object> map = BeanUtils.beanToMap(new User() {{
             setId(123);

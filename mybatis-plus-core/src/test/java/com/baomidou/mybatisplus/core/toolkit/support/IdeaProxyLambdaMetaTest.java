@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.core.toolkit.support;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleProxies;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class IdeaProxyLambdaMetaTest {
 
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void test() throws NoSuchMethodException, IllegalAccessException {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle handle = lookup.findStatic(IdeaProxyLambdaMetaTest.class, "s", MethodType.methodType(int.class));

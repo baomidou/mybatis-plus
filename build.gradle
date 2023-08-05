@@ -179,11 +179,11 @@ subprojects {
         // 增加jvm参数不是一个很好的处理方案,最好还是只用java8下跑,下面只是兼容运行一下,但在高版本jdk下还有很多第三方反射库存在问题(等待完全升级)
         // 部分测试用例如果需要在高版本java下运行用@EnabledOnJre
         // 例如: https://github.com/cglib/cglib/issues/191
-        if (JavaVersion.current().isJava9Compatible()) {
-            jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
-                        "--add-opens", "java.base/java.util=ALL-UNNAMED",
-                        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
-        }
+//        if (JavaVersion.current().isJava9Compatible()) {
+//            jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
+//                        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+//                        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
+//        }
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
 //        exclude("**/generator/**")
