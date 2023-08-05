@@ -298,6 +298,16 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     }
 
     /**
+     * 测试开启生成实体时生成字段注解
+     */
+    @Test
+    public void testEnableTableFieldAnnotation() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(strategyConfig().entityBuilder().enableTableFieldAnnotation().build());
+        generator.execute();
+    }
+
+    /**
      * 自定义模板（列表）
      */
     @Test
