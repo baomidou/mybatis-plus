@@ -312,6 +312,30 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     }
 
     /**
+     * 测试开正则匹配包含的表名
+     */
+    @Test
+    public void testAddIncludeTables() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(new StrategyConfig.Builder().addInclude("^t_.*").build());
+        generator.execute();
+    }
+
+    /**
+     * 测试开正则匹配排除的表名
+     */
+    @Test
+    public void testAddExcludeTables() {
+        AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        generator.strategy(new StrategyConfig.Builder().addExclude(
+            // 排除 st 结尾的表
+            ".*st$",
+            // 排除非 t_ 开头的表
+            "^(?!t_).*"
+        ).build()).execute();
+    }
+
+    /**
      * 测试开启Boolean类型字段移除is前缀
      */
     @Test
