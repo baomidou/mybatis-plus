@@ -135,7 +135,7 @@ public class DdlHelper {
 
     public static ScriptRunner getScriptRunner(Connection connection, boolean autoCommit) {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
-        Resources.setCharset(Charset.forName("UTF-8"));
+        Resources.setCharset(Charset.forName(StringPool.UTF_8));
         scriptRunner.setAutoCommit(autoCommit);
         scriptRunner.setEscapeProcessing(false);
         scriptRunner.setRemoveCRs(true);
