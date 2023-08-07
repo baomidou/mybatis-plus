@@ -12,3 +12,10 @@ create table `t_simple`
     update_time datetime comment '更新时间',
     primary key (id)
 ) COMMENT = '测试表';
+drop table if exists `t_test`;
+create table `t_test`
+(
+    id          int auto_increment comment 'id',
+    name        varchar(50) comment '姓名',
+    primary key (id)
+) COMMENT = '测试表';
