@@ -24,18 +24,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * DDL 辅助类
@@ -83,6 +86,15 @@ public class DdlHelper {
                 List<Map<String, Object>> objectMap = sqlRunner.selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
                 if (null == objectMap || objectMap.isEmpty()) {
                     log.debug("run script file: {}", sqlFile);
+                    String[] sqlFileArr = sqlFile.split(StringPool.HASH);
+                    if (Objects.equals(2, sqlFileArr.length)) {
+                        // 命令间的分隔符
+                        scriptRunner.setDelimiter(sqlFileArr[1]);
+                        // 原始文件路径
+                        sqlFile = sqlFileArr[0];
+                    } else {
+                        scriptRunner.setDelimiter(StringPool.SEMICOLON);
+                    }
                     File file = new File(sqlFile);
                     if (file.exists()) {
                         scriptRunner.runScript(new FileReader(file));
@@ -123,8 +135,12 @@ public class DdlHelper {
 
     public static ScriptRunner getScriptRunner(Connection connection, boolean autoCommit) {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
+        Resources.setCharset(Charset.forName("UTF-8"));
         scriptRunner.setAutoCommit(autoCommit);
+        scriptRunner.setEscapeProcessing(false);
+        scriptRunner.setRemoveCRs(true);
         scriptRunner.setStopOnError(true);
+        scriptRunner.setFullLineDelimiter(false);
         return scriptRunner;
     }
 
