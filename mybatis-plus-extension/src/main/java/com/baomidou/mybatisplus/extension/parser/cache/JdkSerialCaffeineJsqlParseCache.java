@@ -18,14 +18,7 @@ package com.baomidou.mybatisplus.extension.parser.cache;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.Setter;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.Statements;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
@@ -52,12 +45,6 @@ public class JdkSerialCaffeineJsqlParseCache extends AbstractCaffeineJsqlParseCa
 
     @Override
     public Object deserialize(String sql, byte[] bytes) {
-        try {
-            return SerializationUtils.deserialize(bytes);
-        } catch (Exception e) {
-            cache.invalidate(sql);
-            logger.error("deserialize error", e);
-        }
-        return null;
+        return SerializationUtils.deserialize(bytes);
     }
 }

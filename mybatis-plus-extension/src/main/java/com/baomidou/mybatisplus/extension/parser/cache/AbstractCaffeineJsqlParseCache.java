@@ -53,26 +53,49 @@ public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
 
     @Override
     public void putStatement(String sql, Statement value) {
-        put(sql, value);
+        this.put(sql, value);
     }
 
     @Override
     public void putStatements(String sql, Statements value) {
-        put(sql, value);
+        this.put(sql, value);
     }
 
     @Override
     public Statement getStatement(String sql) {
-        byte[] bytes = cache.getIfPresent(sql);
-        return null == bytes ? null : (Statement) deserialize(sql, bytes);
+        return this.get(sql);
     }
 
     @Override
     public Statements getStatements(String sql) {
-        byte[] bytes = cache.getIfPresent(sql);
-        return null == bytes ? null : (Statements) deserialize(sql, bytes);
+        return this.get(sql);
     }
 
+    /**
+     * 获取解析对象，异常清空缓存逻辑
+     *
+     * @param sql 执行 SQL
+     * @return 返回泛型对象
+     */
+    protected <T> T get(String sql) {
+        byte[] bytes = cache.getIfPresent(sql);
+        if (null != bytes) {
+            try {
+                return (T) deserialize(sql, bytes);
+            } catch (Exception e) {
+                cache.invalidate(sql);
+                logger.error("deserialize error", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 存储解析对象
+     *
+     * @param sql   执行 SQL
+     * @param value 解析对象
+     */
     protected void put(String sql, Object value) {
         if (async) {
             if (executor != null) {
