@@ -44,12 +44,6 @@ public class FstSerialCaffeineJsqlParseCache extends AbstractCaffeineJsqlParseCa
 
     @Override
     public Object deserialize(String sql, byte[] bytes) {
-        try {
-            return FstFactory.getDefaultFactory().asObject(bytes);
-        } catch (Exception e) {
-            cache.invalidate(sql);
-            logger.error("deserialize error", e);
-        }
-        return null;
+        return FstFactory.getDefaultFactory().asObject(bytes);
     }
 }
