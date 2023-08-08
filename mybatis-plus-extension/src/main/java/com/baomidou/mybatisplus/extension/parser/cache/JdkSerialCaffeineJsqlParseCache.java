@@ -29,70 +29,29 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 /**
+ * jsqlparser 缓存 jdk 序列化 Caffeine 缓存实现
+ *
  * @author miemie
  * @since 2023-08-05
  */
-public class JdkSerialCaffeineJsqlParseCache implements JsqlParseCache {
-    protected final Log logger = LogFactory.getLog(this.getClass());
-    private final Cache<String, byte[]> cache;
-    @Setter
-    private boolean async = false;
-    @Setter
-    private Executor executor;
+public class JdkSerialCaffeineJsqlParseCache extends AbstractCaffeineJsqlParseCache {
+
 
     public JdkSerialCaffeineJsqlParseCache(Cache<String, byte[]> cache) {
-        this.cache = cache;
+        super(cache);
     }
 
     public JdkSerialCaffeineJsqlParseCache(Consumer<Caffeine<Object, Object>> consumer) {
-        Caffeine<Object, Object> caffeine = Caffeine.newBuilder();
-        consumer.accept(caffeine);
-        this.cache = caffeine.build();
+        super(consumer);
     }
 
     @Override
-    public void putStatement(String sql, Statement value) {
-        put(sql, value);
-    }
-
-    @Override
-    public void putStatements(String sql, Statements value) {
-        put(sql, value);
-    }
-
-    protected void put(String sql, Object value) {
-        if (async) {
-            if (executor != null) {
-                CompletableFuture.runAsync(() -> cache.put(sql, serialize(value)), executor);
-            } else {
-                CompletableFuture.runAsync(() -> cache.put(sql, serialize(value)));
-            }
-        } else {
-            cache.put(sql, serialize(value));
-        }
-    }
-
-    @Override
-    public Statement getStatement(String sql) {
-        byte[] bytes = cache.getIfPresent(sql);
-        if (bytes != null)
-            return (Statement) deserialize(sql, bytes);
-        return null;
-    }
-
-    @Override
-    public Statements getStatements(String sql) {
-        byte[] bytes = cache.getIfPresent(sql);
-        if (bytes != null)
-            return (Statements) deserialize(sql, bytes);
-        return null;
-    }
-
-    protected byte[] serialize(Object obj) {
+    public byte[] serialize(Object obj) {
         return SerializationUtils.serialize(obj);
     }
 
-    protected Object deserialize(String sql, byte[] bytes) {
+    @Override
+    public Object deserialize(String sql, byte[] bytes) {
         try {
             return SerializationUtils.deserialize(bytes);
         } catch (Exception e) {

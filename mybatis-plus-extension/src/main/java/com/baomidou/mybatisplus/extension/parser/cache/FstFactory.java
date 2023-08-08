@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.extension.parser.cache;
 import org.nustaq.serialization.FSTConfiguration;
 
 /**
+ * Fst Factory
+ *
  * @author miemie
  * @since 2023-08-06
  */

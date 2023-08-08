@@ -19,6 +19,8 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
 
 /**
+ * jsqlparser 缓存接口
+ *
  * @author miemie
  * @since 2023-08-05
  */
