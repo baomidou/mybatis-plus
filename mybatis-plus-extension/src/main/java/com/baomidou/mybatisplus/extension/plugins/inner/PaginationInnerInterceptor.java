@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserGlobal;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -30,7 +31,6 @@ import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -261,7 +261,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             return lowLevelCountSql(sql);
         }
         try {
-            Select select = (Select) CCJSqlParserUtil.parse(sql);
+            Select select = (Select) JsqlParserGlobal.parse(sql);
             SelectBody selectBody = select.getSelectBody();
             // https://github.com/baomidou/mybatis-plus/issues/3920  分页增加union语法支持
             if (selectBody instanceof SetOperationList) {
@@ -382,7 +382,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     public String concatOrderBy(String originalSql, List<OrderItem> orderList) {
         try {
-            Select select = (Select) CCJSqlParserUtil.parse(originalSql);
+            Select select = (Select) JsqlParserGlobal.parse(originalSql);
             SelectBody selectBody = select.getSelectBody();
             if (selectBody instanceof PlainSelect) {
                 PlainSelect plainSelect = (PlainSelect) selectBody;
