@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
@@ -826,4 +827,56 @@ class H2UserTest extends BaseTest {
         );
     }
 
+    @Test
+    void testUnchecked() {
+        Wrappers.<H2User>lambdaQuery()
+            .select(H2User::getAge, H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
+
+        new LambdaQueryChainWrapper<>(H2User.class)
+            .select(H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
+
+        // 重写方法保留支持.
+        new LambdaQueryChainWrapper<H2User>(H2User.class) {
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderByDesc(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderByDesc----------");
+                return super.doOrderByDesc(condition, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column,  List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderByAsc----------");
+                return super.doOrderByAsc(condition, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderBy(boolean condition, boolean isAsc, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderBy----------");
+                return super.doOrderBy(condition, isAsc, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doGroupBy(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理GroupBy----------");
+                return super.doGroupBy(condition, column, columns);
+            }
+
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doSelect(boolean condition, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理Select----------");
+                return super.doSelect(condition, columns);
+            }
+        }
+            .select(H2User::getAge)
+            .select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
+    }
 }

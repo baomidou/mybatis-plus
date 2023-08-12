@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
@@ -23,7 +24,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +51,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     @SafeVarargs
     protected final String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
-        return columnsToString(onlyColumn, Arrays.asList(columns));
+        return columnsToString(onlyColumn, CollectionUtils.toList(columns));
     }
 
     protected final String columnsToString(boolean onlyColumn, List<SFunction<T, ?>> columns) {
@@ -67,6 +67,55 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         ColumnCache cache = getColumnCache(column);
         return onlyColumn ? cache.getColumn() : cache.getColumnSelect();
     }
+
+    @Override
+    @SafeVarargs
+    public final Children groupBy(boolean condition, SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return super.groupBy(condition, column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderBy(boolean condition, boolean isAsc, SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return orderBy(condition, isAsc, column, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children groupBy(SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return doGroupBy(true, column, CollectionUtils.toList(columns));
+    }
+
+
+    @Override
+    public Children groupBy(boolean condition, SFunction<T, ?> column, List<SFunction<T, ?>> columns) {
+        return doGroupBy(condition,column,columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByAsc(SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return super.orderByAsc(column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByAsc(boolean condition, SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return super.orderByAsc(condition, column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByDesc(SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return super.orderByDesc(column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByDesc(boolean condition, SFunction<T, ?> column, SFunction<T, ?>... columns) {
+        return super.orderByDesc(condition, column, columns);
+    }
+
 
     /**
      * 获取 SerializedLambda 对应的列信息，从 lambda 表达式中推测实体类

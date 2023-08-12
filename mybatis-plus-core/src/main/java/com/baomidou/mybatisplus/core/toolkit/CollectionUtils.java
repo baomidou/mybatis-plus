@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -217,4 +218,18 @@ public class CollectionUtils {
         Collections.sort(result, comparator);
         return result;
     }
+
+    /**
+     * 构建List
+     *
+     * @since 3.5.4
+     */
+    @SafeVarargs
+    public static <T> List<T> toList(T... t) {
+        if (t != null) {
+            return Arrays.asList(t);
+        }
+        return Collections.emptyList();
+    }
+
 }
