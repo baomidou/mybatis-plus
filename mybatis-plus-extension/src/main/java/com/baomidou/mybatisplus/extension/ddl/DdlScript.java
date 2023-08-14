@@ -15,12 +15,18 @@
  */
 package com.baomidou.mybatisplus.extension.ddl;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 import javax.sql.DataSource;
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Ddl 脚本执行
@@ -54,24 +60,34 @@ public class DdlScript {
     /**
      * 执行 SQL 脚本文件
      *
-     * @param sqlFiles SQL 脚本文件列表
+     * @param sqlFiles   SQL 脚本文件列表
+     * @param autoCommit 自动提交事务
      */
     public void run(List<String> sqlFiles, boolean autoCommit) {
         DdlHelper.runScript(this.ddlGenerator, this.dataSource, sqlFiles, autoCommit);
+    }
+
+    public void run(String sqlScript) throws Exception {
+        this.run(sqlScript, null);
     }
 
     /**
      * 执行 SQL 脚本
      *
      * @param sqlScript SQL 脚本内容
+     * @param delimiter 执行 SQL 分隔符，默认 ; 符号结束执行
      * @throws Exception
      */
-    public void run(String sqlScript) throws Exception {
-        this.run(new StringReader(sqlScript));
+    public void run(String sqlScript, String delimiter) throws Exception {
+        this.run(new StringReader(sqlScript), this.autoCommit, delimiter);
     }
 
     public void run(Reader reader) throws Exception {
-        this.run(reader, this.autoCommit);
+        this.run(reader, this.autoCommit, null);
+    }
+
+    public void run(Reader reader, boolean autoCommit) throws Exception {
+        this.run(reader, autoCommit, null);
     }
 
     /**
@@ -79,9 +95,63 @@ public class DdlScript {
      *
      * @param reader     SQL 脚本内容
      * @param autoCommit 自动提交事务
+     * @param delimiter  执行 SQL 分隔符，默认 ; 符号结束执行
      * @throws Exception
      */
-    public void run(Reader reader, boolean autoCommit) throws Exception {
-        DdlHelper.getScriptRunner(dataSource.getConnection(), autoCommit).runScript(reader);
+    public void run(Reader reader, boolean autoCommit, String delimiter) throws Exception {
+        ScriptRunner scriptRunner = DdlHelper.getScriptRunner(dataSource.getConnection(), autoCommit);
+        // 设置自定义 SQL 分隔符，默认 ; 符号分割
+        if (StringUtils.isNotBlank(delimiter)) {
+            scriptRunner.setDelimiter(delimiter);
+        }
+        // 执行 SQL 脚本
+        scriptRunner.runScript(reader);
+    }
+
+    public boolean execute(final String driverClassName, final String url, final String user, final String password,
+                           final String sql, Consumer<String> exceptionConsumer) {
+        return this.execute(driverClassName, url, user, password, sql, null, exceptionConsumer);
+    }
+
+    /**
+     * jdbc 连接指定 sql 执行
+     *
+     * @param driverClassName   连接驱动名
+     * @param url               连接地址
+     * @param user              数据库用户名
+     * @param password          数据库密码
+     * @param sql               执行 SQL
+     * @param delimiter         执行 SQL 分隔符，默认 ; 符号结束执行
+     * @param exceptionConsumer 异常处理
+     * @return
+     */
+    public boolean execute(final String driverClassName, final String url, final String user, final String password,
+                           final String sql, String delimiter, Consumer<String> exceptionConsumer) {
+        Connection connection = null;
+        try {
+            Class.forName(driverClassName);
+            connection = DriverManager.getConnection(url, user, password);
+            // 执行 SQL 脚本
+            this.run(sql, delimiter);
+            return true;
+        } catch (Exception e) {
+            if (null != connection) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            exceptionConsumer.accept(e.getMessage());
+        } finally {
+            if (null != connection) {
+                try {
+                    connection.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 }
