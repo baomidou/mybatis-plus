@@ -90,16 +90,20 @@ public class DdlScript {
         this.run(reader, autoCommit, null);
     }
 
+    public void run(Reader reader, boolean autoCommit, String delimiter) throws Exception {
+        this.run(this.dataSource.getConnection(), reader, autoCommit, delimiter);
+    }
+
     /**
      * 执行 SQL 脚本
      *
+     * @param connection {@link Connection}
      * @param reader     SQL 脚本内容
      * @param autoCommit 自动提交事务
      * @param delimiter  执行 SQL 分隔符，默认 ; 符号结束执行
-     * @throws Exception
      */
-    public void run(Reader reader, boolean autoCommit, String delimiter) throws Exception {
-        ScriptRunner scriptRunner = DdlHelper.getScriptRunner(dataSource.getConnection(), autoCommit);
+    public void run(Connection connection, Reader reader, boolean autoCommit, String delimiter) {
+        ScriptRunner scriptRunner = DdlHelper.getScriptRunner(connection, autoCommit);
         // 设置自定义 SQL 分隔符，默认 ; 符号分割
         if (StringUtils.isNotBlank(delimiter)) {
             scriptRunner.setDelimiter(delimiter);
@@ -132,7 +136,7 @@ public class DdlScript {
             Class.forName(driverClassName);
             connection = DriverManager.getConnection(url, user, password);
             // 执行 SQL 脚本
-            this.run(sql, delimiter);
+            this.run(connection, new StringReader(sql), this.autoCommit, delimiter);
             return true;
         } catch (Exception e) {
             if (null != connection) {
