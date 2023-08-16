@@ -118,7 +118,9 @@ public enum DbType {
      */
     @Deprecated
     GBASE_INFORMIX("gbase 8s", "南大通用数据库 GBase 8s"),
-
+    /**
+     * Sinodb
+     */
     SINODB("sinodb","星瑞格数据库"),
     /**
      * Oscar
@@ -153,7 +155,7 @@ public enum DbType {
      */
     CSIIDB("csiidb", "CSIIDB数据库"),
     /**
-     * CSIIDB
+     * Hana
      */
     SAP_HANA("hana", "SAP_HANA数据库"),
     /**
