@@ -1,5 +1,13 @@
 dependencies {
+    api project(":mybatis-plus-core")
+    api project(":mybatis-plus-annotation")
     api project(":mybatis-plus-extension")
+
+    api "${lib.mybatis}"
+    api "${lib.'jsqlparser'}"
+
+    // TODO 这个后面优化到mybatis-plus-boot-starter里面把,非spring项目部需要这个.
+    api "${lib."mybatis-spring"}"
 
     testImplementation "${lib.'spring-web'}"
     testImplementation "${lib.'javax.servlet-api'}"
