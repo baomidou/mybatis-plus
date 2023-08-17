@@ -420,6 +420,14 @@ public class TableField {
             }
         }
 
+        public String getTableName() {
+            return tableName;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
         public int getLength() {
             return length;
         }
