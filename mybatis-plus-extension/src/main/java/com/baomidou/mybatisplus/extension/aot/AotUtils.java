@@ -1,10 +1,9 @@
 package com.baomidou.mybatisplus.extension.aot;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -16,7 +15,6 @@ import java.util.jar.JarFile;
  * @author ztp
  * @date 2023/8/18 11:56
  */
-@Slf4j
 public class AotUtils {
 
     /**
@@ -28,7 +26,7 @@ public class AotUtils {
      */
     public static List<Class<?>> getGraalAotHints(List<String> packageList) {
 
-        log.info("begin =================打印bean引用================================\n");
+        System.out.println("begin =================打印bean引用================================\n");
 
         List<Class<?>> importList=new ArrayList<>();
         packageList.forEach(t -> {
@@ -45,8 +43,8 @@ public class AotUtils {
         });
 
 
-        importList.forEach(t->log.info("载入lambda类: {}",t));
-        log.info("end =================打印bean引用===============================\n\n\n\n\n");
+        importList.forEach(t->System.out.println("载入lambda类: {}"+t));
+        System.out.println("end =================打印bean引用===============================\n\n\n\n\n");
 
 
         return importList;
@@ -60,39 +58,42 @@ public class AotUtils {
      * @param packageName
      * @return java.util.Set<java.lang.Class<?>>
      */
-    @SneakyThrows
     public static Set<Class<?>> getClasses(String packageName) {
-        Set<Class<?>> classSet = new HashSet<>();
-        String sourcePath = packageName.replace(".", "/");
-        Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(sourcePath);
-        while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            if (url != null) {
-                String protocol = url.getProtocol();
-                if ("file".equals(protocol)) {
-                    String packagePath = url.getPath().replaceAll("%20", " ");
-                    addClass(classSet, packagePath, packageName);
-                } else if ("jar".equals(protocol)) {
-                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                    if (jarURLConnection != null) {
-                        JarFile jarFile = jarURLConnection.getJarFile();
-                        if (jarFile != null) {
-                            Enumeration<JarEntry> jarEntries = jarFile.entries();
-                            while (jarEntries.hasMoreElements()) {
-                                JarEntry jarEntry = jarEntries.nextElement();
-                                String jarEntryName = jarEntry.getName();
-                                if (jarEntryName.contains(sourcePath) && jarEntryName.endsWith(".class")) {
-                                    String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                    doAddClass(classSet, className);
+        try {
+            Set<Class<?>> classSet = new HashSet<>();
+            String sourcePath = packageName.replace(".", "/");
+            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(sourcePath);
+            while (urls.hasMoreElements()) {
+                URL url = urls.nextElement();
+                if (url != null) {
+                    String protocol = url.getProtocol();
+                    if ("file".equals(protocol)) {
+                        String packagePath = url.getPath().replaceAll("%20", " ");
+                        addClass(classSet, packagePath, packageName);
+                    } else if ("jar".equals(protocol)) {
+                        JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        if (jarURLConnection != null) {
+                            JarFile jarFile = jarURLConnection.getJarFile();
+                            if (jarFile != null) {
+                                Enumeration<JarEntry> jarEntries = jarFile.entries();
+                                while (jarEntries.hasMoreElements()) {
+                                    JarEntry jarEntry = jarEntries.nextElement();
+                                    String jarEntryName = jarEntry.getName();
+                                    if (jarEntryName.contains(sourcePath) && jarEntryName.endsWith(".class")) {
+                                        String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
+                                        doAddClass(classSet, className);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        return classSet;
+            return classSet;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void addClass(Set<Class<?>> classSet, String packagePath, String packageName) {
