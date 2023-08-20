@@ -116,7 +116,6 @@ public class DatabaseMetaDataWrapper {
                 try {
                     column.autoIncrement = "YES".equals(resultSet.getString("IS_AUTOINCREMENT"));
                 } catch (SQLException sqlException) {
-                    logger.warn("获取IS_AUTOINCREMENT出现异常:", sqlException);
                     //TODO 目前测试在oracle旧驱动下存在问题，降级成false.
                 }
                 columnsInfoMap.put(name.toLowerCase(), column);
