@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 import java.util.Collection;
@@ -237,39 +238,95 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public Children groupBy(boolean condition, R column, R... columns) {
-        getWrapper().groupBy(condition, column, columns);
-        return typedThis;
+    @SafeVarargs
+    public final Children groupBy(boolean condition, R column, R... columns) {
+        return doGroupBy(condition, column, CollectionUtils.toList(columns));
+    }
+
+    public Children groupBy(boolean condition, R column, List<R> columns) {
+        return doGroupBy(condition, column, columns);
     }
 
     @Override
     public Children groupBy(boolean condition, R column) {
-        getWrapper().groupBy(condition, column);
-        return typedThis;
+        return doGroupBy(condition, column, null);
     }
 
     @Override
     public Children groupBy(boolean condition, List<R> columns) {
-        getWrapper().groupBy(condition, columns);
-        return typedThis;
+        return doGroupBy(condition, null, columns);
     }
 
     @Override
-    public Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
-        getWrapper().orderBy(condition, isAsc, column, columns);
+    @SafeVarargs
+    public final Children orderBy(boolean condition, boolean isAsc, R column, R... columns) {
+        return orderBy(condition, isAsc, column, CollectionUtils.toList(columns));
+    }
+
+    public Children orderBy(boolean condition, boolean isAsc, R column, List<R> columns) {
+        return doOrderBy(condition, isAsc, column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children groupBy(R column, R... columns) {
+        return doGroupBy(true, column, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByAsc(R column, R... columns) {
+        return orderByAsc(true, column, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByAsc(boolean condition, R column, R... columns) {
+        return doOrderByAsc(condition, column, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByDesc(boolean condition, R column, R... columns) {
+        return doOrderByDesc(condition, column, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final Children orderByDesc(R column, R... columns) {
+        return orderByDesc(true, column, columns);
+    }
+
+    // --------------  新增重写方法开始----------------
+    protected Children doOrderByDesc(boolean condition, R column, List<R> columns) {
+        return doOrderBy(condition, false, column, columns);
+    }
+
+    protected Children doOrderByAsc(boolean condition, R column, List<R> columns) {
+        return doOrderBy(condition, true, column, columns);
+    }
+
+    protected Children doOrderBy(boolean condition, boolean isAsc, R column, List<R> columns) {
+        getWrapper().doOrderBy(condition, isAsc, column, columns);
         return typedThis;
     }
+
+    protected Children doGroupBy(boolean condition, R column, List<R> columns) {
+        getWrapper().doGroupBy(condition, column, columns);
+        return typedThis;
+    }
+
+
+    // --------------  新增重写方法结束----------------
 
     @Override
     public Children orderBy(boolean condition, boolean isAsc, R column) {
-        getWrapper().orderBy(condition, isAsc, column);
-        return typedThis;
+        return doOrderBy(condition, isAsc, column, null);
     }
 
     @Override
     public Children orderBy(boolean condition, boolean isAsc, List<R> columns) {
-        getWrapper().orderBy(condition, isAsc, columns);
-        return typedThis;
+        return doOrderBy(condition, isAsc, null, columns);
     }
 
     @Override

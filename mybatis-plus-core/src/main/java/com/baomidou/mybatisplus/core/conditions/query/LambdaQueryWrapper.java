@@ -75,10 +75,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     @Override
     public LambdaQueryWrapper<T> select(boolean condition, List<SFunction<T, ?>> columns) {
-        if (condition && CollectionUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setStringValue(columnsToString(false, columns));
-        }
-        return typedThis;
+        return doSelect(condition, columns);
     }
 
     /**
@@ -101,6 +98,28 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         }
         Assert.notNull(entityClass, "entityClass can not be null");
         this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate));
+        return typedThis;
+    }
+
+    @Override
+    @SafeVarargs
+    public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
+        return doSelect(true, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final LambdaQueryWrapper<T> select(boolean condition, SFunction<T, ?>... columns) {
+        return doSelect(condition, CollectionUtils.toList(columns));
+    }
+
+    /**
+     * @since 3.5.4
+     */
+    protected LambdaQueryWrapper<T> doSelect(boolean condition, List<SFunction<T, ?>> columns) {
+        if (condition && CollectionUtils.isNotEmpty(columns)) {
+            this.sqlSelect.setStringValue(columnsToString(false, columns));
+        }
         return typedThis;
     }
 
