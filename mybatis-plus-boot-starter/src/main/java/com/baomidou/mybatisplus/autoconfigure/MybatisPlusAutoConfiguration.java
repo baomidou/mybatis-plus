@@ -342,8 +342,10 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             }
 
             // for spring-native
-            boolean injectSqlSession = environment.getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class,
-                Boolean.TRUE);
+            Boolean injectSqlSession = environment.getProperty("mybatis-plus.inject-sql-session-on-mapper-scan", Boolean.class);
+            if (injectSqlSession == null) {
+                injectSqlSession = environment.getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
+            }
             if (injectSqlSession && this.beanFactory instanceof ListableBeanFactory) {
                 ListableBeanFactory listableBeanFactory = (ListableBeanFactory) this.beanFactory;
                 Optional<String> sqlSessionTemplateBeanName = Optional

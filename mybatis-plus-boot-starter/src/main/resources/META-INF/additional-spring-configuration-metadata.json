@@ -38,6 +38,12 @@
             "type": "java.lang.String"
         },
         {
+            "defaultValue": true,
+            "name": "mybatis-plus.inject-sql-session-on-mapper-scan",
+            "description": "Set whether inject a SqlSessionTemplate or SqlSessionFactory bean (If you want to back to the behavior of 2.2.1 or before, specify false). If you use together with spring-native, should be set true.",
+            "type": "java.lang.Boolean"
+        },
+        {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
             "name": "mybatis-plus.global-config.identifier-generator",
             "deprecation": {
