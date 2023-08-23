@@ -55,8 +55,8 @@ public class Insert extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        String valuesScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null),
-            LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
+        String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null),
+            null, null, null, COMMA) + NEWLINE + RIGHT_BRACKET;
         String keyProperty = null;
         String keyColumn = null;
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
