@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,18 +37,15 @@ import java.util.Optional;
  * @author Caratacus
  * @since 2016-12-11
  */
-public class SqlRunner implements ISqlRunner, Closeable {
+public class SqlRunner implements ISqlRunner {
 
     private final Log log = LogFactory.getLog(SqlRunner.class);
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
-    // 默认FACTORY
-    private SqlSessionFactory sqlSessionFactory;
 
     private Class<?> clazz;
 
     public SqlRunner() {
-        this.sqlSessionFactory = SqlHelper.FACTORY;
     }
 
     public SqlRunner(Class<?> clazz) {
@@ -62,10 +58,6 @@ public class SqlRunner implements ISqlRunner, Closeable {
      * @return ignore
      */
     public static SqlRunner db() {
-        // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
-        if (DEFAULT.sqlSessionFactory == null) {
-            DEFAULT.sqlSessionFactory = SqlHelper.FACTORY;
-        }
         return DEFAULT;
     }
 
@@ -238,12 +230,15 @@ public class SqlRunner implements ISqlRunner, Closeable {
      * 获取SqlSessionFactory
      */
     private SqlSessionFactory getSqlSessionFactory() {
-        return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(sqlSessionFactory);
+        return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(SqlHelper.FACTORY);
     }
 
-    @Override
+    /**
+     * @deprecated 3.5.3.2
+     */
+    @Deprecated
     public void close() {
-        DEFAULT.sqlSessionFactory = null;
+
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.support;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandleProxies;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 /**
@@ -34,15 +32,10 @@ public class IdeaProxyLambdaMeta implements LambdaMeta {
     private final String name;
 
     public IdeaProxyLambdaMeta(Proxy func) {
-        InvocationHandler handler = Proxy.getInvocationHandler(func);
-        try {
-            MethodHandle dmh = (MethodHandle) ReflectionKit.setAccessible(handler.getClass().getDeclaredField("val$target")).get(handler);
-            Executable executable = MethodHandles.reflectAs(Executable.class, dmh);
-            clazz = executable.getDeclaringClass();
-            name = executable.getName();
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new MybatisPlusException(e);
-        }
+        MethodHandle dmh = MethodHandleProxies.wrapperInstanceTarget(func);
+        Executable executable = MethodHandles.reflectAs(Executable.class, dmh);
+        clazz = executable.getDeclaringClass();
+        name = executable.getName();
     }
 
     @Override

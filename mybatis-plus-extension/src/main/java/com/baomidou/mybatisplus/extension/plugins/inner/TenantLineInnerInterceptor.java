@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.RowConstructor;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -32,6 +34,7 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.update.UpdateSet;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -42,6 +45,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -120,7 +124,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         }
 
         Select select = insert.getSelect();
-        if (select != null) {
+        if (select != null && (select.getSelectBody() instanceof PlainSelect)) { //fix github issue 4998  修复升级到4.5版本的问题
             this.processInsertSelect(select.getSelectBody(), (String) obj);
         } else if (insert.getItemsList() != null) {
             // fixed github pull/295
@@ -129,7 +133,26 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             if (itemsList instanceof MultiExpressionList) {
                 ((MultiExpressionList) itemsList).getExpressionLists().forEach(el -> el.getExpressions().add(tenantId));
             } else {
-                ((ExpressionList) itemsList).getExpressions().add(tenantId);
+                List<Expression> expressions = ((ExpressionList) itemsList).getExpressions();
+                if (CollectionUtils.isNotEmpty(expressions)) {//fix github issue 4998 jsqlparse 4.5 批量insert ItemsList不是MultiExpressionList 了，需要特殊处理
+                    int len = expressions.size();
+                    for (int i = 0; i < len; i++) {
+                        Expression expression = expressions.get(i);
+                        if (expression instanceof RowConstructor) {
+                            ((RowConstructor) expression).getExprList().getExpressions().add(tenantId);
+                        } else if (expression instanceof Parenthesis) {
+                            RowConstructor rowConstructor = new RowConstructor()
+                                .withExprList(new ExpressionList(((Parenthesis) expression).getExpression(), tenantId));
+                            expressions.set(i, rowConstructor);
+                        } else {
+                            if (len - 1 == i) { // (?,?) 只有最后一个expre的时候才拼接tenantId
+                                expressions.add(tenantId);
+                            }
+                        }
+                    }
+                } else {
+                    expressions.add(tenantId);
+                }
             }
         } else {
             throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
@@ -145,6 +168,14 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         if (tenantLineHandler.ignoreTable(table.getName())) {
             // 过滤退出执行
             return;
+        }
+        ArrayList<UpdateSet> sets = update.getUpdateSets();
+        if (!CollectionUtils.isEmpty(sets)) {
+            sets.forEach(us -> us.getExpressions().forEach(ex -> {
+                if (ex instanceof SubSelect) {
+                    processSelectBody(((SubSelect) ex).getSelectBody(), (String) obj);
+                }
+            }));
         }
         update.setWhere(this.andExpression(table, update.getWhere(), (String) obj));
     }

@@ -3,10 +3,13 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author nieqiuqiu 2020/7/2
@@ -14,6 +17,7 @@ import java.util.Map;
 class CollectionUtilsTest {
 
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void testCreateHashMap() throws ReflectiveOperationException {
         Map<String, String> hashMap = newHashMapWithExpectedSize(4);
         Assertions.assertEquals(8, getTableSize(hashMap));
@@ -38,6 +42,8 @@ class CollectionUtilsTest {
         map = newHashMap(16);
         Assertions.assertEquals(16, getTableSize(map));
         Assertions.assertEquals(12, getThresholdValue(map));
+
+        computeIfAbsent();
     }
 
     private Map<String, String> newHashMapWithExpectedSize(int size) {
@@ -63,6 +69,13 @@ class CollectionUtilsTest {
         Field field = map.getClass().getDeclaredField("threshold");
         field.setAccessible(true);
         return (int) field.get(map);
+    }
+
+    private void computeIfAbsent() {
+
+        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        CollectionUtils.computeIfAbsent(map, "AaAa", key -> map.computeIfAbsent("BBBB", key2 -> "noah"));
+        System.out.println("i can return");
     }
 
 }

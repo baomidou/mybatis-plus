@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,9 +99,12 @@ public class TableInfo implements Constants {
     private String currentNamespace;
     /**
      * MybatisConfiguration 标记 (Configuration内存地址值)
+     *
+     * @deprecated 3.5.3.2 初始化阶段可以使用一下,后期尽量避免在容器初始化完成之后再继续调用此方法
      */
     @Getter
     @Setter(AccessLevel.NONE)
+    @Deprecated
     private Configuration configuration;
     /**
      * 是否开启下划线转驼峰
@@ -346,12 +349,13 @@ public class TableInfo implements Constants {
     /**
      * 获取所有的查询的 sql 片段
      *
+     * @param fistAnd             首个条件是否添加 AND 关键字
      * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
      * @param withId              是否包含 id 项
      * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
+    public String getAllSqlWhere(boolean fistAnd, boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
@@ -366,7 +370,7 @@ public class TableInfo implements Constants {
         }
         String newKeyProperty = newPrefix + keyProperty;
         String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false)
+        return SqlScriptUtils.convertIf(fistAnd ? " AND " + keySqlScript : keySqlScript, String.format("%s != null", newKeyProperty), false)
             + NEWLINE + filedSqlScript;
     }
 

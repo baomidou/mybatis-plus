@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ public class GlobalConfigUtils {
      * 获取当前的SqlSessionFactory
      *
      * @param clazz 实体类
+     * @deprecated 3.5.3.2 尽量少用,后期取消此方法获取实例
      */
+    @Deprecated
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);

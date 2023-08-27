@@ -125,4 +125,25 @@ public class TableFieldTest {
         Assertions.assertNotNull(new TableField(configBuilder, "updateBy").setPropertyName("createBy", DbColumnType.STRING).getFill());
         Assertions.assertNotNull(new TableField(configBuilder, "create_user").setPropertyName("createUser", DbColumnType.STRING).getFill());
     }
+
+    @Test
+    void testIdConvert(){
+        ConfigBuilder configBuilder;
+        configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig, GeneratorBuilder.strategyConfig(), null, GeneratorBuilder.globalConfig(), null);
+        Assertions.assertFalse(new TableField(configBuilder, "id").primaryKey(true).setPropertyName("id", DbColumnType.LONG).isConvert());
+        Assertions.assertFalse(new TableField(configBuilder, "id").primaryKey(false).setPropertyName("id", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(true).setPropertyName("ids", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(false).setPropertyName("ids", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "user_id").primaryKey(true).setPropertyName("userId", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "user_id").primaryKey(false).setPropertyName("userId", DbColumnType.LONG).isConvert());
+        // 开启tableFieldAnnotationEnable
+        configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig, GeneratorBuilder.strategyConfig().entityBuilder().enableTableFieldAnnotation().build(), null, GeneratorBuilder.globalConfig(), null);
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(true).setPropertyName("id", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(false).setPropertyName("id", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(true).setPropertyName("ids", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "id").primaryKey(false).setPropertyName("ids", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "user_id").primaryKey(true).setPropertyName("userId", DbColumnType.LONG).isConvert());
+        Assertions.assertTrue(new TableField(configBuilder, "user_id").primaryKey(false).setPropertyName("userId", DbColumnType.LONG).isConvert());
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.parser;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -46,7 +45,7 @@ public abstract class JsqlParserSupport {
             logger.debug("original SQL: " + sql);
         }
         try {
-            Statement statement = CCJSqlParserUtil.parse(sql);
+            Statement statement = JsqlParserGlobal.parse(sql);
             return processParser(statement, 0, sql, obj);
         } catch (JSQLParserException e) {
             throw ExceptionUtils.mpe("Failed to process, Error SQL: %s", e.getCause(), sql);
@@ -60,7 +59,7 @@ public abstract class JsqlParserSupport {
         try {
             // fixed github pull/295
             StringBuilder sb = new StringBuilder();
-            Statements statements = CCJSqlParserUtil.parseStatements(sql);
+            Statements statements = JsqlParserGlobal.parseStatements(sql);
             int i = 0;
             for (Statement statement : statements.getStatements()) {
                 if (i > 0) {

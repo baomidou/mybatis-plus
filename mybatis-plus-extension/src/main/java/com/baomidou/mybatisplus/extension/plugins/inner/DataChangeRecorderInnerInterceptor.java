@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,60 +15,38 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserGlobal;
+import lombok.Data;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.JdbcParameter;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.statement.update.Update;
+import net.sf.jsqlparser.statement.update.UpdateSet;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-
-import lombok.Data;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.JdbcParameter;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.AllColumns;
-import net.sf.jsqlparser.statement.select.FromItem;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SelectItem;
-import net.sf.jsqlparser.statement.update.Update;
-import net.sf.jsqlparser.statement.update.UpdateSet;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -136,7 +114,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             OperationResult operationResult;
             long startTs = System.currentTimeMillis();
             try {
-                Statement statement = CCJSqlParserUtil.parse(mpBs.sql());
+                Statement statement = JsqlParserGlobal.parse(mpBs.sql());
                 if (statement instanceof Insert) {
                     operationResult = processInsert((Insert) statement, mpSh.boundSql());
                 } else if (statement instanceof Update) {
@@ -220,8 +198,8 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(), selectStmt.toString(),
             prepareParameterMapping4Select(boundSql.getParameterMappings(), updateStmt),
             boundSql.getParameterObject());
-        MetaObject metaObject = SystemMetaObject.forObject(boundSql);
-        Map<String, Object> additionalParameters = (Map<String, Object>) metaObject.getValue("additionalParameters");
+        PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+        Map<String, Object> additionalParameters = mpBoundSql.additionalParameters();
         if (additionalParameters != null && !additionalParameters.isEmpty()) {
             for (Map.Entry<String, Object> ety : additionalParameters.entrySet()) {
                 boundSql4Select.setAdditionalParameter(ety.getKey(), ety.getValue());
@@ -285,7 +263,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             //FIRSTNAME: FIRST_NAME/FIRST-NAME/FIRST$NAME/FIRST.NAME
             relatedColumnsUpperCaseWithoutUnderline.put(item.toString().replaceAll("[._\\-$]", "").toUpperCase(), item.toString().toUpperCase());
         }
-        MetaObject metaObject = SystemMetaObject.forObject(updateSql.getParameterObject());
+        MetaObject metaObject = PluginUtils.getMetaObject(updateSql.getParameterObject());
 
         for (ParameterMapping parameterMapping : updateSql.getParameterMappings()) {
             String propertyName = parameterMapping.getProperty();
@@ -324,7 +302,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
 
     private Map<String, Object> buildParameterObjectMap(BoundSql boundSql) {
-        MetaObject metaObject = SystemMetaObject.forObject(boundSql.getParameterObject());
+        MetaObject metaObject = PluginUtils.getMetaObject(boundSql.getParameterObject());
         Map<String, Object> propertyValMap = new HashMap<>(boundSql.getParameterMappings().size());
         for (ParameterMapping parameterMapping : boundSql.getParameterMappings()) {
             String propertyName = parameterMapping.getProperty();
@@ -609,7 +587,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     @Data
     public static class OperationResult {
-
         private String operation;
         private boolean recordStatus;
         private String tableName;
@@ -618,30 +595,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
          * cost for this plugin, ms
          */
         private long cost;
-
-        public String getTableName() {
-            return tableName;
-        }
-
-        public void setTableName(String tableName) {
-            this.tableName = tableName;
-        }
-
-        public String getOperation() {
-            return operation;
-        }
-
-        public void setOperation(String operation) {
-            this.operation = operation;
-        }
-
-        public boolean isRecordStatus() {
-            return recordStatus;
-        }
-
-        public void setRecordStatus(boolean recordStatus) {
-            this.recordStatus = recordStatus;
-        }
 
         public void buildDataStr(List<DataChangedRecord> records) {
             StringBuilder sb = new StringBuilder();
@@ -660,15 +613,12 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{");
-            sb.append("\"").append("tableName").append("\"").append(":").append("\"").append(tableName).append("\"").append(",");
-            sb.append("\"").append("operation").append("\"").append(":").append("\"").append(operation).append("\"").append(",");
-            sb.append("\"").append("recordStatus").append("\"").append(":").append("\"").append(recordStatus).append("\"").append(",");
-            sb.append("\"").append("changedData").append("\"").append(":").append(changedData).append(",");
-            sb.append("\"").append("cost(ms)").append("\"").append(":").append(cost);
-            sb.append("}");
-            return sb.toString();
+            return "{" +
+                    "\"tableName\":\"" + tableName + "\"," +
+                    "\"operation\":\"" + operation + "\"," +
+                    "\"recordStatus\":\"" + recordStatus + "\"," +
+                    "\"changedData\":" + changedData + "," +
+                    "\"cost(ms)\":" + cost + "}";
         }
     }
 
@@ -842,7 +792,5 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         }
 
         public static DataUpdateLimitationException DEFAULT = new DataUpdateLimitationException("本次操作 因超过系统安全阈值 被拦截，如需继续，请联系管理员!");
-
     }
-
 }

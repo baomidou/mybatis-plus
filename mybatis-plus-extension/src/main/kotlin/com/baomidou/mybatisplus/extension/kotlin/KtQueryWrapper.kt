@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
-import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty1
 
 /**
  * Kotlin Lambda 语法使用 Wrapper
@@ -32,7 +32,8 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KProperty<*>> {
+@Suppress("serial")
+open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KMutableProperty1<T, *>> {
 
     /**
      * 查询字段
@@ -64,7 +65,7 @@ open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Qu
         this.sqlFirst = sqlFirst
     }
 
-    override fun select(condition: Boolean, columns: MutableList<KProperty<*>>): KtQueryWrapper<T> {
+    override fun select(condition: Boolean, columns: MutableList<KMutableProperty1<T, *>>): KtQueryWrapper<T> {
         if (condition && CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.stringValue = columnsToString(false, columns)
         }

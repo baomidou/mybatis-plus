@@ -15,5 +15,6 @@ dependencies {
     testImplementation "${lib.sqlite}"
     testImplementation "${lib.firebird}"
     testImplementation "${lib.'swagger-annotations'}"
+    testImplementation "${lib.'logback-classic'}"
     testCompileOnly "org.jetbrains:annotations:22.0.0"
 }

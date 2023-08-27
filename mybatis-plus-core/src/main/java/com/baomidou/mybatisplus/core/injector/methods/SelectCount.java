@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author hubin
  * @since 2018-04-08
  */
-@SuppressWarnings("serial")
 public class SelectCount extends AbstractMethod {
 
     public SelectCount() {
@@ -47,7 +46,7 @@ public class SelectCount extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
         String sql = String.format(sqlMethod.getSql(), sqlFirst(), sqlCount(), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlComment());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Long.class);
     }
 }

@@ -24,12 +24,14 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
@@ -72,6 +74,9 @@ class H2UserTest extends BaseTest {
     protected IH2UserService userService;
     @Autowired
     SqlSessionFactory sqlSessionFactory;
+
+    @Autowired
+    private H2StudentMapper h2StudentMapper;
 
     public void initBatchLimitation(int limitation) {
         if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
@@ -121,6 +126,17 @@ class H2UserTest extends BaseTest {
     @Order(6)
     void testSelectLambdaById() {
         H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getTestId, 101));
+        Assertions.assertNotNull(h2User);
+    }
+
+
+    @Test
+    @Order(7)
+    void testLambdaTypeHandler() {
+        // 演示 json 格式 Wrapper TypeHandler 查询
+        H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery()
+            .apply("name={0,typeHandler=" + H2userNameJsonTypeHandler.class.getCanonicalName() + "}",
+                "{\"id\":101,\"name\":\"Tomcat\"}"));
         Assertions.assertNotNull(h2User);
     }
 
@@ -613,6 +629,7 @@ class H2UserTest extends BaseTest {
         Page page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
         Assertions.assertEquals(page.getTotal(), 0);
+        Assertions.assertEquals(userService.lambdaQuery().list(Page.of(1, -1, false)).size(), page.getRecords().size());
     }
 
     @Test
@@ -673,5 +690,193 @@ class H2UserTest extends BaseTest {
         // 异常情况
         Assertions.assertThrows(TooManyResultsException.class, () -> userService.getOneOpt(Wrappers.<H2User>lambdaQuery()
             .like(H2User::getName, "tes")));
+    }
+
+    @Test
+    void testInsertFill() {
+        H2User h2User;
+        h2User = new H2User("insertFillByCustomMethod1", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod1(h2User);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        h2User = new H2User("insertFillByCustomMethod2", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod2(h2User);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        h2User = new H2User("insertFillByCustomMethod3", AgeEnum.ONE);
+        h2StudentMapper.insertFillByCustomMethod3(h2User, "fillByCustomMethod3");
+        Assertions.assertNotNull(h2User.getTestType());
+
+        List<H2User> list;
+        list = Arrays.asList(new H2User("insertFillByCustomMethod4-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod4-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod4(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod5-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod5-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod5(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod6-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod6-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod6(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod7-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod7-2", AgeEnum.ONE));
+        h2StudentMapper.insertFillByCustomMethod7(list);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        H2User[] h2Users;
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod8-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod8-2", AgeEnum.ONE)};
+        h2StudentMapper.insertFillByCustomMethod8(h2Users);
+        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod9-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod9-2", AgeEnum.ONE)};
+        h2StudentMapper.insertFillByCustomMethod9(h2Users);
+        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        Map<String, Object> map;
+        h2User = new H2User("insertFillByCustomMethod10", AgeEnum.ONE);
+        map = new HashMap<>();
+        map.put("et", h2User);
+        h2StudentMapper.insertFillByCustomMethod10(map);
+        Assertions.assertNotNull(h2User.getTestType());
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod11-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod11-2", AgeEnum.ONE));
+        map = new HashMap<>();
+        map.put("list", list);
+        h2StudentMapper.insertFillByCustomMethod11(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        list = Arrays.asList(new H2User("insertFillByCustomMethod12-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod12-2", AgeEnum.ONE));
+        map = new HashMap<>();
+        map.put("coll", list);
+        h2StudentMapper.insertFillByCustomMethod12(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+
+        h2Users = new H2User[]{new H2User("insertFillByCustomMethod13-1", AgeEnum.ONE), new H2User("insertFillByCustomMethod13-2", AgeEnum.ONE)};
+        map = new HashMap<>();
+        map.put("array", h2Users);
+        h2StudentMapper.insertFillByCustomMethod13(map);
+        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+    }
+
+    @Test
+    void testUpdateFill() {
+        Map<String, Object> map;
+        H2User h2User;
+        h2User = new H2User();
+        map = new HashMap<>();
+        map.put("et", h2User);
+        map.put("list", Arrays.asList(1L, 2L, 3L));
+        h2StudentMapper.updateFillByCustomMethod1(map);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod2(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod3(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User();
+        h2StudentMapper.updateFillByCustomMethod4(Arrays.asList(1L, 2L, 3L), h2User);
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+    }
+
+    @Test
+    void testListMapsByPage() {
+        Assertions.assertEquals(userService.listMaps().size(), userService.count());
+        Assertions.assertEquals(userService.listMaps(new Page<>(1, 2)).size(), userService.page(new Page<>(1, 2)).getRecords().size());
+        Assertions.assertEquals(userService.listMaps(new Page<>(2, 2)).size(), userService.page(new Page<>(2, 2)).getRecords().size());
+
+        Assertions.assertEquals(
+            userService.pageMaps(new Page<>(1, 2, false)).getRecords().size(),
+            userService.listMaps(new Page<>(1, 2, false)).size()
+        );
+        Assertions.assertEquals(
+            userService.pageMaps(new Page<>(2, 2, false)).getRecords().size(),
+            userService.listMaps(new Page<>(2, 2, false)).size()
+        );
+
+        Assertions.assertEquals(
+            userService.pageMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size(),
+            userService.listMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size()
+        );
+        Assertions.assertEquals(
+            userService.pageMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size(),
+            userService.listMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size()
+        );
+    }
+
+    @Test
+    void testListByPage() {
+        Assertions.assertEquals(userService.list().size(), userService.count());
+        Assertions.assertEquals(userService.list(new Page<>(1, 2)).size(), userService.page(new Page<>(1, 2)).getRecords().size());
+        Assertions.assertEquals(userService.list(new Page<>(2, 2)).size(), userService.page(new Page<>(2, 2)).getRecords().size());
+        Assertions.assertEquals(
+            userService.list(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size(),
+            userService.page(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size()
+        );
+
+        List<H2User> list = userService.list(new Page<>(2, 2, false));
+
+        Assertions.assertEquals(
+            userService.list(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size(),
+            userService.page(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size()
+        );
+    }
+
+    @Test
+    void testUnchecked() {
+        Wrappers.<H2User>lambdaQuery()
+            .select(H2User::getAge, H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
+
+        new LambdaQueryChainWrapper<>(H2User.class)
+            .select(H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
+
+        // 重写方法保留支持.
+        new LambdaQueryChainWrapper<H2User>(H2User.class) {
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderByDesc(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderByDesc----------");
+                return super.doOrderByDesc(condition, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column,  List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderByAsc----------");
+                return super.doOrderByAsc(condition, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doOrderBy(boolean condition, boolean isAsc, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理OrderBy----------");
+                return super.doOrderBy(condition, isAsc, column, columns);
+            }
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doGroupBy(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理GroupBy----------");
+                return super.doGroupBy(condition, column, columns);
+            }
+
+            @Override
+            protected LambdaQueryChainWrapper<H2User> doSelect(boolean condition, List<SFunction<H2User, ?>> columns) {
+                System.out.println("-------处理Select----------");
+                return super.doSelect(condition, columns);
+            }
+        }
+            .select(H2User::getAge)
+            .select(true, H2User::getDeleted, H2User::getDeleted)
+            .orderBy(true, true, H2User::getAge, H2User::getAge)
+            .orderByAsc(H2User::getAge, H2User::getDeleted).orderByAsc(true, H2User::getAge, H2User::getTestType)
+            .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+            .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
     }
 }

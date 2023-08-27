@@ -16,7 +16,9 @@ dependencies {
     implementation "${lib['mybatis-thymeleaf']}"
     implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
-    testImplementation "${lib.h2}"
+    implementation "de.ruedigermoeller:fst:2.57"
+    implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     testImplementation "com.github.pagehelper:pagehelper:5.3.1"
     testImplementation "com.google.guava:guava:31.1-jre"
+    testImplementation "io.github.classgraph:classgraph:+"
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
+
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -295,6 +297,13 @@ public interface Func<Children, R> extends Serializable {
     Children groupBy(boolean condition, R column, R... columns);
 
     /**
+     * 分组：GROUP BY 字段, ...
+     * @since 3.5.4
+     */
+    Children groupBy(boolean condition, R column, List<R> columns);
+
+
+    /**
      * 排序：ORDER BY 字段, ... ASC
      * <p>例: orderByAsc(true, "id")</p>
      *
@@ -338,6 +347,15 @@ public interface Func<Children, R> extends Serializable {
     }
 
     /**
+     * 排序：ORDER BY 字段, ... ASC
+     *
+     * @since 3.5.4
+     */
+    default Children orderByAsc(boolean condition, R column, List<R> columns) {
+        return orderBy(condition, true, column, columns);
+    }
+
+    /**
      * 排序：ORDER BY 字段, ... DESC
      * <p>例: orderByDesc(true, "id")</p>
      *
@@ -377,8 +395,18 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ... DESC
      */
     default Children orderByDesc(boolean condition, R column, R... columns) {
+        return orderBy(condition, false, column, CollectionUtils.toList(columns));
+    }
+
+    /**
+     * 排序：ORDER BY 字段, ... DESC
+     *
+     * @since 3.5.4
+     */
+    default Children orderByDesc(boolean condition, R column, List<R> columns) {
         return orderBy(condition, false, column, columns);
     }
+
 
     /**
      * 排序：ORDER BY 字段, ...
@@ -406,6 +434,15 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ...
      */
     Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
+
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     *
+     * @since 3.5.4
+     */
+    Children orderBy(boolean condition, boolean isAsc, R column, List<R> columns);
+
 
     /**
      * ignore

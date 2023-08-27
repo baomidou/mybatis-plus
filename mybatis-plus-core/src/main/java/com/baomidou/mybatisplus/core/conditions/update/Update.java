@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,17 +63,21 @@ public interface Update<Children, R> extends Serializable {
     /**
      * ignore
      */
-    default Children setSql(String sql) {
-        return setSql(true, sql);
+    default Children setSql(String setSql, Object... params) {
+        return setSql(true, setSql, params);
     }
 
     /**
      * 设置 更新 SQL 的 SET 片段
      *
-     * @param sql set sql
+     * @param setSql set sql
+     *               例1: setSql("id=1")
+     *               例2: apply("dateColumn={0}", LocalDate.now())
+     *               例3: apply("dateColumn={0}", LocalDate.now())
+     *               例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
      * @return children
      */
-    Children setSql(boolean condition, String sql);
+    Children setSql(boolean condition, String setSql, Object... params);
 
     /**
      * 获取 更新 SQL 的 SET 片段

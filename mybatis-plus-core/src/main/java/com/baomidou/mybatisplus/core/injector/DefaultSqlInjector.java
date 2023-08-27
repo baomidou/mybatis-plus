@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,11 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
         Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
             .add(new Insert())
             .add(new Delete())
-            .add(new DeleteByMap())
             .add(new Update())
-            .add(new SelectByMap())
             .add(new SelectCount())
             .add(new SelectMaps())
-            .add(new SelectMapsPage())
             .add(new SelectObjs())
-            .add(new SelectList())
-            .add(new SelectPage());
+            .add(new SelectList());
         if (tableInfo.havePK()) {
             builder.add(new DeleteById())
                 .add(new DeleteBatchByIds())

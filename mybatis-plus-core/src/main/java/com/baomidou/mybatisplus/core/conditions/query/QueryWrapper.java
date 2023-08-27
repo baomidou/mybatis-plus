@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,14 +43,19 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * 查询字段
      */
-    private final SharedString sqlSelect = new SharedString();
+    protected final SharedString sqlSelect = new SharedString();
 
     public QueryWrapper() {
-        this(null);
+        this((T) null);
     }
 
     public QueryWrapper(T entity) {
         super.setEntity(entity);
+        super.initNeed();
+    }
+
+    public QueryWrapper(Class<T> entityClass) {
+        super.setEntityClass(entityClass);
         super.initNeed();
     }
 

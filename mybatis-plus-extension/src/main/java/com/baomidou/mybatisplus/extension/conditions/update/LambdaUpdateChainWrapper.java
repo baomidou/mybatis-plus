@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,8 +53,8 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
     }
 
     @Override
-    public LambdaUpdateChainWrapper<T> setSql(boolean condition, String sql) {
-        wrapperChildren.setSql(condition, sql);
+    public LambdaUpdateChainWrapper<T> setSql(boolean condition, String setSql, Object... params) {
+        wrapperChildren.setSql(condition, setSql, params);
         return typedThis;
     }
 

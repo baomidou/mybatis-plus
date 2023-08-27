@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,8 +98,13 @@ public abstract class Wrapper<T> implements ISqlSegment {
     /**
      * 查询条件不为空(包含entity)
      */
-    public boolean nonEmptyOfWhere() {
+    public boolean isNonEmptyOfWhere() {
         return !isEmptyOfWhere();
+    }
+
+    @Deprecated
+    public boolean nonEmptyOfWhere() {
+        return isNonEmptyOfWhere();
     }
 
     /**
@@ -112,8 +117,13 @@ public abstract class Wrapper<T> implements ISqlSegment {
     /**
      * 查询条件为空(不包含entity)
      */
-    public boolean nonEmptyOfNormal() {
+    public boolean isNonEmptyOfNormal() {
         return !isEmptyOfNormal();
+    }
+
+    @Deprecated
+    public boolean nonEmptyOfNormal() {
+        return isNonEmptyOfNormal();
     }
 
     /**
@@ -121,7 +131,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      *
      * @return true 不为空
      */
-    public boolean nonEmptyOfEntity() {
+    public boolean isNonEmptyOfEntity() {
         T entity = getEntity();
         if (entity == null) {
             return false;
@@ -136,6 +146,11 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty())) : false;
     }
 
+    @Deprecated
+    public boolean nonEmptyOfEntity() {
+        return isNonEmptyOfEntity();
+    }
+
     /**
      * 根据实体FieldStrategy属性来决定判断逻辑
      */
@@ -144,6 +159,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
             case NOT_NULL:
                 return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
             case IGNORED:
+                return true;
+            case ALWAYS:
                 return true;
             case NOT_EMPTY:
                 return StringUtils.checkValNotNull(tableInfo.getPropertyValue(entity, e.getProperty()));
@@ -160,7 +177,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * @return true 为空
      */
     public boolean isEmptyOfEntity() {
-        return !nonEmptyOfEntity();
+        return !isNonEmptyOfEntity();
     }
 
     /**

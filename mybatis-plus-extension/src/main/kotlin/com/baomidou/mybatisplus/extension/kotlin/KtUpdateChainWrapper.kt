@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@ import com.baomidou.mybatisplus.core.conditions.update.Update
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper
 import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate
-import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty1
 
 /**
  * @author FlyInWind
  * @since 2020-10-18
  */
+@Suppress("serial")
 open class KtUpdateChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>?
-) : AbstractChainWrapper<T, KProperty<*>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
-    ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KProperty<*>> {
-
+) : AbstractChainWrapper<T, KMutableProperty1<T, *>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
+    ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KMutableProperty1<T, *>> {
 
     constructor(baseMapper: BaseMapper<T>, entityClass: Class<T>) : this(baseMapper) {
         super.wrapperChildren = KtUpdateWrapper(entityClass)
@@ -48,13 +48,13 @@ open class KtUpdateChainWrapper<T : Any>(
         super.setEntityClass(entity.javaClass)
     }
 
-    override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
+    override fun set(condition: Boolean, column: KMutableProperty1<T, *>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
         wrapperChildren.set(condition, column, value, mapping)
         return typedThis
     }
 
-    override fun setSql(condition: Boolean, sql: String): KtUpdateChainWrapper<T> {
-        wrapperChildren.setSql(condition, sql)
+    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateChainWrapper<T> {
+        wrapperChildren.setSql(condition, setSql, params)
         return typedThis
     }
 
@@ -65,5 +65,4 @@ open class KtUpdateChainWrapper<T : Any>(
     override fun getEntityClass(): Class<T> {
         return super.wrapperChildren.entityClass
     }
-
 }

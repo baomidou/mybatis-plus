@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ public class TypeRegistry {
         //double
         typeMap.put(Types.FLOAT, DbColumnType.DOUBLE);
         typeMap.put(Types.REAL, DbColumnType.DOUBLE);
+        typeMap.put(Types.DOUBLE, DbColumnType.DOUBLE);
         //int
         typeMap.put(Types.INTEGER, DbColumnType.INTEGER);
         //bigDecimal
@@ -76,7 +77,7 @@ public class TypeRegistry {
         //TODO 类型需要补充完整
     }
 
-    public IColumnType getColumnType(TableField.MetaInfo metaInfo) {
+    public IColumnType getColumnType(TableField.MetaInfo metaInfo, DbColumnType defaultType) {
         //TODO 是否用包装类??? 可以尝试判断字段是否允许为null来判断是否用包装类
         int typeCode = metaInfo.getJdbcType().TYPE_CODE;
         switch (typeCode) {
@@ -93,8 +94,12 @@ public class TypeRegistry {
             case Types.TIMESTAMP:
                 return getTimestampType(metaInfo);
             default:
-                return typeMap.getOrDefault(typeCode, DbColumnType.OBJECT);
+                return typeMap.getOrDefault(typeCode, defaultType);
         }
+    }
+
+    public IColumnType getColumnType(TableField.MetaInfo metaInfo) {
+        return getColumnType(metaInfo, DbColumnType.OBJECT);
     }
 
     private IColumnType getBitType(TableField.MetaInfo metaInfo) {

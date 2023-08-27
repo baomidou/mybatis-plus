@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,14 @@ import java.net.InetAddress;
  * @since 3.3.0
  */
 public class DefaultIdentifierGenerator implements IdentifierGenerator {
+
     private final Sequence sequence;
 
+    /**
+     * @see #getInstance()
+     * @deprecated 3.5.3.2 共享默认单例
+     */
+    @Deprecated
     public DefaultIdentifierGenerator() {
         this.sequence = new Sequence(null);
     }
@@ -49,4 +55,15 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
     public Long nextId(Object entity) {
         return sequence.nextId();
     }
+
+    public static DefaultIdentifierGenerator getInstance() {
+        return DefaultInstance.INSTANCE;
+    }
+
+    private static class DefaultInstance {
+
+        public static final DefaultIdentifierGenerator INSTANCE = new DefaultIdentifierGenerator();
+
+    }
+
 }

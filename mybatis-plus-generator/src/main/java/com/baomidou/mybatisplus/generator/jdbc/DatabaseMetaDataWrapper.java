@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class DatabaseMetaDataWrapper {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseMetaDataWrapper.class);
 
-    private Connection connection;
+    private final Connection connection;
 
     private final DatabaseMetaData databaseMetaData;
 
@@ -106,6 +106,7 @@ public class DatabaseMetaDataWrapper {
                 String name = resultSet.getString("COLUMN_NAME");
                 column.name = name;
                 column.primaryKey = primaryKeys.contains(name);
+                column.typeName = resultSet.getString("TYPE_NAME");
                 column.jdbcType = JdbcType.forCode(resultSet.getInt("DATA_TYPE"));
                 column.length = resultSet.getInt("COLUMN_SIZE");
                 column.scale = resultSet.getInt("DECIMAL_DIGITS");
@@ -115,7 +116,6 @@ public class DatabaseMetaDataWrapper {
                 try {
                     column.autoIncrement = "YES".equals(resultSet.getString("IS_AUTOINCREMENT"));
                 } catch (SQLException sqlException) {
-                    logger.warn("获取IS_AUTOINCREMENT出现异常:", sqlException);
                     //TODO 目前测试在oracle旧驱动下存在问题，降级成false.
                 }
                 columnsInfoMap.put(name.toLowerCase(), column);
@@ -216,6 +216,8 @@ public class DatabaseMetaDataWrapper {
 
         private JdbcType jdbcType;
 
+        private String typeName;
+
         public String getName() {
             return name;
         }
@@ -252,5 +254,12 @@ public class DatabaseMetaDataWrapper {
             return autoIncrement;
         }
 
+        public String getTypeName() {
+            return typeName;
+        }
+
+        public void setTypeName(String typeName) {
+            this.typeName = typeName;
+        }
     }
 }

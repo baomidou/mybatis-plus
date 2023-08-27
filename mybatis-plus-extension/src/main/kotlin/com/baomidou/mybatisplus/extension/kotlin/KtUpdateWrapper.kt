@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
-import kotlin.reflect.KProperty
+import kotlin.reflect.KMutableProperty1
 
 /**
  * Kotlin Lambda 更新封装
@@ -33,7 +33,8 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
+@Suppress("serial")
+open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KMutableProperty1<T, *>> {
 
     /**
      * SQL 更新字段内容，例如：name='1', age=2
@@ -68,14 +69,14 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         else sqlSet.stream().collect(joining(StringPool.COMMA))
     }
 
-    override fun setSql(condition: Boolean, sql: String): KtUpdateWrapper<T> {
-        if (condition && StringUtils.isNotBlank(sql)) {
-            sqlSet.add(sql)
+    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateWrapper<T> {
+        if (condition && StringUtils.isNotBlank(setSql)) {
+            sqlSet.add(formatSqlMaybeWithParam(setSql, *params))
         }
         return typedThis
     }
 
-    override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
+    override fun set(condition: Boolean, column: KMutableProperty1<T, *>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
         return maybeDo(condition) {
             val sql = formatParam(mapping, value)
             sqlSet.add(columnsToString(column) + Constants.EQUALS + sql)

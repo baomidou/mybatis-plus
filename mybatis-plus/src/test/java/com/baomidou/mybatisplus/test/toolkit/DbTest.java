@@ -235,16 +235,24 @@ class DbTest extends BaseDbTest<EntityMapper> {
         Page<Map<String, Object>> page = Db.pageMaps(new Page<>(1, 1), Entity.class);
         Assertions.assertEquals(2, page.getTotal());
 
+        Assertions.assertEquals(Db.listMaps(new Page<>(1, 1, false), Entity.class).size(), page.getRecords().size());
+
         page = Db.pageMaps(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
         Assertions.assertEquals(1, page.getRecords().size());
+
+        Assertions.assertEquals(Db.listMaps(new Page<>(1, 1, false), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
     }
 
     @Test
     void testPage() {
         IPage<Entity> page = Db.page(new Page<>(1, 1), Entity.class);
         Assertions.assertEquals(2, page.getTotal());
+        Assertions.assertEquals(Db.list(new Page<Entity>(1, 1), Entity.class).size(),page.getRecords().size());
+
         page = Db.page(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
         Assertions.assertEquals(1, page.getRecords().size());
+
+        Assertions.assertEquals(Db.list(new Page<Entity>(1, 1), Wrappers.lambdaQuery(Entity.class)).size(),page.getRecords().size());
     }
 
     @Test

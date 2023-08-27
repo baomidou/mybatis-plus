@@ -15,18 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
-import org.junit.jupiter.api.AfterAll;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.annotation.Resource;
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 
 @DirtiesContext
 public class BaseTest {
@@ -55,11 +50,4 @@ public class BaseTest {
         });
     }
 
-    @AfterAll
-    public static void afterAll() throws NoSuchFieldException, IllegalAccessException {
-        Field tableInfoCache = TableInfoHelper.class.getDeclaredField("TABLE_INFO_CACHE");
-        tableInfoCache.setAccessible(true);
-        Map<Class<?>, TableInfo> tableInfoMap = (Map<Class<?>, TableInfo>) tableInfoCache.get(TableInfoHelper.class);
-        tableInfoMap.clear();
-    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,9 @@ public enum DbType {
      */
     @Deprecated
     GBASE_INFORMIX("gbase 8s", "南大通用数据库 GBase 8s"),
-
+    /**
+     * Sinodb
+     */
     SINODB("sinodb","星瑞格数据库"),
     /**
      * Oscar
@@ -153,7 +155,7 @@ public enum DbType {
      */
     CSIIDB("csiidb", "CSIIDB数据库"),
     /**
-     * CSIIDB
+     * Hana
      */
     SAP_HANA("hana", "SAP_HANA数据库"),
     /**

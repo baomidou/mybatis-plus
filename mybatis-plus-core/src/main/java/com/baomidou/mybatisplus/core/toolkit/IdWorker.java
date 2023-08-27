@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static IdentifierGenerator IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator();
+    private static IdentifierGenerator IDENTIFIER_GENERATOR = entity -> DefaultIdentifierGenerator.getInstance().nextId(entity);
 
     /**
      * 毫秒格式化时间

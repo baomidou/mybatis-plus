@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2016-09-09
  */
 public class TableInfoHelper {
+
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
     /**
@@ -250,10 +251,19 @@ public class TableInfoHelper {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
 
+        // 表追加前缀
         String targetTableName = tableName;
         if (StringUtils.isNotBlank(tablePrefix) && tablePrefixEffect) {
             targetTableName = tablePrefix + targetTableName;
         }
+
+        // 表格式化
+        String tableFormat = dbConfig.getTableFormat();
+        if (StringUtils.isNotBlank(tableFormat)) {
+            targetTableName = String.format(tableFormat, targetTableName);
+        }
+
+        // 表追加 schema 信息
         if (StringUtils.isNotBlank(schema)) {
             targetTableName = schema + StringPool.DOT + targetTableName;
         }

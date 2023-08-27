@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,17 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      */
     default List<T> list() {
         return execute(mapper -> mapper.selectList(getWrapper()));
+    }
+
+    /**
+     * 获取集合
+     *
+     * @param page 分页条件
+     * @return 集合记录
+     * @since 3.5.3.2
+     */
+    default List<T> list(IPage<T> page) {
+        return execute(mapper -> mapper.selectList(page, getWrapper()));
     }
 
     /**

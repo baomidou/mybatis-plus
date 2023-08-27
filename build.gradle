@@ -11,25 +11,25 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.10',
-        mybatisSpringVersion = '2.0.7',
-        mybatisSpringBootStarterVersion = '2.2.2',
+        mybatisVersion = '3.5.13',
+        mybatisSpringVersion = '2.1.1',
+        mybatisSpringBootStarterVersion = '2.3.1',
         springVersion = '5.3.15',
         springBootVersion = '2.5.3',
         springCloudVersion = '3.1.1',
-        jsqlparserVersion = '4.4', // 4.5 有bug
+        jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
     ]
 
     lib = [
-        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.7.10",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10",
+        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.9.0",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0",
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
         "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.3",
-        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.1",
+        "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.2",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
         "spring-jdbc"                : "org.springframework:spring-jdbc:${springVersion}",
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
@@ -57,7 +57,7 @@ ext {
         "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
         "postgresql"                 : "org.postgresql:postgresql:42.4.1",
-        "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
+        "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc8.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:2.1.214",
@@ -65,7 +65,7 @@ ext {
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.39.2.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.6.java8",
         //cache
-        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
+        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.3",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
         //code generator
@@ -102,6 +102,7 @@ subprojects {
         testImplementation "${lib["junit-jupiter"]}"
         testImplementation "org.mockito:mockito-junit-jupiter:4.6.1"
         testImplementation "${lib["lagarto"]}"
+        testImplementation "${lib["logback-classic"]}"
     }
 
     tasks.withType(JavaCompile) {
@@ -178,15 +179,20 @@ subprojects {
         // 增加jvm参数不是一个很好的处理方案,最好还是只用java8下跑,下面只是兼容运行一下,但在高版本jdk下还有很多第三方反射库存在问题(等待完全升级)
         // 部分测试用例如果需要在高版本java下运行用@EnabledOnJre
         // 例如: https://github.com/cglib/cglib/issues/191
-        if (JavaVersion.current().isJava9Compatible()) {
-            jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
-                        "--add-opens", "java.base/java.util=ALL-UNNAMED",
-                        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
-        }
+//        if (JavaVersion.current().isJava9Compatible()) {
+//            jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
+//                        "--add-opens", "java.base/java.util=ALL-UNNAMED",
+//                        "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
+//        }
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
-        exclude("**/generator/**")
+//        exclude("**/generator/**")
     }
+
+    task cleanBuildDir(type: Delete) {
+        delete "${projectDir}/out"
+    }
+    tasks.clean.dependsOn(cleanBuildDir)
 
     task javadocJar(type: Jar) {
         archiveClassifier = 'javadoc'

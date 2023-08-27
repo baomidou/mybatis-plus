@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -128,6 +129,8 @@ public class StrategyConfig {
     private Mapper mapper;
 
     private Service service;
+
+    private IOutputFile outputFile = (path, ot) -> new File(path);
 
     /**
      * 实体配置构建者
@@ -365,6 +368,11 @@ public class StrategyConfig {
         return notLikeTable;
     }
 
+    @Nullable
+    public IOutputFile getOutputFile() {
+        return outputFile;
+    }
+
     /**
      * 策略配置构建者
      *
@@ -543,6 +551,16 @@ public class StrategyConfig {
          */
         public Builder notLikeTable(@NotNull LikeTable notLikeTable) {
             this.strategyConfig.notLikeTable = notLikeTable;
+            return this;
+        }
+
+        /**
+         * 输出文件处理
+         *
+         * @return this
+         */
+        public Builder outputFile(@NotNull IOutputFile outputFile) {
+            this.strategyConfig.outputFile = outputFile;
             return this;
         }
 

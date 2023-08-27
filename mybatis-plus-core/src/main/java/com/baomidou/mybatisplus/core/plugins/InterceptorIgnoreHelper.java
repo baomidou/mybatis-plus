@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,9 @@ public abstract class InterceptorIgnoreHelper {
             ignoreStrategy = IGNORE_STRATEGY_CACHE.get(id.substring(0, id.length() - SelectKeyGenerator.SELECT_KEY_SUFFIX.length()));
         }
         if (ignoreStrategy == null) {
-            ignoreStrategy = IGNORE_STRATEGY_CACHE.get(id.substring(0, id.lastIndexOf(StringPool.DOT)));
+            // fixed github issues/5342
+            int index = id.lastIndexOf(StringPool.DOT);
+            ignoreStrategy = IGNORE_STRATEGY_CACHE.get(index > 0 ? id.substring(0, index) : id);
         }
         if (ignoreStrategy != null) {
             Boolean apply = function.apply(ignoreStrategy);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -211,7 +211,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
         try {
-            page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
+            page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST), map));
         } finally {
             closeSqlSession(sqlSession);
         }

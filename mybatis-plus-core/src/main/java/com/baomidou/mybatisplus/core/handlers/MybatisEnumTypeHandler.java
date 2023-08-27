@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         Object value = rs.getObject(columnName, this.propertyType);
-        if (null == value && rs.wasNull()) {
+        if (null == value || rs.wasNull()) {
             return null;
         }
         return this.valueOf(value);
@@ -125,7 +125,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         Object value = rs.getObject(columnIndex, this.propertyType);
-        if (null == value && rs.wasNull()) {
+        if (null == value || rs.wasNull()) {
             return null;
         }
         return this.valueOf(value);
@@ -134,7 +134,7 @@ public class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         Object value = cs.getObject(columnIndex, this.propertyType);
-        if (null == value && cs.wasNull()) {
+        if (null == value || cs.wasNull()) {
             return null;
         }
         return this.valueOf(value);

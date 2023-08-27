@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -38,6 +40,14 @@ import java.util.Map;
  * @since 2017-06-20
  */
 public abstract class PluginUtils {
+
+    /**
+     * 缓存内置的插件对象反射信息
+     *
+     * @since 3.5.3.2
+     */
+    public static final DefaultReflectorFactory DEFAULT_REFLECTOR_FACTORY = new DefaultReflectorFactory();
+
     public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
 
     /**
@@ -46,10 +56,22 @@ public abstract class PluginUtils {
     @SuppressWarnings("unchecked")
     public static <T> T realTarget(Object target) {
         if (Proxy.isProxyClass(target.getClass())) {
-            MetaObject metaObject = SystemMetaObject.forObject(target);
-            return realTarget(metaObject.getValue("h.target"));
+            Plugin plugin = (Plugin) Proxy.getInvocationHandler(target);
+            MetaObject metaObject = getMetaObject(plugin);
+            return realTarget(metaObject.getValue("target"));
         }
         return (T) target;
+    }
+
+    /**
+     * 获取对象元数据信息
+     *
+     * @param object 参数
+     * @return 元数据信息
+     * @since 3.5.3
+     */
+    public static MetaObject getMetaObject(Object object) {
+        return MetaObject.forObject(object, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, DEFAULT_REFLECTOR_FACTORY);
     }
 
     /**
@@ -68,8 +90,8 @@ public abstract class PluginUtils {
 
     public static MPStatementHandler mpStatementHandler(StatementHandler statementHandler) {
         statementHandler = realTarget(statementHandler);
-        MetaObject object = SystemMetaObject.forObject(statementHandler);
-        return new MPStatementHandler(SystemMetaObject.forObject(object.getValue("delegate")));
+        MetaObject object = getMetaObject(statementHandler);
+        return new MPStatementHandler(getMetaObject(object.getValue("delegate")));
     }
 
     /**
@@ -116,12 +138,13 @@ public abstract class PluginUtils {
      * {@link BoundSql}
      */
     public static class MPBoundSql {
+
         private final MetaObject boundSql;
         private final BoundSql delegate;
 
         MPBoundSql(BoundSql boundSql) {
             this.delegate = boundSql;
-            this.boundSql = SystemMetaObject.forObject(boundSql);
+            this.boundSql = getMetaObject(boundSql);
         }
 
         public String sql() {

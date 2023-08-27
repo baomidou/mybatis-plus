@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.reflection.property.PropertyCopier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanCopier;
 
@@ -16,6 +18,7 @@ import java.util.Collections;
 class PageTest {
 
     @Test
+    @EnabledOnJre(JRE.JAVA_8)
     void testCopy(){
         Page page1 = new Page(2, 10, 100, false);
         page1.setOptimizeCountSql(false);

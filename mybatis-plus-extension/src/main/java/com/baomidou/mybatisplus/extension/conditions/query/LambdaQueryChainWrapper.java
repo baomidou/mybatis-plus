@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
@@ -62,6 +63,25 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
 
     @Override
     public LambdaQueryChainWrapper<T> select(boolean condition, List<SFunction<T, ?>> columns) {
+        return doSelect(condition, columns);
+    }
+
+    @Override
+    @SafeVarargs
+    public final LambdaQueryChainWrapper<T> select(SFunction<T, ?>... columns) {
+        return doSelect(true, CollectionUtils.toList(columns));
+    }
+
+    @Override
+    @SafeVarargs
+    public final LambdaQueryChainWrapper<T> select(boolean condition, SFunction<T, ?>... columns) {
+        return doSelect(condition, CollectionUtils.toList(columns));
+    }
+
+    /**
+     * @since 3.5.4
+     */
+    protected LambdaQueryChainWrapper<T> doSelect(boolean condition, List<SFunction<T, ?>> columns) {
         wrapperChildren.select(condition, columns);
         return typedThis;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -38,8 +39,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +53,8 @@ import java.util.Map;
  * @since 3.4.0
  */
 public class MybatisParameterHandler implements ParameterHandler {
+
+    public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
 
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
@@ -75,13 +80,7 @@ public class MybatisParameterHandler implements ParameterHandler {
             if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
                 return parameter;
             }
-            Collection<Object> parameters = getParameters(parameter);
-            if (null != parameters) {
-                // 感觉这里可以稍微优化一下，理论上都是同一个.
-                parameters.forEach(this::process);
-            } else {
-                process(parameter);
-            }
+            extractParameters(parameter).forEach(this::process);
         }
         return parameter;
     }
@@ -183,12 +182,16 @@ public class MybatisParameterHandler implements ParameterHandler {
      * </p>
      *
      * @return 集合参数
+     * @deprecated 3.5.3.2
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
+    @Deprecated
     protected Collection<Object> getParameters(Object parameterObject) {
         Collection<Object> parameters = null;
         if (parameterObject instanceof Collection) {
             parameters = (Collection) parameterObject;
+        } else if (ArrayUtils.isArray(parameterObject)) {
+            parameters = toCollection(parameterObject);
         } else if (parameterObject instanceof Map) {
             Map parameterMap = (Map) parameterObject;
             // 约定 coll collection list array 这四个特殊key值处理批量.
@@ -207,18 +210,48 @@ public class MybatisParameterHandler implements ParameterHandler {
         return parameters;
     }
 
+    /**
+     * 提取特殊key值 (只支持外层参数,嵌套参数不考虑)
+     * List<Map>虽然这种写法目前可以进去提取et,但不考虑再提取list等其他类型,只做简单参数提取
+     *
+     * @param parameterObject 参数
+     * @return 预期可能为填充参数值
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private Collection<Object> extractParameters(Object parameterObject) {
+        Collection<Object> parameters = new ArrayList<>();
+        if (parameterObject instanceof Collection) {
+            parameters = (Collection) parameterObject;
+        } else if (ArrayUtils.isArray(parameterObject)) {
+            parameters = toCollection(parameterObject);
+        } else if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            if (parameterMap.containsKey(Constants.ENTITY)) {
+                parameters.add(parameterMap.get(Constants.ENTITY));
+            }
+            for (String key : COLLECTION_KEYS) {
+                if (parameterMap.containsKey(key)) {
+                    parameters.addAll(toCollection(parameterMap.get(key)));
+                }
+            }
+        } else {
+            parameters.add(parameterObject);
+        }
+        return parameters;
+    }
+
     @SuppressWarnings("unchecked")
     protected Collection<Object> toCollection(Object value) {
         if (value == null) {
-            return null;
+            return Collections.emptyList();
         }
         // 只处理array和collection
-        if (value.getClass().isArray()) {
+        if (ArrayUtils.isArray(value)) {
             return Arrays.asList((Object[]) value);
         } else if (Collection.class.isAssignableFrom(value.getClass())) {
             return (Collection<Object>) value;
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

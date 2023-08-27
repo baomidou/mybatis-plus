@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -283,9 +283,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         // 当前 join 的左表
         Table leftTable = null;
 
-        if (mainTables == null) {
-            mainTables = new ArrayList<>();
-        } else if (mainTables.size() == 1) {
+        if (mainTables.size() == 1) {
             mainTable = mainTables.get(0);
             leftTable = mainTable;
         }
@@ -320,6 +318,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 // 如果不要忽略，且是右连接，则记录下当前表
                 if (join.isRight()) {
                     mainTable = joinTable;
+                    mainTables.clear();
                     if (leftTable != null) {
                         onTables = Collections.singletonList(leftTable);
                     }
@@ -330,12 +329,12 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                         onTables = Arrays.asList(mainTable, joinTable);
                     }
                     mainTable = null;
+                    mainTables.clear();
                 } else {
                     onTables = Collections.singletonList(joinTable);
                 }
 
-                mainTables = new ArrayList<>();
-                if (mainTable != null) {
+                if (mainTable != null && !mainTables.contains(mainTable)) {
                     mainTables.add(mainTable);
                 }
 
@@ -346,7 +345,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                     List<Expression> onExpressions = new LinkedList<>();
                     onExpressions.add(builderExpression(originOnExpressions.iterator().next(), onTables, whereSegment));
                     join.setOnExpressions(onExpressions);
-                    leftTable = joinTable;
+                    leftTable = mainTable == null ? joinTable : mainTable;
                     continue;
                 }
                 // 表名压栈，忽略的表压入 null，以便后续不处理

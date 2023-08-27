@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,21 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * DDL 辅助类
@@ -52,8 +55,8 @@ public class DdlHelper {
      * @param ddlGenerator DDL 生成器
      * @param connection   数据库连接
      * @param sqlFiles     SQL 文件列表
-     * @param autoCommit   字段提交事务
-     * @throws Exception
+     * @param autoCommit   自动提交事务
+     * @throws SQLException SQLException
      */
     public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles, boolean autoCommit) throws SQLException {
         // 执行自定义 DDL 信息
@@ -83,6 +86,15 @@ public class DdlHelper {
                 List<Map<String, Object>> objectMap = sqlRunner.selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
                 if (null == objectMap || objectMap.isEmpty()) {
                     log.debug("run script file: {}", sqlFile);
+                    String[] sqlFileArr = sqlFile.split(StringPool.HASH);
+                    if (Objects.equals(2, sqlFileArr.length)) {
+                        // 命令间的分隔符
+                        scriptRunner.setDelimiter(sqlFileArr[1]);
+                        // 原始文件路径
+                        sqlFile = sqlFileArr[0];
+                    } else {
+                        scriptRunner.setDelimiter(StringPool.SEMICOLON);
+                    }
                     File file = new File(sqlFile);
                     if (file.exists()) {
                         scriptRunner.runScript(new FileReader(file));
@@ -103,8 +115,7 @@ public class DdlHelper {
      * @param ddlGenerator DDL 生成器
      * @param dataSource   数据源
      * @param sqlFiles     SQL 文件列表
-     * @param autoCommit   字段提交事务
-     * @throws Exception
+     * @param autoCommit   自动提交事务
      */
     public static void runScript(IDdlGenerator ddlGenerator, DataSource dataSource, List<String> sqlFiles, boolean autoCommit) {
         try (Connection connection = dataSource.getConnection()) {
@@ -124,8 +135,12 @@ public class DdlHelper {
 
     public static ScriptRunner getScriptRunner(Connection connection, boolean autoCommit) {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
+        Resources.setCharset(Charset.forName(StringPool.UTF_8));
         scriptRunner.setAutoCommit(autoCommit);
+        scriptRunner.setEscapeProcessing(false);
+        scriptRunner.setRemoveCRs(true);
         scriptRunner.setStopOnError(true);
+        scriptRunner.setFullLineDelimiter(false);
         return scriptRunner;
     }
 

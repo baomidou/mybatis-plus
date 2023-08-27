@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2022, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2023, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class Db {
         Class<T> entityClass = getEntityClass(entityList);
         Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
         String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
     }
 
     /**
@@ -113,7 +113,7 @@ public class Db {
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal)
                 || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass, SqlMethod.SELECT_BY_ID), entity));
@@ -205,7 +205,7 @@ public class Db {
         Class<T> entityClass = getEntityClass(entityList);
         TableInfo tableInfo = getTableInfo(entityClass);
         String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
-        return SqlHelper.executeBatch(entityClass, LogFactory.getLog(Db.class), entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
@@ -380,6 +380,17 @@ public class Db {
     }
 
     /**
+     * @param page         分页条件
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param <T>          entity
+     * @return 列表数据
+     */
+    public static <T> List<T> list(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
+        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(page, queryWrapper));
+    }
+
+
+    /**
      * 查询所有
      *
      * @param entityClass 实体类
@@ -388,6 +399,18 @@ public class Db {
     public static <T> List<T> list(Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null));
     }
+
+    /**
+     * @param page        分页条件
+     * @param entityClass 实体类
+     * @param <T>         entity
+     * @return 列表数据
+     * @since 3.5.3.2
+     */
+    public static <T> List<T> list(IPage<T> page, Class<T> entityClass) {
+        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(page, null));
+    }
+
 
     /**
      * 根据entity中不为空的字段进行查询
@@ -400,12 +423,36 @@ public class Db {
     }
 
     /**
+     * 根据entity中不为空的字段进行查询
+     *
+     * @param page   分页条件
+     * @param entity 实体类
+     * @param <T>    entity
+     * @return 列表数据
+     * @since 3.5.3.2
+     */
+    public static <T> List<T> list(IPage<T> page, T entity) {
+        return list(page, Wrappers.lambdaQuery(entity));
+    }
+
+    /**
      * 查询列表
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> List<Map<String, Object>> listMaps(AbstractWrapper<T, ?, ?> queryWrapper) {
         return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(queryWrapper));
+    }
+
+    /**
+     * @since 3.5.3.2
+     * @param page 分页参数
+     * @param queryWrapper queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @return 列表数据
+     * @param <T> entity
+     */
+    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, AbstractWrapper<T, ?, ?> queryWrapper) {
+        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(page, queryWrapper));
     }
 
     /**
@@ -419,12 +466,39 @@ public class Db {
     }
 
     /**
+     * 分页查询列表
+     *
+     * @param page        分页条件
+     * @param entityClass 实体类
+     * @param <T>         entity
+     * @return 列表数据
+     * @since 3.5.3.2
+     */
+    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, Class<T> entityClass) {
+        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectMaps(page, null));
+    }
+
+
+    /**
      * 根据entity不为空的条件查询列表
      *
      * @param entity 实体类
      */
     public static <T> List<Map<String, Object>> listMaps(T entity) {
         return listMaps(Wrappers.lambdaQuery(entity));
+    }
+
+    /**
+     * 根据entity不为空的条件查询列表
+     *
+     * @param page   分页条件
+     * @param entity entity
+     * @param <T>    entity
+     * @return 列表数据
+     * @since 3.5.3.2
+     */
+    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, T entity) {
+        return listMaps(page, Wrappers.lambdaQuery(entity));
     }
 
     /**
