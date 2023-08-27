@@ -28,7 +28,7 @@ import kotlin.reflect.KProperty
  * @since 2020-10-18
  */
 open class KtQueryChainWrapper<T : Any>(
-    internal val baseMapper: BaseMapper<T>
+    internal val baseMapper: BaseMapper<T>?
 ) : AbstractChainWrapper<T, KProperty<*>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
     ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty<*>> {
 
@@ -41,6 +41,15 @@ open class KtQueryChainWrapper<T : Any>(
         super.wrapperChildren = KtQueryWrapper(entity)
     }
 
+    constructor(entityClass: Class<T>) : this(null) {
+        super.wrapperChildren = KtQueryWrapper(entityClass)
+    }
+
+    constructor(entity: T) : this(null) {
+        super.wrapperChildren = KtQueryWrapper(entity)
+        super.setEntityClass(entity.javaClass)
+    }
+
     override fun select(condition: Boolean, columns: MutableList<KProperty<*>>): KtQueryChainWrapper<T> {
         wrapperChildren.select(condition, columns)
         return typedThis
@@ -51,7 +60,7 @@ open class KtQueryChainWrapper<T : Any>(
         return typedThis
     }
 
-    override fun getBaseMapper(): BaseMapper<T> {
+    override fun getBaseMapper(): BaseMapper<T>? {
         return baseMapper
     }
 

@@ -26,7 +26,7 @@ import kotlin.reflect.KProperty
  * @since 2020-10-18
  */
 open class KtUpdateChainWrapper<T : Any>(
-    internal val baseMapper: BaseMapper<T>
+    internal val baseMapper: BaseMapper<T>?
 ) : AbstractChainWrapper<T, KProperty<*>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
     ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KProperty<*>> {
 
@@ -39,6 +39,15 @@ open class KtUpdateChainWrapper<T : Any>(
         super.wrapperChildren = KtUpdateWrapper(entity)
     }
 
+    constructor(entityClass: Class<T>) : this(null) {
+        super.wrapperChildren = KtUpdateWrapper(entityClass)
+    }
+
+    constructor(entity: T) : this(null) {
+        super.wrapperChildren = KtUpdateWrapper(entity)
+        super.setEntityClass(entity.javaClass)
+    }
+
     override fun set(condition: Boolean, column: KProperty<*>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
         wrapperChildren.set(condition, column, value, mapping)
         return typedThis
@@ -49,7 +58,7 @@ open class KtUpdateChainWrapper<T : Any>(
         return typedThis
     }
 
-    override fun getBaseMapper(): BaseMapper<T> {
+    override fun getBaseMapper(): BaseMapper<T>? {
         return baseMapper
     }
 
