@@ -21,4 +21,5 @@ dependencies {
     testImplementation "com.github.pagehelper:pagehelper:5.3.1"
     testImplementation "com.google.guava:guava:31.1-jre"
     testImplementation "io.github.classgraph:classgraph:+"
+    testImplementation "${lib.h2}"
 }
