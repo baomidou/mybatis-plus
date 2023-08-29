@@ -37,9 +37,26 @@ import org.apache.ibatis.mapping.SqlSource;
  */
 public class Insert extends AbstractMethod {
 
+    /**
+     * 自增主键字段是否忽略
+     *
+     * @since 3.5.4
+     */
+    private boolean ignoreAutoIncrementColumn;
+
     public Insert() {
         this(SqlMethod.INSERT_ONE.getMethod());
     }
+
+    /**
+     * @param ignoreAutoIncrementColumn 是否忽略自增长主键字段
+     * @since 3.5.4
+     */
+    public Insert(boolean ignoreAutoIncrementColumn) {
+        this(SqlMethod.INSERT_ONE.getMethod());
+        this.ignoreAutoIncrementColumn = ignoreAutoIncrementColumn;
+    }
+
 
     /**
      * @param name 方法名
@@ -49,13 +66,23 @@ public class Insert extends AbstractMethod {
         super(name);
     }
 
+    /**
+     * @param name                      方法名
+     * @param ignoreAutoIncrementColumn 是否忽略自增长主键字段
+     * @since 3.5.4
+     */
+    public Insert(String name, boolean ignoreAutoIncrementColumn) {
+        super(name);
+        this.ignoreAutoIncrementColumn = ignoreAutoIncrementColumn;
+    }
+
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
-        String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null),
+        String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null, ignoreAutoIncrementColumn),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null),
+        String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null, ignoreAutoIncrementColumn),
             null, null, null, COMMA) + NEWLINE + RIGHT_BRACKET;
         String keyProperty = null;
         String keyColumn = null;
