@@ -624,7 +624,7 @@ public class TableInfoHelper {
             // 多个主键生成器
             KeySequence keySequence = tableInfo.getKeySequence();
             if (null != keySequence && DbType.OTHER != keySequence.dbType()) {
-                keyGenerator = keyGenerators.stream().filter(k -> k.dbType() == keySequence.dbType()).findFirst().get();
+                keyGenerator = keyGenerators.stream().filter(k -> k.dbType() == keySequence.dbType()).findFirst().orElse(null);
             }
         }
         // 无法找到注解指定生成器，默认使用第一个生成器
