@@ -29,7 +29,7 @@ import kotlin.reflect.KMutableProperty1
  */
 @Suppress("serial")
 open class KtQueryChainWrapper<T : Any>(
-    internal val baseMapper: BaseMapper<T>
+    internal val baseMapper: BaseMapper<T>?
 ) : AbstractChainWrapper<T, KMutableProperty1<T, *>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
     ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KMutableProperty1<T, *>> {
 
@@ -39,6 +39,15 @@ open class KtQueryChainWrapper<T : Any>(
 
     constructor(baseMapper: BaseMapper<T>, entity: T) : this(baseMapper) {
         super.wrapperChildren = KtQueryWrapper(entity)
+    }
+
+    constructor(entityClass: Class<T>) : this(null) {
+        super.wrapperChildren = KtQueryWrapper(entityClass)
+    }
+
+    constructor(entity: T) : this(null) {
+        super.wrapperChildren = KtQueryWrapper(entity)
+        super.setEntityClass(entity.javaClass)
     }
 
     override fun select(condition: Boolean, columns: MutableList<KMutableProperty1<T, *>>): KtQueryChainWrapper<T> {
@@ -51,7 +60,7 @@ open class KtQueryChainWrapper<T : Any>(
         return typedThis
     }
 
-    override fun getBaseMapper(): BaseMapper<T> {
+    override fun getBaseMapper(): BaseMapper<T>? {
         return baseMapper
     }
 

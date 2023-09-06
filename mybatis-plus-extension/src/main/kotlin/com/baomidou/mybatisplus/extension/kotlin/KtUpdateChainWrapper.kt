@@ -27,7 +27,7 @@ import kotlin.reflect.KMutableProperty1
  */
 @Suppress("serial")
 open class KtUpdateChainWrapper<T : Any>(
-    internal val baseMapper: BaseMapper<T>
+    internal val baseMapper: BaseMapper<T>?
 ) : AbstractChainWrapper<T, KMutableProperty1<T, *>, KtUpdateChainWrapper<T>, KtUpdateWrapper<T>>(),
     ChainUpdate<T>, Update<KtUpdateChainWrapper<T>, KMutableProperty1<T, *>> {
 
@@ -37,6 +37,15 @@ open class KtUpdateChainWrapper<T : Any>(
 
     constructor(baseMapper: BaseMapper<T>, entity: T) : this(baseMapper) {
         super.wrapperChildren = KtUpdateWrapper(entity)
+    }
+
+    constructor(entityClass: Class<T>) : this(null) {
+        super.wrapperChildren = KtUpdateWrapper(entityClass)
+    }
+
+    constructor(entity: T) : this(null) {
+        super.wrapperChildren = KtUpdateWrapper(entity)
+        super.setEntityClass(entity.javaClass)
     }
 
     override fun set(condition: Boolean, column: KMutableProperty1<T, *>, value: Any?, mapping: String?): KtUpdateChainWrapper<T> {
@@ -49,7 +58,7 @@ open class KtUpdateChainWrapper<T : Any>(
         return typedThis
     }
 
-    override fun getBaseMapper(): BaseMapper<T> {
+    override fun getBaseMapper(): BaseMapper<T>? {
         return baseMapper
     }
 

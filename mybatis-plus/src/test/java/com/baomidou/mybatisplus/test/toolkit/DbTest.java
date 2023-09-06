@@ -1,16 +1,5 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.apache.ibatis.plugin.Interceptor;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -26,6 +15,12 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import com.baomidou.mybatisplus.test.sqlrunner.Entity;
 import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
+import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
 
 /**
  * 以静态方式调用Service中的函数

@@ -15,36 +15,27 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 以静态方式调用Service中的函数
@@ -600,6 +591,16 @@ public class Db {
     }
 
     /**
+     * kt链式查询
+     *
+     * @return KtQueryWrapper 的包装类
+     */
+    public static <T> KtQueryChainWrapper<T> ktQuery(Class<T> entityClass) {
+        return ChainWrappers.ktQueryChain(entityClass);
+    }
+
+
+    /**
      * 链式查询 lambda 式
      * <p>注意：不支持 Kotlin </p>
      *
@@ -616,6 +617,15 @@ public class Db {
      */
     public static <T> UpdateChainWrapper<T> update(Class<T> entityClass) {
         return ChainWrappers.updateChain(entityClass);
+    }
+
+    /**
+     * kt链式更改
+     *
+     * @return KtUpdateWrapper 的包装类
+     */
+    public static <T> KtUpdateChainWrapper<T> ktUpdate(Class<T> entityClass) {
+        return ChainWrappers.ktUpdateChain(entityClass);
     }
 
     /**
