@@ -370,7 +370,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
 
-    public Children doOrderBy(boolean condition, boolean isAsc, R column, List<R> columns){
+    public Children doOrderBy(boolean condition, boolean isAsc, R column, List<R> columns) {
         return maybeDo(condition, () -> {
             final SqlKeyword mode = isAsc ? ASC : DESC;
             if (column != null) {
@@ -378,7 +378,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             }
             if (CollectionUtils.isNotEmpty(columns)) {
                 columns.forEach(c -> appendSqlSegments(ORDER_BY,
-                    columnToSqlSegment(c), mode));
+                        columnToSqlSegment(c), mode));
             }
         });
     }

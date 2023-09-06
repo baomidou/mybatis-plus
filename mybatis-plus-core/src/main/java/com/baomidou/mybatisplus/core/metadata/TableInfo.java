@@ -326,7 +326,23 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
+        return getAllInsertSqlPropertyMaybeIf(prefix, false);
+    }
+
+    /**
+     * 获取所有 insert 时候插入值 sql 脚本片段
+     *
+     * @param prefix                    前缀
+     * @param ignoreAutoIncrementColumn 是否忽略自增主键字段
+     * @return sql 脚本片段
+     * @since 3.5.4
+     */
+    public String getAllInsertSqlPropertyMaybeIf(final String prefix, boolean ignoreAutoIncrementColumn) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
+        if (ignoreAutoIncrementColumn) {
+            return fieldList.stream()
+                .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+        }
         return getKeyInsertSqlProperty(false, newPrefix, true) + fieldList.stream()
             .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
@@ -341,7 +357,23 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getAllInsertSqlColumnMaybeIf(final String prefix) {
+        return getAllInsertSqlColumnMaybeIf(prefix, false);
+    }
+
+    /**
+     * 获取 insert 时候字段 sql 脚本片段
+     *
+     * @param prefix                    前缀
+     * @param ignoreAutoIncrementColumn 是否忽略自增主键字段
+     * @return sql脚本内容
+     * @since 3.5.4
+     */
+    public String getAllInsertSqlColumnMaybeIf(final String prefix, boolean ignoreAutoIncrementColumn) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
+        if (ignoreAutoIncrementColumn) {
+            return fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
+                .filter(Objects::nonNull).collect(joining(NEWLINE));
+        }
         return getKeyInsertSqlColumn(false, newPrefix, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
     }

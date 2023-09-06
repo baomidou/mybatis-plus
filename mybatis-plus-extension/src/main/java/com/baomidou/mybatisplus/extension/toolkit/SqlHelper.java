@@ -59,7 +59,9 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      * @return SqlSession
+     * @deprecated 3.5.4
      */
+    @Deprecated
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
         // TODO 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
         return sqlSessionFactory(clazz).openSession(ExecutorType.BATCH);
@@ -255,10 +257,29 @@ public final class SqlHelper {
      * @param <E>         E
      * @return 操作结果
      * @since 3.4.0
+     * @deprecated 3.5.4 {@link #saveOrUpdateBatch(SqlSessionFactory, Class, Log, Collection, int, BiPredicate, BiConsumer)}
      */
+    @Deprecated
     public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession, E> predicate, BiConsumer<SqlSession, E> consumer) {
+        return saveOrUpdateBatch(sqlSessionFactory(entityClass), mapper, log, list, batchSize, predicate, consumer);
+    }
+
+    /**
+     * 批量更新或保存
+     *
+     * @param sqlSessionFactory SqlSessionFactory
+     * @param log               日志对象
+     * @param list              数据集合
+     * @param batchSize         批次大小
+     * @param predicate         predicate(新增条件) notNull
+     * @param consumer          consumer（更新处理） notNull
+     * @param <E>               E
+     * @return 操作结果
+     * @since 3.5.4
+     */
+    public static <E> boolean saveOrUpdateBatch(SqlSessionFactory sqlSessionFactory, Class<?> mapper, Log log, Collection<E> list, int batchSize, BiPredicate<SqlSession, E> predicate, BiConsumer<SqlSession, E> consumer) {
         String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
-        return executeBatch(entityClass, log, list, batchSize, (sqlSession, entity) -> {
+        return executeBatch(sqlSessionFactory, log, list, batchSize, (sqlSession, entity) -> {
             if (predicate.test(sqlSession, entity)) {
                 sqlSession.insert(sqlStatement, entity);
             } else {
