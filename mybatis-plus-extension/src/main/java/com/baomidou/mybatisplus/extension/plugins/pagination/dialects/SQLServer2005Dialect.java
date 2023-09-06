@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
@@ -47,7 +48,9 @@ public class SQLServer2005Dialect implements IDialect {
     }
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        long limit = page.getSize();
         StringBuilder pagingBuilder = new StringBuilder();
         String orderby = getOrderByPart(originalSql);
         String distinctStr = StringPool.EMPTY;

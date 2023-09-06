@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
@@ -27,7 +28,20 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 public class MySqlDialect implements IDialect {
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        // 计算实际count值
+        long limit = page.getSize();
+        // 此次分页查询是否进行总数的查询，为否时total恒为0无法计算出真实count
+        if (page.searchCount()) {
+            long leftCount = page.getTotal() - (page.getCurrent() - 1) * limit;
+            // 正常来说leftCount总是>=0, 这里避免异常情况发现小于0时直接设置为0
+            if (leftCount < 0) {
+                limit = 0;
+            } else {
+                limit = Math.min(leftCount, limit);
+            }
+        }
         StringBuilder sql = new StringBuilder(originalSql).append(" LIMIT ").append(FIRST_MARK);
         if (offset != 0L) {
             sql.append(StringPool.COMMA).append(SECOND_MARK);

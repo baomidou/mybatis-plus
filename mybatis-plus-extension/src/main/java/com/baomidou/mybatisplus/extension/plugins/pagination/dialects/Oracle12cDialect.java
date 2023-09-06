@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
@@ -26,7 +27,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 public class Oracle12cDialect implements IDialect {
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        long limit = page.getSize();
         String sql = originalSql + " OFFSET " + FIRST_MARK + " ROWS FETCH NEXT " + SECOND_MARK + " ROWS ONLY";
         return new DialectModel(sql, offset, limit).setConsumerChain();
     }

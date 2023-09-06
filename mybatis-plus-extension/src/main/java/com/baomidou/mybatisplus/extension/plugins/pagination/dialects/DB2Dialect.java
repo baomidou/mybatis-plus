@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
@@ -26,7 +27,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 public class DB2Dialect implements IDialect {
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        long limit = page.getSize();
         long firstParam = offset + 1;
         long secondParam = offset + limit;
         String sql = "SELECT * FROM (SELECT TMP_PAGE.*,ROWNUMBER() OVER() AS ROW_ID FROM ( " + originalSql +

@@ -174,7 +174,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         IDialect dialect = findIDialect(executor);
 
         final Configuration configuration = ms.getConfiguration();
-        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
+        DialectModel model = dialect.buildPaginationSql(buildSql, page);
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
 
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();

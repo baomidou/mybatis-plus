@@ -15,12 +15,15 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 public class InformixDialect implements IDialect {
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        long limit = page.getSize();
         StringBuilder ret = new StringBuilder();
         ret.append(String.format("select skip %s first %s ", offset + "", limit + ""));
         ret.append(originalSql.replaceFirst("(?i)select", ""));

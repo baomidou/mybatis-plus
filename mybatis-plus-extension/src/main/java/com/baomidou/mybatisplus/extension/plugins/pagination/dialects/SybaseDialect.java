@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 import java.util.ArrayList;
@@ -42,7 +43,9 @@ public class SybaseDialect implements IDialect {
     }
 
     @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+    public DialectModel buildPaginationSql(String originalSql, IPage<?> page) {
+        long offset = page.offset();
+        long limit = page.getSize();
         int index = findMainFROM(originalSql);
         if(index == -1){
             index = originalSql.toUpperCase().indexOf(" FROM ");
