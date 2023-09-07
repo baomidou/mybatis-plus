@@ -87,7 +87,13 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      */
     public boolean deleteById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
-        return deleteById(pkVal());
+
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), this));
+        } finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
