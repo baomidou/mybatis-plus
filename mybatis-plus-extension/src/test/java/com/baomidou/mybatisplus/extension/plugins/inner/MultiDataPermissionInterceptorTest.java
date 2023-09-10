@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
 import com.google.common.collect.HashBasedTable;
 import net.sf.jsqlparser.JSQLParserException;
@@ -32,6 +33,11 @@ public class MultiDataPermissionInterceptorTest {
     private static String TEST_5 = "com.baomidou.roleMapper.selectByRoleId";
     private static String TEST_6 = "com.baomidou.roleMapper.selectUserInfo";
     private static String TEST_7 = "com.baomidou.roleMapper.summarySum";
+    private static String TEST_8_1 = "com.baomidou.CustomMapper.selectByOnlyMyData";
+    private static String TEST_8_2 = "com.baomidou.CustomMapper.selectByOnlyOrgData";
+    private static String TEST_8_3 = "com.baomidou.CustomMapper.selectByOnlyDeptData";
+    private static String TEST_8_4 = "com.baomidou.CustomMapper.selectByMyDataOrDeptData";
+    private static String TEST_8_5 = "com.baomidou.CustomMapper.selectByMyData";
 
     static {
         sqlSegmentMap = HashBasedTable.create();
@@ -44,6 +50,12 @@ public class MultiDataPermissionInterceptorTest {
         sqlSegmentMap.put(TEST_6, "sys_user_role", "r.role_id=3 AND r.role_id IN (7,9,11)");
         sqlSegmentMap.put(TEST_7, "`fund`", "a.id = 1 AND a.year = 2022 AND a.create_user_id = 1111");
         sqlSegmentMap.put(TEST_7, "`fund_month`", "b.fund_id = 2 AND b.month <= '2022-05'");
+        sqlSegmentMap.put(TEST_8_1, "fund", "user_id=1");
+        sqlSegmentMap.put(TEST_8_2, "fund", "org_id=1");
+        sqlSegmentMap.put(TEST_8_3, "fund", "dept_id=1");
+        sqlSegmentMap.put(TEST_8_4, "fund", "user_id=1 or dept_id=1");
+        sqlSegmentMap.put(TEST_8_5, "table1", "u.user_id=1");
+        sqlSegmentMap.put(TEST_8_5, "table2", "u.dept_id=1");
         interceptor = new DataPermissionInterceptor(new MultiDataPermissionHandler() {
 
             @Override
@@ -53,6 +65,10 @@ public class MultiDataPermissionInterceptorTest {
                     if (sqlSegment == null) {
                         logger.info("{} {} AS {} : NOT FOUND", mappedStatementId, table.getName(), table.getAlias());
                         return null;
+                    }
+                    if (table.getAlias() != null) {
+                        // 替换表别名
+                        sqlSegment = sqlSegment.replaceAll("u\\.", table.getAlias().getName() + StringPool.DOT);
                     }
                     Expression sqlSegmentExpression = CCJSqlParserUtil.parseCondExpression(sqlSegment);
                     logger.info("{} {} AS {} : {}", mappedStatementId, table.getName(), table.getAlias(), sqlSegmentExpression.toString());
@@ -112,6 +128,24 @@ public class MultiDataPermissionInterceptorTest {
     void test7() {
         assertSql(TEST_7, "SELECT c.doc AS title, sum(c.total_paid_amount) AS total_paid_amount, sum(c.balance_amount) AS balance_amount FROM (SELECT `a`.`id`, `a`.`doc`, `b`.`month`, `b`.`total_paid_amount`, `b`.`balance_amount`, row_number() OVER (PARTITION BY `a`.`id` ORDER BY `b`.`month` DESC) AS `row_index` FROM `fund` `a` LEFT JOIN `fund_month` `b` ON `a`.`id` = `b`.`fund_id` AND `b`.`submit` = TRUE) c WHERE c.row_index = 1 GROUP BY title LIMIT 20",
             "SELECT c.doc AS title, sum(c.total_paid_amount) AS total_paid_amount, sum(c.balance_amount) AS balance_amount FROM (SELECT `a`.`id`, `a`.`doc`, `b`.`month`, `b`.`total_paid_amount`, `b`.`balance_amount`, row_number() OVER (PARTITION BY `a`.`id` ORDER BY `b`.`month` DESC) AS `row_index` FROM `fund` `a` LEFT JOIN `fund_month` `b` ON `a`.`id` = `b`.`fund_id` AND `b`.`submit` = TRUE AND b.fund_id = 2 AND b.month <= '2022-05' WHERE a.id = 1 AND a.year = 2022 AND a.create_user_id = 1111) c WHERE c.row_index = 1 GROUP BY title LIMIT 20");
+    }
+
+    @Test
+    void test8() {
+        assertSql(TEST_8_1, "select * from fund where id=3",
+            "SELECT * FROM fund WHERE id = 3 AND user_id = 1");
+        assertSql(TEST_8_2, "select * from fund where id=3",
+            "SELECT * FROM fund WHERE id = 3 AND org_id = 1");
+        assertSql(TEST_8_3, "select * from fund where id=3",
+            "SELECT * FROM fund WHERE id = 3 AND dept_id = 1");
+        assertSql(TEST_8_4, "select * from fund where id=3",
+            "SELECT * FROM fund WHERE id = 3 AND user_id = 1 OR dept_id = 1");
+        // 修改之前旧版的多表数据权限对这个SQL的表现形式：
+        // 输入 "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 on t1.uid = t2.uid) SELECT * FROM temp"
+        // 输出 "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 ON t1.uid = t2.uid) SELECT * FROM temp"
+        // 修改之后的多表数据权限对这个SQL的表现形式
+        assertSql(TEST_8_5, "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 on t1.uid = t2.uid) SELECT * FROM temp",
+            "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 ON t1.uid = t2.uid AND t2.dept_id = 1 WHERE t1.user_id = 1) SELECT * FROM temp");
     }
 
     void assertSql(String mappedStatementId, String sql, String targetSql) {
