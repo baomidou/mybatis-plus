@@ -52,8 +52,9 @@ public class DeleteById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
+        SqlMethod sqlMethod;
         if (tableInfo.isWithLogicDelete()) {
+            sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
             List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
                 .filter(TableFieldInfo::isWithUpdateFill)
                 .filter(f -> !f.isLogicDelete())

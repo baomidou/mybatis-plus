@@ -87,7 +87,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      */
     public boolean deleteById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
-
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), this));
@@ -117,7 +116,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      */
     public boolean updateById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
-        // updateById
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
         SqlSession sqlSession = sqlSession();
@@ -137,7 +135,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
-        // update
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE), map));

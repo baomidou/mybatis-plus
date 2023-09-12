@@ -243,6 +243,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return doGroupBy(condition, column, CollectionUtils.toList(columns));
     }
 
+    @Override
     public Children groupBy(boolean condition, R column, List<R> columns) {
         return doGroupBy(condition, column, columns);
     }
@@ -263,6 +264,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return orderBy(condition, isAsc, column, CollectionUtils.toList(columns));
     }
 
+    @Override
     public Children orderBy(boolean condition, boolean isAsc, R column, List<R> columns) {
         return doOrderBy(condition, isAsc, column, columns);
     }
