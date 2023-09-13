@@ -1,0 +1,18 @@
+java {
+//    toolchain {
+//        languageVersion.set(JavaLanguageVersion.of(17))
+//    }
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+
+dependencies {
+    api project(":spring-boot-starter:mybatis-plus-spring-boot3-starter")
+    api project(":spring-boot-starter:mybatis-plus-spring-boot-test-autoconfigure")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3Version}")
+    api "org.springframework.boot:spring-boot-autoconfigure"
+    api "org.springframework.boot:spring-boot-starter-test"
+    api "org.springframework:spring-tx"
+    testImplementation "${lib.h2}"
+}

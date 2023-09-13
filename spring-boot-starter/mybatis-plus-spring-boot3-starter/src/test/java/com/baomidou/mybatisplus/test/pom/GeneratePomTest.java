@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2019, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -47,7 +47,7 @@ class GeneratePomTest {
 
     @Test
     void test() throws IOException {
-        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");) {
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml")) {
             JerryParser jerryParser = Jerry.create(new LagartoDOMBuilder().enableXmlMode());
             Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
             Jerry dependencies = doc.s("dependencies dependency");
@@ -56,27 +56,24 @@ class GeneratePomTest {
                 String artifactId = $this.s("artifactId").text();
                 dependenciesMap.put(artifactId, new Dependency(artifactId, $this.s("scope").text(), Boolean.parseBoolean($this.s("optional").text())));
             });
-            Dependency core = dependenciesMap.get("mybatis-plus-core");
-            Assertions.assertEquals("compile", core.getScope());
-            Assertions.assertFalse(core.isOptional());
-            Dependency mybatisSpring = dependenciesMap.get("mybatis-spring");
-            Assertions.assertEquals("compile", mybatisSpring.getScope());
-            Assertions.assertTrue(mybatisSpring.isOptional());
-            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
-            Assertions.assertEquals("compile", kotlinStdlib.getScope());
-            Assertions.assertTrue(kotlinStdlib.isOptional());
-            Dependency kotlinReflect = dependenciesMap.get("kotlin-reflect");
-            Assertions.assertEquals("compile", kotlinReflect.getScope());
-            Assertions.assertTrue(kotlinReflect.isOptional());
-            Dependency support = dependenciesMap.get("spring-context-support");
-            Assertions.assertEquals("compile", support.getScope());
-            Assertions.assertTrue(support.isOptional());
-            Dependency jdbc = dependenciesMap.get("spring-jdbc");
+            Dependency mp = dependenciesMap.get("mybatis-plus");
+            Assertions.assertEquals("compile", mp.getScope());
+            Assertions.assertFalse(mp.isOptional());
+            Dependency autoconfigure = dependenciesMap.get("spring-boot-autoconfigure");
+            Assertions.assertEquals("compile", autoconfigure.getScope());
+            Assertions.assertFalse(autoconfigure.isOptional());
+            Dependency jdbc = dependenciesMap.get("spring-boot-starter-jdbc");
             Assertions.assertEquals("compile", jdbc.getScope());
-            Assertions.assertTrue(jdbc.isOptional());
-            Dependency slf4jApi = dependenciesMap.get("slf4j-api");
-            Assertions.assertEquals("compile", slf4jApi.getScope());
-            Assertions.assertTrue(slf4jApi.isOptional());
+            Assertions.assertFalse(jdbc.isOptional());
+            Dependency configurationProcessor = dependenciesMap.get("spring-boot-configuration-processor");
+            Assertions.assertEquals("compile", configurationProcessor.getScope());
+            Assertions.assertTrue(configurationProcessor.isOptional());
+            Dependency autoconfigureProcessor = dependenciesMap.get("spring-boot-autoconfigure-processor");
+            Assertions.assertEquals("compile", autoconfigureProcessor.getScope());
+            Assertions.assertTrue(autoconfigureProcessor.isOptional());
+            Dependency bom = dependenciesMap.get("spring-boot-dependencies");
+            Assertions.assertEquals("import", bom.getScope());
+            Assertions.assertFalse(bom.isOptional());
         }
     }
 

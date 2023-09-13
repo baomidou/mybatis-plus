@@ -7,15 +7,17 @@ allprojects {
 
 ext {
     configuration = [
-        javaVersion = JavaVersion.VERSION_1_8
+        javaVersion = JavaVersion.VERSION_17
     ]
 
     libraries = [
         mybatisVersion = '3.5.13',
         mybatisSpringVersion = '2.1.1',
+        mybatisSpring3Version = '3.0.2',
         mybatisSpringBootStarterVersion = '2.3.1',
         springVersion = '5.3.15',
         springBootVersion = '2.5.3',
+        springBoot3Version = '3.1.3',
         springCloudVersion = '3.1.1',
         jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
@@ -27,6 +29,7 @@ ext {
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
+        "mybatis-spring3"             : "org.mybatis:mybatis-spring:${mybatisSpring3Version}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
         "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.3",
         "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.2",
@@ -89,6 +92,10 @@ subprojects {
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
+
+    compileJava {
+        options.release = 8
+    }
 
     repositories {
         mavenLocal()

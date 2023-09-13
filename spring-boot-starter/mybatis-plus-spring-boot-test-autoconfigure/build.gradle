@@ -1,0 +1,8 @@
+dependencies {
+    implementation "org.springframework:spring-tx:${springVersion}"
+    implementation project(":spring-boot-starter:mybatis-plus-boot-starter")
+    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+}

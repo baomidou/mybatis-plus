@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     api project(":mybatis-plus-core")
-    api "${lib."mybatis-spring"}"
+    implementation "${lib."mybatis-spring"}"
 
     implementation "${lib."kotlin-stdlib-jdk8"}"
     implementation "${lib."kotlin-reflect"}"
