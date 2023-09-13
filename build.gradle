@@ -30,7 +30,7 @@ ext {
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-spring3"             : "org.mybatis:mybatis-spring:${mybatisSpring3Version}",
-        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.3",
+        "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.4",
         "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.2.3",
         "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.1.2",
         "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
@@ -53,7 +53,7 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.23.1",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.11",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.15.2",
         "gson"                       : "com.google.code.gson:gson:2.9.1",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
         //datasource
@@ -73,7 +73,7 @@ ext {
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
-        "freemarker"          : "org.freemarker:freemarker:2.3.31",
+        "freemarker"          : "org.freemarker:freemarker:2.3.32",
         "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.2",
         "enjoy"               : "com.jfinal:enjoy:5.0.0",
