@@ -7,6 +7,8 @@
 * feat: 代码生成器元数据信息公开tableName与columnName字段访问.
 * feat: 新增mybatis-plus-spring-boot3-starter与mybatis-plus-spring-boot3-starter-test支持SpringBoot3
 * feat: 升级源码Jdk开发版本至Java17
-* opt: mybatis-plus-extension与mybatis-plus中mybatis-spring依赖修改为可选依赖(如果项目在非spring下使用到了请手动添加依赖)
+* feat: 升级gradle-wrapper至7.3支持Java17
+* opt: mybatis-plus-extension中mybatis-spring依赖修改为可选依赖(如果项目在非spring下使用到了请手动添加依赖)
 *
+
 
