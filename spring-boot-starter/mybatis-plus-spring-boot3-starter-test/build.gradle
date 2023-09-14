@@ -1,11 +1,6 @@
-java {
-//    toolchain {
-//        languageVersion.set(JavaLanguageVersion.of(17))
-//    }
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+compileJava {
+    options.release = 17
 }
-
 
 dependencies {
     api project(":spring-boot-starter:mybatis-plus-spring-boot3-starter")
