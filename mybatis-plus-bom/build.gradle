@@ -4,7 +4,7 @@ buildscript {
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
-        classpath "io.spring.gradle:dependency-management-plugin:1.1.0"
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.3"
     }
 }
 
