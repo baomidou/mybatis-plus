@@ -22,20 +22,17 @@ import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -98,14 +95,27 @@ class MybatisTest {
         System.out.println("------------------批量测试开始-----------------------------");
         sqlSession = sqlSessionFactory.openSession();
         mapper = sqlSession.getMapper(H2UserMapper.class);
-        List<H2User> userList = Arrays.asList(new H2User(1000L,"测试"),new H2User(1001L,"测试"));
-        // 基于JdbcTransaction的原生事务管理.
-        // 非自动提交事务时,执行结束后会回滚掉批量插入的数据
+        List<H2User> userList = Arrays.asList(new H2User(1000L, "测试"), new H2User(1001L, "测试"));
+        try {
+            new MybatisBatch<>(sqlSessionFactory, userList).execute(H2UserMapper.class.getName() + ".insert", parameter -> {
+                if (parameter.getTestId() == 1001L) {
+                    throw new RuntimeException("报错了");
+                }
+                return parameter;
+            });
+        } catch (Exception exception) {
+            for (H2User u : userList) {
+                Assertions.assertNull(mapper.selectById(u.getTestId()));
+            }
+        }
+
+        userList = Arrays.asList(new H2User(2000L, "测试"), new H2User(2001L, "测试"));
         new MybatisBatch<>(sqlSessionFactory, userList).execute(H2UserMapper.class.getName() + ".insert");
         for (H2User u : userList) {
-            Assertions.assertNull(mapper.selectById(u.getTestId()));
+            Assertions.assertNotNull(mapper.selectById(u.getTestId()));
         }
         // 自动提交事务
+        userList = Arrays.asList(new H2User(3000L,"测试"),new H2User(3001L,"测试"));
         sqlSession = sqlSessionFactory.openSession();
         mapper = sqlSession.getMapper(H2UserMapper.class);
         new MybatisBatch<>(sqlSessionFactory, userList).execute(true, H2UserMapper.class.getName() + ".insert");

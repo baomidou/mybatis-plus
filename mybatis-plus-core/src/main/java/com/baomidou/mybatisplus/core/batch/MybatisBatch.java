@@ -116,7 +116,11 @@ public class MybatisBatch<T> {
             for (T data : dataList) {
                 sqlSession.update(statement, toParameter(parameterConvert, data));
             }
-            return sqlSession.flushStatements();
+            List<BatchResult> resultList = sqlSession.flushStatements();
+            if(!autoCommit) {
+                sqlSession.commit();
+            }
+            return resultList;
         }
     }
 
@@ -154,6 +158,9 @@ public class MybatisBatch<T> {
             }
             resultList.addAll(sqlSession.flushStatements());
             resultList.addAll(session.getResultBatchList());
+            if(!autoCommit) {
+                sqlSession.commit();
+            }
             return resultList;
         }
     }
