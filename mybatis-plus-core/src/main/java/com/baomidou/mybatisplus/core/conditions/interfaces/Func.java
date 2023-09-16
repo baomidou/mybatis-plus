@@ -118,6 +118,9 @@ public interface Func<Children, R> extends Serializable {
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      * <p>例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
+     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     *
      * @param condition 执行条件
      * @param column    字段
      * @param coll      数据集合
@@ -135,6 +138,9 @@ public interface Func<Children, R> extends Serializable {
     /**
      * 字段 NOT IN (v0, v1, ...)
      * <p>例: notIn("id", 1, 2, 3, 4, 5)</p>
+     *
+     * <li> 注意！当数组为 空 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
      *
      * @param condition 执行条件
      * @param column    字段
