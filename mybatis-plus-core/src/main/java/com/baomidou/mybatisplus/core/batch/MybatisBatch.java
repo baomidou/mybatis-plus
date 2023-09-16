@@ -22,6 +22,7 @@ import java.util.function.Function;
  * <li>返回值为批处理结果,如果对返回值比较关心的可接收判断处理</li>
  * <li>saveOrUpdate尽量少用把,保持批处理为简单的插入或更新</li>
  * <li>关于saveOrUpdate中的sqlSession,如果执行了select操作的话,BatchExecutor都会触发一次flushStatements,为了保证结果集,故使用包装了部分sqlSession查询操作</li>
+ * <li>autoCommit参数,在spring下使用的是{@link org.mybatis.spring.transaction.SpringManagedTransaction},控制无效,只能通过datasource控制(建议不要修改),单独使用mybatis下{@link org.apache.ibatis.transaction.jdbc.JdbcTransaction}是可用的</li>
  * <pre>
  *     Spring示例:
  * 		transactionTemplate.execute(new TransactionCallback<List<BatchResult>>() {
@@ -47,45 +48,98 @@ public class MybatisBatch<T> {
         this.dataList = dataList;
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param statement 执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(String statement) {
         return execute(false, statement, (entity) -> entity);
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param statement        执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @param parameterConvert 参数转换器
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(String statement, ParameterConvert<T> parameterConvert) {
         return execute(false, statement, parameterConvert);
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param autoCommit 是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param statement  执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(boolean autoCommit, String statement) {
-        return execute(autoCommit, statement, null);
+        return execute(autoCommit, statement, (entity) -> entity);
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param batchMethod 批量操作方法
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(BatchMethod<T> batchMethod) {
         return execute(false, batchMethod);
     }
 
+
+    /**
+     * 执行批量操作
+     *
+     * @param autoCommit  是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param batchMethod 批量操作方法
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(boolean autoCommit, BatchMethod<T> batchMethod) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, autoCommit)) {
-            for (T data : dataList) {
-                ParameterConvert<T> parameterConvert = batchMethod.getParameterConvert();
-                sqlSession.update(batchMethod.getStatementId(), toParameter(parameterConvert, data));
-            }
-            return sqlSession.flushStatements();
-        }
+        return execute(autoCommit, batchMethod.getStatementId(), batchMethod.getParameterConvert());
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param autoCommit       是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param statement        执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @param parameterConvert 参数转换器
+     * @return 批处理结果
+     */
     public List<BatchResult> execute(boolean autoCommit, String statement, ParameterConvert<T> parameterConvert) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, autoCommit)) {
             for (T data : dataList) {
-                sqlSession.update(statement, parameterConvert != null ? parameterConvert.convert(data) : data);
+                sqlSession.update(statement, toParameter(parameterConvert, data));
             }
             return sqlSession.flushStatements();
         }
     }
 
+    /**
+     * 批量保存或更新
+     *
+     * @param insertMethod    插入方法
+     * @param insertPredicate 插入条件 (当条件满足时执行插入方法,否则执行更新方法)
+     * @param updateMethod    更新方法
+     * @return 批处理结果
+     */
     public List<BatchResult> saveOrUpdate(BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
         return saveOrUpdate(false, insertMethod, insertPredicate, updateMethod);
     }
 
+    /**
+     * 批量保存或更新
+     *
+     * @param autoCommit      是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param insertMethod    插入方法
+     * @param insertPredicate 插入条件 (当条件满足时执行插入方法,否则执行更新方法)
+     * @param updateMethod    更新方法
+     * @return 批处理结果
+     */
     public List<BatchResult> saveOrUpdate(boolean autoCommit, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
         List<BatchResult> resultList = new ArrayList<>();
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, autoCommit)) {
@@ -127,14 +181,24 @@ public class MybatisBatch<T> {
             });
         }
 
-        public BatchMethod<T> update(Function<T, Wrapper<T>> wrapperFunction) {
+        public BatchMethod<T> update(Function<T, Wrapper<T>> function) {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (entity) -> {
                 Map<String, Object> param = new HashMap<>();
                 param.put(Constants.ENTITY, entity);
-                param.put(Constants.WRAPPER, wrapperFunction.apply(entity));
+                param.put(Constants.WRAPPER, function.apply(entity));
                 return param;
             });
         }
+
+        public <E> BatchMethod<E> deleteById(Function<E, T> function) {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.DELETE_BY_ID.getMethod(), function::apply);
+        }
+
+        @SuppressWarnings("TypeParameterHidesVisibleType")
+        public <T> BatchMethod<T> deleteById() {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.DELETE_BY_ID.getMethod());
+        }
+
     }
 
 }

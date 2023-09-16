@@ -131,4 +131,10 @@ public class H2User extends SuperEntity {
             "testDate=" + testDate + "," +
             "version=" + version;
     }
+
+    public static H2User ofId(Long id) {
+        H2User h2User = new H2User();
+        h2User.setTestId(id);
+        return h2User;
+    }
 }

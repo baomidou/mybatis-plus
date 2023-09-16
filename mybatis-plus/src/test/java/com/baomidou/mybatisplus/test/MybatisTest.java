@@ -16,11 +16,13 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.Configuration;
@@ -29,14 +31,19 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -47,16 +54,15 @@ import java.sql.SQLException;
 @ExtendWith(MockitoExtension.class)
 class MybatisTest {
 
-    @Test
-    void test() throws IOException, SQLException {
-        JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setUser("sa");
-        dataSource.setPassword("");
-        dataSource.setUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+    private static SqlSessionFactory sqlSessionFactory;
+
+
+    @BeforeAll
+    public static void init() throws IOException, SQLException {
         Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
-        SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);
-        SqlSession sqlSession = factory.openSession(dataSource.getConnection());
-        Configuration configuration = factory.getConfiguration();
+        sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(reader);
+        DataSource dataSource = sqlSessionFactory.getConfiguration().getEnvironment().getDataSource();
+        Configuration configuration = sqlSessionFactory.getConfiguration();
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
         /*
          *  如果是将defaultEnumTypeHandler设置成MP的处理器,
@@ -66,6 +72,12 @@ class MybatisTest {
         Connection connection = dataSource.getConnection();
         ScriptRunner scriptRunner = new ScriptRunner(connection);
         scriptRunner.runScript(Resources.getResourceAsReader("h2/user.ddl.sql"));
+    }
+
+
+    @Test
+    void test(){
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
         H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
         Assertions.assertEquals(mapper.myInsertWithNameVersion("test", 2), 1);
         Assertions.assertEquals(mapper.insert(new H2User("test")), 1);
@@ -81,6 +93,26 @@ class MybatisTest {
         Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
         Assertions.assertEquals(mapper.deleteById(66L), 1);
         Assertions.assertNull(mapper.selectById(66L));
+        sqlSession.close();
+
+        System.out.println("------------------批量测试开始-----------------------------");
+        sqlSession = sqlSessionFactory.openSession();
+        mapper = sqlSession.getMapper(H2UserMapper.class);
+        List<H2User> userList = Arrays.asList(new H2User(1000L,"测试"),new H2User(1001L,"测试"));
+        // 基于JdbcTransaction的原生事务管理.
+        // 非自动提交事务时,执行结束后会回滚掉批量插入的数据
+        new MybatisBatch<>(sqlSessionFactory, userList).execute(H2UserMapper.class.getName() + ".insert");
+        for (H2User u : userList) {
+            Assertions.assertNull(mapper.selectById(u.getTestId()));
+        }
+        // 自动提交事务
+        sqlSession = sqlSessionFactory.openSession();
+        mapper = sqlSession.getMapper(H2UserMapper.class);
+        new MybatisBatch<>(sqlSessionFactory, userList).execute(true, H2UserMapper.class.getName() + ".insert");
+        for (H2User u : userList) {
+            Assertions.assertNotNull(mapper.selectById(u.getTestId()));
+        }
+        System.out.println("------------------批量测试结束-----------------------------");
     }
 
 }

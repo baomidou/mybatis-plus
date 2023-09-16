@@ -16,7 +16,7 @@ public class BatchMethod<T> {
     /**
      * 方法参数转换器,默认传递批量的entity的参数
      */
-    private ParameterConvert<T> parameterConvert;
+    private ParameterConvert<T> parameterConvert = (entity) -> entity;
 
     public BatchMethod(String statementId) {
         this.statementId = statementId;
