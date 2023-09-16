@@ -287,6 +287,14 @@ public class MybatisBatch<T> {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.DELETE_BY_ID.getMethod());
         }
 
+        public <E> BatchMethod<E> get(String method) {
+            return new BatchMethod<>(namespace + StringPool.DOT + method);
+        }
+
+        public <E> BatchMethod<E> get(String method, ParameterConvert<E> parameterConvert) {
+            return new BatchMethod<>(namespace + StringPool.DOT + method, parameterConvert);
+        }
+
     }
 
 }

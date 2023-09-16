@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.core.batch.BatchMethod;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -124,8 +123,9 @@ class H2UserMapperTest extends BaseTest {
         for (int i = 0; i < batchSize; i++) {
             h2UserList.add(new H2User("myInsertWithoutParam" + i));
         }
+        MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
         // 执行批量插入
-        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(H2UserMapper.class.getName() + ".myInsertWithoutParam");
+        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(method.get("myInsertWithoutParam"));
         updateCounts = batchResults.get(0).getUpdateCounts();
         Assertions.assertEquals(batchSize, updateCounts.length);
         for (int updateCount : updateCounts) {
@@ -137,7 +137,7 @@ class H2UserMapperTest extends BaseTest {
             h2UserList.add(new H2User("myInsertWithParam" + i));
         }
         // 执行批量插入
-        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(H2UserMapper.class.getName() + ".myInsertWithParam", parameter -> Map.of("user1", parameter));
+        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(method.get("myInsertWithParam", parameter -> Map.of("user1", parameter)));
         updateCounts = batchResults.get(0).getUpdateCounts();
         Assertions.assertEquals(batchSize, updateCounts.length);
         for (int updateCount : updateCounts) {
@@ -148,7 +148,7 @@ class H2UserMapperTest extends BaseTest {
         for (int i = 0; i < batchSize; i++) {
             h2UserList.add(new H2User("myInsertWithParam" + i));
         }
-        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(new BatchMethod<>(H2UserMapper.class.getName() + ".myInsertWithParam", parameter -> Map.of("user1", parameter)));
+        batchResults = new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(method.get("myInsertWithParam", parameter -> Map.of("user1", parameter)));
         updateCounts = batchResults.get(0).getUpdateCounts();
         Assertions.assertEquals(batchSize, updateCounts.length);
         for (int updateCount : updateCounts) {
