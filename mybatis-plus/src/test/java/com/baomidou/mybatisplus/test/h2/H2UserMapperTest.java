@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
@@ -108,6 +109,10 @@ class H2UserMapperTest extends BaseTest {
         for (int updateCount : updateCounts) {
             Assertions.assertEquals(1, updateCount);
         }
+
+        List<Long> ids = Arrays.asList(120000L, 120001L);
+        MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
+        new MybatisBatch<>(sqlSessionFactory, ids).execute(method.insert(H2User::ofId));
     }
 
     @Test
@@ -198,6 +203,15 @@ class H2UserMapperTest extends BaseTest {
         for (int updateCount : updateCounts) {
             Assertions.assertEquals(0, updateCount);
         }
+
+        List<Long> ids = Arrays.asList(120000L, 120001L);
+        MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
+
+        new MybatisBatch<>(sqlSessionFactory, ids).execute(method.update(id -> Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "updateTest").eq(H2User::getTestId, id)));
+        new MybatisBatch<>(sqlSessionFactory, ids).execute(method.update(id -> new H2User().setName("updateTest2"), id -> Wrappers.<H2User>lambdaUpdate().eq(H2User::getTestId, id)));
+
+        new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(method.update(user -> Wrappers.<H2User>update().set("name", "updateTest3").eq("test_id", user.getTestId())));
+        new MybatisBatch<>(sqlSessionFactory, h2UserList).execute(method.update(user -> new H2User("updateTests4"), p -> Wrappers.<H2User>update().eq("test_id", p.getTestId())));
     }
 
     @Test

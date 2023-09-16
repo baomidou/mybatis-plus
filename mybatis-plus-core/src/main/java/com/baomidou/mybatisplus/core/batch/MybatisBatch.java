@@ -9,6 +9,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -157,22 +158,58 @@ public class MybatisBatch<T> {
         }
     }
 
+    /**
+     * 参数转换
+     *
+     * @param parameterConvert 参数转换器
+     * @param data             参数
+     * @return 方法参数
+     */
     protected Object toParameter(ParameterConvert<T> parameterConvert, T data) {
         return parameterConvert != null ? parameterConvert.convert(data) : data;
     }
 
+    /**
+     * 内置方法简化调用
+     *
+     * @param <T> 泛型参数(实体)
+     */
     public static class Method<T> {
 
+        /**
+         * 命名空间
+         */
         private final String namespace;
 
         public Method(Class<?> mapperClass) {
             this.namespace = mapperClass.getName();
         }
 
+        /**
+         * 新增方法
+         *
+         * @return 新增方法
+         */
         public BatchMethod<T> insert() {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.INSERT_ONE.getMethod());
         }
 
+        /**
+         * 新增方法
+         *
+         * @param function 转换函数
+         * @param <E>      实体
+         * @return 新增方法
+         */
+        public <E> BatchMethod<E> insert(Function<E, T> function) {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.INSERT_ONE.getMethod(), function::apply);
+        }
+
+        /**
+         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#updateById(java.lang.Object)}
+         *
+         * @return 更新方法
+         */
         public BatchMethod<T> updateById() {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE_BY_ID.getMethod(), (entity) -> {
                 Map<String, Object> param = new HashMap<>();
@@ -181,19 +218,70 @@ public class MybatisBatch<T> {
             });
         }
 
-        public BatchMethod<T> update(Function<T, Wrapper<T>> function) {
-            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (entity) -> {
+        /**
+         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#updateById(java.lang.Object)}
+         *
+         * @param etFunction 实体转换
+         * @param <E>        实体
+         * @return 更新方法
+         */
+        public <E> BatchMethod<E> updateById(Function<E, T> etFunction) {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE_BY_ID.getMethod(), (parameter) -> {
                 Map<String, Object> param = new HashMap<>();
-                param.put(Constants.ENTITY, entity);
-                param.put(Constants.WRAPPER, function.apply(entity));
+                param.put(Constants.ENTITY, etFunction.apply(parameter));
                 return param;
             });
         }
 
+        /**
+         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
+         *
+         * @param wrapperFunction 更新条件(不能为null)
+         * @param <E>             实体
+         * @return 更新方法
+         */
+        public <E> BatchMethod<E> update(Function<E, Wrapper<T>> wrapperFunction) {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (parameter) -> {
+                Map<String, Object> param = new HashMap<>();
+                param.put(Constants.WRAPPER, wrapperFunction.apply(parameter));
+                return param;
+            });
+        }
+
+        /**
+         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
+         *
+         * @param entityFunction  实体参数
+         * @param wrapperFunction wrapper参数
+         * @param <E>             实体
+         * @return 更新方法
+         */
+        public <E> BatchMethod<E> update(Function<E, T> entityFunction, Function<E, Wrapper<T>> wrapperFunction) {
+            return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (parameter) -> {
+                Map<String, Object> param = new HashMap<>();
+                param.put(Constants.ENTITY, entityFunction.apply(parameter));
+                param.put(Constants.WRAPPER, wrapperFunction.apply(parameter));
+                return param;
+            });
+        }
+
+        /**
+         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
+         *
+         * @param function 参数转换
+         * @param <E>      实体
+         * @return 删除方法
+         */
         public <E> BatchMethod<E> deleteById(Function<E, T> function) {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.DELETE_BY_ID.getMethod(), function::apply);
         }
 
+        /**
+         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
+         *
+         * @param <T> 实体
+         * @return 删除方法
+         */
         @SuppressWarnings("TypeParameterHidesVisibleType")
         public <T> BatchMethod<T> deleteById() {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.DELETE_BY_ID.getMethod());
