@@ -21,8 +21,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleProxies;
@@ -41,7 +39,6 @@ class LambdaUtilsTest {
      * 测试解析
      */
     @Test
-    @EnabledOnJre(JRE.JAVA_8)
     @SuppressWarnings("unchecked")
     void testExtract() throws IllegalAccessException, NoSuchMethodException {
         SFunction<TestModel, Object> function = TestModel::getName;
