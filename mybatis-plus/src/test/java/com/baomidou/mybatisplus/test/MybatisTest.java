@@ -16,9 +16,9 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
-import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
+import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
@@ -97,7 +97,7 @@ class MybatisTest {
         mapper = sqlSession.getMapper(H2UserMapper.class);
         List<H2User> userList = Arrays.asList(new H2User(1000L, "测试"), new H2User(1001L, "测试"));
         try {
-            new MybatisBatch<>(sqlSessionFactory, userList).execute(H2UserMapper.class.getName() + ".insert", parameter -> {
+            MybatisBatchUtils.execute(sqlSessionFactory, userList, H2UserMapper.class.getName() + ".insert", parameter -> {
                 if (parameter.getTestId() == 1001L) {
                     throw new RuntimeException("报错了");
                 }
@@ -110,7 +110,7 @@ class MybatisTest {
         }
 
         userList = Arrays.asList(new H2User(2000L, "测试"), new H2User(2001L, "测试"));
-        new MybatisBatch<>(sqlSessionFactory, userList).execute(H2UserMapper.class.getName() + ".insert");
+        MybatisBatchUtils.execute(sqlSessionFactory, userList, H2UserMapper.class.getName() + ".insert");
         for (H2User u : userList) {
             Assertions.assertNotNull(mapper.selectById(u.getTestId()));
         }
@@ -118,7 +118,7 @@ class MybatisTest {
         userList = Arrays.asList(new H2User(3000L,"测试"),new H2User(3001L,"测试"));
         sqlSession = sqlSessionFactory.openSession();
         mapper = sqlSession.getMapper(H2UserMapper.class);
-        new MybatisBatch<>(sqlSessionFactory, userList).execute(true, H2UserMapper.class.getName() + ".insert");
+        MybatisBatchUtils.execute(sqlSessionFactory, userList, true, H2UserMapper.class.getName() + ".insert");
         for (H2User u : userList) {
             Assertions.assertNotNull(mapper.selectById(u.getTestId()));
         }
