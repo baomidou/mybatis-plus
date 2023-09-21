@@ -328,8 +328,8 @@ public class TableInfoHelper {
             }
 
             boolean isPK = false;
-            boolean isOrderBy = annotationHandler.getAnnotation(field, OrderBy.class) != null;
-
+            OrderBy orderBy = annotationHandler.getAnnotation(field, OrderBy.class);
+            boolean isOrderBy = orderBy != null;
             /* 主键ID 初始化 */
             if (existTableId) {
                 TableId tableId = annotationHandler.getAnnotation(field, TableId.class);
@@ -346,12 +346,11 @@ public class TableInfoHelper {
             }
 
             if (isPK) {
-                if (isOrderBy) {
-                    tableInfo.getOrderByFields().add(new TableFieldInfo(globalConfig, tableInfo, field, reflector, existTableLogic, true));
+                if (orderBy != null) {
+                    tableInfo.getOrderByFields().add(new OrderFieldInfo(tableInfo.getKeyColumn(), orderBy.asc(), orderBy.sort()));
                 }
                 continue;
             }
-
             final TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
 
             /* 有 @TableField 注解的字段初始化 */

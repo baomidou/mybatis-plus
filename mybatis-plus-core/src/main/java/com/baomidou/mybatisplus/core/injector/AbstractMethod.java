@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.metadata.OrderFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -260,15 +261,15 @@ public abstract class AbstractMethod implements Constants {
 
     protected String sqlOrderBy(TableInfo tableInfo) {
         /* 不存在排序字段，直接返回空 */
-        List<TableFieldInfo> orderByFields = tableInfo.getOrderByFields();
+        List<OrderFieldInfo> orderByFields = tableInfo.getOrderByFields();
         if (CollectionUtils.isEmpty(orderByFields)) {
             return StringPool.EMPTY;
         }
-        orderByFields.sort(Comparator.comparingInt(TableFieldInfo::getOrderBySort));
+        orderByFields.sort(Comparator.comparingInt(OrderFieldInfo::getSort));
         StringBuilder sql = new StringBuilder();
         sql.append(NEWLINE).append(" ORDER BY ");
-        sql.append(orderByFields.stream().map(tfi -> String.format("%s %s", tfi.getColumn(),
-            tfi.getOrderByType())).collect(joining(",")));
+        sql.append(orderByFields.stream().map(orderFieldInfo -> String.format("%s %s", orderFieldInfo.getColumn(),
+            orderFieldInfo.getType())).collect(joining(",")));
         /* 当wrapper中传递了orderBy属性，@orderBy注解失效 */
         return SqlScriptUtils.convertIf(sql.toString(), String.format("%s == null or %s", WRAPPER,
             WRAPPER_EXPRESSION_ORDER), true);

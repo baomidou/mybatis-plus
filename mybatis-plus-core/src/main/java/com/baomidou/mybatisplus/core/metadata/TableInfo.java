@@ -177,7 +177,7 @@ public class TableInfo implements Constants {
      * 排序列表
      */
     @Setter
-    private List<TableFieldInfo> orderByFields;
+    private List<OrderFieldInfo> orderByFields;
 
     /**
      * @since 3.4.4
@@ -503,9 +503,6 @@ public class TableInfo implements Constants {
             if (i.isWithUpdateFill()) {
                 this.withUpdateFill = true;
             }
-            if (i.isOrderBy()) {
-                this.getOrderByFields().add(i);
-            }
             if (i.isVersion()) {
                 this.withVersion = true;
                 this.versionFieldInfo = i;
@@ -521,7 +518,7 @@ public class TableInfo implements Constants {
         return Collections.unmodifiableList(fieldList);
     }
 
-    public List<TableFieldInfo> getOrderByFields() {
+    public List<OrderFieldInfo> getOrderByFields() {
         if (null == this.orderByFields) {
             this.orderByFields = new LinkedList<>();
         }
