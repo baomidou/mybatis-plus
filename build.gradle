@@ -7,7 +7,7 @@ allprojects {
 
 ext {
     configuration = [
-        javaVersion = JavaVersion.VERSION_17
+        javaVersion = JavaVersion.VERSION_21
     ]
 
     libraries = [
@@ -92,6 +92,10 @@ subprojects {
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
+
+    lombok {
+        version = "1.18.30"
+    }
 
     compileJava {
         options.release = 8

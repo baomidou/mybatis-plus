@@ -1,5 +1,9 @@
 apply plugin: 'kotlin'
 
+compileKotlin{
+    kotlinOptions.jvmTarget = "1.8"
+}
+
 dependencies {
     api project(":mybatis-plus-core")
     implementation "${lib."mybatis-spring"}"
