@@ -637,6 +637,8 @@ class H2UserTest extends BaseTest {
         H2User h2User = new H2User(3L, "test");
         userService.removeById(1L);
         userService.removeById(1L, true);
+        userService.removeById(1, true);
+        userService.removeById("1", true);
         userService.removeById(1L, false);
         userService.removeById(h2User);
         userService.removeById(h2User, true);
@@ -645,7 +647,7 @@ class H2UserTest extends BaseTest {
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), true);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2, true);
+        userService.removeBatchByIds(Arrays.asList(1L, 2L, 3, "3", h2User), 2, true);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2, false);
     }
 

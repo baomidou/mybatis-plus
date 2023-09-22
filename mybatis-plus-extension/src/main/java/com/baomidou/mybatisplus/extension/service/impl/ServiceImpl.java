@@ -32,6 +32,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -51,6 +53,8 @@ import java.util.function.Function;
  */
 @SuppressWarnings("unchecked")
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+
+    private final ConversionService conversionService = DefaultConversionService.getSharedInstance();
 
     protected Log log = LogFactory.getLog(getClass());
 
@@ -292,7 +296,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (useFill && tableInfo.isWithLogicDelete()) {
             if (!entityClass.isAssignableFrom(id.getClass())) {
                 T instance = tableInfo.newInstance();
-                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), id);
+                Object value = tableInfo.getKeyType() != id.getClass() ? conversionService.convert(id, tableInfo.getKeyType()) : id;
+                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), value);
                 return removeById(instance);
             }
         }
@@ -317,7 +322,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     sqlSession.update(sqlStatement, e);
                 } else {
                     T instance = tableInfo.newInstance();
-                    tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), e);
+                    Object value = tableInfo.getKeyType() != e.getClass() ? conversionService.convert(e, tableInfo.getKeyType()) : e;
+                    tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), value);
                     sqlSession.update(sqlStatement, instance);
                 }
             } else {
