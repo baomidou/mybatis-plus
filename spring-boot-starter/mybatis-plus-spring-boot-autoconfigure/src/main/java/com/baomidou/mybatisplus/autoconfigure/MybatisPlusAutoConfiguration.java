@@ -267,9 +267,13 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     // TODO 入参使用 MybatisSqlSessionFactoryBean
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
         // TODO 使用 MybatisConfiguration
-        MybatisConfiguration configuration = this.properties.getConfiguration();
-        if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
+        MybatisPlusProperties.CoreConfiguration coreConfiguration = this.properties.getConfiguration();
+        MybatisConfiguration configuration = null;
+        if (coreConfiguration != null || !StringUtils.hasText(this.properties.getConfigLocation())) {
             configuration = new MybatisConfiguration();
+        }
+        if (configuration != null && coreConfiguration != null) {
+            coreConfiguration.applyTo(configuration);
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {

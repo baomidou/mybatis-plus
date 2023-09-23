@@ -9,7 +9,7 @@
             "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties",
             "name": "mybatis-plus.configuration",
             "sourceMethod": "getConfiguration()",
-            "type": "com.baomidou.mybatisplus.core.MybatisConfiguration"
+            "type": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties$CoreConfiguration"
         },
         {
             "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties",
@@ -79,24 +79,21 @@
             "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties",
             "name": "mybatis-plus.default-scripting-language-driver",
             "defaultValue": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
-            "type": "java.lang.Class<? extends org.apache.ibatis.scripting.LanguageDriver>",
-            "deprecation": {
-                "level": "error",
-                "reason": "如果修改了该值,你会至少失去几乎所有 mp 提供的功能."
-            }
+            "type": "java.lang.Class<? extends org.apache.ibatis.scripting.LanguageDriver>"
         },
         {
-            "sourceType": "com.baomidou.mybatisplus.core.MybatisConfiguration",
+            "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties$CoreConfiguration",
             "name": "mybatis-plus.configuration.default-scripting-language",
             "defaultValue": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
             "type": "java.lang.Class<? extends org.apache.ibatis.scripting.LanguageDriver>",
             "deprecation": {
                 "level": "error",
-                "reason": "设置无效."
+                "reason": "设置无效.",
+                "replacement": "mybatis-plus.configuration.default-scripting-language-driver"
             }
         },
         {
-            "sourceType": "com.baomidou.mybatisplus.core.MybatisConfiguration",
+            "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties$CoreConfiguration",
             "name": "mybatis-plus.configuration.default-enum-type-handler",
             "defaultValue": "org.apache.ibatis.type.EnumTypeHandler",
             "description": "A default TypeHandler class for Enum.",

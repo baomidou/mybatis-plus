@@ -72,8 +72,8 @@ class MetadataTest {
         Assertions.assertEquals(metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package", String.class.getName(), MybatisPlusProperties.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.global-config.db-config.table-underline"), new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(), GlobalConfig.DbConfig.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location", String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"), new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(), MybatisConfiguration.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"), new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(), MybatisConfiguration.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"), new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(), MybatisConfiguration.class.getName()));
+        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"), new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
+        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"), new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
+        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"), new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
     }
 }
