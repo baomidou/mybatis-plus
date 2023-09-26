@@ -881,4 +881,15 @@ class H2UserTest extends BaseTest {
             .orderByDesc(H2User::getDeleted, H2User::getPrice).orderByDesc(true, H2User::getDeleted, H2User::getTestType)
             .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
     }
+
+    @Test
+    void testSelectObjs() {
+        for (Object o : userService.listObjs()) {
+            Assertions.assertEquals(o.getClass(), Long.class);
+        }
+        for (Long id : userService.<Long>listObjs()) {
+            System.out.println(id);
+        }
+    }
+
 }
