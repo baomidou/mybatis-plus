@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.apache.ibatis.session.ResultHandler;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -161,6 +162,15 @@ public interface BaseMapper<T> extends Mapper<T> {
     List<T> selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList);
 
     /**
+     * 查询（根据ID 批量查询）
+     *
+     * @param idList        idList 主键ID列表(不能为 null 以及 empty)
+     * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler);
+
+    /**
      * 查询（根据 columnMap 条件）
      *
      * @param columnMap 表字段 map 对象
@@ -168,6 +178,17 @@ public interface BaseMapper<T> extends Mapper<T> {
     default List<T> selectByMap(Map<String, Object> columnMap) {
         QueryWrapper<T> qw = Wrappers.query();
         return this.selectList(qw.allEq(columnMap));
+    }
+
+    /**
+     * 查询（根据 columnMap 条件）
+     *
+     * @param columnMap     表字段 map 对象
+     * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    default void selectByMap(Map<String, Object> columnMap, ResultHandler<T> resultHandler) {
+        this.selectList(Wrappers.<T>query().allEq(columnMap), resultHandler);
     }
 
     /**
@@ -228,6 +249,15 @@ public interface BaseMapper<T> extends Mapper<T> {
     List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
+     * 根据 entity 条件，查询全部记录
+     *
+     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * @param resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
+
+    /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *
      * @param page         分页查询条件
@@ -235,6 +265,15 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.3.2
      */
     List<T> selectList(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    /**
+     * 根据 entity 条件，查询全部记录（并翻页）
+     * @param page          分页查询条件
+     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * @param resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectList(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
 
 
     /**
@@ -245,6 +284,15 @@ public interface BaseMapper<T> extends Mapper<T> {
     List<Map<String, Object>> selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
+     * 根据 Wrapper 条件，查询全部记录
+     *
+     * @param queryWrapper  实体对象封装操作类
+     * @param resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
+
+    /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      *
      * @param page         分页查询条件
@@ -253,6 +301,15 @@ public interface BaseMapper<T> extends Mapper<T> {
      */
     List<Map<String, Object>> selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
+    /**
+     * 根据 Wrapper 条件，查询全部记录（并翻页）
+     *
+     * @param page          分页查询条件
+     * @param queryWrapper  实体对象封装操作类
+     * @param resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
 
     /**
      * 根据 Wrapper 条件，查询全部记录
@@ -261,6 +318,16 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     List<Object> selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    /**
+     * 根据 Wrapper 条件，查询全部记录
+     * <p>注意： 只返回第一个字段的值</p>
+     *
+     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * @param resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     */
+    void selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Object> resultHandler);
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
