@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -38,6 +39,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.junit.jupiter.api.*;
@@ -890,6 +892,33 @@ class H2UserTest extends BaseTest {
         for (Long id : userService.<Long>listObjs()) {
             System.out.println(id);
         }
+    }
+
+    @Test
+    void testResultSet() {
+        BaseMapper<H2User> baseMapper = userService.getBaseMapper();
+        Page<H2User> page = new Page<>(1, 1000000);
+        System.out.println("--------------------------------------------");
+        baseMapper.selectList(page, Wrappers.emptyWrapper());
+        List<Long> ids = new ArrayList<>();
+        System.out.println("---------------selectListByPage-------------------");
+        baseMapper.selectList(page, Wrappers.emptyWrapper(), resultContext -> {
+            H2User resultObject = resultContext.getResultObject();
+            ids.add(resultObject.getTestId());
+            System.out.println(resultObject);
+        });
+        System.out.println("---------------selectBatchIds-------------------");
+        baseMapper.selectBatchIds(ids, resultContext -> System.out.println(resultContext.getResultObject()));
+        System.out.println("---------------selectList-------------------");
+        baseMapper.selectList(Wrappers.emptyWrapper(), resultContext -> System.out.println(resultContext.getResultObject()));
+        System.out.println("---------------selectObjs-------------------");
+        baseMapper.selectObjs(Wrappers.emptyWrapper(), (ResultHandler<Long>) resultContext -> System.out.println(resultContext.getResultObject()));
+        System.out.println("---------------selectByMap-------------------");
+        baseMapper.selectByMap(new HashMap<>(), resultContext -> System.out.println(resultContext.getResultObject()));
+        System.out.println("---------------selectMapsByPage-------------------");
+        baseMapper.selectMaps(Page.of(1, 100000), Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject().forEach((k, v) -> System.out.println(k + "--------" + v)));
+        System.out.println("---------------selectMaps-------------------");
+        baseMapper.selectMaps(Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject().forEach((k, v) -> System.out.println(k + "--------" + v)));
     }
 
 }

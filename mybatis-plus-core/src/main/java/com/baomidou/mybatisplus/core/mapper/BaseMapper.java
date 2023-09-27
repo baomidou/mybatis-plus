@@ -290,7 +290,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
-    void selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
+    void selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Map<String, Object>> resultHandler);
 
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
@@ -309,7 +309,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
-    void selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
+    void selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Map<String, Object>> resultHandler);
 
     /**
      * 根据 Wrapper 条件，查询全部记录
@@ -328,16 +328,6 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.4
      */
     <E> void selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<E> resultHandler);
-
-    /**
-     * 根据 Wrapper 条件，查询全部记录
-     * <p>注意： 只返回第一个字段的值</p>
-     *
-     * @param queryWrapper  实体对象封装操作类（可以为 null）
-     * @param resultHandler 结果处理器 {@link ResultHandler}
-     * @since 3.5.4
-     */
-    void selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Object> resultHandler);
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
