@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
+import com.baomidou.mybatisplus.core.toolkit.reflect.TypeParameterResolver;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
@@ -93,9 +94,12 @@ public final class ReflectionKit {
      * @return Class
      */
     public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
-        //update by noear @2021-09-03
-        Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
-        return null == typeArguments ? null : typeArguments[index];
+        // 这里泛型逻辑提取进行了调整,如果在Spring项目情况或者自定义了泛型提取,那就优先走这里,否则使用框架内置的进行泛型提取.
+        if (GenericTypeUtils.hasGenericTypeResolver()) {
+            Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+            return null == typeArguments ? null : typeArguments[index];
+        }
+        return (Class<?>) TypeParameterResolver.resolveClassIndexedParameter(clazz, genericIfc, index);
     }
 
     /**

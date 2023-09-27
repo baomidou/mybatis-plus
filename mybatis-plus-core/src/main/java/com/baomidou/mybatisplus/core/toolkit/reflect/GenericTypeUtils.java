@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.reflect;
 
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 /**
  * 泛型类工具（用于隔离Spring的代码）
  *
@@ -23,6 +24,22 @@ package com.baomidou.mybatisplus.core.toolkit.reflect;
  * @since 2021-09-03
  */
 public class GenericTypeUtils {
+
+    /**
+     * 能否加载SpringCore包
+     *
+     * @since 3.5.4
+     */
+    private static boolean loadSpringCore = false;
+
+    static {
+        try {
+            ClassUtils.toClassConfident("org.springframework.core.GenericTypeResolver");
+            loadSpringCore = true;
+        } catch (Exception exception) {
+            // ignore
+        }
+    }
     private static IGenericTypeResolver GENERIC_TYPE_RESOLVER;
 
     /**
@@ -42,4 +59,15 @@ public class GenericTypeUtils {
     public static void setGenericTypeResolver(IGenericTypeResolver genericTypeResolver) {
         GENERIC_TYPE_RESOLVER = genericTypeResolver;
     }
+
+    /**
+     * 判断是否有自定泛型提取类或能否加载SpringCore进行泛型提取
+     *
+     * @return 是否有实现
+     * @since 3.5.4
+     */
+    public static boolean hasGenericTypeResolver() {
+        return GENERIC_TYPE_RESOLVER != null || loadSpringCore;
+    }
+
 }
