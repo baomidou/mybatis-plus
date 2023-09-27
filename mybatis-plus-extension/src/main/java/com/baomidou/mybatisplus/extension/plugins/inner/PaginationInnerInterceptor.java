@@ -115,7 +115,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     @Override
     public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
-        if (page == null || page.getSize() < 0 || !page.searchCount()) {
+        if (page == null || page.getSize() < 0 || !page.searchCount() || resultHandler != Executor.NO_RESULT_HANDLER) {
             return true;
         }
 
