@@ -95,11 +95,12 @@ public final class ReflectionKit {
      */
     public static Class<?> getSuperClassGenericType(final Class<?> clazz, final Class<?> genericIfc, final int index) {
         // 这里泛型逻辑提取进行了调整,如果在Spring项目情况或者自定义了泛型提取,那就优先走这里,否则使用框架内置的进行泛型提取.
+        Class<?> userClass = ClassUtils.getUserClass(clazz);
         if (GenericTypeUtils.hasGenericTypeResolver()) {
-            Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(ClassUtils.getUserClass(clazz), genericIfc);
+            Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(userClass, genericIfc);
             return null == typeArguments ? null : typeArguments[index];
         }
-        return (Class<?>) TypeParameterResolver.resolveClassIndexedParameter(clazz, genericIfc, index);
+        return (Class<?>) TypeParameterResolver.resolveClassIndexedParameter(userClass, genericIfc, index);
     }
 
     /**
@@ -192,7 +193,9 @@ public final class ReflectionKit {
      * @param object 可访问的对象
      * @param <T>    类型
      * @return 返回设置后的对象
+     * @deprecated 3.5.4 {@link java.security.AccessController}
      */
+    @Deprecated
     public static <T extends AccessibleObject> T setAccessible(T object) {
         return AccessController.doPrivileged(new SetAccessibleAction<>(object));
     }

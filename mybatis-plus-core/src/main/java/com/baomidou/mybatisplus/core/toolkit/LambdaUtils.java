@@ -17,7 +17,12 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.*;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.IdeaProxyLambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.ReflectLambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.ShadowLambdaMeta;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -55,7 +60,8 @@ public final class LambdaUtils {
         // 2. 反射读取
         try {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
-            return new ReflectLambdaMeta((SerializedLambda) ReflectionKit.setAccessible(method).invoke(func), func.getClass().getClassLoader());
+            method.setAccessible(true);
+            return new ReflectLambdaMeta((SerializedLambda) method.invoke(func), func.getClass().getClassLoader());
         } catch (Throwable e) {
             // 3. 反射失败使用序列化的方式读取
             return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
