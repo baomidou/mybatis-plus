@@ -503,8 +503,8 @@ public interface IService<T> {
     /**
      * 查询全部记录
      */
-    default List<Object> listObjs() {
-        return listObjs(Function.identity());
+    default <E> List<E> listObjs() {
+        return getBaseMapper().selectObjs(null);
     }
 
     /**
@@ -521,8 +521,8 @@ public interface IService<T> {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    default List<Object> listObjs(Wrapper<T> queryWrapper) {
-        return listObjs(queryWrapper, Function.identity());
+    default <E> List<E> listObjs(Wrapper<T> queryWrapper) {
+        return getBaseMapper().selectObjs(queryWrapper);
     }
 
     /**

@@ -515,7 +515,7 @@ public class Db {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    public static <T> List<Object> listObjs(AbstractWrapper<T, ?, ?> queryWrapper) {
+    public static <E, T> List<E> listObjs(AbstractWrapper<T, ?, ?> queryWrapper) {
         return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectObjs(queryWrapper));
     }
 
