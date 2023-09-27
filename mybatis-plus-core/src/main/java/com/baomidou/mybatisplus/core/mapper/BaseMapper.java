@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -146,6 +148,16 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
+
+    /**
+     * 根据 Wrapper 更新记录
+     *
+     * @param updateWrapper {@link UpdateWrapper} or {@link LambdaUpdateWrapper}
+     * @since 3.5.4
+     */
+    default int update(@Param(Constants.WRAPPER) Wrapper<T> updateWrapper) {
+        return update(null, updateWrapper);
+    }
 
     /**
      * 根据 ID 查询

@@ -418,4 +418,14 @@ class H2UserMapperTest extends BaseTest {
         Long count = userMapper.selectCountLong();
         System.out.println(count);
     }
+
+    @Test
+    void testUpdateByWrapper() {
+        var h2User = new H2User();
+        userMapper.insert(h2User);
+        var wrapper = Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "testUpdateByWrapper").eq(H2User::getTestId, h2User.getTestId());
+        Assertions.assertEquals(userMapper.update(wrapper), 1);
+        Assertions.assertEquals(userMapper.selectById(h2User.getTestId()).getName(), "testUpdateByWrapper");
+    }
+
 }
