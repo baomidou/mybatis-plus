@@ -27,6 +27,7 @@ import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.ResultHandler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -221,14 +222,21 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, boolean throwEx) {
-        List<T> list = this.selectList(queryWrapper);
-        // 抄自 DefaultSqlSession#selectOne
+        List<T> list = new ArrayList<>();
+        //TODO 后期配合Page参数可以做数据库分页,下面的换成RowBounds做限制结果集也行
+        this.selectList(queryWrapper, resultContext -> {
+            T resultObject = resultContext.getResultObject();
+            list.add(resultObject);
+            if (!throwEx || resultContext.getResultCount() > 1) {
+                resultContext.stop();
+            }
+        });
         int size = list.size();
         if (size == 1) {
             return list.get(0);
         } else if (size > 1) {
             if (throwEx) {
-                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found multiple records");
             }
             return list.get(0);
         }

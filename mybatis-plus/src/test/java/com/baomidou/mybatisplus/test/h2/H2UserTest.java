@@ -910,7 +910,6 @@ class H2UserTest extends BaseTest {
         System.out.println("---------------selectBatchIds-------------------");
         baseMapper.selectBatchIds(ids, resultContext -> System.out.println(resultContext.getResultObject()));
         System.out.println("---------------selectList-------------------");
-        baseMapper.selectList(Wrappers.emptyWrapper(), resultContext -> System.out.println(resultContext.getResultObject()));
         System.out.println("---------------selectObjs-------------------");
         baseMapper.selectObjs(Wrappers.emptyWrapper(), (ResultHandler<Long>) resultContext -> System.out.println(resultContext.getResultObject()));
         System.out.println("---------------selectByMap-------------------");
@@ -919,6 +918,13 @@ class H2UserTest extends BaseTest {
         baseMapper.selectMaps(Page.of(1, 100000), Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject().forEach((k, v) -> System.out.println(k + "--------" + v)));
         System.out.println("---------------selectMaps-------------------");
         baseMapper.selectMaps(Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject().forEach((k, v) -> System.out.println(k + "--------" + v)));
+    }
+
+    @Test
+    void testSelectOne() {
+        Assertions.assertTrue(userService.list().size() > 2);
+        Assertions.assertThrows(TooManyResultsException.class, () -> userService.getBaseMapper().selectOne(Wrappers.emptyWrapper()));
+        Assertions.assertNotNull(userService.getBaseMapper().selectOne(Wrappers.emptyWrapper(), false));
     }
 
 }
