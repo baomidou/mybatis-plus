@@ -43,8 +43,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
@@ -229,9 +231,13 @@ public class MybatisParameterHandler implements ParameterHandler {
             if (parameterMap.containsKey(Constants.ENTITY)) {
                 parameters.add(parameterMap.get(Constants.ENTITY));
             }
+            Set<Collection<Object>> objectSet = new HashSet<>();
             for (String key : COLLECTION_KEYS) {
                 if (parameterMap.containsKey(key)) {
-                    parameters.addAll(toCollection(parameterMap.get(key)));
+                    Collection<Object> collection = toCollection(parameterMap.get(key));
+                    if (objectSet.add(collection)) {
+                        parameters.addAll(collection);
+                    }
                 }
             }
         } else {
