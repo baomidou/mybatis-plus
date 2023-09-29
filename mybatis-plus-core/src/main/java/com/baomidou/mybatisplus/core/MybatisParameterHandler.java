@@ -56,7 +56,22 @@ import java.util.Set;
  */
 public class MybatisParameterHandler implements ParameterHandler {
 
+    /**
+     * 填充的key值
+     *
+     * @see #getCollectionFillKeys()
+     * @since 3.5.3.2
+     * @deprecated 3.5.4
+     */
+    @Deprecated
     public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
+
+    /**
+     * 需要填充的集合key值
+     *
+     * @since 3.5.4
+     */
+    private static final Set<String> COLLECTION_FILL_KEYS = new HashSet<>(Arrays.asList(COLLECTION_KEYS));
 
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
@@ -221,29 +236,40 @@ public class MybatisParameterHandler implements ParameterHandler {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private Collection<Object> extractParameters(Object parameterObject) {
-        Collection<Object> parameters = new ArrayList<>();
         if (parameterObject instanceof Collection) {
-            parameters = (Collection) parameterObject;
+            return (Collection) parameterObject;
         } else if (ArrayUtils.isArray(parameterObject)) {
-            parameters = toCollection(parameterObject);
+            return toCollection(parameterObject);
         } else if (parameterObject instanceof Map) {
-            Map parameterMap = (Map) parameterObject;
+            Collection<Object> parameters = new ArrayList<>();
+            Map<String, Object> parameterMap = (Map) parameterObject;
             if (parameterMap.containsKey(Constants.ENTITY)) {
                 parameters.add(parameterMap.get(Constants.ENTITY));
             }
             Set<Collection<Object>> objectSet = new HashSet<>();
-            for (String key : COLLECTION_KEYS) {
-                if (parameterMap.containsKey(key)) {
-                    Collection<Object> collection = toCollection(parameterMap.get(key));
-                    if (objectSet.add(collection)) {
-                        parameters.addAll(collection);
+            if (parameterMap.size() > COLLECTION_FILL_KEYS.size()) {
+                for (String key : COLLECTION_FILL_KEYS) {
+                    if (parameterMap.containsKey(key)) {
+                        Collection<Object> collection = toCollection(parameterMap.get(key));
+                        if (objectSet.add(collection)) {
+                            parameters.addAll(collection);
+                        }
                     }
                 }
+            } else {
+                parameterMap.forEach((k, v) -> {
+                    if (COLLECTION_FILL_KEYS.contains(k)) {
+                        Collection<Object> collection = toCollection(v);
+                        if (objectSet.add(collection)) {
+                            parameters.addAll(collection);
+                        }
+                    }
+                });
             }
+            return parameters;
         } else {
-            parameters.add(parameterObject);
+            return Collections.singleton(parameterObject);
         }
-        return parameters;
     }
 
     @SuppressWarnings("unchecked")
@@ -295,4 +321,25 @@ public class MybatisParameterHandler implements ParameterHandler {
             }
         }
     }
+
+    /**
+     * 获取集合特殊key值填充列表
+     *
+     * @return key值列表
+     * @since 3.5.4
+     */
+    public static Set<String> getCollectionFillKeys() {
+        return Collections.unmodifiableSet(COLLECTION_FILL_KEYS);
+    }
+
+    /**
+     * 添加特殊集合Key值填充处理
+     *
+     * @param keys 特殊集合key值
+     * @since 3.5.4
+     */
+    public static void addCollectionFillKeys(String... keys) {
+        COLLECTION_FILL_KEYS.addAll(Arrays.asList(keys));
+    }
+
 }

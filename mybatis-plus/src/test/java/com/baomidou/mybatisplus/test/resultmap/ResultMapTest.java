@@ -43,6 +43,6 @@ public class ResultMapTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String mapperXml() {
-        return "com/baomidou/mybatisplus/test/resultmap/entityMapper.xml";
+        return "com/baomidou/mybatisplus/test/resultmap/EntityMapper.xml";
     }
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.fill.FillMapper">
+
+    <insert id="insertBatch1">
+        insert into t_fill(id, name) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.name})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatch2">
+        insert into t_fill(id, name) values
+        <foreach collection="mpList" item="item" separator=",">
+            (#{item.id}, #{item.name})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatch3">
+        insert into t_fill(id, name) values
+        <foreach collection="mybatisList" item="item" separator=",">
+            (#{item.id}, #{item.name})
+        </foreach>
+    </insert>
+
+    <insert id="insertBatch4">
+        insert into t_fill(id, name) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.name})
+        </foreach>
+    </insert>
+
+</mapper>
