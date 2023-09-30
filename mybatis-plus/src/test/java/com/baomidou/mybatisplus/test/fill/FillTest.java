@@ -1,10 +1,8 @@
 package com.baomidou.mybatisplus.test.fill;
 
-import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.reflection.MetaObject;
@@ -20,10 +18,6 @@ import java.util.List;
  */
 public class FillTest extends BaseDbTest<FillMapper> {
 
-    static {
-        System.out.println("---------增加一个特殊Key值填充处理列表--------------");
-        MybatisParameterHandler.addCollectionFillKeys("mpList");
-    }
     @Test
     void testInsert() {
         doTest(mapper -> {
@@ -58,10 +52,10 @@ public class FillTest extends BaseDbTest<FillMapper> {
     @Test
     void testInsertBatch3() {
         doTest(mapper -> {
-            var entityList = new ArrayList<>(Arrays.asList(new FillEntity(IdWorker.getId()), new FillEntity(IdWorker.getId())));
+            var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
             mapper.insertBatch3(entityList);
             for (FillEntity entity : entityList) {
-                assertEntity(entity, null, 0);
+                assertEntity(entity, "insertAdmin", 1);
             }
         });
     }

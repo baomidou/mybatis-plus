@@ -26,7 +26,11 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
@@ -59,19 +63,11 @@ public class MybatisParameterHandler implements ParameterHandler {
     /**
      * 填充的key值
      *
-     * @see #getCollectionFillKeys()
      * @since 3.5.3.2
      * @deprecated 3.5.4
      */
     @Deprecated
     public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
-
-    /**
-     * 需要填充的集合key值
-     *
-     * @since 3.5.4
-     */
-    private static final Set<String> COLLECTION_FILL_KEYS = new HashSet<>(Arrays.asList(COLLECTION_KEYS));
 
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
@@ -243,29 +239,13 @@ public class MybatisParameterHandler implements ParameterHandler {
         } else if (parameterObject instanceof Map) {
             Collection<Object> parameters = new ArrayList<>();
             Map<String, Object> parameterMap = (Map) parameterObject;
-            if (parameterMap.containsKey(Constants.ENTITY)) {
-                parameters.add(parameterMap.get(Constants.ENTITY));
-            }
-            Set<Collection<Object>> objectSet = new HashSet<>();
-            if (parameterMap.size() > COLLECTION_FILL_KEYS.size()) {
-                for (String key : COLLECTION_FILL_KEYS) {
-                    if (parameterMap.containsKey(key)) {
-                        Collection<Object> collection = toCollection(parameterMap.get(key));
-                        if (objectSet.add(collection)) {
-                            parameters.addAll(collection);
-                        }
-                    }
+            Set<Object> objectSet = new HashSet<>();
+            parameterMap.forEach((k, v) -> {
+                if (objectSet.add(v)) {
+                    Collection<Object> collection = toCollection(v);
+                    parameters.addAll(collection);
                 }
-            } else {
-                parameterMap.forEach((k, v) -> {
-                    if (COLLECTION_FILL_KEYS.contains(k)) {
-                        Collection<Object> collection = toCollection(v);
-                        if (objectSet.add(collection)) {
-                            parameters.addAll(collection);
-                        }
-                    }
-                });
-            }
+            });
             return parameters;
         } else {
             return Collections.singleton(parameterObject);
@@ -277,13 +257,13 @@ public class MybatisParameterHandler implements ParameterHandler {
         if (value == null) {
             return Collections.emptyList();
         }
-        // 只处理array和collection
         if (ArrayUtils.isArray(value)) {
             return Arrays.asList((Object[]) value);
         } else if (Collection.class.isAssignableFrom(value.getClass())) {
             return (Collection<Object>) value;
+        } else {
+            return Collections.singletonList(value);
         }
-        return Collections.emptyList();
     }
 
     @Override
@@ -321,25 +301,4 @@ public class MybatisParameterHandler implements ParameterHandler {
             }
         }
     }
-
-    /**
-     * 获取集合特殊key值填充列表
-     *
-     * @return key值列表
-     * @since 3.5.4
-     */
-    public static Set<String> getCollectionFillKeys() {
-        return Collections.unmodifiableSet(COLLECTION_FILL_KEYS);
-    }
-
-    /**
-     * 添加特殊集合Key值填充处理
-     *
-     * @param keys 特殊集合key值
-     * @since 3.5.4
-     */
-    public static void addCollectionFillKeys(String... keys) {
-        COLLECTION_FILL_KEYS.addAll(Arrays.asList(keys));
-    }
-
 }

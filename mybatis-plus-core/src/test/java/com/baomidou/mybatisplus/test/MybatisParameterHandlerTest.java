@@ -122,9 +122,9 @@ class MybatisParameterHandlerTest {
         Model model2 = new Model();
         params1.put("arrays", new Model[]{model1, model2});
         new MybatisParameterHandler(mappedStatement, params1, boundSql);
-        assertThat(model1.getId()).isNull();
-        assertThat(model2.getId()).isNull();
-        assertThat(model1.getInsertOperator()).isNull();
+        assertThat(model1.getId()).isNotNull();
+        assertThat(model2.getId()).isNotNull();
+        assertThat(model1.getInsertOperator()).isNotNull();
         assertThat(model1.getUpdateOperator()).isNull();
 
         model1 = new Model();

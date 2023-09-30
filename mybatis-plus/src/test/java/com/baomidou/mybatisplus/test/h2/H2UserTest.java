@@ -780,7 +780,7 @@ class H2UserTest extends BaseTest {
 
         h2User = new H2User();
         h2StudentMapper.updateFillByCustomMethod3(Arrays.asList(1L, 2L, 3L), h2User);
-        Assertions.assertNull(h2User.getLastUpdatedDt());
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
 
         h2User = new H2User();
         h2StudentMapper.updateFillByCustomMethod4(Arrays.asList(1L, 2L, 3L), h2User);
