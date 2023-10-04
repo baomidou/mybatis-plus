@@ -30,8 +30,11 @@ import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -571,15 +574,7 @@ public class TableInfo implements Constants {
      */
     @SuppressWarnings("unchecked")
     public <T> T newInstance() {
-        Constructor<?> defaultConstructor = reflector.getDefaultConstructor();
-        if (!defaultConstructor.isAccessible()) {
-            defaultConstructor.setAccessible(true);
-        }
-        try {
-            return (T) defaultConstructor.newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw ExceptionUtils.mpe(e);
-        }
+        return (T) configuration.getObjectFactory().create(entityType);
     }
 
 }
