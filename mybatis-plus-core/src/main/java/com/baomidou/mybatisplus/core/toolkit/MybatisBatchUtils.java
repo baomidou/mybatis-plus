@@ -116,6 +116,10 @@ public class MybatisBatchUtils {
 
     /**
      * 批量保存或更新
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 举个例子(事务开启状态下):
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
      * @param sqlSessionFactory sqlSessionFactory {@link SqlSessionFactory}
      * @param dataList          数据集列表
@@ -131,6 +135,10 @@ public class MybatisBatchUtils {
 
     /**
      * 批量保存或更新
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 举个例子(事务开启状态下):
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
      * @param sqlSessionFactory sqlSessionFactory {@link SqlSessionFactory}
      * @param dataList          数据集列表

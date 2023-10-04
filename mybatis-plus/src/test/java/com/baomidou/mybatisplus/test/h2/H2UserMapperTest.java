@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,6 +29,7 @@ import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
@@ -253,6 +255,38 @@ class H2UserMapperTest extends BaseTest {
             Assertions.assertEquals(batchResult.getUpdateCounts().length, 1);
             Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
         }
+    }
+
+    @Test
+    void testSaveOrUpdateBatch3() {
+        var id = IdWorker.getId();
+        var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch3"), new H2User(id, "testSaveOrUpdateBatch3-1"));
+        var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
+        // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> {
+            MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, h2UserList,
+                mapperMethod.insert(),
+                ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null),
+                mapperMethod.updateById());
+        });
+
+    }
+
+    @Test
+    void testSaveOrUpdateBatch4() {
+        var id = IdWorker.getId();
+        var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch4"), new H2User(id, "testSaveOrUpdateBatch4-1"));
+        var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
+        // 共享一个sqlSession,每次selectById都会刷新一下,第二条记录为update.
+        var batchResults = MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, h2UserList,
+            mapperMethod.insert(),
+            ((sqlSession, h2User) -> sqlSession.selectList(mapperMethod.get("selectById").getStatementId(), h2User.getTestId()).isEmpty()),
+            mapperMethod.updateById());
+        var updateCounts = batchResults.get(0).getUpdateCounts();
+        for (int updateCount : updateCounts) {
+            Assertions.assertEquals(1, updateCount);
+        }
+        Assertions.assertEquals(userMapper.selectById(id).getName(), "testSaveOrUpdateBatch4-1");
     }
 
 

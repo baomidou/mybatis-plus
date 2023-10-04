@@ -15,10 +15,12 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
@@ -140,4 +142,19 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     public List<H2User> testCustomSqlSegment(Wrapper wrapper) {
         return baseMapper.selectTestCustomSqlSegment(wrapper);
     }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void testSaveOrUpdateTransactional1(List<H2User> users) {
+        var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
+        MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, users, method.insert(), (sqlSession, user) -> this.getById(user.getTestId()) == null, method.updateById());
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void testSaveOrUpdateTransactional2(List<H2User> users) {
+        var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
+        MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, users, method.insert(), (sqlSession, user) -> sqlSession.selectList(method.get("selectById").getStatementId(), user.getTestId()).isEmpty(), method.updateById());
+    }
+
 }

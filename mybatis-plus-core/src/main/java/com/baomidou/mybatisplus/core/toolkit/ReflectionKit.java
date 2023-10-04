@@ -69,7 +69,9 @@ public final class ReflectionKit {
      * @param entity    实体
      * @param fieldName 字段名称
      * @return 属性值
+     * @deprecated 3.5.4
      */
+    @Deprecated
     public static Object getFieldValue(Object entity, String fieldName) {
         Class<?> cls = entity.getClass();
         Map<String, Field> fieldMaps = getFieldMap(cls);

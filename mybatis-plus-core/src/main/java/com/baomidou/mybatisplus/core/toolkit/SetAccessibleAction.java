@@ -20,7 +20,10 @@ import java.security.PrivilegedAction;
 
 /**
  * Create by hcl at 2021/5/14
+ *
+ * @deprecated 3.5.4
  */
+@Deprecated
 public class SetAccessibleAction<T extends AccessibleObject> implements PrivilegedAction<T> {
     private final T obj;
 

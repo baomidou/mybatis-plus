@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
@@ -36,6 +37,7 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
@@ -925,6 +927,21 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue(userService.list().size() > 2);
         Assertions.assertThrows(TooManyResultsException.class, () -> userService.getBaseMapper().selectOne(Wrappers.emptyWrapper()));
         Assertions.assertNotNull(userService.getBaseMapper().selectOne(Wrappers.emptyWrapper(), false));
+    }
+
+    @Test
+    void testSaveOrUpdateTransactional1() {
+        var id = IdWorker.getId();
+        var userList = List.of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> userService.testSaveOrUpdateTransactional1(userList));
+    }
+
+    @Test
+    void testSaveOrUpdateTransactional2() {
+        var id = IdWorker.getId();
+        var userList = List.of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
+        userService.testSaveOrUpdateTransactional2(userList);
+        Assertions.assertEquals(userService.getById(id).getName(), "test-3");
     }
 
 }

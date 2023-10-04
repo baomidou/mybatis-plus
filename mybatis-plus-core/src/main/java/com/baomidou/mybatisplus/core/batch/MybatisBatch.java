@@ -35,6 +35,7 @@ import java.util.function.Function;
 /**
  * <li>事务需要自行控制</li>
  * <li>批次数据尽量自行切割处理</li>
+ * <li>关于事务必须执行到flushStatements才具有意义{@link org.apache.ibatis.executor.BatchExecutor#doFlushStatements(boolean)}</>
  * <li>返回值为批处理结果,如果对返回值比较关心的可接收判断处理</li>
  * <li>saveOrUpdate尽量少用把,保持批处理为简单的插入或更新</li>
  * <li>关于saveOrUpdate中的sqlSession,如果执行了select操作的话,BatchExecutor都会触发一次flushStatements,为了保证结果集,故使用包装了部分sqlSession查询操作</li>
@@ -141,6 +142,10 @@ public class MybatisBatch<T> {
 
     /**
      * 批量保存或更新
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 举个例子(事务开启状态下):
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
      * @param insertMethod    插入方法
      * @param insertPredicate 插入条件 (当条件满足时执行插入方法,否则执行更新方法)
@@ -153,6 +158,10 @@ public class MybatisBatch<T> {
 
     /**
      * 批量保存或更新
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 举个例子(事务开启状态下):
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
      * @param autoCommit      是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
      * @param insertMethod    插入方法
@@ -173,7 +182,7 @@ public class MybatisBatch<T> {
             }
             resultList.addAll(sqlSession.flushStatements());
             resultList.addAll(session.getResultBatchList());
-            if(!autoCommit) {
+            if (!autoCommit) {
                 sqlSession.commit();
             }
             return resultList;

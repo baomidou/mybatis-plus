@@ -60,4 +60,9 @@ public interface IH2UserService extends IService<H2User> {
     void testSaveBatchNoTransactional2();
 
     List<H2User> testCustomSqlSegment(Wrapper wrapper);
+
+    void testSaveOrUpdateTransactional1(List<H2User> users);
+
+    void testSaveOrUpdateTransactional2(List<H2User> users);
+
 }
