@@ -56,8 +56,8 @@ public class SqlRunnerInjector {
     /**
      * 是否已经存在MappedStatement
      *
-     * @param mappedStatement
-     * @return
+     * @param mappedStatement mappedStatement
+     * @return 是否存在
      */
     private boolean hasMappedStatement(String mappedStatement) {
         return configuration.hasStatement(mappedStatement, false);
@@ -66,11 +66,10 @@ public class SqlRunnerInjector {
     /**
      * 创建查询MappedStatement
      *
-     * @param mappedStatement
+     * @param mappedStatement mappedStatement
      * @param sqlSource       执行的sqlSource
      * @param resultType      返回的结果类型
      */
-    @SuppressWarnings("serial")
     private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
         MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
             .resultMaps(new ArrayList<ResultMap>() {
@@ -86,11 +85,10 @@ public class SqlRunnerInjector {
     /**
      * 创建一个MappedStatement
      *
-     * @param mappedStatement
+     * @param mappedStatement mappedStatement
      * @param sqlSource       执行的sqlSource
      * @param sqlCommandType  执行的sqlCommandType
      */
-    @SuppressWarnings("serial")
     private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
         MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
             new ArrayList<ResultMap>() {

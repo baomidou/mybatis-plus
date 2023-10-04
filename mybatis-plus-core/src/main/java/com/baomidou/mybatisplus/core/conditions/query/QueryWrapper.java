@@ -36,7 +36,6 @@ import java.util.function.Predicate;
  * @author hubin miemie HCL
  * @since 2018-05-25
  */
-@SuppressWarnings("serial")
 public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     implements Query<QueryWrapper<T>, T, String> {
 

@@ -28,7 +28,6 @@ import java.util.List;
  * @author miemie
  * @since 2018-06-27
  */
-@SuppressWarnings("serial")
 public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implements ISqlSegment, StringPool {
 
     /**

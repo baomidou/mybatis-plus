@@ -30,7 +30,6 @@ import java.util.List;
  * @since 2018-06-27
  */
 @Getter
-@SuppressWarnings("serial")
 public class MergeSegments implements ISqlSegment {
 
     private final NormalSegmentList normal = new NormalSegmentList();

@@ -255,7 +255,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testNewInstance() throws ReflectiveOperationException {
+    void testNewInstance() {
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelOne.class);
         ModelOne entity = tableInfo.newInstance();
         tableInfo.setPropertyValue(entity, tableInfo.getKeyColumn(), 1L);

@@ -34,7 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubin miemie HCL
  * @since 2018-05-30
  */
-@SuppressWarnings("serial")
 public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdateWrapper<T>>
     implements Update<LambdaUpdateWrapper<T>, SFunction<T, ?>> {
 

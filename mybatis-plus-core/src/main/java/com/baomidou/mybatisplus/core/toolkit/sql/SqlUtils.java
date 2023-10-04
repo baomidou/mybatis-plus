@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
  * @author Caratacus
  * @since 2016-11-13
  */
-@SuppressWarnings("serial")
 public abstract class SqlUtils implements Constants {
 
     private static final Pattern pattern = Pattern.compile("\\{@((\\w+?)|(\\w+?:\\w+?)|(\\w+?:\\w+?:\\w+?))}");

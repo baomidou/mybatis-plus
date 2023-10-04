@@ -29,7 +29,6 @@ import static java.util.stream.Collectors.joining;
  * @author miemie
  * @since 2018-06-27
  */
-@SuppressWarnings("serial")
 public class OrderBySegmentList extends AbstractISegmentList {
 
     @Override

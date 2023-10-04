@@ -52,7 +52,6 @@ import java.util.Map;
 @Getter
 @ToString
 @EqualsAndHashCode
-@SuppressWarnings("serial")
 public class TableFieldInfo implements Constants {
 
     /**
@@ -192,7 +191,6 @@ public class TableFieldInfo implements Constants {
     /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public TableFieldInfo(GlobalConfig globalConfig, TableInfo tableInfo, Field field, TableField tableField,
                           Reflector reflector, boolean existTableLogic, boolean isOrderBy) {
         this(globalConfig, tableInfo, field, tableField, reflector, existTableLogic);

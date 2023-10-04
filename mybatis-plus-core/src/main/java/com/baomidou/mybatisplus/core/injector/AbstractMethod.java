@@ -230,14 +230,14 @@ public abstract class AbstractMethod implements Constants {
      * @return String
      */
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
-        /**
+        /*
          * Wrapper SQL
          */
         String _sgEs_ = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
         String andSqlSegment = SqlScriptUtils.convertIf(String.format(" AND ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_NONEMPTYOFNORMAL), true);
         String lastSqlSegment = SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_EMPTYOFNORMAL), true);
 
-        /**
+        /*
          * 存在逻辑删除 SQL 注入
          */
         if (table.isWithLogicDelete()) {
@@ -249,7 +249,7 @@ public abstract class AbstractMethod implements Constants {
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
 
-        /**
+        /*
          * 普通 SQL 注入
          */
         String sqlScript = table.getAllSqlWhere(false, false, true, WRAPPER_ENTITY_DOT);

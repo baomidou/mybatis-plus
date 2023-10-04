@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
  * @author miemie
  * @since 2018-06-27
  */
-@SuppressWarnings("serial")
 public class NormalSegmentList extends AbstractISegmentList {
 
     /**

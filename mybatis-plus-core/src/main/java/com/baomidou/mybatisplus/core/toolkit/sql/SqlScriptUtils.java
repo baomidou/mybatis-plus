@@ -28,7 +28,6 @@ import org.apache.ibatis.type.TypeHandler;
  * @author miemie
  * @since 2018-08-15
  */
-@SuppressWarnings("serial")
 public abstract class SqlScriptUtils implements Constants {
 
     /**

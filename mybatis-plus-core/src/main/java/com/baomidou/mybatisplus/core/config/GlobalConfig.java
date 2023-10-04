@@ -43,7 +43,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 @Data
 @Accessors(chain = true)
-@SuppressWarnings("serial")
 public class GlobalConfig implements Serializable {
     /**
      * 是否开启 LOGO
