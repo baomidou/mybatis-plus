@@ -53,14 +53,14 @@ public class InjectionConfig {
      * 自定义模板文件，key为文件名称，value为模板路径（已弃用，换成了customFiles，3.5.4版本会删除此方法）
      */
     @Deprecated
-    private Map<String, String> customFile = new HashMap<>();
+    private final Map<String, String> customFile = new HashMap<>();
 
     /**
      * 自定义模板文件列表
      *
      * @since 3.5.3
      */
-    private List<CustomFile> customFiles = new ArrayList<>();
+    private final List<CustomFile> customFiles = new ArrayList<>();
 
     /**
      * 是否覆盖已有文件（默认 false）（已弃用，已放到自定义文件类CustomFile中，3.5.4版本会删除此方法）
@@ -73,7 +73,6 @@ public class InjectionConfig {
     /**
      * 输出文件前
      */
-    @NotNull
     public void beforeOutputFile(TableInfo tableInfo, Map<String, Object> objectMap) {
         if (!customMap.isEmpty()) {
             objectMap.putAll(customMap);
@@ -195,4 +194,5 @@ public class InjectionConfig {
             return this.injectionConfig;
         }
     }
+
 }

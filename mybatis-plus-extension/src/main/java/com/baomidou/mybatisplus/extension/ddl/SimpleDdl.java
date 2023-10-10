@@ -28,6 +28,7 @@ import java.util.function.Consumer;
  * @since 2021-09-23
  */
 public class SimpleDdl implements IDdl {
+
     @Autowired
     private DataSource dataSource;
 
@@ -40,4 +41,5 @@ public class SimpleDdl implements IDdl {
     public List<String> getSqlFiles() {
         return null;
     }
+
 }

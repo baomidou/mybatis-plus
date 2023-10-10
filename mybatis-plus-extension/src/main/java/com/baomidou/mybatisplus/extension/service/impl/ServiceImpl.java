@@ -56,7 +56,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     private final ConversionService conversionService = DefaultConversionService.getSharedInstance();
 
-    protected Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     @Autowired
     protected M baseMapper;
@@ -71,14 +71,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return baseMapper;
     }
 
-    protected Class<T> entityClass = currentModelClass();
+    protected final Class<T> entityClass = currentModelClass();
 
     @Override
     public Class<T> getEntityClass() {
         return entityClass;
     }
 
-    protected Class<M> mapperClass = currentMapperClass();
+    protected final Class<M> mapperClass = currentMapperClass();
 
     /**
      * 判断数据库操作是否成功

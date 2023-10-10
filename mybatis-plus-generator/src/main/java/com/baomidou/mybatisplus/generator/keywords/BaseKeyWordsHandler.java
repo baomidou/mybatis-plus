@@ -28,7 +28,7 @@ import java.util.*;
  */
 public abstract class BaseKeyWordsHandler implements IKeyWordsHandler {
 
-    public Set<String> keyWords;
+    public final Set<String> keyWords;
 
     public BaseKeyWordsHandler(@NotNull List<String> keyWords) {
         this.keyWords = new HashSet<>(keyWords);
@@ -47,4 +47,5 @@ public abstract class BaseKeyWordsHandler implements IKeyWordsHandler {
     public boolean isKeyWords(@NotNull String columnName) {
         return getKeyWords().contains(columnName.toUpperCase(Locale.ENGLISH));
     }
+
 }

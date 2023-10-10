@@ -35,9 +35,12 @@ import java.util.function.Consumer;
  * @since 2021-07-23
  */
 public class DdlScript {
-    private DataSource dataSource;
-    private IDdlGenerator ddlGenerator;
-    private boolean autoCommit;
+
+    private final DataSource dataSource;
+
+    private final IDdlGenerator ddlGenerator;
+
+    private final boolean autoCommit;
 
     public DdlScript(DataSource dataSource) {
         this(dataSource, null);

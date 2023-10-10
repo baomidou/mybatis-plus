@@ -32,7 +32,8 @@ import java.util.List;
  */
 @Slf4j
 public class DdlApplicationRunner implements ApplicationRunner {
-    private List<IDdl> ddlList;
+
+    private final List<IDdl> ddlList;
 
     public DdlApplicationRunner(List<IDdl> ddlList) {
         this.ddlList = ddlList;
@@ -51,4 +52,5 @@ public class DdlApplicationRunner implements ApplicationRunner {
         }
         log.debug("  ...  DDL end create  ...  ");
     }
+
 }

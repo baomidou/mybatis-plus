@@ -15,14 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * SQL 表名解析
  * <p>
- * https://github.com/mnadeem/sql-table-name-parser
+ * <a href="https://github.com/mnadeem/sql-table-name-parser">...</a>
  * <p>
  * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well.
  * USE: new TableNameParser(sql).tables()
@@ -123,7 +129,7 @@ public final class TableNameParser {
      * @param sql SQL
      * @return 语句
      */
-    protected List<SqlToken> fetchAllTokens(String sql) {
+    private List<SqlToken> fetchAllTokens(String sql) {
         List<SqlToken> tokens = new ArrayList<>();
         Matcher matcher = NON_SQL_TOKEN_PATTERN.matcher(sql);
         int last = 0;
