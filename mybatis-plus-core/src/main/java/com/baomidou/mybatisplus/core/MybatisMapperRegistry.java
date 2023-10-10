@@ -23,8 +23,8 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 继承至MapperRegistry
@@ -35,7 +35,8 @@ import java.util.Map;
 public class MybatisMapperRegistry extends MapperRegistry {
 
     private final Configuration config;
-    private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new HashMap<>();
+
+    private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new ConcurrentHashMap<>();
 
     public MybatisMapperRegistry(Configuration config) {
         super(config);
@@ -108,4 +109,5 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
     }
+
 }
