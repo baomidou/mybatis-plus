@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -30,6 +31,7 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -37,6 +39,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -61,9 +64,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Autowired
     protected M baseMapper;
 
-    @Autowired
-    protected SqlSessionFactory sqlSessionFactory;
-
     protected final Class<?>[] typeArguments = GenericTypeUtils.resolveTypeArguments(getClass(), ServiceImpl.class);
 
     @Override
@@ -79,6 +79,22 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     protected final Class<M> mapperClass = currentMapperClass();
+
+    private volatile SqlSessionFactory sqlSessionFactory;
+
+    @SuppressWarnings("rawtypes")
+    protected SqlSessionFactory getSqlSessionFactory() {
+        if (this.sqlSessionFactory == null) {
+            synchronized (this) {
+                if (this.sqlSessionFactory == null) {
+                    MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(this.baseMapper);
+                    SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) mybatisMapperProxy.getSqlSession();
+                    this.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+                }
+            }
+        }
+        return this.sqlSessionFactory;
+    }
 
     /**
      * 判断数据库操作是否成功
@@ -108,7 +124,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected SqlSession sqlSessionBatch() {
-        return sqlSessionFactory.openSession(ExecutorType.BATCH);
+        return getSqlSessionFactory().openSession(ExecutorType.BATCH);
     }
 
     /**
@@ -119,7 +135,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionUtils.closeSqlSession(sqlSession, this.sqlSessionFactory);
+        SqlSessionUtils.closeSqlSession(sqlSession, getSqlSessionFactory());
     }
 
     /**
@@ -187,7 +203,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.saveOrUpdateBatch(this.sqlSessionFactory, this.mapperClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
+        return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.mapperClass, this.log, entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal)
                 || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
@@ -238,7 +254,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected boolean executeBatch(Consumer<SqlSession> consumer) {
-        return SqlHelper.executeBatch(this.sqlSessionFactory, this.log, consumer);
+        return SqlHelper.executeBatch(getSqlSessionFactory(), this.log, consumer);
     }
 
     /**
@@ -252,7 +268,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @since 3.3.1
      */
     protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
-        return SqlHelper.executeBatch(this.sqlSessionFactory, this.log, list, batchSize, consumer);
+        return SqlHelper.executeBatch(getSqlSessionFactory(), this.log, list, batchSize, consumer);
     }
 
     /**

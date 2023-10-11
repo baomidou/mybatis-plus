@@ -117,6 +117,10 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
         }
     }
 
+    public SqlSession getSqlSession() {
+        return sqlSession;
+    }
+
     private MethodHandle getMethodHandleJava9(Method method)
         throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         final Class<?> declaringClass = method.getDeclaringClass();

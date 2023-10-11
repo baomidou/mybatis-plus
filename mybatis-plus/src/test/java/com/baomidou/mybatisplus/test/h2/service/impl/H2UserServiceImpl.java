@@ -147,14 +147,14 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public void testSaveOrUpdateTransactional1(List<H2User> users) {
         var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
-        MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, users, method.insert(), (sqlSession, user) -> this.getById(user.getTestId()) == null, method.updateById());
+        MybatisBatchUtils.saveOrUpdate(getSqlSessionFactory(), users, method.insert(), (sqlSession, user) -> this.getById(user.getTestId()) == null, method.updateById());
     }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void testSaveOrUpdateTransactional2(List<H2User> users) {
         var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
-        MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, users, method.insert(), (sqlSession, user) -> sqlSession.selectList(method.get("selectById").getStatementId(), user.getTestId()).isEmpty(), method.updateById());
+        MybatisBatchUtils.saveOrUpdate(getSqlSessionFactory(), users, method.insert(), (sqlSession, user) -> sqlSession.selectList(method.get("selectById").getStatementId(), user.getTestId()).isEmpty(), method.updateById());
     }
 
 }
