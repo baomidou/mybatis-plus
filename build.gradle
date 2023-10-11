@@ -76,7 +76,7 @@ ext {
         "freemarker"          : "org.freemarker:freemarker:2.3.32",
         "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.11",
-        "enjoy"               : "com.jfinal:enjoy:5.0.0",
+        "enjoy"               : "com.jfinal:enjoy:5.1.3",
         "logback-classic"     : "ch.qos.logback:logback-classic:1.4.11",
     ]
 }
