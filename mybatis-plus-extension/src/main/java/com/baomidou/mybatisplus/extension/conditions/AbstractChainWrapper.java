@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 所有包装类都继承此抽象类,此抽象类代理了大部分生成 where 条件的方法
@@ -464,5 +465,181 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     protected Object clone() throws CloneNotSupportedException {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "clone");
+    }
+
+    @Override
+    public Children eq(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().eq(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children ne(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().ne(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children gt(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().gt(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children ge(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().ge(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children lt(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().lt(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children le(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().le(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children between(boolean condition, R column, Supplier<Object> val1, Supplier<Object> val2) {
+        if (condition) {
+            getWrapper().between(true, column, val1.get(), val2.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notBetween(boolean condition, R column, Supplier<Object> val1, Supplier<Object> val2) {
+        if (condition) {
+            getWrapper().notBetween(true, column, val1.get(), val2.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children like(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().like(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notLike(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().notLike(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notLikeLeft(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().notLikeLeft(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notLikeRight(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().notLikeRight(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children likeLeft(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().likeLeft(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children likeRight(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().likeRight(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children in(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().in(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notIn(boolean condition, R column, Supplier<Object> val) {
+        if (condition) {
+            getWrapper().notIn(true, column, val.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children inSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().inSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children gtSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().gtSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children geSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().geSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children ltSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().ltSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children leSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().leSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notInSql(boolean condition, R column, Supplier<String> inValue) {
+        if (condition) {
+            getWrapper().notInSql(true, column, inValue.get());
+        }
+        return typedThis;
     }
 }

@@ -944,4 +944,17 @@ class H2UserTest extends BaseTest {
         Assertions.assertEquals(userService.getById(id).getName(), "test-3");
     }
 
+    @Test
+    @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+    void testSupplier() {
+        H2User h2User = null;
+        System.out.println("----------------------原始写法---------------------------------");
+        Assertions.assertThrows(NullPointerException.class, () -> userService.query().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), "name", h2User.getName().trim()).count());
+        System.out.println("----------------------原始写法---------------------------------");
+        System.out.println("------------------------------新写法,当对象为空时可以惰性求值.------------------------------------------------");
+        var dataSize = userService.query().count();
+        Assertions.assertEquals(dataSize, userService.query().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), "name", () -> h2User.getName().trim()).count());
+        Assertions.assertEquals(dataSize, userService.lambdaQuery().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), H2User::getName, () -> h2User.getName().trim()).count());
+    }
+
 }
