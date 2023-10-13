@@ -582,7 +582,16 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children in(boolean condition, R column, Supplier<Object> val) {
         if (condition) {
-            getWrapper().in(true, column, val.get());
+            Object object = val.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                Object[] arrays = (Object[]) object;
+                getWrapper().in(true, column, arrays);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                getWrapper().in(true, column, (Collection<?>) object);
+            } else {
+                getWrapper().in(true, column, object);
+            }
         }
         return typedThis;
     }
@@ -590,7 +599,16 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children notIn(boolean condition, R column, Supplier<Object> val) {
         if (condition) {
-            getWrapper().notIn(true, column, val.get());
+            Object object = val.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                Object[] arrays = (Object[]) object;
+                getWrapper().notIn(true, column, arrays);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                getWrapper().notIn(true, column, (Collection<?>) object);
+            } else {
+                getWrapper().notIn(true, column, object);
+            }
         }
         return typedThis;
     }
