@@ -957,4 +957,42 @@ class H2UserTest extends BaseTest {
         Assertions.assertEquals(dataSize, userService.lambdaQuery().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), H2User::getName, () -> h2User.getName().trim()).count());
     }
 
+    @Test
+    void testSupplierIn() {
+        userService.saveBatch(Arrays.asList(new H2User("testSupplierIn1"), new H2User("testSupplierIn2"), new H2User("testSupplierIn3")));
+        var count1 = userService.query().in("name", "testSupplierIn1").count();
+        Assertions.assertEquals(1, count1);
+        Assertions.assertEquals(count1, userService.query().in(true, "name", () -> "testSupplierIn1").count());
+        Assertions.assertEquals(count1, userService.lambdaQuery().in(true, H2User::getName, () -> "testSupplierIn1").count());
+
+        var count2 = userService.query().in("name", "testSupplierIn1", "testSupplierIn2").count();
+        Assertions.assertEquals(2, count2);
+
+        Assertions.assertEquals(count2, userService.query().in(true, "name", () -> new String[]{"testSupplierIn1", "testSupplierIn2"}).count());
+        Assertions.assertEquals(count2, userService.query().in(true, "name", () -> Arrays.asList("testSupplierIn1", "testSupplierIn2")).count());
+        Assertions.assertEquals(count2, userService.query().in(true, "name", () -> List.of("testSupplierIn1", "testSupplierIn2")).count());
+
+        Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> new String[]{"testSupplierIn1", "testSupplierIn2"}).count());
+        Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> Arrays.asList("testSupplierIn1", "testSupplierIn2")).count());
+        Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> List.of("testSupplierIn1", "testSupplierIn2")).count());
+    }
+
+    @Test
+    void testSupplierNotIn() {
+        var count1 = userService.query().notIn("name", "testSupplierNotIn").count();
+        Assertions.assertTrue(count1 > 0);
+        Assertions.assertEquals(count1, userService.query().notIn(true, "name", () -> "testSupplierNotIn").count());
+        Assertions.assertEquals(count1, userService.lambdaQuery().notIn(true, H2User::getName, () -> "testSupplierNotIn").count());
+
+        var count2 = userService.query().notIn("name", "testSupplierNotIn", "testSupplierNotIn").count();
+        Assertions.assertTrue(count2 > 0);
+        Assertions.assertEquals(count2, userService.query().notIn(true, "name", () -> new String[]{"testSupplierNotIn", "testSupplierNotIn"}).count());
+        Assertions.assertEquals(count2, userService.query().notIn(true, "name", () -> Arrays.asList("testSupplierNotIn", "testSupplierNotIn")).count());
+        Assertions.assertEquals(count2, userService.query().notIn(true, "name", () -> List.of("testSupplierNotIn", "testSupplierNotIn")).count());
+
+        Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> new String[]{"testSupplierNotIn", "testSupplierNotIn"}).count());
+        Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> Arrays.asList("testSupplierNotIn", "testSupplierNotIn")).count());
+        Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> List.of("testSupplierNotIn", "testSupplierNotIn")).count());
+    }
+
 }

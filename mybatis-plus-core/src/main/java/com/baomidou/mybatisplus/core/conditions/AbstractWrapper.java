@@ -811,7 +811,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children in(boolean condition, R column, Supplier<Object> val) {
         if (condition) {
-            return in(true, column, val.get());
+            Object object = val.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                Object[] arrays = (Object[]) object;
+                in(true, column, arrays);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                in(true, column, (Collection<?>) object);
+            } else {
+                in(true, column, object);
+            }
         }
         return typedThis;
     }
@@ -819,7 +828,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children notIn(boolean condition, R column, Supplier<Object> val) {
         if (condition) {
-            return notIn(true, column, val.get());
+            Object object = val.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                Object[] arrays = (Object[]) object;
+                notIn(true, column, arrays);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                notIn(true, column, (Collection<?>) object);
+            } else {
+                notIn(true, column, object);
+            }
         }
         return typedThis;
     }
