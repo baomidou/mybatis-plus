@@ -217,7 +217,7 @@ public interface Func<Children, R> extends Serializable {
     /**
      * 字段 IN ( sql语句 )
      * <p>!! sql 注入方式的 in 方法 !!</p>
-     * <p>例1: inSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: inSql("id", "1")</p>
      * <p>例2: inSql("id", "select id from table where id &lt; 3")</p>
      *
      * @param condition 执行条件
@@ -230,7 +230,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 &gt; ( sql语句 )
-     * <p>例1: gtSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: gtSql("id", "1")</p>
      * <p>例1: gtSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param condition 执行条件
@@ -242,7 +242,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 &gt; ( sql语句 )
-     * <p>例1: gtSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: gtSql("id", "1")</p>
      * <p>例1: gtSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param condition 执行条件
@@ -255,7 +255,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 &gt; ( sql语句 )
-     * <p>例1: gtSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: gtSql("id", "1")</p>
      * <p>例1: gtSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param column    字段
@@ -268,7 +268,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 >= ( sql语句 )
-     * <p>例1: geSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: geSql("id", "1")</p>
      * <p>例1: geSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param condition 执行条件
@@ -280,7 +280,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 >= ( sql语句 )
-     * <p>例1: geSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: geSql("id", "1")</p>
      * <p>例1: geSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param condition 执行条件
@@ -293,7 +293,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 >= ( sql语句 )
-     * <p>例1: geSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例1: geSql("id", "1")</p>
      * <p>例1: geSql("id", "select id from table where name = 'JunJun'")</p>
      *
      * @param column 字段
@@ -631,6 +631,19 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      */
     Children having(boolean condition, String sqlHaving, Object... params);
+
+    /**
+     * HAVING ( sql语句 )
+     * <p>例1: having("sum(age) &gt; 10")</p>
+     * <p>例2: having("sum(age) &gt; {0}", 10)</p>
+     *
+     * @param condition 执行条件
+     * @param sqlHaving sql 语句
+     * @param params    参数数组
+     * @return children
+     * @since 3.5.4
+     */
+    Children having(boolean condition, String sqlHaving, Supplier<Object> params);
 
     /**
      * ignore

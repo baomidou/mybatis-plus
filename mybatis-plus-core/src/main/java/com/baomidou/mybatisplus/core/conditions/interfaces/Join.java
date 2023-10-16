@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 /**
  * 查询条件封装
@@ -80,6 +81,19 @@ public interface Join<Children> extends Serializable {
      */
     Children last(boolean condition, String lastSql);
 
+
+    /**
+     * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
+     * <p>例: last("limit 1")</p>
+     * <p>注意只能调用一次,多次调用以最后一次为准</p>
+     *
+     * @param condition 执行条件
+     * @param lastSql   sql语句
+     * @return children
+     * @since 3.5.4
+     */
+    Children last(boolean condition, Supplier<String> lastSql);
+
     /**
      * ignore
      */
@@ -95,6 +109,16 @@ public interface Join<Children> extends Serializable {
      * @return children
      */
     Children comment(boolean condition, String comment);
+
+    /**
+     * sql 注释(会拼接在 sql 的最后面)
+     *
+     * @param condition 执行条件
+     * @param comment   sql注释
+     * @return children
+     * @since 3.5.4
+     */
+    Children comment(boolean condition, Supplier<String> comment);
 
     /**
      * ignore
@@ -114,7 +138,23 @@ public interface Join<Children> extends Serializable {
     Children first(boolean condition, String firstSql);
 
     /**
-     * ignore
+     * sql 起始句（会拼接在SQL语句的起始处）
+     *
+     * @param condition 执行条件
+     * @param firstSql  起始语句
+     * @return children
+     * @since 3.5.4
+     */
+    Children first(boolean condition, Supplier<String> firstSql);
+
+    /**
+     * 拼接 EXISTS ( sql语句 )
+     * <p>!! sql 注入方法 !!</p>
+     * <p>例: exists("select id from table where age = 1")</p>
+     *
+     * @param existsSql sql语句
+     * @param values    数据数组
+     * @return children
      */
     default Children exists(String existsSql, Object... values) {
         return exists(true, existsSql, values);
@@ -132,6 +172,31 @@ public interface Join<Children> extends Serializable {
      */
     Children exists(boolean condition, String existsSql, Object... values);
 
+//    /**
+//     * 拼接 EXISTS ( sql语句 )
+//     * <p>!! sql 注入方法 !!</p>
+//     * <p>例: exists("select id from table where age = 1")</p>
+//     *
+//     * @param condition 执行条件
+//     * @param existsSql sql语句
+//     * @param values    数据数组
+//     * @return children
+//     */
+//    Children exists(boolean condition, String existsSql, List<Object> values);
+
+    /**
+     * 拼接 EXISTS ( sql语句 )
+     * <p>!! sql 注入方法 !!</p>
+     * <p>例: exists("select id from table where age = 1")</p>
+     *
+     * @param condition 执行条件
+     * @param sql sql语句
+     * @param values    数据数组
+     * @return children
+     * @since 3.5.4
+     */
+    Children exists(boolean condition, String sql, Supplier<Object> values);
+
     /**
      * ignore
      */
@@ -145,9 +210,22 @@ public interface Join<Children> extends Serializable {
      * <p>例: notExists("select id from table where age = 1")</p>
      *
      * @param condition 执行条件
-     * @param existsSql sql语句
+     * @param sql sql语句
      * @param values    数据数组
      * @return children
      */
-    Children notExists(boolean condition, String existsSql, Object... values);
+    Children notExists(boolean condition, String sql, Object... values);
+
+    /**
+     * 拼接 NOT EXISTS ( sql语句 )
+     * <p>!! sql 注入方法 !!</p>
+     * <p>例: notExists("select id from table where age = 1")</p>
+     *
+     * @param condition 执行条件
+     * @param sql sql语句
+     * @param values    数据数组
+     * @return children
+     * @since 3.5.4
+     */
+    Children notExists(boolean condition, String sql, Supplier<Object> values);
 }

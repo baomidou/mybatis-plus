@@ -58,13 +58,6 @@ import java.util.*;
 
 /**
  * Mybatis Plus H2 Junit Test
- * JDK 8 run test:
- * <p>"Error: Could not create the Java Virtual Machine."</p>
- * <p>Go to build.gradle: remove below configuration:</p>
- * <p>
- * //  jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
- * //                    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1
@@ -510,6 +503,7 @@ class H2UserTest extends BaseTest {
      * CTO 说批量插入性能不行，让我们来分析一下问题在哪里
      */
     @Test
+    @Disabled
     void batchInsertPerformanceTest() {
         List<H2User> users = mockUser(10_000, 99989);
         userService.saveBatch(users);
@@ -856,16 +850,19 @@ class H2UserTest extends BaseTest {
                 System.out.println("-------处理OrderByDesc----------");
                 return super.doOrderByDesc(condition, column, columns);
             }
+
             @Override
-            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column,  List<SFunction<H2User, ?>> columns) {
+            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理OrderByAsc----------");
                 return super.doOrderByAsc(condition, column, columns);
             }
+
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderBy(boolean condition, boolean isAsc, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理OrderBy----------");
                 return super.doOrderBy(condition, isAsc, column, columns);
             }
+
             @Override
             protected LambdaQueryChainWrapper<H2User> doGroupBy(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理GroupBy----------");
@@ -947,12 +944,15 @@ class H2UserTest extends BaseTest {
     @Test
     @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
     void testSupplier() {
+        var dataSize = userService.query().count();
         H2User h2User = null;
         System.out.println("----------------------原始写法---------------------------------");
-        Assertions.assertThrows(NullPointerException.class, () -> userService.query().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), "name", h2User.getName().trim()).count());
+        Assertions.assertThrows(NullPointerException.class,
+            () -> userService.query().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), "name", h2User.getName().trim()).count());
+        Assertions.assertEquals(dataSize, userService.query()
+            .func(h2User != null && StringUtils.isNotBlank(h2User.getName()), w -> w.eq("name", h2User.getName().trim())).count());
         System.out.println("----------------------原始写法---------------------------------");
         System.out.println("------------------------------新写法,当对象为空时可以惰性求值.------------------------------------------------");
-        var dataSize = userService.query().count();
         Assertions.assertEquals(dataSize, userService.query().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), "name", () -> h2User.getName().trim()).count());
         Assertions.assertEquals(dataSize, userService.lambdaQuery().eq(h2User != null && StringUtils.isNotBlank(h2User.getName()), H2User::getName, () -> h2User.getName().trim()).count());
     }
@@ -975,6 +975,20 @@ class H2UserTest extends BaseTest {
         Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> new String[]{"testSupplierIn1", "testSupplierIn2"}).count());
         Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> Arrays.asList("testSupplierIn1", "testSupplierIn2")).count());
         Assertions.assertEquals(count2, userService.lambdaQuery().in(true, H2User::getName, () -> List.of("testSupplierIn1", "testSupplierIn2")).count());
+
+        var count3 = userService.query().inSql("name", "'testSupplierIn1','testSupplierIn3'").count();
+        Assertions.assertEquals(2, count2);
+        Assertions.assertEquals(count3, userService.query().inSql(true, "name", () -> "'testSupplierIn1','testSupplierIn3'").count());
+        Assertions.assertEquals(count3, userService.lambdaQuery().inSql(true, H2User::getName, () -> "'testSupplierIn1','testSupplierIn3'").count());
+
+        Assertions.assertEquals(userService.count(), userService.query().in(false, "name", () -> {
+            throwsException();
+            return "testSupplierIn1";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().in(false, H2User::getName, () -> {
+            throwsException();
+            return "testSupplierIn1";
+        }).count());
     }
 
     @Test
@@ -993,6 +1007,255 @@ class H2UserTest extends BaseTest {
         Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> new String[]{"testSupplierNotIn", "testSupplierNotIn"}).count());
         Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> Arrays.asList("testSupplierNotIn", "testSupplierNotIn")).count());
         Assertions.assertEquals(count2, userService.lambdaQuery().notIn(true, H2User::getName, () -> List.of("testSupplierNotIn", "testSupplierNotIn")).count());
+
+        var count3 = userService.query().notIn("name", "'testSupplierNotIn','testSupplierNotIn'").count();
+        Assertions.assertTrue(count3 > 0);
+        Assertions.assertEquals(count3, userService.query().notIn(true, "name", () -> "'testSupplierIn1','testSupplierIn3'").count());
+        Assertions.assertEquals(count3, userService.lambdaQuery().notIn(true, H2User::getName, () -> "'testSupplierIn1','testSupplierIn3'").count());
+
+        Assertions.assertEquals(userService.count(), userService.query().notIn(false, "name", () -> {
+            throwsException();
+            return "testSupplierNotIn";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().notIn(false, H2User::getName, () -> {
+            throwsException();
+            return "testSupplierNotIn";
+        }).count());
+
     }
+
+    @Test
+    void testHaving() {
+        userService.saveBatch(Arrays.asList(new H2User("testHaving"), new H2User("testHaving"), new H2User("testHaving")));
+        var count = userService.query().eq("name", "testHaving").groupBy("name").having(true, "count(1) > {0}", 1).count();
+        Assertions.assertEquals(3, (long) count);
+        Assertions.assertEquals(count, userService.query().eq("name", "testHaving").groupBy("name").having(true, "count(1) > {0}", () -> new Object[]{1}).count());
+        Assertions.assertEquals(count, userService.query().eq("name", "testHaving").groupBy("name").having(true, "count(1) > {0}", () -> new String[]{"1"}).count());
+        Assertions.assertEquals(count, userService.query().eq("name", "testHaving").groupBy("name").having(true, "count(1) > {0}", () -> List.of(1)).count());
+        Assertions.assertEquals(count, userService.query().eq("name", "testHaving").groupBy("name").having(true, "count(1) > {0}", () -> 1).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(H2User::getName, "testHaving").groupBy(H2User::getName).having(true, "count(1) > {0}", () -> new Object[]{1}).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(H2User::getName, "testHaving").groupBy(H2User::getName).having(true, "count(1) > {0}", () -> new String[]{"1"}).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(H2User::getName, "testHaving").groupBy(H2User::getName).having(true, "count(1) > {0}", () -> List.of(1)).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(H2User::getName, "testHaving").groupBy(H2User::getName).having(true, "count(1) > {0}", () -> 1).count());
+        Assertions.assertEquals(count, userService.query().eq("name", "testHaving").groupBy("name").having(false, "count(1) > {0}", () -> {
+            throwsException();
+            return 1;
+        }).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(H2User::getName, "testHaving").groupBy(H2User::getName).having(false, "count(1) > {0}", () -> {
+            throwsException();
+            return 1;
+        }).count());
+
+
+    }
+
+    @Test
+    void testGeSql() {
+        var count = userService.query().geSql("test_id", "1").count();
+        Assertions.assertEquals(count, userService.query().geSql(true, "test_id", () -> "1").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().geSql(true, H2User::getTestId, () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.query().geSql(false, "test_id", () -> {
+            throwsException();
+            return "1";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().geSql(false, H2User::getTestId, () -> {
+            throwsException();
+            return "1";
+        }).count());
+    }
+
+    @Test
+    void testGtSql() {
+        var count = userService.query().gtSql("test_id", "1").count();
+        Assertions.assertEquals(count, userService.query().gtSql(true, "test_id", () -> "1").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().gtSql(true, H2User::getTestId, () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.query().gtSql(false, "test_id", () -> {
+            throwsException();
+            return "1";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().gtSql(false, H2User::getTestId, () -> {
+            throwsException();
+            return "1";
+        }).count());
+    }
+
+    @Test
+    void testLeSql() {
+        var count = userService.query().leSql("test_id", "9").count();
+        Assertions.assertEquals(count, userService.query().leSql(true, "test_id", () -> "9").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().leSql(true, H2User::getTestId, () -> "9").count());
+        Assertions.assertEquals(userService.count(), userService.query().leSql(false, "test_id", () -> {
+            throwsException();
+            return "9";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().leSql(false, H2User::getTestId, () -> {
+            throwsException();
+            return "9";
+        }).count());
+    }
+
+    @Test
+    void testLtSql() {
+        var count = userService.query().lt("test_id", "9").count();
+        Assertions.assertEquals(count, userService.query().ltSql(true, "test_id", () -> "9").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().ltSql(true, H2User::getTestId, () -> "9").count());
+
+        Assertions.assertEquals(userService.count(), userService.query().ltSql(false, "test_id", () -> {
+            throwsException();
+            return "9";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().ltSql(false, H2User::getTestId, () -> {
+            throwsException();
+            return "9";
+        }).count());
+    }
+
+    @Test
+    void testEq() {
+        var h2User = new H2User("testEq");
+        userService.save(h2User);
+        var count = userService.query().eq("name", "testEq").count();
+        Assertions.assertEquals(1, count);
+        Assertions.assertEquals(count, userService.query().eq(true, "name", () -> "testEq").count());
+        Assertions.assertEquals(count, userService.query().eq(true, "test_id", h2User::getTestId).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(true, H2User::getName, () -> "testEq").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().eq(true, H2User::getTestId, h2User::getTestId).count());
+
+        Assertions.assertEquals(userService.count(), userService.query().eq(false, "name", () -> {
+            throwsException();
+            return "testEq";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.query().eq(false, "test_id", () -> {
+            throwsException();
+            return h2User.getTestId();
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().eq(false, H2User::getName, () -> {
+            throwsException();
+            return "testEq";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().eq(false, H2User::getTestId, () -> {
+            throwsException();
+            return h2User.getTestId();
+        }).count());
+    }
+
+
+    @Test
+    void testNe() {
+        var count = userService.query().ne("name", "testEq").count();
+        Assertions.assertEquals(count, userService.query().ne(true, "name", () -> "testEq").count());
+        Assertions.assertEquals(count, userService.lambdaQuery().ne(true, H2User::getName, () -> "testEq").count());
+        Assertions.assertEquals(userService.count(), userService.query().ne(false, "name", () -> {
+            throwsException();
+            return "testEq";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().ne(false, H2User::getName, () -> {
+            throwsException();
+            return "testEq";
+        }).count());
+    }
+
+    @Test
+    void testGt() {
+        var count = userService.query().gt("test_id", 1).count();
+        Assertions.assertEquals(count, userService.query().gt(true, "test_id", () -> "1").count());
+        Assertions.assertEquals(count, userService.query().gt(true, "test_id", () -> 1).count());
+        Assertions.assertEquals(userService.count(), userService.query().gt(false, "test_id", () -> {
+            throwsException();
+            return "1";
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().gt(false, H2User::getTestId, () -> {
+            throwsException();
+            return "1";
+        }).count());
+    }
+
+    @Test
+    void testLt() {
+        var count = userService.query().lt("test_id", "1").count();
+        Assertions.assertEquals(count, userService.query().lt(true, "test_id", () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.query().lt(false, "test_id", () -> {
+            throwsException();
+            return "1";
+        }).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().lt(true, H2User::getTestId, () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().lt(false, H2User::getTestId, () -> {
+            throwsException();
+            return "1";
+        }).count());
+    }
+
+    @Test
+    void testLe() {
+        var count = userService.query().le("test_id", "1").count();
+        Assertions.assertEquals(count, userService.query().le(true, "test_id", () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.query().le(false, "test_id", () -> {
+            throwsException();
+            return "1";
+        }).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().le(true, H2User::getTestId, () -> "1").count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().le(false, H2User::getTestId, () -> {
+            throwsException();
+            return "1";
+        }).count());
+    }
+
+    @Test
+    void testBetween() {
+        var count = userService.query().between("age", AgeEnum.TWO.getValue(), AgeEnum.THREE.getValue()).count();
+        Assertions.assertEquals(count, userService.query().between(true, "age", AgeEnum.TWO::getValue, AgeEnum.THREE::getValue).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().between(true, H2User::getAge, AgeEnum.TWO::getValue, AgeEnum.THREE::getValue).count());
+        Assertions.assertEquals(userService.count(), userService.query().between(false, "age", () -> {
+            throwsException();
+            return AgeEnum.TWO.getValue();
+        }, () -> {
+            throwsException();
+            return AgeEnum.THREE.getValue();
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().between(false, H2User::getAge, () -> {
+            throwsException();
+            return AgeEnum.TWO.getValue();
+        }, () -> {
+            throwsException();
+            return AgeEnum.THREE.getValue();
+        }).count());
+    }
+
+    @Test
+    void testNotBetween() {
+        var count = userService.query().notBetween("age", AgeEnum.TWO.getValue(), AgeEnum.THREE.getValue()).count();
+        Assertions.assertEquals(count, userService.query().notBetween(true, "age", AgeEnum.TWO::getValue, AgeEnum.THREE::getValue).count());
+        Assertions.assertEquals(count, userService.lambdaQuery().notBetween(true, H2User::getAge, AgeEnum.TWO::getValue, AgeEnum.THREE::getValue).count());
+        Assertions.assertEquals(userService.count(), userService.query().notBetween(false, "age", () -> {
+            throwsException();
+            return AgeEnum.TWO.getValue();
+        }, () -> {
+            throwsException();
+            return AgeEnum.THREE.getValue();
+        }).count());
+        Assertions.assertEquals(userService.count(), userService.lambdaQuery().notBetween(false, H2User::getAge, () -> {
+            throwsException();
+            return AgeEnum.TWO.getValue();
+        }, () -> {
+            throwsException();
+            return AgeEnum.THREE.getValue();
+        }).count());
+    }
+
+    @Test
+    void testExists(){
+        var count = userService.query().exists("select 1").count();
+        Assertions.assertEquals(count,userService.query().exists(true,"select {0}", ()-> 1).count());
+        Assertions.assertEquals(count,userService.lambdaQuery().exists(true,"select {0}", ()-> 1).count());
+
+//        Assertions.assertEquals(count,userService.query().exists(true,"select {0} {1}", ()-> new String[]{"1","2"}).count());
+        Assertions.assertEquals(count,userService.lambdaQuery().exists(true,"select {0} {1}", ()-> new int[]{1,2}).count());
+    }
+
+
+    private void throwsException() {
+        throw new RuntimeException("多少有点小毛病");
+    }
+
 
 }

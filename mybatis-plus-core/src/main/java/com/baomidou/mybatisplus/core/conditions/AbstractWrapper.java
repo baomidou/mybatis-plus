@@ -275,6 +275,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             () -> String.format("(%s)", formatSqlMaybeWithParam(existsSql, values))));
     }
 
+//    @Override
+//    public Children exists(boolean condition, String existsSql, List<Object> values) {
+//        return maybeDo(condition, () -> appendSqlSegments(EXISTS,
+//            () -> String.format("(%s)", formatSqlMaybeWithParam(existsSql, values))));
+//    }
+
     @Override
     public Children notExists(boolean condition, String existsSql, Object... values) {
         return not(condition).exists(condition, existsSql, values);
@@ -886,6 +892,75 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public Children notInSql(boolean condition, R column, Supplier<String> inValue) {
         if (condition) {
             return notInSql(true, column, inValue.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children having(boolean condition, String sqlHaving, Supplier<Object> params) {
+        if (condition) {
+            Object object = params.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                return having(true, sqlHaving,  object);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                return having(true, sqlHaving, ((Collection<?>) object).toArray());
+            }
+            return having(true, sqlHaving, object);
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children last(boolean condition, Supplier<String> lastSql) {
+        if (condition) {
+            return last(true, lastSql.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children comment(boolean condition, Supplier<String> comment) {
+        if (condition) {
+            return comment(true, comment.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children first(boolean condition, Supplier<String> firstSql) {
+        if (condition) {
+            return first(true, firstSql.get());
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children exists(boolean condition, String sql, Supplier<Object> values) {
+        if (condition) {
+            Object object = values.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                return exists(true,sql, (Object[]) object);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                return exists(true, sql, ((Collection<?>) object).toArray());
+            }
+            return exists(true, sql, object);
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children notExists(boolean condition, String sql, Supplier<Object> values) {
+        if (condition) {
+            Object object = values.get();
+            Class<?> objectClass = object.getClass();
+            if (objectClass.isArray()) {
+                return notExists(true, sql, (Object[]) object);
+            } else if (Collection.class.isAssignableFrom(objectClass)) {
+                return notExists(true, sql, ((Collection<?>) object).toArray());
+            }
+            return notExists(true, sql, object);
         }
         return typedThis;
     }
