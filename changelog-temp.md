@@ -5,7 +5,9 @@
 * fix: 修复@OrderBy搭配@TableId排序字段错误(不兼容改动,com.baomidou.mybatisplus.core.metadata.TableInfo.orderByFields调整了类型).
 * fix: 修复Service中根据主键逻辑删除时类型不匹配导致的错误.
 * fix: 修复分页插件Count与自定义ResultHandler冲突.
-* fix: 修复字段填充处理器可能会出现重入问题
+* fix: 修复字段填充处理器可能会出现重入问题.
+* fix: 修复Service在多SqlSessionFactory下注入错误.
+* fix: 修复MybatisMapperRegistry存在的线程安全问题.
 * feat: 新增自增主键字段是否允许插入控制,可使用方法注入覆盖Insert(boolean ignoreAutoIncrementColumn)或Insert(String name, boolean ignoreAutoIncrementColumn)控制自增主键是否支持写入行为.
 * feat: ActiveRecord模式下deleteById(逻辑删除)方法支持自动填充功能.
 * feat: 内置泛型提取,支持非Spring体系项目使用.
@@ -14,6 +16,7 @@
 * feat: 代码生成器元数据信息公开tableName与columnName字段访问.
 * feat: 新增mybatis-plus-spring-boot3-starter与mybatis-plus-spring-boot3-starter-test支持SpringBoot3.
 * feat: 支持插件缺省注入,当无MybatisPlusInterceptor注入时,支持com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor自动注入.
+* feat: 优化TableInfo.newInstance创建实例方法.
 * feat: 升级源码Jdk开发版本至Java21.
 * feat: 升级gradle-wrapper至8.4-rc-1.
 * feat: 升级kotlin-gradle-plugin至1.9.20-Beta.
@@ -25,3 +28,4 @@
 * opt: 去除com.baomidou.mybatisplus.core.toolkit.ReflectionKit.setAccessible方法调用,防止高版本Jdk移除
 * opt: 调整selectOne方法(配合流式处理,最多提取两行数据,日志不再打印总记录数).
 * opt: 优化selectObjs方法返回值,减少类型强制转换.
+* doc: 补充Wrapper相关API注释文档.
