@@ -29,7 +29,10 @@ import java.util.function.Predicate;
 public interface Query<Children, T, R> extends Serializable {
 
     /**
-     * ignore
+     * 指定查询字段
+     *
+     * @param columns 字段列表
+     * @return children
      */
     @SuppressWarnings("unchecked")
     default Children select(R... columns) {
@@ -37,7 +40,11 @@ public interface Query<Children, T, R> extends Serializable {
     }
 
     /**
-     * ignore
+     * 指定查询字段
+     *
+     * @param condition 执行条件
+     * @param columns   字段列表
+     * @return children
      */
     @SuppressWarnings("unchecked")
     default Children select(boolean condition, R... columns) {
@@ -45,19 +52,26 @@ public interface Query<Children, T, R> extends Serializable {
     }
 
     /**
-     * ignore
+     * 指定查询字段
+     *
+     * @param columns   字段列表
+     * @return children
      */
     default Children select(List<R> columns) {
         return select(true, columns);
     }
 
     /**
-     * ignore
+     * 指定查询字段
+     *
+     * @param condition 执行条件
+     * @param columns   字段列表
+     * @return children
      */
     Children select(boolean condition, List<R> columns);
 
     /**
-     * ignore
+     * 过滤查询的字段信息(主键除外!)
      * <p>注意只有内部有 entity 才能使用该方法</p>
      */
     default Children select(Predicate<TableFieldInfo> predicate) {

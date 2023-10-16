@@ -29,7 +29,13 @@ import java.util.function.Consumer;
 public interface Nested<Param, Children> extends Serializable {
 
     /**
-     * ignore
+     * AND 嵌套
+     * <p>
+     * 例: and(i -&gt; i.eq("name", "李白").ne("status", "活着"))
+     * </p>
+     *
+     * @param consumer  消费函数
+     * @return children
      */
     default Children and(Consumer<Param> consumer) {
         return and(true, consumer);
@@ -48,7 +54,13 @@ public interface Nested<Param, Children> extends Serializable {
     Children and(boolean condition, Consumer<Param> consumer);
 
     /**
-     * ignore
+     * OR 嵌套
+     * <p>
+     * 例: or(i -&gt; i.eq("name", "李白").ne("status", "活着"))
+     * </p>
+     *
+     * @param consumer  消费函数
+     * @return children
      */
     default Children or(Consumer<Param> consumer) {
         return or(true, consumer);
@@ -67,7 +79,13 @@ public interface Nested<Param, Children> extends Serializable {
     Children or(boolean condition, Consumer<Param> consumer);
 
     /**
-     * ignore
+     * 正常嵌套 不带 AND 或者 OR
+     * <p>
+     * 例: nested(i -&gt; i.eq("name", "李白").ne("status", "活着"))
+     * </p>
+     *
+     * @param consumer  消费函数
+     * @return children
      */
     default Children nested(Consumer<Param> consumer) {
         return nested(true, consumer);
@@ -86,7 +104,13 @@ public interface Nested<Param, Children> extends Serializable {
     Children nested(boolean condition, Consumer<Param> consumer);
 
     /**
-     * ignore
+     * not嵌套
+     * <p>
+     * 例: not(i -&gt; i.eq("name", "李白").ne("status", "活着"))
+     * </p>
+     *
+     * @param consumer  消费函数
+     * @return children
      */
     default Children not(Consumer<Param> consumer) {
         return not(true, consumer);

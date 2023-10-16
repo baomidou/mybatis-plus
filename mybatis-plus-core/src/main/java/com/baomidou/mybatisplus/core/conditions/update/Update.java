@@ -24,7 +24,11 @@ import java.io.Serializable;
 public interface Update<Children, R> extends Serializable {
 
     /**
-     * ignore
+     * 设置 更新 SQL 的 SET 片段
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
      */
     default Children set(R column, Object val) {
         return set(true, column, val);
@@ -43,7 +47,12 @@ public interface Update<Children, R> extends Serializable {
     }
 
     /**
-     * ignore
+     * 设置 更新 SQL 的 SET 片段
+     *
+     * @param column  字段
+     * @param val     值
+     * @param mapping 例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
+     * @return children
      */
     default Children set(R column, Object val, String mapping) {
         return set(true, column, val, mapping);
@@ -61,7 +70,14 @@ public interface Update<Children, R> extends Serializable {
     Children set(boolean condition, R column, Object val, String mapping);
 
     /**
-     * ignore
+     * 设置 更新 SQL 的 SET 片段
+     *
+     * @param setSql set sql
+     *               例1: setSql("id=1")
+     *               例2: apply("dateColumn={0}", LocalDate.now())
+     *               例3: apply("dateColumn={0}", LocalDate.now())
+     *               例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
+     * @return children
      */
     default Children setSql(String setSql, Object... params) {
         return setSql(true, setSql, params);
@@ -70,11 +86,12 @@ public interface Update<Children, R> extends Serializable {
     /**
      * 设置 更新 SQL 的 SET 片段
      *
-     * @param setSql set sql
-     *               例1: setSql("id=1")
-     *               例2: apply("dateColumn={0}", LocalDate.now())
-     *               例3: apply("dateColumn={0}", LocalDate.now())
-     *               例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
+     * @param condition 执行条件
+     * @param setSql    set sql
+     *                  例1: setSql("id=1")
+     *                  例2: apply("dateColumn={0}", LocalDate.now())
+     *                  例3: apply("dateColumn={0}", LocalDate.now())
+     *                  例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
      * @return children
      */
     Children setSql(boolean condition, String setSql, Object... params);
