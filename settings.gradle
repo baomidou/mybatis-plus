@@ -10,7 +10,7 @@ buildscript {
         //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20-Beta2"
         classpath "gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.16.1"
-        classpath "io.freefair.gradle:lombok-plugin:6.6.3"
+        classpath "io.freefair.gradle:lombok-plugin:8.4"
     }
 }
 
