@@ -35,7 +35,8 @@ public class SqliteTypeConvert implements ITypeConvert {
     public static final SqliteTypeConvert INSTANCE = new SqliteTypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @see MySqlTypeConvert#toDateType(GlobalConfig, String)
      */
     @Override

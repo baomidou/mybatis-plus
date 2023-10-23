@@ -34,7 +34,7 @@ public class MySqlTypeConvert implements ITypeConvert {
     public static final MySqlTypeConvert INSTANCE = new MySqlTypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
