@@ -59,17 +59,6 @@ import java.util.function.Function;
 @SuppressWarnings("unchecked")
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
-    private static boolean loadAop = false;
-
-    static {
-        try {
-            ClassUtils.toClassConfident("org.springframework.aop.framework.AopProxyUtils");
-            loadAop = true;
-        } catch (Exception exception) {
-            // ignore
-        }
-    }
-
     private final ConversionService conversionService = DefaultConversionService.getSharedInstance();
 
     protected final Log log = LogFactory.getLog(getClass());
@@ -101,8 +90,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             synchronized (this) {
                 if (this.sqlSessionFactory == null) {
                     Object target = this.baseMapper;
-                    if (loadAop && AopUtils.isAopProxy(this.baseMapper)) {
-                        target = AopProxyUtils.getSingletonTarget(this.baseMapper);
+                    // 这个检查目前看着来说基本上可以不用判断Aop是不是存在了.
+                    if (com.baomidou.mybatisplus.extension.toolkit.AopUtils.isLoadSpringAop()) {
+                        if (AopUtils.isAopProxy(this.baseMapper)) {
+                            target = AopProxyUtils.getSingletonTarget(this.baseMapper);
+                        }
                     }
                     if (target != null) {
                         MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(target);
