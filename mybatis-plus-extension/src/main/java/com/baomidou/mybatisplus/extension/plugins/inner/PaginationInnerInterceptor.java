@@ -339,7 +339,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                         }
 
                         for (Expression expression : join.getOnExpressions()) {
-                            if (expression.toString().contains(StringPool.QUESTION_MARK)) {
+                            String onS = expression.toString().toLowerCase();;
+                            if (onS.contains(StringPool.QUESTION_MARK) || onS.contains(str)) {
                                 /* 如果 join 里包含 ?(代表有入参) 就不移除 join */
                                 canRemoveJoin = false;
                                 break;
