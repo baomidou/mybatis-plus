@@ -33,7 +33,7 @@ public class DB2TypeConvert implements ITypeConvert {
     public static final DB2TypeConvert INSTANCE = new DB2TypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {

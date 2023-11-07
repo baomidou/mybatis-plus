@@ -33,6 +33,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
@@ -82,14 +84,25 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     private volatile SqlSessionFactory sqlSessionFactory;
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "deprecation"})
     protected SqlSessionFactory getSqlSessionFactory() {
         if (this.sqlSessionFactory == null) {
             synchronized (this) {
                 if (this.sqlSessionFactory == null) {
-                    MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(this.baseMapper);
-                    SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) mybatisMapperProxy.getSqlSession();
-                    this.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+                    Object target = this.baseMapper;
+                    // 这个检查目前看着来说基本上可以不用判断Aop是不是存在了.
+                    if (com.baomidou.mybatisplus.extension.toolkit.AopUtils.isLoadSpringAop()) {
+                        if (AopUtils.isAopProxy(this.baseMapper)) {
+                            target = AopProxyUtils.getSingletonTarget(this.baseMapper);
+                        }
+                    }
+                    if (target != null) {
+                        MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(target);
+                        SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) mybatisMapperProxy.getSqlSession();
+                        this.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
+                    } else {
+                        this.sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(this.entityClass);
+                    }
                 }
             }
         }

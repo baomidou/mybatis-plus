@@ -34,7 +34,7 @@ public class SqlServerTypeConvert implements ITypeConvert {
     public static final SqlServerTypeConvert INSTANCE = new SqlServerTypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {

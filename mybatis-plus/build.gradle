@@ -12,7 +12,8 @@ dependencies {
     testImplementation "${lib.'javax.servlet-api'}"
 
     testImplementation "${lib.'spring-test'}"
-
+    testImplementation "${lib.'spring-aop'}"
+    testImplementation "${lib.'aspectjweaver'}"
     testImplementation "${lib."jackson"}"
     testImplementation "${lib."fastjson"}"
     testImplementation "${lib."gson"}"

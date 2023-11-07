@@ -34,7 +34,7 @@ public class FirebirdTypeConvert implements ITypeConvert {
     public static final FirebirdTypeConvert INSTANCE = new FirebirdTypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {

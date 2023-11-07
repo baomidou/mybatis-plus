@@ -50,7 +50,6 @@ public class DmTypeConvert implements ITypeConvert {
      * @param config    全局配置
      * @param fieldType 字段类型
      * @return 对应的数据类型
-     * @inheritDoc
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {

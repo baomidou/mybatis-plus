@@ -17,7 +17,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.3.1',
         springVersion = '5.3.27',
         springBootVersion = '2.7.15',
-        springBoot3Version = '3.1.3',
+        springBoot3Version = '3.1.5',
         springCloudVersion = '3.1.1',
         jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
@@ -38,7 +38,7 @@ ext {
         "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
         "spring-web"                 : "org.springframework:spring-web:${springVersion}",
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
-        "aspectjrt"                  : "org.aspectj:aspectjrt:1.9.20.1",
+        "aspectjweaver"                  : "org.aspectj:aspectjweaver:1.9.20.1",
         "cglib"                      : "cglib:cglib:3.3.0",
         "imadcn"                     : "com.imadcn.framework:idworker:1.5.0",
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:${springCloudVersion}",
@@ -74,9 +74,9 @@ ext {
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
         "freemarker"          : "org.freemarker:freemarker:2.3.32",
-        "beetl"               : "com.ibeetl:beetl:3.7.0.RELEASE",
+        "beetl"               : "com.ibeetl:beetl:3.15.10.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.11",
-        "enjoy"               : "com.jfinal:enjoy:5.0.0",
+        "enjoy"               : "com.jfinal:enjoy:5.1.3",
         "logback-classic"     : "ch.qos.logback:logback-classic:1.4.11",
     ]
 }
@@ -111,7 +111,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:4.6.1"
+        testImplementation "org.mockito:mockito-junit-jupiter:5.6.0"
         testImplementation "${lib["lagarto"]}"
     }
 

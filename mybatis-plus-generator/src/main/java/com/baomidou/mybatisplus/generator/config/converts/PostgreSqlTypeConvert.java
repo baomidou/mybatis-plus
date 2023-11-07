@@ -34,7 +34,7 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
     public static final PostgreSqlTypeConvert INSTANCE = new PostgreSqlTypeConvert();
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
