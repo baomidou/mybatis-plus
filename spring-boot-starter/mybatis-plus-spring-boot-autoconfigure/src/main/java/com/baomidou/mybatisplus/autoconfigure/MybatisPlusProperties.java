@@ -338,6 +338,8 @@ public class MybatisPlusProperties {
         // 新增兼容开始...
         private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
+        protected String databaseId;
+
         public void applyTo(Configuration target) {
             PropertyMapper mapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
             mapper.from(getSafeRowBoundsEnabled()).to(target::setSafeRowBoundsEnabled);
@@ -372,6 +374,7 @@ public class MybatisPlusProperties {
             mapper.from(getConfigurationFactory()).to(target::setConfigurationFactory);
             mapper.from(getDefaultEnumTypeHandler()).to(target::setDefaultEnumTypeHandler);
             mapper.from(getDefaultScriptingLanguageDriver()).to(target::setDefaultScriptingLanguage);
+            mapper.from(getDatabaseId()).to(target::setDatabaseId);
         }
     }
 
