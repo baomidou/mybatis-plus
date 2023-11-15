@@ -25,7 +25,7 @@ include 'spring-boot-starter'
 include ':spring-boot-starter:mybatis-plus-boot-starter'
 include ':spring-boot-starter:mybatis-plus-boot-starter-test'
 include ':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure'
+include ':spring-boot-starter:mybatis-plus-spring-boot-test-autoconfigure'
 include ':spring-boot-starter:mybatis-plus-spring-boot3-starter'
 include ':spring-boot-starter:mybatis-plus-spring-boot3-starter-test'
-include ':spring-boot-starter:mybatis-plus-spring-boot-test-autoconfigure'
 
