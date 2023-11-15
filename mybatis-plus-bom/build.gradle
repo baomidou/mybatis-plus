@@ -13,11 +13,15 @@ apply plugin: "io.spring.dependency-management"
 dependencyManagement {
     dependencies {
         dependency "com.baomidou:mybatis-plus-annotation:${APP_VERSION}"
-        dependency "com.baomidou:mybatis-plus-boot-starter:${APP_VERSION}"
-        dependency "com.baomidou:mybatis-plus-boot-starter-test:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-core:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-extension:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-generator:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-boot-starter:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-boot-starter-test:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-spring-boot-autoconfigure:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-spring-boot-test-autoconfigure:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-spring-boot3-starter:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-spring-boot3-starter-test:${APP_VERSION}"
 
     }
 }
