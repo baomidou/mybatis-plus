@@ -197,11 +197,11 @@ public enum DbType {
     /**
      * trino
      */
-    TRINO("trino", "trino数据库"),
+    TRINO("trino", "Trino数据库"),
     /**
-     * trino
+     * presto
      */
-    PRESTO("Presto", "Presto数据库"),
+    PRESTO("presto", "Presto数据库"),
     /**
      * UNKNOWN DB
      */

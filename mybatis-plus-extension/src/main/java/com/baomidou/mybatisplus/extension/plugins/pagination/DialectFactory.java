@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
-import com.cq.idp.config.TrinoDialect;
 
 import java.util.EnumMap;
 import java.util.Map;

@@ -1,7 +1,6 @@
-package com.cq.idp.config;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 
 /**
  * Trino 数据库分页语句组装实现
