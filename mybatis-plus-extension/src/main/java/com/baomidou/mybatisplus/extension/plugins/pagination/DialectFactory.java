@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
+import com.cq.idp.config.TrinoDialect;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -94,6 +95,9 @@ public class DialectFactory {
                 dialect = new GBase8sDialect();
             } else if (dbType == DbType.INFORMIX) {
                 dialect = new InformixDialect();
+            } else if (dbType == DbType.TRINO
+                || dbType == DbType.PRESTO) {
+                dialect = new TrinoDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

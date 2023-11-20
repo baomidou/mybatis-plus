@@ -195,6 +195,14 @@ public enum DbType {
      */
     LEALONE("lealone", "Lealone数据库"),
     /**
+     * trino
+     */
+    TRINO("trino", "trino数据库"),
+    /**
+     * trino
+     */
+    PRESTO("Presto", "Presto数据库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
