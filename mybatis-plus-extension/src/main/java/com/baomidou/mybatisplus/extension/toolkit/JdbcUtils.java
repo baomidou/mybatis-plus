@@ -139,6 +139,10 @@ public class JdbcUtils {
             return DbType.SINODB;
         } else if (url.contains(":uxdb:")) {
             return DbType.UXDB;
+        } else if (url.contains(":trino:")) {
+            return DbType.TRINO;
+        } else if (url.contains(":presto:")) {
+            return DbType.PRESTO;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
