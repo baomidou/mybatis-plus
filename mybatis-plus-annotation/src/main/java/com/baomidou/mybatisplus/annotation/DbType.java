@@ -199,7 +199,7 @@ public enum DbType {
      */
     TRINO("trino", "trino数据库"),
     /**
-     * trino
+     * Presto
      */
     PRESTO("Presto", "Presto数据库"),
     /**
