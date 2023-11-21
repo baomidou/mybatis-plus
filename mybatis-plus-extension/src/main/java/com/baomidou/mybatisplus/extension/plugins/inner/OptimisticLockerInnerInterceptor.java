@@ -41,9 +41,11 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -276,6 +278,34 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
         }
     }
 
+    private static class VersionFactory {
+
+        /**
+         * 存放版本号类型与获取更新后版本号的map
+         */
+        private static final Map<Class<?>, Function<Object, Object>> VERSION_FUNCTION_MAP = new HashMap<>();
+
+        static {
+            VERSION_FUNCTION_MAP.put(long.class, version -> (long) version + 1);
+            VERSION_FUNCTION_MAP.put(Long.class, version -> (long) version + 1);
+            VERSION_FUNCTION_MAP.put(int.class, version -> (int) version + 1);
+            VERSION_FUNCTION_MAP.put(Integer.class, version -> (int) version + 1);
+            VERSION_FUNCTION_MAP.put(Date.class, version -> new Date());
+            VERSION_FUNCTION_MAP.put(Timestamp.class, version -> new Timestamp(System.currentTimeMillis()));
+            VERSION_FUNCTION_MAP.put(LocalDateTime.class, version -> LocalDateTime.now());
+            VERSION_FUNCTION_MAP.put(Instant.class, version -> Instant.now());
+        }
+
+        public static Object getUpdatedVersionVal(Class<?> clazz, Object originalVersionVal) {
+            Function<Object, Object> versionFunction = VERSION_FUNCTION_MAP.get(clazz);
+            if (versionFunction == null) {
+                // not supported type, return original val.
+                return originalVersionVal;
+            }
+            return versionFunction.apply(originalVersionVal);
+        }
+    }
+
     /**
      * This method provides the control for version value.<BR>
      * Returned value type must be the same as original one.
@@ -284,20 +314,6 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
      * @return updated version val
      */
     protected Object getUpdatedVersionVal(Class<?> clazz, Object originalVersionVal) {
-        if (long.class.equals(clazz) || Long.class.equals(clazz)) {
-            return ((long) originalVersionVal) + 1;
-        } else if (int.class.equals(clazz) || Integer.class.equals(clazz)) {
-            return ((int) originalVersionVal) + 1;
-        } else if (Date.class.equals(clazz)) {
-            return new Date();
-        } else if (Timestamp.class.equals(clazz)) {
-            return new Timestamp(System.currentTimeMillis());
-        } else if (LocalDateTime.class.equals(clazz)) {
-            return LocalDateTime.now();
-        } else if (Instant.class.equals(clazz)) {
-            return Instant.now();
-        }
-        //not supported type, return original val.
-        return originalVersionVal;
+        return VersionFactory.getUpdatedVersionVal(clazz, originalVersionVal);
     }
 }
