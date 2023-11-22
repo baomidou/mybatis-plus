@@ -106,6 +106,12 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         List<Join> joins = plainSelect.getJoins();
         if (CollectionUtils.isNotEmpty(joins)) {
             mainTables = processJoins(mainTables, joins, whereSegment);
+            for (Join join : joins) {
+                FromItem rightItem = join.getRightItem();
+                if(rightItem instanceof Table){
+                    mainTables.add((Table) rightItem);
+                }
+            }
         }
 
         // 当有 mainTable 时，进行 where 条件追加
