@@ -105,7 +105,7 @@ public class MultiDataPermissionInterceptorTest {
     void test6() {
         // 显式指定 JOIN 类型时 JOIN 右侧表才能进行拼接条件
         assertSql(TEST_6, "select u.username from sys_user u LEFT join sys_user_role r on u.id=r.user_id",
-            "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.role_id = 3 AND r.role_id IN (7, 9, 11) WHERE u.state = 1 AND u.amount > 1000");
+            "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.role_id = 3 AND r.role_id IN (7, 9, 11) WHERE u.state = 1 AND u.amount > 1000 AND r.role_id = 3 AND r.role_id IN (7, 9, 11)");
     }
 
     @Test
