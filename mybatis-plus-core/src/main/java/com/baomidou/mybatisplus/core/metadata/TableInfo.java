@@ -428,6 +428,26 @@ public class TableInfo implements Constants {
     }
 
     /**
+     * 获取更新填充字段的 sql set 片段
+     *
+     * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
+     * @param prefix              前缀
+     * @return sql 脚本片段
+     */
+    public String getUpdateFillSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return fieldList.stream()
+            .filter(i -> {
+                if (ignoreLogicDelFiled) {
+                    return !(isWithLogicDelete() && i.isLogicDelete());
+                }
+                return true;
+            })
+            .filter(i -> i.isWithUpdateFill())
+            .map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+    }
+
+    /**
      * 获取逻辑删除字段的 sql 脚本
      *
      * @param startWithAnd 是否以 and 开头

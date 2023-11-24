@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.SqlSourceBuilder;
@@ -105,6 +106,20 @@ public abstract class AbstractMethod implements Constants {
      */
     protected String sqlLogicSet(TableInfo table) {
         return "SET " + table.getLogicDeleteSql(false, false);
+    }
+
+    /**
+     * SQL 更新 set 语句
+     *
+     * @param table 表信息
+     * @param prefix 前缀
+     * @return sql set 片段
+     */
+    protected String sqlLogicAndFillSet(TableInfo table, String prefix) {
+        String setSql = "SET ";
+        String updateFillSql = table.getUpdateFillSqlSet(true, prefix);
+        String sql = table.getLogicDeleteSql(false, false);
+        return StringUtils.isEmpty(updateFillSql) ? setSql + sql : setSql + updateFillSql + sql;
     }
 
     /**

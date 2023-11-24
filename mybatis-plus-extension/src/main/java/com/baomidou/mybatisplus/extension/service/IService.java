@@ -652,7 +652,7 @@ public interface IService<T> {
      * @return LambdaUpdateWrapper 的包装类
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
-        return ChainWrappers.lambdaUpdateChain(getBaseMapper());
+        return ChainWrappers.lambdaUpdateChain(getEntityClass());
     }
 
     /**

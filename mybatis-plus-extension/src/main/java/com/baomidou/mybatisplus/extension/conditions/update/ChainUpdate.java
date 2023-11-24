@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.conditions.update;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
@@ -51,6 +52,17 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
      * @return 是否成功
      */
     default boolean remove() {
-        return execute(mapper -> SqlHelper.retBool(mapper.delete(getWrapper())));
+        Class<T> entityClass = getEntityClass();
+        if (entityClass == null) {
+            return execute(mapper -> SqlHelper.retBool(mapper.delete(getWrapper())));
+        } else {
+            T entity = null;
+            try {
+                entity = TableInfoHelper.getTableInfo(entityClass).newInstance();
+            } catch (Exception e) {
+            }
+            T finalEntity = entity;
+            return execute(mapper -> SqlHelper.retBool(mapper.deleteBatch(finalEntity, getWrapper())));
+        }
     }
 }

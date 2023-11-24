@@ -656,6 +656,17 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    void testLamdaDeleteByFill() {
+        H2User user = new H2User("yuge", AgeEnum.TWO);
+        userService.save(user);
+        Long beforeCount = userService.count(userService.lambdaQuery().eq(H2User::getName, "yuge").getWrapper());
+        Assertions.assertTrue(beforeCount.intValue() > 0);
+        userService.lambdaUpdate().eq(H2User::getName, "yuge").remove();
+        Long afterCount = userService.count(userService.lambdaQuery().eq(H2User::getName, "yuge").getWrapper());
+        Assertions.assertTrue(afterCount.intValue() == 0);
+    }
+
+    @Test
     @Order(25)
     void testServiceImplInnerLambdaQueryConstructorSetEntity() {
         H2User condition = new H2User();

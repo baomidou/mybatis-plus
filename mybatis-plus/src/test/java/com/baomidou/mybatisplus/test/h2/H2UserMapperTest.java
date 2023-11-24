@@ -408,6 +408,24 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
+    void deleteBatch() {
+        userMapper.insert(new H2User().setAge(AgeEnum.ONE));
+        userMapper.insert(new H2User().setAge(AgeEnum.TWO));
+        Long beforeCount1 = userMapper.selectCount(new QueryWrapper<>(H2User.class).eq("age", AgeEnum.ONE));
+        Long beforeCount2 = userMapper.selectCount(new QueryWrapper<>(H2User.class).eq("age", AgeEnum.TWO));
+        Assertions.assertTrue(beforeCount1.intValue() > 0);
+        Assertions.assertTrue(beforeCount2.intValue() > 0);
+        userMapper.deleteBatch(null,
+            new QueryWrapper<>(H2User.class).eq("age", AgeEnum.ONE));
+        userMapper.deleteBatch(new H2User(),
+            new QueryWrapper<>(H2User.class).eq("age", AgeEnum.TWO));
+        Long afterCount1 = userMapper.selectCount(new QueryWrapper<>(H2User.class).eq("age", AgeEnum.ONE));
+        Long afterCount2 = userMapper.selectCount(new QueryWrapper<>(H2User.class).eq("age", AgeEnum.TWO));
+        Assertions.assertTrue(afterCount1.intValue() == 0);
+        Assertions.assertTrue(afterCount2.intValue() == 0);
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     void sqlCommentTest() {
         userMapper.delete(new QueryWrapper<H2User>().comment("deleteAllUsers"));

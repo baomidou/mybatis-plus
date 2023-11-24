@@ -35,6 +35,7 @@ public enum SqlMethod {
     @Deprecated
     DELETE_BY_MAP("deleteByMap", "根据columnMap 条件删除记录", "<script>\nDELETE FROM %s %s\n</script>"),
     DELETE("delete", "根据 entity 条件删除记录", "<script>\nDELETE FROM %s %s %s\n</script>"),
+    DELETE_BATCH("deleteBatch", "根据条件删除记录", "<script>\nDELETE FROM %s %s %s\n</script>"),
     DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量删除数据", "<script>\nDELETE FROM %s WHERE %s IN (%s)\n</script>"),
 
     /**
@@ -43,6 +44,7 @@ public enum SqlMethod {
     LOGIC_DELETE_BY_ID("deleteById", "根据ID 逻辑删除一条数据", "<script>\nUPDATE %s %s WHERE %s=#{%s} %s\n</script>"),
     LOGIC_DELETE_BY_MAP("deleteByMap", "根据columnMap 条件逻辑删除记录", "<script>\nUPDATE %s %s %s\n</script>"),
     LOGIC_DELETE("delete", "根据 entity 条件逻辑删除记录", "<script>\nUPDATE %s %s %s %s\n</script>"),
+    LOGIC_DELETE_BATCH("deleteBatch", "根据条件逻辑删除记录", "<script>\nUPDATE %s %s %s %s\n</script>"),
     LOGIC_DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量逻辑删除数据", "<script>\nUPDATE %s %s WHERE %s IN (%s) %s\n</script>"),
 
     /**
