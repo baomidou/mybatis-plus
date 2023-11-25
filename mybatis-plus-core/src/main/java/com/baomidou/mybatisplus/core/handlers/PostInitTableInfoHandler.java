@@ -28,24 +28,14 @@ import org.apache.ibatis.session.Configuration;
 public interface PostInitTableInfoHandler {
 
     /**
-     * 提供对TableInfo增强的能力
-     * @param configuration MybatisConfiguration
-     * @param entityType 实体类型
-     * @return TableInfo
-     */
-    default TableInfo creteTableInfo(Configuration configuration, Class<?> entityType){
-        return new TableInfo(configuration, entityType);
-    }
-
-
-    /**
-     * 参与 TableFieldInfo 初始化
+     * 提供对 TableInfo 增强的能力
      *
-     * @param fieldInfo     TableFieldInfo
-     * @param configuration Configuration
+     * @param configuration MybatisConfiguration
+     * @param entityType    实体类型
+     * @return {@link TableInfo}
      */
-    default void postFieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
-        // ignore
+    default TableInfo creteTableInfo(Configuration configuration, Class<?> entityType) {
+        return new TableInfo(configuration, entityType);
     }
 
     /**
@@ -55,6 +45,16 @@ public interface PostInitTableInfoHandler {
      * @param configuration Configuration
      */
     default void postTableInfo(TableInfo tableInfo, Configuration configuration) {
+        // ignore
+    }
+
+    /**
+     * 参与 TableFieldInfo 初始化
+     *
+     * @param fieldInfo     TableFieldInfo
+     * @param configuration Configuration
+     */
+    default void postFieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
         // ignore
     }
 }
