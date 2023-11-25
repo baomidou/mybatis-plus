@@ -183,10 +183,11 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     private static synchronized TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
-        /* 没有获取到缓存信息,则初始化 */
-        TableInfo tableInfo = new TableInfo(configuration, clazz);
-        tableInfo.setCurrentNamespace(currentNamespace);
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+        PostInitTableInfoHandler postInitTableInfoHandler = globalConfig.getPostInitTableInfoHandler();
+        /* 没有获取到缓存信息,则初始化 */
+        TableInfo tableInfo = postInitTableInfoHandler.creteTableInfo(configuration, clazz);
+        tableInfo.setCurrentNamespace(currentNamespace);
 
         /* 初始化表名相关 */
         final String[] excludeProperty = initTableName(clazz, globalConfig, tableInfo);
@@ -198,7 +199,7 @@ public class TableInfoHelper {
 
         /* 自动构建 resultMap */
         tableInfo.initResultMapIfNeed();
-        globalConfig.getPostInitTableInfoHandler().postTableInfo(tableInfo, configuration);
+        postInitTableInfoHandler.postTableInfo(tableInfo, configuration);
         TABLE_INFO_CACHE.put(clazz, tableInfo);
         TABLE_NAME_INFO_CACHE.put(tableInfo.getTableName(), tableInfo);
 
