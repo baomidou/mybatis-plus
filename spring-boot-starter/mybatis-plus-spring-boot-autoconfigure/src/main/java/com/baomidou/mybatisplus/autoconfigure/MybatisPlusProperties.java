@@ -335,14 +335,17 @@ public class MybatisPlusProperties {
          */
         private Properties variables;
 
+        /**
+         * Specifies the database identify value for switching query to use.
+         */
+        private String databaseId;
+
         // 新增兼容开始... mybatis 3.x 的有做属性删减  部分属性在2.x可用 3.x 已经被剔除了.
         /**
          * Specifies the language used by default for dynamic SQL generation.
          */
         private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
-        private String databaseId;
-        
         private Boolean useGeneratedShortKey;
 
         public void applyTo(Configuration target) {
