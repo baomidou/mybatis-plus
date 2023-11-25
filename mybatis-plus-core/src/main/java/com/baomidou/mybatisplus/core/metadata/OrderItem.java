@@ -15,9 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -30,9 +31,8 @@ import java.util.stream.Collectors;
  * @author HCL
  * Create at 2019/5/27
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class OrderItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -62,6 +62,16 @@ public class OrderItem implements Serializable {
     }
 
     private static OrderItem build(String column, boolean asc) {
-        return new OrderItem(column, asc);
+        return new OrderItem().setColumn(column).setAsc(asc);
+    }
+
+    public OrderItem setColumn(String column) {
+        this.column = StringUtils.replaceAllBlank(column);
+        return this;
+    }
+
+    public OrderItem setAsc(boolean asc) {
+        this.asc = asc;
+        return this;
     }
 }

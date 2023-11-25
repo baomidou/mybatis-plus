@@ -44,12 +44,6 @@ public class GlobalConfig {
     private String outputDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://" : "/tmp";
 
     /**
-     * 是否覆盖已有文件（默认 false）（已迁移到策略配置中，3.5.4版本会删除此方法）
-     */
-    @Deprecated
-    private boolean fileOverride;
-
-    /**
      * 是否打开输出目录
      */
     private boolean open = true;
@@ -94,14 +88,6 @@ public class GlobalConfig {
 
     public String getOutputDir() {
         return outputDir;
-    }
-
-    /**
-     * 是否覆盖已有文件（已迁移到策略配置中，3.5.4版本会删除此方法）
-     */
-    @Deprecated
-    public boolean isFileOverride() {
-        return fileOverride;
     }
 
     public boolean isOpen() {
@@ -155,16 +141,6 @@ public class GlobalConfig {
 
         public Builder() {
             this.globalConfig = new GlobalConfig();
-        }
-
-        /**
-         * 覆盖已有文件（已迁移到策略配置中，3.5.4版本会删除此方法）
-         */
-        @Deprecated
-        public Builder fileOverride() {
-            LOGGER.warn("全局覆盖已有文件的配置已失效，已迁移到策略配置中");
-            this.globalConfig.fileOverride = true;
-            return this;
         }
 
         /**

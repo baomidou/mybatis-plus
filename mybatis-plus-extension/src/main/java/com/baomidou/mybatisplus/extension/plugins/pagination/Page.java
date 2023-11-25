@@ -292,35 +292,4 @@ public class Page<T> implements IPage<T> {
         }
         return searchCount;
     }
-
-    /**
-     * --begin------------- 未来抛弃移除的方法 -------------begin--
-     * 该部分属性转移至 {@link PageDTO}
-     */
-    @Deprecated
-    public String getCountId() {
-        return this.countId;
-    }
-
-    @Deprecated
-    public Long getMaxLimit() {
-        return this.maxLimit;
-    }
-
-    @Deprecated
-    public List<OrderItem> getOrders() {
-        return this.orders;
-    }
-
-    @Deprecated
-    public boolean isOptimizeCountSql() {
-        return this.optimizeCountSql;
-    }
-
-    @Deprecated
-    public boolean isSearchCount() {
-        return this.searchCount;
-    }
-    /** --end------------- 未来抛弃移除的方法 -------------end-- */
-
 }

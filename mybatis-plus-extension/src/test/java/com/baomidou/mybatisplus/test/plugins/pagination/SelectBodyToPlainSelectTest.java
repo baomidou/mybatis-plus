@@ -75,7 +75,8 @@ class SelectBodyToPlainSelectTest {
     @Test
     void testPaginationInterceptorConcatOrderByFix() {
         List<OrderItem> orderList = new ArrayList<>();
-        orderList.add(OrderItem.asc("column"));
+        // 测试可能的 sql 注入 https://github.com/baomidou/mybatis-plus/issues/5745
+        orderList.add(OrderItem.asc("col umn"));
         String actualSql = new PaginationInnerInterceptor()
             .concatOrderBy("select * from test union select * from test2", orderList);
         assertThat(actualSql).isEqualTo("SELECT * FROM test UNION SELECT * FROM test2 ORDER BY column ASC");
