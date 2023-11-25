@@ -51,7 +51,7 @@ public final class TableNameParser {
     private static final String KEYWORD_FROM = "from";
     private static final String KEYWORD_USING = "using";
     private static final String KEYWORD_UPDATE = "update";
-    private static final String KEYWORD_STRAIGHT_JOIN="straight_join";
+    private static final String KEYWORD_STRAIGHT_JOIN = "straight_join";
     private static final String KEYWORD_DUPLICATE = "duplicate";
 
     private static final List<String> concerned = Arrays.asList(KEYWORD_TABLE, KEYWORD_INTO, KEYWORD_JOIN, KEYWORD_USING, KEYWORD_UPDATE, KEYWORD_STRAIGHT_JOIN);
@@ -68,7 +68,7 @@ public final class TableNameParser {
      * 5、把 ,() 也要分出来
      */
     private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern.compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)"
-            + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))"
+        + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))"
     );
 
     private final List<SqlToken> tokens;
