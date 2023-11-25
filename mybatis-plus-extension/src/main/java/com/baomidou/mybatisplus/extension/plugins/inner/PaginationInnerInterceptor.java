@@ -174,10 +174,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         IDialect dialect = findIDialect(executor);
 
         final Configuration configuration = ms.getConfiguration();
-
-        // 计算实际可查询条数 https://github.com/baomidou/mybatis-plus/pull/4882
-        long actualSize = Math.min(page.getTotal() % page.getSize(), page.getSize());
-        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), actualSize);
+        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
 
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
