@@ -105,6 +105,10 @@ public enum DbType {
      */
     GBASE_8S("gbase-8s", "南大通用数据库 GBase 8s"),
     /**
+     * GBase8sPG
+     */
+    GBASE8S_PG("gbase8s-pg", "南大通用数据库 GBase 8s兼容pg"),
+    /**
      * use {@link  #GBASE_8S}
      *
      * @deprecated 2022-05-30
