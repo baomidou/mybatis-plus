@@ -101,6 +101,10 @@ public class JdbcUtils {
             return DbType.GBASE;
         } else if (url.contains(":gbasedbt-sqli:") || url.contains(":informix-sqli:")) {
             return DbType.GBASE_8S;
+        } else if (url.contains(":gbase8s-pg:")){
+            return DbType.GBASE8S_PG;
+        } else if (url.contains(":gbase8c:")) {
+            return DbType.GBASE_8C;
         } else if (url.contains(":ch:") || url.contains(":clickhouse:")) {
             return DbType.CLICK_HOUSE;
         } else if (url.contains(":oscar:")) {
