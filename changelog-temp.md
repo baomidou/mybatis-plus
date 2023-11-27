@@ -1,1 +1,11 @@
+- fix: 修复配置databaseId失效
+- fix: 修复自增主键忽略注入错误忽略非自增主键注入问题
+- feat: 升级gradle-wrapper至8.4
+- feat: 升级kotlin-gradle-plugin至1.9.21
+- feat: 升级mybatis至3.5.14
+- feat: 升级lombok至1.18.30
+- feat: 升级spring-boot3至3.2.0
+- feat: 升级spring-boot2版本mybatis-spring至2.1.2
+- feat: 升级spring-boot3版本mybatis-spring至3.0.3
+- feat: 支持Trino,Presto数据库
 
