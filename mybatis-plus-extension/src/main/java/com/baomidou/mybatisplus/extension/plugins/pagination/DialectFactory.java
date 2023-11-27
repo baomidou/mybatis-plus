@@ -72,7 +72,8 @@ public class DialectFactory {
                 || dbType == DbType.OPENGAUSS
                 || dbType == DbType.TDENGINE
                 || dbType == DbType.UXDB
-                || dbType == DbType.GBASE8S_PG) {
+                || dbType == DbType.GBASE8S_PG
+                || dbType == DbType.GBASE_8C) {
                 dialect = new PostgreDialect();
             }
             // other types

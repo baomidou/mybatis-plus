@@ -123,6 +123,10 @@ public enum DbType {
      */
     GBASE8S_PG("gbase8s-pg", "南大通用数据库 GBase 8s兼容pg"),
     /**
+     * GBase8c
+     */
+    GBASE_8C("gbase8c", "南大通用数据库 GBase 8c"),
+    /**
      * Sinodb
      */
     SINODB("sinodb","星瑞格数据库"),
