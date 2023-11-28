@@ -358,11 +358,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public Children doGroupBy(boolean condition, R column, List<R> columns) {
         return maybeDo(condition, () -> {
             String one = StringPool.EMPTY;
-            if (column != null) {
-                one = columnToString(column);
-            }
             if (CollectionUtils.isNotEmpty(columns)) {
-                one += (StringPool.COMMA + columnsToString(columns));
+                one += columnsToString(columns);
+            }
+            if (column != null) {
+                one = columnToString(column) + StringPool.COMMA + one;
             }
             final String finalOne = one;
             appendSqlSegments(GROUP_BY, () -> finalOne);
