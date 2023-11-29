@@ -113,10 +113,8 @@ public class JdbcUtils {
             return DbType.HIGH_GO;
         } else if (url.contains(":cubrid:")) {
             return DbType.CUBRID;
-        } else if (url.contains(":goldilocks:")) {
-            return DbType.GOLDILOCKS;
-        } else if (url.contains(":csiidb:")) {
-            return DbType.CSIIDB;
+        } else if (url.contains(":sundb:")) {
+            return DbType.SUNDB;
         } else if (url.contains(":sap:")) {
             return DbType.SAP_HANA;
         } else if (url.contains(":impala:")) {
