@@ -362,7 +362,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
                 one = columnToString(column);
             }
             if (CollectionUtils.isNotEmpty(columns)) {
-                one += (StringPool.COMMA + columnsToString(columns));
+                one += column != null ? StringPool.COMMA + columnsToString(columns) : columnsToString(columns);
             }
             final String finalOne = one;
             appendSqlSegments(GROUP_BY, () -> finalOne);

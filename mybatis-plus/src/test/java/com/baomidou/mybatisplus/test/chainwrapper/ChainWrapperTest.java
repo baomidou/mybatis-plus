@@ -24,6 +24,9 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
             .nested(j -> j.isNotNull(id))
             .not(j -> j.isNull(id))
             .list());
+        doTest(i -> i.queryChain().groupBy("id").list());
+        doTest(i -> i.queryChain().groupBy(List.of("id")).list());
+        doTest(i -> i.queryChain().groupBy(List.of("id", "name")).list());
     }
 
     @Override

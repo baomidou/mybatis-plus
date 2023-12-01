@@ -176,6 +176,17 @@ class QueryWrapperTest extends BaseWrapperTest {
         Assertions.assertThrows(MybatisPlusException.class, () -> qw.getCustomSqlSegment());
     }
 
+    @Test
+    void testGroupBy(){
+        Assertions.assertEquals("GROUP BY id", new QueryWrapper<Entity>().groupBy("id").getSqlSegment().trim());
+        Assertions.assertEquals("GROUP BY id,name", new QueryWrapper<Entity>().groupBy(Arrays.asList("id", "name")).getSqlSegment().trim());
+        Assertions.assertEquals("GROUP BY id,name", new QueryWrapper<Entity>().groupBy(List.of("id", "name")).getSqlSegment().trim());
+        Assertions.assertEquals("GROUP BY id,name", new QueryWrapper<Entity>().groupBy(new ArrayList<>() {{
+            add("id");
+            add("name");
+        }}).getSqlSegment().trim());
+    }
+
     private List<Object> getList() {
         List<Object> list = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
