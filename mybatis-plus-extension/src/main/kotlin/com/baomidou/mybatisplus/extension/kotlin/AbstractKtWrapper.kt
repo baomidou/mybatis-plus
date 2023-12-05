@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.stream.Collectors.joining
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * Lambda 语法使用 Wrapper
@@ -31,7 +31,7 @@ import kotlin.reflect.KMutableProperty1
  * @since 2018-11-07
  */
 @Suppress("serial")
-abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KMutableProperty1<T, *>, Children>() {
+abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty1<in T, *>, Children>() {
 
     /**
      * 列 Map
@@ -41,12 +41,12 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
     /**
      * 重载方法，默认 onlyColumn = true
      */
-    override fun columnToString(kProperty: KMutableProperty1<T, *>): String? = columnToString(kProperty, true)
+    override fun columnToString(kProperty: KProperty1<in T, *>): String? = columnToString(kProperty, true)
 
     /**
      * 核心实现方法，供重载使用
      */
-    private fun columnToString(kProperty: KMutableProperty1<T, *>, onlyColumn: Boolean): String? {
+    private fun columnToString(kProperty: KProperty1<in T, *>, onlyColumn: Boolean): String? {
         return columnMap[LambdaUtils.formatKey(kProperty.name)]?.let { if (onlyColumn) it.column else it.columnSelect }
     }
 
@@ -55,7 +55,7 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
      *
      * "user_id" AS "userId" , "user_name" AS "userName"
      */
-    fun columnsToString(onlyColumn: Boolean, vararg columns: KMutableProperty1<T, *>): String =
+    fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty1<in T, *>): String =
         columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
 
     /**
@@ -63,8 +63,8 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
      *
      * "user_id" AS "userId" , "user_name" AS "userName"
      */
-    fun columnsToString(onlyColumn: Boolean, columns: MutableList<KMutableProperty1<T, *>>): String =
-        columns.stream().map { columnToString(it, onlyColumn) }.collect(joining(StringPool.COMMA));
+    fun columnsToString(onlyColumn: Boolean, columns: MutableList<KProperty1<in T, *>>): String =
+        columns.stream().map { columnToString(it, onlyColumn) }.collect(joining(StringPool.COMMA))
 
     override fun initNeed() {
         super.initNeed()

@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * Kotlin Lambda 更新封装
@@ -34,7 +34,7 @@ import kotlin.reflect.KMutableProperty1
  * @since 2018-11-02
  */
 @Suppress("serial")
-open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KMutableProperty1<T, *>> {
+open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty1<in T, *>> {
 
     /**
      * SQL 更新字段内容，例如：name='1', age=2
@@ -76,7 +76,7 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         return typedThis
     }
 
-    override fun set(condition: Boolean, column: KMutableProperty1<T, *>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
+    override fun set(condition: Boolean, column: KProperty1<in T, *>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
         return maybeDo(condition) {
             val sql = formatParam(mapping, value)
             sqlSet.add(columnsToString(column) + Constants.EQUALS + sql)
