@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.annotation;
 
 /**
  * 字段策略枚举类
- * <p>
- * 如果字段是基本数据类型则最终效果等同于 {@link #ALWAYS}
  *
  * @author hubin
  * @since 2016-09-09
@@ -26,6 +24,9 @@ package com.baomidou.mybatisplus.annotation;
 public enum FieldStrategy {
     /**
      * 忽略判断，该字段存在语义理解问题，后续版本将废弃 github issues/5129
+     * @see https://github.com/baomidou/mybatis-plus/issues/5129
+     * Please use {@link ALWAYS} instead
+     * 如果字段是基本数据类型则最终效果等同于 {@link #ALWAYS}
      */
     @Deprecated
     IGNORED,
