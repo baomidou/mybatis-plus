@@ -95,7 +95,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - [基于 pac4j-jwt 的快速集成的 web 安全组件 shaun](https://gitee.com/baomidou/shaun)
 
 # 王者荣耀
-![MPTrophy](https://images.gitee.com/uploads/images/2021/0126/235832_37a17e33_12260.jpeg "mybatis-plus.jpg")
+![MPTrophy](https://foruda.gitee.com/images/1703034397683946868/c9bf2ba5_12260.jpeg "mybatis-plus.jpg")
 
 # 期望 | Futures
 
