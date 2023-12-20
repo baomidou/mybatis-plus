@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper
 import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery
 import java.util.function.Predicate
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * @author FlyInWind
@@ -30,8 +30,8 @@ import kotlin.reflect.KMutableProperty1
 @Suppress("serial")
 open class KtQueryChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>?
-) : AbstractChainWrapper<T, KMutableProperty1<T, *>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
-    ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KMutableProperty1<T, *>> {
+) : AbstractChainWrapper<T, KProperty1<in T, *>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
+    ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty1<in T, *>> {
 
     constructor(baseMapper: BaseMapper<T>, entityClass: Class<T>) : this(baseMapper) {
         super.wrapperChildren = KtQueryWrapper(entityClass)
@@ -50,7 +50,7 @@ open class KtQueryChainWrapper<T : Any>(
         super.setEntityClass(entity.javaClass)
     }
 
-    override fun select(condition: Boolean, columns: MutableList<KMutableProperty1<T, *>>): KtQueryChainWrapper<T> {
+    override fun select(condition: Boolean, columns: MutableList<KProperty1<in T, *>>): KtQueryChainWrapper<T> {
         wrapperChildren.select(condition, columns)
         return typedThis
     }

@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 
 /**
  * Kotlin Lambda 语法使用 Wrapper
@@ -33,7 +33,7 @@ import kotlin.reflect.KMutableProperty1
  * @since 2018-11-02
  */
 @Suppress("serial")
-open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KMutableProperty1<T, *>> {
+open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KProperty1<in T, *>> {
 
     /**
      * 查询字段
@@ -65,7 +65,7 @@ open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Qu
         this.sqlFirst = sqlFirst
     }
 
-    override fun select(condition: Boolean, columns: MutableList<KMutableProperty1<T, *>>): KtQueryWrapper<T> {
+    override fun select(condition: Boolean, columns: MutableList<KProperty1<in T, *>>): KtQueryWrapper<T> {
         if (condition && CollectionUtils.isNotEmpty(columns)) {
             this.sqlSelect.stringValue = columnsToString(false, columns)
         }
