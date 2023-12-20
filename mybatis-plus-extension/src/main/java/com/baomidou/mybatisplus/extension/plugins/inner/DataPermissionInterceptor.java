@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
@@ -23,10 +24,7 @@ import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.SetOperationList;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -80,13 +78,24 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
 
     @Override
     protected void processSelect(Select select, int index, String sql, Object obj) {
-        SelectBody selectBody = select.getSelectBody();
-        if (selectBody instanceof PlainSelect) {
-            this.setWhere((PlainSelect) selectBody, (String) obj);
-        } else if (selectBody instanceof SetOperationList) {
-            SetOperationList setOperationList = (SetOperationList) selectBody;
-            List<SelectBody> selectBodyList = setOperationList.getSelects();
-            selectBodyList.forEach(s -> this.setWhere((PlainSelect) s, (String) obj));
+        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
+            // 参照 com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor.processSelect 做的修改
+            final String whereSegment = (String) obj;
+            processSelectBody(select.getSelectBody(), whereSegment);
+            List<WithItem> withItemsList = select.getWithItemsList();
+            if (!CollectionUtils.isEmpty(withItemsList)) {
+                withItemsList.forEach(withItem -> processSelectBody(withItem, whereSegment));
+            }
+        } else {
+            // 兼容原来的旧版 DataPermissionHandler 场景
+            SelectBody selectBody = select.getSelectBody();
+            if (selectBody instanceof PlainSelect) {
+                this.setWhere((PlainSelect) selectBody, (String) obj);
+            } else if (selectBody instanceof SetOperationList) {
+                SetOperationList setOperationList = (SetOperationList) selectBody;
+                List<SelectBody> selectBodyList = setOperationList.getSelects();
+                selectBodyList.forEach(s -> this.setWhere((PlainSelect) s, (String) obj));
+            }
         }
     }
 
@@ -97,10 +106,6 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
      * @param whereSegment 查询条件片段
      */
     protected void setWhere(PlainSelect plainSelect, String whereSegment) {
-        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
-            processPlainSelect(plainSelect, whereSegment);
-            return;
-        }
         // 兼容旧版的数据权限处理
         final Expression sqlSegment = dataPermissionHandler.getSqlSegment(plainSelect.getWhere(), whereSegment);
         if (null != sqlSegment) {
