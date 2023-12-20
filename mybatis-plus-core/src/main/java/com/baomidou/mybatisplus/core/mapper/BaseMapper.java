@@ -116,8 +116,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param columnMap 表字段 map 对象
      */
     default int deleteByMap(Map<String, Object> columnMap) {
-        QueryWrapper<T> qw = Wrappers.query();
-        return this.delete(qw.allEq(columnMap));
+        return this.delete(Wrappers.<T>query().allEq(columnMap));
     }
 
     /**
@@ -188,8 +187,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param columnMap 表字段 map 对象
      */
     default List<T> selectByMap(Map<String, Object> columnMap) {
-        QueryWrapper<T> qw = Wrappers.query();
-        return this.selectList(qw.allEq(columnMap));
+        return this.selectList(Wrappers.<T>query().allEq(columnMap));
     }
 
     /**
@@ -227,7 +225,7 @@ public interface BaseMapper<T> extends Mapper<T> {
             return list.get(0);
         } else if (size > 1) {
             if (throwEx) {
-                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + size);
             }
             return list.get(0);
         }
@@ -347,8 +345,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<T> list = selectList(page, queryWrapper);
-        page.setRecords(list);
+        page.setRecords(selectList(page, queryWrapper));
         return page;
     }
 
@@ -359,8 +356,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类
      */
     default <P extends IPage<Map<String, Object>>> P selectMapsPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
-        List<Map<String, Object>> list = selectMaps(page, queryWrapper);
-        page.setRecords(list);
+        page.setRecords(selectMaps(page, queryWrapper));
         return page;
     }
 
