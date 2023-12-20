@@ -25,7 +25,9 @@ package com.baomidou.mybatisplus.annotation;
  */
 public enum FieldStrategy {
     /**
-     * 忽略判断，该字段存在语义理解问题，后续版本将废弃 github issues/5129
+     * 忽略判断
+     *
+     * @deprecated 3.5.3.2 该字段存在语义理解问题效果等于{@link #ALWAYS}
      */
     @Deprecated
     IGNORED,
