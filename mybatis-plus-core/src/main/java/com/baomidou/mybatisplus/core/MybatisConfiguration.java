@@ -147,7 +147,6 @@ public class MybatisConfiguration extends Configuration {
      * @param <T>
      */
     public <T> void removeMapper(Class<T> type) {
-        // TODO
         Set<String> mapperRegistryCache = GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache();
         final String mapperType = type.toString();
         if (mapperRegistryCache.contains(mapperType)) {
@@ -208,7 +207,6 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
         if (driver == null) {
-            //todo 替换动态SQL生成的默认语言为自己的。
             driver = MybatisXMLLanguageDriver.class;
         }
         getLanguageRegistry().setDefaultDriverClass(driver);

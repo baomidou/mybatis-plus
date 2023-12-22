@@ -83,7 +83,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
-        // TODO 使用 MybatisConfiguration 而不是 Configuration
         super(new MybatisConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
@@ -272,7 +271,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setArgNameBasedConstructorAutoMapping(booleanValueOf(props.getProperty("argNameBasedConstructorAutoMapping"), false));
         configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
         configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));
-        // TODO 下面俩: 1.统一 mapUnderscoreToCamelCase 属性默认值为 true 2.新增`useGeneratedShortKey`属性
         configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
         ((MybatisConfiguration) configuration).setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
     }

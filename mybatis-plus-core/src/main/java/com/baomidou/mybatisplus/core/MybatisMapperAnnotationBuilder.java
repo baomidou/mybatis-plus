@@ -108,15 +108,12 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     parseResultMap(method);
                 }
                 try {
-                    // TODO 加入 注解过滤缓存
                     InterceptorIgnoreHelper.initSqlParserInfoCache(ignoreStrategy, mapperName, method);
                     parseStatement(method);
                 } catch (IncompleteElementException e) {
-                    // TODO 使用 MybatisMethodResolver 而不是 MethodResolver
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
                 }
             }
-            // TODO 注入 CURD 动态 SQL , 放在在最后, because 可能会有人会用注解重写sql
             try {
                 // https://github.com/baomidou/mybatis-plus/issues/3038
                 if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
@@ -249,7 +246,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         applyConstructorArgs(args, returnType, resultMappings);
         applyResults(results, returnType, resultMappings);
         Discriminator disc = applyDiscriminator(resultMapId, returnType, discriminator);
-        // TODO add AutoMappingBehaviour
         assistant.addResultMap(resultMapId, returnType, null, disc, resultMappings, null);
         createDiscriminatorResultMaps(resultMapId, returnType, discriminator);
     }
@@ -262,7 +258,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 // issue #136
                 applyConstructorArgs(c.constructArgs(), resultType, resultMappings);
                 applyResults(c.results(), resultType, resultMappings);
-                // TODO add AutoMappingBehaviour
                 assistant.addResultMap(caseResultMapId, c.type(), resultMapId, null, resultMappings, null);
             }
         }
@@ -365,7 +360,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 resultSetType,
                 flushCache,
                 useCache,
-                // TODO gcode issue #577
                 false,
                 keyGenerator,
                 keyProperty,
@@ -454,7 +448,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
-            // TODO 下面是支援 IPage 及其子类作为返回值的
             else if (IPage.class.isAssignableFrom(rawType)) {
                 Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
                 Type returnTypeParameter = actualTypeArguments[0];
@@ -464,7 +457,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
                 }
             }
-            // TODO 上面是支援 IPage 及其子类作为返回值的
         }
 
         return returnType;

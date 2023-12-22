@@ -80,10 +80,8 @@ public class MybatisMapperMethod {
                 } else if (method.returnsCursor()) {
                     result = executeForCursor(sqlSession, args);
                 } else {
-                    // TODO 这里下面改了
                     if (IPage.class.isAssignableFrom(method.getReturnType())) {
                         result = executeForIPage(sqlSession, args);
-                        // TODO 这里上面改了
                     } else {
                         Object param = method.convertArgsToSqlCommandParam(args);
                         result = sqlSession.selectOne(command.getName(), param);

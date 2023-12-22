@@ -562,7 +562,6 @@ public class TableFieldInfo implements Constants {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (typeHandler == null) {
                 typeHandler = registry.getInstance(propertyType, this.typeHandler);
-                // todo 这会有影响 registry.register(typeHandler);
             }
             builder.typeHandler(typeHandler);
         }
