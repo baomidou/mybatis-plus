@@ -195,7 +195,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {
