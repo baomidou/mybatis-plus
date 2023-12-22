@@ -404,9 +404,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public DdlApplicationRunner ddlApplicationRunner(@Autowired(required = false) List<IDdl> ddlList) {
-        if (ObjectUtils.isEmpty(ddlList)) {
-            return null;
-        }
         return new DdlApplicationRunner(ddlList);
     }
 }
