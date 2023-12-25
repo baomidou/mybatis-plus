@@ -25,6 +25,6 @@ dependencies {
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     testImplementation "com.github.pagehelper:pagehelper:5.3.1"
     testImplementation "com.google.guava:guava:33.0.0-jre"
-    testImplementation "io.github.classgraph:classgraph:4.8.163"
+    testImplementation "io.github.classgraph:classgraph:4.8.165"
     testImplementation "${lib.h2}"
 }
