@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -272,6 +273,39 @@ public interface IService<T> {
      * @param batchSize  更新批次数量
      */
     boolean updateBatchById(Collection<T> entityList, int batchSize);
+
+    /**
+     * 根据ID 动态字段策略 更新
+     * @param strategy 字段策略
+     * @param entity 实体对象
+     * @return boolean true 操作成功 false 操作失败
+     */
+    default boolean strategyUpdateById(FieldStrategy strategy,T entity){
+        if (FieldStrategy.DEFAULT == strategy){
+            return updateById(entity);
+        }
+        return SqlHelper.retBool(getBaseMapper().strategyUpdateById(strategy,entity));
+    }
+    /**
+     * 根据ID 动态字段策略 批量更新
+     *
+     * @param strategy 字段策略
+     * @param entityList 实体对象集合
+     * @return boolean true 操作成功 false 操作失败
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean strategyUpdateBatchById(FieldStrategy strategy,Collection<T> entityList){
+        return strategyUpdateBatchById(strategy,entityList,DEFAULT_BATCH_SIZE);
+    }
+    /**
+     * 根据ID 动态字段策略 批量更新
+     *
+     * @param strategy   字段策略
+     * @param entityList 实体对象集合
+     * @param batchSize  更新批次数量
+     * @return boolean true 操作成功 false 操作失败
+     */
+    boolean strategyUpdateBatchById(FieldStrategy strategy,Collection<T> entityList,int batchSize);
 
     /**
      * TableId 注解存在更新记录，否插入一条记录

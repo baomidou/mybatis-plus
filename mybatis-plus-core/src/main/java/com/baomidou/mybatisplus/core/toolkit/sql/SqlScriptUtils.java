@@ -20,6 +20,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * <p>
  * sql 脚本工具类
@@ -145,6 +148,34 @@ public abstract class SqlScriptUtils implements Constants {
      */
     public static String convertSet(final String sqlScript) {
         return "<set>" + NEWLINE + sqlScript + NEWLINE + "</set>";
+    }
+
+    /**
+     * <p>
+     * 生成 bind 标签的脚本
+     * <a href="https://mybatis.org/mybatis-3/zh_CN/dynamic-sql.html#bind">bind</a>
+     * </p>
+     * @param name 变量名
+     * @param expression 变量值计算表达式
+     * @return bind 脚本
+     */
+    public static String convertBind(final String name,String expression){
+        return "<bind name=\""+name+"\" value=\""+expression+"\"/>";
+    }
+
+    /**
+     * <p>
+     *  批量生成 bind 标签的脚本
+     *  <p>
+     * @see SqlScriptUtils#convertBind
+     * @param bindMap 变量名与变量值计算表达式的映射 key 为变量名 value 为变量值计算表达式
+     * @return bind 脚本
+     */
+    public static String convertBinds(final Map<String,String> bindMap){
+        return bindMap.entrySet()
+            .stream()
+            .map(entry -> convertBind(entry.getKey(),entry.getValue()))
+            .collect(Collectors.joining(NEWLINE));
     }
 
     /**

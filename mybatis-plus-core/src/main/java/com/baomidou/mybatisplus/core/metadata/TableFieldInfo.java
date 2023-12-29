@@ -497,7 +497,27 @@ public class TableFieldInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
-        return getSqlSet(false, prefix);
+        return getSqlSet(false, prefix, false);
+    }
+    /**
+     * 获取 set sql 片段
+     *
+     * @param prefix 前缀
+     * @param dynamicStrategy 是否动态策略
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(final String prefix, final boolean dynamicStrategy) {
+        return getSqlSet(false, prefix, dynamicStrategy);
+    }
+
+    /**
+     * 获取 set sql 片段
+     *
+     * @param prefix 前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(final boolean ignoreIf,final String prefix) {
+        return getSqlSet(false, prefix, false);
     }
 
     /**
@@ -505,9 +525,10 @@ public class TableFieldInfo implements Constants {
      *
      * @param ignoreIf 忽略 IF 包裹
      * @param prefix   前缀
+     * @param dynamicStrategy 是否动态字段策略
      * @return sql 脚本片段
      */
-    public String getSqlSet(final boolean ignoreIf, final String prefix) {
+    public String getSqlSet(final boolean ignoreIf, final String prefix, final boolean dynamicStrategy) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + EQUALS;
@@ -524,7 +545,9 @@ public class TableFieldInfo implements Constants {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, convertIfProperty(newPrefix, property), updateStrategy);
+        String realProperty = convertIfProperty(newPrefix, property);
+        return dynamicStrategy?convertIfDynamicStrategy(sqlSet,realProperty,updateStrategy):
+            convertIf(sqlSet, realProperty, updateStrategy);
     }
 
     private String convertIfProperty(String prefix, String property) {
@@ -586,7 +609,7 @@ public class TableFieldInfo implements Constants {
      * @param fieldStrategy 验证策略
      * @return if 脚本片段
      */
-    private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
+    protected String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
         if (fieldStrategy == FieldStrategy.NEVER) {
             return null;
         }
@@ -598,5 +621,28 @@ public class TableFieldInfo implements Constants {
                 false);
         }
         return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property), false);
+    }
+
+    private String convertIfDynamicStrategy(final String sqlScript, String property,final FieldStrategy fieldStrategy) {
+        if (FieldStrategy.NEVER == fieldStrategy) {
+            return null;
+        }
+        if (isPrimitive) {
+            return sqlScript;
+        }
+        return SqlScriptUtils.convertIf(sqlScript, ifTest(property, isCharSequence), false);
+    }
+
+    private String ifTest(String property, boolean isCharSequence) {
+        String template = "%s or (%s and %s != null) or (%s and %s != null%s)";
+        return String.format(
+            template,
+            Constants.ALWAYS_STRATEGY_BINDER,
+            Constants.NOT_NULL_STRATEGY_BINDER,
+            property,
+            Constants.NOT_EMPTY_STRATEGY_BINDER,
+            property,
+            isCharSequence ? (" and " + property + " != ''") : EMPTY
+        );
     }
 }

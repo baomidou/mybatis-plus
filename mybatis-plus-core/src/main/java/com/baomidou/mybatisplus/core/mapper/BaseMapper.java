@@ -15,8 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -139,6 +139,15 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entity 实体对象
      */
     int updateById(@Param(Constants.ENTITY) T entity);
+
+    /**
+     * 使用指定的字段策略 根据  ID修改  update
+     *
+     * @param strategy 字段策略
+     * @param entity   实体对象
+     * @return int 返回影响行数
+     */
+    int strategyUpdateById(@Param(Constants.STRATEGY) FieldStrategy strategy, @Param(Constants.ENTITY) T entity);
 
     /**
      * 根据 whereEntity 条件，更新记录

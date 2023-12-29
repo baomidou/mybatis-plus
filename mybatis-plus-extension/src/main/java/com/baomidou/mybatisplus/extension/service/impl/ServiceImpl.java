@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.service.impl;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -233,6 +234,22 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
+            sqlSession.update(sqlStatement, param);
+        });
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean strategyUpdateBatchById(FieldStrategy strategy, Collection<T> entityList, int batchSize) {
+        if (strategy == FieldStrategy.DEFAULT){
+            return updateBatchById(entityList, batchSize);
+        }
+        String sqlStatement = getSqlStatement(SqlMethod.STRATEGY_UPDATE_BY_ID);
+        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
+            MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, entity);
+            param.put(Constants.STRATEGY, strategy);
             sqlSession.update(sqlStatement, param);
         });
     }
