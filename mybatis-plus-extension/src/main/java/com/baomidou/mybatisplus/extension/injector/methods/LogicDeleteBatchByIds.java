@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
+import com.baomidou.mybatisplus.core.enums.ISqlMethod;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
@@ -58,7 +59,7 @@ public class LogicDeleteBatchByIds extends DeleteBatchByIds {
     }
 
     @Override
-    public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
+    public String logicDeleteScript(TableInfo tableInfo, ISqlMethod sqlMethod) {
         List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
             .filter(TableFieldInfo::isWithUpdateFill)
             .filter(f -> !f.isLogicDelete())

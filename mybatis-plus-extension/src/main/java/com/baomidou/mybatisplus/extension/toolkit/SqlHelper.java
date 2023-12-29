@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.enums.ISqlMethod;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -295,7 +296,7 @@ public final class SqlHelper {
      * @return 命名id
      * @since 3.4.0
      */
-    public static String getSqlStatement(Class<?> mapper, SqlMethod sqlMethod) {
+    public static String getSqlStatement(Class<?> mapper, ISqlMethod sqlMethod) {
         return mapper.getName() + StringPool.DOT + sqlMethod.getMethod();
     }
 

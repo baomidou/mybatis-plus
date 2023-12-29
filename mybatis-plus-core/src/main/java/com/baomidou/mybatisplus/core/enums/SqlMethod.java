@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.core.enums;
  * @author hubin
  * @since 2016-01-23
  */
-public enum SqlMethod {
+public enum SqlMethod implements ISqlMethod{
     /**
      * 插入
      */
@@ -84,14 +84,17 @@ public enum SqlMethod {
         this.sql = sql;
     }
 
+    @Override
     public String getMethod() {
         return method;
     }
 
+    @Override
     public String getDesc() {
         return desc;
     }
 
+    @Override
     public String getSql() {
         return sql;
     }

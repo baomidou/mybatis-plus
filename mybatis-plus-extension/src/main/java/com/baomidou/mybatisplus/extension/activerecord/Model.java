@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.activerecord;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.ISqlMethod;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -256,7 +257,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      *
      * @param sqlMethod sqlMethod
      */
-    protected String sqlStatement(SqlMethod sqlMethod) {
+    protected String sqlStatement(ISqlMethod sqlMethod) {
         return sqlStatement(sqlMethod.getMethod());
     }
 
