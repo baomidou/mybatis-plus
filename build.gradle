@@ -71,7 +71,7 @@ ext {
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
         "freemarker"          : "org.freemarker:freemarker:2.3.32",
-        "beetl"               : "com.ibeetl:beetl:3.15.10.RELEASE",
+        "beetl"               : "com.ibeetl:beetl:3.15.13.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.12",
         "enjoy"               : "com.jfinal:enjoy:5.1.3",
         "logback-classic"     : "ch.qos.logback:logback-classic:1.4.11",
