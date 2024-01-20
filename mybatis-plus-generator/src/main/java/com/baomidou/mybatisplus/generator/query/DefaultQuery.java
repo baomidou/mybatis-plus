@@ -60,8 +60,8 @@ public class DefaultQuery extends AbstractDatabaseQuery {
     @Override
     public @NotNull List<TableInfo> queryTables() {
         try {
-            boolean isInclude = strategyConfig.getInclude().size() > 0;
-            boolean isExclude = strategyConfig.getExclude().size() > 0;
+            boolean isInclude = !strategyConfig.getInclude().isEmpty();
+            boolean isExclude = !strategyConfig.getExclude().isEmpty();
             //所有的表信息
             List<TableInfo> tableList = new ArrayList<>();
             List<DatabaseMetaDataWrapper.Table> tables = this.getTables();

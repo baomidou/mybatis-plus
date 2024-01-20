@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -56,46 +57,55 @@ public class TableInfo {
     /**
      * 是否转换
      */
+    @Getter
     private boolean convert;
 
     /**
      * 表名称
      */
+    @Getter
     private String name;
 
     /**
      * 表注释
      */
+    @Getter
     private String comment;
 
     /**
      * 实体名称
      */
+    @Getter
     private String entityName;
 
     /**
      * mapper名称
      */
+    @Getter
     private String mapperName;
 
     /**
      * xml名称
      */
+    @Getter
     private String xmlName;
 
     /**
      * service名称
      */
+    @Getter
     private String serviceName;
 
     /**
      * serviceImpl名称
      */
+    @Getter
     private String serviceImplName;
 
     /**
      * controller名称
      */
+    @Getter
     private String controllerName;
 
     /**
@@ -106,6 +116,7 @@ public class TableInfo {
     /**
      * 是否有主键
      */
+    @Getter
     private boolean havePrimaryKey;
 
     /**
@@ -300,54 +311,14 @@ public class TableInfo {
         return importPackages;
     }
 
-    public boolean isConvert() {
-        return convert;
-    }
-
     public TableInfo setConvert(boolean convert) {
         this.convert = convert;
         return this;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public String getEntityName() {
-        return entityName;
-    }
-
-    public String getMapperName() {
-        return mapperName;
-    }
-
-    public String getXmlName() {
-        return xmlName;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public String getServiceImplName() {
-        return serviceImplName;
-    }
-
-    public String getControllerName() {
-        return controllerName;
-    }
-
     @NotNull
     public List<TableField> getFields() {
         return fields;
-    }
-
-    public boolean isHavePrimaryKey() {
-        return havePrimaryKey;
     }
 
     @NotNull
@@ -357,7 +328,6 @@ public class TableInfo {
 
     /**
      * 获取是否生成service接口
-     * @return
      */
     public boolean isServiceInterface() {
         return globalConfig.isServiceInterface();
