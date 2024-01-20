@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.converts.select;
 
+import lombok.Getter;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -29,6 +31,10 @@ import java.util.function.Supplier;
  * Created at 2020/6/11 16:55
  */
 public class Selector<P, T> {
+    /**
+     *  当前选择器是否已经选择分支，如果已经存在分支被击中，则返回 true；否则返回 false
+     */
+    @Getter
     private boolean selected = false;
     private Function<P, T> factory;
 
@@ -91,15 +97,6 @@ public class Selector<P, T> {
      */
     public T or(T t) {
         return or(() -> t);
-    }
-
-    /**
-     * 当前选择器是否已经选择分支
-     *
-     * @return 如果已经存在分支被击中，则返回 true；否则返回 false
-     */
-    public boolean isSelected() {
-        return selected;
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.*;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ class PathInfoHandler {
     /**
      * 输出文件Map
      */
+    @Getter
     private final Map<OutputFile, String> pathInfo = new HashMap<>();
 
     /**
@@ -74,10 +76,6 @@ class PathInfoHandler {
         putPathInfo(templateConfig.getServiceImpl(), OutputFile.serviceImpl, ConstVal.SERVICE_IMPL);
         putPathInfo(templateConfig.getController(), OutputFile.controller, ConstVal.CONTROLLER);
         putPathInfo(OutputFile.parent, ConstVal.PARENT);
-    }
-
-    public Map<OutputFile, String> getPathInfo() {
-        return this.pathInfo;
     }
 
     private void putPathInfo(String template, OutputFile outputFile, String module) {

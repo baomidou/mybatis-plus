@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.function.ConverterFileName;
 import com.baomidou.mybatisplus.generator.util.ClassUtils;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -49,6 +50,7 @@ public class Controller implements ITemplate {
      *      <code>@Controller</code> -> <code>@RestController</code>
      * </pre>
      */
+    @Getter
     private boolean restStyle;
 
     /**
@@ -57,6 +59,7 @@ public class Controller implements ITemplate {
      *      <code>@RequestMapping("/managerUserActionHistory")</code> -> <code>@RequestMapping("/manager-user-action-history")</code>
      * </pre>
      */
+    @Getter
     private boolean hyphenStyle;
 
     /**
@@ -76,15 +79,8 @@ public class Controller implements ITemplate {
      *
      * @since 3.5.2
      */
+    @Getter
     private boolean fileOverride;
-
-    public boolean isRestStyle() {
-        return restStyle;
-    }
-
-    public boolean isHyphenStyle() {
-        return hyphenStyle;
-    }
 
     @Nullable
     public String getSuperClass() {
@@ -94,10 +90,6 @@ public class Controller implements ITemplate {
     @NotNull
     public ConverterFileName getConverterFileName() {
         return converterFileName;
-    }
-
-    public boolean isFileOverride() {
-        return fileOverride;
     }
 
     @Override

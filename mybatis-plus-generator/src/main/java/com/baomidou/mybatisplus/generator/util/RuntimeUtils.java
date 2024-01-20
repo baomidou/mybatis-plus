@@ -36,7 +36,6 @@ public class RuntimeUtils {
      * 打开指定输出文件目录
      *
      * @param outDir 输出文件目录
-     * @throws IOException
      */
     public static void openDir(String outDir) throws IOException {
         File file = new File(outDir);

@@ -271,7 +271,6 @@ public abstract class AbstractTemplateEngine {
      * @throws Exception 异常
      * @since 3.5.0
      */
-    @NotNull
     public abstract void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception;
 
     /**

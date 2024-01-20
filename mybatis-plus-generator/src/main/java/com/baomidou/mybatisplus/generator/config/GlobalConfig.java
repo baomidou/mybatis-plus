@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,21 +43,25 @@ public class GlobalConfig {
     /**
      * 生成文件的输出目录【 windows:D://  linux or mac:/tmp 】
      */
+    @Getter
     private String outputDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://" : "/tmp";
 
     /**
      * 是否打开输出目录
      */
+    @Getter
     private boolean open = true;
 
     /**
      * 作者
      */
+    @Getter
     private String author = "baomidou";
 
     /**
      * 开启 Kotlin 模式（默认 false）
      */
+    @Getter
     private boolean kotlin;
 
     /**
@@ -65,6 +71,7 @@ public class GlobalConfig {
     /**
      * 开启 springdoc 模式（默认 false 与 swagger 不可同时使用）
      */
+    @Getter
     private boolean springdoc;
 
     /**
@@ -84,31 +91,13 @@ public class GlobalConfig {
      * 增加此开关的原因：在某些项目实践中，只需要生成service实现类，不需要抽象sevice接口
      * 针对某些项目，生成service接口，开发时反而麻烦，这种情况，可以将该属性设置为false
      */
+    @Getter
+    @Setter
     private boolean serviceInterface = true;
-
-    public String getOutputDir() {
-        return outputDir;
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public boolean isKotlin() {
-        return kotlin;
-    }
 
     public boolean isSwagger() {
         // springdoc 设置优先于 swagger
-        return springdoc ? false : swagger;
-    }
-
-    public boolean isSpringdoc() {
-        return springdoc;
+        return !springdoc && swagger;
     }
 
     @NotNull
@@ -121,13 +110,6 @@ public class GlobalConfig {
         return commentDate.get();
     }
 
-    public boolean isServiceInterface() {
-        return serviceInterface;
-    }
-
-    public void setServiceInterface(boolean serviceInterface) {
-        this.serviceInterface = serviceInterface;
-    }
 
     /**
      * 全局配置构建
@@ -193,7 +175,6 @@ public class GlobalConfig {
 
         /**
          * 不生成service接口
-         * @return
          */
         public Builder disableServiceInterface() {
             this.globalConfig.serviceInterface = false;

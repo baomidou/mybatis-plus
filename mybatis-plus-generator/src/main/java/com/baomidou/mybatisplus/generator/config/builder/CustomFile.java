@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.generator.config.IConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import lombok.Getter;
 
 import java.util.function.Function;
 
@@ -26,6 +27,7 @@ import java.util.function.Function;
  * @author xusimin
  * @since 3.5.3
  */
+@Getter
 public class CustomFile {
 
     /**
@@ -57,30 +59,6 @@ public class CustomFile {
      * 是否覆盖已有文件（默认 false）
      */
     private boolean fileOverride;
-
-    public boolean isFileOverride() {
-        return fileOverride;
-    }
-
-    public Function<TableInfo, String> getFormatNameFunction() {
-        return formatNameFunction;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getTemplatePath() {
-        return templatePath;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
 
     /**
      * 构建者

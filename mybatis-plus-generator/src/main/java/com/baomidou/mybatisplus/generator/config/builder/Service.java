@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.function.ConverterFileName;
 import com.baomidou.mybatisplus.generator.util.ClassUtils;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,7 @@ public class Service implements ITemplate {
      *
      * @since 3.5.2
      */
+    @Getter
     private boolean fileOverride;
 
     @NotNull
@@ -90,10 +92,6 @@ public class Service implements ITemplate {
     @NotNull
     public ConverterFileName getConverterServiceImplFileName() {
         return converterServiceImplFileName;
-    }
-
-    public boolean isFileOverride() {
-        return fileOverride;
     }
 
     @Override
