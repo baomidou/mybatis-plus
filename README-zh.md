@@ -43,6 +43,36 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 </p>
 
 
+# 依赖引用
+
+- Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
+    - Maven:
+    - SpringBoot2
+      ```xml
+      <dependency>
+          <groupId>com.baomidou</groupId>
+          <artifactId>mybatis-plus-boot-starter</artifactId>
+          <version>Latest Version</version>
+      </dependency>
+      ```
+    - SpringBoot3
+      ```xml
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>Latest Version</version>
+      </dependency>
+      ```
+    - Gradle
+    - SpringBoot2
+      ```groovy
+      compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+      ```
+    - SpringBoot3
+      ```groovy
+      compile group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
+      ```
+
 # 优点 | Advantages
 
 - **无侵入**：Mybatis-Plus 在 Mybatis 的基础上进行扩展，只做增强不做改变，引入 Mybatis-Plus 不会对您现有的 Mybatis 构架产生任何影响，而且 MP 支持所有 Mybatis 原生的特性
@@ -77,16 +107,6 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [SSM-实战 Demo](https://gitee.com/juapk/SpringWind)
 
-# Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
-
-``` xml
-<dependency>
-    <groupId>com.baomidou</groupId>
-    <artifactId>mybatis-plus</artifactId>
-    <version>Latest Version</version>
-</dependency>
-```
-
 # 其他开源项目 | Other Project
 
 - [基于Cookie的SSO中间件 Kisso](https://gitee.com/baomidou/kisso)
@@ -104,10 +124,6 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 # 版权 | License
 
 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-
-# 捐赠 | Donate
-
-> [捐赠记录,感谢你们的支持！](https://gitee.com/baomidou/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
 
 ![捐赠 mybatis-plus](https://gitee.com/uploads/images/2015/1222/211207_0acab44e_12260.png "支持一下mybatis-plus")
 
