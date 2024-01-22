@@ -53,7 +53,7 @@ public interface IPage<T> extends Serializable {
      * @since 3.4.4 @2021-09-13
      */
     default boolean optimizeJoinOfCountSql() {
-        return true;
+        return false;
     }
 
     /**

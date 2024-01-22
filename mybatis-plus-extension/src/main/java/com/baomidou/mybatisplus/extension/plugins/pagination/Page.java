@@ -72,7 +72,7 @@ public class Page<T> implements IPage<T> {
      * {@link #optimizeJoinOfCountSql()}
      */
     @Setter
-    protected boolean optimizeJoinOfCountSql = true;
+    protected boolean optimizeJoinOfCountSql = false;
     /**
      * 单页分页条数限制
      */
