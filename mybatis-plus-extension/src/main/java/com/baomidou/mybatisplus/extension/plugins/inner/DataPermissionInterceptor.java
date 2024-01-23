@@ -15,17 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
-import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
-import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
-import lombok.*;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.select.*;
-import net.sf.jsqlparser.statement.update.Update;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -34,9 +27,26 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
+import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SetOperationList;
+import net.sf.jsqlparser.statement.select.WithItem;
+import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * 数据权限处理器
@@ -51,8 +61,10 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @SuppressWarnings({"rawtypes"})
 public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor implements InnerInterceptor {
+
     private DataPermissionHandler dataPermissionHandler;
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
@@ -78,6 +90,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
 
     @Override
     protected void processSelect(Select select, int index, String sql, Object obj) {
+        if (dataPermissionHandler == null) {
+            return;
+        }
         if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
             // 参照 com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor.processSelect 做的修改
             final String whereSegment = (String) obj;
@@ -106,6 +121,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
      * @param whereSegment 查询条件片段
      */
     protected void setWhere(PlainSelect plainSelect, String whereSegment) {
+        if (dataPermissionHandler == null) {
+            return;
+        }
         // 兼容旧版的数据权限处理
         final Expression sqlSegment = dataPermissionHandler.getSqlSegment(plainSelect.getWhere(), whereSegment);
         if (null != sqlSegment) {
@@ -136,6 +154,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
     }
 
     protected Expression getUpdateOrDeleteExpression(final Table table, final Expression where, final String whereSegment) {
+        if (dataPermissionHandler == null) {
+            return null;
+        }
         if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
             return andExpression(table, where, whereSegment);
         } else {
@@ -146,6 +167,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
 
     @Override
     public Expression buildTableExpression(final Table table, final Expression where, final String whereSegment) {
+        if (dataPermissionHandler == null) {
+            return null;
+        }
         // 只有新版数据权限处理器才会执行到这里
         final MultiDataPermissionHandler handler = (MultiDataPermissionHandler) dataPermissionHandler;
         return handler.getSqlSegment(table, where, whereSegment);
