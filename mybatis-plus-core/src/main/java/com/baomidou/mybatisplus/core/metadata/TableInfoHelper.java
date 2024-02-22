@@ -48,6 +48,7 @@ import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -608,10 +609,30 @@ public class TableInfoHelper {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
         return fieldList.stream()
             .filter(field -> {
-                /* 过滤注解非表字段属性 */
-                TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
-                return (tableField == null || tableField.exist());
-            }).collect(toList());
+                /*
+                  检查字段中是否有 TableField 注解, 或者注解上有 TableField(此时作为元注解使用)注解.
+                 */
+                Annotation[] annotations = field.getDeclaredAnnotations();
+                if(annotations.length == 0){
+                    return true;
+                }
+                // 存在TableField注解且exist()为true时
+                TableField tableField = field.getAnnotation(TableField.class);
+                if(tableField != null && tableField.exist()){
+                    return true;
+                }
+                // 不存在TableField注解或者exist()为false时, TableField作为元注解使用时的校验逻辑
+                boolean needContain = true;
+                for (Annotation annotation : annotations) {
+                    Class<? extends Annotation> annotationType = annotation.annotationType();
+                    TableField tf = annotationType.getAnnotation(TableField.class);
+                    if(tf != null && !tf.exist()){
+                        needContain = false;
+                    }
+                }
+                return needContain;
+            })
+            .collect(toList());
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
