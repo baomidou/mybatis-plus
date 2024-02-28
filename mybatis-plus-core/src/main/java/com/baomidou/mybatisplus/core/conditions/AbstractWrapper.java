@@ -622,7 +622,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public String getSqlComment() {
         if (StringUtils.isNotBlank(sqlComment.getStringValue())) {
-            return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
+            return "/*" + sqlComment.getStringValue() + "*/";
         }
         return null;
     }
@@ -630,7 +630,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public String getSqlFirst() {
         if (StringUtils.isNotBlank(sqlFirst.getStringValue())) {
-            return StringEscape.escapeRawString(sqlFirst.getStringValue());
+            return sqlFirst.getStringValue();
         }
         return null;
     }
