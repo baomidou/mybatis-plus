@@ -93,8 +93,25 @@ class TableInfoHelperTest {
 
     }
 
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+    @TableName(schema = "test")
+    @interface MyTable {
+
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+    @TableLogic(value = "false", delval = "true")
+    @interface MyTableLogic {
+
+    }
+
 
     @Data
+    @MyTable
     private static class CustomAnnotation {
 
         @MyId
@@ -104,15 +121,24 @@ class TableInfoHelperTest {
 
         @NotExistsField
         private String test;
+
+        @MyTableLogic
+        private Boolean del;
     }
 
     @Test
     void testCustomAnnotation() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
-        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
         List<Field> fieldList = TableInfoHelper.getAllFields(CustomAnnotation.class);
-        Assertions.assertThat(fieldList.size()).isEqualTo(2);
+        Assertions.assertThat(fieldList.size()).isEqualTo(3);
         Assertions.assertThat(TableInfoHelper.isExistTableId(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
+        Assertions.assertThat(TableInfoHelper.isExistTableLogic(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
+        TableFieldInfo logicDeleteFieldInfo = TableInfoHelper.getTableInfo(CustomAnnotation.class).getLogicDeleteFieldInfo();
+        Assertions.assertThat(logicDeleteFieldInfo).isNotNull();
+        Assertions.assertThat(logicDeleteFieldInfo.getLogicDeleteValue()).isNotNull().isEqualTo("true");
+        Assertions.assertThat(logicDeleteFieldInfo.getLogicNotDeleteValue()).isNotNull().isEqualTo("false");
+        Assertions.assertThat(tableInfo.getTableName()).isEqualTo("test.custom_annotation");
     }
 
 

@@ -19,6 +19,9 @@ import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author nieqiurong
@@ -27,24 +30,42 @@ import java.lang.reflect.Field;
 @UtilityClass
 public class AnnotationUtils {
 
-    private static final String javaPackage = Override.class.getPackage().getName();
-
     public <T extends Annotation> T findFirstAnnotation(Class<T> annotationClazz, Field field) {
-        return getAnnotation(annotationClazz, field.getDeclaredAnnotations());
+        return getAnnotation(annotationClazz, new HashSet<>(), field.getDeclaredAnnotations());
+    }
+
+    public <T extends Annotation> T findFirstAnnotation(Class<T> annotationClazz, Class<?> clz) {
+        Set<Class<? extends Annotation>> hashSet = new HashSet<>();
+        T annotation = getAnnotation(annotationClazz, hashSet, clz.getDeclaredAnnotations());
+        if (annotation != null) {
+            return annotation;
+        }
+        Class<?> currentClass = clz.getSuperclass();
+        while (currentClass != null) {
+            annotation = getAnnotation(annotationClazz, hashSet, currentClass.getDeclaredAnnotations());
+            if (annotation != null) {
+                return annotation;
+            }
+            currentClass = currentClass.getSuperclass();
+        }
+        return null;
+    }
+
+    public <T extends Annotation> T findFirstAnnotation(Class<T> annotationClazz, Method method) {
+        return getAnnotation(annotationClazz, new HashSet<>(), method.getDeclaredAnnotations());
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Annotation> T getAnnotation(Class<T> annotationClazz, Annotation... annotations) {
+    private <T extends Annotation> T getAnnotation(Class<T> annotationClazz, Set<Class<? extends Annotation>> annotationSet, Annotation... annotations) {
         for (Annotation annotation : annotations) {
-            if (annotation.annotationType().getPackage().getName().startsWith(javaPackage)) {
-                continue;
-            }
-            if (annotationClazz.isAssignableFrom(annotation.annotationType())) {
-                return (T) annotation;
-            }
-            annotation = getAnnotation(annotationClazz, annotation.annotationType().getDeclaredAnnotations());
-            if (annotation != null) {
-                return (T) annotation;
+            if (annotationSet.add(annotation.annotationType())) {
+                if (annotationClazz.isAssignableFrom(annotation.annotationType())) {
+                    return (T) annotation;
+                }
+                annotation = getAnnotation(annotationClazz, annotationSet, annotation.annotationType().getDeclaredAnnotations());
+                if (annotation != null) {
+                    return (T) annotation;
+                }
             }
         }
         return null;

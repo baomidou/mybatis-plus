@@ -36,7 +36,7 @@ public interface AnnotationHandler {
      * @return 注解
      */
     default <T extends Annotation> T getAnnotation(Class<?> beanClass, Class<T> annotationClass) {
-        return beanClass.getAnnotation(annotationClass);
+        return AnnotationUtils.findFirstAnnotation(annotationClass, beanClass);
     }
 
     /**
@@ -48,7 +48,7 @@ public interface AnnotationHandler {
      * @return 是否包含该注解
      */
     default <T extends Annotation> boolean isAnnotationPresent(Class<?> beanClass, Class<T> annotationClass) {
-        return beanClass.isAnnotationPresent(annotationClass);
+        return AnnotationUtils.findFirstAnnotation(annotationClass, beanClass) != null;
     }
 
     /**
@@ -84,7 +84,7 @@ public interface AnnotationHandler {
      * @return 注解
      */
     default <T extends Annotation> T getAnnotation(Method method, Class<T> annotationClass) {
-        return method.getAnnotation(annotationClass);
+        return AnnotationUtils.findFirstAnnotation(annotationClass, method);
     }
 
     /**
@@ -96,6 +96,6 @@ public interface AnnotationHandler {
      * @return 是否包含该注解
      */
     default <T extends Annotation> boolean isAnnotationPresent(Method method, Class<T> annotationClass) {
-        return method.isAnnotationPresent(annotationClass);
+        return AnnotationUtils.findFirstAnnotation(annotationClass, method) != null;
     }
 }

@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
@@ -43,7 +44,17 @@ public class AnnotationUtilsTest {
 
     }
 
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+    @TableName(schema = "test")
+    @interface MyTable {
+
+    }
+
+
     @Data
+    @MyTable
     public static class Demo {
 
         private String id;
@@ -129,6 +140,13 @@ public class AnnotationUtilsTest {
         Assertions.assertTrue(tableField.exist());
         TableLogic tableLogic = AnnotationUtils.findFirstAnnotation(TableLogic.class, Demo.class.getDeclaredField("deleted"));
         Assertions.assertNotNull(tableLogic);
+    }
+
+    @Test
+    void test8() {
+        TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, Demo.class);
+        Assertions.assertNotNull(tableName);
+        Assertions.assertEquals(tableName.schema(),"test");
     }
 
 }
