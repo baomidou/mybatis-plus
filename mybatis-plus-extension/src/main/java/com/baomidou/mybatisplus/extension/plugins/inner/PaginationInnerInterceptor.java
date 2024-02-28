@@ -272,7 +272,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             GroupByElement groupBy = plainSelect.getGroupBy();
 
             // 包含 distinct、groupBy 不优化
-            if (null != distinct || null != groupBy) {
+            if (null != groupBy) {
                 return lowLevelCountSql(select.toString());
             }
 
