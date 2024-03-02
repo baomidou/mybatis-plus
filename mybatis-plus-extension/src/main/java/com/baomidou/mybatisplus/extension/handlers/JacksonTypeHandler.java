@@ -17,13 +17,18 @@ package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Jackson 实现 JSON 字段类型处理器
@@ -37,6 +42,7 @@ import java.io.IOException;
 public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     private static ObjectMapper OBJECT_MAPPER;
     private final Class<?> type;
+    private TypeReference<List<Object>> valueTypeRef;
 
     public JacksonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {
@@ -49,6 +55,9 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     @Override
     protected Object parse(String json) {
         try {
+            if (valueTypeRef != null) {
+                return getObjectMapper().readValue(json, valueTypeRef);
+            }
             return getObjectMapper().readValue(json, type);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -74,5 +83,14 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     public static void setObjectMapper(ObjectMapper objectMapper) {
         Assert.notNull(objectMapper, "ObjectMapper should not be null");
         JacksonTypeHandler.OBJECT_MAPPER = objectMapper;
+    }
+
+    public void setField(final Field field) {
+        this.valueTypeRef = new TypeReference<List<Object>>() {
+            @Override
+            public Type getType() {
+                return TypeParameterResolver.resolveFieldType(field, field.getDeclaringClass());
+            }
+        };
     }
 }

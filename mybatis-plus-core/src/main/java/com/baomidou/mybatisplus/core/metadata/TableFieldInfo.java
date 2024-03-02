@@ -33,6 +33,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
+import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeAliasRegistry;
@@ -41,6 +42,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -382,7 +384,7 @@ public class TableFieldInfo implements Constants {
      * 排序初始化
      *
      * @param tableInfo 表信息
-     * @param orderBy 排序注解
+     * @param orderBy   排序注解
      */
     private void initOrderBy(TableInfo tableInfo, OrderBy orderBy) {
         if (null != orderBy) {
@@ -399,7 +401,7 @@ public class TableFieldInfo implements Constants {
      * 逻辑删除初始化
      *
      * @param globalConfig 全局配置
-     * @param field    字段属性对象
+     * @param field        字段属性对象
      */
     private void initLogicDelete(GlobalConfig globalConfig, Field field, boolean existTableLogic) {
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
@@ -563,9 +565,25 @@ public class TableFieldInfo implements Constants {
             if (typeHandler == null) {
                 typeHandler = registry.getInstance(propertyType, this.typeHandler);
             }
+            injectField(typeHandler);
             builder.typeHandler(typeHandler);
         }
         return builder.build();
+    }
+
+    /**
+     * 使用反射为 TypeHandler 注入处理的类型对应的 Field 对象
+     *
+     * @param typeHandler TypeHandler 实例对象
+     */
+    private void injectField(TypeHandler<?> typeHandler) {
+        Class<?> clazz = typeHandler.getClass();
+        try {
+            Method setField = clazz.getMethod("setField", Field.class);
+            setField.invoke(typeHandler, field);
+        } catch (Exception e) {
+            // 忽略
+        }
     }
 
     public String getVersionOli(final String alias, final String prefix) {
