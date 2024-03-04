@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.lang.reflect.Field;
-
 /**
  * Json类型处理器接口(实现类确保为多例状态).
  *
@@ -27,13 +25,6 @@ import java.lang.reflect.Field;
  * @since 3.5.6
  */
 public interface IJsonTypeHandler<T> {
-
-    /**
-     * 初始化处理器
-     *
-     * @param field 字段信息
-     */
-    void init(Field field);
 
     /**
      * 反序列化json

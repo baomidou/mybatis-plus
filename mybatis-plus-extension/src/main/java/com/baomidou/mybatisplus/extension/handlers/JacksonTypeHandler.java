@@ -19,12 +19,12 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 /**
@@ -33,7 +33,6 @@ import java.lang.reflect.Type;
  * @author hubin
  * @since 2019-08-25
  */
-@Slf4j
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
@@ -41,11 +40,13 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     private static ObjectMapper OBJECT_MAPPER;
 
     public JacksonTypeHandler(Class<?> type) {
-        if (log.isTraceEnabled()) {
-            log.trace("JacksonTypeHandler(" + type + ")");
-        }
-        Assert.notNull(type, "Type argument cannot be null");
+        super(type);
     }
+
+    public JacksonTypeHandler(Class<?> type, Field field) {
+        super(type, field);
+    }
+
 
     @Override
     public Object parse(String json) {
@@ -53,7 +54,7 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
             return getObjectMapper().readValue(json, new TypeReference<Object>() {
                 @Override
                 public Type getType() {
-                    return genericType;
+                    return getFieldType();
                 }
             });
         } catch (IOException e) {

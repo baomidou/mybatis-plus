@@ -17,11 +17,11 @@ package com.baomidou.mybatisplus.extension.handlers;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
+
+import java.lang.reflect.Field;
 
 /**
  * Fastjson2 实现 JSON 字段类型处理器
@@ -29,22 +29,21 @@ import org.apache.ibatis.type.MappedTypes;
  * @author nieqiurong
  * @since 3.5.5
  */
-@Slf4j
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class Fastjson2TypeHandler extends AbstractJsonTypeHandler<Object> {
 
     public Fastjson2TypeHandler(Class<?> type) {
-        if (log.isTraceEnabled()) {
-            log.trace("Fastjson2TypeHandler(" + type + ")");
-        }
-        Assert.notNull(type, "Type argument cannot be null");
+        super(type);
     }
 
+    public Fastjson2TypeHandler(Class<?> type, Field field) {
+        super(type, field);
+    }
 
     @Override
     public Object parse(String json) {
-        return JSON.parseObject(json, this.genericType);
+        return JSON.parseObject(json, this.getFieldType());
     }
 
     @Override

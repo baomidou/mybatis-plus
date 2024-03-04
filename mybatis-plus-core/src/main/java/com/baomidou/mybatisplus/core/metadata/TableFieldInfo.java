@@ -563,9 +563,12 @@ public class TableFieldInfo implements Constants {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (IJsonTypeHandler.class.isAssignableFrom(this.typeHandler)) {
                 // 保证每次实例化
-                typeHandler = registry.getInstance(this.propertyType, this.typeHandler);
-                IJsonTypeHandler<?> jsonTypeHandler = (IJsonTypeHandler<?>) typeHandler;
-                jsonTypeHandler.init(this.field);
+                try {
+                    //TODO 后面想一下怎么支持原生的方式,目前只支持自动生成的情况.
+                    typeHandler = this.typeHandler.getDeclaredConstructor(Class.class, Field.class).newInstance(this.propertyType, this.field);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
             } else {
                 if (typeHandler == null) {
                     typeHandler = registry.getInstance(this.propertyType, this.typeHandler);
