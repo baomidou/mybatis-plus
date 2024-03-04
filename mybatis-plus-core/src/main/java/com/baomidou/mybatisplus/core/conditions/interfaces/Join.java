@@ -97,8 +97,11 @@ public interface Join<Children> extends Serializable {
 
     /**
      * sql 注释(会拼接在 sql 的最后面)
+     * <p>
+     * 自3.5.6开始,默认不处理转义字符,如有需要,调用{@link com.baomidou.mybatisplus.core.toolkit.sql.StringEscape#escapeRawString(String)}
+     * </p>
      *
-     * @param comment   sql注释
+     * @param comment sql注释
      * @return children
      */
     default Children comment(String comment) {
@@ -107,6 +110,9 @@ public interface Join<Children> extends Serializable {
 
     /**
      * sql 注释(会拼接在 sql 的最后面)
+     * <p>
+     * 自3.5.6开始,默认不处理转义字符,如有需要,调用{@link com.baomidou.mybatisplus.core.toolkit.sql.StringEscape#escapeRawString(String)}
+     * </p>
      *
      * @param condition 执行条件
      * @param comment   sql注释
@@ -116,8 +122,11 @@ public interface Join<Children> extends Serializable {
 
     /**
      * sql 起始句（会拼接在SQL语句的起始处）
+     * <p>
+     * 自3.5.6开始,默认不处理转义字符,如有需要,调用{@link com.baomidou.mybatisplus.core.toolkit.sql.StringEscape#escapeRawString(String)}
+     * </p>
      *
-     * @param firstSql  起始语句
+     * @param firstSql 起始语句
      * @return children
      */
     default Children first(String firstSql) {
@@ -126,6 +135,9 @@ public interface Join<Children> extends Serializable {
 
     /**
      * sql 起始句（会拼接在SQL语句的起始处）
+     * <p>
+     * 自3.5.6开始,默认不处理转义字符,如有需要,调用{@link com.baomidou.mybatisplus.core.toolkit.sql.StringEscape#escapeRawString(String)}
+     * </p>
      *
      * @param condition 执行条件
      * @param firstSql  起始语句
