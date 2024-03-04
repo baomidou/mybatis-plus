@@ -15,20 +15,40 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.lang.reflect.Field;
 
 /**
  * Json类型处理器接口(实现类确保为多例状态).
  *
  * @author nieqiurong 2024年3月4日
+ * @see TableName#autoResultMap()
  * @since 3.5.6
  */
 public interface IJsonTypeHandler<T> {
 
+    /**
+     * 初始化处理器
+     *
+     * @param field 字段信息
+     */
     void init(Field field);
 
+    /**
+     * 反序列化json
+     *
+     * @param json json字符串
+     * @return T
+     */
     T parse(String json);
 
+    /**
+     * 序列化json
+     *
+     * @param obj 对象信息
+     * @return json字符串
+     */
     String toJson(Object obj);
 
 }

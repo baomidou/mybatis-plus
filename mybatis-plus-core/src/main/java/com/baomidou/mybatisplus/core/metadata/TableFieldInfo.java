@@ -42,7 +42,6 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -554,22 +553,22 @@ public class TableFieldInfo implements Constants {
      * @return ResultMapping
      */
     ResultMapping getResultMapping(final Configuration configuration) {
-        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-            StringUtils.getTargetColumn(column), propertyType);
+        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, this.property,
+            StringUtils.getTargetColumn(this.column), this.propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
-        if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
-            builder.jdbcType(jdbcType);
+        if (this.jdbcType != null && this.jdbcType != JdbcType.UNDEFINED) {
+            builder.jdbcType(this.jdbcType);
         }
-        if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
+        if (this.typeHandler != null && this.typeHandler != UnknownTypeHandler.class) {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (IJsonTypeHandler.class.isAssignableFrom(this.typeHandler)) {
                 // 保证每次实例化
-                typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                typeHandler = registry.getInstance(this.propertyType, this.typeHandler);
                 IJsonTypeHandler<?> jsonTypeHandler = (IJsonTypeHandler<?>) typeHandler;
                 jsonTypeHandler.init(this.field);
             } else {
                 if (typeHandler == null) {
-                    typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                    typeHandler = registry.getInstance(this.propertyType, this.typeHandler);
                 }
             }
             builder.typeHandler(typeHandler);
