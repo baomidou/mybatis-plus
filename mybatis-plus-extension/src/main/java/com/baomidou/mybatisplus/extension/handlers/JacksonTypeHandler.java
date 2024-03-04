@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
@@ -24,6 +25,9 @@ import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Jackson 实现 JSON 字段类型处理器
@@ -47,16 +51,33 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     }
 
     @Override
-    protected Object parse(String json) {
+    public Object parse(String json) {
         try {
-            return getObjectMapper().readValue(json, type);
+            if (List.class.isAssignableFrom(this.type)) {
+                return getObjectMapper().readValue(json, new TypeReference<Object>() {
+                    @Override
+                    public Type getType() {
+                        return genericType;
+                    }
+                });
+            } else if (Map.class.isAssignableFrom(this.type)) {
+                return getObjectMapper().readValue(json, new TypeReference<Map<?, ?>>() {
+                    @Override
+                    public Type getType() {
+                        return genericType;
+                    }
+                });
+            } else {
+                return getObjectMapper().readValue(json, this.type);
+            }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    protected String toJson(Object obj) {
+    public String toJson(Object obj) {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {

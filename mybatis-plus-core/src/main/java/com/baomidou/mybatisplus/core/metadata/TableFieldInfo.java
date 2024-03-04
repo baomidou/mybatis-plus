@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -41,6 +42,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -560,8 +562,15 @@ public class TableFieldInfo implements Constants {
         }
         if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
-            if (typeHandler == null) {
+            if (IJsonTypeHandler.class.isAssignableFrom(this.typeHandler)) {
+                // 保证每次实例化
                 typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                IJsonTypeHandler<?> jsonTypeHandler = (IJsonTypeHandler<?>) typeHandler;
+                jsonTypeHandler.init(this.field);
+            } else {
+                if (typeHandler == null) {
+                    typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                }
             }
             builder.typeHandler(typeHandler);
         }

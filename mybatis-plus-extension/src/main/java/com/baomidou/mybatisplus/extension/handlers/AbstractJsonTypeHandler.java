@@ -15,10 +15,13 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
+import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +31,17 @@ import java.sql.SQLException;
  * @author miemie
  * @since 2019-11-28
  */
-public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
+public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> implements IJsonTypeHandler<T> {
+
+    /**
+     * @since 3.5.6
+     */
+    protected Type genericType;
+
+    @Override
+    public void init(Field field) {
+        this.genericType = field.getGenericType();
+    }
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
@@ -53,7 +66,4 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return StringUtils.isBlank(json) ? null : parse(json);
     }
 
-    protected abstract T parse(String json);
-
-    protected abstract String toJson(T obj);
 }

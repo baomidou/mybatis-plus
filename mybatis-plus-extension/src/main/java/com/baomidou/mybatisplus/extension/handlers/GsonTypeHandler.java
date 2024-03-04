@@ -44,12 +44,12 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
     }
 
     @Override
-    protected Object parse(String json) {
+    public Object parse(String json) {
         return getGson().fromJson(json, type);
     }
 
     @Override
-    protected String toJson(Object obj) {
+    public String toJson(Object obj) {
         return getGson().toJson(obj);
     }
 
