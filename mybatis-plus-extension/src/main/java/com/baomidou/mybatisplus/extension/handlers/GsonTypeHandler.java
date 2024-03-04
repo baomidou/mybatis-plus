@@ -32,20 +32,19 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
+
     private static Gson GSON;
-    private final Class<?> type;
 
     public GsonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {
             log.trace("GsonTypeHandler(" + type + ")");
         }
         Assert.notNull(type, "Type argument cannot be null");
-        this.type = type;
     }
 
     @Override
     public Object parse(String json) {
-        return getGson().fromJson(json, type);
+        return getGson().fromJson(json, this.genericType);
     }
 
     @Override

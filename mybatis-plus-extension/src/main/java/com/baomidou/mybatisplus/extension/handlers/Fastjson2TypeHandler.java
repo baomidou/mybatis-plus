@@ -34,20 +34,17 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class Fastjson2TypeHandler extends AbstractJsonTypeHandler<Object> {
 
-    private final Class<?> type;
-
     public Fastjson2TypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {
             log.trace("Fastjson2TypeHandler(" + type + ")");
         }
         Assert.notNull(type, "Type argument cannot be null");
-        this.type = type;
     }
 
 
     @Override
     public Object parse(String json) {
-        return JSON.parseObject(json, this.type);
+        return JSON.parseObject(json, this.genericType);
     }
 
     @Override

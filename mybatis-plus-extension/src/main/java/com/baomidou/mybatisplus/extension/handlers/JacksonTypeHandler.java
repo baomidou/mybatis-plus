@@ -26,8 +26,6 @@ import org.apache.ibatis.type.MappedTypes;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Jackson 实现 JSON 字段类型处理器
@@ -39,38 +37,25 @@ import java.util.Map;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
+
     private static ObjectMapper OBJECT_MAPPER;
-    private final Class<?> type;
 
     public JacksonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {
             log.trace("JacksonTypeHandler(" + type + ")");
         }
         Assert.notNull(type, "Type argument cannot be null");
-        this.type = type;
     }
 
     @Override
     public Object parse(String json) {
         try {
-            if (List.class.isAssignableFrom(this.type)) {
-                return getObjectMapper().readValue(json, new TypeReference<Object>() {
-                    @Override
-                    public Type getType() {
-                        return genericType;
-                    }
-                });
-            } else if (Map.class.isAssignableFrom(this.type)) {
-                return getObjectMapper().readValue(json, new TypeReference<Map<?, ?>>() {
-                    @Override
-                    public Type getType() {
-                        return genericType;
-                    }
-                });
-            } else {
-                return getObjectMapper().readValue(json, this.type);
-            }
-
+            return getObjectMapper().readValue(json, new TypeReference<Object>() {
+                @Override
+                public Type getType() {
+                    return genericType;
+                }
+            });
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
