@@ -2,12 +2,12 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
+import com.baomidou.mybatisplus.core.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -73,7 +73,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         if (StringUtils.isNotBlank(mapperXml)) {
             try {
                 InputStream inputStream = Resources.getResourceAsStream(mapperXml);
-                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(inputStream,
+                MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(inputStream,
                     configuration, mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
             } catch (IOException e) {

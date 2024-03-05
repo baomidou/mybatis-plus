@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -563,12 +564,7 @@ public class TableFieldInfo implements Constants {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (IJsonTypeHandler.class.isAssignableFrom(this.typeHandler)) {
                 // 保证每次实例化
-                try {
-                    //TODO 后面想一下怎么支持原生的方式,目前只支持自动生成的情况.
-                    typeHandler = this.typeHandler.getDeclaredConstructor(Class.class, Field.class).newInstance(this.propertyType, this.field);
-                } catch (ReflectiveOperationException e) {
-                    throw new RuntimeException(e);
-                }
+                typeHandler = MybatisUtils.newJsonTypeHandler(this.typeHandler, this.propertyType, this.field);
             } else {
                 if (typeHandler == null) {
                     typeHandler = registry.getInstance(this.propertyType, this.typeHandler);

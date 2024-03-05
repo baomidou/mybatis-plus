@@ -19,9 +19,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * Json类型处理器接口(实现类确保为多例状态).
+ * <p>
+ * 注意:查询返回时需要使用resultMap
+ * </p>
  *
  * @author nieqiurong 2024年3月4日
- * @see TableName#autoResultMap()
+ * @see TableName#autoResultMap() 自动构建
+ * @see TableName#resultMap() 手动指定
  * @since 3.5.6
  */
 public interface IJsonTypeHandler<T> {
