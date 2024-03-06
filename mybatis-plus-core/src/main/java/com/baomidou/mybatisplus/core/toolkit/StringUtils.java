@@ -587,6 +587,7 @@ public final class StringUtils {
      *     <li>\t 水平制表符</li>
      *     <li>\s 空格</li>
      *     <li>\r 换行</li>
+     *     <li>&、*、+、=、#、-、; 上述符号</li>
      * </ul>
      *
      * @param str 字符串
@@ -609,6 +610,8 @@ public final class StringUtils {
      *     <li>\t 水平制表符</li>
      *     <li>\s 空格</li>
      *     <li>\r 换行</li>
+     *     <li>\r 等号</li>
+     *     <li>&、*、+、=、#、-、; 上述符号</li>
      * </ul>
      *
      * @param str 字符串

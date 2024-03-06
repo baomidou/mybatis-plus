@@ -59,6 +59,7 @@ class SelectBodyToPlainSelectTest {
         orderItems.add(orderEmptyColumn);
     }
 
+
     @Test
     void testPaginationInterceptorConcatOrderByBefore() {
         String actualSql = new PaginationInnerInterceptor()
@@ -97,6 +98,8 @@ class SelectBodyToPlainSelectTest {
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION ALL SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
     }
 
+
+
     @Test
     void testPaginationInterceptorOrderByEmptyColumnFix() {
         String actualSql = new PaginationInnerInterceptor()
@@ -109,5 +112,34 @@ class SelectBodyToPlainSelectTest {
 
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC");
     }
+
+    @Test
+    void testPaginationInterceptorOrderByComplexPreventSqlI() {
+        // 测试特殊的排序方法 https://github.com/baomidou/mybatis-plus/issues/5976
+        ITEMS.add(OrderItem.asc("CASE WHEN column = 'one' THEN 1 WHEN column = 'two' THEN 2 ELSE 3 END", false));
+        String actualSql = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test", ITEMS);
+        assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC, CASE WHEN column = 'one' THEN 1 WHEN column = 'two' THEN 2 ELSE 3 END ASC");
+        String actualSqlWhere = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1", ITEMS);
+        assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC, CASE WHEN column = 'one' THEN 1 WHEN column = 'two' THEN 2 ELSE 3 END ASC");
+        ITEMS.removeLast();
+    }
+
+    @Test
+    void testPaginationInterceptorOrderByComplexSqlI() {
+        // 测试特殊的排序方法 https://github.com/baomidou/mybatis-plus/issues/5976
+        ITEMS.add(OrderItem.asc("CASE WHEN column = 'one' THEN 1 WHEN column = 'two' THEN 2 ELSE 3 END", true));
+        String actualSql = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test", ITEMS);
+        assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC, CASEWHENcolumnoneTHEN1WHENcolumntwoTHEN2ELSE3END ASC");
+        String actualSqlWhere = new PaginationInnerInterceptor()
+            .concatOrderBy("select * from test where 1 = 1", ITEMS);
+        assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC, CASEWHENcolumnoneTHEN1WHENcolumntwoTHEN2ELSE3END ASC");
+        ITEMS.removeLast();
+    }
+
+
+
 
 }

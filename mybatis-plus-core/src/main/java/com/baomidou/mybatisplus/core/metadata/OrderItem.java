@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,27 +45,78 @@ public class OrderItem implements Serializable {
     private boolean asc = true;
 
     public static OrderItem asc(String column) {
-        return build(column, true);
+        return build(column, true, true);
+    }
+
+    /**
+     * 正序排序
+     * @param column 列名
+     * @param preventSqlInject 是否防止SQL注入
+     * @return
+     */
+    public static OrderItem asc(String column, boolean preventSqlInject) {
+        return build(column, true, preventSqlInject);
     }
 
     public static OrderItem desc(String column) {
-        return build(column, false);
+        return build(column, false, true);
     }
+
+    /**
+     * 倒序排序
+     * @param column 列名
+     * @param preventSqlInject 是否防止SQL注入
+     * @return
+     */
+    public static OrderItem desc(String column, boolean preventSqlInject) {
+        return build(column, false, preventSqlInject);
+    }
+
 
     public static List<OrderItem> ascs(String... columns) {
         return Arrays.stream(columns).map(OrderItem::asc).collect(Collectors.toList());
     }
 
-    public static List<OrderItem> descs(String... columns) {
-        return Arrays.stream(columns).map(OrderItem::desc).collect(Collectors.toList());
+    public static List<OrderItem> ascs(boolean preventSqlInject, String... columns) {
+        return Arrays.stream(columns).map(column -> OrderItem.asc(column, preventSqlInject)).collect(Collectors.toList());
+    }
+
+    public static List<OrderItem> descs(boolean preventSqlInject, String... columns) {
+        return Arrays.stream(columns).map(column -> OrderItem.desc(column, preventSqlInject)).collect(Collectors.toList());
     }
 
     private static OrderItem build(String column, boolean asc) {
-        return new OrderItem().setColumn(column).setAsc(asc);
+        return build(column, asc, true);
+    }
+
+    /**
+     * 构建函数
+     * @param column 列名
+     * @param asc 是否正序
+     * @param preventSqlInject 是否防止SQL注入
+     * @return
+     */
+    private static OrderItem build(String column, boolean asc, boolean preventSqlInject) {
+        return new OrderItem().setColumn(column, preventSqlInject).setAsc(asc);
     }
 
     public OrderItem setColumn(String column) {
-        this.column = StringUtils.replaceAllBlank(column);
+        return this.setColumn(column, true);
+    }
+
+    /**
+     * 设置列名
+     * @param column 列名
+     * @param preventSqlInject 是否防止SQL注入
+     * @return
+     */
+    public OrderItem setColumn(String column, boolean preventSqlInject) {
+        if (preventSqlInject) {
+            // 开启SQL注入后会去除一切空格等特殊符号
+            this.column = StringUtils.replaceAllBlank(column);
+        } else  {
+            this.column = column;
+        }
         return this;
     }
 
@@ -74,4 +124,5 @@ public class OrderItem implements Serializable {
         this.asc = asc;
         return this;
     }
+
 }
