@@ -19,11 +19,11 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.Setter;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.Resources;
@@ -90,7 +90,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private Resource configLocation;
 
-    // TODO 使用 MybatisConfiguration
     private MybatisConfiguration configuration;
 
     private Resource[] mapperLocations;
@@ -144,7 +143,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     @Deprecated
     private String typeEnumsPackage;
 
-    // TODO 自定义全局配置
     @Setter
     private GlobalConfig globalConfig;
 
@@ -325,7 +323,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Set a customized MyBatis configuration.
-     * TODO 这里的入参使用 MybatisConfiguration 而不是 Configuration
      *
      * @param configuration MyBatis configuration
      * @since 1.3.0
@@ -456,7 +453,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         final Configuration targetConfiguration;
 
-        // TODO 使用 MybatisXmlConfigBuilder 而不是 XMLConfigBuilder
         MybatisXMLConfigBuilder xmlConfigBuilder = null;
         if (this.configuration != null) {
             targetConfiguration = this.configuration;
@@ -466,21 +462,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 targetConfiguration.getVariables().putAll(this.configurationProperties);
             }
         } else if (this.configLocation != null) {
-            // TODO 使用 MybatisXMLConfigBuilder
             xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
             targetConfiguration = xmlConfigBuilder.getConfiguration();
         } else {
             LOGGER.debug(() -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            // TODO 使用 MybatisConfiguration
             targetConfiguration = new MybatisConfiguration();
             Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
         }
 
-        // TODO 无配置启动所必须的
         this.globalConfig = Optional.ofNullable(this.globalConfig).orElseGet(GlobalConfigUtils::defaults);
         this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
 
-        // TODO 初始化 id-work 以及 打印骚东西
         GlobalConfigUtils.setGlobalConfig(targetConfiguration, this.globalConfig);
 
         Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
@@ -565,7 +557,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         continue;
                     }
                     try {
-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+                        MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
                             targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
                         xmlMapperBuilder.parse();
                     } catch (Exception e) {
@@ -582,10 +574,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
 
-        // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
-        // TODO 打印 Banner
         if (globalConfig.isBanner()) {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");

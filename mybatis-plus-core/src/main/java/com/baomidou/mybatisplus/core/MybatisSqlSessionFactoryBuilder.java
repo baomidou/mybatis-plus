@@ -43,7 +43,6 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
-            //TODO 这里换成 MybatisXMLConfigBuilder 而不是 XMLConfigBuilder
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
@@ -62,7 +61,6 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            //TODO 这里换成 MybatisXMLConfigBuilder 而不是 XMLConfigBuilder
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
@@ -77,7 +75,6 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         }
     }
 
-    // TODO 使用自己的逻辑,注入必须组件
     @Override
     public SqlSessionFactory build(Configuration configuration) {
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);

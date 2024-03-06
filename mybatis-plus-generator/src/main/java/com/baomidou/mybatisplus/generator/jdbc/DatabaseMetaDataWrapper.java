@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.generator.jdbc;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.type.JdbcType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +39,7 @@ public class DatabaseMetaDataWrapper {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseMetaDataWrapper.class);
 
+    @Getter
     private final Connection connection;
 
     private final DatabaseMetaData databaseMetaData;
@@ -59,10 +62,6 @@ public class DatabaseMetaDataWrapper {
         } catch (SQLException e) {
             throw new RuntimeException("获取元数据错误:", e);
         }
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public void closeConnection() {
@@ -170,6 +169,7 @@ public class DatabaseMetaDataWrapper {
         return table;
     }
 
+    @Getter
     public static class Table {
 
         private String name;
@@ -178,24 +178,13 @@ public class DatabaseMetaDataWrapper {
 
         private String tableType;
 
-        public String getRemarks() {
-            return remarks;
-        }
-
-        public String getTableType() {
-            return tableType;
-        }
-
-        public String getName() {
-            return name;
-        }
-
         public boolean isView() {
             return "VIEW".equals(tableType);
         }
 
     }
 
+    @Getter
     public static class Column {
 
         private boolean primaryKey;
@@ -216,50 +205,8 @@ public class DatabaseMetaDataWrapper {
 
         private JdbcType jdbcType;
 
+        @Setter
         private String typeName;
 
-        public String getName() {
-            return name;
-        }
-
-        public int getLength() {
-            return length;
-        }
-
-        public boolean isNullable() {
-            return nullable;
-        }
-
-        public String getRemarks() {
-            return remarks;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public int getScale() {
-            return scale;
-        }
-
-        public JdbcType getJdbcType() {
-            return jdbcType;
-        }
-
-        public boolean isPrimaryKey() {
-            return primaryKey;
-        }
-
-        public boolean isAutoIncrement() {
-            return autoIncrement;
-        }
-
-        public String getTypeName() {
-            return typeName;
-        }
-
-        public void setTypeName(String typeName) {
-            this.typeName = typeName;
-        }
     }
 }

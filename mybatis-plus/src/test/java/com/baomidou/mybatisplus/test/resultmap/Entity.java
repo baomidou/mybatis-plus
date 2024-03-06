@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author miemie
@@ -28,10 +30,30 @@ public class Entity implements Serializable {
     @TableField(typeHandler = GsonTypeHandler.class)
     private Gg gg2;
 
+    @TableField(typeHandler = GsonTypeHandler.class)
+    private List<Gg> gg3;
+
+    @TableField(typeHandler = GsonTypeHandler.class)
+    private List<Gg4> gg4;
+
+    @TableField(typeHandler = GsonTypeHandler.class)
+    private String[] str;
+
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Gg {
         private String name;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Gg4 {
+        private String name;
+        private Gg gg;
+        private List<Gg> ggList;
+        private Map<String,Gg> ggMap;
     }
 }

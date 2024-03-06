@@ -92,11 +92,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     Object target = this.baseMapper;
                     // 这个检查目前看着来说基本上可以不用判断Aop是不是存在了.
                     if (com.baomidou.mybatisplus.extension.toolkit.AopUtils.isLoadSpringAop()) {
-                        if (AopUtils.isAopProxy(this.baseMapper)) {
-                            target = AopProxyUtils.getSingletonTarget(this.baseMapper);
+                        while (AopUtils.isAopProxy(target)) {
+                            target = AopProxyUtils.getSingletonTarget(target);
                         }
                     }
-                    if (target != null) {
+                    if (target instanceof MybatisMapperProxy) {
                         MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(target);
                         SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) mybatisMapperProxy.getSqlSession();
                         this.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
@@ -195,7 +195,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {

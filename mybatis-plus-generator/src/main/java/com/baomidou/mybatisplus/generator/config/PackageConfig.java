@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -42,41 +43,49 @@ public class PackageConfig {
     /**
      * 父包模块名
      */
+    @Getter
     private String moduleName = "";
 
     /**
      * Entity包名
      */
+    @Getter
     private String entity = "entity";
 
     /**
      * Service包名
      */
+    @Getter
     private String service = "service";
 
     /**
      * Service Impl包名
      */
+    @Getter
     private String serviceImpl = "service.impl";
 
     /**
      * Mapper包名
      */
+    @Getter
     private String mapper = "mapper";
 
     /**
      * Mapper XML包名
      */
+    @Getter
     private String xml = "mapper.xml";
 
     /**
      * Controller包名
      */
+    @Getter
     private String controller = "controller";
 
     /**
      * 路径配置信息
      */
+    @Getter
     private Map<OutputFile, String> pathInfo;
 
     /**
@@ -139,38 +148,6 @@ public class PackageConfig {
      */
     public String getPackageInfo(String module) {
         return getPackageInfo().get(module);
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public String getServiceImpl() {
-        return serviceImpl;
-    }
-
-    public String getMapper() {
-        return mapper;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
-    public String getController() {
-        return controller;
-    }
-
-    public Map<OutputFile, String> getPathInfo() {
-        return pathInfo;
     }
 
     /**

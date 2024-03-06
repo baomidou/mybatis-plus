@@ -1,13 +1,5 @@
-- fix: 修复配置databaseId失效
-- fix: 修复自增主键忽略注入错误忽略非自增主键注入问题
-- fix: 修复ChainWrapper模式下GroupBy生成多的逗
-- fix: 修复selectOne缓存问题
-- feat: 升级gradle-wrapper至8.4
-- feat: 升级kotlin-gradle-plugin至1.9.21
-- feat: 升级mybatis至3.5.14
-- feat: 升级lombok至1.18.30
-- feat: 升级spring-boot3至3.2.0
-- feat: 升级spring-boot2版本mybatis-spring至2.1.2
-- feat: 升级spring-boot3版本mybatis-spring至3.0.3
-- feat: 支持Trino,Presto数据库
-
+- fix: 修复Service多层代理引发的错误
+- fix: 修复Json类型处理器反序列化泛型丢失原始类型
+- fix: 去除sqlFirst与sqlComment转义(如有需要转义操作,请手动调用转义后传入)
+- feat: 支持组合注解
+- feat: 升级spring-cloud-commons

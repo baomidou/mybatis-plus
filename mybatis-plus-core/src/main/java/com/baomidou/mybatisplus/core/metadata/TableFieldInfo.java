@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -552,17 +554,21 @@ public class TableFieldInfo implements Constants {
      * @return ResultMapping
      */
     ResultMapping getResultMapping(final Configuration configuration) {
-        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-            StringUtils.getTargetColumn(column), propertyType);
+        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, this.property,
+            StringUtils.getTargetColumn(this.column), this.propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
-        if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
-            builder.jdbcType(jdbcType);
+        if (this.jdbcType != null && this.jdbcType != JdbcType.UNDEFINED) {
+            builder.jdbcType(this.jdbcType);
         }
-        if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
+        if (this.typeHandler != null && this.typeHandler != UnknownTypeHandler.class) {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
-            if (typeHandler == null) {
-                typeHandler = registry.getInstance(propertyType, this.typeHandler);
-                // todo 这会有影响 registry.register(typeHandler);
+            if (IJsonTypeHandler.class.isAssignableFrom(this.typeHandler)) {
+                // 保证每次实例化
+                typeHandler = MybatisUtils.newJsonTypeHandler(this.typeHandler, this.propertyType, this.field);
+            } else {
+                if (typeHandler == null) {
+                    typeHandler = registry.getInstance(this.propertyType, this.typeHandler);
+                }
             }
             builder.typeHandler(typeHandler);
         }

@@ -172,7 +172,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-        // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
@@ -204,10 +203,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
-        // TODO 修改源码支持定义 TransactionFactory
         this.getBeanThen(TransactionFactory.class, factory::setTransactionFactory);
 
-        // TODO 对源码做了一定的修改(因为源码适配了老旧的mybatis版本,但我们不需要适配)
         Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();
         if (!ObjectUtils.isEmpty(this.languageDrivers)) {
             factory.setScriptingLanguageDrivers(this.languageDrivers);
@@ -216,21 +213,13 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
         applySqlSessionFactoryBeanCustomizers(factory);
 
-        // TODO 此处必为非 NULL
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
-        // TODO 注入填充器
         this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
-        // TODO 注入注解控制器
         this.getBeanThen(AnnotationHandler.class, globalConfig::setAnnotationHandler);
-        // TODO 注入参与器
         this.getBeanThen(PostInitTableInfoHandler.class, globalConfig::setPostInitTableInfoHandler);
-        // TODO 注入主键生成器
         this.getBeansThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerators(i));
-        // TODO 注入sql注入器
         this.getBeanThen(ISqlInjector.class, globalConfig::setSqlInjector);
-        // TODO 注入ID生成器
         this.getBeanThen(IdentifierGenerator.class, globalConfig::setIdentifierGenerator);
-        // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
     }
@@ -264,9 +253,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
     }
 
-    // TODO 入参使用 MybatisSqlSessionFactoryBean
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
-        // TODO 使用 MybatisConfiguration
         MybatisPlusProperties.CoreConfiguration coreConfiguration = this.properties.getConfiguration();
         MybatisConfiguration configuration = null;
         if (coreConfiguration != null || !StringUtils.hasText(this.properties.getConfigLocation())) {
@@ -337,7 +324,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                 .collect(Collectors.toSet());
             if (propertyNames.contains("lazyInitialization")) {
                 // Need to mybatis-spring 2.0.2+
-                // TODO 兼容了mybatis.lazy-initialization配置
                 builder.addPropertyValue("lazyInitialization", "${mybatis-plus.lazy-initialization:${mybatis.lazy-initialization:false}}");
             }
             if (propertyNames.contains("defaultScope")) {
@@ -404,9 +390,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public DdlApplicationRunner ddlApplicationRunner(@Autowired(required = false) List<IDdl> ddlList) {
-        if (ObjectUtils.isEmpty(ddlList)) {
-            return null;
-        }
         return new DdlApplicationRunner(ddlList);
     }
 }

@@ -17,14 +17,14 @@ ext {
         springVersion = '5.3.27',
         springBootVersion = '2.7.15',
         springBoot3Version = '3.2.0',
-        springCloudVersion = '3.1.1',
+        springCloudVersion = '3.1.8',
         jsqlparserVersion = '4.6',
         junitVersion = '5.9.0',
     ]
 
     lib = [
         "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:1.9.22",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22",
         "jsqlparser"                 : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
@@ -41,7 +41,7 @@ ext {
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:${springCloudVersion}",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.20.1",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.21",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
@@ -49,20 +49,20 @@ ext {
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
         "assertj-core"               : "org.assertj:assertj-core:3.23.1",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-        "fastjson"                   : "com.alibaba:fastjson:2.0.40",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.15.2",
+        "fastjson"                   : "com.alibaba:fastjson:2.0.44",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.16.1",
         "gson"                       : "com.google.code.gson:gson:2.9.1",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
-        "postgresql"                 : "org.postgresql:postgresql:42.4.1",
+        "postgresql"                 : "org.postgresql:postgresql:42.7.1",
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc8.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:2.2.224",
         "mysql"                      : "mysql:mysql-connector-java:8.0.30",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.43.0.0",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.44.1.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:4.0.6.java8",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.3",
@@ -71,8 +71,8 @@ ext {
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
         "freemarker"          : "org.freemarker:freemarker:2.3.32",
-        "beetl"               : "com.ibeetl:beetl:3.15.10.RELEASE",
-        "swagger-annotations" : "io.swagger:swagger-annotations:1.6.11",
+        "beetl"               : "com.ibeetl:beetl:3.15.13.RELEASE",
+        "swagger-annotations" : "io.swagger:swagger-annotations:1.6.12",
         "enjoy"               : "com.jfinal:enjoy:5.1.3",
         "logback-classic"     : "ch.qos.logback:logback-classic:1.4.11",
     ]

@@ -124,7 +124,7 @@ public class MybatisPlusProperties {
     private String typeEnumsPackage;
 
     /**
-     * TODO 全局配置
+     * 全局配置
      */
     @NestedConfigurationProperty
     private GlobalConfig globalConfig = GlobalConfigUtils.defaults();

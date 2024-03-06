@@ -9,5 +9,8 @@
 
     <resultMap id="resultMap" type="com.baomidou.mybatisplus.test.resultmap.Entity" extends="baseResult">
         <result column="gg2" property="gg2" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
+        <result property="gg3" column="gg3" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
+        <result property="gg4" column="gg4" javaType="list" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
+        <result property="str" column="str" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
     </resultMap>
 </mapper>

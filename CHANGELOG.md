@@ -1,4 +1,24 @@
 ﻿# CHANGELOG
+## [v3.5.5] 2023.12.24
+- fix: 修复配置databaseId失效
+- fix: 修复自增主键忽略注入错误忽略非自增主键注入问题
+- fix: 修复ChainWrapper模式下GroupBy生成多的逗
+- fix: 修复selectOne缓存问题
+- fix: 修复数据权限多表支持在某些场景下失效问题
+- fix: 修复生成器mysql类型转换器point转换错误
+- fix: 修复kotlin下无法使用父类属性操作
+- fix: 修复自动注入DdlApplicationRunner返回null导致的高版本springboot启动错误
+- fix: 修复生成器代码提示的RuntimeUtils安全性漏洞问题
+- feat: 新增fastjson2支持
+- feat: 升级gradle-wrapper至8.4
+- feat: 升级kotlin-gradle-plugin至1.9.21
+- feat: 升级mybatis至3.5.15
+- feat: 升级lombok至1.18.30
+- feat: 升级spring-boot3至3.2.0
+- feat: 升级spring-boot2版本mybatis-spring至2.1.2
+- feat: 升级spring-boot3版本mybatis-spring至3.0.3
+- feat: 移除通用service中saveOrUpdate的事务
+- feat: 支持Trino,Presto,GBase8s-pg,SUNDB数据库
 
 ## [v3.5.4.1] 2023.11.4
 - fix: 修复Aop增强Mapper层导致的转换错误.

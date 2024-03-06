@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,26 +44,31 @@ public class TemplateConfig {
     /**
      * 设置控制器模板路径
      */
+    @Getter
     private String controller;
 
     /**
      * 设置Mapper模板路径
      */
+    @Getter
     private String mapper;
 
     /**
      * 设置MapperXml模板路径
      */
+    @Getter
     private String xml;
 
     /**
      * 设置Service模板路径
      */
+    @Getter
     private String service;
 
     /**
      * 设置ServiceImpl模板路径
      */
+    @Getter
     private String serviceImpl;
 
     /**
@@ -119,7 +125,7 @@ public class TemplateConfig {
      * @since 3.3.2
      */
     public TemplateConfig disable(@NotNull TemplateType... templateTypes) {
-        if (templateTypes != null && templateTypes.length > 0) {
+        if (templateTypes != null) {
             for (TemplateType templateType : templateTypes) {
                 switch (templateType) {
                     case ENTITY:
@@ -158,26 +164,6 @@ public class TemplateConfig {
      */
     public TemplateConfig disable() {
         return disable(TemplateType.values());
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public String getServiceImpl() {
-        return serviceImpl;
-    }
-
-    public String getMapper() {
-        return mapper;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
-    public String getController() {
-        return controller;
     }
 
     /**

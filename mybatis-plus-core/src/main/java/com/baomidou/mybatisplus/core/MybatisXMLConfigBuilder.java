@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -83,7 +82,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
-        // TODO 使用 MybatisConfiguration 而不是 Configuration
         super(new MybatisConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
@@ -272,7 +270,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setArgNameBasedConstructorAutoMapping(booleanValueOf(props.getProperty("argNameBasedConstructorAutoMapping"), false));
         configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
         configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));
-        // TODO 下面俩: 1.统一 mapUnderscoreToCamelCase 属性默认值为 true 2.新增`useGeneratedShortKey`属性
         configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
         ((MybatisConfiguration) configuration).setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
     }
@@ -379,13 +376,13 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
                         try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
-                            XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
+                            MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
                             mapperParser.parse();
                         }
                     } else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
                         try (InputStream inputStream = Resources.getUrlAsStream(url)) {
-                            XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
+                            MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
                             mapperParser.parse();
                         }
                     } else if (resource == null && url == null && mapperClass != null) {

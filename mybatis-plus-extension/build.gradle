@@ -21,10 +21,10 @@ dependencies {
     implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
     implementation "de.ruedigermoeller:fst:3.0.4-jdk17"
-    implementation "com.alibaba.fastjson2:fastjson2:2.0.43"
+    implementation "com.alibaba.fastjson2:fastjson2:2.0.44"
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     testImplementation "com.github.pagehelper:pagehelper:5.3.1"
-    testImplementation "com.google.guava:guava:31.1-jre"
-    testImplementation "io.github.classgraph:classgraph:4.8.163"
+    testImplementation "com.google.guava:guava:33.0.0-jre"
+    testImplementation "io.github.classgraph:classgraph:4.8.165"
     testImplementation "${lib.h2}"
 }

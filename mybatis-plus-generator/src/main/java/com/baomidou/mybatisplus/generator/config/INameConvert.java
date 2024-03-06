@@ -35,7 +35,6 @@ public interface INameConvert {
      * 执行实体名称转换
      *
      * @param tableInfo 表信息对象
-     * @return
      */
     @NotNull
     String entityNameConvert(@NotNull TableInfo tableInfo);
@@ -44,7 +43,6 @@ public interface INameConvert {
      * 执行属性名称转换
      *
      * @param field 表字段对象，如果属性表字段命名不一致注意 convert 属性的设置
-     * @return
      */
     @NotNull
     String propertyNameConvert(@NotNull TableField field);
@@ -76,11 +74,11 @@ public interface INameConvert {
         private String processName(String name, NamingStrategy strategy, Set<String> prefix, Set<String> suffix) {
             String propertyName = name;
             // 删除前缀
-            if (prefix.size() > 0) {
+            if (!prefix.isEmpty()) {
                 propertyName = NamingStrategy.removePrefix(propertyName, prefix);
             }
             // 删除后缀
-            if (suffix.size() > 0) {
+            if (!suffix.isEmpty()) {
                 propertyName = NamingStrategy.removeSuffix(propertyName, suffix);
             }
             if (StringUtils.isBlank(propertyName)) {

@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.function.ConverterFileName;
 import com.baomidou.mybatisplus.generator.util.ClassUtils;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ public class Entity implements ITemplate {
     /**
      * 自定义基础的Entity类，公共字段
      */
+    @Getter
     private final Set<String> superEntityColumns = new HashSet<>();
 
     /**
@@ -84,6 +86,7 @@ public class Entity implements ITemplate {
     /**
      * 实体是否生成 serialVersionUID
      */
+    @Getter
     private boolean serialVersionUID = true;
 
     /**
@@ -91,6 +94,7 @@ public class Entity implements ITemplate {
      * -----------------------------------<br>
      * public static final String ID = "test_id";
      */
+    @Getter
     private boolean columnConstant;
 
     /**
@@ -98,23 +102,27 @@ public class Entity implements ITemplate {
      *
      * @since 3.3.2
      */
+    @Getter
     private boolean chain;
 
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
      */
+    @Getter
     private boolean lombok;
 
     /**
      * Boolean类型字段是否移除is前缀（默认 false）<br>
      * 比如 : 数据库字段名称 : 'is_xxx',类型为 : tinyint. 在映射实体的时候则会去掉is,在实体类中映射最终结果为 xxx
      */
+    @Getter
     private boolean booleanColumnRemoveIsPrefix;
 
     /**
      * 是否生成实体时，生成字段注解（默认 false）
      */
+    @Getter
     private boolean tableFieldAnnotationEnable;
 
     /**
@@ -166,6 +174,7 @@ public class Entity implements ITemplate {
      *
      * @since 3.5.0
      */
+    @Getter
     private boolean activeRecord;
 
     /**
@@ -187,6 +196,7 @@ public class Entity implements ITemplate {
      *
      * @since 3.5.2
      */
+    @Getter
     private boolean fileOverride;
 
     /**
@@ -253,34 +263,6 @@ public class Entity implements ITemplate {
         return superClass;
     }
 
-    public Set<String> getSuperEntityColumns() {
-        return this.superEntityColumns;
-    }
-
-    public boolean isSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public boolean isColumnConstant() {
-        return columnConstant;
-    }
-
-    public boolean isChain() {
-        return chain;
-    }
-
-    public boolean isLombok() {
-        return lombok;
-    }
-
-    public boolean isBooleanColumnRemoveIsPrefix() {
-        return booleanColumnRemoveIsPrefix;
-    }
-
-    public boolean isTableFieldAnnotationEnable() {
-        return tableFieldAnnotationEnable;
-    }
-
     @Nullable
     public String getVersionColumnName() {
         return versionColumnName;
@@ -311,10 +293,6 @@ public class Entity implements ITemplate {
         return naming;
     }
 
-    public boolean isActiveRecord() {
-        return activeRecord;
-    }
-
     @Nullable
     public IdType getIdType() {
         return idType;
@@ -323,10 +301,6 @@ public class Entity implements ITemplate {
     @NotNull
     public ConverterFileName getConverterFileName() {
         return converterFileName;
-    }
-
-    public boolean isFileOverride() {
-        return fileOverride;
     }
 
     @Override

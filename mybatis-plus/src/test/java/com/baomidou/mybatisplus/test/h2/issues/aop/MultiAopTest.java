@@ -17,7 +17,7 @@ import java.util.List;
  * @author nieqiurong
  */
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {AppConfig.class, AopConfig2.class})
+@ContextConfiguration(classes = {AppConfig.class, AopConfig1.class, AopConfig2.class})
 public class MultiAopTest {
 
     @Autowired

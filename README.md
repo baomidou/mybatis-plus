@@ -71,6 +71,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 -   Add MyBatis-Plus dependency
     - Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
     - Maven:
+    - SpringBoot2
       ```xml
       <dependency>
           <groupId>com.baomidou</groupId>
@@ -78,9 +79,22 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
           <version>Latest Version</version>
       </dependency>
       ```
+    - SpringBoot3
+      ```xml
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        <version>Latest Version</version>
+      </dependency>
+      ```
     - Gradle
+    - SpringBoot2
       ```groovy
       compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+      ```
+    - SpringBoot3
+      ```groovy
+      compile group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
       ```
 -   Modify mapper file extends BaseMapper interface
 
