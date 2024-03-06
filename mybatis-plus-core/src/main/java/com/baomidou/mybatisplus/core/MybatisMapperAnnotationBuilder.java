@@ -28,11 +28,9 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -77,13 +75,13 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         .collect(Collectors.toSet());
 
     private final Configuration configuration;
-    private final MapperBuilderAssistant assistant;
+    private final MybatisMapperBuilderAssistant assistant;
     private final Class<?> type;
 
     public MybatisMapperAnnotationBuilder(Configuration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace(StringPool.DOT, StringPool.SLASH) + ".java (best guess)";
-        this.assistant = new MapperBuilderAssistant(configuration, resource);
+        this.assistant = new MybatisMapperBuilderAssistant(configuration, resource);
         this.configuration = configuration;
         this.type = type;
     }
@@ -167,7 +165,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 }
             }
             if (inputStream != null) {
-                XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
+                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
                 xmlParser.parse();
             }
         }

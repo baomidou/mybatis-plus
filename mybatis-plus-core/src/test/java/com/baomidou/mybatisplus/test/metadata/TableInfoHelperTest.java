@@ -17,6 +17,12 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,6 +75,70 @@ class TableInfoHelperTest {
         private String sex;
 
         private String name;
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+    @TableField(exist = false)
+    @interface NotExistsField {
+
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+    @TableId
+    @interface MyId {
+
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+    @TableName(schema = "test")
+    @interface MyTable {
+
+    }
+
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+    @TableLogic(value = "false", delval = "true")
+    @interface MyTableLogic {
+
+    }
+
+
+    @Data
+    @MyTable
+    private static class CustomAnnotation {
+
+        @MyId
+        private Long id;
+
+        private String name;
+
+        @NotExistsField
+        private String test;
+
+        @MyTableLogic
+        private Boolean del;
+    }
+
+    @Test
+    void testCustomAnnotation() {
+        MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
+        List<Field> fieldList = TableInfoHelper.getAllFields(CustomAnnotation.class);
+        Assertions.assertThat(fieldList.size()).isEqualTo(3);
+        Assertions.assertThat(TableInfoHelper.isExistTableId(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
+        Assertions.assertThat(TableInfoHelper.isExistTableLogic(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
+        TableFieldInfo logicDeleteFieldInfo = TableInfoHelper.getTableInfo(CustomAnnotation.class).getLogicDeleteFieldInfo();
+        Assertions.assertThat(logicDeleteFieldInfo).isNotNull();
+        Assertions.assertThat(logicDeleteFieldInfo.getLogicDeleteValue()).isNotNull().isEqualTo("true");
+        Assertions.assertThat(logicDeleteFieldInfo.getLogicNotDeleteValue()).isNotNull().isEqualTo("false");
+        Assertions.assertThat(tableInfo.getTableName()).isEqualTo("test.custom_annotation");
     }
 
 

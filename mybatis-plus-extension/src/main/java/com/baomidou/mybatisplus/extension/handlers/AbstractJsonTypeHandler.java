@@ -15,10 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
+import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +34,40 @@ import java.sql.SQLException;
  * @author miemie
  * @since 2019-11-28
  */
-public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
+public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> implements IJsonTypeHandler<T> {
+
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    protected final Class<?> type;
+
+    /**
+     * @since 3.5.6
+     */
+    protected Type genericType;
+
+    /**
+     * 默认初始化
+     *
+     * @param type 类型
+     */
+    public AbstractJsonTypeHandler(Class<?> type) {
+        this.type = type;
+        if (log.isTraceEnabled()) {
+            log.trace(this.getClass().getSimpleName() + "(" + type + ")");
+        }
+        Assert.notNull(type, "Type argument cannot be null");
+    }
+
+    /**
+     * 通过字段初始化
+     *
+     * @param type  类型
+     * @param field 字段
+     */
+    public AbstractJsonTypeHandler(Class<?> type, Field field) {
+        this(type);
+        this.genericType = field.getGenericType();
+    }
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException {
@@ -53,7 +92,8 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> {
         return StringUtils.isBlank(json) ? null : parse(json);
     }
 
-    protected abstract T parse(String json);
+    public Type getFieldType() {
+        return this.genericType != null ? this.genericType : this.type;
+    }
 
-    protected abstract String toJson(T obj);
 }
