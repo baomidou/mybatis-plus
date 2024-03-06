@@ -1,2 +1,5 @@
-
-
+- fix: 修复Service多层代理引发的错误
+- fix: 修复Json类型处理器反序列化泛型丢失原始类型
+- fix: 去除sqlFirst与sqlComment转义(如有需要转义操作,请手动调用转义后传入)
+- feat: 支持组合注解
+- feat: 升级spring-cloud-commons
