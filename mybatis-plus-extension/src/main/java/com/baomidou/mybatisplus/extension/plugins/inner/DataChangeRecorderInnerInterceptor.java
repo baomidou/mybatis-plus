@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserGlobal;
 import lombok.Data;
 import net.sf.jsqlparser.expression.Expression;
@@ -93,7 +94,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @SuppressWarnings("unused")
     public static final String IGNORED_TABLE_COLUMN_PROPERTIES = "ignoredTableColumns";
 
     private final Map<String, Set<String>> ignoredTableColumns = new ConcurrentHashMap<>();
@@ -132,8 +132,9 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 logger.error("Unexpected error for mappedStatement={}, sql={}", ms.getId(), mpBs.sql(), e);
                 return;
             }
-            long costThis = System.currentTimeMillis() - startTs;
-            if (operationResult != null) {
+            // false 情况不输出
+            if (operationResult != null && operationResult.isRecordStatus()) {
+                long costThis = System.currentTimeMillis() - startTs;
                 operationResult.setCost(costThis);
                 dealOperationResult(operationResult);
             }
@@ -149,7 +150,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
      */
     protected boolean allowProcess(String sql) {
         String sqlTrim = sql.trim().toUpperCase();
-        return sqlTrim.startsWith("INSERT") || sqlTrim.startsWith("UPDATE") || sqlTrim.startsWith("DELETE");
+        return sqlTrim.startsWith(SqlCommandType.INSERT.name()) || sqlTrim.startsWith(SqlCommandType.UPDATE.name()) || sqlTrim.startsWith(SqlCommandType.DELETE.name());
     }
 
     /**
@@ -163,7 +164,14 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     public OperationResult processInsert(Insert insertStmt, BoundSql boundSql) {
         OperationResult result = new OperationResult();
-        result.setOperation("insert");
+        Table table = insertStmt.getTable();
+        final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
+        result.setOperation(SqlCommandType.INSERT.name());
+        if (ignoredColumns != null && ignoredColumns.stream().anyMatch(StringPool.ASTERISK::equals)) {
+            result.setTableName(table.getName() + StringPool.COLON + StringPool.ASTERISK);
+            result.setRecordStatus(false);
+            return result;
+        }
         result.setTableName(insertStmt.getTable().getName());
         result.setRecordStatus(true);
         result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), boundSql, insertStmt, null));
@@ -176,14 +184,12 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         PlainSelect selectBody = new PlainSelect();
         Table table = updateStmt.getTable();
         final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
-        if (ignoredColumns != null) {
-            if (ignoredColumns.stream().anyMatch("*"::equals)) {
-                OperationResult result = new OperationResult();
-                result.setOperation("update");
-                result.setTableName(table.getName() + ":*");
-                result.setRecordStatus(false);
-                return result;
-            }
+        if (ignoredColumns != null && ignoredColumns.stream().anyMatch(StringPool.ASTERISK::equals)) {
+            OperationResult result = new OperationResult();
+            result.setOperation(SqlCommandType.UPDATE.name());
+            result.setTableName(table.getName() + StringPool.COLON + StringPool.ASTERISK);
+            result.setRecordStatus(false);
+            return result;
         }
         selectBody.setFromItem(table);
         List<Column> updateColumns = new ArrayList<>();
@@ -207,7 +213,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         }
         OriginalDataObj originalData = buildOriginalObjectData(selectStmt, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
         OperationResult result = new OperationResult();
-        result.setOperation("update");
+        result.setOperation(SqlCommandType.UPDATE.name());
         result.setTableName(table.getName());
         result.setRecordStatus(true);
         result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), boundSql, updateStmt, originalData));
@@ -271,7 +277,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 continue;
             }
             String[] arr = propertyName.split("\\.");
-            String propertyNameTrim = arr[arr.length - 1].replace("_", "").toUpperCase();
+            String propertyNameTrim = arr[arr.length - 1].replace(StringPool.UNDERSCORE, StringPool.EMPTY).toUpperCase();
             if (relatedColumnsUpperCaseWithoutUnderline.containsKey(propertyNameTrim)) {
                 columnNameValMap.put(relatedColumnsUpperCaseWithoutUnderline.get(propertyNameTrim), metaObject.getValue(propertyName));
             }
@@ -324,7 +330,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             ResultSet resultSet = statement.executeQuery();
             final ResultSetMetaData metaData = resultSet.getMetaData();
             int columnCount = metaData.getColumnCount();
-            StringBuilder sb = new StringBuilder("[");
+            StringBuilder sb = new StringBuilder(StringPool.LEFT_SQ_BRACKET);
             int count = 0;
             while (resultSet.next()) {
                 ++count;
@@ -332,7 +338,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                     logger.error("batch delete limit exceed: count={}, BATCH_UPDATE_LIMIT={}", count, BATCH_UPDATE_LIMIT);
                     throw DataUpdateLimitationException.DEFAULT;
                 }
-                sb.append("{");
+                sb.append(StringPool.LEFT_BRACE);
                 for (int i = 1; i <= columnCount; ++i) {
                     sb.append("\"").append(metaData.getColumnName(i)).append("\":\"");
                     Object res = resultSet.getObject(i);
@@ -343,9 +349,9 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                     }
                     sb.append("\",");
                 }
-                sb.replace(sb.length() - 1, sb.length(), "}");
+                sb.replace(sb.length() - 1, sb.length(), StringPool.RIGHT_BRACE);
             }
-            sb.append("]");
+            sb.append(StringPool.RIGHT_SQ_BRACKET);
             resultSet.close();
             return sb.toString();
         } catch (Exception e) {
@@ -389,9 +395,9 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
      * 防止出现全表批量更新
      * 默认一次更新不超过1000条
      *
-     * @param selectStmt
-     * @param count
-     * @return
+     * @param selectStmt 查询stmt
+     * @param count      批量上限，默认1000
+     * @return 成功/失败
      */
     private boolean checkTableBatchLimitExceeded(Select selectStmt, int count) {
         if (!batchUpdateLimitationOpened) {
@@ -516,7 +522,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         selectStmt.setSelectBody(selectBody);
         String originalData = buildOriginalData(selectStmt, mappedStatement, boundSql, connection);
         OperationResult result = new OperationResult();
-        result.setOperation("delete");
+        result.setOperation(SqlCommandType.DELETE.name());
         result.setTableName(table.getName());
         result.setRecordStatus(originalData.startsWith("["));
         result.setChangedData(originalData);
@@ -555,8 +561,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
      */
     @Override
     public void setProperties(Properties properties) {
-
-        String ignoredTableColumns = properties.getProperty("ignoredTableColumns");
+        String ignoredTableColumns = properties.getProperty(IGNORED_TABLE_COLUMN_PROPERTIES);
         if (ignoredTableColumns == null || ignoredTableColumns.trim().isEmpty()) {
             return;
         }
@@ -614,11 +619,11 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         @Override
         public String toString() {
             return "{" +
-                    "\"tableName\":\"" + tableName + "\"," +
-                    "\"operation\":\"" + operation + "\"," +
-                    "\"recordStatus\":\"" + recordStatus + "\"," +
-                    "\"changedData\":" + changedData + "," +
-                    "\"cost(ms)\":" + cost + "}";
+                "\"tableName\":\"" + tableName + "\"," +
+                "\"operation\":\"" + operation + "\"," +
+                "\"recordStatus\":\"" + recordStatus + "\"," +
+                "\"changedData\":" + changedData + "," +
+                "\"cost(ms)\":" + cost + "}";
         }
     }
 
@@ -723,9 +728,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         }
 
         public String generateDataStr() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("\"").append(columnName).append("\"").append(":").append("\"").append(convertDoubleQuotes(originalValue)).append("->").append(convertDoubleQuotes(updateValue)).append("\"").append(",");
-            return sb.toString();
+            return "\"" + columnName + "\"" + ":" + "\"" + convertDoubleQuotes(originalValue) + "->" + convertDoubleQuotes(updateValue) + "\"" + ",";
         }
 
         public String convertDoubleQuotes(Object obj) {
