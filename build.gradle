@@ -12,7 +12,7 @@ ext {
 
     libraries = [
         mybatisVersion = '3.5.15',
-        mybatisSpringVersion = '2.1.2',
+        mybatisSpringVersion = '3.0.3',
         mybatisSpringBootStarterVersion = '2.3.1',
         springVersion = '5.3.27',
         springBootVersion = '2.7.15',
