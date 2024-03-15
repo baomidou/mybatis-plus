@@ -5,7 +5,7 @@ dependencies {
     implementation "${lib.beetl}"
     implementation "${lib.enjoy}"
 
-    compileOnly "org.jetbrains:annotations:22.0.0"
+    compileOnly "org.jetbrains:annotations:24.1.0"
     testImplementation "${lib.sqlserver}"
     testImplementation "${lib.postgresql}"
     testImplementation lib.oracle as ConfigurableFileTree
@@ -16,5 +16,5 @@ dependencies {
     testImplementation "${lib.firebird}"
     testImplementation "${lib.'swagger-annotations'}"
     testImplementation "${lib.'logback-classic'}"
-    testCompileOnly "org.jetbrains:annotations:22.0.0"
+    testCompileOnly "org.jetbrains:annotations:24.1.0"
 }
