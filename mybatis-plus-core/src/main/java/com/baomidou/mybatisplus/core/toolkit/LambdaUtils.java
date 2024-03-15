@@ -17,12 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
-import com.baomidou.mybatisplus.core.toolkit.support.IdeaProxyLambdaMeta;
-import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
-import com.baomidou.mybatisplus.core.toolkit.support.ReflectLambdaMeta;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.ShadowLambdaMeta;
+import com.baomidou.mybatisplus.core.toolkit.support.*;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
@@ -70,6 +65,7 @@ public final class LambdaUtils {
 
     /**
      * 格式化 key 将传入的 key 变更为大写格式
+     * 为了支持首字母是大写的字段
      *
      * <pre>
      *     Assert.assertEquals("USERID", formatKey("userId"))
