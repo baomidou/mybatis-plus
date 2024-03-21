@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.conditions.update;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
 
@@ -28,7 +27,6 @@ import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings({"serial"})
 public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
     implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
@@ -58,9 +56,14 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
         return typedThis;
     }
 
-    @Override
-    public String getSqlSet() {
-        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
+    public LambdaUpdateChainWrapper<T> setSelfIncr(boolean condition, SFunction<T, ?> column, Object val) {
+        wrapperChildren.setSelfIncr(condition, column, val);
+        return typedThis;
+    }
+
+    public LambdaUpdateChainWrapper<T> setSelfDecr(boolean condition, SFunction<T, ?> column, Object val) {
+        wrapperChildren.setSelfDecr(condition, column, val);
+        return typedThis;
     }
 
     @Override

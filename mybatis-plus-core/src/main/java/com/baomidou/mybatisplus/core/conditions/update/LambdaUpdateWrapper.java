@@ -90,6 +90,34 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         return typedThis;
     }
 
+    /**
+     * 字段自增变量 val 值
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       变量值 1 字段自增 + 1
+     */
+    public LambdaUpdateWrapper<T> setSelfIncr(boolean condition, SFunction<T, ?> column, Object val) {
+        return maybeDo(condition, () -> {
+            String realColumn = columnToString(column);
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.PLUS + val);
+        });
+    }
+
+    /**
+     * 字段自减变量 val 值
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       变量值 1 字段自减 - 1
+     */
+    public LambdaUpdateWrapper<T> setSelfDecr(boolean condition, SFunction<T, ?> column, Object val) {
+        return maybeDo(condition, () -> {
+            String realColumn = columnToString(column);
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.DASH + val);
+        });
+    }
+
     @Override
     public String getSqlSet() {
         if (CollectionUtils.isEmpty(sqlSet)) {
