@@ -3,3 +3,4 @@
 - fix: 去除sqlFirst与sqlComment转义(如有需要转义操作,请手动调用转义后传入)
 - feat: 支持组合注解
 - feat: 升级spring-cloud-commons
+- feat: 新增 LambdaUpdateWrapper 字段自增 setSelfIncr 自减 setSelfDecr 方法
