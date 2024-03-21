@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+
+import java.util.List;
+
 /**
  * 简单分页模型 DTO 用于解决跨服务数据传输问题，不影响 Page 作为返回对象序列化 JSON 产生不必要的数据
  *
@@ -22,6 +26,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
  * @since 2021-05-20
  */
 public class PageDTO<T> extends Page<T> {
+
     private static final long serialVersionUID = 1L;
 
     public PageDTO() {
@@ -59,4 +64,25 @@ public class PageDTO<T> extends Page<T> {
     public static <T> Page<T> of(long current, long size, long total, boolean searchCount) {
         return new PageDTO<>(current, size, total, searchCount);
     }
+
+    public String getCountId() {
+        return this.countId;
+    }
+
+    public Long getMaxLimit() {
+        return this.maxLimit;
+    }
+
+    public List<OrderItem> getOrders() {
+        return this.orders;
+    }
+
+    public boolean isOptimizeCountSql() {
+        return this.optimizeCountSql;
+    }
+
+    public boolean isSearchCount() {
+        return this.searchCount;
+    }
+
 }

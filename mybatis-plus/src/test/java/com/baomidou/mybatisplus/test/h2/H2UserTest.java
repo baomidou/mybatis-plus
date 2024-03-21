@@ -72,13 +72,6 @@ import net.sf.jsqlparser.statement.select.Select;
 
 /**
  * Mybatis Plus H2 Junit Test
- * JDK 8 run test:
- * <p>"Error: Could not create the Java Virtual Machine."</p>
- * <p>Go to build.gradle: remove below configuration:</p>
- * <p>
- * //  jvmArgs += ["--add-opens", "java.base/java.lang=ALL-UNNAMED",
- * //                    "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED"]
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1
@@ -309,7 +302,6 @@ class H2UserTest extends BaseTest {
             userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
             Assertions.fail("SHOULD NOT REACH HERE");
         } catch (Exception e) {
-            e.printStackTrace();
             Assertions.assertTrue(checkIsDataUpdateLimitationException(e));
         }
     }
@@ -360,10 +352,10 @@ class H2UserTest extends BaseTest {
     @Test
     @Order(21)
     void testSaveBatch() {
-        Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch0"))));
-        Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"), new H2User("saveBatch4"))));
+        Assertions.assertTrue(userService.saveBatch(List.of(new H2User("saveBatch0"))));
+        Assertions.assertTrue(userService.saveBatch(List.of(new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"), new H2User("saveBatch4"))));
         Assertions.assertEquals(5, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
-        Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"), new H2User("saveBatch8")), 2));
+        Assertions.assertTrue(userService.saveBatch(List.of(new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"), new H2User("saveBatch8")), 2));
         Assertions.assertEquals(9, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
     }
 
@@ -451,7 +443,7 @@ class H2UserTest extends BaseTest {
                 new H2User(1L, "andy")
             ));
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof DataAccessException);
+            Assertions.assertInstanceOf(DataAccessException.class, e);
         }
     }
 
@@ -501,7 +493,7 @@ class H2UserTest extends BaseTest {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testCustomSqlSegment(new QueryWrapper<H2User>().like("name", "y%"));
-        Assertions.assertTrue(2 == h2Users.size());
+        Assertions.assertEquals(3, h2Users.size());
     }
 
     @Test
@@ -544,7 +536,7 @@ class H2UserTest extends BaseTest {
      * @return 返回模拟的一群人
      */
     private List<H2User> mockUser(int size, long cardinal) {
-        return new AbstractList<H2User>() {
+        return new AbstractList<>() {
 
             @Override
             public H2User get(int index) {
@@ -641,7 +633,7 @@ class H2UserTest extends BaseTest {
     @Test
     void testPageOrderBy() {
         // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
-        Page page = Page.of(1, 10);
+        Page<H2User> page = Page.of(1, 10);
         Assertions.assertTrue(userService.page(page, Wrappers.<H2User>query().select("test_id,name")
             .orderByDesc("test_id")).getPages() > 0);
         Assertions.assertTrue(userService.page(page, Wrappers.<H2User>lambdaQuery()
@@ -650,7 +642,7 @@ class H2UserTest extends BaseTest {
 
     @Test
     void testPageNegativeSize() {
-        Page page = Page.of(1, -1);
+        Page<H2User> page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
         Assertions.assertEquals(page.getTotal(), 0);
         Assertions.assertEquals(userService.lambdaQuery().list(Page.of(1, -1, false)).size(), page.getRecords().size());
@@ -682,10 +674,10 @@ class H2UserTest extends BaseTest {
         condition.setName("Tomcat");
         H2User user = userService.lambdaQuery(condition).one();
         Assertions.assertNotNull(user);
-        Assertions.assertTrue("Tomcat".equals(user.getName()));
+        Assertions.assertEquals("Tomcat", user.getName());
         H2User h2User = userService.lambdaQuery().setEntity(condition).one();
         Assertions.assertNotNull(h2User);
-        Assertions.assertTrue("Tomcat".equals(h2User.getName()));
+        Assertions.assertEquals("Tomcat", h2User.getName());
     }
 
     @Test
@@ -870,7 +862,7 @@ class H2UserTest extends BaseTest {
             .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType);
 
         // 重写方法保留支持.
-        new LambdaQueryChainWrapper<H2User>(H2User.class) {
+        new LambdaQueryChainWrapper<>(H2User.class) {
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderByDesc(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理OrderByDesc----------");
