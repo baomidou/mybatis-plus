@@ -57,7 +57,7 @@ import java.util.function.Function;
  * @since 2018-06-23
  */
 @SuppressWarnings("unchecked")
-public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     private final ConversionService conversionService = DefaultConversionService.getSharedInstance();
 
