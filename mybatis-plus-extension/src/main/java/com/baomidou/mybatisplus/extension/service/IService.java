@@ -238,6 +238,7 @@ public interface IService<T> {
 
     /**
      * 根据 UpdateWrapper 条件，更新记录 需要设置sqlset
+     * <p>此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}</p>
      *
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
@@ -248,7 +249,7 @@ public interface IService<T> {
     /**
      * 根据 whereEntity 条件，更新记录
      *
-     * @param entity        实体对象
+     * @param entity        实体对象(当entity为空时无法进行自动填充)
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     default boolean update(T entity, Wrapper<T> updateWrapper) {

@@ -47,6 +47,7 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
         super(configuration, resource);
     }
 
+    @Override
     public ResultMapping buildResultMapping(Class<?> resultType, String property, String column, Class<?> javaType,
                                             JdbcType jdbcType, String nestedSelect, String nestedResultMap, String notNullColumn, String columnPrefix,
                                             Class<? extends TypeHandler<?>> typeHandler, List<ResultFlag> flags, String resultSet, String foreignColumn,

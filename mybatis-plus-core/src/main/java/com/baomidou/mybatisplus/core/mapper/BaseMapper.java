@@ -143,13 +143,14 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 whereEntity 条件，更新记录
      *
-     * @param entity        实体对象 (set 条件值,可以为 null)
+     * @param entity        实体对象 (set 条件值,可以为 null,当entity为null时,无法进行自动填充)
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
 
     /**
      * 根据 Wrapper 更新记录
+     * <p>此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}</p>
      *
      * @param updateWrapper {@link UpdateWrapper} or {@link LambdaUpdateWrapper}
      * @since 3.5.4
