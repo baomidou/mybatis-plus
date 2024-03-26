@@ -123,8 +123,10 @@ public class AutoGenerator {
      *
      * @param templateConfig 模板配置
      * @return this
+     * @see #strategy
      * @since 3.5.0
      */
+    @Deprecated
     public AutoGenerator template(@NotNull TemplateConfig templateConfig) {
         this.template = templateConfig;
         return this;

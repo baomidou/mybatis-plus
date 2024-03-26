@@ -82,6 +82,21 @@ public class Controller implements ITemplate {
     @Getter
     private boolean fileOverride;
 
+    /**
+     * 是否生成
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private boolean generate = true;
+
+    /**
+     * 模板路径
+     * @since 3.5.6
+     */
+    @Getter
+    private String templatePath = ConstVal.TEMPLATE_CONTROLLER;
+
     @Nullable
     public String getSuperClass() {
         return superClass;
@@ -197,6 +212,29 @@ public class Controller implements ITemplate {
          */
         public Builder enableFileOverride() {
             this.controller.fileOverride = true;
+            return this;
+        }
+
+        /**
+         * 禁用生成
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disable() {
+            this.controller.generate = false;
+            return this;
+        }
+
+        /**
+         * 指定模板路径
+         *
+         * @param template 模板路径
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder template(String template) {
+            this.controller.templatePath = template;
             return this;
         }
 

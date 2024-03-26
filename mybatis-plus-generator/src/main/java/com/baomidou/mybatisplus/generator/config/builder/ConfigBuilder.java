@@ -36,6 +36,7 @@ public class ConfigBuilder {
     /**
      * 模板路径配置信息
      */
+    @Deprecated
     private final TemplateConfig templateConfig;
 
     /**
@@ -142,6 +143,7 @@ public class ConfigBuilder {
     }
 
     @NotNull
+    @Deprecated
     public TemplateConfig getTemplateConfig() {
         return templateConfig;
     }

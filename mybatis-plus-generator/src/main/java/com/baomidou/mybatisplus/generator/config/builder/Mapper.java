@@ -114,6 +114,38 @@ public class Mapper implements ITemplate {
      */
     private Class<? extends Cache> cache;
 
+    /**
+     * 是否生成XML
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private boolean generateMapperXml = true;
+
+    /**
+     * 是否生成Mapper
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private boolean generateMapper = true;
+
+    /**
+     * Mapper模板路径
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private String mapperTemplatePath = ConstVal.TEMPLATE_MAPPER;
+
+    /**
+     * MapperXml模板路径
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private String mapperXmlTemplatePath = ConstVal.TEMPLATE_XML;
+
     @NotNull
     public String getSuperClass() {
         return superClass;
@@ -145,6 +177,8 @@ public class Mapper implements ITemplate {
             data.put("cacheClassName", cacheClass.getName());
         }
         data.put("superMapperClass", ClassUtils.getSimpleName(this.superClass));
+        data.put("generateMapperXml", this.generateMapperXml);
+        data.put("generateMapper", this.generateMapper);
         return data;
     }
 
@@ -303,6 +337,28 @@ public class Mapper implements ITemplate {
          */
         public Builder enableFileOverride() {
             this.mapper.fileOverride = true;
+            return this;
+        }
+
+        /**
+         * Service模板路径
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder mapperTemplate(String template) {
+            this.mapper.mapperTemplatePath = template;
+            return this;
+        }
+
+        /**
+         * ServiceImpl模板路径
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder mapperXmlTemplate(String template) {
+            this.mapper.mapperXmlTemplatePath = template;
             return this;
         }
 

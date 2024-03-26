@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.IFill;
 import com.baomidou.mybatisplus.generator.ITemplate;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.INameConvert;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
@@ -57,6 +58,20 @@ public class Entity implements ITemplate {
     private final AnnotationHandler annotationHandler = new AnnotationHandler(){};
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Entity.class);
+
+    /**
+     * Java模板默认路径
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private String javaTemplate = ConstVal.TEMPLATE_ENTITY_JAVA;
+
+    /**
+     * Kotlin模板默认撸
+     */
+    @Getter
+    private String kotlinTemplate = ConstVal.TEMPLATE_ENTITY_KT;
 
     private Entity() {
     }
@@ -198,6 +213,15 @@ public class Entity implements ITemplate {
      */
     @Getter
     private boolean fileOverride;
+
+
+    /**
+     * 是否生成
+     *
+     * @since 3.5.6
+     */
+    @Getter
+    private boolean generate;
 
     /**
      * <p>
@@ -616,6 +640,31 @@ public class Entity implements ITemplate {
             this.entity.fileOverride = true;
             return this;
         }
+
+        /**
+         * 指定模板路径
+         *
+         * @param template 模板路径
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder javaTemplate(String template) {
+            this.entity.javaTemplate = template;
+            return this;
+        }
+
+        /**
+         * 指定模板路径
+         *
+         * @param template 模板路径
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder kotlinTemplatePath(String template) {
+            this.entity.kotlinTemplate = template;
+            return this;
+        }
+
 
         public Entity get() {
             String superClass = this.entity.superClass;

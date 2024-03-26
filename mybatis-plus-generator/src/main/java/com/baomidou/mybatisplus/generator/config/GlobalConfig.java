@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.generator.config.builder.Service;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import lombok.Getter;
 import lombok.Setter;
@@ -90,9 +91,11 @@ public class GlobalConfig {
      * 是否生成service 接口（默认 true）
      * 增加此开关的原因：在某些项目实践中，只需要生成service实现类，不需要抽象sevice接口
      * 针对某些项目，生成service接口，开发时反而麻烦，这种情况，可以将该属性设置为false
+     * @deprecated 3.5.6 {@link Service.Builder#disableService()}
      */
     @Getter
     @Setter
+    @Deprecated
     private boolean serviceInterface = true;
 
     public boolean isSwagger() {

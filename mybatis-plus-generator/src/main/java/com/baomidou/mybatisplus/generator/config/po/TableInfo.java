@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
+import com.baomidou.mybatisplus.generator.config.builder.Service;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -328,7 +329,9 @@ public class TableInfo {
 
     /**
      * 获取是否生成service接口
+     * @deprecated {@link Service.Builder#disableService()}
      */
+    @Deprecated
     public boolean isServiceInterface() {
         return globalConfig.isServiceInterface();
     }
