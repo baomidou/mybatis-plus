@@ -270,6 +270,23 @@ class MybatisParameterHandlerTest {
             assertThat(m.getInsertOperator()).isNotNull();
             assertThat(m.getUpdateOperator()).isNotNull();
         });
+
+        byte[] bytes1 = new byte[]{};
+        model = new Model();
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        new MybatisParameterHandler(mappedStatement, Map.of("test", bytes1, Constants.ENTITY, model), boundSql);
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getInsertOperator()).isNotNull();
+        assertThat(model.getUpdateOperator()).isNull();
+
+        Byte[] bytes2 = new Byte[]{};
+        model = new Model();
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        new MybatisParameterHandler(mappedStatement, Map.of("test", bytes2, Constants.ENTITY, model), boundSql);
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getInsertOperator()).isNotNull();
+        assertThat(model.getUpdateOperator()).isNull();
+
     }
 
 }
