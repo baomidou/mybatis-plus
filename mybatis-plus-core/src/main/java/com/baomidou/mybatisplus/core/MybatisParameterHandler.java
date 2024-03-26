@@ -257,7 +257,7 @@ public class MybatisParameterHandler implements ParameterHandler {
         if (value == null) {
             return Collections.emptyList();
         }
-        if (ArrayUtils.isArray(value)) {
+        if (ArrayUtils.isArray(value) && !value.getClass().getComponentType().isPrimitive()) {
             return Arrays.asList((Object[]) value);
         } else if (Collection.class.isAssignableFrom(value.getClass())) {
             return (Collection<Object>) value;
