@@ -1,6 +1,12 @@
 - fix: 修复Service多层代理引发的错误
 - fix: 修复Json类型处理器反序列化泛型丢失原始类型
 - fix: 去除sqlFirst与sqlComment转义(如有需要转义操作,请手动调用转义后传入)
+- fix: 修复填充器处理器基本类型数组出现强制错误
+- fix: 修复上版本移除掉Page方法保留至PageDto类之中
+- feat: ServiceImpl修改为抽象类,防止错误直接实例化
+- feat: 重构生成器TemplateConfig配置,模板禁用与路径配置更改至对应具体实现之上
 - feat: 支持组合注解
 - feat: 升级spring-cloud-commons
 - feat: 新增 LambdaUpdateWrapper 字段自增 setSelfIncr 自减 setSelfDecr 方法
+- feat: 增加CI
+- doc: 增加update(Wrapper)相关api无法自动填充注释
