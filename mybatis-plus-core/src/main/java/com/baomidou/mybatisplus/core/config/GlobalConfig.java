@@ -210,6 +210,14 @@ public class GlobalConfig implements Serializable {
         private FieldStrategy whereStrategy = FieldStrategy.NOT_NULL;
 
         /**
+         * 生成INSERT语句时忽略自增主键字段(默认不忽略,主键有值时写入主键值,无值自增).
+         * <p>当设置为true时,执行生成SQL语句无论ID是否有值都会忽视 (此为3.4.3.1版本下策略,如果升级遇到问题可以考虑开启此配置来兼容升级)</p>
+         *
+         * @since 3.5.6
+         */
+        private boolean insertIgnoreAutoIncrementColumn = false;
+
+        /**
          * 重写whereStrategy的get方法，适配低版本：
          * - 如果用户自定义了selectStrategy则用用户自定义的，
          * - 后续版本移除selectStrategy后，直接删除该方法即可。
