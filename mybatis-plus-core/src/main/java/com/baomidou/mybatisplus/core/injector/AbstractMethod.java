@@ -119,7 +119,7 @@ public abstract class AbstractMethod implements Constants {
      */
     protected String sqlSet(boolean logic, boolean ew, TableInfo table, boolean judgeAliasNull, final String alias,
                             final String prefix) {
-        String sqlScript = table.getAllSqlSet(logic, prefix);
+        String sqlScript = getTableAllSqlSet(table, logic, prefix);
         if (judgeAliasNull) {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
         }
@@ -129,6 +129,17 @@ public abstract class AbstractMethod implements Constants {
         }
         sqlScript = SqlScriptUtils.convertSet(sqlScript);
         return sqlScript;
+    }
+
+    /**
+     * table所有的 sql set 片段
+     * @param table table 信息
+     * @param logic 是否逻辑删除注入器
+     * @param prefix 前缀
+     * @return table所有的 sql set 片段
+     */
+    protected String getTableAllSqlSet(TableInfo table,final boolean logic,final String prefix){
+        return table.getAllSqlSet(logic, prefix, false);
     }
 
     /**

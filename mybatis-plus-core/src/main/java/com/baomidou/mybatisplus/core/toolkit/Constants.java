@@ -179,4 +179,24 @@ public interface Constants extends StringPool, Serializable {
      */
     String WRAPPER_PARAM = "MPGENVAL";
     String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
+
+    /**
+     * 动态 字段策略参数名
+     */
+    String STRATEGY = "st";
+
+    /**
+     *  字段策略忽略判断 bind name
+     */
+    String ALWAYS_STRATEGY_BINDER = "always";
+
+    /**
+     *  字段策略非空判断 bind name
+     */
+    String NOT_NULL_STRATEGY_BINDER = "notNull";
+
+    /**
+     *  字段策略非空白判断 bind name
+     */
+    String NOT_EMPTY_STRATEGY_BINDER = "notEmpty";
 }

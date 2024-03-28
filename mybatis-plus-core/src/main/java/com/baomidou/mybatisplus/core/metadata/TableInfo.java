@@ -416,7 +416,18 @@ public class TableInfo implements Constants {
      * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
+    public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix){
+        return getAllSqlSet(ignoreLogicDelFiled,prefix,false);
+    }
+    /**
+     * 获取所有的 sql set 片段
+     *
+     * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
+     * @param prefix              前缀
+     * @param dynamicStrategy     是否是动态字段策略
+     * @return sql 脚本片段
+     */
+    public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix,boolean dynamicStrategy) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         return fieldList.stream()
             .filter(i -> {
@@ -424,7 +435,7 @@ public class TableInfo implements Constants {
                     return !(isWithLogicDelete() && i.isLogicDelete());
                 }
                 return true;
-            }).map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+            }).map(i -> i.getSqlSet(newPrefix,dynamicStrategy)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**

@@ -50,6 +50,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             builder.add(new DeleteById())
                 .add(new DeleteBatchByIds())
                 .add(new UpdateById())
+                .add(new StrategyUpdateById())
                 .add(new SelectById())
                 .add(new SelectBatchByIds());
         } else {
