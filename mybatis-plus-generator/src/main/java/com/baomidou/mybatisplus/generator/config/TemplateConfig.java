@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author tzg hubin
  * @since 2017-06-17
+ * @deprecated 3.5.6 {@link StrategyConfig}
  */
 @Deprecated
 public class TemplateConfig {
@@ -175,6 +176,7 @@ public class TemplateConfig {
      * 模板路径配置构建者
      *
      * @author nieqiurong 3.5.0
+     * @deprecated 3.5.6 {@link StrategyConfig}
      */
     @Deprecated
     public static class Builder implements IConfigBuilder<TemplateConfig> {

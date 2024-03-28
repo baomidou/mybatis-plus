@@ -60,7 +60,9 @@ public final class FastAutoGenerator {
 
     /**
      * 模板配置 Builder
+     * @deprecated 3.5.6 {@link #strategyConfigBuilder}
      */
+    @Deprecated
     private final TemplateConfig.Builder templateConfigBuilder;
 
     /**
@@ -191,12 +193,20 @@ public final class FastAutoGenerator {
      *
      * @param consumer 自定义模板配置
      * @return FastAutoGenerator
+     * @deprecated 3.5.6 {@link #strategyConfig(Consumer)}
      */
+    @Deprecated
     public FastAutoGenerator templateConfig(Consumer<TemplateConfig.Builder> consumer) {
         consumer.accept(this.templateConfigBuilder);
         return this;
     }
 
+    /**
+     * @param biConsumer
+     * @return FastAutoGenerator
+     * @deprecated 3.5.6 {@link #strategyConfig(BiConsumer)}
+     */
+    @Deprecated
     public FastAutoGenerator templateConfig(BiConsumer<Function<String, String>, TemplateConfig.Builder> biConsumer) {
         biConsumer.accept(this::scannerNext, this.templateConfigBuilder);
         return this;

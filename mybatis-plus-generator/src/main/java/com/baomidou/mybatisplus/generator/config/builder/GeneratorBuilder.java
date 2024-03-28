@@ -83,7 +83,9 @@ public class GeneratorBuilder {
      * 模板路径配置项
      *
      * @return TemplateConfig
+     * @deprecated 3.5.6 {@link #strategyConfig()}
      */
+    @Deprecated
     public static TemplateConfig templateConfig() {
         return new TemplateConfig.Builder().build();
     }
@@ -92,7 +94,9 @@ public class GeneratorBuilder {
      * 模板路径配置项 Builder
      *
      * @return TemplateConfig.Builder
+     * @deprecated 3.5.6 {@link #strategyConfigBuilder()}
      */
+    @Deprecated
     public static TemplateConfig.Builder templateConfigBuilder() {
         return new TemplateConfig.Builder();
     }

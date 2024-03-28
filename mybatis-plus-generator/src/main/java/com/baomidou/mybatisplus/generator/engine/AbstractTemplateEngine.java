@@ -206,6 +206,7 @@ public abstract class AbstractTemplateEngine {
      * @param function function
      * @return 模板路径
      * @since 3.5.0
+     * @deprecated 3.5.6
      */
     @NotNull
     @Deprecated

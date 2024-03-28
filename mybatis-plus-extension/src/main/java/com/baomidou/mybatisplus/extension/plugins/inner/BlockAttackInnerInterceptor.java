@@ -54,7 +54,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         MappedStatement ms = handler.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            if (InterceptorIgnoreHelper.willIgnoreBlockAttack(ms.getId())) return;
+            if (InterceptorIgnoreHelper.willIgnoreBlockAttack(ms.getId())) {
+                return;
+            }
             BoundSql boundSql = handler.boundSql();
             parserMulti(boundSql.getSql(), null);
         }

@@ -61,12 +61,6 @@ public class CustomFile {
     private boolean fileOverride;
 
     /**
-     * 是否生成
-     */
-    @Getter
-    private boolean generate;
-
-    /**
      * 构建者
      */
     public static class Builder implements IConfigBuilder<CustomFile> {

@@ -92,7 +92,9 @@ public class TypeConverts {
     static BranchBuilder<String, IColumnType> containsAny(CharSequence... values) {
         return BranchBuilder.of(s -> {
             for (CharSequence value : values) {
-                if (s.contains(value)) return true;
+                if (s.contains(value)) {
+                    return true;
+                }
             }
             return false;
         });
