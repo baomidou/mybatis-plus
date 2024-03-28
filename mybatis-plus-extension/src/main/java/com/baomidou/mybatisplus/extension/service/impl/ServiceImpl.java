@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.ISqlMethod;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -160,7 +161,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
      * @deprecated 3.4.0
      */
     @Deprecated
-    protected String sqlStatement(SqlMethod sqlMethod) {
+    protected String sqlStatement(ISqlMethod sqlMethod) {
         return SqlHelper.table(entityClass).getSqlStatement(sqlMethod.getMethod());
     }
 
@@ -185,7 +186,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
      * @return 命名id
      * @since 3.4.0
      */
-    protected String getSqlStatement(SqlMethod sqlMethod) {
+    protected String getSqlStatement(ISqlMethod sqlMethod) {
         return SqlHelper.getSqlStatement(mapperClass, sqlMethod);
     }
 

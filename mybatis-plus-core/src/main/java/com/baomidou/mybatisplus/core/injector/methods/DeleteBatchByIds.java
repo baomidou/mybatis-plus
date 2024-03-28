@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
+import com.baomidou.mybatisplus.core.enums.ISqlMethod;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -67,7 +68,7 @@ public class DeleteBatchByIds extends AbstractMethod {
      * @return 逻辑删除脚本
      * @since 3.5.0
      */
-    public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
+    public String logicDeleteScript(TableInfo tableInfo, ISqlMethod sqlMethod) {
         return String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
                 SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
