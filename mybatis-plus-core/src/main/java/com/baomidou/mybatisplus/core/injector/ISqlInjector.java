@@ -32,4 +32,5 @@ public interface ISqlInjector {
      * @param mapperClass      mapper 接口的 class 对象
      */
     void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+
 }

@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
- * </p>
+ * SqlRunner执行接口
  *
  * @author yuxiaobin
  * @since 2018/2/7

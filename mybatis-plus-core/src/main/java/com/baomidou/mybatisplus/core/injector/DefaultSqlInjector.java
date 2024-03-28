@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.methods.*;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -35,8 +36,8 @@ import static java.util.stream.Collectors.toList;
 public class DefaultSqlInjector extends AbstractSqlInjector {
 
     @Override
-    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-        GlobalConfig.DbConfig dbConfig = GlobalConfigUtils.getDbConfig(tableInfo.getConfiguration());
+    public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+        GlobalConfig.DbConfig dbConfig = GlobalConfigUtils.getDbConfig(configuration);
         Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
             .add(new Insert(dbConfig.isInsertIgnoreAutoIncrementColumn()))
             .add(new Delete())

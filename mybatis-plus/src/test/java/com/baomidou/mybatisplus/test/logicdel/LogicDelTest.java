@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -127,8 +128,8 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
         });
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+            public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new LogicDeleteBatchByIds("testDeleteBatch"));
                 return methodList;
             }

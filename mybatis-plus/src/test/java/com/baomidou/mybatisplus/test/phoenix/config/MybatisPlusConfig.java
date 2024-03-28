@@ -82,8 +82,8 @@ public class MybatisPlusConfig {
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new Upsert());
                 return methodList;
             }

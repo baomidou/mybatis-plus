@@ -80,8 +80,8 @@ public class MybatisPlusConfigLogicDelete {
              * 测试注入自定义方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(mapperClass, tableInfo);
+            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+                List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE

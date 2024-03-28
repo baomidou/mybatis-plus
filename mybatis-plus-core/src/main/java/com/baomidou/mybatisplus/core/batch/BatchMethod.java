@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.core.batch;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
+ * 批量执行方法
+ *
  * @author nieqiurong
  * @since 3.5.4
  */

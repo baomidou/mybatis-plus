@@ -24,7 +24,9 @@ import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -47,11 +49,15 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             if (!mapperRegistryCache.contains(className)) {
                 TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                 List<AbstractMethod> methodList = this.getMethodList(mapperClass, tableInfo);
+                // 兼容旧代码
+                if (CollectionUtils.isEmpty(methodList)) {
+                    methodList = this.getMethodList(builderAssistant.getConfiguration(), mapperClass, tableInfo);
+                }
                 if (CollectionUtils.isNotEmpty(methodList)) {
                     // 循环注入自定义方法
                     methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
                 } else {
-                    logger.debug(mapperClass.toString() + ", No effective injection method was found.");
+                    logger.debug(className + ", No effective injection method was found.");
                 }
                 mapperRegistryCache.add(className);
             }
@@ -64,9 +70,27 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param mapperClass 当前mapper
+     * @param tableInfo   表信息
      * @return 注入的方法集合
      * @since 3.1.2 add  mapperClass
+     * @deprecated 3.5.6 {@link #getMethodList(Configuration, Class, TableInfo)}
      */
-    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass,TableInfo tableInfo);
+    @Deprecated
+    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
+        return getMethodList(tableInfo.getConfiguration(), mapperClass, tableInfo);
+    }
+
+    /**
+     * 获取注入的方法
+     *
+     * @param configuration 配置对象
+     * @param mapperClass   当前mapper
+     * @param tableInfo     表信息
+     * @return 注入方法集合
+     * @since 3.5.6
+     */
+    public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+        return new ArrayList<>();
+    }
 
 }
