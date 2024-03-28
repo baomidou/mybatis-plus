@@ -9,4 +9,6 @@
 - feat: 升级spring-cloud-commons
 - feat: 新增 LambdaUpdateWrapper 字段自增 setSelfIncr 自减 setSelfDecr 方法
 - feat: 增加CI
+- feat: 获取注入方法时传递org.apache.ibatis.session.Configuration
+- feat: 新增自增主键兼容配置开关(mybatis-plus.global-config.db-config.insert-ignore-auto-increment-column 默认false,开启INSERT语句无视主键字段生成).
 - doc: 增加update(Wrapper)相关api无法自动填充注释
