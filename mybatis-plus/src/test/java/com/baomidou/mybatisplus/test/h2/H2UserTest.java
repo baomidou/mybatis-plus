@@ -227,7 +227,7 @@ class H2UserTest extends BaseTest {
         System.out.println("===============================================");
         userService.lambdaUpdate().set(H2User::getAge, AgeEnum.THREE).eq(H2User::getTestId, id).update();
         UpdateWrapper<H2User> wp = new UpdateWrapper<>();
-        wp.set("age", AgeEnum.TWO).eq("test_id", id);
+        wp.set("age", AgeEnum.TWO);
         wp.set("name", "yanjinyin@gitee");
         userService.update(wp);
 

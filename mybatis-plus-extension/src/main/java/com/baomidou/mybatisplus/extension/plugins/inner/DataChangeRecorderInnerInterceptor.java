@@ -200,7 +200,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         result.setTableName(insertStmt.getTable().getName());
         result.setRecordStatus(true);
         Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(result.getTableName(), boundSql, insertStmt);
-        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), boundSql, insertStmt, null, updatedColumnDatas));
+        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), null, updatedColumnDatas));
         return result;
     }
 
@@ -245,7 +245,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         result.setOperation("update");
         result.setTableName(table.getName());
         result.setRecordStatus(true);
-        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), boundSql, updateStmt, originalData, updatedColumnDatas));
+        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), originalData, updatedColumnDatas));
         return result;
     }
 
@@ -347,11 +347,10 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     }
 
     /**
-     * @param updateSql
      * @param originalDataObj
      * @return
      */
-    private List<DataChangedRecord> compareAndGetUpdatedColumnDatas(String tableName, BoundSql updateSql, Statement statement, OriginalDataObj originalDataObj, Map<String, Object> columnNameValMap) {
+    private List<DataChangedRecord> compareAndGetUpdatedColumnDatas(String tableName, OriginalDataObj originalDataObj, Map<String, Object> columnNameValMap) {
         final Set<String> ignoredColumns = ignoredTableColumns.get(tableName.toUpperCase());
         if (originalDataObj == null || originalDataObj.isEmpty()) {
             DataChangedRecord oneRecord = new DataChangedRecord();
