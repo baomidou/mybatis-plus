@@ -463,6 +463,12 @@ class TenantLineInnerInterceptorTest {
             "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.tenant_id = 1 WHERE u.tenant_id = 1");
     }
 
+    @Test
+    void testDuplicateKeyUpdate() {
+        assertSql("INSERT INTO entity (name,age) VALUES ('秋秋',18),('秋秋','22') ON DUPLICATE KEY UPDATE age=18",
+            "INSERT INTO entity (name, age, tenant_id) VALUES ('秋秋', 18, 1), ('秋秋', '22', 1) ON DUPLICATE KEY UPDATE age = 18, tenant_id = 1");
+    }
+
     void assertSql(String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, null)).isEqualTo(targetSql);
     }

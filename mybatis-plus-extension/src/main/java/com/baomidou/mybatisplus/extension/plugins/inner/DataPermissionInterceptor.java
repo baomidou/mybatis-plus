@@ -43,7 +43,6 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
@@ -96,19 +95,18 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
         if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
             // 参照 com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor.processSelect 做的修改
             final String whereSegment = (String) obj;
-            processSelectBody(select.getSelectBody(), whereSegment);
+            processSelectBody(select, whereSegment);
             List<WithItem> withItemsList = select.getWithItemsList();
             if (!CollectionUtils.isEmpty(withItemsList)) {
                 withItemsList.forEach(withItem -> processSelectBody(withItem, whereSegment));
             }
         } else {
             // 兼容原来的旧版 DataPermissionHandler 场景
-            SelectBody selectBody = select.getSelectBody();
-            if (selectBody instanceof PlainSelect) {
-                this.setWhere((PlainSelect) selectBody, (String) obj);
-            } else if (selectBody instanceof SetOperationList) {
-                SetOperationList setOperationList = (SetOperationList) selectBody;
-                List<SelectBody> selectBodyList = setOperationList.getSelects();
+            if (select instanceof PlainSelect) {
+                this.setWhere((PlainSelect) select, (String) obj);
+            } else if (select instanceof SetOperationList) {
+                SetOperationList setOperationList = (SetOperationList) select;
+                List<Select> selectBodyList = setOperationList.getSelects();
                 selectBodyList.forEach(s -> this.setWhere((PlainSelect) s, (String) obj));
             }
         }

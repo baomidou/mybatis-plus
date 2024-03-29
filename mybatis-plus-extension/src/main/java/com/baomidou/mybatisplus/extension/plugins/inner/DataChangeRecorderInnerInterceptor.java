@@ -36,6 +36,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.jsqlparser.statement.select.Values;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -72,13 +73,10 @@ import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.select.SetOperationList;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.update.UpdateSet;
-import net.sf.jsqlparser.statement.values.ValuesStatement;
 
 /**
  * <p>
@@ -205,7 +203,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     public OperationResult processUpdate(Update updateStmt, MappedStatement mappedStatement, BoundSql boundSql, Connection connection) {
         Expression where = updateStmt.getWhere();
-        Select selectStmt = new Select();
         PlainSelect selectBody = new PlainSelect();
         Table table = updateStmt.getTable();
         final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
@@ -226,9 +223,8 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         Columns2SelectItemsResult buildColumns2SelectItems = buildColumns2SelectItems(table.getName(), updateColumns);
         selectBody.setSelectItems(buildColumns2SelectItems.getSelectItems());
         selectBody.setWhere(where);
-        selectStmt.setSelectBody(selectBody);
-
-        BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(), selectStmt.toString(),
+        SelectItem<PlainSelect> plainSelectSelectItem = new SelectItem<>(selectBody);
+        BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(),  plainSelectSelectItem.toString(),
             prepareParameterMapping4Select(boundSql.getParameterMappings(), updateStmt),
             boundSql.getParameterObject());
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
@@ -238,7 +234,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 boundSql4Select.setAdditionalParameter(ety.getKey(), ety.getValue());
             }
         }
-        OriginalDataObj originalData = buildOriginalObjectData(selectStmt, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
+        OriginalDataObj originalData = buildOriginalObjectData(selectBody, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
         OperationResult result = new OperationResult();
         result.setOperation("update");
         result.setTableName(table.getName());
@@ -257,7 +253,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     private List<ParameterMapping> prepareParameterMapping4Select(List<ParameterMapping> originalMappingList, Update updateStmt) {
         List<Expression> updateValueExpressions = new ArrayList<>();
         for (UpdateSet updateSet : updateStmt.getUpdateSets()) {
-            updateValueExpressions.addAll(updateSet.getExpressions());
+            updateValueExpressions.addAll(updateSet.getValues());
         }
         int removeParamCount = 0;
         for (Expression expression : updateValueExpressions) {
@@ -282,9 +278,9 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             int index = 0;
             for (UpdateSet updateSet : updateStmt.getUpdateSets()) {
                 selectItemsFromUpdateSql.addAll(updateSet.getColumns());
-                final List<Expression> updateList = updateSet.getExpressions();
-                for (int i = 0; i < updateList.size(); ++i) {
-                    Expression updateExps = updateList.get(i);
+                ExpressionList<?> values = updateSet.getValues();
+                for (int i = 0; i < values.size(); ++i) {
+                    Expression updateExps = values.get(i);
                     if (!(updateExps instanceof JdbcParameter)) {
                         columnNameValMap.put(updateSet.getColumns().get(i).getColumnName().toUpperCase(), updateExps.toString());
                     }
@@ -397,23 +393,23 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         Map<String, String> columnNameValMap = new HashMap<>(4);
         final Select select = insert.getSelect();
         List<Column> columns = insert.getColumns();
-        if (select != null && select.getSelectBody() instanceof SetOperationList) {
-            SetOperationList setOperationList = (SetOperationList) select.getSelectBody();
-            final List<SelectBody> selects = setOperationList.getSelects();
+        if (select != null && select instanceof SetOperationList) {
+            SetOperationList setOperationList = (SetOperationList) select;
+            final List<Select> selects = setOperationList.getSelects();
             if (CollectionUtils.isEmpty(selects)) {
                 return columnNameValMap;
             }
-            final SelectBody selectBody = selects.get(0);
-            if (!(selectBody instanceof ValuesStatement)) {
+            final Select selectBody = selects.get(0);
+            if (!(selectBody instanceof Values)) {
                 return columnNameValMap;
             }
-            ValuesStatement valuesStatement = (ValuesStatement) selectBody;
+            Values valuesStatement = (Values) selectBody;
             if (valuesStatement.getExpressions() instanceof ExpressionList) {
                 ExpressionList expressionList = (ExpressionList) valuesStatement.getExpressions();
                 List<Expression> expressions = expressionList.getExpressions();
                 for (Expression expression : expressions) {
                     if (expression instanceof RowConstructor) {
-                        final ExpressionList exprList = ((RowConstructor) expression).getExprList();
+                        final ExpressionList exprList = ((RowConstructor) expression);
                         if (exprList != null) {
                             final List<Expression> insertExpList = exprList.getExpressions();
                             for (int i = 0; i < insertExpList.size(); ++i) {
@@ -605,16 +601,16 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     private Columns2SelectItemsResult buildColumns2SelectItems(String tableName, List<Column> columns) {
         if (columns == null || columns.isEmpty()) {
-            return Columns2SelectItemsResult.build(Collections.singletonList(new AllColumns()), 0);
+            return Columns2SelectItemsResult.build(Collections.singletonList(new SelectItem<>(new AllColumns())), 0);
         }
-        List<SelectItem> selectItems = new ArrayList<>(columns.size());
+        List<SelectItem<?>> selectItems = new ArrayList<>(columns.size());
         for (Column column : columns) {
-            selectItems.add(new SelectExpressionItem(column));
+            selectItems.add(new SelectItem<>(column));
         }
         for (TableInfo tableInfo : TableInfoHelper.getTableInfos()) {
             if (tableName.equalsIgnoreCase(tableInfo.getTableName())) {
                 Column pk = new Column(tableInfo.getKeyColumn());
-                selectItems.add(new SelectExpressionItem(pk));
+                selectItems.add(new SelectItem<>(pk));
                 Columns2SelectItemsResult result = Columns2SelectItemsResult.build(selectItems, 1);
                 result.setPk(pk);
                 return result;
@@ -658,13 +654,11 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     public OperationResult processDelete(Delete deleteStmt, MappedStatement mappedStatement, BoundSql boundSql, Connection connection) {
         Table table = deleteStmt.getTable();
         Expression where = deleteStmt.getWhere();
-        Select selectStmt = new Select();
         PlainSelect selectBody = new PlainSelect();
         selectBody.setFromItem(table);
-        selectBody.setSelectItems(Collections.singletonList(new AllColumns()));
+        selectBody.setSelectItems(Collections.singletonList(new SelectItem<>((new AllColumns()))));
         selectBody.setWhere(where);
-        selectStmt.setSelectBody(selectBody);
-        String originalData = buildOriginalData(selectStmt, mappedStatement, boundSql, connection);
+        String originalData = buildOriginalData(selectBody, mappedStatement, boundSql, connection);
         OperationResult result = new OperationResult();
         result.setOperation("delete");
         result.setTableName(table.getName());
@@ -780,13 +774,13 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         /**
          * all column with additional columns: ID, etc.
          */
-        private List<SelectItem> selectItems;
+        private List<SelectItem<?>> selectItems;
         /**
          * newly added column count from meta data.
          */
         private int additionalItemCount;
 
-        public static Columns2SelectItemsResult build(List<SelectItem> selectItems, int additionalItemCount) {
+        public static Columns2SelectItemsResult build(List<SelectItem<?>> selectItems, int additionalItemCount) {
             Columns2SelectItemsResult result = new Columns2SelectItemsResult();
             result.setSelectItems(selectItems);
             result.setAdditionalItemCount(additionalItemCount);
