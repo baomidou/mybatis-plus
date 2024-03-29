@@ -310,6 +310,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children eqSql(boolean condition, R column, String eqValue) {
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), EQ,
+            () -> String.format("(%s)", eqValue)));
+    }
+
+    @Override
     public Children inSql(boolean condition, R column, String inValue) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN,
             () -> String.format("(%s)", inValue)));
