@@ -54,7 +54,7 @@ open class KtUpdateChainWrapper<T : Any>(
     }
 
     override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateChainWrapper<T> {
-        wrapperChildren.setSql(condition, setSql, params)
+        wrapperChildren.setSql(condition, setSql, *params)
         return typedThis
     }
 
