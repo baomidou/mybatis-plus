@@ -850,14 +850,11 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         @SuppressWarnings("rawtypes")
         public boolean isDataChanged(Object updateValue) {
             if (!Objects.equals(originalValue, updateValue)) {
-//                if (originalValue instanceof Number) {
-//                    BigDecimal update = new BigDecimal(updateValue.toString());
-//                    BigDecimal original = new BigDecimal(originalValue.toString());
-//                    return update.compareTo(original) != 0;
-//                }
-//                if (originalValue instanceof Date) {
-//                    return ((Date) originalValue).compareTo((Date) updateValue)!=0;
-//                }
+                if (originalValue instanceof Clob) {
+                    String originalStr = convertClob((Clob) originalValue);
+                    setOriginalValue(originalStr);
+                    return !originalStr.equals(updateValue);
+                }
                 if (originalValue instanceof Comparable) {
                     Comparable original = (Comparable) originalValue;
                     Comparable update = (Comparable) updateValue;
@@ -866,11 +863,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                     } catch (Exception e) {
                         return true;
                     }
-                }
-                if (originalValue instanceof Clob) {
-                    String originalStr = convertClob((Clob) originalValue);
-                    setOriginalValue(originalStr);
-                    return !originalStr.equals(updateValue);
                 }
                 return true;
             }
