@@ -233,7 +233,7 @@ public class Controller implements ITemplate {
          * @return this
          * @since 3.5.6
          */
-        public Builder template(String template) {
+        public Builder template(@NotNull String template) {
             this.controller.templatePath = template;
             return this;
         }

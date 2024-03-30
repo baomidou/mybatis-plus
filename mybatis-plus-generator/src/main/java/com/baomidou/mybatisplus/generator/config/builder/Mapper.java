@@ -346,7 +346,7 @@ public class Mapper implements ITemplate {
          * @return this
          * @since 3.5.6
          */
-        public Builder mapperTemplate(String template) {
+        public Builder mapperTemplate(@NotNull String template) {
             this.mapper.mapperTemplatePath = template;
             return this;
         }
@@ -357,8 +357,42 @@ public class Mapper implements ITemplate {
          * @return this
          * @since 3.5.6
          */
-        public Builder mapperXmlTemplate(String template) {
+        public Builder mapperXmlTemplate(@NotNull String template) {
             this.mapper.mapperXmlTemplatePath = template;
+            return this;
+        }
+
+        /**
+         * 禁用Mapper生成
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disable() {
+            this.mapper.generateMapper = false;
+            this.mapper.generateMapperXml = false;
+            return this;
+        }
+
+        /**
+         * 禁用Mapper接口生成
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disableMapper() {
+            this.mapper.generateMapper = false;
+            return this;
+        }
+
+        /**
+         * 禁用MapperXml生成
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disableMapperXml() {
+            this.mapper.generateMapperXml = false;
             return this;
         }
 

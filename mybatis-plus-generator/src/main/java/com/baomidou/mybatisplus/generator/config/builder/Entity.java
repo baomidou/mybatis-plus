@@ -94,7 +94,7 @@ public class Entity implements ITemplate {
 
     /**
      * 自定义忽略字段
-     * https://github.com/baomidou/generator/issues/46
+     * <a href="https://github.com/baomidou/generator/issues/46">...</a>
      */
     private final Set<String> ignoreColumns = new HashSet<>();
 
@@ -221,7 +221,7 @@ public class Entity implements ITemplate {
      * @since 3.5.6
      */
     @Getter
-    private boolean generate;
+    private boolean generate = true;
 
     /**
      * <p>
@@ -665,6 +665,16 @@ public class Entity implements ITemplate {
             return this;
         }
 
+        /**
+         * 禁用实体生成
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disable() {
+            this.entity.generate = false;
+            return this;
+        }
 
         public Entity get() {
             String superClass = this.entity.superClass;

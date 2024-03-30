@@ -48,7 +48,7 @@ public class Service implements ITemplate {
      * @since 3.5.6
      */
     @Getter
-    private boolean generateServiceImpl = false;
+    private boolean generateServiceImpl = true;
 
 
     /**
@@ -57,7 +57,7 @@ public class Service implements ITemplate {
      * @since 3.5.6
      */
     @Getter
-    private boolean generateService = false;
+    private boolean generateService = true;
 
     /**
      * @since 3.5.6
@@ -253,6 +253,18 @@ public class Service implements ITemplate {
         }
 
         /**
+         * 禁用生成Service
+         *
+         * @return this
+         * @since 3.5.6
+         */
+        public Builder disable() {
+            this.service.generateService = false;
+            this.service.generateServiceImpl = false;
+            return this;
+        }
+
+        /**
          * 禁用生成
          *
          * @return this
@@ -280,7 +292,7 @@ public class Service implements ITemplate {
          * @return this
          * @since 3.5.6
          */
-        public Builder serviceTemplate(String template) {
+        public Builder serviceTemplate(@NotNull String template) {
             this.service.serviceTemplate = template;
             return this;
         }
@@ -291,7 +303,7 @@ public class Service implements ITemplate {
          * @return this
          * @since 3.5.6
          */
-        public Builder serviceImplTemplate(String template) {
+        public Builder serviceImplTemplate(@NotNull String template) {
             this.service.serviceImplTemplate = template;
             return this;
         }

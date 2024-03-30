@@ -29,6 +29,10 @@ import org.slf4j.LoggerFactory;
  * 模板路径配置项
  *
  * @author tzg hubin
+ * @see StrategyConfig.Builder#entityBuilder()
+ * @see StrategyConfig.Builder#serviceBuilder()
+ * @see StrategyConfig.Builder#mapperBuilder()
+ * @see StrategyConfig.Builder#controllerBuilder()
  * @since 2017-06-17
  * @deprecated 3.5.6 {@link StrategyConfig}
  */
@@ -128,8 +132,18 @@ public class TemplateConfig {
      *
      * @param templateTypes 模板类型
      * @return this
+     * @see Entity.Builder#disable()
+     * @see Service.Builder#disable()
+     * @see Service.Builder#disableService()
+     * @see Service.Builder#disableServiceImpl()
+     * @see Controller.Builder#disable()
+     * @see Mapper.Builder#disable()
+     * @see Mapper.Builder#disableMapper()
+     * @see Mapper.Builder#disableMapperXml()
      * @since 3.3.2
+     * @deprecated 3.5.6
      */
+    @Deprecated
     public TemplateConfig disable(@NotNull TemplateType... templateTypes) {
         if (templateTypes != null) {
             for (TemplateType templateType : templateTypes) {
@@ -166,8 +180,18 @@ public class TemplateConfig {
      * 禁用全部模板
      *
      * @return this
+     * @see Entity.Builder#disable()
+     * @see Service.Builder#disable()
+     * @see Service.Builder#disableService()
+     * @see Service.Builder#disableServiceImpl()
+     * @see Controller.Builder#disable()
+     * @see Mapper.Builder#disable()
+     * @see Mapper.Builder#disableMapper()
+     * @see Mapper.Builder#disableMapperXml()
      * @since 3.5.0
+     * @deprecated 3.5.6
      */
+    @Deprecated
     public TemplateConfig disable() {
         return disable(TemplateType.values());
     }

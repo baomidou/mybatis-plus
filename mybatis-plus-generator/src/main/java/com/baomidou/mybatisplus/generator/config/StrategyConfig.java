@@ -360,7 +360,7 @@ public class StrategyConfig {
         return notLikeTable;
     }
 
-    @Nullable
+    @NotNull
     public IOutputFile getOutputFile() {
         return outputFile;
     }
