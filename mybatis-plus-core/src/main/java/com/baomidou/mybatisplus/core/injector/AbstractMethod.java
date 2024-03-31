@@ -124,11 +124,9 @@ public abstract class AbstractMethod implements Constants {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
         }
         if (ew) {
-            sqlScript += NEWLINE;
-            sqlScript += convertIfEwParam(U_WRAPPER_SQL_SET, false);
+            sqlScript = sqlScript + NEWLINE + convertIfEwParam(U_WRAPPER_SQL_SET, false);
         }
-        sqlScript = SqlScriptUtils.convertSet(sqlScript);
-        return sqlScript;
+        return SqlScriptUtils.convertSet(sqlScript);
     }
 
     /**
@@ -209,16 +207,14 @@ public abstract class AbstractMethod implements Constants {
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s.isEmpty", COLUMN_MAP, COLUMN_MAP), true);
             sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true));
-            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            return sqlScript;
+            return SqlScriptUtils.convertWhere(sqlScript);
         } else {
             String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s", COLUMN_MAP,
-                COLUMN_MAP_IS_EMPTY), true);
-            return sqlScript;
+            return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s", COLUMN_MAP,
+                COLUMN_MAP_IS_EMPTY), true);;
         }
     }
 
