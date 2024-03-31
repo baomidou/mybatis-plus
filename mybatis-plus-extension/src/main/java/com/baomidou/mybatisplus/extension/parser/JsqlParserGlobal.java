@@ -22,15 +22,30 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * @author miemie
  * @since 2023-08-05
  */
 public class JsqlParserGlobal {
+
+    /**
+     * 默认解析处理线程池
+     * <p>注意: 由于项目情况,机器配置等不一样因素,请自行根据情况创建指定线程池.</p>
+     *
+     * @see java.util.concurrent.ThreadPoolExecutor
+     * @since 3.5.6
+     */
+    public static ExecutorService executorService = Executors.newFixedThreadPool((Runtime.getRuntime().availableProcessors() + 1) / 2);
+
     @Setter
-    private static JsqlParserFunction<String, Statement> parserSingleFunc = CCJSqlParserUtil::parse;
+    private static JsqlParserFunction<String, Statement> parserSingleFunc = sql -> CCJSqlParserUtil.parse(sql, executorService, null);
+
     @Setter
-    private static JsqlParserFunction<String, Statements> parserMultiFunc = CCJSqlParserUtil::parseStatements;
+    private static JsqlParserFunction<String, Statements> parserMultiFunc = sql -> CCJSqlParserUtil.parseStatements(sql, executorService, null);
+
     @Setter
     private static JsqlParseCache jsqlParseCache;
 
