@@ -62,9 +62,11 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     private final Object parameterObject;
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
+    private final MappedStatement mappedStatement;
 
     public MybatisParameterHandler(MappedStatement mappedStatement, Object parameter, BoundSql boundSql) {
         super(mappedStatement, parameter, boundSql);
+        this.mappedStatement = mappedStatement;
         this.configuration = mappedStatement.getConfiguration();
         this.sqlCommandType = mappedStatement.getSqlCommandType();
         this.parameterObject = processParameter(parameter);
@@ -158,7 +160,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill() && tableInfo.isWithInsertFill()) {
+            if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement) && tableInfo.isWithInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
         });
@@ -166,7 +168,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
+            if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement) && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
         });

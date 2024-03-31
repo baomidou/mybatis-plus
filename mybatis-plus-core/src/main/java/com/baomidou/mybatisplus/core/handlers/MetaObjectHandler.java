@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.util.Collections;
@@ -36,15 +37,43 @@ public interface MetaObjectHandler {
 
     /**
      * 是否开启了插入填充
+     *
+     * @deprecated 3.5.6 {@link #openInsertFill(MappedStatement)}
      */
+    @Deprecated
     default boolean openInsertFill() {
         return true;
     }
 
     /**
-     * 是否开启了更新填充
+     * 是否开启插入填充
+     *
+     * @param mappedStatement {@link MappedStatement}
+     * @return 是否开启
+     * @since 3.5.6
      */
+    default boolean openInsertFill(MappedStatement mappedStatement) {
+        return true;
+    }
+
+    /**
+     * 是否开启了更新填充
+     *
+     * @deprecated 3.5.6 {@link #openUpdateFill(MappedStatement)}
+     */
+    @Deprecated
     default boolean openUpdateFill() {
+        return true;
+    }
+
+    /**
+     * 是否开启了更新填充
+     *
+     * @param mappedStatement {@link MappedStatement}
+     * @return 是否开启
+     * @since 3.5.6
+     */
+    default boolean openUpdateFill(MappedStatement mappedStatement) {
         return true;
     }
 

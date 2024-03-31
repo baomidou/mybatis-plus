@@ -289,4 +289,63 @@ class MybatisParameterHandlerTest {
 
     }
 
+    @Test
+    void testIgnoreMapperStatement() {
+        MappedStatement mappedStatement;
+        Configuration configuration = new MybatisConfiguration();
+        BoundSql boundSql = mock(BoundSql.class);
+        StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(DefaultIdentifierGenerator.getInstance()).setMetaObjectHandler(new MetaObjectHandler() {
+
+            @Override
+            public boolean openInsertFill(MappedStatement mappedStatement) {
+                //根据msId跳过填充
+                return !"com.baomidou.demo.ignoreFillSave".equals(mappedStatement.getId());
+            }
+
+            @Override
+            public boolean openUpdateFill(MappedStatement mappedStatement) {
+                //根据msId跳过填充
+                return !"com.baomidou.demo.ignoreFillUpdate".equals(mappedStatement.getId());
+            }
+
+            @Override
+            public void insertFill(MetaObject metaObject) {
+                setFieldValByName("id", 666L, metaObject);
+                setFieldValByName("insertOperator", "秋秋", metaObject);
+            }
+
+            @Override
+            public void updateFill(MetaObject metaObject) {
+                setFieldValByName("updateOperator", "秋秋", metaObject);
+            }
+
+        });
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Model.class);
+        Model model;
+
+        model = new Model("测试新增忽略填充");
+        mappedStatement = new MappedStatement.Builder(configuration, "com.baomidou.demo.ignoreFillSave", staticSqlSource, SqlCommandType.INSERT).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getId()).isNull();
+        assertThat(model.getInsertOperator()).isNull();
+
+        model = new Model("测试新增填充");
+        mappedStatement = new MappedStatement.Builder(configuration, "com.baomidou.demo.save", staticSqlSource, SqlCommandType.INSERT).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getInsertOperator()).isNotNull();
+        assertThat(model.getInsertOperator()).isEqualTo("秋秋");
+
+        model = new Model("测试更新忽略填充");
+        mappedStatement = new MappedStatement.Builder(configuration, "com.baomidou.demo.ignoreFillUpdate", staticSqlSource, SqlCommandType.UPDATE).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getUpdateOperator()).isNull();
+
+        model = new Model("测试更新填充");
+        mappedStatement = new MappedStatement.Builder(configuration, "com.baomidou.demo.update", staticSqlSource, SqlCommandType.UPDATE).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getUpdateOperator()).isEqualTo("秋秋");
+    }
+
 }
