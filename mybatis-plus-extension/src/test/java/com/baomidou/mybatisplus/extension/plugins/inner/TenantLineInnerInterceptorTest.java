@@ -85,6 +85,12 @@ class TenantLineInnerInterceptorTest {
         assertSql("UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ?) WHERE e.id = ?",
             "UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ? AND e1.tenant_id = 1) " +
                 "WHERE e.id = ? AND e.tenant_id = 1");
+
+        assertSql("UPDATE sys_user SET (name, age) = ('秋秋', 18), address = 'test'",
+            "UPDATE sys_user SET (name, age) = ('秋秋', 18), address = 'test' WHERE tenant_id = 1");
+
+        assertSql("UPDATE entity t1 INNER JOIN entity t2 ON t1.a= t2.a SET t1.b = t2.b, t1.c = t2.c",
+            "UPDATE entity t1 INNER JOIN entity t2 ON t1.a = t2.a SET t1.b = t2.b, t1.c = t2.c WHERE t1.tenant_id = 1");
     }
 
     @Test
