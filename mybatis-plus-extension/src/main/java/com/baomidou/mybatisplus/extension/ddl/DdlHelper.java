@@ -148,9 +148,7 @@ public class DdlHelper {
     protected static IDdlGenerator getDdlGenerator(String jdbcUrl) throws RuntimeException {
         DbType dbType = JdbcUtils.getDbType(jdbcUrl);
         switch (dbType) {
-            case OTHER:
-                throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
-            case MYSQL:
+	        case MYSQL:
             case MARIADB:
             case GBASE:
             case OSCAR:
@@ -186,20 +184,7 @@ public class DdlHelper {
             case GBASE8S_PG:
             case GBASE_8C:
                 return PostgreDdlGenerator.newInstance();
-            case DB2:
-            case SQL_SERVER2005:
-            case SYBASE:
-            case XCloud:
-            case GBASE_8S:
-            case GBASEDBT:
-            case GBASE_INFORMIX:
-            case SINODB:
-            case INFORMIX:
-            case TRINO:
-            case PRESTO:
-                throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
-                // 处理未知的数据库类型
-            default:
+	        default:
                 throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
         }
 
