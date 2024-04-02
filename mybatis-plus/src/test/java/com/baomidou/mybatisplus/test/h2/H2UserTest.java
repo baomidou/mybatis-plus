@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,21 +205,29 @@ class H2UserTest extends BaseTest {
         user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
+        final LocalDateTime dateTime = LocalDateTime.of(2024, 3, 29, 10, 0, 0);
+        user.setCreatedDt(dateTime);
         userService.save(user);
 
         H2User userDB = userService.getById(id);
         Assertions.assertEquals(1, userDB.getVersion().intValue());
+        Assertions.assertTrue(userDB.getCreatedDt().compareTo(dateTime) == 0);
 
         userDB.setName("992");
+        userDB.setCreatedDt(dateTime);
+        System.out.println("===============================================");
         userService.updateById(userDB);
         Assertions.assertEquals(2, userDB.getVersion().intValue(), "updated version value should be updated to entity");
 
         userDB = userService.getById(id);
         Assertions.assertEquals(2, userDB.getVersion().intValue());
         Assertions.assertEquals("992", userDB.getName());
-        userService.lambdaUpdate().set(H2User::getAge,AgeEnum.THREE).eq(H2User::getTestId,id).update();
+        userDB.setCreatedDt(LocalDateTime.now());
+        userService.updateById(userDB);
+        System.out.println("===============================================");
+        userService.lambdaUpdate().set(H2User::getAge, AgeEnum.THREE).eq(H2User::getTestId, id).update();
         UpdateWrapper<H2User> wp = new UpdateWrapper<>();
-        wp.set("age",AgeEnum.TWO).eq("test_id",id);
+        wp.set("age", AgeEnum.TWO);
         wp.set("name", "yanjinyin@gitee");
         userService.update(wp);
 
@@ -507,11 +516,9 @@ class H2UserTest extends BaseTest {
         final Select select = (Select) CCJSqlParserUtil.parse(targetSql1);
         Assertions.assertEquals(select.toString(), targetSql1);
 
-
         final String targetSql2 = "SELECT * FROM user WHERE id NOT IN (?)";
         final Select select2 = (Select) CCJSqlParserUtil.parse(targetSql2);
         Assertions.assertEquals(select2.toString(), targetSql2);
-
 
         final String targetSql3 = "SELECT * FROM user WHERE id IS NOT NULL";
         final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
@@ -868,16 +875,19 @@ class H2UserTest extends BaseTest {
                 System.out.println("-------处理OrderByDesc----------");
                 return super.doOrderByDesc(condition, column, columns);
             }
+
             @Override
-            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column,  List<SFunction<H2User, ?>> columns) {
+            protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理OrderByAsc----------");
                 return super.doOrderByAsc(condition, column, columns);
             }
+
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderBy(boolean condition, boolean isAsc, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理OrderBy----------");
                 return super.doOrderBy(condition, isAsc, column, columns);
             }
+
             @Override
             protected LambdaQueryChainWrapper<H2User> doGroupBy(boolean condition, SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
                 System.out.println("-------处理GroupBy----------");
