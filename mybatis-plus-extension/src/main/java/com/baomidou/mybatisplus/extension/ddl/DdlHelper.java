@@ -147,47 +147,22 @@ public class DdlHelper {
 
     protected static IDdlGenerator getDdlGenerator(String jdbcUrl) throws RuntimeException {
         DbType dbType = JdbcUtils.getDbType(jdbcUrl);
-        switch (dbType) {
-	        case MYSQL:
-            case MARIADB:
-            case GBASE:
-            case OSCAR:
-            case XU_GU:
-            case CLICK_HOUSE:
-            case OCEAN_BASE:
-            case CUBRID:
-            case SUNDB:
-                return MysqlDdlGenerator.newInstance();
-            case ORACLE:
-            case DM:
-            case GAUSS:
-            case ORACLE_12C:
-            case FIREBIRD:
-            case SQL_SERVER:
-                return OracleDdlGenerator.newInstance();
-            case SQLITE:
-                return SQLiteDdlGenerator.newInstance();
-            case POSTGRE_SQL:
-            case H2:
-            case LEALONE:
-            case HSQL:
-            case KINGBASE_ES:
-            case PHOENIX:
-            case SAP_HANA:
-            case IMPALA:
-            case HIGH_GO:
-            case VERTICA:
-            case REDSHIFT:
-            case OPENGAUSS:
-            case TDENGINE:
-            case UXDB:
-            case GBASE8S_PG:
-            case GBASE_8C:
-                return PostgreDdlGenerator.newInstance();
-	        default:
-                throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
+        // mysql same type
+        if (dbType.mysqlSameType()) {
+            return MysqlDdlGenerator.newInstance();
         }
-
+        // oracle same type
+        else if (dbType.oracleSameType()) {
+            return OracleDdlGenerator.newInstance();
+        }
+        else if (DbType.SQLITE == dbType){
+            return SQLiteDdlGenerator.newInstance();
+        }
+        // postgresql same type
+        else if (dbType.postgresqlSameType()) {
+            return PostgreDdlGenerator.newInstance();
+        }
+        throw new RuntimeException("Unsupported database type: " + jdbcUrl);
     }
 
     public static String getDatabase(String jdbcUrl) {

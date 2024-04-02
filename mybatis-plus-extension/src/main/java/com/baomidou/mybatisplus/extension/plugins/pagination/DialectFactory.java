@@ -38,41 +38,15 @@ public class DialectFactory {
                 throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
             }
             // mysql same type
-            else if (dbType == DbType.MYSQL
-                || dbType == DbType.MARIADB
-                || dbType == DbType.GBASE
-                || dbType == DbType.OSCAR
-                || dbType == DbType.XU_GU
-                || dbType == DbType.CLICK_HOUSE
-                || dbType == DbType.OCEAN_BASE
-                || dbType == DbType.CUBRID
-                || dbType == DbType.SUNDB) {
+            else if (dbType.mysqlSameType()) {
                 dialect = new MySqlDialect();
             }
             // oracle same type
-            else if (dbType == DbType.ORACLE
-                || dbType == DbType.DM
-                || dbType == DbType.GAUSS) {
+            else if (dbType.oracleSameType()) {
                 dialect = new OracleDialect();
             }
             // postgresql same type
-            else if (dbType == DbType.POSTGRE_SQL
-                || dbType == DbType.H2
-                || dbType == DbType.LEALONE
-                || dbType == DbType.SQLITE
-                || dbType == DbType.HSQL
-                || dbType == DbType.KINGBASE_ES
-                || dbType == DbType.PHOENIX
-                || dbType == DbType.SAP_HANA
-                || dbType == DbType.IMPALA
-                || dbType == DbType.HIGH_GO
-                || dbType == DbType.VERTICA
-                || dbType == DbType.REDSHIFT
-                || dbType == DbType.OPENGAUSS
-                || dbType == DbType.TDENGINE
-                || dbType == DbType.UXDB
-                || dbType == DbType.GBASE8S_PG
-                || dbType == DbType.GBASE_8C) {
+            else if (dbType.postgresqlSameType()) {
                 dialect = new PostgreDialect();
             }
             // other types
