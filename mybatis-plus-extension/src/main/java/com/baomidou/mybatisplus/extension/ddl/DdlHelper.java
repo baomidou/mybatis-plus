@@ -15,13 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.ddl;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.MysqlDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.OracleDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.PostgreDdlGenerator;
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
+import com.baomidou.mybatisplus.extension.ddl.history.SQLiteDdlGenerator;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
@@ -145,17 +146,48 @@ public class DdlHelper {
     }
 
     protected static IDdlGenerator getDdlGenerator(String jdbcUrl) throws RuntimeException {
-        IDialect dialect = DialectFactory.getDialect(JdbcUtils.getDbType(jdbcUrl));
-        if (dialect instanceof MySqlDialect) {
-            return MysqlDdlGenerator.newInstance();
+        DbType dbType = JdbcUtils.getDbType(jdbcUrl);
+        switch (dbType) {
+	        case MYSQL:
+            case MARIADB:
+            case GBASE:
+            case OSCAR:
+            case XU_GU:
+            case CLICK_HOUSE:
+            case OCEAN_BASE:
+            case CUBRID:
+            case SUNDB:
+                return MysqlDdlGenerator.newInstance();
+            case ORACLE:
+            case DM:
+            case GAUSS:
+            case ORACLE_12C:
+            case FIREBIRD:
+            case SQL_SERVER:
+                return OracleDdlGenerator.newInstance();
+            case SQLITE:
+                return SQLiteDdlGenerator.newInstance();
+            case POSTGRE_SQL:
+            case H2:
+            case LEALONE:
+            case HSQL:
+            case KINGBASE_ES:
+            case PHOENIX:
+            case SAP_HANA:
+            case IMPALA:
+            case HIGH_GO:
+            case VERTICA:
+            case REDSHIFT:
+            case OPENGAUSS:
+            case TDENGINE:
+            case UXDB:
+            case GBASE8S_PG:
+            case GBASE_8C:
+                return PostgreDdlGenerator.newInstance();
+	        default:
+                throw ExceptionUtils.mpe("%s database not supported.", dbType.getDb());
         }
-        if (dialect instanceof PostgreDialect) {
-            return PostgreDdlGenerator.newInstance();
-        }
-        if (dialect instanceof OracleDialect || dialect instanceof Oracle12cDialect) {
-            return OracleDdlGenerator.newInstance();
-        }
-        throw new RuntimeException("The database is not supported");
+
     }
 
     public static String getDatabase(String jdbcUrl) {
