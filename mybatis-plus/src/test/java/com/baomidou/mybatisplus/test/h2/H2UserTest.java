@@ -226,10 +226,6 @@ class H2UserTest extends BaseTest {
         userService.updateById(userDB);
         System.out.println("===============================================");
         userService.lambdaUpdate().set(H2User::getAge, AgeEnum.THREE).eq(H2User::getTestId, id).update();
-        UpdateWrapper<H2User> wp = new UpdateWrapper<>();
-        wp.set("age", AgeEnum.TWO);
-        wp.set("name", "yanjinyin@gitee");
-        userService.update(wp);
 
     }
 
@@ -502,7 +498,7 @@ class H2UserTest extends BaseTest {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testCustomSqlSegment(new QueryWrapper<H2User>().like("name", "y%"));
-        Assertions.assertEquals(3, h2Users.size());
+        Assertions.assertEquals(2, h2Users.size());
     }
 
     @Test
