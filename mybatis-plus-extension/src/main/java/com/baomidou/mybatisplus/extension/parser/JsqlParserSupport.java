@@ -61,7 +61,7 @@ public abstract class JsqlParserSupport {
             StringBuilder sb = new StringBuilder();
             Statements statements = JsqlParserGlobal.parseStatements(sql);
             int i = 0;
-            for (Statement statement : statements.getStatements()) {
+            for (Statement statement : statements) {
                 if (i > 0) {
                     sb.append(StringPool.SEMICOLON);
                 }

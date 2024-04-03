@@ -26,6 +26,7 @@ import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
@@ -35,8 +36,6 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -117,9 +116,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
 
     @Override
     protected void processSelect(Select select, int index, String sql, Object obj) {
-        SelectBody selectBody = select.getSelectBody();
-        if (selectBody instanceof PlainSelect) {
-            PlainSelect plainSelect = (PlainSelect) selectBody;
+        if (select instanceof PlainSelect) {
+            PlainSelect plainSelect = (PlainSelect) select;
             Expression where = plainSelect.getWhere();
             Assert.notNull(where, "非法SQL，必须要有where条件");
             Table table = (Table) plainSelect.getFromItem();
@@ -172,14 +170,14 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
                 Function function = (Function) binaryExpression.getLeftExpression();
                 throw new MybatisPlusException("非法SQL，where条件中不能使用数据库函数，错误函数信息：" + function.toString());
             }
-            if (binaryExpression.getRightExpression() instanceof SubSelect) {
-                SubSelect subSelect = (SubSelect) binaryExpression.getRightExpression();
+            if (binaryExpression.getRightExpression() instanceof Subtraction) {
+                Subtraction subSelect = (Subtraction) binaryExpression.getRightExpression();
                 throw new MybatisPlusException("非法SQL，where条件中不能使用子查询，错误子查询SQL信息：" + subSelect.toString());
             }
         } else if (expression instanceof InExpression) {
             InExpression inExpression = (InExpression) expression;
-            if (inExpression.getRightItemsList() instanceof SubSelect) {
-                SubSelect subSelect = (SubSelect) inExpression.getRightItemsList();
+            if (inExpression.getRightExpression() instanceof Subtraction) {
+                Subtraction subSelect = (Subtraction) inExpression.getRightExpression();
                 throw new MybatisPlusException("非法SQL，where条件中不能使用子查询，错误子查询SQL信息：" + subSelect.toString());
             }
         }

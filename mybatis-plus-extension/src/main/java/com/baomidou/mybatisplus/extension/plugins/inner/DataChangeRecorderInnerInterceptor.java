@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +25,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -35,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.sf.jsqlparser.statement.select.Values;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -206,7 +209,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     public OperationResult processUpdate(Update updateStmt, MappedStatement mappedStatement, BoundSql boundSql, Connection connection) {
         Expression where = updateStmt.getWhere();
-        Select selectStmt = new Select();
         PlainSelect selectBody = new PlainSelect();
         Table table = updateStmt.getTable();
         final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
@@ -227,9 +229,8 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         Columns2SelectItemsResult buildColumns2SelectItems = buildColumns2SelectItems(table.getName(), updateColumns);
         selectBody.setSelectItems(buildColumns2SelectItems.getSelectItems());
         selectBody.setWhere(where);
-        selectStmt.setSelectBody(selectBody);
-
-        BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(), selectStmt.toString(),
+        SelectItem<PlainSelect> plainSelectSelectItem = new SelectItem<>(selectBody);
+        BoundSql boundSql4Select = new BoundSql(mappedStatement.getConfiguration(),  plainSelectSelectItem.toString(),
             prepareParameterMapping4Select(boundSql.getParameterMappings(), updateStmt),
             boundSql.getParameterObject());
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
@@ -239,13 +240,12 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 boundSql4Select.setAdditionalParameter(ety.getKey(), ety.getValue());
             }
         }
-        Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(table.getName(), boundSql, updateStmt);
-        OriginalDataObj originalData = buildOriginalObjectData(updatedColumnDatas, selectStmt, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
+        OriginalDataObj originalData = buildOriginalObjectData(selectBody, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
         OperationResult result = new OperationResult();
         result.setOperation("update");
         result.setTableName(table.getName());
         result.setRecordStatus(true);
-        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), originalData, updatedColumnDatas));
+        result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), boundSql, updateStmt, originalData));
         return result;
     }
 
@@ -268,7 +268,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     private List<ParameterMapping> prepareParameterMapping4Select(List<ParameterMapping> originalMappingList, Update updateStmt) {
         List<Expression> updateValueExpressions = new ArrayList<>();
         for (UpdateSet updateSet : updateStmt.getUpdateSets()) {
-            updateValueExpressions.addAll(updateSet.getExpressions());
+            updateValueExpressions.addAll(updateSet.getValues());
         }
         int removeParamCount = 0;
         for (Expression expression : updateValueExpressions) {
@@ -279,8 +279,13 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         return originalMappingList.subList(removeParamCount, originalMappingList.size());
     }
 
-    protected Map<String, Object> getUpdatedColumnDatas(String tableName, BoundSql updateSql, Statement statement) {
-        Map<String, Object> columnNameValMap = new HashMap<>(updateSql.getParameterMappings().size());
+    /**
+     * @param updateSql
+     * @param originalDataObj
+     * @return
+     */
+    private List<DataChangedRecord> compareAndGetUpdatedColumnDatas(String tableName, BoundSql updateSql, Statement statement, OriginalDataObj originalDataObj) {
+        Map<String, String> columnNameValMap = new HashMap<>(updateSql.getParameterMappings().size());
         Map<Integer, String> columnSetIndexMap = new HashMap<>(updateSql.getParameterMappings().size());
         List<Column> selectItemsFromUpdateSql = new ArrayList<>();
         if (statement instanceof Update) {
@@ -321,17 +326,12 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 final String columnName = columnSetIndexMap.getOrDefault(index++, getColumnNameByProperty(propertyNameTrim, tableName));
                 if (relatedColumnsUpperCaseWithoutUnderline.containsKey(propertyNameTrim)) {
                     final String colkey = relatedColumnsUpperCaseWithoutUnderline.get(propertyNameTrim);
-                    Object valObj = metaObject.getValue(propertyName);
-                    if (valObj instanceof IEnum) {
-                        valObj = ((IEnum<?>) valObj).getValue();
-                    } else if (valObj instanceof Enum) {
-                        valObj = getEnumValue((Enum) valObj);
-                    }
+                    final String val = String.valueOf(metaObject.getValue(propertyName));
                     if (columnNameValMap.containsKey(colkey)) {
-                        columnNameValMap.put(relatedColumnsUpperCaseWithoutUnderline.get(propertyNameTrim), String.valueOf(columnNameValMap.get(colkey)).replace("?", valObj == null ? "" : valObj.toString()));
+                        columnNameValMap.put(relatedColumnsUpperCaseWithoutUnderline.get(propertyNameTrim), String.valueOf(columnNameValMap.get(colkey)).replace("?", val));
                     }
                     if (columnName != null && !columnNameValMap.containsKey(columnName)) {
-                        columnNameValMap.put(columnName, valObj);
+                        columnNameValMap.put(columnName, val);
                     }
                 } else {
                     if (columnName != null) {
@@ -343,19 +343,12 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             }
         }
         dealWithUpdateWrapper(columnSetIndexMap, columnNameValMap, updateSql);
-        return columnNameValMap;
-    }
 
-    /**
-     * @param originalDataObj
-     * @return
-     */
-    private List<DataChangedRecord> compareAndGetUpdatedColumnDatas(String tableName, OriginalDataObj originalDataObj, Map<String, Object> columnNameValMap) {
         final Set<String> ignoredColumns = ignoredTableColumns.get(tableName.toUpperCase());
         if (originalDataObj == null || originalDataObj.isEmpty()) {
             DataChangedRecord oneRecord = new DataChangedRecord();
             List<DataColumnChangeResult> updateColumns = new ArrayList<>(columnNameValMap.size());
-            for (Map.Entry<String, Object> ety : columnNameValMap.entrySet()) {
+            for (Map.Entry<String, String> ety : columnNameValMap.entrySet()) {
                 String columnName = ety.getKey();
                 if ((ignoredColumns == null || !ignoredColumns.contains(columnName)) && !ignoreAllColumns.contains(columnName)) {
                     updateColumns.add(DataColumnChangeResult.constrcutByUpdateVal(columnName, ety.getValue()));
@@ -375,17 +368,8 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         return updateDataList;
     }
 
-    private Object getEnumValue(Enum enumVal) {
-        Optional<String> enumValueFieldName = MybatisEnumTypeHandler.findEnumValueFieldName(enumVal.getClass());
-        if (enumValueFieldName.isPresent()) {
-            return SystemMetaObject.forObject(enumVal).getValue(enumValueFieldName.get());
-        }
-        return enumVal;
-
-    }
-
     @SuppressWarnings("rawtypes")
-    private void dealWithUpdateWrapper(Map<Integer, String> columnSetIndexMap, Map<String, Object> columnNameValMap, BoundSql updateSql) {
+    private void dealWithUpdateWrapper(Map<Integer, String> columnSetIndexMap, Map<String, String> columnNameValMap, BoundSql updateSql){
         if (columnSetIndexMap.size() <= columnNameValMap.size()) {
             return;
         }
@@ -534,21 +518,20 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         }
     }
 
-    private OriginalDataObj buildOriginalObjectData(Map<String, Object> updatedColumnDatas, Select selectStmt, Column pk, MappedStatement mappedStatement, BoundSql boundSql, Connection connection) {
+    private OriginalDataObj buildOriginalObjectData(Select selectStmt, Column pk, MappedStatement mappedStatement, BoundSql boundSql, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(selectStmt.toString())) {
             DefaultParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
             ResultSet resultSet = statement.executeQuery();
             List<DataChangedRecord> originalObjectDatas = new LinkedList<>();
             int count = 0;
-
             while (resultSet.next()) {
                 ++count;
                 if (checkTableBatchLimitExceeded(selectStmt, count)) {
                     logger.error("batch update limit exceed: count={}, BATCH_UPDATE_LIMIT={}", count, BATCH_UPDATE_LIMIT);
                     throw DataUpdateLimitationException.DEFAULT;
                 }
-                originalObjectDatas.add(prepareOriginalDataObj(updatedColumnDatas, resultSet, pk));
+                originalObjectDatas.add(prepareOriginalDataObj(resultSet, pk));
             }
             OriginalDataObj result = new OriginalDataObj();
             result.setOriginalDataObj(originalObjectDatas);
@@ -608,20 +591,14 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
      * @return
      * @throws SQLException
      */
-    private DataChangedRecord prepareOriginalDataObj(Map<String, Object> updatedColumnDatas, ResultSet resultSet, Column pk) throws SQLException {
+    private DataChangedRecord prepareOriginalDataObj(ResultSet resultSet, Column pk) throws SQLException {
         final ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         List<DataColumnChangeResult> originalColumnDatas = new LinkedList<>();
         DataColumnChangeResult pkval = null;
         for (int i = 1; i <= columnCount; ++i) {
             String columnName = metaData.getColumnName(i).toUpperCase();
-            DataColumnChangeResult col;
-            Object updateVal = updatedColumnDatas.get(columnName);
-            if (updateVal != null && updateVal.getClass().getCanonicalName().startsWith("java.")) {
-                col = DataColumnChangeResult.constrcutByOriginalVal(columnName, resultSet.getObject(i, updateVal.getClass()));
-            } else {
-                col = DataColumnChangeResult.constrcutByOriginalVal(columnName, resultSet.getObject(i));
-            }
+            DataColumnChangeResult col = DataColumnChangeResult.constrcutByOriginalVal(columnName, resultSet.getObject(i));
             if (pk != null && columnName.equalsIgnoreCase(pk.getColumnName())) {
                 pkval = col;
             } else {
@@ -637,7 +614,6 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         return changedRecord;
     }
 
-
     private Columns2SelectItemsResult buildColumns2SelectItems(String tableName, List<Column> columns) {
         if (columns == null || columns.isEmpty()) {
             return Columns2SelectItemsResult.build(Collections.singletonList(new AllColumns()), 0);
@@ -646,15 +622,16 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         for (Column column : columns) {
             selectItems.add(new SelectExpressionItem(column));
         }
-        TableInfo tableInfo = getTableInfoByTableName(tableName);
-        if (tableInfo == null) {
-            return Columns2SelectItemsResult.build(selectItems, 0);
+        for (TableInfo tableInfo : TableInfoHelper.getTableInfos()) {
+            if (tableName.equalsIgnoreCase(tableInfo.getTableName())) {
+                Column pk = new Column(tableInfo.getKeyColumn());
+                selectItems.add(new SelectItem<>(pk));
+                Columns2SelectItemsResult result = Columns2SelectItemsResult.build(selectItems, 1);
+                result.setPk(pk);
+                return result;
+            }
         }
-        Column pk = new Column(tableInfo.getKeyColumn());
-        selectItems.add(new SelectExpressionItem(pk));
-        Columns2SelectItemsResult result = Columns2SelectItemsResult.build(selectItems, 1);
-        result.setPk(pk);
-        return result;
+        return Columns2SelectItemsResult.build(selectItems, 0);
     }
 
     private String buildParameterObject(BoundSql boundSql) {
@@ -695,10 +672,9 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         Select selectStmt = new Select();
         PlainSelect selectBody = new PlainSelect();
         selectBody.setFromItem(table);
-        selectBody.setSelectItems(Collections.singletonList(new AllColumns()));
+        selectBody.setSelectItems(Collections.singletonList(new SelectItem<>((new AllColumns()))));
         selectBody.setWhere(where);
-        selectStmt.setSelectBody(selectBody);
-        String originalData = buildOriginalData(selectStmt, mappedStatement, boundSql, connection);
+        String originalData = buildOriginalData(selectBody, mappedStatement, boundSql, connection);
         OperationResult result = new OperationResult();
         result.setOperation("delete");
         result.setTableName(table.getName());
@@ -814,13 +790,13 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         /**
          * all column with additional columns: ID, etc.
          */
-        private List<SelectItem> selectItems;
+        private List<SelectItem<?>> selectItems;
         /**
          * newly added column count from meta data.
          */
         private int additionalItemCount;
 
-        public static Columns2SelectItemsResult build(List<SelectItem> selectItems, int additionalItemCount) {
+        public static Columns2SelectItemsResult build(List<SelectItem<?>> selectItems, int additionalItemCount) {
             Columns2SelectItemsResult result = new Columns2SelectItemsResult();
             result.setSelectItems(selectItems);
             result.setAdditionalItemCount(additionalItemCount);

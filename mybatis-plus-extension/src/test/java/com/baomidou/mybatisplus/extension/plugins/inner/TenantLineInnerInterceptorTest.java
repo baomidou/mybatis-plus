@@ -85,6 +85,12 @@ class TenantLineInnerInterceptorTest {
         assertSql("UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ?) WHERE e.id = ?",
             "UPDATE entity e SET e.cq = (SELECT e1.total FROM entity e1 WHERE e1.id = ? AND e1.tenant_id = 1) " +
                 "WHERE e.id = ? AND e.tenant_id = 1");
+
+        assertSql("UPDATE sys_user SET (name, age) = ('秋秋', 18), address = 'test'",
+            "UPDATE sys_user SET (name, age) = ('秋秋', 18), address = 'test' WHERE tenant_id = 1");
+
+        assertSql("UPDATE entity t1 INNER JOIN entity t2 ON t1.a= t2.a SET t1.b = t2.b, t1.c = t2.c",
+            "UPDATE entity t1 INNER JOIN entity t2 ON t1.a = t2.a SET t1.b = t2.b, t1.c = t2.c WHERE t1.tenant_id = 1");
     }
 
     @Test
@@ -461,6 +467,12 @@ class TenantLineInnerInterceptorTest {
         // 显式指定 JOIN 类型时 JOIN 右侧表才能进行拼接条件
         assertSql("select u.username from sys_user u LEFT join sys_user_role r on u.id=r.user_id",
             "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.tenant_id = 1 WHERE u.tenant_id = 1");
+    }
+
+    @Test
+    void testDuplicateKeyUpdate() {
+        assertSql("INSERT INTO entity (name,age) VALUES ('秋秋',18),('秋秋','22') ON DUPLICATE KEY UPDATE age=18",
+            "INSERT INTO entity (name, age, tenant_id) VALUES ('秋秋', 18, 1), ('秋秋', '22', 1) ON DUPLICATE KEY UPDATE age = 18, tenant_id = 1");
     }
 
     void assertSql(String sql, String targetSql) {
