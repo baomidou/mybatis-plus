@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 /**
  * SQL 解析工具类
  *
@@ -32,4 +34,23 @@ public class SqlParserUtils {
     public static String getOriginalCountSql(String originalSql) {
         return String.format("SELECT COUNT(*) FROM (%s) TOTAL", originalSql);
     }
+
+    /**
+     * 去除表或字段包裹符号
+     *
+     * @param tableOrColumn 表名或字段名
+     * @return str
+     * @since 3.5.6
+     */
+    public static String removeWrapperSymbol(String tableOrColumn) {
+        if (StringUtils.isBlank(tableOrColumn)) {
+            return null;
+        }
+        if (tableOrColumn.startsWith("`") || tableOrColumn.startsWith("\"")
+            || tableOrColumn.startsWith("[") || tableOrColumn.startsWith("<")) {
+            return tableOrColumn.substring(1, tableOrColumn.length() - 1);
+        }
+        return tableOrColumn;
+    }
+
 }

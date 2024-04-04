@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
+import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -214,23 +215,25 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     private void validUseIndex(Table table, String columnName, Connection connection) {
         //是否使用索引
         boolean useIndexFlag = false;
-
-        String tableInfo = table.getName();
-        //表存在的索引
-        String dbName = null;
-        String tableName;
-        String[] tableArray = tableInfo.split("\\.");
-        if (tableArray.length == 1) {
-            tableName = tableArray[0];
-        } else {
-            dbName = tableArray[0];
-            tableName = tableArray[1];
-        }
-        List<IndexInfo> indexInfos = getIndexInfos(dbName, tableName, connection);
-        for (IndexInfo indexInfo : indexInfos) {
-            if (null != columnName && columnName.equalsIgnoreCase(indexInfo.getColumnName())) {
-                useIndexFlag = true;
-                break;
+        if (StringUtils.isNotBlank(columnName)) {
+            String tableInfo = table.getName();
+            //表存在的索引
+            String dbName = null;
+            String tableName;
+            String[] tableArray = tableInfo.split("\\.");
+            if (tableArray.length == 1) {
+                tableName = tableArray[0];
+            } else {
+                dbName = tableArray[0];
+                tableName = tableArray[1];
+            }
+            columnName = SqlParserUtils.removeWrapperSymbol(columnName);
+            List<IndexInfo> indexInfos = getIndexInfos(dbName, tableName, connection);
+            for (IndexInfo indexInfo : indexInfos) {
+                if (indexInfo.getColumnName().equalsIgnoreCase(columnName)) {
+                    useIndexFlag = true;
+                    break;
+                }
             }
         }
         if (!useIndexFlag) {
@@ -323,7 +326,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
                 DatabaseMetaData metadata = conn.getMetaData();
                 String catalog = StringUtils.isBlank(dbName) ? conn.getCatalog() : dbName;
                 String schema = StringUtils.isBlank(dbName) ? conn.getSchema() : dbName;
-                rs = metadata.getIndexInfo(catalog, schema, tableName, false, true);
+                rs = metadata.getIndexInfo(catalog, schema, SqlParserUtils.removeWrapperSymbol(tableName), false, true);
                 indexInfos = new ArrayList<>();
                 while (rs.next()) {
                     //索引中的列序列号等于1，才有效

@@ -27,4 +27,5 @@ dependencies {
     testImplementation "com.google.guava:guava:33.0.0-jre"
     testImplementation "io.github.classgraph:classgraph:4.8.165"
     testImplementation "${lib.h2}"
+    testImplementation "${lib.mysql}"
 }
