@@ -52,8 +52,8 @@ class IllegalSQLInnerInterceptorTest {
     }
 
     @Test
-//    @Disabled
-    void testMysql(){
+    @Disabled
+    void testForMysql(){
         /*
          *   CREATE TABLE `t_demo` (
               `a` int DEFAULT NULL,
