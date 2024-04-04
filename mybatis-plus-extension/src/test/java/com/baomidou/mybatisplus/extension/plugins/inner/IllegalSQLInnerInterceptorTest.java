@@ -20,7 +20,7 @@ class IllegalSQLInnerInterceptorTest {
 
     private final IllegalSQLInnerInterceptor interceptor = new IllegalSQLInnerInterceptor();
 //
-      // 待研究为啥H2读不到索引信息
+    // 待研究为啥H2读不到索引信息
 //    private static Connection connection;
 //
 //    @BeforeAll
@@ -48,12 +48,17 @@ class IllegalSQLInnerInterceptorTest {
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("delete from t_user set age = 18", null));
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from t_user where age != 1", null));
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from t_user where age = 1 or name = 'test'", null));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from t_user where (age = 1 or name = 'test')", null));
 //        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where a = 1 and b = 2", connection));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("update t_user set age = 1 where age = 1 or name = 'test'", null));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("update t_user set age = 1 where (age = 1 or name = 'test')", null));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("delete t_user where age = 1 or name = 'test'", null));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("delete t_user where (age = 1 or name = 'test')", null));
     }
 
     @Test
     @Disabled
-    void testForMysql(){
+    void testForMysql() {
         /*
          *   CREATE TABLE `t_demo` (
               `a` int DEFAULT NULL,
@@ -96,6 +101,30 @@ class IllegalSQLInnerInterceptorTest {
 
         Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("SELECT * FROM `t_demo` a LEFT JOIN `test` b ON a.a = b.a WHERE a.a = 1", dataSource.getConnection()));
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("SELECT * FROM `t_demo` a LEFT JOIN `test` b ON a.a = b.a WHERE a.b = 1", dataSource.getConnection()));
+
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where (c = 3 OR b = 2)", dataSource.getConnection()));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where c = 3 OR b = 2", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a = 3 AND (c = 3 OR b = 2)", dataSource.getConnection()));
+
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where (a = 3 AND c = 3 OR b = 2)", dataSource.getConnection()));
+
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a in (1,3,2)", dataSource.getConnection()));
+
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where a in (1,3,2) or b = 2", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a in (1,3,2) AND b = 2", dataSource.getConnection()));
+
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where (a = 3 AND c = 3 AND b = 2)", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` a INNER JOIN test b ON a.a = b.a where a.a = 3 AND (b.c = 3 OR b.b = 2)", dataSource.getConnection()));
+
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where a != (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+        //TODO 低版本这里的抛异常了.看着应该不用抛出
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a = (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a >= (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select * from `t_demo` where a <= (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where b = (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where b >= (SELECT b FROM test limit 1) ", dataSource.getConnection()));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `t_demo` where b <= (SELECT b FROM test limit 1) ", dataSource.getConnection()));
 
     }
 

@@ -27,6 +27,7 @@ import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
+import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
@@ -154,6 +155,10 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * @param expression ignore
      */
     private void validExpression(Expression expression) {
+        while (expression instanceof Parenthesis) {
+            Parenthesis parenthesis = (Parenthesis) expression;
+            expression = parenthesis.getExpression();
+        }
         //where条件使用了 or 关键字
         if (expression instanceof OrExpression) {
             OrExpression orExpression = (OrExpression) expression;
@@ -289,8 +294,10 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
             }
 
             //获得右边表达式，并分解
-            Expression rightExpression = ((BinaryExpression) expression).getRightExpression();
-            validExpression(rightExpression);
+            if (joinTable != null) {
+                Expression rightExpression = ((BinaryExpression) expression).getRightExpression();
+                validExpression(rightExpression);
+            }
         }
     }
 
