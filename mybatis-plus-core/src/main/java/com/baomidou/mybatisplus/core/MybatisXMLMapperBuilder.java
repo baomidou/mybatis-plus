@@ -19,6 +19,7 @@ import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
@@ -42,10 +43,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -59,7 +58,7 @@ import java.util.Properties;
 public class MybatisXMLMapperBuilder extends BaseBuilder {
 
     private final XPathParser parser;
-    private final MybatisMapperBuilderAssistant builderAssistant;
+    private final MapperBuilderAssistant builderAssistant;
     private final Map<String, XNode> sqlFragments;
     private final String resource;
 
@@ -104,9 +103,9 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
             configuration.addLoadedResource(resource);
             bindMapperForNamespace();
         }
-        parsePendingResultMaps();
-        parsePendingCacheRefs();
-        parsePendingStatements();
+        configuration.parsePendingResultMaps(false);
+        configuration.parsePendingCacheRefs(false);
+        configuration.parsePendingStatements(false);
     }
 
     public XNode getSqlFragment(String refid) {
@@ -146,51 +145,6 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
                 statementParser.parseStatementNode();
             } catch (IncompleteElementException e) {
                 configuration.addIncompleteStatement(statementParser);
-            }
-        }
-    }
-
-    private void parsePendingResultMaps() {
-        Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
-        synchronized (incompleteResultMaps) {
-            Iterator<ResultMapResolver> iter = incompleteResultMaps.iterator();
-            while (iter.hasNext()) {
-                try {
-                    iter.next().resolve();
-                    iter.remove();
-                } catch (IncompleteElementException e) {
-                    // ResultMap is still missing a resource...
-                }
-            }
-        }
-    }
-
-    private void parsePendingCacheRefs() {
-        Collection<CacheRefResolver> incompleteCacheRefs = configuration.getIncompleteCacheRefs();
-        synchronized (incompleteCacheRefs) {
-            Iterator<CacheRefResolver> iter = incompleteCacheRefs.iterator();
-            while (iter.hasNext()) {
-                try {
-                    iter.next().resolveCacheRef();
-                    iter.remove();
-                } catch (IncompleteElementException e) {
-                    // Cache ref is still missing a resource...
-                }
-            }
-        }
-    }
-
-    private void parsePendingStatements() {
-        Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
-        synchronized (incompleteStatements) {
-            Iterator<XMLStatementBuilder> iter = incompleteStatements.iterator();
-            while (iter.hasNext()) {
-                try {
-                    iter.next().parseStatementNode();
-                    iter.remove();
-                } catch (IncompleteElementException e) {
-                    // Statement is still missing a resource...
-                }
             }
         }
     }

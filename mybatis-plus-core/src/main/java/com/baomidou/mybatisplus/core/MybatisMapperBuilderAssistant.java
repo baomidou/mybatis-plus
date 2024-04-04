@@ -54,7 +54,7 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
                                             boolean lazy) {
         Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
         TypeHandler<?> typeHandlerInstance = null;
-        if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
+        if (typeHandler != null) {
             if (IJsonTypeHandler.class.isAssignableFrom(typeHandler)) {
                 try {
                     Field field = resultType.getDeclaredField(property);

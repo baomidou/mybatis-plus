@@ -42,9 +42,9 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -366,15 +366,16 @@ public class MybatisConfiguration extends Configuration {
 
     // Slow but a one time cost. A better solution is welcome.
     @Override
-    protected void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
+    public void checkGloballyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (rm.hasNestedResultMaps()) {
-            for (Map.Entry<String, ResultMap> entry : resultMaps.entrySet()) {
-                Object value = entry.getValue();
-                if (value instanceof ResultMap) {
-                    ResultMap entryResultMap = (ResultMap) value;
+            final String resultMapId = rm.getId();
+            for (Object resultMapObject : resultMaps.values()) {
+                if (resultMapObject instanceof ResultMap) {
+                    ResultMap entryResultMap = (ResultMap) resultMapObject;
                     if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
-                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator().getDiscriminatorMap().values();
-                        if (discriminatedResultMapNames.contains(rm.getId())) {
+                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator().getDiscriminatorMap()
+                            .values();
+                        if (discriminatedResultMapNames.contains(resultMapId)) {
                             entryResultMap.forceNestedResultMaps();
                         }
                     }
@@ -387,8 +388,7 @@ public class MybatisConfiguration extends Configuration {
     @Override
     protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
-            for (Map.Entry<String, String> entry : rm.getDiscriminator().getDiscriminatorMap().entrySet()) {
-                String discriminatedResultMapName = entry.getValue();
+            for (String discriminatedResultMapName : rm.getDiscriminator().getDiscriminatorMap().values()) {
                 if (hasResultMap(discriminatedResultMapName)) {
                     ResultMap discriminatedResultMap = resultMaps.get(discriminatedResultMapName);
                     if (discriminatedResultMap.hasNestedResultMaps()) {
@@ -400,14 +400,29 @@ public class MybatisConfiguration extends Configuration {
         }
     }
 
-    protected class StrictMap<V> extends HashMap<String, V> {
+    protected class StrictMap<V> extends ConcurrentHashMap<String, V> {
 
         private static final long serialVersionUID = -4950446264854982944L;
         private final String name;
         private BiFunction<V, V, String> conflictMessageProducer;
 
+        public StrictMap(String name, int initialCapacity, float loadFactor) {
+            super(initialCapacity, loadFactor);
+            this.name = name;
+        }
+
+        public StrictMap(String name, int initialCapacity) {
+            super(initialCapacity);
+            this.name = name;
+        }
+
         public StrictMap(String name) {
             super();
+            this.name = name;
+        }
+
+        public StrictMap(String name, Map<String, ? extends V> m) {
+            super(m);
             this.name = name;
         }
 
@@ -443,6 +458,15 @@ public class MybatisConfiguration extends Configuration {
                 }
             }
             return super.put(key, value);
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            if (key == null) {
+                return false;
+            }
+
+            return super.get(key) != null;
         }
 
         @Override

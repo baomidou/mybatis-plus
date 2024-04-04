@@ -65,7 +65,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         return knownMappers.containsKey(type);
     }
 
-    /**
+    /** 
      * 清空 Mapper 缓存信息
      */
     protected <T> void removeMapper(Class<T> type) {
