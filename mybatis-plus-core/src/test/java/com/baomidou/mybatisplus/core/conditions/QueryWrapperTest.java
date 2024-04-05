@@ -107,12 +107,13 @@ class QueryWrapperTest extends BaseWrapperTest {
             .groupBy("id").groupBy("name", "id2", "name2")
             .in("inColl", getList()).or().notIn("notInColl", getList())
             .in("inArray").notIn("notInArray", 5, 6, 7)
+            .eqSql("eqSql", "1")
             .inSql("inSql", "1,2,3,4,5").notInSql("inSql", "1,2,3,4,5")
             .gtSql("gtSql", "1,2,3,4,5").ltSql("ltSql", "1,2,3,4,5")
             .geSql("geSql", "1,2,3,4,5").leSql("leSql", "1,2,3,4,5")
             .having("sum(age) > {0}", 1).having("id is not null")
             .func(entity.getId() != null, j -> j.eq("id", entity.getId()));// 不会npe,也不会加入sql
-        logSqlWhere("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5) AND gtSql > (1,2,3,4,5) AND ltSql < (1,2,3,4,5) AND geSql >= (1,2,3,4,5) AND leSql <= (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
+        logSqlWhere("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND eqSql = (1) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5) AND gtSql > (1,2,3,4,5) AND ltSql < (1,2,3,4,5) AND geSql >= (1,2,3,4,5) AND leSql <= (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
         logParams(queryWrapper);
     }
 

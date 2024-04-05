@@ -202,6 +202,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children eqSql(boolean condition, R column, String eqValue) {
+        getWrapper().eqSql(condition, column, eqValue);
+        return typedThis;
+    }
+
+    @Override
     public Children inSql(boolean condition, R column, String inValue) {
         getWrapper().inSql(condition, column, inValue);
         return typedThis;
