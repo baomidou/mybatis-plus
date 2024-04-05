@@ -195,9 +195,10 @@ public interface Func<Children, R> extends Serializable {
      * <p>例1: eqSql("id", "1")</p>
      * <p>例2: eqSql("id", "select MAX(id) from table")</p>
      *
-     * @param column    字段
-     * @param sql   sql语句
+     * @param column 字段
+     * @param sql    sql语句
      * @return children
+     * @since 3.5.6
      */
     default Children eqSql(R column, String sql) {
         return eqSql(true, column, sql);
@@ -211,8 +212,9 @@ public interface Func<Children, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param column    字段
-     * @param sql   sql语句
+     * @param sql       sql语句
      * @return children
+     * @since 3.5.6
      */
     Children eqSql(boolean condition, R column, String sql);
 
