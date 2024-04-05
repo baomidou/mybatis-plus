@@ -23,7 +23,9 @@ import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author miemie
@@ -32,13 +34,25 @@ import java.util.concurrent.Executors;
 public class JsqlParserGlobal {
 
     /**
+     * 默认线程数大小
+     *
+     * @since 3.5.6
+     */
+    public static final int DEFAULT_THREAD_SIZE = (Runtime.getRuntime().availableProcessors() + 1) / 2;
+
+    /**
      * 默认解析处理线程池
      * <p>注意: 由于项目情况,机器配置等不一样因素,请自行根据情况创建指定线程池.</p>
      *
      * @see java.util.concurrent.ThreadPoolExecutor
      * @since 3.5.6
      */
-    public static ExecutorService executorService = Executors.newFixedThreadPool((Runtime.getRuntime().availableProcessors() + 1) / 2);
+    public static ExecutorService executorService = new ThreadPoolExecutor(DEFAULT_THREAD_SIZE, DEFAULT_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
+        Thread thread = new Thread(r);
+        thread.setName("mybatis-plus-jsqlParser-" + thread.getId());
+        thread.setDaemon(true);
+        return thread;
+    });
 
     @Setter
     private static JsqlParserFunction<String, Statement> parserSingleFunc = sql -> CCJSqlParserUtil.parse(sql, executorService, null);
