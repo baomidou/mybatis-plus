@@ -22,6 +22,7 @@ import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式高效有序 ID 生产黑科技(sequence)
@@ -32,6 +33,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 2016-08-18
  */
 public class Sequence {
+
+    /**
+     * 自动寻找网卡时,默认启动最大时间间隔,超过这个初始化时间打印warn日志
+     *
+     * @since 3.5.6
+     */
+    public static long MAX_START_INTERVAL_TIME = TimeUnit.SECONDS.toNanos(5);
 
     private static final Log logger = LogFactory.getLog(Sequence.class);
     /**
@@ -78,9 +86,16 @@ public class Sequence {
 
     public Sequence(InetAddress inetAddress) {
         this.inetAddress = inetAddress;
+        long start = System.nanoTime();
         this.datacenterId = getDatacenterId(maxDatacenterId);
         this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
-        initLog();
+        long end = System.nanoTime();
+        if (end - start > Sequence.MAX_START_INTERVAL_TIME) {
+            // 一般这里启动慢,是未指定inetAddress时出现,请查看本机hostname,将本机hostname写入至本地系统hosts文件之中进行解析
+            logger.warn("Initialization Sequence Very Slow! Get datacenterId:" + this.datacenterId + " workerId:" + this.workerId);
+        } else {
+            initLog();
+        }
     }
 
     private void initLog() {
@@ -131,10 +146,20 @@ public class Sequence {
         long id = 0L;
         try {
             if (null == this.inetAddress) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Use localhost address ");
+                }
                 this.inetAddress = InetAddress.getLocalHost();
             }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Get " + inetAddress + " network interface ");
+            }
             NetworkInterface network = NetworkInterface.getByInetAddress(this.inetAddress);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Get network interface info: " + network);
+            }
             if (null == network) {
+                logger.warn("Unable to get network interface for " + inetAddress);
                 id = 1L;
             } else {
                 byte[] mac = network.getHardwareAddress();
