@@ -61,7 +61,7 @@ public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
                 try {
                     script = SqlUtils.replaceSqlPlaceholder(script, find, config.getEscapeSymbol());
                 } catch (MybatisPlusException e) {
-                    throw new IncompleteElementException();
+                    throw new IncompleteElementException(e);
                 }
             }
         }

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -348,7 +349,7 @@ public class MybatisPlusProperties {
 
         private Boolean useGeneratedShortKey;
 
-        public void applyTo(Configuration target) {
+        public void applyTo(MybatisConfiguration target) {
             PropertyMapper mapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
             mapper.from(getSafeRowBoundsEnabled()).to(target::setSafeRowBoundsEnabled);
             mapper.from(getSafeResultHandlerEnabled()).to(target::setSafeResultHandlerEnabled);
@@ -383,7 +384,7 @@ public class MybatisPlusProperties {
             mapper.from(getDefaultEnumTypeHandler()).to(target::setDefaultEnumTypeHandler);
             mapper.from(getDefaultScriptingLanguageDriver()).to(target::setDefaultScriptingLanguage);
             mapper.from(getDatabaseId()).to(target::setDatabaseId);
-            mapper.from(getUseGeneratedShortKey()).to(target::setUseGeneratedKeys);
+            mapper.from(getUseGeneratedShortKey()).to(target::setUseGeneratedShortKey);
         }
     }
 
