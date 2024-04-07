@@ -17,6 +17,7 @@ dependencies {
     implementation "${lib."jackson"}"
     implementation "${lib."fastjson"}"
     implementation "${lib."gson"}"
+    implementation "${lib."jts-core"}"
     implementation "${lib['mybatis-thymeleaf']}"
     implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
