@@ -51,12 +51,7 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     @Override
     public Object parse(String json) {
         try {
-            return getObjectMapper().readValue(json, new TypeReference<Object>() {
-                @Override
-                public Type getType() {
-                    return getFieldType();
-                }
-            });
+            return getObjectMapper().readValue(json, getObjectMapper().getTypeFactory().constructType(getFieldType()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
