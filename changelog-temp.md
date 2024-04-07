@@ -6,6 +6,8 @@
 - fix: 修复IllegalSQLInnerInterceptor未处理Parenthesis
 - fix: 修复IllegalSQLInnerInterceptor表名或字段名包裹导致无法获取索引信息和索引字段校验问题
 - fix: 修复KtUpdateChainWrapper调用setSql的时候params没有展开
+- fix: 修复配置useGeneratedShortKey失效
+- fix: 修复DataChangeRecorderInnerInterceptor一系列问题
 - feat: ServiceImpl修改为抽象类,防止错误直接实例化
 - feat: 重构生成器TemplateConfig配置,模板禁用与路径配置更改至对应具体实现之上
 - feat: 支持组合注解
@@ -19,4 +21,6 @@
 - feat: 新增eqSql方法
 - feat: 升级mybatis至3.5.16
 - feat: 升级jsqlparser至4.9
+- feat: 新增SQL解析线程池
+- feat: 增加雪花ID生成器初始化日志打印(默认超过5秒打印警告日志)
 - doc: 增加update(Wrapper)相关api无法自动填充注释
