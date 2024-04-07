@@ -16,13 +16,15 @@
 package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 /**
@@ -45,12 +47,15 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
         super(type, field);
     }
 
-
     @Override
     public Object parse(String json) {
+        ObjectMapper objectMapper = getObjectMapper();
+        TypeFactory typeFactory = objectMapper.getTypeFactory();
+        JavaType javaType = typeFactory.constructType(getFieldType());
         try {
-            return getObjectMapper().readValue(json, getObjectMapper().getTypeFactory().constructType(getFieldType()));
-        } catch (IOException e) {
+            return objectMapper.readValue(json, javaType);
+        } catch (JacksonException e) {
+            log.error("deserialize json: " + json + " to " + javaType + " error ", e);
             throw new RuntimeException(e);
         }
     }
@@ -60,6 +65,7 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
         try {
             return getObjectMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
+            log.error("serialize " + obj + " to json error ", e);
             throw new RuntimeException(e);
         }
     }
@@ -75,4 +81,5 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
         Assert.notNull(objectMapper, "ObjectMapper should not be null");
         JacksonTypeHandler.OBJECT_MAPPER = objectMapper;
     }
+
 }

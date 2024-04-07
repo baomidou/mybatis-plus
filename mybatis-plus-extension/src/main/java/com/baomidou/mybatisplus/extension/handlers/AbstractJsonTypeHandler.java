@@ -18,10 +18,10 @@ package com.baomidou.mybatisplus.extension.handlers;
 import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -36,7 +36,7 @@ import java.sql.SQLException;
  */
 public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> implements IJsonTypeHandler<T> {
 
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     protected final Class<?> type;
 
@@ -63,6 +63,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> impl
      *
      * @param type  类型
      * @param field 字段
+     * @since 3.5.6
      */
     public AbstractJsonTypeHandler(Class<?> type, Field field) {
         this(type);

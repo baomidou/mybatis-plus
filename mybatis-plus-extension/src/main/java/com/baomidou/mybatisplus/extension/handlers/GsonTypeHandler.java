@@ -43,7 +43,6 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
         super(type, field);
     }
 
-
     @Override
     public Object parse(String json) {
         return getGson().fromJson(json, this.getFieldType());
@@ -65,4 +64,5 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
         Assert.notNull(gson, "Gson should not be null");
         GsonTypeHandler.GSON = gson;
     }
+
 }

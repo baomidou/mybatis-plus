@@ -35,9 +35,6 @@ public class FastjsonTypeHandler extends AbstractJsonTypeHandler<Object> {
 
     public FastjsonTypeHandler(Class<?> type) {
         super(type);
-        if (log.isTraceEnabled()) {
-            log.trace("FastjsonTypeHandler(" + type + ")");
-        }
     }
 
     public FastjsonTypeHandler(Class<?> type, Field field) {
