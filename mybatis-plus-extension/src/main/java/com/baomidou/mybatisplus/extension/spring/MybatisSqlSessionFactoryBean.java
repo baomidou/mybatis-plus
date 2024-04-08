@@ -36,6 +36,7 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.logging.Logger;
@@ -60,10 +61,14 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 import static org.springframework.util.Assert.notNull;
@@ -100,7 +105,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private Properties configurationProperties;
 
+    private SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new MybatisSqlSessionFactoryBuilder();
+
     private SqlSessionFactory sqlSessionFactory;
+
+    private String environment = SqlSessionFactoryBean.class.getSimpleName();
+
 
     private boolean failFast;
 
@@ -269,16 +279,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.typeHandlersPackage = typeHandlersPackage;
     }
 
-    /**
-     * Set the default type handler class for enum.
-     *
-     * @param defaultEnumTypeHandler The default type handler class for enum
-     * @since 2.0.5
-     */
-    public void setDefaultEnumTypeHandler(
-        @SuppressWarnings("rawtypes") Class<? extends TypeHandler> defaultEnumTypeHandler) {
-        this.defaultEnumTypeHandler = defaultEnumTypeHandler;
-    }
+
 
     /**
      * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
@@ -289,7 +290,16 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     public void setTypeHandlers(TypeHandler<?>... typeHandlers) {
         this.typeHandlers = typeHandlers;
     }
-
+    /**
+     * Set the default type handler class for enum.
+     *
+     * @param defaultEnumTypeHandler The default type handler class for enum
+     * @since 2.0.5
+     */
+    public void setDefaultEnumTypeHandler(
+        @SuppressWarnings("rawtypes") Class<? extends TypeHandler> defaultEnumTypeHandler) {
+        this.defaultEnumTypeHandler = defaultEnumTypeHandler;
+    }
     /**
      * List of type aliases to register. They can be annotated with {@code Alias}
      *
@@ -389,23 +399,47 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     }
 
     /**
-     * Set the MyBatis TransactionFactory to use. Default is {@code SpringManagedTransactionFactory}
+     * Sets the {@code SqlSessionFactoryBuilder} to use when creating the {@code SqlSessionFactory}.
      * <p>
-     * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
-     * be it Spring transaction management, EJB CMT or plain JTA. If there is no active transaction,
-     * SqlSession operations will execute SQL statements non-transactionally.
+     * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By default,
+     * {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
      *
-     * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any
-     * attempt at getting an SqlSession through Spring's MyBatis framework will throw an exception if
-     * a transaction is active.
+     * @param sqlSessionFactoryBuilder
+     *          a SqlSessionFactoryBuilder
+     */
+    public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
+        this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
+    }
+
+    /**
+     * Set the MyBatis TransactionFactory to use. Default is {@code SpringManagedTransactionFactory}.
+     * <p>
+     * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases: be it Spring transaction
+     * management, EJB CMT or plain JTA. If there is no active transaction, SqlSession operations will execute SQL
+     * statements non-transactionally.
+     * <p>
+     * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any attempt at
+     * getting an SqlSession through Spring's MyBatis framework will throw an exception if a transaction is active.
      *
-     * @param transactionFactory the MyBatis TransactionFactory
      * @see SpringManagedTransactionFactory
+     *
+     * @param transactionFactory
+     *          the MyBatis TransactionFactory
      */
     public void setTransactionFactory(TransactionFactory transactionFactory) {
         this.transactionFactory = transactionFactory;
     }
 
+    /**
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file. This is
+     * used only as a placeholder name. The default value is {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     *
+     * @param environment
+     *          the environment name
+     */
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
     /**
      * Set scripting language drivers.
      *
@@ -424,6 +458,88 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     public void setDefaultScriptingLanguageDriver(Class<? extends LanguageDriver> defaultScriptingLanguageDriver) {
         this.defaultScriptingLanguageDriver = defaultScriptingLanguageDriver;
+    }
+
+    /**
+     * Add locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
+     * at runtime.
+     * <p>
+     * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file. This property being
+     * based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
+     * "classpath*:sqlmap/*-mapper.xml".
+     *
+     * @param mapperLocations
+     *          location of MyBatis mapper files
+     *
+     * @see #setMapperLocations(Resource...)
+     *
+     * @since 3.0.2
+     */
+    public void addMapperLocations(Resource... mapperLocations) {
+        setMapperLocations(appendArrays(this.mapperLocations, mapperLocations, Resource[]::new));
+    }
+
+    /**
+     * Add type handlers.
+     *
+     * @param typeHandlers
+     *          Type handler list
+     *
+     * @since 3.0.2
+     */
+    public void addTypeHandlers(TypeHandler<?>... typeHandlers) {
+        setTypeHandlers(appendArrays(this.typeHandlers, typeHandlers, TypeHandler[]::new));
+    }
+
+    /**
+     * Add scripting language drivers.
+     *
+     * @param scriptingLanguageDrivers
+     *          scripting language drivers
+     *
+     * @since 3.0.2
+     */
+    public void addScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
+        setScriptingLanguageDrivers(
+            appendArrays(this.scriptingLanguageDrivers, scriptingLanguageDrivers, LanguageDriver[]::new));
+    }
+
+    /**
+     * Add Mybatis plugins.
+     *
+     * @param plugins
+     *          list of plugins
+     *
+     * @since 3.0.2
+     */
+    public void addPlugins(Interceptor... plugins) {
+        setPlugins(appendArrays(this.plugins, plugins, Interceptor[]::new));
+    }
+
+    /**
+     * Add type aliases.
+     *
+     * @param typeAliases
+     *          Type aliases list
+     *
+     * @since 3.0.2
+     */
+    public void addTypeAliases(Class<?>... typeAliases) {
+        setTypeAliases(appendArrays(this.typeAliases, typeAliases, Class[]::new));
+    }
+
+    private <T> T[] appendArrays(T[] oldArrays, T[] newArrays, IntFunction<T[]> generator) {
+        if (oldArrays == null) {
+            return newArrays;
+        } else {
+            if (newArrays == null) {
+                return oldArrays;
+            } else {
+                List<T> newList = new ArrayList<>(Arrays.asList(oldArrays));
+                newList.addAll(Arrays.asList(newArrays));
+                return newList.toArray(generator.apply(0));
+            }
+        }
     }
 
     /**
@@ -544,7 +660,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-        targetConfiguration.setEnvironment(new Environment(MybatisSqlSessionFactoryBean.class.getSimpleName(),
+        targetConfiguration.setEnvironment(new Environment(this.environment,
             this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
             this.dataSource));
 
@@ -572,7 +688,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
 
-        final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
+        final SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(targetConfiguration);
 
         SqlHelper.FACTORY = sqlSessionFactory;
 
