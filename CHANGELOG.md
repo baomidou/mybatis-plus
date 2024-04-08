@@ -1,4 +1,32 @@
 ﻿# CHANGELOG
+## [v3.5.6] 2024.04.08
+- fix: 修复通用Service多层代理引发的错误
+- fix: 修复Json类型处理器反序列化泛型丢失原始类型
+- fix: 修复填充器处理器基本类型数组出现强制错误
+- fix: 修复上版本移除掉Page方法保留至PageDto类之中
+- fix: 修复IllegalSQLInnerInterceptor未处理Parenthesis
+- fix: 修复IllegalSQLInnerInterceptor表名或字段名包裹导致无法获取索引信息和索引字段校验问题
+- fix: 修复KtUpdateChainWrapper调用setSql的时候params没有展开
+- fix: 修复useGeneratedShortKey配置失效
+- fix: 修复DataChangeRecorderInnerInterceptor一系列问题
+- feat: 去除sqlFirst与sqlComment转义(如有需要转义操作,请手动调用转义后传入)
+- feat: ServiceImpl修改为抽象类,防止错误直接实例化
+- feat: 重构代码生成器TemplateConfig配置,模板禁用与路径配置更改至对应具体实现之上
+- feat: 支持组合注解
+- feat: 新增 LambdaUpdateWrapper 字段自增 setIncrBy 自减 setDecrBy 方法
+- feat: 获取注入方法时传递org.apache.ibatis.session.Configuration
+- feat: 新增自增主键兼容配置开关(mybatis-plus.global-config.db-config.insert-ignore-auto-increment-column 默认false,开启INSERT语句无视主键字段生成)
+- feat: 新增参数填充器跳过方式(基于MappedStatement#id)
+- feat: 新增SQLite的DDL自动维护功
+- feat: 新增eqSql方法
+- feat: 新增SQL解析线程池
+- feat: 增加雪花ID生成器初始化日志打印(默认超过5秒打印警告日志)
+- feat: 升级mybatis至3.5.16
+- feat: 升级spring-cloud-commons
+- feat: 升级jsqlparser至4.9
+- test: Github增加CI
+- doc: 增加update(Wrapper)相关api无法自动填充注释
+
 ## [v3.5.5] 2023.12.24
 - fix: 修复配置databaseId失效
 - fix: 修复自增主键忽略注入错误忽略非自增主键注入问题
