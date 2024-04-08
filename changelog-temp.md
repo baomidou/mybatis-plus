@@ -12,7 +12,7 @@
 - feat: 重构生成器TemplateConfig配置,模板禁用与路径配置更改至对应具体实现之上
 - feat: 支持组合注解
 - feat: 升级spring-cloud-commons
-- feat: 新增 LambdaUpdateWrapper 字段自增 setSelfIncr 自减 setSelfDecr 方法
+- feat: 新增 LambdaUpdateWrapper 字段自增 setIncrBy 自减 setDecrBy 方法
 - feat: 增加CI
 - feat: 获取注入方法时传递org.apache.ibatis.session.Configuration
 - feat: 新增自增主键兼容配置开关(mybatis-plus.global-config.db-config.insert-ignore-auto-increment-column 默认false,开启INSERT语句无视主键字段生成)

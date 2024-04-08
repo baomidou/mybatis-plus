@@ -23,9 +23,34 @@ class LambdaUpdateWrapperTest extends BaseWrapperTest {
     }
 
     @Test
-    void test() {
+    void testIncrByAndDecrBy() {
         LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
-        wrapper.setSelfIncr(true, User::getRoleId, 1).setSelfDecr(true, User::getName, 1).eq(User::getId, 1);
+        wrapper.setIncrBy(true, User::getRoleId, 1).setDecrBy(true, User::getName, 1).eq(User::getId, 1);
         Assertions.assertEquals("role_id=role_id+1,username=username-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, 1).setIncrBy(User::getName, 1).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+1,username=username+1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(false, User::getRoleId, 1).setIncrBy(User::getName, 1).eq(User::getId, 1);
+        Assertions.assertEquals("username=username+1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, 1).setDecrBy(User::getName, 1).eq(false, User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1,username=username-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(true, User::getRoleId, 1).setDecrBy(true, User::getName, 1).eq(false, User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1,username=username-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(false, User::getRoleId, 1).setDecrBy(User::getName, 1).eq(User::getId, 1);
+        Assertions.assertEquals("username=username-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, 1).setDecrBy(false, User::getName, 1).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1", wrapper.getSqlSet());
     }
+
 }

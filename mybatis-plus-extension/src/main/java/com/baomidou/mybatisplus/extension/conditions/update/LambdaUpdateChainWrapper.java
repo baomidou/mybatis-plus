@@ -56,13 +56,58 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
         return typedThis;
     }
 
-    public LambdaUpdateChainWrapper<T> setSelfIncr(boolean condition, SFunction<T, ?> column, Object val) {
-        wrapperChildren.setSelfIncr(condition, column, val);
+    /**
+     * 字段自增变量 val 值
+     *
+     * @param column 字段
+     * @param val    值
+     * @return this
+     * @since 3.5.6
+     */
+    public LambdaUpdateChainWrapper<T> setIncrBy(SFunction<T, ?> column, Number val) {
+        wrapperChildren.setIncrBy(column, val);
         return typedThis;
     }
 
-    public LambdaUpdateChainWrapper<T> setSelfDecr(boolean condition, SFunction<T, ?> column, Object val) {
-        wrapperChildren.setSelfDecr(condition, column, val);
+
+    /**
+     * 字段自增变量 val 值
+     *
+     * @param condition 条件
+     * @param column    字段
+     * @param val       值
+     * @return this
+     * @since 3.5.6
+     */
+    public LambdaUpdateChainWrapper<T> setIncrBy(boolean condition, SFunction<T, ?> column, Number val) {
+        wrapperChildren.setIncrBy(condition, column, val);
+        return typedThis;
+    }
+
+    /**
+     * 字段自减变量 val 值
+     *
+     * @param column 字段
+     * @param val    值
+     * @return this
+     * @since 3.5.6
+     */
+    public LambdaUpdateChainWrapper<T> setDecrBy(SFunction<T, ?> column, Number val) {
+        wrapperChildren.setDecrBy(column, val);
+        return typedThis;
+    }
+
+    /**
+     * 字段自减变量 val 值
+     *
+     * @param condition 条件
+     * @param column    字段
+     * @param val       值
+     * @return this
+     * @since 3.5.6
+     */
+    public LambdaUpdateChainWrapper<T> setDecrBy(boolean condition, SFunction<T, ?> column, Number val) {
+        wrapperChildren.setDecrBy(condition, column, val);
         return typedThis;
     }
 
