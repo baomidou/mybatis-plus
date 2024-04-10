@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
+import com.baomidou.mybatisplus.core.batch.BatchSqlSession;
 import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -28,6 +29,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
@@ -44,6 +46,7 @@ import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 
 /*
 
@@ -432,17 +435,28 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList) {
+        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        String keyProperty = tableInfo.getKeyProperty();
+        String statement = mybatisMapperProxy.getMapperInterface().getName() + StringPool.DOT + SqlMethod.SELECT_BY_ID.getMethod();
+        return saveOrUpdateBatch(entityList, (sqlSession, entity) -> {
+            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+            return StringUtils.checkValNull(idVal) || CollectionUtils.isEmpty(sqlSession.selectList(statement, entity));
+        });
+    }
+
+    /**
+     * 批量修改或插入
+     *
+     * @param entityList 实体对象集合
+     * @since 3.5.7
+     */
+    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate) {
         MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
-        String keyProperty = tableInfo.getKeyProperty();
-        String statementId = method.get(SqlMethod.SELECT_BY_ID.getMethod()).getStatementId();
-        return MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, entityList, method.insert(), (sqlSession, entity) -> {
-            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal) || CollectionUtils.isEmpty(sqlSession.selectList(statementId, entity));
-        }, method.updateById());
+        return MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, entityList, method.insert(), insertPredicate, method.updateById());
     }
 
 }

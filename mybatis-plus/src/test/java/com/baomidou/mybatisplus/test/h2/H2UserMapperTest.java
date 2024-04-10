@@ -272,6 +272,49 @@ class H2UserMapperTest extends BaseTest {
         }
     }
 
+    @Test
+    void testSaveOrUpdateBatchMapper2() {
+        int batchSize = 10;
+        List<H2User> h2UserList = new ArrayList<>();
+        for (int i = 0; i < batchSize; i++) {
+            h2UserList.add(new H2User(Long.valueOf(40000 + i), "test" + i));
+        }
+        List<BatchResult> batchResults = userMapper.saveOrUpdateBatch(h2UserList,((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null));
+        // 没有使用共享的sqlSession,由于都是新增返回还是一个批次
+        int[] updateCounts = batchResults.get(0).getUpdateCounts();
+        Assertions.assertEquals(batchSize, updateCounts.length);
+        for (int updateCount : updateCounts) {
+            Assertions.assertEquals(1, updateCount);
+        }
+    }
+
+    @Test
+    void testSaveOrUpdateBatchMapper3() {
+        var id = IdWorker.getId();
+        var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatchMapper3"), new H2User(id, "testSaveOrUpdateBatchMapper3-1"));
+        // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> {
+            userMapper.saveOrUpdateBatch(h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null));
+        });
+    }
+
+    @Test
+    void testSaveOrUpdateBatchMapper4() {
+        var id = IdWorker.getId();
+        var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatchMapper4"), new H2User(id, "testSaveOrUpdateBatchMapper4-1"));
+        var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
+        // 共享一个sqlSession,每次selectById都会刷新一下,第二条记录为update.
+        var batchResults = userMapper.saveOrUpdateBatch(h2UserList,
+            ((sqlSession, h2User) -> sqlSession.selectList(mapperMethod.get("selectById").getStatementId(), h2User.getTestId()).isEmpty()));
+        var updateCounts = batchResults.get(0).getUpdateCounts();
+        for (int updateCount : updateCounts) {
+            Assertions.assertEquals(1, updateCount);
+        }
+        Assertions.assertEquals(userMapper.selectById(id).getName(), "testSaveOrUpdateBatchMapper4-1");
+    }
+
+
+
 
     @Test
     void testSaveOrUpdateBatch2() {
