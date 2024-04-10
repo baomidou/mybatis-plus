@@ -103,4 +103,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select("select count(*) from h2user")
     Long selectCountLong();
+
+    @Select("select * from h2user where test_id = #{id}")
+    H2User getById(@Param("id") Long id);
 }

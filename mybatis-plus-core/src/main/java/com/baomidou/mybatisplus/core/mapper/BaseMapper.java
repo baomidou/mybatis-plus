@@ -19,16 +19,22 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.ognl.OgnlOps;
 import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
@@ -106,7 +112,31 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param id 主键ID
      */
-    int deleteById(Serializable id);
+    default int deleteById(Serializable id) {
+        return deleteById(id, true);
+    }
+
+    /**
+     * 根据 ID 删除
+     *
+     * @param useFill 是否填充
+     * @param id      主键ID
+     * @since 3.5.7
+     */
+    default int deleteById(Serializable id, boolean useFill) {
+        if (useFill) {
+            Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+            if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+                T instance = tableInfo.newInstance();
+                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), OgnlOps.convertValue(id, tableInfo.getKeyType()));
+                return this.deleteById(instance);
+            }
+        }
+        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
+        return sqlSession.delete(mybatisMapperProxy.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(), id);
+    }
 
     /**
      * 根据实体(ID)删除

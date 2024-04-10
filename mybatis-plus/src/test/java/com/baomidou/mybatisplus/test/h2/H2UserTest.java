@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
@@ -631,6 +632,24 @@ class H2UserTest extends BaseTest {
         userService.removeById(h2User);
         userService.removeByIds(Arrays.asList(10000L, h2User));
         userService.removeByIds(Arrays.asList(10000L, h2User), false);
+        h2User = new H2User("test");
+        H2UserMapper h2UserMapper = (H2UserMapper) userService.getBaseMapper();
+        h2UserMapper.insert(h2User);
+        h2UserMapper.deleteById(h2User.getTestId());
+        h2User = h2UserMapper.getById(h2User.getTestId());
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User("test");
+        h2UserMapper.insert(h2User);
+        h2UserMapper.deleteById(h2User.getTestId(), false);
+        h2User = h2UserMapper.getById(h2User.getTestId());
+        Assertions.assertNull(h2User.getLastUpdatedDt());
+
+        h2User = new H2User("test");
+        h2UserMapper.insert(h2User);
+        h2UserMapper.deleteById(String.valueOf(h2User.getTestId()));
+        h2User = h2UserMapper.getById(h2User.getTestId());
+        Assertions.assertNotNull(h2User.getLastUpdatedDt());
     }
 
     @Test
