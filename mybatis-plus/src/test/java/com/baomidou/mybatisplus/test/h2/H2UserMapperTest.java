@@ -315,14 +315,14 @@ class H2UserMapperTest extends BaseTest {
 
     @Test
     void testRemoveByIds() {
-        Assertions.assertEquals(userMapper.deleteByIds(List.of(666666661, "2")), userMapper.deleteByIds(List.of(666666661, "2"), false));
+        Assertions.assertEquals(userMapper.deleteBatchIds(List.of(666666661, "2")), userMapper.deleteBatchIds(List.of(666666661, "2"), false));
         H2User h2User = new H2User("testRemoveByIds");
         userMapper.insert(h2User);
-        userMapper.deleteByIds(List.of(h2User));
+        userMapper.deleteBatchIds(List.of(h2User));
         Assertions.assertNotNull(userMapper.getById(h2User.getTestId()).getLastUpdatedDt());
         h2User = new H2User("testRemoveByIds");
         userMapper.insert(h2User);
-        userMapper.deleteByIds(List.of(h2User), false);
+        userMapper.deleteBatchIds(List.of(h2User), false);
         Assertions.assertNull(userMapper.getById(h2User.getTestId()).getLastUpdatedDt());
     }
 

@@ -174,23 +174,9 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 删除（根据ID或实体 批量删除）
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
-     * @since 3.5.7
      */
-    default int deleteByIds(@Param(Constants.COLL) Collection<?> idList) {
-        return deleteByIds(idList, true);
-    }
-
-
-    /**
-     * 删除（根据ID或实体 批量删除）
-     *
-     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
-     * @see #deleteByIds(Collection)
-     * @deprecated 3.5.7
-     */
-    @Deprecated
     default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
-        return deleteByIds(idList, true);
+        return deleteBatchIds(idList, true);
     }
 
     /**
@@ -200,7 +186,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param useFill     逻辑删除下是否填充
      * @since 3.5.7
      */
-    default int deleteByIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
+    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
         MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();

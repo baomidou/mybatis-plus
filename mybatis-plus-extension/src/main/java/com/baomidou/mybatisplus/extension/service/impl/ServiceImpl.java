@@ -295,45 +295,20 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
-
-    @Override
-    public boolean removeById(Serializable id) {
-        return SqlHelper.retBool(getBaseMapper().deleteById(id));
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean removeByIds(Collection<?> list) {
-        if (CollectionUtils.isEmpty(list)) {
-            return false;
-        }
-        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
-    }
-
+    
     @Override
     public boolean removeById(Serializable id, boolean useFill) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        if (useFill && tableInfo.isWithLogicDelete()) {
-            if (!entityClass.isAssignableFrom(id.getClass())) {
-                T instance = tableInfo.newInstance();
-                Object value = tableInfo.getKeyType() != id.getClass() ? conversionService.convert(id, tableInfo.getKeyType()) : id;
-                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), value);
-                return removeById(instance);
-            }
-        }
-        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+        return SqlHelper.retBool(getBaseMapper().deleteById(id, useFill));
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public boolean removeBatchByIds(Collection<?> list, int batchSize) {
-        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
-        return SqlHelper.retBool(getBaseMapper().deleteByIds(list, useFill));
+        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list, useFill));
     }
 
 }
