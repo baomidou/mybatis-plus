@@ -1,0 +1,4 @@
+- feat: BaseMapper新增批量操作与SaveOrUpdate方法
+- feat: BaseMapper新增批量操作方法返回值List<BatchResult>
+- feat: BaseMapper方法逻辑删除默认支持填充
+- feat: 调整Service层逻辑删除填充逻辑处理

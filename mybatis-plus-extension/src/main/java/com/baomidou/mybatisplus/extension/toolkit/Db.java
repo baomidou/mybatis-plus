@@ -241,13 +241,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        Class<T> entityClass = getEntityClass(entity);
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
-        String keyProperty = tableInfo.getKeyProperty();
-        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        Object idVal = tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
-        return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal, entityClass)) ? save(entity) : updateById(entity);
+        return SqlHelper.execute(getEntityClass(entity), baseMapper -> baseMapper.saveOrUpdate(entity));
     }
 
     /**
