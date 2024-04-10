@@ -124,8 +124,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default int deleteById(Serializable id, boolean useFill) {
-        if (useFill) {
-            Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        if (!entityClass.isAssignableFrom(id.getClass()) && useFill) {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
             if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
                 T instance = tableInfo.newInstance();
