@@ -256,6 +256,24 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
+    void testSaveOrUpdateBatchMapper1() {
+        int batchSize = 10;
+        List<H2User> h2UserList = new ArrayList<>();
+        for (int i = 0; i < batchSize; i++) {
+            h2UserList.add(new H2User(Long.valueOf(140000 + i), "test" + i));
+        }
+        List<BatchResult> batchResults = userMapper.saveOrUpdateBatch(h2UserList);
+        Assertions.assertEquals(batchSize, batchResults.size());
+        // 使用共享的sqlSession,等于每次都是刷新了,批次总结果集就等于数据大小了
+        Assertions.assertEquals(batchSize, batchResults.size());
+        for (BatchResult batchResult : batchResults) {
+            Assertions.assertEquals(batchResult.getUpdateCounts().length, 1);
+            Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
+        }
+    }
+
+
+    @Test
     void testSaveOrUpdateBatch2() {
         int batchSize = 10;
         List<H2User> h2UserList = new ArrayList<>();

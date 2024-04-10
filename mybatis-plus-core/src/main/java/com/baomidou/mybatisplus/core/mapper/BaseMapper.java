@@ -24,9 +24,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import org.apache.ibatis.annotations.Param;
@@ -421,6 +423,26 @@ public interface BaseMapper<T> extends Mapper<T> {
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
         return MybatisBatchUtils.execute(sqlSessionFactory, entityList, method.updateById());
+    }
+
+    /**
+     * 批量修改或插入
+     *
+     * @param entityList 实体对象集合
+     * @since 3.5.7
+     */
+    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList) {
+        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
+        SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
+        String keyProperty = tableInfo.getKeyProperty();
+        String statementId = method.get(SqlMethod.SELECT_BY_ID.getMethod()).getStatementId();
+        return MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, entityList, method.insert(), (sqlSession, entity) -> {
+            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+            return StringUtils.checkValNull(idVal) || CollectionUtils.isEmpty(sqlSession.selectList(statementId, entity));
+        }, method.updateById());
     }
 
 }
