@@ -36,15 +36,12 @@ import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -58,8 +55,6 @@ import java.util.function.Function;
  */
 @SuppressWarnings("unchecked")
 public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
-
-    private final ConversionService conversionService = DefaultConversionService.getSharedInstance();
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -197,15 +192,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
      */
     @Override
     public boolean saveOrUpdate(T entity) {
-        if (null != entity) {
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
-            Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
-            String keyProperty = tableInfo.getKeyProperty();
-            Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-            Object idVal = tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
-            return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
-        }
-        return false;
+        return getBaseMapper().saveOrUpdate(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -295,7 +282,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
-    
+
     @Override
     public boolean removeById(Serializable id, boolean useFill) {
         return SqlHelper.retBool(getBaseMapper().deleteById(id, useFill));
