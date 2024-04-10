@@ -298,10 +298,6 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
 
     @Override
     public boolean removeById(Serializable id) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
-        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
-            return removeById(id, true);
-        }
         return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
@@ -311,11 +307,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntityClass());
-        if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
-            return removeBatchByIds(list, true);
-        }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     @Override
@@ -335,29 +327,13 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeBatchByIds(Collection<?> list, int batchSize) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        return removeBatchByIds(list, batchSize, tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill());
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
-        String sqlStatement = getSqlStatement(SqlMethod.DELETE_BY_ID);
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        return executeBatch(list, batchSize, (sqlSession, e) -> {
-            if (useFill && tableInfo.isWithLogicDelete()) {
-                if (entityClass.isAssignableFrom(e.getClass())) {
-                    sqlSession.update(sqlStatement, e);
-                } else {
-                    T instance = tableInfo.newInstance();
-                    Object value = tableInfo.getKeyType() != e.getClass() ? conversionService.convert(e, tableInfo.getKeyType()) : e;
-                    tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), value);
-                    sqlSession.update(sqlStatement, instance);
-                }
-            } else {
-                sqlSession.update(sqlStatement, e);
-            }
-        });
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list, useFill));
     }
 
 }

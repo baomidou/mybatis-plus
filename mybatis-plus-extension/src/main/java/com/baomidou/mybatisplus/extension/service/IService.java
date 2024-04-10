@@ -155,7 +155,7 @@ public interface IService<T> {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     /**
@@ -174,7 +174,7 @@ public interface IService<T> {
         if (useFill) {
             return removeBatchByIds(list, true);
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     /**
@@ -208,8 +208,11 @@ public interface IService<T> {
      * @param list      主键ID或实体列表
      * @param batchSize 批次大小
      * @return 删除结果
+     * @see #removeBatchByIds(Collection, boolean)
      * @since 3.5.0
+     * @deprecated 3.5.7
      */
+    @Deprecated
     default boolean removeBatchByIds(Collection<?> list, int batchSize) {
         throw new UnsupportedOperationException("不支持的方法!");
     }
@@ -221,8 +224,11 @@ public interface IService<T> {
      * @param batchSize 批次大小
      * @param useFill   是否启用填充(为true的情况,会将入参转换实体进行delete删除)
      * @return 删除结果
+     * @see #removeBatchByIds(Collection, boolean)
      * @since 3.5.0
+     * @deprecated 3.5.7
      */
+    @Deprecated
     default boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
         throw new UnsupportedOperationException("不支持的方法!");
     }

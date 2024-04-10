@@ -43,7 +43,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -125,22 +127,22 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 根据 ID 删除
      *
      * @param useFill 是否填充
-     * @param id      主键ID
+     * @param obj      主键ID或实体
      * @since 3.5.7
      */
-    default int deleteById(Serializable id, boolean useFill) {
+    default int deleteById(Object obj, boolean useFill) {
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
-        if (!entityClass.isAssignableFrom(id.getClass()) && useFill) {
+        if (!entityClass.isAssignableFrom(obj.getClass()) && useFill) {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
             if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
                 T instance = tableInfo.newInstance();
-                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), OgnlOps.convertValue(id, tableInfo.getKeyType()));
+                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), OgnlOps.convertValue(obj, tableInfo.getKeyType()));
                 return this.deleteById(instance);
             }
         }
         MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
-        return sqlSession.delete(mybatisMapperProxy.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(), id);
+        return sqlSession.delete(mybatisMapperProxy.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(), obj);
     }
 
     /**
@@ -167,12 +169,58 @@ public interface BaseMapper<T> extends Mapper<T> {
      */
     int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
+
     /**
      * 删除（根据ID或实体 批量删除）
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
+     * @since 3.5.7
      */
-    int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList);
+    default int deleteByIds(@Param(Constants.COLL) Collection<?> idList) {
+        return deleteByIds(idList, true);
+    }
+
+
+    /**
+     * 删除（根据ID或实体 批量删除）
+     *
+     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
+     * @see #deleteByIds(Collection)
+     * @deprecated 3.5.7
+     */
+    @Deprecated
+    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
+        return deleteByIds(idList, true);
+    }
+
+    /**
+     * 删除（根据ID或实体 批量删除）
+     *
+     * @param collections 主键ID列表或实体列表(不能为 null 以及 empty)
+     * @param useFill     逻辑删除下是否填充
+     * @since 3.5.7
+     */
+    default int deleteByIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
+        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
+        Class<?> mapperInterface = mybatisMapperProxy.getMapperInterface();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        List<Object> ids = new ArrayList<>(collections.size());
+        if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            for (Object obj : collections) {
+                if (entityClass.isAssignableFrom(obj.getClass())) {
+                    ids.add(tableInfo.getPropertyValue(obj, tableInfo.getKeyProperty()));
+                } else {
+                    ids.add(obj);
+                }
+            }
+            this.update(tableInfo.newInstance(), Wrappers.<T>update().in(tableInfo.getKeyColumn(), ids));
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put(Constants.COLL, collections);
+        return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BATCH_BY_IDS.getMethod(), params);
+    }
 
     /**
      * 根据 ID 修改
