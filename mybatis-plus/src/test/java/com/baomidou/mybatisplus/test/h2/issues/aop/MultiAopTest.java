@@ -39,6 +39,7 @@ public class MultiAopTest {
         );
         demoService.save(new Demo());
         demoService.saveBatch(List.of(new Demo()));
+        demoService.getBaseMapper().saveBatch(List.of(new Demo()));
     }
 
 }

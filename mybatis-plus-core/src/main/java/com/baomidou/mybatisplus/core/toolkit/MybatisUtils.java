@@ -1,8 +1,12 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -47,6 +51,22 @@ public class MybatisUtils {
             }
         }
         return result;
+    }
+
+    public static SqlSessionFactory getSqlSessionFactory(MybatisMapperProxy<?> mybatisMapperProxy) {
+        SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
+        if (sqlSession instanceof DefaultSqlSession) {
+            // TODO 原生mybatis下只能这样了.
+            return GlobalConfigUtils.getGlobalConfig(mybatisMapperProxy.getSqlSession().getConfiguration()).getSqlSessionFactory();
+        }
+        Field declaredField;
+        try {
+            declaredField = sqlSession.getClass().getDeclaredField("sqlSessionFactory");
+            declaredField.setAccessible(true);
+            return (SqlSessionFactory) declaredField.get(sqlSession);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

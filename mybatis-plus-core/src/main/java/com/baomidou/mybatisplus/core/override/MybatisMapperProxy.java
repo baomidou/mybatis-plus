@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
@@ -117,6 +116,10 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
 
     public SqlSession getSqlSession() {
         return sqlSession;
+    }
+
+    public Class<T> getMapperInterface() {
+        return mapperInterface;
     }
 
     private MethodHandle getMethodHandleJava9(Method method)

@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.batch.ParameterConvert;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -40,7 +41,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, String statement) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, String statement) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(statement);
     }
 
@@ -54,7 +55,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, String statement, ParameterConvert<T> parameterConvert) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, String statement, ParameterConvert<T> parameterConvert) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(statement, parameterConvert);
     }
 
@@ -68,7 +69,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, boolean autoCommit, String statement) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, boolean autoCommit, String statement) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(autoCommit, statement);
     }
 
@@ -83,7 +84,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, boolean autoCommit, String statement, ParameterConvert<T> parameterConvert) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, boolean autoCommit, String statement, ParameterConvert<T> parameterConvert) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(autoCommit, statement, parameterConvert);
     }
 
@@ -96,7 +97,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, BatchMethod<T> batchMethod) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, BatchMethod<T> batchMethod) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(batchMethod);
     }
 
@@ -110,7 +111,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, List<T> dataList, boolean autoCommit, BatchMethod<T> batchMethod) {
+    public static <T> List<BatchResult> execute(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, boolean autoCommit, BatchMethod<T> batchMethod) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).execute(autoCommit, batchMethod);
     }
 
@@ -129,7 +130,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> saveOrUpdate(SqlSessionFactory sqlSessionFactory, List<T> dataList, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
+    public static <T> List<BatchResult> saveOrUpdate(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).saveOrUpdate(insertMethod, insertPredicate, updateMethod);
     }
 
@@ -149,7 +150,7 @@ public class MybatisBatchUtils {
      * @param <T>               泛型
      * @return 批处理结果
      */
-    public static <T> List<BatchResult> saveOrUpdate(SqlSessionFactory sqlSessionFactory, List<T> dataList, boolean autoCommit, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
+    public static <T> List<BatchResult> saveOrUpdate(SqlSessionFactory sqlSessionFactory, Collection<T> dataList, boolean autoCommit, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
         return new MybatisBatch<>(sqlSessionFactory, dataList).saveOrUpdate(autoCommit, insertMethod, insertPredicate, updateMethod);
     }
 

@@ -26,6 +26,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +59,9 @@ public class MybatisBatch<T> {
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    private final List<T> dataList;
+    private final Collection<T> dataList;
 
-    public MybatisBatch(SqlSessionFactory sqlSessionFactory, List<T> dataList) {
+    public MybatisBatch(SqlSessionFactory sqlSessionFactory, Collection<T> dataList) {
         this.sqlSessionFactory = sqlSessionFactory;
         this.dataList = dataList;
     }

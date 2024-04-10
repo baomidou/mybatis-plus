@@ -70,6 +70,24 @@ class H2UserMapperTest extends BaseTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    @Test
+    void testMapperSaveBatch() {
+        var list = List.of(new H2User("秋秋1"), new H2User("秋秋2"));
+        List<BatchResult> batchResults = userMapper.saveBatch(list);
+        Assertions.assertEquals(2, batchResults.get(0).getUpdateCounts().length);
+    }
+
+    @Test
+    void testMapperUpdateBatch() {
+        var list = List.of(new H2User("秋秋1"), new H2User("秋秋2"));
+        userMapper.saveBatch(list);
+        for (H2User h2User : list) {
+            h2User.setName("test" + 1);
+        }
+        List<BatchResult> batchResults = userMapper.updateBatchById(list);
+        Assertions.assertEquals(2, batchResults.get(0).getUpdateCounts().length);
+    }
+
 
     @Test
     void testBatchTransaction() {
