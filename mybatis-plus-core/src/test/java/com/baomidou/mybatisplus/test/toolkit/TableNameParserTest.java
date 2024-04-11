@@ -492,6 +492,23 @@ public class TableNameParserTest {
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("cf_procedure"));
     }
 
+    @Test
+    public void testUpdateIgnore() {
+        String sql = "update ignore student set name = 'abc' where id = 4";
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("student"));
+
+        sql = "UPDATE IGNORE student set name = 'abc' where id = 4";
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("student"));
+    }
+
+    @Test
+    public void testInsertIgnore() {
+        String sql = "INSERT IGNORE INTO student (userid,username) VALUES (2,'swan'),(4,'bear') ;";
+        assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("student"));
+    }
+
+
+
     private static Collection<String> asSet(String... a) {
         Set<String> result = new HashSet<>();
         Collections.addAll(result, a);
