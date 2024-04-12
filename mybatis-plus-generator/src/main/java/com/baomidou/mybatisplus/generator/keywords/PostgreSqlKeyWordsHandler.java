@@ -101,6 +101,7 @@ public class PostgreSqlKeyWordsHandler extends BaseKeyWordsHandler {
         "OR",
         "ORDER",
         "OUTER",
+        "OUTPUT",
         "OVERLAPS",
         "PLACING",
         "PRIMARY",

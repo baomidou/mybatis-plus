@@ -465,6 +465,7 @@ public class MySqlKeyWordsHandler extends BaseKeyWordsHandler {
         "OUT",
         "OUTER",
         "OUTFILE",
+        "OUTPUT",
         "OVER",
         "OWNER",
         "PACK_KEYS",

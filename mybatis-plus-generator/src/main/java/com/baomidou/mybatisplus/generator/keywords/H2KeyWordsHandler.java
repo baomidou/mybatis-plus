@@ -80,6 +80,7 @@ public class H2KeyWordsHandler extends BaseKeyWordsHandler {
         "ON",
         "OR",
         "ORDER",
+        "OUTPUT",
         "OVER",
         "PARTITION",
         "PRIMARY",
