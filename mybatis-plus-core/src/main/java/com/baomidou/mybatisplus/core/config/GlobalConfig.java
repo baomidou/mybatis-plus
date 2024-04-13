@@ -27,10 +27,13 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -92,6 +95,10 @@ public class GlobalConfig implements Serializable {
      * 主键生成器
      */
     private IdentifierGenerator identifierGenerator;
+    /**
+     * 数据库相关配置
+     */
+    private Sequence sequence = new Sequence();
 
     @Data
     public static class DbConfig {
@@ -229,4 +236,42 @@ public class GlobalConfig implements Serializable {
             return selectStrategy == null ? whereStrategy : selectStrategy;
         }
     }
+
+    /**
+     * 雪花ID配置
+     * <p>
+     * 1. 手动指定{@link #workerId} 和 {@link #datacenterId}
+     * </p>
+     * <p>
+     * 2. 基于网卡信息和进程PID计算 {@link #workerId} 和 {@link #datacenterId}
+     * </p>
+     *
+     * @since 3.5.7
+     */
+    @Getter
+    @Setter
+    public static class Sequence {
+
+        /**
+         * 工作机器 ID
+         */
+        private Long workerId;
+
+        /**
+         * 数据标识 ID 部分
+         */
+        private Long datacenterId;
+
+        /**
+         * 首选网络地址 (例如: 192.168.1,支持正则)
+         */
+        private List<String> preferredNetworks = new ArrayList<>();
+
+        /**
+         * 忽略网卡(例如:eth0,,支持正则)
+         */
+        private List<String> ignoredInterfaces = new ArrayList<>();
+
+    }
+
 }

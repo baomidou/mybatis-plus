@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.NetUtils;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
@@ -30,6 +31,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.InetAddress;
 import java.util.Properties;
 
 /**
@@ -81,7 +83,14 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
         final IdentifierGenerator identifierGenerator;
         if (null == globalConfig.getIdentifierGenerator()) {
-            identifierGenerator = DefaultIdentifierGenerator.getInstance();
+            GlobalConfig.Sequence sequence = globalConfig.getSequence();
+            if (sequence.getWorkerId() != null && sequence.getDatacenterId() != null) {
+                identifierGenerator = new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
+            } else {
+                NetUtils.NetProperties netProperties = new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
+                InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
+                identifierGenerator = new DefaultIdentifierGenerator(inetAddress);
+            }
             globalConfig.setIdentifierGenerator(identifierGenerator);
         } else {
             identifierGenerator = globalConfig.getIdentifierGenerator();
