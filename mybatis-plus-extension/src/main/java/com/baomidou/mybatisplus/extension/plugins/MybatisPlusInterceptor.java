@@ -144,4 +144,12 @@ public class MybatisPlusInterceptor implements Interceptor {
             addInnerInterceptor(innerInterceptor);
         });
     }
+
+    @Override
+    public String toString() {
+        return "MybatisPlusInterceptor{" +
+            "interceptors=" + interceptors +
+            '}';
+    }
+
 }
