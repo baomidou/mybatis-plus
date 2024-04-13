@@ -50,11 +50,11 @@ class PathInfoHandler {
      */
     private final PackageConfig packageConfig;
 
-    PathInfoHandler(GlobalConfig globalConfig, TemplateConfig templateConfig, PackageConfig packageConfig) {
+    PathInfoHandler(GlobalConfig globalConfig, StrategyConfig strategyConfig, PackageConfig packageConfig) {
         this.outputDir = globalConfig.getOutputDir();
         this.packageConfig = packageConfig;
         // 设置默认输出路径
-        this.setDefaultPathInfo(globalConfig, templateConfig);
+        this.setDefaultPathInfo(globalConfig, strategyConfig);
         // 覆盖自定义路径
         Map<OutputFile, String> pathInfo = packageConfig.getPathInfo();
         if (CollectionUtils.isNotEmpty(pathInfo)) {
@@ -66,15 +66,31 @@ class PathInfoHandler {
      * 设置默认输出路径
      *
      * @param globalConfig   全局配置
-     * @param templateConfig 模板配置
+     * @param strategyConfig 模板配置
      */
-    private void setDefaultPathInfo(GlobalConfig globalConfig, TemplateConfig templateConfig) {
-        putPathInfo(templateConfig.getEntity(globalConfig.isKotlin()), OutputFile.entity, ConstVal.ENTITY);
-        putPathInfo(templateConfig.getMapper(), OutputFile.mapper, ConstVal.MAPPER);
-        putPathInfo(templateConfig.getXml(), OutputFile.xml, ConstVal.XML);
-        putPathInfo(templateConfig.getService(), OutputFile.service, ConstVal.SERVICE);
-        putPathInfo(templateConfig.getServiceImpl(), OutputFile.serviceImpl, ConstVal.SERVICE_IMPL);
-        putPathInfo(templateConfig.getController(), OutputFile.controller, ConstVal.CONTROLLER);
+    private void setDefaultPathInfo(GlobalConfig globalConfig, StrategyConfig strategyConfig) {
+        Entity entity = strategyConfig.entity();
+        if (entity.isGenerate()) {
+            putPathInfo(globalConfig.isKotlin() ? entity.getKotlinTemplate() : entity.getJavaTemplate(), OutputFile.entity, ConstVal.ENTITY);
+        }
+        Mapper mapper = strategyConfig.mapper();
+        if (mapper.isGenerateMapper()) {
+            putPathInfo(mapper.getMapperTemplatePath(), OutputFile.mapper, ConstVal.MAPPER);
+        }
+        if (mapper.isGenerateMapperXml()) {
+            putPathInfo(mapper.getMapperXmlTemplatePath(), OutputFile.xml, ConstVal.XML);
+        }
+        Service service = strategyConfig.service();
+        if (service.isGenerateService()) {
+            putPathInfo(service.getServiceTemplate(), OutputFile.service, ConstVal.SERVICE);
+        }
+        if (service.isGenerateServiceImpl()) {
+            putPathInfo(service.getServiceImplTemplate(), OutputFile.serviceImpl, ConstVal.SERVICE_IMPL);
+        }
+        Controller controller = strategyConfig.controller();
+        if (controller.isGenerate()) {
+            putPathInfo(controller.getTemplatePath(), OutputFile.controller, ConstVal.CONTROLLER);
+        }
         putPathInfo(OutputFile.parent, ConstVal.PARENT);
     }
 
