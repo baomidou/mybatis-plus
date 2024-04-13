@@ -128,7 +128,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
     private static boolean canHaveStatement(Method method) {
         // issue #237
-        return !method.isBridge() && !method.isDefault();
+        // issue #6057 https://github.com/baomidou/mybatis-plus/issues/6057
+        return !method.isBridge();
     }
 
 
