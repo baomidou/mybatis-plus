@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
+import java.math.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +111,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     public LambdaUpdateWrapper<T> setIncrBy(boolean condition, SFunction<T, ?> column, Number val) {
         return maybeDo(condition, () -> {
             String realColumn = columnToString(column);
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.PLUS + val);
+            String valueAsString = getValueAsString(val);
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.PLUS +  valueAsString);
         });
     }
 
@@ -134,8 +136,17 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     public LambdaUpdateWrapper<T> setDecrBy(boolean condition, SFunction<T, ?> column, Number val) {
         return maybeDo(condition, () -> {
             String realColumn = columnToString(column);
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.DASH + val);
+            String valueAsString = getValueAsString(val);
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.DASH + valueAsString);
         });
+    }
+
+    private String getValueAsString(Number val) {
+        if (val instanceof BigDecimal) {
+            return ((BigDecimal)val).toPlainString();
+        }else {
+            return val.toString();
+        }
     }
 
     @Override
