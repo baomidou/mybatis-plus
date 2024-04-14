@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -27,13 +26,12 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.ognl.OgnlOps;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.SimpleTypeRegistry;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,7 +57,6 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     @Deprecated
     public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
 
-    private final Object parameterObject;
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
     private final MappedStatement mappedStatement;
@@ -69,25 +66,16 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         this.mappedStatement = mappedStatement;
         this.configuration = mappedStatement.getConfiguration();
         this.sqlCommandType = mappedStatement.getSqlCommandType();
-        this.parameterObject = processParameter(parameter);
+        processParameter(parameter);
     }
 
-    public Object processParameter(Object parameter) {
+    public void processParameter(Object parameter) {
         /* 只处理插入或更新操作 */
-        if (parameter != null
-            && (SqlCommandType.INSERT == this.sqlCommandType || SqlCommandType.UPDATE == this.sqlCommandType)) {
-            //检查 parameterObject
-            if (SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
-                return parameter;
+        if (parameter != null && !SimpleTypeRegistry.isSimpleType(parameter.getClass())) {
+            if (SqlCommandType.INSERT == this.sqlCommandType || SqlCommandType.UPDATE == this.sqlCommandType) {
+                extractParameters(parameter).forEach(this::process);
             }
-            extractParameters(parameter).forEach(this::process);
         }
-        return parameter;
-    }
-
-    @Override
-    public Object getParameterObject() {
-        return this.parameterObject;
     }
 
     private void process(Object parameter) {
@@ -120,7 +108,6 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         }
     }
 
-
     protected void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
@@ -129,34 +116,14 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
             Object idValue = metaObject.getValue(keyProperty);
             if (identifierGenerator.assignId(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
-                    Class<?> keyType = tableInfo.getKeyType();
-                    if (Number.class.isAssignableFrom(keyType)) {
-                        Number id = identifierGenerator.nextId(entity);
-                        if (keyType == id.getClass()) {
-                            metaObject.setValue(keyProperty, id);
-                        } else if (Integer.class == keyType) {
-                            metaObject.setValue(keyProperty, id.intValue());
-                        } else if (Long.class == keyType) {
-                            metaObject.setValue(keyProperty, id.longValue());
-                        } else if (BigDecimal.class.isAssignableFrom(keyType)) {
-                            metaObject.setValue(keyProperty, new BigDecimal(id.longValue()));
-                        } else if (BigInteger.class.isAssignableFrom(keyType)) {
-                            metaObject.setValue(keyProperty, new BigInteger(id.toString()));
-                        } else {
-                            throw new MybatisPlusException("Key type '" + keyType + "' not supported");
-                        }
-                    } else if (String.class.isAssignableFrom(keyType)) {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
-                    } else {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
-                    }
+                    Number id = identifierGenerator.nextId(entity);
+                    metaObject.setValue(keyProperty, OgnlOps.convertValue(id, tableInfo.getKeyType()));
                 } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
                     metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
                 }
             }
         }
     }
-
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
