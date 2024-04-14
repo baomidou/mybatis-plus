@@ -31,8 +31,8 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 # 特别用户
 
 <p>
-  <a href="https://www.diboot.com/?from=mp" target="_blank">
-   <img alt="DiBoot-Logo" src="https://www.diboot.com/diboot_slogon.png" width="160px" height="50px">
+  <a href="http://boot.aizuda.com/?from=mp" target="_blank">
+   <img alt="AiZuDa-Logo" src="https://baomidou.com/img/azd01.png" width="160px" height="50px">
   </a>
   <a href="http://aizuda.com/?from=mp" target="_blank">
    <img alt="Mybatis-Plus-Logo" src="https://foruda.gitee.com/images/1685339582501163828/763d3037_12260.png" width="160px" height="50px">
