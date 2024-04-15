@@ -115,13 +115,21 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
     protected boolean retBool(Integer result) {
         return SqlHelper.retBool(result);
     }
-
+    /**
+     * 当前映射类
+     * {@code @update} 2024年4月15日17:47:37 增加null值判断
+     * @author chrelyonly
+     */
     protected Class<M> currentMapperClass() {
-        return (Class<M>) this.typeArguments[0];
+        return null == this.typeArguments ? null :(Class<M>) this.typeArguments[0];
     }
-
+    /**
+     * 当前模型类
+     * {@code @update} 2024年4月15日17:47:37 增加null值判断
+     * @author chrelyonly
+     */
     protected Class<T> currentModelClass() {
-        return (Class<T>) this.typeArguments[1];
+        return null == this.typeArguments ? null :(Class<T>) this.typeArguments[1];
     }
 
 
