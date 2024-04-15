@@ -8,4 +8,6 @@ dependencies {
     implementation "${lib.'imadcn'}"
     implementation "${lib.'mybatis-ehcache'}"
     implementation "${lib.'mybatis-redis'}"
+
+    testImplementation "${lib.'logback-classic'}"
 }

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 /**
  * @author miemie
  * @since 2021-01-27
@@ -51,6 +53,68 @@ class LambdaUpdateWrapperTest extends BaseWrapperTest {
         wrapper = new LambdaUpdateWrapper<>();
         wrapper.setDecrBy(User::getRoleId, 1).setDecrBy(false, User::getName, 1).eq(User::getId, 1);
         Assertions.assertEquals("role_id=role_id-1", wrapper.getSqlSet());
+
+
+    }
+
+    @Test
+    void testIncrByAndDecrByBigDecimal() {
+        var wrapper = new LambdaUpdateWrapper<User>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal("1")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal(1)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal(1.0000)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal("1.0000")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-1.0000", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal(0.01)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-" + new BigDecimal(0.01), wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal("0.01")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-0.01", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setDecrBy(User::getRoleId, new BigDecimal("2340").setScale(-1)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id-2340", wrapper.getSqlSet());
+
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal("1")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal(1)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal(1.0000)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+1", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal("1.0000")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+1.0000", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal(0.01)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+" + new BigDecimal(0.01), wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal("0.01")).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+0.01", wrapper.getSqlSet());
+
+        wrapper = new LambdaUpdateWrapper<>();
+        wrapper.setIncrBy(User::getRoleId, new BigDecimal("2340").setScale(-1)).eq(User::getId, 1);
+        Assertions.assertEquals("role_id=role_id+2340", wrapper.getSqlSet());
     }
 
 }
