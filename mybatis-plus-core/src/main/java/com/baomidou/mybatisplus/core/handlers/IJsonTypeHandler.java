@@ -50,6 +50,6 @@ public interface IJsonTypeHandler<T> {
      * @param obj 对象信息
      * @return json字符串
      */
-    String toJson(Object obj);
+    String toJson(T obj);
 
 }
