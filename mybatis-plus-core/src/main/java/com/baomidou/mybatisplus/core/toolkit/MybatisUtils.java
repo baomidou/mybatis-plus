@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import lombok.experimental.UtilityClass;
@@ -9,8 +10,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
+import org.springframework.aop.framework.AopProxyUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 
 /**
  * @author nieqiurong
@@ -53,6 +56,13 @@ public class MybatisUtils {
         return result;
     }
 
+    /**
+     * 获取SqlSessionFactory
+     *
+     * @param mybatisMapperProxy {@link MybatisMapperProxy}
+     * @return SqlSessionFactory
+     * @since 3.5.7
+     */
     public static SqlSessionFactory getSqlSessionFactory(MybatisMapperProxy<?> mybatisMapperProxy) {
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
         if (sqlSession instanceof DefaultSqlSession) {
@@ -67,6 +77,35 @@ public class MybatisUtils {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 获取代理实现
+     *
+     * @param mapper mapper类
+     * @return 代理实现
+     * @since 3.5.7
+     */
+    public static MybatisMapperProxy<?> getMybatisMapperProxy(Object mapper) {
+        if (mapper instanceof MybatisMapperProxy) {
+            // fast return
+            return (MybatisMapperProxy<?>) mapper;
+        }
+        Object result = mapper;
+        if (AopUtils.isLoadSpringAop()) {
+            while (org.springframework.aop.support.AopUtils.isAopProxy(result)) {
+                result = AopProxyUtils.getSingletonTarget(result);
+            }
+        }
+        if (result != null) {
+            while (Proxy.isProxyClass(result.getClass())) {
+                result = Proxy.getInvocationHandler(mapper);
+            }
+        }
+        if (result instanceof MybatisMapperProxy) {
+            return (MybatisMapperProxy<?>) result;
+        }
+        throw new MybatisPlusException("Unable to get MybatisMapperProxy : " + mapper);
     }
 
 }

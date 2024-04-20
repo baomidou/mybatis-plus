@@ -86,13 +86,16 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
                 if (this.sqlSessionFactory == null) {
                     Object target = this.baseMapper;
                     // 这个检查目前看着来说基本上可以不用判断Aop是不是存在了.
-                    if (com.baomidou.mybatisplus.extension.toolkit.AopUtils.isLoadSpringAop()) {
+                    if (com.baomidou.mybatisplus.core.toolkit.AopUtils.isLoadSpringAop()) {
                         while (AopUtils.isAopProxy(target)) {
                             target = AopProxyUtils.getSingletonTarget(target);
                         }
                     }
+                    if (target != null && Proxy.isProxyClass(target.getClass())) {
+                        target = Proxy.getInvocationHandler(target);
+                    }
                     if (target instanceof MybatisMapperProxy) {
-                        MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) Proxy.getInvocationHandler(target);
+                        MybatisMapperProxy mybatisMapperProxy = (MybatisMapperProxy) target;
                         SqlSessionTemplate sqlSessionTemplate = (SqlSessionTemplate) mybatisMapperProxy.getSqlSession();
                         this.sqlSessionFactory = sqlSessionTemplate.getSqlSessionFactory();
                     } else {

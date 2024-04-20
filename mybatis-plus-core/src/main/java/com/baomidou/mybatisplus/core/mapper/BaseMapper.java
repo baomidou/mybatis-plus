@@ -43,7 +43,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -142,7 +141,7 @@ public interface BaseMapper<T> extends Mapper<T> {
                 return this.deleteById(instance);
             }
         }
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
         return sqlSession.delete(mybatisMapperProxy.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(), obj);
     }
@@ -189,7 +188,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default int deleteBatchIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
         Class<?> mapperInterface = mybatisMapperProxy.getMapperInterface();
@@ -462,7 +461,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default List<BatchResult> saveBatch(Collection<T> entityList) {
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
         return MybatisBatchUtils.execute(sqlSessionFactory, entityList, method.insert());
@@ -475,7 +474,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default List<BatchResult> updateBatchById(Collection<T> entityList) {
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
         return MybatisBatchUtils.execute(sqlSessionFactory, entityList, method.updateById());
@@ -488,7 +487,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList) {
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         String keyProperty = tableInfo.getKeyProperty();
@@ -506,7 +505,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate) {
-        MybatisMapperProxy<?> mybatisMapperProxy = (MybatisMapperProxy<?>) Proxy.getInvocationHandler(this);
+        MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
         return MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, entityList, method.insert(), insertPredicate, method.updateById());

@@ -28,4 +28,5 @@ dependencies {
     testImplementation "io.github.classgraph:classgraph:4.8.165"
     testImplementation "${lib.h2}"
     testImplementation "${lib.mysql}"
+    testImplementation "${lib.'logback-classic'}"
 }
