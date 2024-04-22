@@ -99,7 +99,7 @@ public class MybatisUtils {
         }
         if (result != null) {
             while (Proxy.isProxyClass(result.getClass())) {
-                result = Proxy.getInvocationHandler(mapper);
+                result = Proxy.getInvocationHandler(result);
             }
         }
         if (result instanceof MybatisMapperProxy) {
