@@ -179,4 +179,10 @@ public interface Constants extends StringPool, Serializable {
      */
     String WRAPPER_PARAM = "MPGENVAL";
     String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
+
+
+    /**
+     * 默认批次提交数量
+     */
+    int DEFAULT_BATCH_SIZE = 1000;
 }
