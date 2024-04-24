@@ -35,7 +35,7 @@
    <img alt="AiZuDa-Logo" src="https://baomidou.com/img/azd01.png" width="160px" height="50px">
   </a>
   <a href="https://gitee.com/gz-yami/mall4j?from=mp" target="_blank">
-   <img alt="Mybatis-Plus-Logo" src="https://baomidou.com/img/mall4j.gif" width="210px" height="75px">
+   <img alt="Mybatis-Plus-Logo" src="https://baomidou.com/img/mall4j.gif" width="160px" height="50px">
   </a>
 </p>
 
