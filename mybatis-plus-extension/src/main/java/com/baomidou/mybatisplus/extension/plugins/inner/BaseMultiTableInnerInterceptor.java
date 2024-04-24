@@ -24,6 +24,7 @@ import lombok.ToString;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
@@ -105,7 +106,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         // 处理 join
         List<Join> joins = plainSelect.getJoins();
         if (CollectionUtils.isNotEmpty(joins)) {
-             processJoins(mainTables, joins, whereSegment);
+            processJoins(mainTables, joins, whereSegment);
         }
 
         // 当有 mainTable 时，进行 where 条件追加
@@ -125,7 +126,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
             mainTables.add(fromTable);
-        } else if (fromItem instanceof ParenthesedFromItem ) {
+        } else if (fromItem instanceof ParenthesedFromItem) {
             // SubJoin 类型则还需要添加上 where 条件
             List<Table> tables = processSubJoin((ParenthesedFromItem) fromItem, whereSegment);
             mainTables.addAll(tables);
@@ -219,6 +220,13 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                     processSelectBody(((Select) expression), whereSegment);
                 } else if (expression instanceof Function) {
                     processFunction((Function) expression, whereSegment);
+                } else if (expression instanceof EqualsTo) {
+                    if (((EqualsTo) expression).getLeftExpression() instanceof Select) {
+                        processSelectBody(((Select) ((EqualsTo) expression).getLeftExpression()), whereSegment);
+                    }
+                    if (((EqualsTo) expression).getRightExpression() instanceof Select) {
+                        processSelectBody(((Select) ((EqualsTo) expression).getRightExpression()), whereSegment);
+                    }
                 }
             });
         }
@@ -289,8 +297,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             if (joinItem instanceof Table) {
                 joinTables = new ArrayList<>();
                 joinTables.add((Table) joinItem);
-            } else if (joinItem instanceof ParenthesedFromItem ) {
-                joinTables = processSubJoin((ParenthesedFromItem ) joinItem, whereSegment);
+            } else if (joinItem instanceof ParenthesedFromItem) {
+                joinTables = processSubJoin((ParenthesedFromItem) joinItem, whereSegment);
             }
 
             if (joinTables != null) {
@@ -373,9 +381,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         // 构造每张表的条件
         List<Expression> expressions = tables.stream()
-            .map(item -> buildTableExpression(item, currentExpression, whereSegment))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(item -> buildTableExpression(item, currentExpression, whereSegment))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // 没有表需要处理直接返回
         if (CollectionUtils.isEmpty(expressions)) {

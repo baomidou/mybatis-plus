@@ -475,6 +475,12 @@ class TenantLineInnerInterceptorTest {
             "INSERT INTO entity (name, age, tenant_id) VALUES ('秋秋', 18, 1), ('秋秋', '22', 1) ON DUPLICATE KEY UPDATE age = 18, tenant_id = 1");
     }
 
+    @Test
+    void test6075() {
+        String sql = "Select a.*, b.*, IF((Select c.value From C as c Where c.code = \"1\") = 1, c.type, a.type) as type from A as a, B as b Where a.b_id = b.id";
+        System.out.println(interceptor.parserSingle(sql, null));
+    }
+
     void assertSql(String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, null)).isEqualTo(targetSql);
     }
