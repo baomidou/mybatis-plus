@@ -16,11 +16,13 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -29,13 +31,14 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * 以静态方式调用Service中的函数
@@ -84,9 +87,8 @@ public class Db {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        Class<?> mapperClass = ClassUtils.toClassConfident(getTableInfo(entityClass).getCurrentNamespace());
-        String sqlStatement = SqlHelper.getSqlStatement(mapperClass, SqlMethod.INSERT_ONE);
-        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.saveBatch(entityList, batchSize));
+        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
     /**
@@ -109,19 +111,8 @@ public class Db {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        TableInfo tableInfo = getTableInfo(entityClass);
-        Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
-        String keyProperty = tableInfo.getKeyProperty();
-        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for primary key from entity!");
-        return SqlHelper.saveOrUpdateBatch(entityClass, mapperClass, log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal)
-                || CollectionUtils.isEmpty(sqlSession.selectList(SqlHelper.getSqlStatement(mapperClass, SqlMethod.SELECT_BY_ID), entity));
-        }, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(SqlHelper.getSqlStatement(mapperClass, SqlMethod.UPDATE_BY_ID), param);
-        });
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.saveOrUpdateBatch(entityList, batchSize));
+        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
     /**
@@ -203,13 +194,8 @@ public class Db {
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
-        TableInfo tableInfo = getTableInfo(entityClass);
-        String sqlStatement = SqlHelper.getSqlStatement(ClassUtils.toClassConfident(tableInfo.getCurrentNamespace()), SqlMethod.UPDATE_BY_ID);
-        return SqlHelper.executeBatch(entityClass, log, entityList, batchSize, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            sqlSession.update(sqlStatement, param);
-        });
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.updateBatchById(entityList, batchSize));
+        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
     /**

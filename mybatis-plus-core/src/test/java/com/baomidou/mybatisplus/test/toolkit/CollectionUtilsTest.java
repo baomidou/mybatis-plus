@@ -8,8 +8,12 @@ import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * @author nieqiuqiu 2020/7/2
@@ -44,6 +48,13 @@ class CollectionUtilsTest {
         Assertions.assertEquals(12, getThresholdValue(map));
 
         computeIfAbsent();
+    }
+
+    @Test
+    void testSplit() {
+        List<Integer> list = asList(1, 2, 3, 4, 5);
+        List<List<Integer>> lists = CollectionUtils.split(list, 2);
+        Assertions.assertEquals(asList(asList(1, 2), asList(3, 4), singletonList(5)), lists);
     }
 
     private Map<String, String> newHashMapWithExpectedSize(int size) {

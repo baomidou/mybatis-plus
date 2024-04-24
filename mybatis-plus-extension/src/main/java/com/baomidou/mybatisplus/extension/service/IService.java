@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -49,7 +50,7 @@ public interface IService<T> {
     /**
      * 默认批次提交数量
      */
-    int DEFAULT_BATCH_SIZE = 1000;
+    int DEFAULT_BATCH_SIZE = Constants.DEFAULT_BATCH_SIZE;
 
     /**
      * 插入一条记录（选择字段，策略插入）
