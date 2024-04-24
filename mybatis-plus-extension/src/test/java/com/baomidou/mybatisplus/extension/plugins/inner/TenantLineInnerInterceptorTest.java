@@ -5,8 +5,6 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -28,9 +26,6 @@ class TenantLineInnerInterceptorTest {
         @Override
         public boolean ignoreTable(String tableName) {
             ignoreFirst = true;
-            if (Objects.equals(tableName, "sys_dict")) {
-                return true;
-            }
             return tableName.startsWith("with_as");
         }
     });
@@ -165,7 +160,7 @@ class TenantLineInnerInterceptorTest {
     }
 
     @Test
-    void selectSubSelect() {
+    void selectWhereSubSelect() {
         /* >= */
         assertSql("SELECT * FROM entity e WHERE e.id >= (select e1.id from entity1 e1 where e1.id = ?)",
             "SELECT * FROM entity e WHERE e.id >= (SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.tenant_id = 1");
@@ -191,6 +186,14 @@ class TenantLineInnerInterceptorTest {
     void selectBodySubSelect() {
         assertSql("select t1.col1,(select t2.col2 from t2 t2 where t1.col1=t2.col1) from t1 t1",
             "SELECT t1.col1, (SELECT t2.col2 FROM t2 t2 WHERE t1.col1 = t2.col1 AND t2.tenant_id = 1) FROM t1 t1 WHERE t1.tenant_id = 1");
+    }
+
+    @Test
+    void selectBodyFuncSubSelect() {
+        assertSql("SELECT e1.*, IF((SELECT e2.id FROM entity2 e2 WHERE e2.id = 1) = 1, e2.type, e1.type) AS type " +
+                "FROM entity e1 WHERE e1.id = ?",
+            "SELECT e1.*, IF((SELECT e2.id FROM entity2 e2 WHERE e2.id = 1 AND e2.tenant_id = 1) = 1, e2.type, e1.type) AS type " +
+                "FROM entity e1 WHERE e1.id = ? AND e1.tenant_id = 1");
     }
 
     @Test
@@ -295,7 +298,6 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void selectSubJoin() {
-
         assertSql("select * FROM " +
                 "(entity1 e1 right JOIN entity2 e2 ON e1.id = e2.id)",
             "SELECT * FROM " +
@@ -343,7 +345,6 @@ class TenantLineInnerInterceptorTest {
                 "WHERE e1.tenant_id = 1");
     }
 
-
     @Test
     void selectLeftJoinMultipleTrailingOn() {
         // 多个 on 尾缀的
@@ -385,6 +386,14 @@ class TenantLineInnerInterceptorTest {
                 "WHERE (e.id = ? OR e.name = ?)",
             "SELECT * FROM entity e " +
                 "INNER JOIN entity1 e1 ON e1.id = e.id AND e.tenant_id = 1 AND e1.tenant_id = 1 " +
+                "WHERE (e.id = ? OR e.name = ?)");
+
+        // ignore table
+        assertSql("SELECT * FROM entity e " +
+                "inner join with_as_1 w1 on w1.id = e.id " +
+                "WHERE (e.id = ? OR e.name = ?)",
+            "SELECT * FROM entity e " +
+                "INNER JOIN with_as_1 w1 ON w1.id = e.id AND e.tenant_id = 1 " +
                 "WHERE (e.id = ? OR e.name = ?)");
 
         // 隐式内连接
@@ -429,11 +438,10 @@ class TenantLineInnerInterceptorTest {
             "SELECT * FROM (((entity e, entity1 e1))) " +
                 "WHERE e.id = e1.id " +
                 "AND e.tenant_id = 1 AND e1.tenant_id = 1");
-
     }
 
     @Test
-    void selectJoin() {
+    void selectSingleJoin() {
         // join
         assertSql("SELECT * FROM entity e join entity1 e1 on e1.id = e.id WHERE e.id = ? OR e.name = ?",
             "SELECT * FROM entity e JOIN entity1 e1 ON e1.id = e.id AND e1.tenant_id = 1 WHERE (e.id = ? OR e.name = ?) AND e.tenant_id = 1");
@@ -448,37 +456,10 @@ class TenantLineInnerInterceptorTest {
             "WITH with_as_A AS (SELECT * FROM entity WHERE tenant_id = 1) SELECT * FROM with_as_A");
     }
 
-
-    @Test
-    void selectIgnoreTable() {
-        assertSql(" SELECT dict.dict_code, item.item_text AS \"text\", item.item_value AS \"value\" FROM sys_dict_item item INNER JOIN sys_dict dict ON dict.id = item.dict_id WHERE dict.dict_code IN (1, 2, 3) AND item.item_value IN (1, 2, 3)",
-            "SELECT dict.dict_code, item.item_text AS \"text\", item.item_value AS \"value\" FROM sys_dict_item item INNER JOIN sys_dict dict ON dict.id = item.dict_id AND item.tenant_id = 1 WHERE dict.dict_code IN (1, 2, 3) AND item.item_value IN (1, 2, 3)");
-    }
-
-    @Test
-    void test6() {
-        // 不显式指定 JOIN 类型时 JOIN 右侧表无法识进行拼接条件（在未改动之前就已经有这个问题）
-        assertSql("select u.username from sys_user u join sys_user_role r on u.id=r.user_id",
-            "SELECT u.username FROM sys_user u JOIN sys_user_role r ON u.id = r.user_id AND r.tenant_id = 1 WHERE u.tenant_id = 1");
-    }
-
-    @Test
-    void test7() {
-        // 显式指定 JOIN 类型时 JOIN 右侧表才能进行拼接条件
-        assertSql("select u.username from sys_user u LEFT join sys_user_role r on u.id=r.user_id",
-            "SELECT u.username FROM sys_user u LEFT JOIN sys_user_role r ON u.id = r.user_id AND r.tenant_id = 1 WHERE u.tenant_id = 1");
-    }
-
     @Test
     void testDuplicateKeyUpdate() {
         assertSql("INSERT INTO entity (name,age) VALUES ('秋秋',18),('秋秋','22') ON DUPLICATE KEY UPDATE age=18",
             "INSERT INTO entity (name, age, tenant_id) VALUES ('秋秋', 18, 1), ('秋秋', '22', 1) ON DUPLICATE KEY UPDATE age = 18, tenant_id = 1");
-    }
-
-    @Test
-    void test6075() {
-        String sql = "Select a.*, b.*, IF((Select c.value From C as c Where c.code = \"1\") = 1, c.type, a.type) as type from A as a, B as b Where a.b_id = b.id";
-        System.out.println(interceptor.parserSingle(sql, null));
     }
 
     void assertSql(String sql, String targetSql) {
