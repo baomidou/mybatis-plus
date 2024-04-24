@@ -21,11 +21,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Collection工具类
@@ -232,4 +235,27 @@ public class CollectionUtils {
         return Collections.emptyList();
     }
 
+    /**
+     * 切割集合为多个集合
+     * @param entityList 数据集合
+     * @param batchSize 每批集合的大小
+     * @return 切割后的多个集合
+     * @param <T> 数据类型
+     */
+    public static <T> List<List<T>> split(Collection<T> entityList, int batchSize) {
+        if (isEmpty(entityList)) {
+            return Collections.emptyList();
+        }
+        Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
+        final Iterator<T> iterator = entityList.iterator();
+        final List<List<T>> results = new ArrayList<>(entityList.size() / batchSize);
+        while (iterator.hasNext()) {
+            final List<T> list = IntStream.range(0, batchSize).filter(x -> iterator.hasNext())
+                .mapToObj(i -> iterator.next()).collect(Collectors.toList());
+            if (!list.isEmpty()) {
+                results.add(list);
+            }
+        }
+        return results;
+    }
 }
