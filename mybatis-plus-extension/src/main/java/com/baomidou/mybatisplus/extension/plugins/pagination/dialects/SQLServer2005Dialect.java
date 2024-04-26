@@ -54,11 +54,12 @@ public class SQLServer2005Dialect implements IDialect {
 
         String loweredString = originalSql.toLowerCase();
         String sqlPartString = originalSql;
-        if (loweredString.trim().startsWith("select")) {
-            int index = 6;
-            if (loweredString.startsWith("select distinct")) {
+        String trimStr = loweredString.trim();
+        if (trimStr.startsWith("select")) {
+            int index = loweredString.indexOf("select") + 6;
+            if (trimStr.startsWith("select distinct")) {
                 distinctStr = "DISTINCT ";
-                index = 15;
+                index = loweredString.indexOf("select distinct") + 15;
             }
             sqlPartString = sqlPartString.substring(index);
         }
