@@ -1,6 +1,13 @@
 - fix: 修复动态表名处理 update ignore 错误
+- fix: 修复SQLServer2005分页处理空格错误
+- fix: 修复多租户查询出现问题
+- fix: 修正非通用泛型情况下序列化json减少强转
+- fix: 修复代码生成器禁用模板失效
 - feat: BaseMapper新增批量操作与SaveOrUpdate方法
 - feat: BaseMapper新增批量操作方法返回值List<BatchResult>
 - feat: BaseMapper方法逻辑删除默认支持填充
 - feat: 调整Service层逻辑删除填充逻辑处理
+- feat: 自增自减处理BigDecimal
+- frat: 新增雪花ID配置（支持手动分配workerId与datacenterId或指定网卡信息自动获取方式）
 - feat: SpringBoot依赖升级
+- feat: 升级kotlin-reflect至1.9.23
