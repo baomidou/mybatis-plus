@@ -1,5 +1,6 @@
-package com.baomidou.mybatisplus.extension.plugins.inner;
+package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
 import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
 

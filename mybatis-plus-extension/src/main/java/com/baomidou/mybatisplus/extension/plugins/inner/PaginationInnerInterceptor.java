@@ -256,7 +256,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * @param sql  sql
      * @return countSql
      */
-    protected String autoCountSql(IPage<?> page, String sql) {
+    public String autoCountSql(IPage<?> page, String sql) {
         if (!page.optimizeCountSql()) {
             return lowLevelCountSql(sql);
         }

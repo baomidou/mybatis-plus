@@ -78,7 +78,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         }
     }
 
-    protected String changeTable(String sql) {
+    public String changeTable(String sql) {
         ExceptionUtils.throwMpe(null == tableNameHandler, "Please implement TableNameHandler processing logic");
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();

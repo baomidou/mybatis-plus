@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.parser.cache;
+package com.baomidou.mybatisplus.test.extension.parser.cache;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;

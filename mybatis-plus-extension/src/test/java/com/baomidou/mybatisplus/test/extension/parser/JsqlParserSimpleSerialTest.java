@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.parser;
+package com.baomidou.mybatisplus.test.extension.parser;
 
 import com.baomidou.mybatisplus.extension.parser.cache.FstFactory;
 import net.sf.jsqlparser.JSQLParserException;
