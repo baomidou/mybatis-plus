@@ -31,6 +31,10 @@ class PaginationInnerInterceptorTest {
 
         assertsCountSql("select * from user u LEFT JOIN role r ON r.id = u.role_id LEFT JOIN permission p on p.id = u.per_id WHERE u.xx = ?",
             "SELECT COUNT(*) AS total FROM user u WHERE u.xx = ?");
+
+        assertsCountSql("select distinct id from table order by id", "SELECT COUNT(*) FROM (SELECT DISTINCT id FROM table) TOTAL");
+
+        assertsCountSql("select distinct id from table", "SELECT COUNT(*) FROM (SELECT DISTINCT id FROM table) TOTAL");
     }
 
     @Test

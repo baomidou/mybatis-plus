@@ -267,13 +267,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 return lowLevelCountSql(sql);
             }
             PlainSelect plainSelect = (PlainSelect) select;
-            Distinct distinct = plainSelect.getDistinct();
-            GroupByElement groupBy = plainSelect.getGroupBy();
-
-            // 包含 distinct、groupBy 不优化
-            if (null != distinct || null != groupBy) {
-                return lowLevelCountSql(select.toString());
-            }
 
             // 优化 order by 在非分组情况下
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
@@ -291,7 +284,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                     plainSelect.setOrderByElements(null);
                 }
             }
-
+            Distinct distinct = plainSelect.getDistinct();
+            GroupByElement groupBy = plainSelect.getGroupBy();
+            // 包含 distinct、groupBy 不优化
+            if (null != distinct || null != groupBy) {
+                return lowLevelCountSql(select.toString());
+            }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
                 if (item.toString().contains(StringPool.QUESTION_MARK)) {
