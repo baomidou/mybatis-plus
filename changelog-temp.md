@@ -3,6 +3,7 @@
 - fix: 修复多租户查询出现问题
 - fix: 修正非通用泛型情况下序列化json减少强转
 - fix: 修复代码生成器禁用模板失效
+- fix: 修复分页count优化distinct搭配orderBy处理错误
 - feat: BaseMapper新增批量操作与SaveOrUpdate方法
 - feat: BaseMapper新增批量操作方法返回值List<BatchResult>
 - feat: BaseMapper方法逻辑删除默认支持填充
