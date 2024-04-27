@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
  */
 public class SQLServer2005Dialect implements IDialect {
 
-    private static final Pattern pattern = Pattern.compile("\\((.)*order by(.)*\\)");
+    private static final Pattern ORDER_BY_PATTERN = Pattern.compile("\\((.)*order by(.)*\\)");
+
+    private static final Pattern SELECT_PATTERN = Pattern.compile("(?i)select\\s+(distinct\\s+)?");
 
     public String getOrderByPart(String sql) {
         String order_by = "order by";
@@ -38,7 +40,7 @@ public class SQLServer2005Dialect implements IDialect {
         if (lastIndex == -1) {
             return StringPool.EMPTY;
         }
-        Matcher matcher = pattern.matcher(sql);
+        Matcher matcher = ORDER_BY_PATTERN.matcher(sql);
         if (!matcher.find()) {
             return sql.substring(lastIndex);
         }
@@ -51,20 +53,16 @@ public class SQLServer2005Dialect implements IDialect {
         StringBuilder pagingBuilder = new StringBuilder();
         String orderby = getOrderByPart(originalSql);
         String distinctStr = StringPool.EMPTY;
-
-        String loweredString = originalSql.toLowerCase();
         String sqlPartString = originalSql;
-        String trimStr = loweredString.trim();
-        if (trimStr.startsWith("select")) {
-            int index = loweredString.indexOf("select") + 6;
-            if (trimStr.startsWith("select distinct")) {
+        Matcher matcher = SELECT_PATTERN.matcher(originalSql);
+        if (matcher.find()) {
+            int index = matcher.end() - 1;
+            if (matcher.group().toLowerCase().contains("distinct")) {
                 distinctStr = "DISTINCT ";
-                index = loweredString.indexOf("select distinct") + 15;
             }
             sqlPartString = sqlPartString.substring(index);
         }
         pagingBuilder.append(sqlPartString);
-
         // if no ORDER BY is specified use fake ORDER BY field to avoid errors
         if (StringUtils.isBlank(orderby)) {
             orderby = "ORDER BY CURRENT_TIMESTAMP";
