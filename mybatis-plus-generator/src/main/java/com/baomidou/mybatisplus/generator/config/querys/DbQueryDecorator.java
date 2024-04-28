@@ -65,7 +65,8 @@ public class DbQueryDecorator extends AbstractDbQuery {
     @Override
     public String tablesSql() {
         String tablesSql = dbQuery.tablesSql();
-        if (DbType.POSTGRE_SQL == dbType || DbType.KINGBASE_ES == dbType || DbType.DB2 == dbType || DbType.ORACLE == dbType) {
+        if (DbType.POSTGRE_SQL == dbType || DbType.KINGBASE_ES == dbType
+            || DbType.DB2 == dbType || DbType.ORACLE == dbType || DbType.DM == dbType) {
             tablesSql = String.format(tablesSql, this.schema);
         }
         if (strategyConfig.isEnableSqlFilter()) {
@@ -108,7 +109,7 @@ public class DbQueryDecorator extends AbstractDbQuery {
             tableFieldsSql = String.format(tableFieldsSql.replace("#schema", this.schema), tableName, tableName.toUpperCase());
         } else if (DbType.DM == dbType) {
             tableName = tableName.toUpperCase();
-            tableFieldsSql = String.format(tableFieldsSql, tableName,this.schema);
+            tableFieldsSql = String.format(tableFieldsSql, tableName, this.schema);
         } else if (DbType.POSTGRE_SQL == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, tableName, tableName, tableName,this.schema);
         } else {

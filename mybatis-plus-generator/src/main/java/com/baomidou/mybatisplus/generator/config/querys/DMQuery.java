@@ -25,8 +25,16 @@ public class DMQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "SELECT * FROM (SELECT DISTINCT T1.TABLE_NAME AS TABLE_NAME,T2.COMMENTS AS TABLE_COMMENT FROM USER_TAB_COLUMNS T1 " +
-            "INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME and owner='%s') WHERE 1=1 ";
+        return "SELECT * FROM ( SELECT /*+ MAX_OPT_N_TABLES(5) */ NULL AS TABLE_CAT, SCHEMAS.NAME AS TABLE_SCHEM, \n" +
+            "TABS.NAME AS TABLE_NAME, CASE TABS.SUBTYPE$ WHEN 'UTAB' THEN 'TABLE' WHEN 'VIEW' THEN 'VIEW' WHEN 'STAB' THEN 'SYSTEM TABLE' WHEN 'SYNOM'\n" +
+            " THEN 'SYNONYM' END AS TABLE_TYPE, (SELECT COMMENT$ FROM SYSTABLECOMMENTS WHERE SCHNAME = SCHEMAS.NAME AND TVNAME = TABS.NAME) AS REMARKS, \n" +
+            " NULL AS TYPE_CAT, NULL AS TYPE_SCHEM, NULL AS TYPE_NAME, NULL AS SELF_REFERENCING_COL_NAME, NULL AS REF_GENERATION \n" +
+            "  FROM (SELECT ID, NAME, PID FROM SYS.SYSOBJECTS WHERE TYPE$ = 'SCH' AND NAME LIKE '%s'  ESCAPE '!'  )  SCHEMAS, \n" +
+            "  (SELECT * FROM SYS.SYSOBJECTS  WHERE ((SUBTYPE$='UTAB' AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 9 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) \n" +
+            "  != 27 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 29 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 25 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT)\n" +
+            "   != 12 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 7 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 21 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT)\n" +
+            "    != 23 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 18 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 5)OR SUBTYPE$='VIEW' )) \n" +
+            "TABS WHERE TABS.SCHID = SCHEMAS.ID ) temp where 1=1";
     }
 
     @Override
@@ -54,7 +62,7 @@ public class DMQuery extends AbstractDbQuery {
     }
     @Override
     public String tableComment() {
-        return "TABLE_COMMENT";
+        return "REMARKS";
     }
 
     @Override
