@@ -49,6 +49,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 class StrategyConfigTest {
 
     @Test
+    void test() {
+        StrategyConfig strategyConfig;
+        // 默认全开
+        strategyConfig = new StrategyConfig.Builder().build();
+        Assertions.assertTrue(strategyConfig.controller().isGenerate());
+        Assertions.assertTrue(strategyConfig.entity().isGenerate());
+        Assertions.assertTrue(strategyConfig.service().isGenerateService());
+        Assertions.assertTrue(strategyConfig.service().isGenerateServiceImpl());
+        Assertions.assertTrue(strategyConfig.mapper().isGenerateMapper());
+        Assertions.assertTrue(strategyConfig.mapper().isGenerateMapperXml());
+        strategyConfig =
+            new StrategyConfig.Builder()
+                .entityBuilder()
+                .javaTemplate("/templates/entity.java")
+                .disable()
+                .serviceBuilder().disable()
+                .disableService().serviceTemplate("/templates/service.java").serviceImplTemplate("/templates/serviceImpl.java")
+                .mapperBuilder().disableMapper().disableMapperXml()
+                .controllerBuilder().disable().template("")
+                .build();
+        Assertions.assertFalse(strategyConfig.controller().isGenerate());
+        Assertions.assertFalse(strategyConfig.entity().isGenerate());
+        Assertions.assertFalse(strategyConfig.service().isGenerateService());
+        Assertions.assertFalse(strategyConfig.service().isGenerateServiceImpl());
+        Assertions.assertFalse(strategyConfig.mapper().isGenerateMapper());
+        Assertions.assertFalse(strategyConfig.mapper().isGenerateMapperXml());
+    }
+
+    @Test
     void baseEntity() {
         StrategyConfig strategyConfig = GeneratorBuilder.strategyConfig();
         strategyConfig.entityBuilder().superClass(BaseEntity.class);

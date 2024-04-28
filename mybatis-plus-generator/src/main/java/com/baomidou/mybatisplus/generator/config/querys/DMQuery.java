@@ -34,7 +34,7 @@ public class DMQuery extends AbstractDbQuery {
             "  != 27 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 29 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 25 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT)\n" +
             "   != 12 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 7 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 21 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT)\n" +
             "    != 23 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 18 AND CAST((INFO3 & 0x00FF & 0x003F) AS INT) != 5)OR SUBTYPE$='VIEW' )) \n" +
-            "TABS WHERE TABS.SCHID = SCHEMAS.ID ) temp where 1=1";
+            "TABS WHERE TABS.SCHID = SCHEMAS.ID ) TEMP WHERE 1=1";
     }
 
     @Override
