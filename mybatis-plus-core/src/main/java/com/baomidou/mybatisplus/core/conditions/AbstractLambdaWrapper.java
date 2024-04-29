@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
@@ -41,6 +42,14 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
+
+    @Override
+    protected Children addCondition(boolean condition, SFunction<T, ?> column, SqlKeyword sqlKeyword, Object val) {
+        //@Todo 获取表名，TableInfoHelper.getTableInfo(表名)获取TableInfo.getFieldList.mapping
+        String mapping = null;
+        return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), sqlKeyword,
+            () -> formatParam(mapping, val)));
+    }
 
     @Override
     @SafeVarargs
