@@ -61,7 +61,7 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
         @TableId("`id`")
         private Long id;
 
-        @TableField("`name`")
+        @TableField(value = "`name`",typeHandler = AESTypeHandler.class)
         private Long name;
     }
 
@@ -70,7 +70,7 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
         @Override
         public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType)
             throws SQLException {
-            ps.setString(i, (String)parameter+"_2024");
+            ps.setString(i, parameter +"_2024");
         }
 
         @Override
