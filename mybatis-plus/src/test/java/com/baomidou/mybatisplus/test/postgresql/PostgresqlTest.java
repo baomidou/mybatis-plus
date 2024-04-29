@@ -6,18 +6,18 @@ import com.baomidou.mybatisplus.test.postgresql.service.IPgtableService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:postgresql/spring-test-postgresql.xml"})
 public class PostgresqlTest {
-    @Resource
+    @Autowired
     private PgtableMappper mapper;
-    @Resource
+    @Autowired
     private IPgtableService pgtableService;
 
     @Test

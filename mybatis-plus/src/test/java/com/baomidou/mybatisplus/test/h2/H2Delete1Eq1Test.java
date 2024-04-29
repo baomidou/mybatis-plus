@@ -23,10 +23,10 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -40,9 +40,9 @@ import java.util.List;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2Delete1Eq1Test extends BaseTest {
 
-    @Resource
+    @Autowired
     protected H2UserMapper logicDeleteMapper;
-    @Resource
+    @Autowired
     protected H2StudentMapper defaultMapper;
 
     @Test

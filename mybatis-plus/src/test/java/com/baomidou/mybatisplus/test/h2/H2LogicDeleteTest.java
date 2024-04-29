@@ -21,10 +21,10 @@ import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserLogicDeleteMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -38,7 +38,7 @@ import java.util.List;
 @ContextConfiguration(locations = {"classpath:h2/spring-logic-delete-h2.xml"})
 class H2LogicDeleteTest extends BaseTest {
 
-    @Resource
+    @Autowired
     protected H2UserLogicDeleteMapper logicDeleteMapper;
 
     @Test

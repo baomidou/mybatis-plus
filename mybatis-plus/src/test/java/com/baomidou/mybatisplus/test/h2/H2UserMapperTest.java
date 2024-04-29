@@ -40,7 +40,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -61,7 +60,7 @@ import static java.util.stream.Collectors.toList;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2UserMapperTest extends BaseTest {
 
-    @Resource
+    @Autowired
     protected H2UserMapper userMapper;
 
     @Autowired

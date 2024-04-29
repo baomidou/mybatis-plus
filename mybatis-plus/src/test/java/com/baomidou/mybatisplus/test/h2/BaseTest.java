@@ -17,16 +17,16 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @DirtiesContext
 public class BaseTest {
 
-    @Resource
+    @Autowired
     protected JdbcTemplate jdbcTemplate;
 
     protected static final String NQQ = "聂秋秋";

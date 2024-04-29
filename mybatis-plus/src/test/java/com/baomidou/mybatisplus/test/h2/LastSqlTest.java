@@ -10,10 +10,10 @@ import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ import java.util.Map;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class LastSqlTest {
 
-    @Resource
+    @Autowired
     private H2StudentMapper mapper;
 
     @Test

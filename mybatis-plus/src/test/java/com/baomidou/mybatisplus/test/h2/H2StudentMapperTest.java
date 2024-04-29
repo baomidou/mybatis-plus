@@ -27,10 +27,10 @@ import com.baomidou.mybatisplus.test.h2.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +46,7 @@ import java.util.Objects;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2StudentMapperTest extends BaseTest {
 
-    @Resource
+    @Autowired
     protected H2StudentMapper studentMapper;
 
     @Test
