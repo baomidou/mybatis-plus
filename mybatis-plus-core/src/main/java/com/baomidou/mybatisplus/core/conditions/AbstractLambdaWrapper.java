@@ -16,10 +16,14 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
@@ -45,8 +49,18 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     @Override
     protected Children addCondition(boolean condition, SFunction<T, ?> column, SqlKeyword sqlKeyword, Object val) {
-        //@Todo 获取表名，TableInfoHelper.getTableInfo(表名)获取TableInfo.getFieldList.mapping
-        String mapping = null;
+        LambdaMeta meta = LambdaUtils.extract(column);
+        //  获取字段名
+        String columnName = PropertyNamer.methodToProperty(meta.getImplMethodName());
+        //  根据字段名获取表信息
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(meta.getInstantiatedClass());
+        //  获取字段信息，同时根据字段名获取字段的handler，如果没有则返回null
+        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+        String mapping = fieldList.stream()
+            .filter(tableFieldInfo -> StringUtils.equals(tableFieldInfo.getProperty(), columnName))
+            .findFirst()
+            .map(TableFieldInfo::getMapping)
+            .orElse(null);
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), sqlKeyword,
             () -> formatParam(mapping, val)));
     }
