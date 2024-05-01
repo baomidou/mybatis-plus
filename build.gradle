@@ -60,7 +60,7 @@ ext {
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:2.2.224",
-        "mysql"                      : "com.mysql:mysql-connector-j:8.3.0",
+        "mysql"                      : "com.mysql:mysql-connector-j:8.4.0",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.45.3.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.4.java8",
         //cache
