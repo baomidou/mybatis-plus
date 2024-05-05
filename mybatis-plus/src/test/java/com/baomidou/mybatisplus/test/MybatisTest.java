@@ -107,11 +107,18 @@ class MybatisTest {
 
     @Test
     void testBatchAutoCommitFalseOnException1() {
-        List<H2User> userList = List.of(new H2User(1000L, "测试"), new H2User(1000L, "测试"));
-        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory, userList, H2UserMapper.class.getName() + ".insert"));
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory,
+            List.of(new H2User(1000L, "测试"), new H2User(1000L, "测试")), H2UserMapper.class.getName() + ".insert"));
         try (var sqlSession = sqlSessionFactory.openSession()) {
             var mapper = sqlSession.getMapper(H2UserMapper.class);
             Assertions.assertNull(mapper.selectById(1000L));
+        }
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory,
+            List.of(new H2User(1001L, "测试"), new H2User(1001L, "测试")),
+            H2UserMapper.class.getName() + ".insert", 1));
+        try (var sqlSession = sqlSessionFactory.openSession()) {
+            var mapper = sqlSession.getMapper(H2UserMapper.class);
+            Assertions.assertNotNull(mapper.selectById(1001L));
         }
     }
 
@@ -145,18 +152,25 @@ class MybatisTest {
 
     @Test
     void testBatchAutoCommitTrueOnException1() {
-        var userList = List.of(new H2User(4000L, "测试"), new H2User(4000L, "测试"));
-        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory, userList, true, H2UserMapper.class.getName() + ".insert"));
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory,
+            List.of(new H2User(4000L, "测试"), new H2User(4000L, "测试")), true, H2UserMapper.class.getName() + ".insert"));
         try (var sqlSession = sqlSessionFactory.openSession()) {
             var mapper = sqlSession.getMapper(H2UserMapper.class);
             Assertions.assertNotNull(mapper.selectById(4000L));
+        }
+        Assertions.assertThrowsExactly(PersistenceException.class,
+            () -> MybatisBatchUtils.execute(sqlSessionFactory, List.of(new H2User(4020L, "测试"), new H2User(4020L, "测试"), 1),
+                true, H2UserMapper.class.getName() + ".insert"));
+        try (var sqlSession = sqlSessionFactory.openSession()) {
+            var mapper = sqlSession.getMapper(H2UserMapper.class);
+            Assertions.assertNotNull(mapper.selectById(4020L));
         }
     }
 
     @Test
     void testBatchAutoCommitTrueOnException2() {
-        var userList = List.of(new H2User(4010L, "测试"), new H2User(4011L, "测试"));
-        Assertions.assertThrowsExactly(RuntimeException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory, userList, true, H2UserMapper.class.getName() + ".insert", parameter -> {
+        Assertions.assertThrowsExactly(RuntimeException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory,
+            List.of(new H2User(4010L, "测试"), new H2User(4011L, "测试")), true, H2UserMapper.class.getName() + ".insert", parameter -> {
             if (parameter.getTestId() == 4011L) {
                 throw new RuntimeException("出异常了");
             }
@@ -166,6 +180,19 @@ class MybatisTest {
             var mapper = sqlSession.getMapper(H2UserMapper.class);
             Assertions.assertNull(mapper.selectById(4010L));
             Assertions.assertNull(mapper.selectById(4011L));
+        }
+        Assertions.assertThrowsExactly(RuntimeException.class, () -> MybatisBatchUtils.execute(sqlSessionFactory,
+            List.of(new H2User(4015L, "测试"), new H2User(4016L, "测试")), true,
+            H2UserMapper.class.getName() + ".insert", parameter -> {
+            if (parameter.getTestId() == 4016L) {
+                throw new RuntimeException("出异常了");
+            }
+            return parameter;
+        },1));
+        try (var sqlSession = sqlSessionFactory.openSession()) {
+            var mapper = sqlSession.getMapper(H2UserMapper.class);
+            Assertions.assertNotNull(mapper.selectById(4015L));
+            Assertions.assertNull(mapper.selectById(4016L));
         }
     }
 
