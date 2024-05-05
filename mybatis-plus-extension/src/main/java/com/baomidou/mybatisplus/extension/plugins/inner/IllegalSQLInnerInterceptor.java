@@ -27,11 +27,11 @@ import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -155,9 +155,9 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * @param expression ignore
      */
     private void validExpression(Expression expression) {
-        while (expression instanceof Parenthesis) {
-            Parenthesis parenthesis = (Parenthesis) expression;
-            expression = parenthesis.getExpression();
+        while (expression instanceof ParenthesedExpressionList) {
+            ParenthesedExpressionList<Expression> parenthesis = (ParenthesedExpressionList) expression;
+            expression = parenthesis.get(0);
         }
         //where条件使用了 or 关键字
         if (expression instanceof OrExpression) {

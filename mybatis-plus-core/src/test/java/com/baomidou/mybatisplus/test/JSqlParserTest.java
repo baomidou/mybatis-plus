@@ -20,7 +20,7 @@ class JSqlParserTest {
     void parser() throws Exception {
         Select select = (Select) CCJSqlParserUtil.parse("SELECT a,b,c FROM tableName t WHERE t.col = 9 and b=c LIMIT 3, ?");
 
-        PlainSelect ps = (PlainSelect) select.getSelectBody();
+        PlainSelect ps = (PlainSelect) select;
 
         System.out.println(ps.getWhere().toString());
         System.out.println(ps.getSelectItems().get(1).toString());
@@ -47,4 +47,13 @@ class JSqlParserTest {
         Delete delete = (Delete) CCJSqlParserUtil.parse("delete from tableName t");
         Assertions.assertNull(delete.getWhere());
     }
+
+    @Test
+    void testSelectForUpdate() throws Exception {
+        Assertions.assertEquals("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE",
+            CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString());
+        Assertions.assertEquals("SELECT * FROM sys_sms_send_record WHERE check_status = 0 ORDER BY submit_time ASC LIMIT 10 FOR UPDATE",
+            CCJSqlParserUtil.parse("select * from sys_sms_send_record where check_status = 0 for update order by submit_time asc limit 10").toString());
+    }
+
 }
