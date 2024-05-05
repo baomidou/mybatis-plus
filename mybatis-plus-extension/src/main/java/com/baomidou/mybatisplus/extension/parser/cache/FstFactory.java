@@ -49,6 +49,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.ExtractExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.FilterOverImpl.class);
         conf.registerClass(net.sf.jsqlparser.expression.Function.class);
+        conf.registerClass(net.sf.jsqlparser.expression.Function.HavingClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.HexValue.class);
         conf.registerClass(net.sf.jsqlparser.expression.IntervalExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.JdbcNamedParameter.class);
@@ -59,6 +60,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.JsonFunctionExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.JsonKeyValuePair.class);
         conf.registerClass(net.sf.jsqlparser.expression.KeepExpression.class);
+        conf.registerClass(net.sf.jsqlparser.expression.LambdaExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.LongValue.class);
         conf.registerClass(net.sf.jsqlparser.expression.MySQLGroupConcat.class);
         conf.registerClass(net.sf.jsqlparser.expression.MySQLIndexHint.class);
@@ -79,6 +81,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.SQLServerHints.class);
         conf.registerClass(net.sf.jsqlparser.expression.SignedExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.StringValue.class);
+        conf.registerClass(net.sf.jsqlparser.expression.StructType.class);
         conf.registerClass(net.sf.jsqlparser.expression.TimeKeyExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.TimeValue.class);
         conf.registerClass(net.sf.jsqlparser.expression.TimestampValue.class);
@@ -113,6 +116,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.Contains.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.DoubleAnd.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.EqualsTo.class);
+        conf.registerClass(net.sf.jsqlparser.expression.operators.relational.ExcludesExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.ExistsExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.ExpressionList.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.FullTextSearch.class);
@@ -120,6 +124,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.GreaterThan.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.InExpression.class);
+        conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IncludesExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsBooleanExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsDistinctExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsNullExpression.class);

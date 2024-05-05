@@ -28,6 +28,7 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -76,7 +77,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         if (where != null) {
             if (where instanceof OrExpression) {
-                return new AndExpression(new Parenthesis(where), expression);
+                return new AndExpression(new ParenthesedExpressionList<>(where), expression);
             } else {
                 return new AndExpression(where, expression);
             }
@@ -189,9 +190,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 // not exists
                 NotExpression expression = (NotExpression) where;
                 processWhereSubSelect(expression.getExpression(), whereSegment);
-            } else if (where instanceof Parenthesis) {
-                Parenthesis expression = (Parenthesis) where;
-                processWhereSubSelect(expression.getExpression(), whereSegment);
+            } else if (where instanceof ParenthesedExpressionList) {
+                ParenthesedExpressionList<Expression> expression = (ParenthesedExpressionList) where;
+                processWhereSubSelect(expression.get(0), whereSegment);
             }
         }
     }
@@ -403,7 +404,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             return injectExpression;
         }
         if (currentExpression instanceof OrExpression) {
-            return new AndExpression(new Parenthesis(currentExpression), injectExpression);
+            return new AndExpression(new ParenthesedExpressionList<>(currentExpression), injectExpression);
         } else {
             return new AndExpression(currentExpression, injectExpression);
         }
