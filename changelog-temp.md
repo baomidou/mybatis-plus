@@ -14,3 +14,4 @@
 - feat: SpringBoot依赖升级
 - feat: 升级kotlin-reflect至1.9.23
 - feat: 重构ServiceImpl泛型参数提取
+- feat: 升级lombok至1.18.32
