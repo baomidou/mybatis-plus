@@ -81,7 +81,6 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
     apply plugin: "io.freefair.lombok"
-    apply plugin: 'com.github.hierynomus.license'
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
@@ -140,21 +139,6 @@ subprojects {
                 attributes 'Automatic-Module-Name': "${project.group}.${project.name.replaceAll("-", ".")}"
             }
         }
-    }
-
-    // 控制台直接执行 `gradle licenseMain` 或者 `gradle licenseFormatMain`
-    // 前者是检查 main 源码的 licence 情况,后者是在 main 源码文件上 format license
-    // 因为不打算在 test 代码上添加 licence, 所以不使用 licenseTest 和 licenseFormatTest 这俩
-    license {
-        encoding = "UTF-8"
-        header = rootProject.file("license.txt")
-        includes(["**/*.java", "**/*.kt"])
-        mapping {
-            java = "SLASHSTAR_STYLE"
-            kt = "SLASHSTAR_STYLE"
-        }
-        ignoreFailures = true
-        ext.year = Calendar.getInstance().get(Calendar.YEAR)
     }
 
     //noinspection GroovyAssignabilityCheck
