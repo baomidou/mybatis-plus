@@ -154,6 +154,7 @@ class TenantLineInnerInterceptorTest {
         assertSql("SELECT * FROM entity e WHERE EXISTS (select e1.id from entity1 e1 where e1.id = ?)",
             "SELECT * FROM entity e WHERE EXISTS (SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.tenant_id = 1");
 
+        assertSql("SELECT EXISTS (SELECT 1 FROM entity1 e WHERE e.id = ? LIMIT 1)","SELECT EXISTS (SELECT 1 FROM entity1 e WHERE e.id = ? AND e.tenant_id = 1 LIMIT 1)");
 
         /* NOT EXISTS */
         assertSql("SELECT * FROM entity e WHERE NOT EXISTS (select e1.id from entity1 e1 where e1.id = ?)",

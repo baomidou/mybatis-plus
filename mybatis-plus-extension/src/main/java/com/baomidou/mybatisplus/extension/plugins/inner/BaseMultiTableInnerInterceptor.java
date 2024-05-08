@@ -202,6 +202,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             processSelectBody(((Select) expression), whereSegment);
         } else if (expression instanceof Function) {
             processFunction((Function) expression, whereSegment);
+        } else if (expression instanceof ExistsExpression) {
+            ExistsExpression existsExpression = (ExistsExpression) expression;
+            processSelectBody((Select) existsExpression.getRightExpression(), whereSegment);
         }
     }
 
