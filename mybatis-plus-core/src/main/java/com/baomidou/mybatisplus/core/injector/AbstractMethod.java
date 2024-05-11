@@ -214,7 +214,7 @@ public abstract class AbstractMethod implements Constants {
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and !%s", COLUMN_MAP,
-                COLUMN_MAP_IS_EMPTY), true);;
+                COLUMN_MAP_IS_EMPTY), true);
         }
     }
 
