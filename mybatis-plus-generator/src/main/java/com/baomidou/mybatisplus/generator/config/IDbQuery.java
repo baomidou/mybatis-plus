@@ -78,4 +78,17 @@ public interface IDbQuery {
      * 自定义字段名称
      */
     String[] fieldCustom();
+
+    /**
+     * 获取主键sql
+     *
+     * @param dataSourceConfig 数据库配置信息
+     * @param tableName        表名
+     * @return 主键查询sql
+     * @since 3.5.7
+     */
+    default String primaryKeySql(DataSourceConfig dataSourceConfig, String tableName) {
+        return null;
+    }
+
 }

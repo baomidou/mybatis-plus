@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.query;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
@@ -24,7 +23,6 @@ import com.baomidou.mybatisplus.generator.config.builder.Entity;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.querys.DbQueryDecorator;
-import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -93,18 +91,18 @@ public class SQLQuery extends AbstractDatabaseQuery {
     }
 
     protected void convertTableFields(@NotNull TableInfo tableInfo) {
-        DbType dbType = this.dataSourceConfig.getDbType();
         String tableName = tableInfo.getName();
         try {
             Map<String, DatabaseMetaDataWrapper.Column> columnsInfoMap = databaseMetaDataWrapper.getColumnsInfo(tableName, false);
             String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
-            Set<String> h2PkColumns = new HashSet<>();
-            boolean isH2OrLEALONEDbType = (DbType.H2 == dbType || DbType.LEALONE == dbType);
-            if (isH2OrLEALONEDbType) {
-                dbQuery.execute(String.format(H2Query.PK_QUERY_SQL, tableName), result -> {
+            Set<String> pkColumns = new HashSet<>();
+            String primaryKeySql = dbQuery.primaryKeySql(dataSourceConfig, tableName);
+            boolean selectPk = StringUtils.isNotBlank(primaryKeySql);
+            if (selectPk) {
+                dbQuery.execute(primaryKeySql, result -> {
                     String primaryKey = result.getStringResult(dbQuery.fieldKey());
                     if (Boolean.parseBoolean(primaryKey)) {
-                        h2PkColumns.add(result.getStringResult(dbQuery.fieldName()));
+                        pkColumns.add(result.getStringResult(dbQuery.fieldName()));
                     }
                 });
             }
@@ -116,7 +114,7 @@ public class SQLQuery extends AbstractDatabaseQuery {
                 // 设置字段的元数据信息
                 TableField.MetaInfo metaInfo = new TableField.MetaInfo(columnInfo, tableInfo);
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                boolean isId = isH2OrLEALONEDbType ? h2PkColumns.contains(columnName) : result.isPrimaryKey();
+                boolean isId = selectPk ? pkColumns.contains(columnName) : result.isPrimaryKey();
                 // 处理ID
                 if (isId) {
                     field.primaryKey(dbQuery.isKeyIdentity(result.getResultSet()));

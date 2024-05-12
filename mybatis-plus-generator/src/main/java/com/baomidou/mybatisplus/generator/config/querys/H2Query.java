@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -72,4 +74,10 @@ public class H2Query extends AbstractDbQuery {
     public boolean isKeyIdentity(ResultSet results) throws SQLException {
         return results.getString("SEQUENCE_NAME") != null;
     }
+
+    @Override
+    public String primaryKeySql(DataSourceConfig dataSourceConfig, String tableName) {
+        return String.format(PK_QUERY_SQL, tableName);
+    }
+
 }
