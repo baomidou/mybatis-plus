@@ -35,7 +35,7 @@ public class SQLiteDdlGenerator implements IDdlGenerator {
     @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
         StringBuffer sql = new StringBuffer();
-        sql.append("SELECT count(1) FROM sqlite_master WHERE name='");
+        sql.append("SELECT count(1) NUM FROM sqlite_master WHERE name='");
         sql.append(getDdlHistory()).append("' AND type='table'");
         return executeFunction.apply(sql.toString());
     }
