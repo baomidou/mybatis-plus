@@ -40,7 +40,7 @@ ext {
         "imadcn"                     : "com.imadcn.framework:idworker:1.6.0",
         "spring-cloud-commons"       : "org.springframework.cloud:spring-cloud-commons:${springCloudVersion}",
 
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.22",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.22.1",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
