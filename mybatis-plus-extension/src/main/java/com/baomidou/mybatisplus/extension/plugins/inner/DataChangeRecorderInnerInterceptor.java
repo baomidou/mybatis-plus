@@ -196,7 +196,14 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     public OperationResult processInsert(Insert insertStmt, BoundSql boundSql) {
         OperationResult result = new OperationResult();
         result.setOperation("insert");
-        result.setTableName(insertStmt.getTable().getName());
+        final Table table = insertStmt.getTable();
+        final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
+        if (ignoredColumns != null && ignoredColumns.stream().anyMatch("*"::equals)) {
+            result.setTableName(table.getName() + ":*");
+            result.setRecordStatus(false);
+            return result;
+        }
+        result.setTableName(table.getName());
         result.setRecordStatus(true);
         Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(result.getTableName(), boundSql, insertStmt);
         result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), null, updatedColumnDatas));
