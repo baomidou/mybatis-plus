@@ -194,18 +194,18 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     }
 
     public OperationResult processInsert(Insert insertStmt, BoundSql boundSql) {
-        OperationResult result = new OperationResult();
-        result.setOperation("insert");
-        final Table table = insertStmt.getTable();
-        final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
-        if (ignoredColumns != null && ignoredColumns.stream().anyMatch("*"::equals)) {
-            result.setTableName(table.getName() + ":*");
-            result.setRecordStatus(false);
-            return result;
+        String operation = SqlCommandType.INSERT.name().toLowerCase();
+        Table table = insertStmt.getTable();
+        String tableName = table.getName();
+        Optional<OperationResult> optionalOperationResult = ignoredTableColumns(tableName, operation);
+        if (optionalOperationResult.isPresent()) {
+            return optionalOperationResult.get();
         }
-        result.setTableName(table.getName());
+        OperationResult result = new OperationResult();
+        result.setOperation(operation);
+        result.setTableName(tableName);
         result.setRecordStatus(true);
-        Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(result.getTableName(), boundSql, insertStmt);
+        Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(tableName, boundSql, insertStmt);
         result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), null, updatedColumnDatas));
         return result;
     }
@@ -214,22 +214,18 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
         Expression where = updateStmt.getWhere();
         PlainSelect selectBody = new PlainSelect();
         Table table = updateStmt.getTable();
-        final Set<String> ignoredColumns = ignoredTableColumns.get(table.getName().toUpperCase());
-        if (ignoredColumns != null) {
-            if (ignoredColumns.stream().anyMatch("*"::equals)) {
-                OperationResult result = new OperationResult();
-                result.setOperation("update");
-                result.setTableName(table.getName() + ":*");
-                result.setRecordStatus(false);
-                return result;
-            }
+        String tableName = table.getName();
+        String operation = SqlCommandType.UPDATE.name().toLowerCase();
+        Optional<OperationResult> optionalOperationResult = ignoredTableColumns(tableName, operation);
+        if (optionalOperationResult.isPresent()) {
+            return optionalOperationResult.get();
         }
         selectBody.setFromItem(table);
         List<Column> updateColumns = new ArrayList<>();
         for (UpdateSet updateSet : updateStmt.getUpdateSets()) {
             updateColumns.addAll(updateSet.getColumns());
         }
-        Columns2SelectItemsResult buildColumns2SelectItems = buildColumns2SelectItems(table.getName(), updateColumns);
+        Columns2SelectItemsResult buildColumns2SelectItems = buildColumns2SelectItems(tableName, updateColumns);
         selectBody.setSelectItems(buildColumns2SelectItems.getSelectItems());
         selectBody.setWhere(where);
         SelectItem<PlainSelect> plainSelectSelectItem = new SelectItem<>(selectBody);
@@ -244,14 +240,28 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 boundSql4Select.setAdditionalParameter(ety.getKey(), ety.getValue());
             }
         }
-        Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(table.getName(), boundSql, updateStmt);
+        Map<String, Object> updatedColumnDatas = getUpdatedColumnDatas(tableName, boundSql, updateStmt);
         OriginalDataObj originalData = buildOriginalObjectData(updatedColumnDatas, selectBody, buildColumns2SelectItems.getPk(), mappedStatement, boundSql4Select, connection);
         OperationResult result = new OperationResult();
-        result.setOperation("update");
-        result.setTableName(table.getName());
+        result.setOperation(operation);
+        result.setTableName(tableName);
         result.setRecordStatus(true);
         result.buildDataStr(compareAndGetUpdatedColumnDatas(result.getTableName(), originalData, updatedColumnDatas));
         return result;
+    }
+
+    private Optional<OperationResult> ignoredTableColumns(String table, String operation) {
+        final Set<String> ignoredColumns = ignoredTableColumns.get(table.toUpperCase());
+        if (ignoredColumns != null) {
+            if (ignoredColumns.stream().anyMatch("*"::equals)) {
+                OperationResult result = new OperationResult();
+                result.setOperation(operation);
+                result.setTableName(table + ":*");
+                result.setRecordStatus(false);
+                return Optional.of(result);
+            }
+        }
+        return Optional.empty();
     }
 
     private TableInfo getTableInfoByTableName(String tableName) {
