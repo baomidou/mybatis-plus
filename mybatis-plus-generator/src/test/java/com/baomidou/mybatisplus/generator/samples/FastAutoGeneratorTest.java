@@ -2,9 +2,6 @@ package com.baomidou.mybatisplus.generator.samples;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.engine.EnjoyTemplateEngine;
-
-import java.sql.SQLException;
 
 /**
  * <p>
@@ -25,7 +22,7 @@ public class FastAutoGeneratorTest extends BaseGeneratorTest {
     /**
      * 执行 run
      */
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws Exception {
         // 初始化数据库脚本
         initDataSource(DATA_SOURCE_CONFIG.build());
         FastAutoGenerator.create(DATA_SOURCE_CONFIG)

@@ -6,7 +6,6 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * 基础测试类
@@ -19,12 +18,12 @@ public class BaseGeneratorTest {
     /**
      * 执行数据库脚本
      */
-    protected static void initDataSource(DataSourceConfig dataSourceConfig) throws SQLException {
+    protected static void initDataSource(DataSourceConfig dataSourceConfig) throws Exception {
         Connection conn = dataSourceConfig.getConn();
         InputStream inputStream = H2CodeGeneratorTest.class.getResourceAsStream("/sql/init.sql");
         ScriptRunner scriptRunner = new ScriptRunner(conn);
         scriptRunner.setAutoCommit(true);
-        scriptRunner.runScript(new InputStreamReader(inputStream));
+        scriptRunner.runScript(new InputStreamReader(inputStream, "UTF-8"));
         conn.close();
     }
 

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
      * 执行初始化数据库脚本
      */
     @BeforeAll
-    public static void before() throws SQLException {
+    public static void before() throws Exception {
         initDataSource(DATA_SOURCE_CONFIG);
     }
 
