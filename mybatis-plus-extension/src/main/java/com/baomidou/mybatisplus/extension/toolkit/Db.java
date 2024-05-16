@@ -87,7 +87,7 @@ public class Db {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.saveBatch(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entityList, batchSize));
         return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
@@ -111,7 +111,7 @@ public class Db {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.saveOrUpdateBatch(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insertOrUpdate(entityList, batchSize));
         return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
@@ -194,7 +194,7 @@ public class Db {
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.updateBatchById(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.updateById(entityList, batchSize));
         return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0);
     }
 
@@ -205,7 +205,7 @@ public class Db {
      * @param entityClass 实体类
      */
     public static <T> boolean removeByIds(Collection<? extends Serializable> list, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteBatchIds(list)));
+        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.deleteByIds(list)));
     }
 
     /**

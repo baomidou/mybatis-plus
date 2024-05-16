@@ -169,8 +169,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      */
-    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
-        return deleteBatchIds(idList, true);
+    default int deleteByIds(@Param(Constants.COLL) Collection<?> idList) {
+        return deleteByIds(idList, true);
     }
 
     /**
@@ -180,7 +180,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param useFill     逻辑删除下是否填充
      * @since 3.5.7
      */
-    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
+    default int deleteByIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
@@ -453,8 +453,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entityList 实体对象集合
      * @since 3.5.7
      */
-    default List<BatchResult> saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, Constants.DEFAULT_BATCH_SIZE);
+    default List<BatchResult> insert(Collection<T> entityList) {
+        return insert(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -464,7 +464,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param batchSize  插入批次数量
      * @since 3.5.7
      */
-    default List<BatchResult> saveBatch(Collection<T> entityList, int batchSize) {
+    default List<BatchResult> insert(Collection<T> entityList, int batchSize) {
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
@@ -477,8 +477,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entityList 实体对象集合
      * @since 3.5.7
      */
-    default List<BatchResult> updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, Constants.DEFAULT_BATCH_SIZE);
+    default List<BatchResult> updateById(Collection<T> entityList) {
+        return updateById(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -488,7 +488,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param batchSize  插入批次数量
      * @since 3.5.7
      */
-    default List<BatchResult> updateBatchById(Collection<T> entityList, int batchSize) {
+    default List<BatchResult> updateById(Collection<T> entityList, int batchSize) {
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);
@@ -501,8 +501,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entityList 实体对象集合
      * @since 3.5.7
      */
-    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, Constants.DEFAULT_BATCH_SIZE);
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList) {
+        return insertOrUpdate(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -512,13 +512,13 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param batchSize  插入批次数量
      * @since 3.5.7
      */
-    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList, int batchSize) {
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         String keyProperty = tableInfo.getKeyProperty();
         String statement = mybatisMapperProxy.getMapperInterface().getName() + StringPool.DOT + SqlMethod.SELECT_BY_ID.getMethod();
-        return saveOrUpdateBatch(entityList, (sqlSession, entity) -> {
+        return insertOrUpdate(entityList, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal) || CollectionUtils.isEmpty(sqlSession.selectList(statement, entity));
         }, batchSize);
@@ -530,8 +530,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entityList 实体对象集合
      * @since 3.5.7
      */
-    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate) {
-        return saveOrUpdateBatch(entityList, insertPredicate, Constants.DEFAULT_BATCH_SIZE);
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate) {
+        return insertOrUpdate(entityList, insertPredicate, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -541,7 +541,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param batchSize  插入批次数量
      * @since 3.5.7
      */
-    default List<BatchResult> saveOrUpdateBatch(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate, int batchSize) {
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate, int batchSize) {
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mybatisMapperProxy.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mybatisMapperProxy);

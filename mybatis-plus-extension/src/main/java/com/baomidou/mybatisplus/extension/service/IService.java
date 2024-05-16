@@ -156,7 +156,7 @@ public interface IService<T> {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     /**
@@ -171,7 +171,7 @@ public interface IService<T> {
         if (CollectionUtils.isEmpty(list)) {
             return false;
         }
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list, useFill));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list, useFill));
     }
 
     /**

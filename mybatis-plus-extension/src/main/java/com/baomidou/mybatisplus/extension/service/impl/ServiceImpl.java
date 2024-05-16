@@ -299,12 +299,12 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
 
     @Override
     public boolean removeBatchByIds(Collection<?> list, int batchSize) {
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list));
     }
 
     @Override
     public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
-        return SqlHelper.retBool(getBaseMapper().deleteBatchIds(list, useFill));
+        return SqlHelper.retBool(getBaseMapper().deleteByIds(list, useFill));
     }
 
 }
