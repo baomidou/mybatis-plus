@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
@@ -30,7 +31,6 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -73,7 +73,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, IService.DEFAULT_BATCH_SIZE);
+        return saveBatch(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, IService.DEFAULT_BATCH_SIZE);
+        return saveOrUpdateBatch(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -183,7 +183,7 @@ public class Db {
      * @param entityList 实体对象集合
      */
     public static <T> boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, IService.DEFAULT_BATCH_SIZE);
+        return updateBatchById(entityList, Constants.DEFAULT_BATCH_SIZE);
     }
 
     /**
