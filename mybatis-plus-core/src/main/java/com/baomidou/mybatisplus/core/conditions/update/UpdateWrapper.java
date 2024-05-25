@@ -18,9 +18,11 @@ package com.baomidou.mybatisplus.core.conditions.update;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,28 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
         this.sqlFirst = sqlFirst;
+    }
+
+
+    /**
+     * 检查 SQL 注入过滤
+     */
+    private boolean checkSqlInjection;
+
+    /**
+     * 开启检查 SQL 注入
+     */
+    public UpdateWrapper<T> checkSqlInjection() {
+        this.checkSqlInjection = true;
+        return this;
+    }
+
+    @Override
+    protected String columnToString(String column) {
+        if (checkSqlInjection && SqlInjectionUtils.check(column)) {
+            throw new MybatisPlusException("Discovering SQL injection column: " + column);
+        }
+        return column;
     }
 
     @Override

@@ -55,6 +55,11 @@ import org.junit.jupiter.api.Test;
         assertSql(false,"ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
         assertSql(true,"ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
         assertSql(true, "or 1 = 1");
+        assertSql(true, "and 1 = 1");
+        assertSql(true, "hi = 1 or abc");
+        assertSql(true, "(hi = 1) and abc");
+        assertSql(false, "orAnd");
+        assertSql(false, "andOr");
     }
 
     private void assertSql(boolean injection, String sql) {
