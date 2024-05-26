@@ -16,6 +16,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
     </#if>
 </#if>
+<#if table.convert>
+    import com.baomidou.mybatisplus.annotation.TableName;
+</#if>
 
 /**
  * <p>

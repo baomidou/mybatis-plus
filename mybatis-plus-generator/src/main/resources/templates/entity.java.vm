@@ -16,7 +16,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 #end
 #end
-
+#if(${table.convert})
+import com.baomidou.mybatisplus.annotation.TableName;
+#end
 /**
  * <p>
  * $!{table.comment}
