@@ -32,13 +32,13 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 <p>
   <a href="https://doc.flowlong.com?from=mp" target="_blank">
-   <img alt="AiZuDa-Logo" src="https://foruda.gitee.com/images/1715955628416785121/954c16ef_12260.png" width="160px" height="50px">
+   <img alt="aizuda-Logo" src="https://foruda.gitee.com/images/1715955628416785121/954c16ef_12260.png" width="160px" height="50px">
   </a>
   <a href="https://gitee.com/gz-yami/mall4j?from=mp" target="_blank">
-   <img alt="Mybatis-Plus-Logo" src="https://foruda.gitee.com/images/1716599753022423252/fb0139cf_12260.png" width="160px" height="50px">
+   <img alt="mall4j-Logo" src="https://foruda.gitee.com/images/1716776021837872678/87883b39_12260.gif" width="160px" height="50px">
   </a>
   <a href="http://github.crmeb.net/u/MyBatis-Plus" target="_blank">
-   <img alt="Crmeb-Logo" src="https://foruda.gitee.com/images/1685339553088166856/b0a6b1a4_12260.gif" width="160px" height="50px">
+   <img alt="crmeb-Logo" src="https://foruda.gitee.com/images/1685339553088166856/b0a6b1a4_12260.gif" width="160px" height="50px">
   </a>
 </p>
 
