@@ -29,7 +29,6 @@ import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.AutoMappingBehavior;
 import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.type.JdbcType;
@@ -115,14 +114,6 @@ public class MybatisPlusProperties {
      * is specified, this property is not used.
      */
     private CoreConfiguration configuration;
-
-    /**
-     * 不再需要这个配置,放心删除
-     *
-     * @deprecated 2022-03-07
-     */
-    @Deprecated
-    private String typeEnumsPackage;
 
     /**
      * 全局配置
