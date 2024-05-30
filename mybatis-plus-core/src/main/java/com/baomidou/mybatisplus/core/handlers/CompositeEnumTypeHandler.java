@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import lombok.Setter;
 import org.apache.ibatis.type.EnumTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
@@ -37,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CompositeEnumTypeHandler<E extends Enum<E>> implements TypeHandler<E> {
 
     private static final Map<Class<?>, Boolean> MP_ENUM_CACHE = new ConcurrentHashMap<>();
-    @Setter
     private static Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
     private final TypeHandler<E> delegate;
 
@@ -49,6 +47,12 @@ public class CompositeEnumTypeHandler<E extends Enum<E>> implements TypeHandler<
             delegate = new MybatisEnumTypeHandler<>(enumClassType);
         } else {
             delegate = getInstance(enumClassType, defaultEnumTypeHandler);
+        }
+    }
+
+    public static void setDefaultEnumTypeHandler(Class<? extends TypeHandler> defaultEnumTypeHandler) {
+        if (defaultEnumTypeHandler != null && !MybatisEnumTypeHandler.class.isAssignableFrom(defaultEnumTypeHandler)) {
+            CompositeEnumTypeHandler.defaultEnumTypeHandler = defaultEnumTypeHandler;
         }
     }
 
