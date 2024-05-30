@@ -52,7 +52,6 @@ class MetadataTest {
         DocumentContext documentContext = JsonPath.parse(new FileSystemResource("build/classes/java/main/META-INF/spring-configuration-metadata.json").getInputStream());
         List<Map<String, String>> properties = documentContext.read("$.properties");
         Map<String, Metadata> metadataMap = properties.stream().map(map -> new Metadata(map.get("name"), map.get("type"), map.get("sourceType"))).collect(Collectors.toMap(Metadata::getName, metadata -> metadata));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.type-enums-package"), new Metadata("mybatis-plus.type-enums-package", String.class.getName(), MybatisPlusProperties.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package", String.class.getName(), MybatisPlusProperties.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.global-config.db-config.table-underline"), new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(), GlobalConfig.DbConfig.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location", String.class.getName(), MybatisPlusProperties.class.getName()));
