@@ -168,9 +168,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testCustomTemplate() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
-        generator.strategy(strategyConfig().build());
-        generator.template(templateConfig()
-            .entity("/templates/entity1.java")
+        generator.strategy(strategyConfig()
+            .entityBuilder().javaTemplate("/templates/entity1.java")
             .build());
         generator.global(globalConfig().build());
         generator.execute();
@@ -203,13 +202,11 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         // 关闭其它模块生成只生成实体
-        generator.template(templateConfig().disable(
-            TemplateType.CONTROLLER,
-            TemplateType.SERVICE,
-            TemplateType.SERVICE_IMPL,
-            TemplateType.XML,
-            TemplateType.MAPPER
-        ).build());
+        generator.strategy(strategyConfig()
+            .controllerBuilder().disable()
+            .serviceBuilder().disable()
+            .mapperBuilder().disable()
+            .build());
         // 日期类型强制设置为 Date 类型
         generator.global(globalConfig().dateType(DateType.ONLY_DATE).build());
         generator.execute();
@@ -224,9 +221,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         Map<String, Object> map = new HashMap<>();
         map.put("abc", 123);
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
-        generator.strategy(strategyConfig().build());
-        generator.template(templateConfig()
-            .entity("/templates/entity1.java")
+        generator.strategy(strategyConfig()
+            .entityBuilder().javaTemplate("/templates/entity1.java")
             .build());
         generator.injection(injectionConfig().customMap(map).build());
         generator.global(globalConfig().build());
@@ -270,9 +266,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testCustomFileByList() {
         // 设置自定义输出文件
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
-        generator.strategy(strategyConfig().build());
-        // 警用默认模板
-        generator.template(templateConfig().disable(TemplateType.CONTROLLER).build());
+        generator.strategy(strategyConfig()
+            // 禁用Controller默认模板
+            .controllerBuilder().disable()
+            .build());
         generator.injection(injectionConfig().customFile(new ArrayList<CustomFile>() {{
             add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build());
             add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo").build());

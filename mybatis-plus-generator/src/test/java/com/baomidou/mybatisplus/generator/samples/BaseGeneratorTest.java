@@ -50,13 +50,6 @@ public class BaseGeneratorTest {
     }
 
     /**
-     * 模板配置
-     */
-    protected static TemplateConfig.Builder templateConfig() {
-        return new TemplateConfig.Builder();
-    }
-
-    /**
      * 注入配置
      */
     protected static InjectionConfig.Builder injectionConfig() {
