@@ -65,6 +65,7 @@ public class TypeRegistry {
         typeMap.put(Types.DATE, DbColumnType.DATE);
         //timestamp
         typeMap.put(Types.TIMESTAMP, DbColumnType.TIMESTAMP);
+        typeMap.put(Types.TIMESTAMP_WITH_TIMEZONE, DbColumnType.TIMESTAMP);
         //double
         typeMap.put(Types.FLOAT, DbColumnType.DOUBLE);
         typeMap.put(Types.REAL, DbColumnType.DOUBLE);
