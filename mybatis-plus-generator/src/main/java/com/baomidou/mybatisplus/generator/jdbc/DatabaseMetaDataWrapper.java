@@ -106,7 +106,13 @@ public class DatabaseMetaDataWrapper {
                 column.name = name;
                 column.primaryKey = primaryKeys.contains(name);
                 column.typeName = resultSet.getString("TYPE_NAME");
-                column.jdbcType = JdbcType.forCode(resultSet.getInt("DATA_TYPE"));
+                int dataType = resultSet.getInt("DATA_TYPE");
+                JdbcType jdbcType = JdbcType.forCode(dataType);
+                if (jdbcType == null) {
+                    // 不标准的类型,统一转为OTHER
+                    jdbcType = JdbcType.OTHER;
+                }
+                column.jdbcType = jdbcType;
                 column.length = resultSet.getInt("COLUMN_SIZE");
                 column.scale = resultSet.getInt("DECIMAL_DIGITS");
                 column.remarks = formatComment(resultSet.getString("REMARKS"));
