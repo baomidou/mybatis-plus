@@ -83,7 +83,7 @@ public enum DbType {
     /**
      * Kingbase
      */
-    KINGBASE_ES("kingbasees", "人大金仓数据库"),
+    KINGBASE_ES("kingbase", "人大金仓数据库"),
     /**
      * Phoenix
      */
