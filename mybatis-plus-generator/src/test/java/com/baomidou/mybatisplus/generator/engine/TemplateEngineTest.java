@@ -3,7 +3,6 @@ package com.baomidou.mybatisplus.generator.engine;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
@@ -41,7 +40,6 @@ public class TemplateEngineTest {
                 .entityBuilder().enableActiveRecord().idType(IdType.INPUT)
                 .mapperBuilder().enableBaseResultMap().enableBaseColumnList()
                 .build(),
-            new TemplateConfig.Builder().build(),
-            GeneratorBuilder.globalConfig(), null));
+            null, GeneratorBuilder.globalConfig(), null));
     }
 }
