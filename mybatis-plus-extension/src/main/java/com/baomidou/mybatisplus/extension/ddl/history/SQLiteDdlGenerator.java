@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.ddl.history;
 
-import org.springframework.stereotype.Component;
-
 import java.util.function.Function;
 
 /**
@@ -25,7 +23,6 @@ import java.util.function.Function;
  * @author 呆猫
  * @since 2024-04-01
  */
-@Component
 public class SQLiteDdlGenerator implements IDdlGenerator {
 
     public static IDdlGenerator newInstance() {
