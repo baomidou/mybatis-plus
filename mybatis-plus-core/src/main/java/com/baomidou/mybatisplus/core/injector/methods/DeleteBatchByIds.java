@@ -17,10 +17,19 @@ package com.baomidou.mybatisplus.core.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 /**
  * 根据 ID 集合删除
@@ -68,11 +77,22 @@ public class DeleteBatchByIds extends AbstractMethod {
      * @since 3.5.0
      */
     public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
+        List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
+            .filter(TableFieldInfo::isWithUpdateFill)
+            .filter(f -> !f.isLogicDelete())
+            .collect(toList());
+        String sqlSet = "SET ";
+        if (CollectionUtils.isNotEmpty(fieldInfos)) {
+            sqlSet += SqlScriptUtils.convertIf(fieldInfos.stream()
+                .map(i -> i.getSqlSet(Constants.ENTITY + StringPool.DOT)).collect(joining(EMPTY)), String.format("%s != null", Constants.ENTITY), true);
+        }
+        sqlSet += StringPool.EMPTY + tableInfo.getLogicDeleteSql(false, false);
         return String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlLogicSet(tableInfo), tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
+            sqlSet, tableInfo.getKeyColumn(), SqlScriptUtils.convertForeach(
                 SqlScriptUtils.convertChoose("@org.apache.ibatis.type.SimpleTypeRegistry@isSimpleType(item.getClass())",
                     "#{item}", "#{item." + tableInfo.getKeyProperty() + "}"),
                 COLL, null, "item", COMMA),
             tableInfo.getLogicDeleteSql(true, true));
     }
+
 }

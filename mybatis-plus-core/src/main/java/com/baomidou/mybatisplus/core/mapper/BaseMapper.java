@@ -36,7 +36,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -199,19 +198,10 @@ public interface BaseMapper<T> extends Mapper<T> {
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
         Class<?> mapperInterface = mybatisMapperProxy.getMapperInterface();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
-            List<Object> ids = new ArrayList<>(collections.size());
-            for (Object obj : collections) {
-                // TODO 乐观锁待定(感觉都要删除了,可以不用考虑乐观锁的情况了)...
-                if (entityClass.isAssignableFrom(obj.getClass())) {
-                    ids.add(tableInfo.getPropertyValue(obj, tableInfo.getKeyProperty()));
-                } else {
-                    ids.add(obj);
-                }
-            }
-            return this.update(tableInfo.newInstance(), Wrappers.<T>update().in(tableInfo.getKeyColumn(), ids));
-        }
         Map<String, Object> params = new HashMap<>();
+        if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            params.put(Constants.ENTITY, tableInfo.newInstance());
+        }
         params.put(Constants.COLL, collections);
         return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BATCH_BY_IDS.getMethod(), params);
     }
