@@ -74,7 +74,8 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             entityList.add(entity2);
             assertThat(mapper.deleteByIds(entityList)).isEqualTo(2);
             entityList.forEach(entity -> {
-                Assertions.assertEquals("聂秋秋", entity.getDeleteBy());
+                //TODO 3.5.7 修改为使用IN的方式删除而不是使用行记录删除.
+//                Assertions.assertEquals("聂秋秋", entity.getDeleteBy());
             });
         });
 

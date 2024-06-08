@@ -168,6 +168,19 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 删除（根据ID或实体 批量删除）
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
+     * @deprecated 3.5.7 {@link #deleteByIds(Collection)}
+     */
+    @Deprecated
+    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
+        return deleteByIds(idList);
+    }
+
+
+    /**
+     * 删除（根据ID或实体 批量删除）
+     *
+     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
+     * @since 3.5.7
      */
     default int deleteByIds(@Param(Constants.COLL) Collection<?> idList) {
         return deleteByIds(idList, true);
@@ -186,16 +199,17 @@ public interface BaseMapper<T> extends Mapper<T> {
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
         Class<?> mapperInterface = mybatisMapperProxy.getMapperInterface();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        List<Object> ids = new ArrayList<>(collections.size());
         if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
+            List<Object> ids = new ArrayList<>(collections.size());
             for (Object obj : collections) {
+                // TODO 乐观锁待定(感觉都要删除了,可以不用考虑乐观锁的情况了)...
                 if (entityClass.isAssignableFrom(obj.getClass())) {
                     ids.add(tableInfo.getPropertyValue(obj, tableInfo.getKeyProperty()));
                 } else {
                     ids.add(obj);
                 }
             }
-            this.update(tableInfo.newInstance(), Wrappers.<T>update().in(tableInfo.getKeyColumn(), ids));
+            return this.update(tableInfo.newInstance(), Wrappers.<T>update().in(tableInfo.getKeyColumn(), ids));
         }
         Map<String, Object> params = new HashMap<>();
         params.put(Constants.COLL, collections);
