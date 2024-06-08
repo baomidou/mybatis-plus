@@ -5,7 +5,8 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.baomidou.mybatisplus.autoconfigure.MybatisPlusInnerInterceptorAutoConfiguration,\
   com.baomidou.mybatisplus.autoconfigure.IdentifierGeneratorAutoConfiguration,\
   com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration,\
-  com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+  com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration,\
+  com.baomidou.mybatisplus.autoconfigure.DdlAutoConfiguration
 # Depends On Database Initialization Detectors
 org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitializationDetector=\
 com.baomidou.mybatisplus.autoconfigure.MybatisDependsOnDatabaseInitializationDetector

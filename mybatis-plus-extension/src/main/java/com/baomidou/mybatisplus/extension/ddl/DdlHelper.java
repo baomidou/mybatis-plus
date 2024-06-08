@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.ddl;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.MysqlDdlGenerator;
@@ -32,7 +31,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -136,7 +135,7 @@ public class DdlHelper {
 
     public static ScriptRunner getScriptRunner(Connection connection, boolean autoCommit) {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
-        Resources.setCharset(Charset.forName(StringPool.UTF_8));
+        Resources.setCharset(StandardCharsets.UTF_8);
         scriptRunner.setAutoCommit(autoCommit);
         scriptRunner.setEscapeProcessing(false);
         scriptRunner.setRemoveCRs(true);

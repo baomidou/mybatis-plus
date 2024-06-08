@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.ddl.DdlHelper;
 import com.baomidou.mybatisplus.extension.ddl.IDdl;
 import lombok.extern.slf4j.Slf4j;
@@ -41,16 +41,12 @@ public class DdlApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.debug("  ...  DDL start create  ...  ");
-        if (ObjectUtils.isNotEmpty(ddlList)) {
-            /**
-             * 执行 SQL 脚本
-             * <p>多数据源情况可按需初始化</p>
-             */
+        if (CollectionUtils.isNotEmpty(ddlList)) {
+            log.debug("  ...  DDL start create  ...  ");
             ddlList.forEach(ddl -> ddl.runScript(dataSource -> DdlHelper.runScript(ddl.getDdlGenerator(),
-                    dataSource, ddl.getSqlFiles(), true)));
+                dataSource, ddl.getSqlFiles(), true)));
+            log.debug("  ...  DDL end create  ...  ");
         }
-        log.debug("  ...  DDL end create  ...  ");
     }
 
 }
