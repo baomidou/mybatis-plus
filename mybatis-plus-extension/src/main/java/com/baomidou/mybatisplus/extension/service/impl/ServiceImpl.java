@@ -201,7 +201,7 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
      */
     @Override
     public boolean saveOrUpdate(T entity) {
-        return getBaseMapper().saveOrUpdate(entity);
+        return getBaseMapper().insertOrUpdate(entity);
     }
 
     @Transactional(rollbackFor = Exception.class)

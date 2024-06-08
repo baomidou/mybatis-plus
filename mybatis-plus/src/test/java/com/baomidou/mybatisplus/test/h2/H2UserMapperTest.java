@@ -538,11 +538,11 @@ class H2UserMapperTest extends BaseTest {
     @Test
     void testSaveOrUpdate() {
         var h2User = new H2User();
-        userMapper.saveOrUpdate(h2User);
+        userMapper.insertOrUpdate(h2User);
         Assertions.assertNotNull(h2User.getTestId());
         Assertions.assertNull(h2User.getLastUpdatedDt());
         h2User.setName("test");
-        userMapper.saveOrUpdate(h2User);
+        userMapper.insertOrUpdate(h2User);
         Assertions.assertNotNull(h2User.getLastUpdatedDt());
     }
 

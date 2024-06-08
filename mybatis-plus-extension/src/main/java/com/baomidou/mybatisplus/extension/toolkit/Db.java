@@ -227,7 +227,7 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        return SqlHelper.execute(getEntityClass(entity), baseMapper -> baseMapper.saveOrUpdate(entity));
+        return SqlHelper.execute(getEntityClass(entity), baseMapper -> baseMapper.insertOrUpdate(entity));
     }
 
     /**

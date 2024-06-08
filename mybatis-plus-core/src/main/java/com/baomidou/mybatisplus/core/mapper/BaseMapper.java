@@ -440,7 +440,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entity 实体对象 (不能为空)
      * @since 3.5.7
      */
-    default boolean saveOrUpdate(T entity) {
+    default boolean insertOrUpdate(T entity) {
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
