@@ -187,6 +187,16 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 删除（根据ID或实体 批量删除）
+     * <p>
+     * 普通删除: DELETE FROM h2user WHERE id IN ( ? , ? )
+     * </p>
+     * <p>
+     * 逻辑删除: UPDATE h2user SET deleted=1 WHERE id IN ( ? , ? ) AND deleted=0
+     * </p>
+     * <p>
+     * 逻辑删除(填充): UPDATE h2user SET delete_user = 'xxx', deleted=1 WHERE id IN ( ? , ? ) AND deleted=0
+     *     <ul>注意:无论参数为id还是实体,填充参数只会以方法追加的et参数为准.<ul/>
+     * </p>
      *
      * @param collections 主键ID列表或实体列表(不能为 null 以及 empty)
      * @param useFill     逻辑删除下是否填充
