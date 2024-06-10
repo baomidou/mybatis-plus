@@ -113,6 +113,9 @@ public class StrategyConfig {
 
     /**
      * 不包含表名
+     * <p>
+     * 只在{@link com.baomidou.mybatisplus.generator.query.SQLQuery}模式下生效.
+     * </p>
      *
      * @since 3.3.0
      */
