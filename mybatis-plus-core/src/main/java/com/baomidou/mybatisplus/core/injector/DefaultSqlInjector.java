@@ -48,7 +48,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             .add(new SelectList());
         if (tableInfo.havePK()) {
             builder.add(new DeleteById())
-                .add(new DeleteBatchByIds())
+                .add(new DeleteByIds())
                 .add(new UpdateById())
                 .add(new SelectById())
                 .add(new SelectBatchByIds());

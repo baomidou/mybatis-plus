@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.extension.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
+import com.baomidou.mybatisplus.core.injector.methods.DeleteByIds;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -46,8 +46,10 @@ import static java.util.stream.Collectors.toList;
  *
  * @author nieqiurong
  * @since 3.5.0
+ * @deprecated 3.5.7 {@link DeleteByIds}
  */
-public class LogicDeleteBatchByIds extends DeleteBatchByIds {
+@Deprecated
+public class LogicDeleteBatchByIds extends DeleteByIds {
 
     public LogicDeleteBatchByIds() {
         super();

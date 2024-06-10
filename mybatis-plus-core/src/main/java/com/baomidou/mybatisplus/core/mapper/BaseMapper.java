@@ -213,7 +213,7 @@ public interface BaseMapper<T> extends Mapper<T> {
             params.put(Constants.ENTITY, tableInfo.newInstance());
         }
         params.put(Constants.COLL, collections);
-        return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BATCH_BY_IDS.getMethod(), params);
+        return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BY_IDS.getMethod(), params);
     }
 
     /**

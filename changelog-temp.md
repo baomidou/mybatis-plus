@@ -20,6 +20,7 @@
 - feat: 修改AES密钥随机性生成
 - feat: UpdateWrapper增加checkSqlInjection方法
 - feat: 调整DDL脚本自动装配逻辑(当无实现时或无mybatis-plus-extension模块时不注入DDL运行bean)
+- feat: 注入方法deleteBatchIds重命名deleteByIds
 - feat: SpringBoot升级至2.7.18和3.2.6
 - feat: 升级kotlin至1.9.24
 - feat: 升级lombok至1.18.32
