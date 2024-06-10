@@ -11,7 +11,7 @@
 - fix: 修复sqlite数据库ddl_history错误导致无法创建表
 - fix: 修复DataChangeRecorderInnerInterceptor在Insert时配置忽略无效
 - fix: 修复代码生成器处理不标准的JdbcType导致空指针错误
-- feat: BaseMapper新增批量操作与SaveOrUpdate方法
+- feat: BaseMapper新增批量操作与InsertOrUpdate方法
 - feat: BaseMapper新增批量操作方法返回值List<BatchResult>
 - feat: BaseMapper方法逻辑删除默认支持填充
 - feat: 调整Service层逻辑删除填充逻辑处理
