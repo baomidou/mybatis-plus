@@ -129,9 +129,10 @@ public class Sequence {
         String name = ManagementFactory.getRuntimeMXBean().getName();
         if (StringUtils.isNotBlank(name)) {
             /*
-             * GET jvmPid
+             * GET jvm 进程名 eg: 62061@macdeMacBook-Pro-2.local
+             * issue#6177 解决k8s集群下,进程号pid为1导致生成重复ID的可能性大大增加
              */
-            mpid.append(name.split(StringPool.AT)[0]);
+            mpid.append(name);
         }
         /*
          * MAC + PID 的 hashcode 获取16个低位
