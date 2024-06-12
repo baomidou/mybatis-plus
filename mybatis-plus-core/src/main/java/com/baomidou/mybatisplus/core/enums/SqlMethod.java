@@ -78,7 +78,15 @@ public enum SqlMethod {
     SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s} %s"),
     @Deprecated
     SELECT_BY_MAP("selectByMap", "根据columnMap 查询一条数据", "<script>SELECT %s FROM %s %s\n</script>"),
+    /**
+     * @deprecated 3.5.8 {@link #SELECT_BY_IDS}
+     */
+    @Deprecated
     SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s </script>"),
+    /**
+     * @since 3.5.8
+     */
+    SELECT_BY_IDS("selectByIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s </script>"),
     @Deprecated
     SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>%s SELECT %s FROM %s %s %s\n</script>"),
     SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>%s SELECT COUNT(%s) AS total FROM %s %s %s\n</script>"),

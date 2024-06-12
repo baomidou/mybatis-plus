@@ -306,7 +306,7 @@ public interface IService<T> {
      * @param idList 主键ID列表
      */
     default List<T> listByIds(Collection<? extends Serializable> idList) {
-        return getBaseMapper().selectBatchIds(idList);
+        return getBaseMapper().selectByIds(idList);
     }
 
     /**

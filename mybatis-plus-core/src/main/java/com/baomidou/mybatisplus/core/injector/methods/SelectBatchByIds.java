@@ -15,40 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 /**
  * 根据ID集合，批量查询数据
  *
  * @author hubin
  * @since 2018-04-06
+ * @deprecated 3.5.8 {@link SelectByIds}
  */
-public class SelectBatchByIds extends AbstractMethod {
+@Deprecated
+public class SelectBatchByIds extends SelectByIds {
 
-    public SelectBatchByIds() {
-        this(SqlMethod.SELECT_BATCH_BY_IDS.getMethod());
-    }
-
-    /**
-     * @param name 方法名
-     * @since 3.5.0
-     */
-    public SelectBatchByIds(String name) {
-        super(name);
-    }
-
-    @Override
-    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
-        SqlSource sqlSource = super.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-                sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-                SqlScriptUtils.convertForeach("#{item}", COLL, null, "item", COMMA),
-                tableInfo.getLogicDeleteSql(true, true)), Object.class);
-        return addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
-    }
 }

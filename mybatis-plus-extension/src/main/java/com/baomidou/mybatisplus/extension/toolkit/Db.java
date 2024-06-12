@@ -301,7 +301,7 @@ public class Db {
      * @param entityClass 实体类
      */
     public static <T> List<T> listByIds(Collection<? extends Serializable> idList, Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectBatchIds(idList));
+        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectByIds(idList));
     }
 
     /**

@@ -51,7 +51,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
                 .add(new DeleteByIds())
                 .add(new UpdateById())
                 .add(new SelectById())
-                .add(new SelectBatchByIds());
+                .add(new SelectByIds());
         } else {
             logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
                 tableInfo.getEntityType()));

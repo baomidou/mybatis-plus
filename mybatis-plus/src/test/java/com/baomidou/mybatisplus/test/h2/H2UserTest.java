@@ -932,7 +932,7 @@ class H2UserTest extends BaseTest {
             System.out.println(resultObject);
         });
         System.out.println("---------------selectBatchIds-------------------");
-        baseMapper.selectBatchIds(ids, resultContext -> System.out.println(resultContext.getResultObject()));
+        baseMapper.selectByIds(ids, resultContext -> System.out.println(resultContext.getResultObject()));
         System.out.println("---------------selectList-------------------");
         System.out.println("---------------selectObjs-------------------");
         baseMapper.selectObjs(Wrappers.emptyWrapper(), (ResultHandler<Long>) resultContext -> System.out.println(resultContext.getResultObject()));

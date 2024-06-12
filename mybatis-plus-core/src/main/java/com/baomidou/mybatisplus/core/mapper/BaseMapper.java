@@ -253,17 +253,40 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 查询（根据ID 批量查询）
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
+     * @return 数据列表
      */
-    List<T> selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList);
+    List<T> selectByIds(@Param(Constants.COLL) Collection<? extends Serializable> idList);
+
+    /**
+     * 查询（根据ID 批量查询）
+     *
+     * @param idList 主键ID列表(不能为 null 以及 empty)
+     * @return 数据列表
+     * @deprecated 3.5.8
+     */
+    default List<T> selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList) {
+        return selectByIds(idList);
+    }
 
     /**
      * 查询（根据ID 批量查询）
      *
      * @param idList        idList 主键ID列表(不能为 null 以及 empty)
      * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
-     * @since 3.5.4
+     * @since 3.5.8
      */
-    void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler);
+    void selectByIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler);
+
+    /**
+     * @param idList        idList 主键ID列表(不能为 null 以及 empty)
+     * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
+     * @since 3.5.4
+     * @deprecated 3.5.8
+     */
+    @Deprecated
+    default void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler) {
+        selectByIds(idList, resultHandler);
+    }
 
     /**
      * 查询（根据 columnMap 条件）
