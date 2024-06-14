@@ -203,6 +203,9 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default int deleteByIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
+        if (CollectionUtils.isEmpty(collections)) {
+            return 0;
+        }
         MybatisMapperProxy<?> mybatisMapperProxy = MybatisUtils.getMybatisMapperProxy(this);
         Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
         SqlSession sqlSession = mybatisMapperProxy.getSqlSession();
