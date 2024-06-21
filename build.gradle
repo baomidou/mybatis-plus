@@ -66,7 +66,7 @@ ext {
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
-        "freemarker"          : "org.freemarker:freemarker:2.3.32",
+        "freemarker"          : "org.freemarker:freemarker:2.3.33",
         "beetl"               : "com.ibeetl:beetl:3.16.1.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
         "enjoy"               : "com.jfinal:enjoy:5.1.3",
