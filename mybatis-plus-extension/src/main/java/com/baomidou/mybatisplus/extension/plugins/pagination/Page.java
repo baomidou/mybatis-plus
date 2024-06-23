@@ -292,4 +292,21 @@ public class Page<T> implements IPage<T> {
         }
         return searchCount;
     }
+
+    @Override
+    public String toString() {
+        return "Page{" +
+            "records=" + records +
+            ", total=" + total +
+            ", size=" + size +
+            ", current=" + current +
+            ", orders=" + orders +
+            ", optimizeCountSql=" + optimizeCountSql +
+            ", searchCount=" + searchCount +
+            ", optimizeJoinOfCountSql=" + optimizeJoinOfCountSql +
+            ", maxLimit=" + maxLimit +
+            ", countId='" + countId + '\'' +
+            '}';
+    }
+
 }
