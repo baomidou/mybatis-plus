@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
@@ -546,4 +547,16 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertNotNull(h2User.getLastUpdatedDt());
     }
 
+    @Test
+    void testSelectAndConvert() {
+        List<H2User> h2Users = userMapper.selectList(new LambdaQueryWrapper<H2User>()
+            .select(H2User::getTestId, H2User::getAge));
+        List<H2Student> h2Students = userMapper.selectAndConvertList(new LambdaQueryWrapper<H2User>()
+            .select(H2User::getTestId, H2User::getAge), H2Student.class);
+        for (int i = 0; i < h2Students.size(); i++) {
+            H2User h2User = h2Users.get(i);
+            H2Student h2Student = h2Students.get(i);
+            Assertions.assertEquals(h2Student.getName(), h2User.getName());
+        }
+    }
 }

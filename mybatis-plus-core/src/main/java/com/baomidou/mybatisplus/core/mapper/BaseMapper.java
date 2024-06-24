@@ -368,6 +368,15 @@ public interface BaseMapper<T> extends Mapper<T> {
     List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
+     * 根据 entity 条件，查询全部记录 并转换成目标类的集合
+     *
+     * @param queryWrapper 实体对象封装操作类
+     */
+    default <S> List<S> selectAndConvertList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, Class<S> clazz) {
+        return BeanConvertUtils.convert(selectList(queryWrapper), clazz);
+    }
+
+    /**
      * 根据 entity 条件，查询全部记录
      *
      * @param queryWrapper  实体对象封装操作类（可以为 null）

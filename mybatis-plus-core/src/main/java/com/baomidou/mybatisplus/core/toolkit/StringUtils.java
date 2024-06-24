@@ -45,7 +45,7 @@ public final class StringUtils {
     /**
      * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
      */
-    public final static Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
+    public static final Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
     /**
      * 验证字符串是否是数据库字段
      */
@@ -616,5 +616,75 @@ public final class StringUtils {
     public static String replaceAllBlank(String str) {
         Matcher matcher = REPLACE_BLANK.matcher(str);
         return matcher.replaceAll("");
+    }
+
+    /**
+     * 首字母大写
+     * <pre>{@code
+     *     StringUtils.capitalize(null)  = null
+     *     StringUtils.capitalize("")    = ""
+     *     StringUtils.capitalize("cat") = "Cat"
+     *     StringUtils.capitalize("cAt") = "CAt"
+     *     StringUtils.capitalize("'cat'") = "'cat'"
+     * }
+     * </pre>
+     */
+    public static String capitalize(final String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+
+        final int firstCodepoint = str.codePointAt(0);
+        final int newCodePoint = Character.toTitleCase(firstCodepoint);
+        if (firstCodepoint == newCodePoint) {
+            // already capitalized
+            return str;
+        }
+
+        final int newCodePoints[] = new int[strLen];
+        int outOffset = 0;
+        newCodePoints[outOffset++] = newCodePoint;
+        for (int inOffset = Character.charCount(firstCodepoint); inOffset < strLen; ) {
+            final int codepoint = str.codePointAt(inOffset);
+            newCodePoints[outOffset++] = codepoint;
+            inOffset += Character.charCount(codepoint);
+        }
+        return new String(newCodePoints, 0, outOffset);
+    }
+
+    /**
+     * 首字母小写
+     * <pre>{@code
+     *     StringUtils.uncapitalize(null)  = null
+     *     StringUtils.uncapitalize("")    = ""
+     *     StringUtils.uncapitalize("cat") = "cat"
+     *     StringUtils.uncapitalize("Cat") = "cat"
+     *     StringUtils.uncapitalize("CAT") = "cAT"
+     * }
+     * </pre>
+     */
+    public static String uncapitalize(final String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+
+        final int firstCodepoint = str.codePointAt(0);
+        final int newCodePoint = Character.toLowerCase(firstCodepoint);
+        if (firstCodepoint == newCodePoint) {
+            // already capitalized
+            return str;
+        }
+
+        final int newCodePoints[] = new int[strLen];
+        int outOffset = 0;
+        newCodePoints[outOffset++] = newCodePoint;
+        for (int inOffset = Character.charCount(firstCodepoint); inOffset < strLen; ) {
+            final int codepoint = str.codePointAt(inOffset);
+            newCodePoints[outOffset++] = codepoint;
+            inOffset += Character.charCount(codepoint);
+        }
+        return new String(newCodePoints, 0, outOffset);
     }
 }
