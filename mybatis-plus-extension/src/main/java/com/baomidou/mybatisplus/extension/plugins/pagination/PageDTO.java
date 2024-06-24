@@ -66,23 +66,31 @@ public class PageDTO<T> extends Page<T> {
     }
 
     public String getCountId() {
-        return this.countId;
+        return super.countId();
     }
 
     public Long getMaxLimit() {
-        return this.maxLimit;
+        return super.maxLimit();
     }
 
     public List<OrderItem> getOrders() {
-        return this.orders;
+        return super.orders();
     }
 
     public boolean isOptimizeCountSql() {
-        return this.optimizeCountSql;
+        return super.optimizeCountSql();
     }
 
     public boolean isSearchCount() {
-        return this.searchCount;
+        return super.searchCount();
     }
 
+    public boolean isOptimizeJoinOfCountSql() {
+        return super.optimizeJoinOfCountSql();
+    }
+
+    @Override
+    public String toString() {
+        return "PageDTO{} " + super.toString();
+    }
 }

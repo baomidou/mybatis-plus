@@ -73,4 +73,13 @@ public class OrderItem implements Serializable {
         this.asc = asc;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "OrderItem{" +
+            "column='" + column + '\'' +
+            ", asc=" + asc +
+            '}';
+    }
+
 }

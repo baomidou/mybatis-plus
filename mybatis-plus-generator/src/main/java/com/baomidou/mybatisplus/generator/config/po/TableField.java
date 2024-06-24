@@ -405,6 +405,13 @@ public class TableField {
          */
         private String typeName;
 
+        /**
+         * 是否为生成列
+         *
+         * @since 3.5.8
+         */
+        private boolean generatedColumn;
+
         public MetaInfo(DatabaseMetaDataWrapper.Column column, TableInfo tableInfo) {
             if (column != null) {
                 this.tableName = tableInfo.getName();
@@ -416,6 +423,7 @@ public class TableField {
                 this.scale = column.getScale();
                 this.jdbcType = column.getJdbcType();
                 this.typeName = column.getTypeName();
+                this.generatedColumn = column.isGeneratedColumn();
             }
         }
 
@@ -467,6 +475,7 @@ public class TableField {
                 ", scale=" + scale +
                 ", jdbcType=" + jdbcType +
                 ", typeName='" + typeName + '\'' +
+                ", generatedColumn=" + generatedColumn +
                 '}';
         }
     }

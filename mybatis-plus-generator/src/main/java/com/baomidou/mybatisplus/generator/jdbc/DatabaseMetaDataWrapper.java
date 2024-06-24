@@ -118,17 +118,23 @@ public class DatabaseMetaDataWrapper {
                 column.remarks = formatComment(resultSet.getString("REMARKS"));
                 column.defaultValue = resultSet.getString("COLUMN_DEF");
                 column.nullable = resultSet.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
-                try {
-                    column.autoIncrement = "YES".equals(resultSet.getString("IS_AUTOINCREMENT"));
-                } catch (SQLException sqlException) {
-                    //TODO 目前测试在oracle旧驱动下存在问题，降级成false.
-                }
+                column.generatedColumn = isGeneratedOrAutoIncrementColumn(resultSet, "IS_GENERATEDCOLUMN");
+                column.autoIncrement = isGeneratedOrAutoIncrementColumn(resultSet, "IS_AUTOINCREMENT");
                 columnsInfoMap.put(name.toLowerCase(), column);
             }
             return Collections.unmodifiableMap(columnsInfoMap);
         } catch (SQLException e) {
             throw new RuntimeException("读取表字段信息:" + tableName + "错误:", e);
         }
+    }
+
+    private boolean isGeneratedOrAutoIncrementColumn(ResultSet resultSet, String columnLabel) {
+        try {
+            return "YES".equals(resultSet.getString(columnLabel));
+        } catch (SQLException e) {
+            // ignore
+        }
+        return false;
     }
 
     public String formatComment(String comment) {
@@ -213,6 +219,8 @@ public class DatabaseMetaDataWrapper {
 
         @Setter
         private String typeName;
+
+        private boolean generatedColumn;
 
     }
 }
