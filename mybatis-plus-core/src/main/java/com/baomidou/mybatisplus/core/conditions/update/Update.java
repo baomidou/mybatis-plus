@@ -74,9 +74,9 @@ public interface Update<Children, R> extends Serializable {
      *
      * @param setSql set sql
      *               例1: setSql("id=1")
-     *               例2: apply("dateColumn={0}", LocalDate.now())
-     *               例3: apply("dateColumn={0}", LocalDate.now())
-     *               例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
+     *               例2: setSql("dateColumn={0}", LocalDate.now())
+     *               例3: setSql("dateColumn={0}", LocalDate.now())
+     *               例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
     default Children setSql(String setSql, Object... params) {
@@ -89,9 +89,9 @@ public interface Update<Children, R> extends Serializable {
      * @param condition 执行条件
      * @param setSql    set sql
      *                  例1: setSql("id=1")
-     *                  例2: apply("dateColumn={0}", LocalDate.now())
-     *                  例3: apply("dateColumn={0}", LocalDate.now())
-     *                  例4: apply("name={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "老王")
+     *                  例2: setSql("dateColumn={0}", LocalDate.now())
+     *                  例3: setSql("dateColumn={0}", LocalDate.now())
+     *                  例4: apply("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
     Children setSql(boolean condition, String setSql, Object... params);
