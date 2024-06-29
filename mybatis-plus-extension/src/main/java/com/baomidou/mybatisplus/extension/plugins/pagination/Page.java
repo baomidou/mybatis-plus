@@ -38,51 +38,51 @@ public class Page<T> implements IPage<T> {
     /**
      * 查询数据列表
      */
-    protected List<T> records = Collections.emptyList();
+    private List<T> records = Collections.emptyList();
 
     /**
      * 总数
      */
-    protected long total = 0;
+    private long total = 0;
     /**
      * 每页显示条数，默认 10
      */
-    protected long size = 10;
+    private long size = 10;
 
     /**
      * 当前页
      */
-    protected long current = 1;
+    private long current = 1;
 
     /**
      * 排序字段信息
      */
     @Setter
-    protected List<OrderItem> orders = new ArrayList<>();
+    private List<OrderItem> orders = new ArrayList<>();
 
     /**
      * 自动优化 COUNT SQL
      */
-    protected boolean optimizeCountSql = true;
+    private boolean optimizeCountSql = true;
     /**
      * 是否进行 count 查询
      */
-    protected boolean searchCount = true;
+    private boolean searchCount = true;
     /**
      * {@link #optimizeJoinOfCountSql()}
      */
     @Setter
-    protected boolean optimizeJoinOfCountSql = true;
+    private boolean optimizeJoinOfCountSql = true;
     /**
      * 单页分页条数限制
      */
     @Setter
-    protected Long maxLimit;
+    private Long maxLimit;
     /**
      * countId
      */
     @Setter
-    protected String countId;
+    private String countId;
 
     public Page() {
     }

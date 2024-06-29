@@ -38,6 +38,13 @@ class ChainWrappersTest : BaseDbTest<UserMapper>() {
         Assertions.assertEquals(4, Db.ktQuery(User::class.java).eq(User::id, 2).one().roleId)
     }
 
+    @Test
+    fun testSetSql() {
+        Assertions.assertTrue(
+            ChainWrappers.ktUpdateChain(User::class.java).eq(User::id, 3).setSql("username = {0}", "haku").update()
+        );
+    }
+
     override fun tableDataSql(): String {
         return "insert into `sys_user`(id,username,role_id) values(1,'gozei',1),(2,'chocolate',2),(3,'sheep',1)"
     }
