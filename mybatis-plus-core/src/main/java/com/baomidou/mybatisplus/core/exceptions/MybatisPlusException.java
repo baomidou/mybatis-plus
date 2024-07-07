@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.exceptions;
 
+import org.apache.ibatis.exceptions.PersistenceException;
+
 /**
  * MybatisPlus 异常类
  *
  * @author hubin
  * @since 2016-01-23
  */
-public class MybatisPlusException extends RuntimeException {
+public class MybatisPlusException extends PersistenceException {
 
     private static final long serialVersionUID = 1L;
 
