@@ -111,5 +111,13 @@ class IllegalSQLInnerInterceptorTest {
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `T_DEMO` where b >= (SELECT b FROM T_TEST limit 1) ", dataSource.getConnection()));
         Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from `T_DEMO` where b <= (SELECT b FROM T_TEST limit 1) ", dataSource.getConnection()));
     }
+    @Test
+    void testCount() {
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select count(*) from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select count(*) from (select * from T_DEMO where a = 1 and `b` = 2) a", dataSource.getConnection()));
+        Assertions.assertDoesNotThrow(() -> interceptor.parserSingle("select count(*) from (select count(*) from (select * from T_DEMO where a = 1 and `b` = 2) a) c", dataSource.getConnection()));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select count(*) from (select * from `T_DEMO`) a ", dataSource.getConnection()));
+        Assertions.assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select count(*) from (select * from `T_DEMO` where b = (SELECT b FROM T_TEST limit 1)) a ", dataSource.getConnection()));
+    }
 
 }

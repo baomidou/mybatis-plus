@@ -35,7 +35,9 @@ import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionLi
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.ParenthesedSelect;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
@@ -120,6 +122,12 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     protected void processSelect(Select select, int index, String sql, Object obj) {
         if (select instanceof PlainSelect) {
             PlainSelect plainSelect = (PlainSelect) select;
+            FromItem fromItem = ((PlainSelect) select).getFromItem();
+            while (fromItem instanceof ParenthesedSelect) {
+                ParenthesedSelect parenthesedSelect = (ParenthesedSelect) fromItem;
+                plainSelect = (PlainSelect) parenthesedSelect.getSelect();
+                fromItem = plainSelect.getFromItem();
+            }
             Expression where = plainSelect.getWhere();
             Assert.notNull(where, "非法SQL，必须要有where条件");
             Table table = (Table) plainSelect.getFromItem();
