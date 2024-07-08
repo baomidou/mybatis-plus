@@ -83,4 +83,13 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     public Class<T> getEntityClass() {
         return entityClass;
     }
+
+
+    public LambdaQueryChainWrapper<T> lambda(){
+        return new LambdaQueryChainWrapper<>(
+            baseMapper,
+            wrapperChildren.lambda()
+        );
+    }
+
 }
