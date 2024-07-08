@@ -213,7 +213,7 @@ public interface BaseMapper<T> extends Mapper<T> {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Map<String, Object> params = new HashMap<>();
         if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
-            params.put(Constants.ENTITY, tableInfo.newInstance());
+            params.put(Constants.MP_FILL_ET, tableInfo.newInstance());
         }
         params.put(Constants.COLL, collections);
         return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BY_IDS.getMethod(), params);

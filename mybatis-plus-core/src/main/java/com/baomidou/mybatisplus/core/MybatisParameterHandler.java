@@ -85,12 +85,16 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
             if (parameter instanceof Map) {
                 // 处理单参数使用注解标记的时候，尝试提取et来获取实体参数
                 Map<?, ?> map = (Map<?, ?>) parameter;
-                if (map.containsKey(Constants.ENTITY)) {
-                    Object et = map.get(Constants.ENTITY);
-                    if (et != null) {
-                        entity = et;
-                        tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
-                    }
+                Object et = null;
+                if(map.containsKey(Constants.ENTITY)){
+                    et = map.get(Constants.ENTITY);
+
+                } else if(map.containsKey(Constants.MP_FILL_ET)){
+                    et = map.get(Constants.MP_FILL_ET);
+                }
+                if (et != null) {
+                    entity = et;
+                    tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
                 }
             } else {
                 tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());

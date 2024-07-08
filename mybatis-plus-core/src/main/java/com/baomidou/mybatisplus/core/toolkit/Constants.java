@@ -52,6 +52,14 @@ public interface Constants extends StringPool, Serializable {
      * 实体类
      */
     String ENTITY = "et";
+
+    /**
+     * 填充实体
+     *
+     * @since 3.5.8
+     */
+    String MP_FILL_ET = "mpFillEt";
+
     /**
      * 实体类 带后缀 ==> .
      */
