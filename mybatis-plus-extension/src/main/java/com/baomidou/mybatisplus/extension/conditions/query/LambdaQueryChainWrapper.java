@@ -61,6 +61,12 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
         super.wrapperChildren = new LambdaQueryWrapper<>(entityClass);
     }
 
+    public LambdaQueryChainWrapper(BaseMapper<T> baseMapper, LambdaQueryWrapper<T> wrapperChildren) {
+        super();
+        this.baseMapper = baseMapper;
+        super.wrapperChildren = wrapperChildren;
+    }
+
     @Override
     public LambdaQueryChainWrapper<T> select(boolean condition, List<SFunction<T, ?>> columns) {
         return doSelect(condition, columns);

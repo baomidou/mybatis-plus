@@ -74,4 +74,11 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     public Class<T> getEntityClass() {
         return entityClass;
     }
+
+    public LambdaUpdateChainWrapper<T> lambda(){
+        return new LambdaUpdateChainWrapper<>(
+            baseMapper,
+            wrapperChildren.lambda()
+        );
+    }
 }
