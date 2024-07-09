@@ -207,6 +207,10 @@ public enum DbType {
      */
     PRESTO("presto", "Presto数据库"),
     /**
+     * derby
+     */
+    DERBY("derby", "Derby数据库"),
+    /**
      * vastbase
      */
     VASTBASE("vastbase", "Vastbase数据库"),
