@@ -52,7 +52,8 @@ public class DialectFactory {
             // other types
             else if (dbType == DbType.ORACLE_12C
                 || dbType == DbType.FIREBIRD
-                || dbType == DbType.SQL_SERVER) {
+                || dbType == DbType.SQL_SERVER
+                || dbType == DbType.DERBY) {
                 dialect = new Oracle12cDialect();
             } else if (dbType == DbType.DB2) {
                 dialect = new DB2Dialect();

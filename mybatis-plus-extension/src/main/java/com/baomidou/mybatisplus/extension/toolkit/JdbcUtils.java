@@ -143,6 +143,8 @@ public class JdbcUtils {
             return DbType.TRINO;
         } else if (url.contains(":presto:")) {
             return DbType.PRESTO;
+        } else if (url.contains(":derby:")) {
+            return DbType.DERBY;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
