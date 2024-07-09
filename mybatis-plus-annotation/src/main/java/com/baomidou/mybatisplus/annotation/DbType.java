@@ -211,6 +211,10 @@ public enum DbType {
      */
     DERBY("derby", "Derby数据库"),
     /**
+     * vastbase
+     */
+    VASTBASE("vastbase", "Vastbase数据库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
@@ -273,6 +277,7 @@ public enum DbType {
             || this == DbType.TDENGINE
             || this == DbType.UXDB
             || this == DbType.GBASE8S_PG
-            || this == DbType.GBASE_8C;
+            || this == DbType.GBASE_8C
+            || this == DbType.VASTBASE;
     }
 }
