@@ -73,6 +73,8 @@ public class DialectFactory {
             } else if (dbType == DbType.TRINO
                 || dbType == DbType.PRESTO) {
                 dialect = new TrinoDialect();
+            } else if (dbType == DbType.GOLDENDB) {
+                dialect = new MySqlDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }
