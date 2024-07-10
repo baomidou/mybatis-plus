@@ -215,7 +215,11 @@ public enum DbType {
      */
     VASTBASE("vastbase", "Vastbase数据库"),
     /**
-     *
+     * goldendb
+     */
+    GOLDENDB("goldendb", "GoldenDB数据库"),
+    /**
+     * duckdb
      */
     DUCKDB("duckdb", "duckdb数据库"),
     /**
