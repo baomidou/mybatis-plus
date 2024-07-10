@@ -259,7 +259,8 @@ public enum DbType {
             || this == DbType.CLICK_HOUSE
             || this == DbType.OCEAN_BASE
             || this == DbType.CUBRID
-            || this == DbType.SUNDB;
+            || this == DbType.SUNDB
+            || this == DbType.GOLDENDB;
     }
 
     public boolean oracleSameType() {
