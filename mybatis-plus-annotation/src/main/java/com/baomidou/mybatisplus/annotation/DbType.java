@@ -219,6 +219,10 @@ public enum DbType {
      */
     GOLDENDB("goldendb", "GoldenDB数据库"),
     /**
+     * duckdb
+     */
+    DUCKDB("duckdb", "duckdb数据库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
@@ -282,6 +286,7 @@ public enum DbType {
             || this == DbType.UXDB
             || this == DbType.GBASE8S_PG
             || this == DbType.GBASE_8C
-            || this == DbType.VASTBASE;
+            || this == DbType.VASTBASE
+            || this == DbType.DUCKDB;
     }
 }

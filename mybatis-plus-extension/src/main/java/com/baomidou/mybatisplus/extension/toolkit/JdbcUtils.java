@@ -149,6 +149,8 @@ public class JdbcUtils {
             return DbType.VASTBASE;
         } else if (url.contains(":goldendb:")) {
             return DbType.GOLDENDB;
+        } else if (url.contains(":duckdb:")){
+            return DbType.DUCKDB;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
