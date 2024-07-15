@@ -141,9 +141,9 @@ class PageTest {
             gson.fromJson(gson.toJson(source), tClass),
             JSON.parseObject(JSON.toJSONString(source), tClass),
             // dubbo 反序列化下出现问题  https://github.com/alibaba/fastjson2/issues/2734
-//            JSONB.parseObject(JSONB.toBytes(source), tClass,
-//                JSONReader.Feature.FieldBased
-//            ),
+            JSONB.parseObject(JSONB.toBytes(source), tClass,
+                JSONReader.Feature.FieldBased
+            ),
             com.alibaba.fastjson.JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(source), tClass)
         );
     }
