@@ -22,16 +22,16 @@ body:
     attributes:
       label: 当前程序版本
       description: 遇到问题时程序所在的版本号
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: what-happened
     attributes:
       label: 问题描述
       description: 请详细描述你碰到的问题
       placeholder: "问题描述"
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:
