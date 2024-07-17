@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -60,10 +61,12 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
     private final MappedStatement mappedStatement;
+    private final Log log;
 
     public MybatisParameterHandler(MappedStatement mappedStatement, Object parameter, BoundSql boundSql) {
         super(mappedStatement, parameter, boundSql);
         this.mappedStatement = mappedStatement;
+        this.log = mappedStatement.getStatementLog();
         this.configuration = mappedStatement.getConfiguration();
         this.sqlCommandType = mappedStatement.getSqlCommandType();
         processParameter(parameter);
@@ -123,7 +126,11 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
                     Number id = identifierGenerator.nextId(entity);
                     metaObject.setValue(keyProperty, OgnlOps.convertValue(id, tableInfo.getKeyType()));
                 } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
-                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
+                    if(String.class.equals(tableInfo.getKeyType())) {
+                        metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
+                    } else {
+                        log.warn("The current ID generation strategy does not support: " + tableInfo.getKeyType());
+                    }
                 }
             }
         }
