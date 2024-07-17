@@ -17,21 +17,21 @@ body:
       options:
         - label: 我已经升级至最新版本。
           required: true
- - type: input
+  - type: input
     id: version
     attributes:
       label: 当前程序版本
       description: 遇到问题时程序所在的版本号
-    validations:
-      required: true
- - type: textarea
+      validations:
+        required: true
+  - type: textarea
     id: what-happened
     attributes:
       label: 问题描述
       description: 请详细描述你碰到的问题
       placeholder: "问题描述"
-    validations:
-      required: true
+      validations:
+        required: true
   - type: textarea
     id: logs
     attributes:
