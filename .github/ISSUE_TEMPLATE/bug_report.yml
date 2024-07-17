@@ -7,19 +7,20 @@ body:
     attributes:
       value: |
         请确认以下信息：
-        1. 请按此模板提交issues，不按模板提交的问题将直接关闭。
-        2. 重复或与仓库无关的 issue 将会被直接关闭。
+        1. 请按此模板提交issues, 不按模板提交的问题将直接关闭
+        2. 如果你的问题与该仓库无关或者可以直接在以往 issue 中找到, 那么你的 issue 将会被直接关闭
+        3. 提交问题务必描述清楚、附上日志, 描述不清导致无法理解和分析的问题会被直接关闭
   - type: checkboxes
     id: confirm
     attributes:
       label: 确认
       description: 在提交 issue 之前，请确认你已经阅读并确认以下内容
       options:
-        - label: 我已经升级至最新版本,并且项目里无依赖冲突
+        - label: 我已经升级至最新版本:<img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">,并且项目里无依赖冲突
           required: true
-        - label: 我已经在`issue`中搜索过,确认问题没有被提出过
+        - label: 我已经在 [issue](https://github.com/baomidou/mybatis-plus/issues) 中搜索过,确认问题没有被提出过
           required: true
-        - label: 我已经修改标题,将标题中的`描述`替换为遇到的问题
+        - label: 我已经修改标题,将标题中的 描述 替换为遇到的问题
           required: true
   - type: input
     id: version
