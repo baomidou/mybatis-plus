@@ -1,6 +1,6 @@
 name: Bug Report
 description: File a bug report.
-title: "[Bug]: "
+title: "[Bug]: 描述"
 labels: ["bug"]
 body:
   - type: markdown
@@ -15,7 +15,11 @@ body:
       label: 确认
       description: 在提交 issue 之前，请确认你已经阅读并确认以下内容
       options:
-        - label: 我已经升级至最新版本。
+        - label: 我已经升级至最新版本,并且项目里无依赖冲突
+          required: true
+        - lable: 我已经在`issue`中搜索过,确认问题没有被提出过
+          required: true
+        - lable: 我已经修改标题,将标题中的`描述`替换为遇到的问题
           required: true
   - type: input
     id: version
