@@ -1,0 +1,40 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请确认以下信息：
+        1. 请按此模板提交issues，不按模板提交的问题将直接关闭。
+        2. 重复或与仓库无关的 issue 将会被直接关闭。
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      description: 在提交 issue 之前，请确认你已经阅读并确认以下内容
+      options:
+        - label: 我已经升级至最新版本。
+          required: true
+ - type: input
+    id: version
+    attributes:
+      label: 当前程序版本
+      description: 遇到问题时程序所在的版本号
+    validations:
+      required: true
+ - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 请详细描述你碰到的问题
+      placeholder: "问题描述"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 详细堆栈日志
+      description: 问题出现时，程序错误堆栈日志。
+      render: bash
