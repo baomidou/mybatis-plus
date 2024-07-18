@@ -528,6 +528,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @return value
      */
     protected final String formatParam(String mapping, Object param) {
+        if (param instanceof ColumnSegment) {
+            return ((ColumnSegment) param).getSqlSegment();
+        }
         final String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
         final String paramStr = getParamAlias() + Constants.WRAPPER_PARAM_MIDDLE + genParamName;
         paramNameValuePairs.put(genParamName, param);

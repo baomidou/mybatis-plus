@@ -122,4 +122,7 @@ public final class LambdaUtils {
         });
     }
 
+    public static <T> SFunction<T, ?> getColumnRef(SFunction<T, ?> func) {
+        return func;
+    }
 }

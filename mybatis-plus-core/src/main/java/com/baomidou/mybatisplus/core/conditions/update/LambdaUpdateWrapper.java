@@ -78,7 +78,12 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     @Override
     public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
         return maybeDo(condition, () -> {
-            String sql = formatParam(mapping, val);
+            Object actualVal = val;
+            // value is a lambda, that refers to a column.
+            if (val instanceof SFunction) {
+                actualVal = referColumn((SFunction<?, ?>) val);
+            }
+            String sql = formatParam(mapping, actualVal);
             sqlSet.add(columnToString(column) + Constants.EQUALS + sql);
         });
     }

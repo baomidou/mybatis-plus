@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -38,6 +39,13 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
         Assertions.assertEquals(lqw.getSqlSegment(), "(`id` = #{ew.paramNameValuePairs.MPGENVAL1})");
     }
 
+    @Test
+    void testLambdaQueryByColumn() {
+        LambdaQueryWrapper lqw = Wrappers.<Table>lambdaQuery()
+            .eq(Table::getId, LambdaUtils.getColumnRef(Table::getRefId));
+        Assertions.assertEquals("(`id` = ref_id)", lqw.getSqlSegment());
+    }
+
 
     @Data
     @TableName("xxx")
@@ -48,5 +56,7 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
 
         @TableField("`name`")
         private Long name;
+
+        private Long refId;
     }
 }

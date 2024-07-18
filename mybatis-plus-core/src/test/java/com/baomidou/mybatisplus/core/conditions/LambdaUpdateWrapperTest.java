@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Assertions;
@@ -117,4 +118,10 @@ class LambdaUpdateWrapperTest extends BaseWrapperTest {
         Assertions.assertEquals("role_id=role_id+2340", wrapper.getSqlSet());
     }
 
+    @Test
+    void testSetByAnotherColumn() {
+        LambdaUpdateWrapper<User> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.set(User::getRoleId, LambdaUtils.getColumnRef(User::getId));
+        Assertions.assertEquals("role_id=id", wrapper.getSqlSet());
+    }
 }

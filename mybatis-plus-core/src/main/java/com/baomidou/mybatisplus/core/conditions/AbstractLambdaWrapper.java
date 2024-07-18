@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.conditions.segments.ColumnSegment;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
@@ -149,5 +151,19 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
             fieldName, lambdaClass.getName());
         return columnCache;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected ColumnSegment referColumn(SFunction<?,?> func) {
+        return () -> columnToString((SFunction<T, ?>) func);
+    }
+
+    @Override
+    protected Children addCondition(boolean condition, SFunction<T, ?> column, SqlKeyword sqlKeyword, Object val) {
+        if (val instanceof SFunction) {
+            // Lambda refers a column, convert it to a ColumnSegment
+            return super.addCondition(condition, column, sqlKeyword, referColumn((SFunction<?, ?>) val));
+        }
+        return super.addCondition(condition, column, sqlKeyword, val);
     }
 }
