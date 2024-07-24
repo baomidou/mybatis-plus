@@ -1,6 +1,6 @@
 name: 错误报告
 description: File a bug report.
-title: "[Bug]: 描述"
+title: "[错误报告]: 描述"
 labels: [""]
 body:
   - type: markdown
