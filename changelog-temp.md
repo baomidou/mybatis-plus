@@ -1,10 +1,21 @@
 - fix: 解决optimizeJoinOfCountSql反序列化不支持问题
 - fix: 解决Db工具类批量操作使用rewriteBatchedStatements=true返回值不准确
+- fix: 修复逻辑删除填充与乐观锁冲突
+- fix: 修复IllegalSQLInnerInterceptor分析嵌套count语句错误
 - opt: Page属性访问调整为private,重写toString方法
+- opt: 主键生成策略(uuid)不支持的类型打印警告日志
+- opt: MybatisPlusException转化为PersistenceException子类
 - feat: 增加deleteByIds空集合处理
 - feat: 重命名selectBatchIds方法为selectByIds
 - feat: 支持tableName与schema属性占位符配
 - feat: 代码生成器增加对虚拟列的属性获取
+- feat: chain wrapper to lambda chain wrapper #6314
 - feat: 升级kotlin2.0.0
-- feat: 升级SpringBoot3.3.1
+- feat: 升级SpringBoot3.3.2
+- feat: 升级fastjson2.0.52
+- feat: 升级spring-cloud-commons4.1.4
 - feat: 部分支持依赖升级更新
+- feat: 支持GoldenDB数据库
+- feat: 支持Duckdb数据库
+- feat: 支持Derby数据库
+- feat: 支持Vastbase数据库
