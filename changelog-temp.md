@@ -2,6 +2,7 @@
 - fix: 解决Db工具类批量操作使用rewriteBatchedStatements=true返回值不准确
 - fix: 修复逻辑删除填充与乐观锁冲突
 - fix: 修复IllegalSQLInnerInterceptor分析嵌套count语句错误
+- fix: 升级jsqlParser5.0解决 for update 语句错误
 - opt: Page属性访问调整为private,重写toString方法
 - opt: 主键生成策略(uuid)不支持的类型打印警告日志
 - opt: MybatisPlusException转化为PersistenceException子类
