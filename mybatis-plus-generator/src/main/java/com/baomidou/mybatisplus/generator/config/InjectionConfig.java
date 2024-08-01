@@ -50,25 +50,11 @@ public class InjectionConfig {
     private Map<String, Object> customMap = new HashMap<>();
 
     /**
-     * 自定义模板文件，key为文件名称，value为模板路径（已弃用，换成了customFiles，3.5.4版本会删除此方法）
-     */
-    @Deprecated
-    private final Map<String, String> customFile = new HashMap<>();
-
-    /**
      * 自定义模板文件列表
      *
      * @since 3.5.3
      */
     private final List<CustomFile> customFiles = new ArrayList<>();
-
-    /**
-     * 是否覆盖已有文件（默认 false）（已弃用，已放到自定义文件类CustomFile中，3.5.4版本会删除此方法）
-     *
-     * @since 3.5.2
-     */
-    @Deprecated
-    private boolean fileOverride;
 
     /**
      * 输出文件前
@@ -93,28 +79,11 @@ public class InjectionConfig {
     }
 
     /**
-     * 已弃用，换成了customFiles，3.5.4版本会删除此方法
-     */
-    @NotNull
-    @Deprecated
-    public Map<String, String> getCustomFile() {
-        return customFile;
-    }
-
-    /**
      * 获取自定义模板文件列表
      */
     @NotNull
     public List<CustomFile> getCustomFiles() {
         return customFiles;
-    }
-
-    /**
-     * 已弃用，已放到自定义文件类CustomFile中，3.5.4版本会删除此方法
-     */
-    @Deprecated
-    public boolean isFileOverride() {
-        return fileOverride;
     }
 
     /**
@@ -176,16 +145,6 @@ public class InjectionConfig {
             CustomFile.Builder builder = new CustomFile.Builder();
             consumer.accept(builder);
             this.injectionConfig.customFiles.add(builder.build());
-            return this;
-        }
-
-        /**
-         * 覆盖已有文件（已弃用，已放到自定义文件类CustomFile中，3.5.4版本会删除此方法）
-         */
-        @Deprecated
-        public Builder fileOverride() {
-            LOGGER.warn("fileOverride方法后续会删除，替代方法为enableFileOverride方法");
-            this.injectionConfig.fileOverride = true;
             return this;
         }
 
