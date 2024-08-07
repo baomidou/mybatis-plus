@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test;
 
+import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -27,6 +28,23 @@ class JSqlParserTest {
 
         AndExpression e = (AndExpression) ps.getWhere();
         System.out.println(e.getLeftExpression());
+    }
+
+    @Test
+    void testDecr() throws JSQLParserException {
+        // 如果连一起 SqlParser 将无法解析 , 还有种处理方式就自减为负数的时候 转为 自增.
+        var parse1 = CCJSqlParserUtil.parse("UPDATE test SET a = a --110");
+        Assertions.assertEquals("UPDATE test SET a = a", parse1.toString());
+        var parse2 = CCJSqlParserUtil.parse("UPDATE test SET a = a - -110");
+        Assertions.assertEquals("UPDATE test SET a = a - -110", parse2.toString());
+    }
+
+    @Test
+    void testIncr() throws JSQLParserException {
+        var parse1 = CCJSqlParserUtil.parse("UPDATE test SET a = a +-110");
+        Assertions.assertEquals("UPDATE test SET a = a + -110", parse1.toString());
+        var parse2 = CCJSqlParserUtil.parse("UPDATE test SET a = a + -110");
+        Assertions.assertEquals("UPDATE test SET a = a + -110", parse2.toString());
     }
 
     @Test

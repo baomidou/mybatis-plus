@@ -111,7 +111,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     public LambdaUpdateWrapper<T> setIncrBy(boolean condition, SFunction<T, ?> column, Number val) {
         return maybeDo(condition, () -> {
             String realColumn = columnToString(column);
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.PLUS + (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn  + Constants.SPACE + Constants.PLUS + Constants.SPACE + (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
         });
     }
 
@@ -135,7 +135,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     public LambdaUpdateWrapper<T> setDecrBy(boolean condition, SFunction<T, ?> column, Number val) {
         return maybeDo(condition, () -> {
             String realColumn = columnToString(column);
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.DASH + (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.SPACE + Constants.DASH + Constants.SPACE + (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
         });
     }
 
