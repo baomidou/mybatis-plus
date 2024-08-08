@@ -80,6 +80,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
+    apply plugin: 'tech.yanand.maven-central-publish'
     apply plugin: "io.freefair.lombok"
 
     sourceCompatibility = "${javaVersion}"
@@ -187,17 +188,20 @@ subprojects {
     publishing {
         repositories {
             maven {
-                name = "OSSRH"
-                def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
-                credentials {
-                    username System.getenv("MAVEN_USERNAME")
-                    password System.getenv("MAVEN_PASSWORD")
-                }
+                name = "Local"
+                url = layout.buildDirectory.dir('repos/bundles')
             }
         }
+
+        // use example : ./gradlew clean build publish publishToMavenCentralPortal -DauthToken='xxxxxx' -x test
+        mavenCentral {
+            repoDir = layout.buildDirectory.dir('repos/bundles')
+            // Base64 encoded of "username:password"
+            authToken = System.getProperty("authToken")
+            // 默认自动发布 AUTOMATIC
+            publishingType = 'USER_MANAGED'
+        }
+
         publications {
 
             mavenJava(MavenPublication) {
