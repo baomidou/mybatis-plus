@@ -61,6 +61,18 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     }
 
     @Override
+    public UpdateChainWrapper<T> setIncrBy(boolean condition, String column, Number val) {
+        wrapperChildren.setIncrBy(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
+    public UpdateChainWrapper<T> setDecrBy(boolean condition, String column, Number val) {
+        wrapperChildren.setDecrBy(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
     public String getSqlSet() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
     }

@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import lombok.Getter;
 
 import java.util.*;
@@ -384,7 +383,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             }
             if (CollectionUtils.isNotEmpty(columns)) {
                 columns.forEach(c -> appendSqlSegments(ORDER_BY,
-                        columnToSqlSegment(c), mode));
+                    columnToSqlSegment(c), mode));
             }
         });
     }

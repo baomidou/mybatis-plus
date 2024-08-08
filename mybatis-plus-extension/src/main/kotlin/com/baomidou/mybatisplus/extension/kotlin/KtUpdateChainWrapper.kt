@@ -58,6 +58,16 @@ open class KtUpdateChainWrapper<T : Any>(
         return typedThis
     }
 
+    override fun setDecrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateChainWrapper<T> {
+        wrapperChildren.setDecrBy(condition, column, `val`)
+        return typedThis
+    }
+
+    override fun setIncrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateChainWrapper<T> {
+        wrapperChildren.setIncrBy(condition, column, `val`)
+        return typedThis
+    }
+
     override fun getBaseMapper(): BaseMapper<T>? {
         return baseMapper
     }

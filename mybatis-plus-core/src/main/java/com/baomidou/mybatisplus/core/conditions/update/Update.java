@@ -95,6 +95,44 @@ public interface Update<Children, R> extends Serializable {
     Children setSql(boolean condition, String setSql, Object... params);
 
     /**
+     * 字段自增变量 val 值
+     *
+     * @param column 字段
+     * @param val    变量值 1 字段自增 + 1
+     */
+    default Children setIncrBy(R column, Number val) {
+        return setIncrBy(true, column, val);
+    }
+
+    /**
+     * 字段自增变量 val 值
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       变量值 1 字段自增 + 1
+     */
+    Children setIncrBy(boolean condition, R column, Number val);
+
+    /**
+     * 字段自减变量 val 值
+     *
+     * @param column 字段
+     * @param val    变量值 1 字段自减 - 1
+     */
+    default Children setDecrBy(R column, Number val) {
+        return setIncrBy(true, column, val);
+    }
+
+    /**
+     * 字段自减变量 val 值
+     *
+     * @param condition 是否加入 set
+     * @param column    字段
+     * @param val       变量值 1 字段自减 - 1
+     */
+    Children setDecrBy(boolean condition, R column, Number val);
+
+    /**
      * 获取 更新 SQL 的 SET 片段
      */
     String getSqlSet();

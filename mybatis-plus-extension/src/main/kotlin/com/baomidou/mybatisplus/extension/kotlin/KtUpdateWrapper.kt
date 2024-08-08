@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.StringUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
+import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty1
@@ -69,17 +70,30 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         else sqlSet.stream().collect(joining(StringPool.COMMA))
     }
 
-    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateWrapper<T> {
-        if (condition && StringUtils.isNotBlank(setSql)) {
-            sqlSet.add(formatSqlMaybeWithParam(setSql, *params))
-        }
-        return typedThis
-    }
-
     override fun set(condition: Boolean, column: KProperty1<in T, *>, value: Any?, mapping: String?): KtUpdateWrapper<T> {
         return maybeDo(condition) {
             val sql = formatParam(mapping, value)
             sqlSet.add(columnsToString(column) + Constants.EQUALS + sql)
+        }
+    }
+
+    override fun setSql(condition: Boolean, setSql: String, vararg params: Any): KtUpdateWrapper<T> {
+        return maybeDo(condition && StringUtils.isNotBlank(setSql)) {
+            sqlSet.add(formatSqlMaybeWithParam(setSql, *params))
+        }
+    }
+
+    override fun setDecrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateWrapper<T> {
+        return maybeDo(condition) {
+            val realColumn = columnToString(column)
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.SPACE + Constants.PLUS + Constants.SPACE + (if (`val` is BigDecimal) `val`.toPlainString() else `val`))
+        }
+    }
+
+    override fun setIncrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateWrapper<T> {
+        return maybeDo(condition) {
+            val realColumn = columnToString(column)
+            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.SPACE + Constants.DASH + Constants.SPACE + (if (`val` is BigDecimal) `val`.toPlainString() else `val`))
         }
     }
 

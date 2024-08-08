@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,10 +109,25 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     public UpdateWrapper<T> setSql(boolean condition, String setSql, Object... params) {
-        if (condition && StringUtils.isNotBlank(setSql)) {
+        return maybeDo(condition && StringUtils.isNotBlank(setSql), () -> {
             sqlSet.add(formatSqlMaybeWithParam(setSql, params));
-        }
-        return typedThis;
+        });
+    }
+
+    @Override
+    public UpdateWrapper<T> setIncrBy(boolean condition, String column, Number val) {
+        return maybeDo(condition, () -> {
+            sqlSet.add(column + Constants.EQUALS + column + Constants.SPACE + Constants.PLUS + Constants.SPACE +
+                (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+        });
+    }
+
+    @Override
+    public UpdateWrapper<T> setDecrBy(boolean condition, String column, Number val) {
+        return maybeDo(condition, () -> {
+            sqlSet.add(column + Constants.EQUALS + column + Constants.SPACE + Constants.DASH + Constants.SPACE +
+                (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+        });
     }
 
     /**
