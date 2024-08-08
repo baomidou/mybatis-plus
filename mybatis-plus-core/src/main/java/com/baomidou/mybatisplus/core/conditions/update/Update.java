@@ -120,7 +120,7 @@ public interface Update<Children, R> extends Serializable {
      * @param val    变量值 1 字段自减 - 1
      */
     default Children setDecrBy(R column, Number val) {
-        return setIncrBy(true, column, val);
+        return setDecrBy(true, column, val);
     }
 
     /**

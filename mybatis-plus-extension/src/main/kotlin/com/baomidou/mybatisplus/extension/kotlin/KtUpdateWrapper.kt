@@ -83,17 +83,17 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
         }
     }
 
-    override fun setDecrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateWrapper<T> {
-        return maybeDo(condition) {
-            val realColumn = columnToString(column)
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.SPACE + Constants.PLUS + Constants.SPACE + (if (`val` is BigDecimal) `val`.toPlainString() else `val`))
-        }
-    }
-
     override fun setIncrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateWrapper<T> {
         return maybeDo(condition) {
             val realColumn = columnToString(column)
-            sqlSet.add(realColumn + Constants.EQUALS + realColumn + Constants.SPACE + Constants.DASH + Constants.SPACE + (if (`val` is BigDecimal) `val`.toPlainString() else `val`))
+            sqlSet.add(String.format("%s=%s + %s", realColumn, realColumn, if (`val` is BigDecimal) `val`.toPlainString() else `val`))
+        }
+    }
+
+    override fun setDecrBy(condition: Boolean, column: KProperty1<in T, *>, `val`: Number): KtUpdateWrapper<T> {
+        return maybeDo(condition) {
+            val realColumn = columnToString(column)
+            sqlSet.add(String.format("%s=%s - %s", realColumn, realColumn, if (`val` is BigDecimal) `val`.toPlainString() else `val`));
         }
     }
 

@@ -117,16 +117,14 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     @Override
     public UpdateWrapper<T> setIncrBy(boolean condition, String column, Number val) {
         return maybeDo(condition, () -> {
-            sqlSet.add(column + Constants.EQUALS + column + Constants.SPACE + Constants.PLUS + Constants.SPACE +
-                (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+            sqlSet.add(String.format("%s=%s + %s", column, column, val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
         });
     }
 
     @Override
     public UpdateWrapper<T> setDecrBy(boolean condition, String column, Number val) {
         return maybeDo(condition, () -> {
-            sqlSet.add(column + Constants.EQUALS + column + Constants.SPACE + Constants.DASH + Constants.SPACE +
-                (val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
+            sqlSet.add(String.format("%s=%s - %s", column, column, val instanceof BigDecimal ? ((BigDecimal) val).toPlainString() : val));
         });
     }
 
