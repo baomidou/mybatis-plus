@@ -75,7 +75,6 @@ public interface Update<Children, R> extends Serializable {
      * @param setSql set sql
      *               例1: setSql("id=1")
      *               例2: setSql("dateColumn={0}", LocalDate.now())
-     *               例3: setSql("dateColumn={0}", LocalDate.now())
      *               例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
@@ -90,8 +89,7 @@ public interface Update<Children, R> extends Serializable {
      * @param setSql    set sql
      *                  例1: setSql("id=1")
      *                  例2: setSql("dateColumn={0}", LocalDate.now())
-     *                  例3: setSql("dateColumn={0}", LocalDate.now())
-     *                  例4: apply("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
+     *                  例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
     Children setSql(boolean condition, String setSql, Object... params);
