@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.10"
-        classpath "io.freefair.gradle:lombok-plugin:8.6"
+        classpath "io.freefair.gradle:lombok-plugin:8.7.1"
         classpath "tech.yanand.maven-central-publish:tech.yanand.maven-central-publish.gradle.plugin:1.1.1"
     }
 }
