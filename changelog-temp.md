@@ -3,6 +3,7 @@
 - fix: 修复逻辑删除填充与乐观锁冲突
 - fix: 修复IllegalSQLInnerInterceptor分析嵌套count语句错误
 - fix: 升级jsqlParser5.0解决 for update 语句错误
+- fix: 修复处自增自减负数情况导致jsqlParser解析优化错误
 - opt: Page属性访问调整为private,重写toString方法
 - opt: 主键生成策略(uuid)不支持的类型打印警告日志
 - opt: MybatisPlusException转化为PersistenceException子类
@@ -14,6 +15,7 @@
 - feat: 升级kotlin2.0.0
 - feat: 升级SpringBoot3.3.2
 - feat: 升级fastjson2.0.52
+- feat: 升级mybatis-spring3.0.4
 - feat: 升级spring-cloud-commons4.1.4
 - feat: 部分支持依赖升级更新
 - feat: 支持GoldenDB数据库
