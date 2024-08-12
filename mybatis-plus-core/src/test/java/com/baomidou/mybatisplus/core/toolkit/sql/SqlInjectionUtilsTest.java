@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
  * @author hubin
  * @since 2021-08-15
  */
- class SqlInjectionUtilsTest {
+class SqlInjectionUtilsTest {
 
     @Test
-     void sqlTest() {
+    void sqlTest() {
         assertSql(false, "insert abc");
         assertSql(true, "insert into user (id,name) value (1, 'qm')");
         assertSql(true, "SELECT * FROM user");
@@ -52,14 +52,33 @@ import org.junit.jupiter.api.Test;
         assertSql(false, "drop");
         assertSql(true, "AND age not in (1,2,3)");
         assertSql(true, "and age <> 1");
-        assertSql(false,"ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
-        assertSql(true,"ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
+        assertSql(false, "ORDER BY field(status,'SUCCESS','FAILED','CLOSED')");
+        assertSql(true, "ORDER BY id,'SUCCESS',''-- FAILED','CLOSED'");
         assertSql(true, "or 1 = 1");
         assertSql(true, "and 1 = 1");
         assertSql(true, "hi = 1 or abc");
         assertSql(true, "(hi = 1) and abc");
         assertSql(false, "orAnd");
         assertSql(false, "andOr");
+        assertSql(false, "andOr");
+
+        // 函数验证
+        assertSql(true, "if(2=2)");
+        assertSql(false, "if");
+        assertSql(true, "SUBSTR(name)");
+        assertSql(true, "substr(name)");
+        assertSql(true, "suBStr(name)");
+        assertSql(false, "suBStr");
+        assertSql(true, "SUBSTRING(name)");
+        assertSql(true, "CHAR(name)");
+        assertSql(true, "char(name)");
+        assertSql(true, "concat(name, '0')");
+        assertSql(false, "concat");
+        assertSql(true, "select(table_name) from info");
+        assertSql(true, ",sleep(0.01)");
+        assertSql(false, ",sleep");
+        assertSql(true, "DBMS_LOCK.sleep(0.01)");
+        assertSql(true, "1=1&&(if(substr((select(table_name) from information_schema.TABLES WHERE table_schema=database() limit 0,1),1,1)!='a',sleep(0.01),2))");
     }
 
     private void assertSql(boolean injection, String sql) {
