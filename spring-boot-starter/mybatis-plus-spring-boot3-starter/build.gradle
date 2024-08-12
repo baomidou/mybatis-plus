@@ -4,7 +4,7 @@ compileJava {
 
 dependencies {
     api project(":mybatis-plus")
-    api "org.mybatis:mybatis-spring:3.0.3"
+    api "org.mybatis:mybatis-spring:3.0.4"
     api project(":spring-boot-starter:mybatis-plus-spring-boot-autoconfigure")
     implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3Version}")
     annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBoot3Version}"
