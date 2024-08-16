@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.service.impl;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -36,12 +37,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ）
@@ -306,5 +309,100 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
     public boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
         return SqlHelper.retBool(getBaseMapper().deleteByIds(list, useFill));
     }
+
+    /**
+     * desc 根据主键集合获取指定格式的MAP
+     * create 2024/8/14 14:29
+     * author Lew
+     *
+     * @param e     接口集合
+     * @param keyField   键对应的字段
+     * @param valueField 值对应的字段
+     * @return
+     */
+    @Override
+    public <K,V> Map<K,V> getKeyValueMap(Collection<? extends Serializable> e, Function<T, K> keyField, Function<T, V> valueField) {
+        if (e == null || e.isEmpty()){
+            return new HashMap<>();
+        }
+        return listByIds(e).stream().collect(Collectors.toMap(
+            keyField,
+            valueField
+        ));
+    }
+
+    /**
+     * desc 根据主键集合获取指定格式的MAP 默认key是被@TableId标记的字段
+     * create 2024/8/14 14:40
+     * author Lew
+     *
+     * @param e     主键集合
+     * @param valueField 返回MAP中对应 值的字段
+     * @return
+     */
+    @Override
+    public <V> Map<?, V> getIdValueMap(Collection<? extends Serializable> e, Function<T, V> valueField) {
+        if (e == null || e.isEmpty()){
+            return new HashMap<>();
+        }
+        List<T> list =listByIds(e);
+        if(list == null || list.isEmpty()){
+            return new HashMap<>();
+        }
+        Class<? extends Object> clazz = list.get(0).getClass();
+
+        Method method = ReflectionKit.getIdMethod(clazz);
+        return list.stream().collect(Collectors.toMap(
+            item->ReflectionKit.methodInvoke(item,method),
+            valueField
+        ));
+    }
+
+
+    /**
+     * desc 获取key字段对应值作为主键 实体作为值的MAP
+     * create 2024/8/14 15:31
+     * author Lew
+     * @param e   主键集合
+     * @param keyField 返回MAP中对应 主键的字段
+     * @return
+     */
+    @Override
+    public <V> Map<V, T> getMapEntity(Collection<? extends Serializable> e, Function<T, V> keyField) {
+        if (e == null || e.isEmpty()){
+            return new HashMap<>();
+        }
+        return listByIds(e).stream().collect(Collectors.toMap(
+            keyField,
+            Function.identity()
+        ));
+    }
+
+
+    /**
+     * desc  获取主键字段对应值作为主键 实体作为值的MAP
+     * create 2024/8/14 15:35
+     * author Lew
+     * @param e 主键集合
+     * @return
+     */
+    @Override
+    public Map<?, T> getMapIdEntity(Collection<? extends Serializable> e) {
+        if (e == null || e.isEmpty()){
+            return new HashMap<>();
+        }
+        List<T> list = listByIds(e);
+        if(list == null || list.isEmpty()){
+            return new HashMap<>();
+        }
+        Class<? extends Object> clazz = list.get(0).getClass();
+        Method method = ReflectionKit.getIdMethod(clazz);
+        return listByIds(e).stream().collect(Collectors.toMap(
+            item->ReflectionKit.methodInvoke(item,method),
+            Function.identity()
+        ));
+    }
+
+
 
 }

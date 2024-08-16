@@ -15,15 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import com.baomidou.mybatisplus.core.toolkit.reflect.TypeParameterResolver;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -202,4 +202,39 @@ public final class ReflectionKit {
         return AccessController.doPrivileged(new SetAccessibleAction<>(object));
     }
 
+
+    /**
+     * desc 获取类中第一个被@TableId标记字段的get方法
+     * create 2024/8/16 17:26
+     * author Lew
+     * @param clazz
+     * @return Method
+     */
+    public static Method getIdMethod(Class<? extends Object> clazz){
+        AtomicReference<Method> method = new AtomicReference<>();
+        Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(TableId.class)).findFirst().ifPresent(field -> {
+            Method temp = null;
+            try {
+                temp = clazz.getMethod("get" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1));
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+            method.set(temp);
+        });
+        if(method.get() == null){
+            throw new RuntimeException("未找到主键字段");
+        }
+        return method.get();
+    }
+
+
+    public static <T> T methodInvoke(Object object, Method method){
+        Object result= null;
+        try {
+            object = method.invoke(object);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            throw new RuntimeException(ex);
+        }
+        return (T) method.getReturnType().cast(result);
+    }
 }

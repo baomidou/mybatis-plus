@@ -674,4 +674,45 @@ public interface IService<T> {
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
+
+    /**
+     * desc 根据主键集合获取指定格式的MAP
+     * create 2024/8/14 10:27
+     * author Lew
+     * @param e 主键集合
+     * @param keyField 返回MAP中对应 主键的字段
+     * @param valueField 返回MAP中对应 值的字段
+     * @return Map<?,?>
+     */
+    <K,V> Map<K,V> getKeyValueMap(Collection<? extends Serializable> e, Function<T, K> keyField, Function<T,V> valueField);
+
+
+    /**
+     * desc  根据主键集合获取指定格式的MAP 默认key是被@TableId标记的字段
+     * create 2024/8/14 10:30
+     * author Lew
+     * @param e 主键集合
+     * @param valueField 返回MAP中对应 值的字段
+     * @return Map<?,?>
+     */
+    <V> Map<?,V> getIdValueMap(Collection<? extends Serializable> e, Function<T,V> valueField);
+
+    /**
+     * desc 获取key字段对应值作为主键 实体作为值的MAP
+     * create 2024/8/14 10:32
+     * author Lew
+     * @param e 主键集合
+     * @param keyField 返回MAP中对应 主键的字段
+     * @return Map<?,T>
+     */
+   <V> Map<V,T> getMapEntity(Collection<? extends Serializable> e, Function<T, V> keyField);
+
+    /**
+     * desc 获取主键字段对应值作为主键 实体作为值的MAP
+     * create 2024/8/14 10:43
+     * author Lew
+     * @param e 主键集合
+     * @return Map<?,T>
+     */
+    Map<?,T> getMapIdEntity(Collection<? extends Serializable> e);
 }
