@@ -34,7 +34,9 @@ class AbstractWrapperTest {
             ex = e;
         }
         assertThat(ex).isNotNull();
+        System.out.println(ex.getMessage());
 
+        ex = null;
         try {
             wrapper.formatSqlMaybeWithParam("c={1}", 1);
         } catch (Exception e) {
