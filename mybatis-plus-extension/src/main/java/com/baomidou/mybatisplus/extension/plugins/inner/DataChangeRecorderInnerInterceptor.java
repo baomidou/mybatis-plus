@@ -350,7 +350,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                     }
                 } else {
                     if (columnName != null) {
-                        columnNameValMap.put(columnName, String.valueOf(metaObject.getValue(propertyName)));
+                        columnNameValMap.put(columnName, metaObject.getValue(propertyName));
                     }
                 }
             } catch (Exception e) {
@@ -430,7 +430,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                         if (setVal instanceof IEnum) {
                             columnNameValMap.put(setColName, String.valueOf(((IEnum<?>) setVal).getValue()));
                         } else {
-                            columnNameValMap.put(setColName, String.valueOf(setVal));
+                            columnNameValMap.put(setColName, setVal);
                         }
                     }
                 }
