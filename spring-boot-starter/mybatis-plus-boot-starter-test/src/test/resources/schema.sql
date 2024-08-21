@@ -5,8 +5,8 @@ create table if not exists sample
     name varchar
 );
 
-drop table if exists interceptor_test;
-create table if not exists interceptor_test
+drop table if exists test;
+create table if not exists test
 (
     id   bigint,
     name varchar

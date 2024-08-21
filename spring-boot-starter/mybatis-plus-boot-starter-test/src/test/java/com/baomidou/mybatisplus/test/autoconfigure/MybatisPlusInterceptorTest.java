@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.autoconfigure;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerInterceptor;
-import com.baomidou.mybatisplus.test.autoconfigure.entity.InterceptorTest;
+import com.baomidou.mybatisplus.test.autoconfigure.entity.TestEntity;
 import com.baomidou.mybatisplus.test.autoconfigure.mapper.TestMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,9 +36,9 @@ public class MybatisPlusInterceptorTest {
     @Test
     void testDataChangeRecorderInnerInterceptor() {
 
-        List<InterceptorTest> testList = new ArrayList<>();
+        List<TestEntity> testList = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
-            InterceptorTest test = new InterceptorTest();
+            TestEntity test = new TestEntity();
             test.setId((long) i);
             test.setName("name" + i);
             testList.add(test);

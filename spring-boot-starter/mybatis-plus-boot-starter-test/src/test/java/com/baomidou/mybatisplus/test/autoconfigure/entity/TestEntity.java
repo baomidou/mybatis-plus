@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.autoconfigure.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -7,7 +8,8 @@ import lombok.Data;
  * @since 2024-08-22
  */
 @Data
-public class InterceptorTest {
+@TableName("test")
+public class TestEntity {
 
     private Long id;
 

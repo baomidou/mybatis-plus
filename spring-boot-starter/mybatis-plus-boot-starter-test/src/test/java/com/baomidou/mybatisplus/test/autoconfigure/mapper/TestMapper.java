@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.test.autoconfigure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.test.autoconfigure.entity.InterceptorTest;
+import com.baomidou.mybatisplus.test.autoconfigure.entity.TestEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 
 @Mapper
-public interface TestMapper extends BaseMapper<InterceptorTest> {
+public interface TestMapper extends BaseMapper<TestEntity> {
 }
