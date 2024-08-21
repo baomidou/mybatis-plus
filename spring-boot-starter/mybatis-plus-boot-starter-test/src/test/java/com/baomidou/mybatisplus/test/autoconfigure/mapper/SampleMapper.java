@@ -1,6 +1,7 @@
-package com.baomidou.mybatisplus.test.autoconfigure;
+package com.baomidou.mybatisplus.test.autoconfigure.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.test.autoconfigure.entity.Sample;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

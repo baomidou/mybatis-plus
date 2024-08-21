@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.autoconfigure;
 
+import com.baomidou.mybatisplus.test.autoconfigure.entity.Sample;
+import com.baomidou.mybatisplus.test.autoconfigure.mapper.SampleMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
