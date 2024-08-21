@@ -22,7 +22,7 @@ dependencies {
     implementation "${lib.'mybatis-freemarker'}"
     implementation "de.ruedigermoeller:fst:3.0.4-jdk17"
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
-    testImplementation "io.github.classgraph:classgraph:4.8.174"
+    testImplementation "io.github.classgraph:classgraph:4.8.175"
     testImplementation "${lib.h2}"
     testImplementation "${lib.mysql}"
     testImplementation "${lib.'logback-classic'}"
