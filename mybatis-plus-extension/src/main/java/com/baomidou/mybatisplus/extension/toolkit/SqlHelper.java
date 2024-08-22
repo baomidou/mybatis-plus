@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
@@ -238,6 +239,31 @@ public final class SqlHelper {
                 consumer.accept(sqlSession, element);
                 if (i == idxLimit) {
                     sqlSession.flushStatements();
+                    idxLimit = Math.min(idxLimit + batchSize, size);
+                }
+                i++;
+            }
+        });
+    }
+
+
+    public static <E> boolean executeBatchOpt(SqlSessionFactory sqlSessionFactory, Log log, Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
+        return !CollectionUtils.isEmpty(list) && executeBatch(sqlSessionFactory, log, sqlSession -> {
+            int size = list.size();
+            int idxLimit = Math.min(batchSize, size);
+            int i = 1;
+            for (E element : list) {
+                consumer.accept(sqlSession, element);
+                if (i == idxLimit) {
+                    List<BatchResult> batchResults = sqlSession.flushStatements();
+                    for(BatchResult batchResult : batchResults) {
+                        for (int count : batchResult.getUpdateCounts()) {
+                            if (count != 1) {
+                                throw ExceptionUtils.mpe("Optimistic lock failed: the number of affected rows does not match the expected count.");
+                            }
+                        }
+                    }
                     idxLimit = Math.min(idxLimit + batchSize, size);
                 }
                 i++;

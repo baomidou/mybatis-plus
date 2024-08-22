@@ -233,6 +233,17 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
         });
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateBatchByIdOpt(Collection<T> entityList, int batchSize) {
+        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
+        return executeBatchOpt(entityList, batchSize, (sqlSession, entity) -> {
+            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, entity);
+            sqlSession.update(sqlStatement, param);
+        });
+    }
+
     @Override
     public T getOne(Wrapper<T> queryWrapper, boolean throwEx) {
         return getBaseMapper().selectOne(queryWrapper, throwEx);
@@ -277,6 +288,20 @@ public abstract class ServiceImpl<M extends BaseMapper<T>, T> implements IServic
      */
     protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         return SqlHelper.executeBatch(getSqlSessionFactory(), this.log, list, batchSize, consumer);
+    }
+
+    /**
+     * 执行批量操作-乐观锁模式
+     *
+     * @param list      数据集合
+     * @param batchSize 批量大小
+     * @param consumer  执行方法
+     * @param <E>       泛型
+     * @return 操作结果
+     * @since 3.3.1
+     */
+    protected <E> boolean executeBatchOpt(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
+        return SqlHelper.executeBatchOpt(getSqlSessionFactory(), this.log, list, batchSize, consumer);
     }
 
     /**

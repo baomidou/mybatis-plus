@@ -216,6 +216,49 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(15)
+    void testUpdateBatchByIdWithOptLock() {
+        H2User user1 = new H2User();
+        user1.setTestId(991L);
+        user1.setName("版本一致");
+        user1.setDesc("初始");
+        user1.setTestType(1);
+        user1.setVersion(0);
+
+        H2User user2 = new H2User();
+        user2.setTestId(992L);
+        user2.setName("版本不一致");
+        user2.setDesc("初始");
+        user2.setTestType(1);
+        user2.setVersion(0);
+        List<H2User> list = Arrays.asList(user1, user2);
+        userService.saveBatch(list);
+        for (H2User h2User : list) {
+            h2User.setDesc("测试更新失败");
+        }
+        user2.setVersion(1);
+        try {
+            boolean b = userService.updateBatchByIdOpt(list, 2);
+        } catch (Exception e) {
+            System.out.println("更新失败");
+        }
+        List<H2User> h2Users = userService.listByIds(Arrays.asList(991L, 992L));
+        for (H2User h2User : h2Users) {
+            Assertions.assertEquals("初始",h2User.getDesc(), "更新失败");
+        }
+
+        for (H2User h2User : h2Users) {
+            h2User.setDesc("测试更新成功");
+        }
+        boolean b = userService.updateBatchByIdOpt(h2Users, h2Users.size());
+        h2Users = userService.listByIds(Arrays.asList(991L, 992L));
+        for (H2User h2User : h2Users) {
+            Assertions.assertEquals("测试更新成功",h2User.getDesc(), "更新成功");
+        }
+        System.out.println(h2Users);
+    }
+
+    @Test
     @Order(16)
     void testUpdateByEwWithOptLock() {
         H2User userInsert = new H2User();

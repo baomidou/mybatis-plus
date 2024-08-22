@@ -275,6 +275,16 @@ public interface IService<T> {
     boolean updateBatchById(Collection<T> entityList, int batchSize);
 
     /**
+     * 根据ID 批量更新-乐观锁模式
+     * 当entityList 中某个entity 的id或version字段与数据库未匹配时，抛异常，事务回滚。
+     *
+     * @param entityList 实体对象集合
+     * @param batchSize  更新批次数量
+     */
+    @Transactional(rollbackFor = Exception.class)
+    boolean updateBatchByIdOpt(Collection<T> entityList, int batchSize);
+
+    /**
      * TableId 注解存在更新记录，否插入一条记录
      *
      * @param entity 实体对象
