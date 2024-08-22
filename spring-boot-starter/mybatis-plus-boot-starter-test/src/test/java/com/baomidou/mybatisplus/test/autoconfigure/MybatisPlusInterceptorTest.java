@@ -47,6 +47,8 @@ public class MybatisPlusInterceptorTest {
         Exception ex = null;
         try {
             testMapper.updateById(testList);
+            testMapper.insert(testList);
+            testMapper.deleteBatchIds(testList);
         } catch (Exception e) {
             ex = e;
         }
