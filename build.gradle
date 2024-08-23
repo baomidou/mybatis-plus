@@ -60,7 +60,7 @@ ext {
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "h2"                         : "com.h2database:h2:2.3.232",
         "mysql"                      : "com.mysql:mysql-connector-j:9.0.0",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.46.0.1",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.46.1.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.5.java8",
         //cache
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
