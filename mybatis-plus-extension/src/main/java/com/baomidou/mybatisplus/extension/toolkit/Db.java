@@ -36,10 +36,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 import java.io.Serializable;
-import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * 以静态方式调用Service中的函数
@@ -89,7 +87,7 @@ public class Db {
         }
         Class<T> entityClass = getEntityClass(entityList);
         List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entityList, batchSize));
-        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
+        return SqlHelper.retBool(batchResults);
     }
 
     /**
@@ -113,7 +111,7 @@ public class Db {
         }
         Class<T> entityClass = getEntityClass(entityList);
         List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insertOrUpdate(entityList, batchSize));
-        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
+        return SqlHelper.retBool(batchResults);
     }
 
     /**
@@ -196,7 +194,7 @@ public class Db {
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
         List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.updateById(entityList, batchSize));
-        return batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
+        return SqlHelper.retBool(batchResults);
     }
 
     /**
@@ -651,7 +649,7 @@ public class Db {
     protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
         Class<T> entityClass = null;
         for (T entity : entityList) {
-            if (entity != null && entity.getClass() != null) {
+            if (entity != null) {
                 entityClass = getEntityClass(entity);
                 break;
             }

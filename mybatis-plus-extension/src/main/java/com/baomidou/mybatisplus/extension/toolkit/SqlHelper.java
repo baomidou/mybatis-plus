@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.ExecutorType;
@@ -33,6 +34,7 @@ import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +42,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 /**
  * SQL 辅助类
@@ -122,6 +125,17 @@ public final class SqlHelper {
      */
     public static boolean retBool(Long result) {
         return null != result && result >= 1;
+    }
+
+    /**
+     * 批量操作是否成功
+     *
+     * @param result 批量操作结果集
+     * @return 操作结果(批量行记录全满足成功的的情况下为true)
+     * @since 3.5.8
+     */
+    public static boolean retBool(List<BatchResult> result) {
+        return result != null && result.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
     }
 
     /**
