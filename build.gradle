@@ -55,7 +55,7 @@ ext {
         //datasource
         "p6spy"                      : "p6spy:p6spy:3.9.1",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
-        "postgresql"                 : "org.postgresql:postgresql:42.7.3",
+        "postgresql"                 : "org.postgresql:postgresql:42.7.4",
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc8.jar']),
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "h2"                         : "com.h2database:h2:2.3.232",
