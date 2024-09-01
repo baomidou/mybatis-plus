@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.mapper.AMapper">
+
+    <cache-ref namespace="com.baomidou.mybatisplus.test.mapper.BMapper"/>
+
+    <resultMap id="xxx1" type="com.baomidou.mybatisplus.test.entity.AEntity">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </resultMap>
+
+    <sql id="testAsql">
+        id
+    </sql>
+
+    <select id="test" resultType="com.baomidou.mybatisplus.test.entity.AEntity">
+        select * from test_a where id = 1
+    </select>
+
+</mapper>

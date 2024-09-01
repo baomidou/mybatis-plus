@@ -3,6 +3,8 @@ package com.baomidou.mybatisplus.test;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
+import com.baomidou.mybatisplus.test.mapper.AMapper;
+import com.baomidou.mybatisplus.test.mapper.BMapper;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory;
@@ -115,4 +117,24 @@ class MybatisConfigurationTest {
             );
         }
     }
+
+    @Test
+    void testReload() {
+        MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
+        mybatisConfiguration.addMapper(BMapper.class);
+        mybatisConfiguration.addMapper(AMapper.class);
+        Assertions.assertEquals(39, mybatisConfiguration.getMappedStatementNames().size());
+        Assertions.assertEquals(4, mybatisConfiguration.getSqlFragments().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getResultMaps().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getCaches().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getMapperRegistry().getMappers().size());
+        mybatisConfiguration.addNewMapper(BMapper.class);
+        mybatisConfiguration.addNewMapper(AMapper.class);
+        Assertions.assertEquals(39, mybatisConfiguration.getMappedStatementNames().size());
+        Assertions.assertEquals(4, mybatisConfiguration.getSqlFragments().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getResultMaps().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getCaches().size());
+        Assertions.assertEquals(2, mybatisConfiguration.getMapperRegistry().getMappers().size());
+    }
+
 }

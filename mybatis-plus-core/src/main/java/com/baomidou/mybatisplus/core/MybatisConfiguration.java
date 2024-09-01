@@ -133,8 +133,9 @@ public class MybatisConfiguration extends Configuration {
      * 新增注入新的 Mapper 信息，新增前会清理之前的缓存信息
      *
      * @param type Mapper Type
-     * @param <T>
+     * @deprecated 3.5.8 不建议在实际生产环境中使用.
      */
+    @Deprecated
     public <T> void addNewMapper(Class<T> type) {
         this.removeMapper(type);
         this.addMapper(type);
@@ -144,8 +145,9 @@ public class MybatisConfiguration extends Configuration {
      * 移除 Mapper 相关缓存，支持 GroovyClassLoader 动态注入 Mapper
      *
      * @param type Mapper Type
-     * @param <T>
+     * @deprecated 3.5.8 不建议在实际生产环境中使用.
      */
+    @Deprecated
     public <T> void removeMapper(Class<T> type) {
         Set<String> mapperRegistryCache = GlobalConfigUtils.getGlobalConfig(this).getMapperRegistryCache();
         final String mapperType = type.toString();
@@ -156,14 +158,18 @@ public class MybatisConfiguration extends Configuration {
             // 清空 Mapper 缓存信息
             this.mybatisMapperRegistry.removeMapper(type);
             this.loadedResources.remove(type.toString());
+            this.loadedResources.remove(type.getName().replace(StringPool.DOT, StringPool.SLASH) + ".xml");
             mapperRegistryCache.remove(mapperType);
 
             // 清空 Mapper 方法 mappedStatement 缓存信息
-            final String typeKey = type.getName() + StringPool.DOT;
-            Set<String> mapperSet = mappedStatements.keySet().stream().filter(ms -> ms.startsWith(typeKey)).collect(Collectors.toSet());
-            if (!mapperSet.isEmpty()) {
-                mapperSet.forEach(mappedStatements::remove);
-            }
+            String typeKey = type.getName() + StringPool.DOT;
+            String simpleName = type.getSimpleName();
+            mappedStatements.keySet().stream().filter(ms -> ms.startsWith(typeKey) || ms.equals(simpleName)).collect(Collectors.toSet()).forEach(mappedStatements::remove);
+            resultMaps.keySet().stream().filter(r -> r.startsWith(typeKey)).collect(Collectors.toSet()).forEach(resultMaps::remove);
+            parameterMaps.keySet().stream().filter(p -> p.startsWith(typeKey)).collect(Collectors.toSet()).forEach(parameterMaps::remove);
+            keyGenerators.keySet().stream().filter(k -> k.startsWith(typeKey)).collect(Collectors.toSet()).forEach(keyGenerators::remove);
+            sqlFragments.keySet().stream().filter(s -> s.startsWith(typeKey)).collect(Collectors.toSet()).forEach(sqlFragments::remove);
+            caches.keySet().stream().filter(p -> p.equals(type.getName()) || p.equals(simpleName)).collect(Collectors.toSet()).forEach(caches::remove);
         }
     }
 
