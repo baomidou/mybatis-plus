@@ -66,6 +66,12 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     @Select("select * from h2user ${ew.customSqlSegment}")
     List<H2User> selectTestCustomSqlSegment(@Param(Constants.WRAPPER) Wrapper wrapper);
 
+    @Select("select * from h2user ${ewAlias.customSqlSegment}")
+    List<H2User> testWrapperSetAliasByParam(@Param("ewAlias") Wrapper wrapper);
+
+    @Select("select * from h2user a inner join h2user b on a.name=b.name ${asd.customSqlSegment} and ${haha.sqlSegment}")
+    List<H2User> testMultiWrapperQuery(@Param("haha") Wrapper haha, @Param("asd") Wrapper wrapper2);
+
     @Select("select count(1) from (" +
         "select test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
         " from h2user " +

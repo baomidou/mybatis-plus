@@ -70,7 +70,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * 1. 逻辑删除需要自己拼接条件 (之前自定义也同样)
      * 2. 不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)
      * 3. 用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)
-     * 4. ew是wrapper定义别名,不能使用其他的替换
+     * 4. ew是wrapper定义的默认别名,可通过{@link org.apache.ibatis.annotations.Param}注解修改，也可以通过{@link AbstractWrapper#setParamAlias(String)}方式设置别名
      */
     public String getCustomSqlSegment() {
         MergeSegments expression = getExpression();
