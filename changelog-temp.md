@@ -4,6 +4,8 @@
 - fix: 修复IllegalSQLInnerInterceptor分析嵌套count语句错误
 - fix: 升级jsqlParser5.0解决 for update 语句错误
 - fix: 修复处自增自减负数情况导致jsqlParser解析优化错误
+- fix: 修复removeMapper缓存清理不完全
+- fix: 修复SqlServerQuery查询表注释乱码
 - opt: Page属性访问调整为private,重写toString方法
 - opt: 主键生成策略(uuid)不支持的类型打印警告日志
 - opt: MybatisPlusException转化为PersistenceException子类
@@ -12,6 +14,7 @@
 - feat: 支持tableName与schema属性占位符配
 - feat: 代码生成器增加对虚拟列的属性获取
 - feat: chain wrapper to lambda chain wrapper #6314
+- feat: 代码生成器增加手动指定数据库驱动兼容不能自动注册的驱动实现
 - feat: 升级kotlin2.0.0
 - feat: 升级SpringBoot3.3.2
 - feat: 升级fastjson2.0.52
