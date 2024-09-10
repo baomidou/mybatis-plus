@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -105,6 +107,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件eq，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionEq(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return eq(condition, column, val);
+    }
+
+    /**
      * 等于 =
      *
      * @param condition 执行条件
@@ -123,6 +137,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children ne(R column, Object val) {
         return ne(true, column, val);
+    }
+
+    /**
+     * 条件ne，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionNe(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return ne(condition, column, val);
     }
 
     /**
@@ -147,6 +173,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件gt，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionGt(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return gt(condition, column, val);
+    }
+
+    /**
      * 大于 &gt;
      *
      * @param condition 执行条件
@@ -167,6 +205,17 @@ public interface Compare<Children, R> extends Serializable {
         return ge(true, column, val);
     }
 
+    /**
+     * 条件ge，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionGe(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return ge(condition, column, val);
+    }
     /**
      * 大于等于 &gt;=
      *
@@ -189,6 +238,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件lt，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionLt(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return lt(condition, column, val);
+    }
+
+    /**
      * 小于 &lt;
      *
      * @param condition 执行条件
@@ -207,6 +268,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children le(R column, Object val) {
         return le(true, column, val);
+    }
+
+    /**
+     * 条件le，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionLe(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return le(condition, column, val);
     }
 
     /**
@@ -278,6 +351,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件like，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionLike(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return like(condition, column, val);
+    }
+
+    /**
      * LIKE '%值%'
      *
      * @param condition 执行条件
@@ -296,6 +381,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children notLike(R column, Object val) {
         return notLike(true, column, val);
+    }
+
+    /**
+     * 条件notLike，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionNotLike(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return notLike(condition, column, val);
     }
 
     /**
@@ -320,6 +417,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件notLikeLeft，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionNotLikeLeft(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return notLikeLeft(condition, column, val);
+    }
+
+    /**
      * NOT LIKE '%值'
      *
      * @param condition 执行条件
@@ -338,6 +447,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children notLikeRight(R column, Object val) {
         return notLikeRight(true, column, val);
+    }
+
+    /**
+     * 条件notLikeRight，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionNotLikeRight(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return notLikeRight(condition, column, val);
     }
 
     /**
@@ -362,6 +483,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 条件leftLike，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionLikeLeft(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return likeLeft(condition, column, val);
+    }
+
+    /**
      * LIKE '%值'
      *
      * @param condition 执行条件
@@ -380,6 +513,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children likeRight(R column, Object val) {
         return likeRight(true, column, val);
+    }
+
+    /**
+     * 条件leftRight，默认使用StringUtils.checkValNotNull(val)作为condition
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children conditionLikeRight(R column, Object val) {
+        boolean condition = StringUtils.checkValNotNull(val);
+        return likeRight(condition, column, val);
     }
 
     /**

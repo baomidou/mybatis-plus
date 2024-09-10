@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 import java.io.Serializable;
@@ -89,6 +90,18 @@ public interface Func<Children, R> extends Serializable {
     }
 
     /**
+     * 条件in，默认使用CollectionUtils.isNotEmpty(coll)作为condition
+     *
+     * @param column 字段
+     * @param coll   数据集合
+     * @return children
+     */
+    default Children conditionIn(R column, Collection<?> coll) {
+        boolean condition = CollectionUtils.isNotEmpty(coll);
+        return in(condition, column, coll);
+    }
+
+    /**
      * 字段 IN (value.get(0), value.get(1), ...)
      * <p>例: in(true, "id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
@@ -115,6 +128,18 @@ public interface Func<Children, R> extends Serializable {
      */
     default Children in(R column, Object... values) {
         return in(true, column, values);
+    }
+
+    /**
+     * 条件in，默认使用ArrayUtils.isNotEmpty(values)作为condition
+     *
+     * @param column 字段
+     * @param values 数据数组
+     * @return children
+     */
+    default Children conditionIn(R column, Object... values) {
+        boolean condition = ArrayUtils.isNotEmpty(values);
+        return in(condition, column, values);
     }
 
     /**
@@ -147,6 +172,17 @@ public interface Func<Children, R> extends Serializable {
     }
 
     /**
+     * 条件in，默认使用CollectionUtils.isNotEmpty(values)作为condition
+     *
+     * @param column 字段
+     * @param coll coll
+     * @return children
+     */
+    default Children conditionNotIn(R column, Collection<?> coll) {
+        boolean condition = CollectionUtils.isNotEmpty(coll);
+        return notIn(condition, column, coll);
+    }
+    /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      * <p>例: notIn(true, "id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
@@ -173,6 +209,18 @@ public interface Func<Children, R> extends Serializable {
      */
     default Children notIn(R column, Object... values) {
         return notIn(true, column, values);
+    }
+
+    /**
+     * 条件notIn，默认使用ArrayUtils.isNotEmpty(values)作为condition
+     *
+     * @param column 字段
+     * @param values 数据数组
+     * @return children
+     */
+    default Children conditionNotIn(R column, Object... values) {
+        boolean condition = ArrayUtils.isNotEmpty(values);
+        return notIn(condition, column, values);
     }
 
     /**

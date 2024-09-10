@@ -99,6 +99,104 @@ class QueryWrapperTest extends BaseWrapperTest {
     }
 
     @Test
+    void testConditionCompareWhenCheckValIsNull() {
+        QueryWrapper<Entity> queryWrapper1 = new QueryWrapper<Entity>()
+            .conditionEq("id", null)
+            .conditionNe("id", null)
+            .or()
+            .conditionGt("id", null)
+            .conditionGe("id", null)
+            .conditionLt("id", null)
+            .conditionLe("id", null)
+            .or()
+            .conditionLike("id", null)
+            .conditionNotLike("id", null)
+            .conditionNotLikeLeft("id", null)
+            .conditionNotLikeRight("id", null)
+            .or()
+            .conditionLikeLeft("id", null)
+            .conditionLikeRight("id", null);
+        logSqlWhere("测试 Compare 下非字符val checkValIsNull的方法", queryWrapper1, "");
+        logParams(queryWrapper1);
+        QueryWrapper<Entity> queryWrapper2 = new QueryWrapper<Entity>()
+            .conditionEq("name", null)
+            .conditionNe("name", null)
+            .or()
+            .conditionGt("name", null)
+            .conditionGe("name", null)
+            .conditionLt("name", null)
+            .conditionLe("name", null)
+            .or()
+            .conditionLike("name", null)
+            .conditionNotLike("name", null)
+            .conditionNotLikeLeft("name", null)
+            .conditionNotLikeRight("name", null)
+            .or()
+            .conditionLikeLeft("name", null)
+            .conditionLikeRight("name", null);
+        logSqlWhere("测试 Compare 下字符类型val checkValIsNull的方法", queryWrapper2, "");
+        logParams(queryWrapper2);
+        QueryWrapper<Entity> queryWrapper3 = new QueryWrapper<Entity>()
+            .conditionEq("name", "")
+            .conditionNe("name", "")
+            .or()
+            .conditionGt("name", "")
+            .conditionGe("name", "")
+            .conditionLt("name", "")
+            .conditionLe("name", "")
+            .or()
+            .conditionLike("name", "")
+            .conditionNotLike("name", "")
+            .conditionNotLikeLeft("name", "")
+            .conditionNotLikeRight("name", "")
+            .or()
+            .conditionLikeLeft("name", "")
+            .conditionLikeRight("name", "");
+        logSqlWhere("测试 Compare 下字符val为空字符串 condition的方法", queryWrapper3, "");
+        logParams(queryWrapper3);
+    }
+
+    @Test
+    void testConditionCompareWhenCheckValNotNull() {
+        QueryWrapper<Entity> queryWrapper1 = new QueryWrapper<Entity>()
+            .conditionEq("id", 1)
+            .conditionNe("id", 1)
+            .or()
+            .conditionGt("id", 1)
+            .conditionGe("id", 1)
+            .conditionLt("id", 1)
+            .conditionLe("id", 1)
+            .or()
+            .conditionLike("id", 1)
+            .conditionNotLike("id", 1)
+            .conditionNotLikeLeft("id", 1)
+            .conditionNotLikeRight("id", 1)
+            .or()
+            .conditionLikeLeft("id", 1)
+            .conditionLikeRight("id", 1);
+        logSqlWhere("测试 Compare 下非字符val CheckValNotNull的方法", queryWrapper1, "(id = ? AND id <> ? OR id > ? AND id >= ? AND id < ? AND id <= ? OR id LIKE ? AND id NOT LIKE ? AND id NOT LIKE ? AND id NOT LIKE ? OR id LIKE ? AND id LIKE ?)");
+        logParams(queryWrapper1);
+        QueryWrapper<Entity> queryWrapper2 = new QueryWrapper<Entity>()
+            .conditionEq("name", "我不是名字")
+            .conditionNe("name", "我不是名字")
+            .or()
+            .conditionGt("name", "我不是名字")
+            .conditionGe("name", "我不是名字")
+            .conditionLt("name", "我不是名字")
+            .conditionLe("name", "我不是名字")
+            .or()
+            .conditionLike("name", "我不是名字")
+            .conditionNotLike("name", "我不是名字")
+            .conditionNotLikeLeft("name", "我不是名字")
+            .conditionNotLikeRight("name", "我不是名字")
+            .or()
+            .conditionLikeLeft("name", "我不是名字")
+            .conditionLikeRight("name", "我不是名字");
+        logSqlWhere("测试 Compare 下字符类型val checkValNotNull的方法", queryWrapper2, "(name = ? AND name <> ? OR name > ? AND name >= ? AND name < ? AND name <= ? OR name LIKE ? AND name NOT LIKE ? AND name NOT LIKE ? AND name NOT LIKE ? OR name LIKE ? AND name LIKE ?)");
+        logParams(queryWrapper2);
+    }
+
+    @Test
     void testFunc() {
         Entity entity = new Entity();
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
@@ -114,6 +212,31 @@ class QueryWrapperTest extends BaseWrapperTest {
             .having("sum(age) > {0}", 1).having("id is not null")
             .func(entity.getId() != null, j -> j.eq("id", entity.getId()));// 不会npe,也不会加入sql
         logSqlWhere("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND eqSql = (1) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5) AND gtSql > (1,2,3,4,5) AND ltSql < (1,2,3,4,5) AND geSql >= (1,2,3,4,5) AND leSql <= (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC,name2 DESC");
+        logParams(queryWrapper);
+    }
+
+    @Test
+    void testConditionFuncWhenInConditionIsEmpty() {
+        Object[] emptyObjects = new Object[0];
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
+            .conditionIn("inColl", Collections.emptyList())
+            .or()
+            .conditionNotIn("notInColl", Collections.emptyList())
+            .conditionIn("inArray", emptyObjects)
+            .conditionNotIn("notInArray", emptyObjects);
+        logSqlWhere("测试 Func 下in条件isEmpty的conditionIn方法", queryWrapper, "");
+        logParams(queryWrapper);
+    }
+
+    @Test
+    void testConditionFuncWhenInConditionIsNotEmpty() {
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
+            .conditionIn("inColl", getList())
+            .or()
+            .conditionNotIn("notInColl", getList())
+            .conditionIn("inArray", 1, 2, 3)
+            .conditionNotIn("notInArray", 1, 2, 3, 4);
+        logSqlWhere("测试 Func 下in条件isNotEmpty的conditionIn方法", queryWrapper, "(inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN (?,?,?) AND notInArray NOT IN (?,?,?,?))");
         logParams(queryWrapper);
     }
 
