@@ -8,15 +8,16 @@ body:
       value: |
         请确认以下信息：
         1. 请按此模板提交issues, 不按模板提交的问题将直接关闭
-        2. 如果你的问题与该仓库无关或者可以直接在以往 issue 中找到, 那么你的 issue 将会被直接关闭
-        3. 提交问题务必描述清楚、附上日志, 描述不清导致无法理解和分析的问题会被直接关闭
+        2. 如果你使用的版本号不是最新版, 那么你的 issue 大概率将会被直接关闭
+        3. 如果你的问题与该仓库无关或者可以直接在以往 issue 中找到, 那么你的 issue 大概率将会被直接关闭
+        4. 提交问题务必描述清楚、附上日志, 描述不清导致无法理解和分析的问题 大概率会被直接关闭
   - type: checkboxes
     id: confirm
     attributes:
       label: 确认
-      description: 在提交 issue 之前，请确认你已经阅读并确认以下内容
+      description: 在提交 issue 之前, 请确认你已经阅读并确认以下内容, 如果 不全部勾选 或 勾选与事实不符 那么你的 issue 大概率将会被直接关闭
       options:
-        - label: 我的版本是最新版本, 我的版本号与 [version](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.baomidou%22%20AND%20a%3A%22mybatis-plus%22) 相同, 并且项目里无依赖冲突
+        - label: 我使用的版本是[最新版](https://central.sonatype.com/search?q=g:com.baomidou%20%20a:mybatis-plus&smo=true), 并且使用插件确认过项目里无依赖版本冲突
           required: true
         - label: 我已经在 [issue](https://github.com/baomidou/mybatis-plus/issues) 中搜索过, 确认问题没有被提出过
           required: true
