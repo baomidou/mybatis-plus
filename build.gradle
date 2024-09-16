@@ -63,7 +63,7 @@ ext {
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.46.1.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.5.java8",
         //cache
-        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0",
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.2.0",
         //code generator
         "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
         "freemarker"          : "org.freemarker:freemarker:2.3.33",
