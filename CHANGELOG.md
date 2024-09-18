@@ -1,4 +1,34 @@
 ﻿# CHANGELOG
+## [v3.5.8] 2024.09.18
+- fix: 解决optimizeJoinOfCountSql反序列化不支持问题
+- fix: 解决Db工具类批量操作使用rewriteBatchedStatements=true返回值不准确
+- fix: 修复逻辑删除填充与乐观锁冲突
+- fix: 修复IllegalSQLInnerInterceptor分析嵌套count语句错误
+- fix: 升级jsqlParser5.0 解决 for update 语句错误
+- fix: 修复处自增自减负数情况导致jsqlParser解析优化错误
+- fix: 修复removeMapper缓存清理不完全
+- fix: 修复SqlServerQuery查询表注释乱码
+- opt: 完善函数注入校验逻辑
+- opt: Page属性访问调整为private,重写toString方法
+- opt: 主键生成策略(uuid)不支持的类型打印警告日志
+- opt: MybatisPlusException转化为PersistenceException子类
+- feat: 增加deleteByIds空集合处理
+- feat: 重命名selectBatchIds方法为selectByIds
+- feat: 支持tableName与schema属性占位符配
+- feat: 代码生成器增加对虚拟列的属性获取
+- feat: chain wrapper to lambda chain wrapper #6314
+- feat: 代码生成器增加手动指定数据库驱动兼容不能自动注册的驱动实现
+- feat: 升级kotlin2.0.0
+- feat: 升级SpringBoot3.3.2
+- feat: 升级fastjson2.0.52
+- feat: 升级mybatis-spring3.0.4
+- feat: 升级spring-cloud-commons4.1.4
+- feat: 部分支持依赖升级更新
+- feat: 支持GoldenDB数据库
+- feat: 支持Duckdb数据库
+- feat: 支持Derby数据库
+- feat: 支持Vastbase数据库
+
 ## [v3.5.7] 2024.06.10
 - fix: 修复动态表名处理 update ignore 错误
 - fix: 修复SQLServer2005分页处理空格错误
