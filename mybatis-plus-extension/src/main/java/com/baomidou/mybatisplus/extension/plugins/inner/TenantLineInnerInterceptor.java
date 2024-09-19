@@ -235,6 +235,9 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         // todo 该起别名就要起别名,禁止修改此处逻辑
         if (table.getAlias() != null) {
             column.append(table.getAlias().getName()).append(StringPool.DOT);
+        } else {
+            // 没有别名就取表名
+            column.append(table.getName()).append(StringPool.DOT);
         }
         column.append(tenantLineHandler.getTenantIdColumn());
         return new Column(column.toString());
