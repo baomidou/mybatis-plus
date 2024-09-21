@@ -52,7 +52,7 @@ public class EnjoyTemplateEngine extends AbstractTemplateEngine {
              BufferedWriter writer = new BufferedWriter(ow)) {
             writer.append(str);
         }
-        LOGGER.debug("模板:" + templatePath + ";  文件:" + outputFile);
+        LOGGER.debug("模板:{};  文件:{}", templatePath, outputFile);
     }
 
     @Override

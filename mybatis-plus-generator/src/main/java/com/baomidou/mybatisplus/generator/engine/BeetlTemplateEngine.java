@@ -72,7 +72,7 @@ public class BeetlTemplateEngine extends AbstractTemplateEngine {
             template.binding(objectMap);
             template.renderTo(fileOutputStream);
         }
-        LOGGER.debug("模板:" + templatePath + ";  文件:" + outputFile);
+        LOGGER.debug("模板:{};  文件:{}", templatePath, outputFile);
     }
 
     @Override
