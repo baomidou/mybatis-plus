@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.generator.config.builder;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.query.IDatabaseQuery;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,6 +88,14 @@ public class ConfigBuilder {
      * @since 3.5.3
      */
     private final IDatabaseQuery databaseQuery;
+
+    /**
+     * 资源加载器
+     * @since 3.5.9
+     */
+    @Getter
+    @Setter
+    private TemplateLoadWay templateLoadWay = TemplateLoadWay.FILE;
 
     /**
      * 在构造器中处理配置

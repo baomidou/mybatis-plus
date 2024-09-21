@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
  */
 public class DbQueryDecorator extends AbstractDbQuery {
     private final IDbQuery dbQuery;
+    @Getter
     private final Connection connection;
     private final DbType dbType;
     private final StrategyConfig strategyConfig;
@@ -190,7 +192,6 @@ public class DbQueryDecorator extends AbstractDbQuery {
      *
      * @param sql      执行SQL
      * @param consumer 结果处理
-     * @throws SQLException
      */
     public void execute(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
         logger.debug("执行SQL:{}", sql);
@@ -207,10 +208,6 @@ public class DbQueryDecorator extends AbstractDbQuery {
         }
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
     public void closeConnection() {
         Optional.ofNullable(connection).ifPresent((con) -> {
             try {
@@ -225,6 +222,7 @@ public class DbQueryDecorator extends AbstractDbQuery {
 
         private final IDbQuery dbQuery;
 
+        @Getter
         private final ResultSet resultSet;
 
         private final DbType dbType;
@@ -233,10 +231,6 @@ public class DbQueryDecorator extends AbstractDbQuery {
             this.resultSet = resultSet;
             this.dbQuery = dbQuery;
             this.dbType = dbType;
-        }
-
-        public ResultSet getResultSet() {
-            return resultSet;
         }
 
         public String getStringResult(String columnLabel) {

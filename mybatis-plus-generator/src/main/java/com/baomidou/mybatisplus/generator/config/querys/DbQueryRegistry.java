@@ -22,8 +22,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
+ * 数据库查询接口注册中心
+ *
  * @author nieqiuqiu
- * @date 2020-01-09
  * @since 3.3.1
  */
 public class DbQueryRegistry {

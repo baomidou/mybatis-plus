@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.engine;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.TemplateLoadWay;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -24,10 +25,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Map;
 import java.util.Properties;
 
@@ -53,16 +51,28 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
     public @NotNull VelocityTemplateEngine init(@NotNull ConfigBuilder configBuilder) {
         if (null == velocityEngine) {
             Properties p = new Properties();
-            p.setProperty(ConstVal.VM_LOAD_PATH_KEY, ConstVal.VM_LOAD_PATH_VALUE);
-            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, StringPool.EMPTY);
             p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
             p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty("file.resource.loader.unicode", StringPool.TRUE);
+            if (configBuilder.getTemplateLoadWay().isFile()) {
+                // 文件模板
+                p.setProperty(ConstVal.VM_LOAD_PATH_KEY, ConstVal.VM_LOAD_PATH_VALUE);
+                p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, StringPool.EMPTY);
+                p.setProperty("file.resource.loader.unicode", StringPool.TRUE);
+            } else {
+                // 文本模板
+                p.setProperty(Velocity.RESOURCE_LOADER, TemplateLoadWay.STRING.getValue());
+            }
             velocityEngine = new VelocityEngine(p);
         }
         return this;
     }
 
+    @Override
+    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
+        StringWriter writer = new StringWriter();
+        velocityEngine.evaluate(new VelocityContext(objectMap), writer, templateName, templateString);
+        return writer.toString();
+    }
 
     @Override
     public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {

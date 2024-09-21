@@ -18,12 +18,7 @@ package com.baomidou.mybatisplus.generator.engine;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.*;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.builder.Controller;
-import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
-import com.baomidou.mybatisplus.generator.config.builder.Entity;
-import com.baomidou.mybatisplus.generator.config.builder.Mapper;
-import com.baomidou.mybatisplus.generator.config.builder.Service;
+import com.baomidou.mybatisplus.generator.config.builder.*;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.util.FileUtils;
 import com.baomidou.mybatisplus.generator.util.RuntimeUtils;
@@ -258,6 +253,16 @@ public abstract class AbstractTemplateEngine {
         }
         return this;
     }
+
+    /**
+     * 将模板转化成为字符串
+     *
+     * @param objectMap      渲染对象 MAP 信息
+     * @param templateName   模板名称
+     * @param templateString 模板字符串
+     * @since 3.5.0
+     */
+    public abstract String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception;
 
     /**
      * 将模板转化成为文件

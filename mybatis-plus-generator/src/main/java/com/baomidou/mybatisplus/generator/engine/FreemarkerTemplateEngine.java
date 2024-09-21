@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.util.Map;
 
 /**
@@ -44,6 +45,13 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
         return this;
     }
 
+    @Override
+    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
+        Template template = new Template(templateName, templateString, configuration);
+        StringWriter writer = new StringWriter();
+        template.process(objectMap, writer);
+        return writer.toString();
+    }
 
     @Override
     public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {
