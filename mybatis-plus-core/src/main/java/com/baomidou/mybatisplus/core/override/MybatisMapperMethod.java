@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.override;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.cursor.Cursor;
@@ -107,14 +107,8 @@ public class MybatisMapperMethod {
 
     @SuppressWarnings("all")
     private <E> Object executeForIPage(SqlSession sqlSession, Object[] args) {
-        IPage<E> result = null;
-        for (Object arg : args) {
-            if (arg instanceof IPage) {
-                result = (IPage<E>) arg;
-                break;
-            }
-        }
-        Assert.notNull(result, "can't found IPage for args!");
+        IPage<E> result = (IPage<E>) ParameterUtils.findPage(args)
+            .orElseThrow(() -> new IllegalArgumentException("can't found IPage for args!"));
         Object param = method.convertArgsToSqlCommandParam(args);
         List<E> list = sqlSession.selectList(command.getName(), param);
         result.setRecords(list);

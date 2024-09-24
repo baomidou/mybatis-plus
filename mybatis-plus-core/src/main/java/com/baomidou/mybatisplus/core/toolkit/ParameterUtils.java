@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,22 +37,30 @@ public class ParameterUtils {
     /**
      * 查找分页参数
      *
-     * @param parameterObject 参数对象
+     * @param args 参数对象（可以为 null)
      * @return 分页参数
      */
-    public static Optional<IPage> findPage(Object parameterObject) {
-        if (parameterObject != null) {
-            if (parameterObject instanceof Map) {
-                Map<?, ?> parameterMap = (Map<?, ?>) parameterObject;
-                for (Map.Entry entry : parameterMap.entrySet()) {
-                    if (entry.getValue() != null && entry.getValue() instanceof IPage) {
-                        return Optional.of((IPage) entry.getValue());
-                    }
+    public static <E> Optional<IPage<E>> findPage(Object... args) {
+        if (args == null) {
+            return Optional.empty();
+        }
+
+        if (args.length == 1 && args[0] instanceof Map) {
+            Collection<?> argValues = ((Map<?, ?>) args[0]).values();
+            for (Object arg : argValues) {
+                if (arg instanceof IPage) {
+                    return Optional.of((IPage<E>) arg);
                 }
-            } else if (parameterObject instanceof IPage) {
-                return Optional.of((IPage) parameterObject);
+            }
+            return Optional.empty();
+        }
+
+        for (Object arg : args) {
+            if (arg instanceof IPage) {
+                return Optional.of((IPage<E>) arg);
             }
         }
         return Optional.empty();
     }
+
 }
