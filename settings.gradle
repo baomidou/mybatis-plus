@@ -28,4 +28,7 @@ include ':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure'
 include ':spring-boot-starter:mybatis-plus-spring-boot-test-autoconfigure'
 include ':spring-boot-starter:mybatis-plus-spring-boot3-starter'
 include ':spring-boot-starter:mybatis-plus-spring-boot3-starter-test'
+include 'solon-plugin'
+include ':solon-plugin:mybatis-plus-solon-plugin'
+include ':solon-plugin:mybatis-plus-extension-solon-plugin'
 

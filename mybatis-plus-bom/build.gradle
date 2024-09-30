@@ -22,6 +22,8 @@ dependencyManagement {
         dependency "com.baomidou:mybatis-plus-spring-boot-test-autoconfigure:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-spring-boot3-starter:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-spring-boot3-starter-test:${APP_VERSION}"
-
+        dependency "com.baomidou:mybatis-plus-solon-plugin:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-extension-solon-plugin:${APP_VERSION}"
+        
     }
 }
