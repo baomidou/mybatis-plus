@@ -6,9 +6,9 @@ compileKotlin {
 
 dependencies {
     api project(":mybatis-plus-core")
-    api "org.noear:mybatis-solon-plugin:3.0.0-RC2"
-    api "org.noear:solon-aot:3.0.0-RC2"
-    testImplementation "org.noear:solon-test:3.0.0-RC2"
+    api "org.noear:mybatis-solon-plugin:3.0.0"
+    api "org.noear:solon-aot:3.0.0"
+    testImplementation "org.noear:solon-test:3.0.0"
     testImplementation "io.github.classgraph:classgraph:4.8.176"
     testImplementation "com.zaxxer:HikariCP:4.0.3"
     testImplementation "${lib.h2}"
