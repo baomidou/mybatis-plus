@@ -13,7 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.baomidou.mybatisplus.extension.ddl;
+
+import org.noear.solon.annotation.Inject;
+
+import javax.sql.DataSource;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
- * Spring相关类
+ * 非多数据源 DDL 实现
+ *
+ * @author hubin
+ * @since 2021-09-23
  */
-package com.baomidou.mybatisplus.extension.spring;
+public class SimpleDdl implements IDdl {
+
+    @Inject
+    private DataSource dataSource;
+
+    @Override
+    public void runScript(Consumer<DataSource> consumer) {
+        consumer.accept(dataSource);
+    }
+
+    @Override
+    public List<String> getSqlFiles() {
+        return null;
+    }
+
+}

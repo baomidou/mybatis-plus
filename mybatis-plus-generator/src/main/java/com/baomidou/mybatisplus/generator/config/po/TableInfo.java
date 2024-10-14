@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
@@ -229,7 +228,7 @@ public class TableInfo {
         } else {
             if (entity.isActiveRecord()) {
                 // 无父类开启 AR 模式
-                this.importPackages.add(Model.class.getCanonicalName());
+                this.importPackages.add("com.baomidou.mybatisplus.extension.activerecord.Model");
             }
         }
         if (entity.isSerialVersionUID() || entity.isActiveRecord()) {

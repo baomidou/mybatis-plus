@@ -1,19 +1,4 @@
-/*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.baomidou.mybatisplus.extension.service;
+package com.baomidou.mybatisplus.extension.repository;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -22,30 +7,21 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.ChainQuery;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.kotlin.KtUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * 顶级 Service
- *
- * @author hubin
- * @since 2018-06-23
- */
-public interface IService<T> {
+public interface IRepository<T> {
 
     /**
      * 默认批次提交数量
@@ -65,29 +41,9 @@ public interface IService<T> {
      * 插入（批量）
      *
      * @param entityList 实体对象集合
-     */
-    @Transactional(rollbackFor = Exception.class)
-    default boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, DEFAULT_BATCH_SIZE);
-    }
-
-    /**
-     * 插入（批量）
-     *
-     * @param entityList 实体对象集合
      * @param batchSize  插入批次数量
      */
     boolean saveBatch(Collection<T> entityList, int batchSize);
-
-    /**
-     * 批量修改插入
-     *
-     * @param entityList 实体对象集合
-     */
-    @Transactional(rollbackFor = Exception.class)
-    default boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, DEFAULT_BATCH_SIZE);
-    }
 
     /**
      * 批量修改插入
@@ -175,59 +131,6 @@ public interface IService<T> {
     }
 
     /**
-     * 批量删除(jdbc批量提交)
-     *
-     * @param list 主键ID或实体列表(主键ID类型必须与实体类型字段保持一致)
-     * @return 删除结果
-     * @since 3.5.0
-     */
-    @Transactional(rollbackFor = Exception.class)
-    default boolean removeBatchByIds(Collection<?> list) {
-        return removeBatchByIds(list, DEFAULT_BATCH_SIZE);
-    }
-
-    /**
-     * 批量删除(jdbc批量提交)
-     *
-     * @param list    主键ID或实体列表(主键ID类型必须与实体类型字段保持一致)
-     * @param useFill 是否启用填充(为true的情况,会将入参转换实体进行delete删除)
-     * @return 删除结果
-     * @since 3.5.0
-     */
-    default boolean removeBatchByIds(Collection<?> list, boolean useFill) {
-        return removeBatchByIds(list, DEFAULT_BATCH_SIZE, useFill);
-    }
-
-    /**
-     * 批量删除(jdbc批量提交)
-     *
-     * @param list      主键ID或实体列表
-     * @param batchSize 批次大小
-     * @return 删除结果
-     * @since 3.5.0
-     * @deprecated 3.5.7 {@link #removeBatchByIds(Collection)}
-     */
-    @Deprecated
-    default boolean removeBatchByIds(Collection<?> list, int batchSize) {
-        throw new UnsupportedOperationException("不支持的方法!");
-    }
-
-    /**
-     * 批量删除(jdbc批量提交)
-     *
-     * @param list      主键ID或实体列表
-     * @param batchSize 批次大小
-     * @param useFill   是否启用填充(为true的情况,会将入参转换实体进行delete删除)
-     * @return 删除结果
-     * @since 3.5.0
-     * @deprecated 3.5.7 {@link #removeBatchByIds(Collection)}
-     */
-    @Deprecated
-    default boolean removeBatchByIds(Collection<?> list, int batchSize, boolean useFill) {
-        throw new UnsupportedOperationException("不支持的方法!");
-    }
-
-    /**
      * 根据 ID 选择修改
      *
      * @param entity 实体对象
@@ -254,16 +157,6 @@ public interface IService<T> {
      */
     default boolean update(T entity, Wrapper<T> updateWrapper) {
         return SqlHelper.retBool(getBaseMapper().update(entity, updateWrapper));
-    }
-
-    /**
-     * 根据ID 批量更新
-     *
-     * @param entityList 实体对象集合
-     */
-    @Transactional(rollbackFor = Exception.class)
-    default boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -570,20 +463,24 @@ public interface IService<T> {
      */
     Class<T> getEntityClass();
 
-    /**
+    /*
      * 以下的方法使用介绍:
-     *
+     * <p>
      * 一. 名称介绍
      * 1. 方法名带有 query 的为对数据的查询操作, 方法名带有 update 的为对数据的修改操作
      * 2. 方法名带有 lambda 的为内部方法入参 column 支持函数式的
+     * </p>
+     * <p>
      * 二. 支持介绍
-     *
      * 1. 方法名带有 query 的支持以 {@link ChainQuery} 内部的方法名结尾进行数据查询操作
      * 2. 方法名带有 update 的支持以 {@link ChainUpdate} 内部的方法名为结尾进行数据修改操作
+     * </p>
      *
+     * <p>
      * 三. 使用示例,只用不带 lambda 的方法各展示一个例子,其他类推
      * 1. 根据条件获取一条数据: `query().eq("column", value).one()`
      * 2. 根据条件删除一条数据: `update().eq("column", value).remove()`
+     * </p>
      *
      */
 
@@ -654,24 +551,5 @@ public interface IService<T> {
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
         return ChainWrappers.lambdaUpdateChain(getBaseMapper());
-    }
-
-    /**
-     * <p>
-     * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法
-     * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的saveOrUpdate操作）
-     * </p>
-     * <p>
-     * 该方法不推荐在多线程并发下使用，并发可能存在间隙锁的问题，可以采用先查询后判断是否更新或保存。
-     * </p>
-     * <p>
-     * 该方法存在安全隐患将在后续大版本删除
-     * </p>
-     *
-     * @param entity 实体对象
-     */
-    @Deprecated
-    default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
-        return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
 }

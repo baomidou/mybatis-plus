@@ -1,0 +1,17 @@
+apply plugin: 'kotlin'
+
+compileKotlin{
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+dependencies {
+    api project(":mybatis-plus-extension")
+    api "org.noear:mybatis-solon-plugin:3.0.0"
+    api "org.noear:solon-aot:3.0.0"
+    testImplementation "org.noear:solon-test:3.0.0"
+    testImplementation "io.github.classgraph:classgraph:4.8.176"
+    testImplementation "com.zaxxer:HikariCP:4.0.3"
+    testImplementation "${lib.h2}"
+    testImplementation "${lib.mysql}"
+    testImplementation "${lib.'logback-classic'}"
+}

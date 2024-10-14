@@ -21,11 +21,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.compatible.CompatibleHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -43,11 +42,11 @@ import java.util.Objects;
  * @author hubin
  * @since 2016-11-06
  */
-public abstract class Model<T extends Model<?>> implements Serializable {
+public abstract class AbstractModel<T extends AbstractModel<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final transient Class<?> entityClass = this.getClass();
+    protected final transient Class<?> entityClass = this.getClass();
 
     /**
      * 插入（字段选择插入）
@@ -238,13 +237,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     }
 
     /**
-     * 执行 SQL
-     */
-    public SqlRunner sql() {
-        return new SqlRunner(this.entityClass);
-    }
-
-    /**
      * 获取Session 默认自动提交
      */
     protected SqlSession sqlSession() {
@@ -284,6 +276,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param sqlSession session
      */
     protected void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
+        CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
     }
 }

@@ -17,17 +17,13 @@ package com.baomidou.mybatisplus.extension.ddl;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
-import com.baomidou.mybatisplus.extension.ddl.history.MysqlDdlGenerator;
-import com.baomidou.mybatisplus.extension.ddl.history.OracleDdlGenerator;
-import com.baomidou.mybatisplus.extension.ddl.history.PostgreDdlGenerator;
-import com.baomidou.mybatisplus.extension.ddl.history.SQLiteDdlGenerator;
+import com.baomidou.mybatisplus.extension.compatible.CompatibleHelper;
+import com.baomidou.mybatisplus.extension.ddl.history.*;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.jdbc.SqlRunner;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -126,7 +122,7 @@ public class DdlHelper {
     }
 
     public static InputStream getInputStream(String path) throws Exception {
-        return new ClassPathResource(path).getInputStream();
+        return CompatibleHelper.getCompatibleSet().getInputStream(path);
     }
 
     protected static String getNowTime() {

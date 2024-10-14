@@ -1,0 +1,29 @@
+apply plugin: 'kotlin'
+
+compileKotlin{
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+dependencies {
+    api project(":mybatis-plus-extension")
+    implementation "${lib."mybatis-spring"}"
+
+    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-reflect"}"
+    implementation "${lib."spring-context-support"}"
+    implementation "${lib."spring-jdbc"}"
+    implementation "${lib."slf4j-api"}"
+    implementation "${lib."p6spy"}"
+    implementation "${lib."jackson"}"
+    implementation "${lib."fastjson"}"
+    implementation "${lib."gson"}"
+    implementation "${lib['mybatis-thymeleaf']}"
+    implementation "${lib.'mybatis-velocity'}"
+    implementation "${lib.'mybatis-freemarker'}"
+    implementation "de.ruedigermoeller:fst:3.0.4-jdk17"
+    implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
+    testImplementation "io.github.classgraph:classgraph:4.8.176"
+    testImplementation "${lib.h2}"
+    testImplementation "${lib.mysql}"
+    testImplementation "${lib.'logback-classic'}"
+}

@@ -1,0 +1,25 @@
+server:
+    port: 6040
+
+# 配置数据源
+dataSource:
+    db1:
+        # 与数据库名可用保持一致
+        schema: test
+        jdbcUrl: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true
+        driverClassName: com.mysql.cj.jdbc.Driver
+        username: root
+        password: 1234
+
+mybatis:
+    db1:
+        mappers:
+            - "demo.dso.mapper.*"
+        configuration:
+            cacheEnabled: false
+            mapUnderscoreToCamelCase: true
+        globalConfig:
+            banner: false
+            metaObjectHandler: "demo.dso.MetaObjectHandlerImpl"
+            dbConfig:
+                logicDeleteField: "deleted"

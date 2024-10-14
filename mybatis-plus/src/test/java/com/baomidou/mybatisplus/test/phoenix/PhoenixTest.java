@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
 import static com.baomidou.mybatisplus.core.enums.SqlMethod.UPSERT_ONE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
