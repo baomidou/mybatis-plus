@@ -1,7 +1,6 @@
 dependencies {
-    api project(":mybatis-plus-spring")
-
     implementation project(":mybatis-plus")
+    implementation "${lib."mybatis-spring"}"
     implementation "${lib."mybatis-spring"}"
     implementation "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
     implementation "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"

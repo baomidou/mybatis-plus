@@ -667,11 +667,6 @@ class H2UserTest extends BaseTest {
         userService.removeById(h2User, true);
         userService.removeById(h2User, false);
         userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User));
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), true);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), false);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, 3, "3", h2User), 2, true);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User), 2, false);
     }
 
     @Test

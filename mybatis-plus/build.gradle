@@ -1,7 +1,7 @@
 dependencies {
     api project(":mybatis-plus-core")
     api project(":mybatis-plus-annotation")
-    api project(":mybatis-plus-extension")
+    api project(":mybatis-plus-spring")
 
     api "${lib.mybatis}"
     api "${lib.'jsqlparser'}"
