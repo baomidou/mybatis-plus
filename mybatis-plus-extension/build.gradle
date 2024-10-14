@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-compileKotlin{
+compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
@@ -23,4 +23,7 @@ dependencies {
     testImplementation "${lib.h2}"
     testImplementation "${lib.mysql}"
     testImplementation "${lib.'logback-classic'}"
+    testImplementation "${lib."mybatis-spring"}"
+    testImplementation "${lib."spring-context-support"}"
+    testImplementation "${lib."spring-jdbc"}"
 }
