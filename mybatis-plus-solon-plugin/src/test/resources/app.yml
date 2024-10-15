@@ -2,10 +2,9 @@ server:
     port: 6040
 
 # 配置数据源
-dataSource:
-    db1:
-        # 与数据库名可用保持一致
-        schema: test
+solon.dataSources:
+    db1!:
+        class: "com.zaxxer.hikari.HikariDataSource"
         jdbcUrl: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true
         driverClassName: com.mysql.cj.jdbc.Driver
         username: root
