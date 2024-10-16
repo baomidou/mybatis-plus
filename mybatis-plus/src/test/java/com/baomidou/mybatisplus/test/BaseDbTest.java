@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.compatible.CompatibleHelper;
+import com.baomidou.mybatisplus.extension.compatible.SpringCompatibleSet;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
@@ -87,6 +89,9 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
             interceptors.forEach(configuration::addInterceptor);
         }
         sqlSessionFactory = builder.build(configuration);
+
+        // 注入 spring 兼容配置
+        CompatibleHelper.setCompatibleSet(new SpringCompatibleSet());
     }
 
     private DataSource dataSource() {
