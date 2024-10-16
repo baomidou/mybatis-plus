@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.compatible;
 
+import java.util.ServiceLoader;
+
 /**
  * 兼容处理辅助类
  */
@@ -23,12 +25,10 @@ public class CompatibleHelper {
     private static CompatibleSet COMPATIBLE_SET;
 
     public static CompatibleSet getCompatibleSet() {
-        return COMPATIBLE_SET;
-    }
-
-    public static void setCompatibleSet(CompatibleSet compatibleSet) {
         if (null == COMPATIBLE_SET) {
-            COMPATIBLE_SET = compatibleSet;
+            ServiceLoader<CompatibleSet> loader = ServiceLoader.load(CompatibleSet.class);
+            COMPATIBLE_SET = loader.iterator().next();
         }
+        return COMPATIBLE_SET;
     }
 }
