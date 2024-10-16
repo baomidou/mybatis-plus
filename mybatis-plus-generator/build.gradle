@@ -1,5 +1,6 @@
 dependencies {
     implementation project(":mybatis-plus-extension")
+    implementation project(":mybatis-plus-spring")
     implementation "${lib.velocity}"
     implementation "${lib.freemarker}"
     implementation "${lib.beetl}"
