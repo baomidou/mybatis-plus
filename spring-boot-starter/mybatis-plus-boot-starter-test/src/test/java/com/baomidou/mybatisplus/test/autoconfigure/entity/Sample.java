@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.autoconfigure;
+package com.baomidou.mybatisplus.test.autoconfigure.entity;
 
 import lombok.Data;
 

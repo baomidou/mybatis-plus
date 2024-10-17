@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.autoconfigure;
 
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.BootstrapWith;
@@ -65,6 +67,7 @@ import java.lang.annotation.*;
 @AutoConfigureMybatisPlus
 @AutoConfigureTestDatabase
 @ImportAutoConfiguration
+@Import(MybatisPlusInterceptor.class)
 public @interface MybatisPlusTest {
 
     /**

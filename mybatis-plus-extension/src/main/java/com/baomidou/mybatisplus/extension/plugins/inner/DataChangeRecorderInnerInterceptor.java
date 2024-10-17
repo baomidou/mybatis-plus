@@ -134,40 +134,49 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
     private int BATCH_UPDATE_LIMIT = 1000;
     private boolean batchUpdateLimitationOpened = false;
     private final Map<String, Integer> BATCH_UPDATE_LIMIT_MAP = new ConcurrentHashMap<>();//表名->批量更新上限
+    private Connection connection;
 
     @Override
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
-        PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
-        MappedStatement ms = mpSh.mappedStatement();
-        final BoundSql boundSql = mpSh.boundSql();
-        SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
-            PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            OperationResult operationResult;
-            long startTs = System.currentTimeMillis();
-            try {
-                Statement statement = JsqlParserGlobal.parse(mpBs.sql());
-                if (statement instanceof Insert) {
-                    operationResult = processInsert((Insert) statement, mpSh.boundSql());
-                } else if (statement instanceof Update) {
-                    operationResult = processUpdate((Update) statement, ms, boundSql, connection);
-                } else if (statement instanceof Delete) {
-                    operationResult = processDelete((Delete) statement, ms, boundSql, connection);
-                } else {
-                    logger.info("other operation sql={}", mpBs.sql());
+        this.connection = connection;
+        beforeGetBoundSql(sh);
+    }
+
+    @Override
+    public void beforeGetBoundSql(StatementHandler sh) {
+        if(connection != null) {
+            PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
+            MappedStatement ms = mpSh.mappedStatement();
+            final BoundSql boundSql = mpSh.boundSql();
+            SqlCommandType sct = ms.getSqlCommandType();
+            if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+                PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+                OperationResult operationResult;
+                long startTs = System.currentTimeMillis();
+                try {
+                    Statement statement = JsqlParserGlobal.parse(mpBs.sql());
+                    if (statement instanceof Insert) {
+                        operationResult = processInsert((Insert) statement, mpSh.boundSql());
+                    } else if (statement instanceof Update) {
+                        operationResult = processUpdate((Update) statement, ms, boundSql, connection);
+                    } else if (statement instanceof Delete) {
+                        operationResult = processDelete((Delete) statement, ms, boundSql, connection);
+                    } else {
+                        logger.info("other operation sql={}", mpBs.sql());
+                        return;
+                    }
+                } catch (Exception e) {
+                    if (e instanceof DataUpdateLimitationException) {
+                        throw (DataUpdateLimitationException) e;
+                    }
+                    logger.error("Unexpected error for mappedStatement={}, sql={}", ms.getId(), mpBs.sql(), e);
                     return;
                 }
-            } catch (Exception e) {
-                if (e instanceof DataUpdateLimitationException) {
-                    throw (DataUpdateLimitationException) e;
+                long costThis = System.currentTimeMillis() - startTs;
+                if (operationResult != null) {
+                    operationResult.setCost(costThis);
+                    dealOperationResult(operationResult);
                 }
-                logger.error("Unexpected error for mappedStatement={}, sql={}", ms.getId(), mpBs.sql(), e);
-                return;
-            }
-            long costThis = System.currentTimeMillis() - startTs;
-            if (operationResult != null) {
-                operationResult.setCost(costThis);
-                dealOperationResult(operationResult);
             }
         }
     }
