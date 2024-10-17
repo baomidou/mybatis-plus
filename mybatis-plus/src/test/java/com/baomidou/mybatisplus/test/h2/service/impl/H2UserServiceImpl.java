@@ -129,6 +129,16 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
+    public List<H2User> testWrapperSetAliasByParam(Wrapper wrapper) {
+        return baseMapper.testWrapperSetAliasByParam(wrapper);
+    }
+
+    @Override
+    public List<H2User> testMultiWrapperQuery(Wrapper wrapper, Wrapper wrapper2) {
+        return baseMapper.testMultiWrapperQuery(wrapper, wrapper2);
+    }
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void testSaveOrUpdateTransactional1(List<H2User> users) {
         var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);

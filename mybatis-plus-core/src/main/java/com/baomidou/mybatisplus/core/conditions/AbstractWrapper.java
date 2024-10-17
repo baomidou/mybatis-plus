@@ -650,17 +650,17 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     /**
-     * 参数别名设置，初始化时优先设置该值、重复设置异常
+     * 参数别名设置，初始化时优先设置该值
      *
      * @param paramAlias 参数别名
      * @return Children
      */
-    @SuppressWarnings("unused")
     public Children setParamAlias(String paramAlias) {
-        Assert.notEmpty(paramAlias, "paramAlias can not be empty!");
-        Assert.isEmpty(paramNameValuePairs, "Please call this method before working!");
-        Assert.isNull(this.paramAlias, "Please do not call the method repeatedly!");
+        String oldParamAlias = getParamAlias();
         this.paramAlias = new SharedString(paramAlias);
+        if (this.expression != null && !oldParamAlias.equals(paramAlias)) {
+            expression.clearSqlSegmentCache();
+        }
         return typedThis;
     }
 

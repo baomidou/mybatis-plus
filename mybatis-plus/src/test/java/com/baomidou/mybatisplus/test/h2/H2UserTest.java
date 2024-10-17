@@ -487,6 +487,38 @@ class H2UserTest extends BaseTest {
         Assertions.assertEquals(2, h2Users.size());
     }
 
+
+    @Test
+    @Order(33)
+    void testWrapperSetAliasByParam() {
+        // Preparing: select * from h2user WHERE (name LIKE ?)
+        // Parameters: %y%%(String)
+        List<H2User> h2Users = userService.testWrapperSetAliasByParam(new QueryWrapper<H2User>().like("name", "y%"));
+        Assertions.assertEquals(2, h2Users.size());
+    }
+
+    @Test
+    @Order(34)
+    void testMultiWrapperQuery() {
+        // Preparing: select * from h2user a inner join h2user b on a.name=b.name WHERE (a.name LIKE ?) and (b.name = ?)
+        // Parameters: %y%%(String), Jerry(String)
+        QueryWrapper<H2User> leftTable = new QueryWrapper<H2User>() {
+            @Override
+            protected String columnToString(String column) {
+                return "a." + super.columnToString(column);
+            }
+        }.like("name", "y%");
+        System.out.println(leftTable.getCustomSqlSegment());
+        QueryWrapper<H2User> rightTable = new QueryWrapper<H2User>() {
+            @Override
+            protected String columnToString(String column) {
+                return "b." + super.columnToString(column);
+            }
+        }.eq("name", "Jerry");
+        List<H2User> h2Users = userService.testMultiWrapperQuery(leftTable, rightTable);
+        Assertions.assertEquals(1, h2Users.size());
+    }
+
     @Test
     void myQueryWithGroupByOrderBy() {
         userService.mySelectMaps().forEach(System.out::println);

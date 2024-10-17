@@ -73,6 +73,15 @@ public class MergeSegments implements ISqlSegment {
         return sqlSegment;
     }
 
+    public void clearSqlSegmentCache() {
+        sqlSegment = StringPool.EMPTY;
+        cacheSqlSegment = false;
+        normal.clearSqlSegmentCache();
+        groupBy.clearSqlSegmentCache();
+        having.clearSqlSegmentCache();
+        orderBy.clearSqlSegmentCache();
+    }
+
     /**
      * 清理
      *

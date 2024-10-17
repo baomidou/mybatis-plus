@@ -119,4 +119,9 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
         sqlSegment = EMPTY;
         cacheSqlSegment = true;
     }
+
+    public void clearSqlSegmentCache() {
+        sqlSegment = EMPTY;
+        cacheSqlSegment = false;
+    }
 }
