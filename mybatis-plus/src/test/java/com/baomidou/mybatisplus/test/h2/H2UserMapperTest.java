@@ -500,6 +500,8 @@ class H2UserMapperTest extends BaseTest {
         Page<H2User> page = new Page<>();
         userMapper.testPage1(new H2User(), page);
         userMapper.testPage2(page, new H2User());
+        Map<String, Object> map = Map.of("pageable", page, "name", "mybatis-plus");
+        userMapper.testPage3(map);
     }
 
     @Test
