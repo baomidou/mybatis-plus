@@ -1,6 +1,5 @@
 dependencies {
     api project(":mybatis-plus-annotation")
-    api "${lib.'jsqlparser'}"
     api "${lib.mybatis}"
 
     implementation "${lib.cglib}"

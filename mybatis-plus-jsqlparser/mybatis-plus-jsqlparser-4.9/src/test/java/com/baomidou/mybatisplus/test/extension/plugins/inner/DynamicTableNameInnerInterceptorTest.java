@@ -1,7 +1,6 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
-import org.intellij.lang.annotations.Language;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +23,6 @@ class DynamicTableNameInnerInterceptorTest {
         interceptor.setTableNameHandler((sql, tableName) -> tableName + "_r");
 
         // 表名相互包含
-        @Language("SQL")
         String origin = "SELECT * FROM t_user, t_user_role";
         assertEquals("SELECT * FROM t_user_r, t_user_role_r", interceptor.changeTable(origin));
 

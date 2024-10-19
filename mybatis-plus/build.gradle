@@ -28,5 +28,6 @@ dependencies {
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.cglib}"
     testImplementation "${lib.postgresql}"
+    testImplementation project(":mybatis-plus-jsqlparser:mybatis-plus-jsqlparser-5.0")
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
 }

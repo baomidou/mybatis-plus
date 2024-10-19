@@ -1,0 +1,1 @@
+tasks.matching {it.group == 'publishing' || it.group == 'central publish' }.each { it.enabled = false }

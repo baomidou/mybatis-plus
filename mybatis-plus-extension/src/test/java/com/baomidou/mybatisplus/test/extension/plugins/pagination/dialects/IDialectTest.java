@@ -2,11 +2,11 @@ package com.baomidou.mybatisplus.test.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,9 @@ class IDialectTest {
             DialectModel model = o.buildPaginationSql("select * from table", 1, 10);
             String sql = model.getDialectSql();
             if (!map.containsKey(sql)) {
-                map.put(sql, Lists.newArrayList(i));
+                ArrayList<Class<?>> list = new ArrayList<>();
+                list.add(i);
+                map.put(sql,list);
             } else {
                 map.get(sql).add(i);
             }

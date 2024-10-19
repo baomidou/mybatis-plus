@@ -47,9 +47,6 @@ class GeneratePomTest {
             Dependency mybatis = dependenciesMap.get("mybatis");
             Assertions.assertEquals("compile", mybatis.getScope());
             Assertions.assertFalse(mybatis.isOptional());
-            Dependency jsqlParser = dependenciesMap.get("jsqlparser");
-            Assertions.assertEquals("compile", jsqlParser.getScope());
-            Assertions.assertFalse(jsqlParser.isOptional());
             Dependency cglib = dependenciesMap.get("cglib");
             Assertions.assertEquals("compile", cglib.getScope());
             Assertions.assertTrue(cglib.isOptional());

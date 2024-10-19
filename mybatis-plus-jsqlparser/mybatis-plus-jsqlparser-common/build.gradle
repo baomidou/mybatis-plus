@@ -1,0 +1,6 @@
+dependencies {
+    api project(":mybatis-plus-extension")
+    implementation "${lib."slf4j-api"}"
+}
+
+compileJava.dependsOn(processResources)
