@@ -73,7 +73,6 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.OracleNamedFunctionParameter.class);
         conf.registerClass(net.sf.jsqlparser.expression.OrderByClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.OverlapsCondition.class);
-        conf.registerClass(net.sf.jsqlparser.expression.Parenthesis.class);
         conf.registerClass(net.sf.jsqlparser.expression.PartitionByClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.RangeExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.RowConstructor.class);

@@ -4,7 +4,6 @@ dependencies {
     api project(":mybatis-plus-spring")
 
     api "${lib.mybatis}"
-    api "${lib.'jsqlparser'}"
 
     implementation "${lib."mybatis-spring"}"
 
@@ -28,6 +27,6 @@ dependencies {
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.cglib}"
     testImplementation "${lib.postgresql}"
-    testImplementation project(":mybatis-plus-jsqlparser:mybatis-plus-jsqlparser-5.0")
+    testImplementation project(":mybatis-plus-jsqlparser:mybatis-plus-jsqlparser")
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
 }

@@ -1,8 +1,12 @@
+compileJava {
+    options.release = 11
+}
+
 dependencies {
-    api "${lib.'jsqlparser'}"
+    api "com.github.jsqlparser:jsqlparser:5.0"
     api project(":mybatis-plus-jsqlparser:mybatis-plus-jsqlparser-common")
     implementation "${lib."slf4j-api"}"
-    implementation "de.ruedigermoeller:fst:3.0.4-jdk17"
+    implementation "de.ruedigermoeller:fst:3.0.3"
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     testImplementation "io.github.classgraph:classgraph:4.8.176"
     testImplementation "${lib."spring-context-support"}"
