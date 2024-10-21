@@ -16,7 +16,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.3.2',
         springVersion = '5.3.39',
         springBootVersion = '2.7.18',
-        springBoot3Version = '3.3.3',
+        springBoot3Version = '3.3.4',
         springCloudVersion = '3.1.8',
         junitVersion = '5.11.0',
     ]
@@ -63,7 +63,7 @@ ext {
         //cache
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.2.0",
         //code generator
-        "velocity"            : "org.apache.velocity:velocity-engine-core:2.3",
+        "velocity"            : "org.apache.velocity:velocity-engine-core:2.4",
         "freemarker"          : "org.freemarker:freemarker:2.3.33",
         "beetl"               : "com.ibeetl:beetl:3.17.0.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
