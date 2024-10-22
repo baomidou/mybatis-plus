@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author miemie
  * @since 2020-06-23
@@ -19,15 +21,17 @@ public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
     @Test
     void replace() {
         doTest(i -> {
-            i.selectAll();
-            i.selectAll2();
+            System.out.println(i.selectAll());
+            List<Entity> list = i.selectAll2();
+            System.out.println(list);
+            assertThat(list.getFirst().getEs().getName()).isNotBlank();
         });
     }
 
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new ReplacePlaceholderInnerInterceptor());
+        interceptor.addInnerInterceptor(new ReplacePlaceholderInnerInterceptor("\""));
         return Collections.singletonList(interceptor);
     }
 
@@ -41,14 +45,25 @@ public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');";
+        return "insert into entity(id,name) values(1,'1'),(2,'2');" +
+            "insert into entity_sub(id,name) values(1,'1'),(2,'2');";
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
+        return Arrays.asList("drop table if exists entity","drop table if exists entity_sub",
+            "CREATE TABLE IF NOT EXISTS entity (" +
             "id BIGINT NOT NULL," +
             "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+            "PRIMARY KEY (id))",
+            "CREATE TABLE IF NOT EXISTS entity_sub (" +
+                "id BIGINT NOT NULL," +
+                "name VARCHAR(30) NULL DEFAULT NULL," +
+                "PRIMARY KEY (id))");
+    }
+
+    @Override
+    protected List<Class<?>> otherMapper() {
+        return List.of(EntitySubMapper.class);
     }
 }

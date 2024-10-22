@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.replaceplaceholder;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,5 +15,15 @@ public class Entity implements Serializable {
 
     private Long id;
 
+    @TableField("`name`")
     private String name;
+
+    @TableField(exist = false)
+    private EntitySub es;
+
+    @Data
+    public static class EntitySub {
+        private Long id;
+        private String name;
+    }
 }

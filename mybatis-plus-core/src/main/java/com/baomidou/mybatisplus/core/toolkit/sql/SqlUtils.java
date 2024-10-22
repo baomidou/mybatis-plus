@@ -90,6 +90,7 @@ public abstract class SqlUtils implements Constants {
         return sql;
     }
 
+    @SuppressWarnings("all")
     public static String getSelectBody(String tableName, String alisa, String asAlisa, String escapeSymbol) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
         Assert.notNull(tableInfo, "can not find TableInfo Cache by \"%s\"", tableName);
@@ -108,14 +109,17 @@ public abstract class SqlUtils implements Constants {
             final String sa = alisa.concat(DOT);
             if (asA) {
                 int as = body.indexOf(AS);
+                String column;
+                String property;
                 if (as < 0) {
-                    sb.append(sa).append(body).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(body), escapeSymbol));
+                    column = body;
+                    property = StringUtils.getTargetColumn(body);
                 } else {
-                    String column = body.substring(0, as);
-                    String property = body.substring(as + 4);
+                    column = body.substring(0, as);
+                    property = body.substring(as + 4);
                     property = StringUtils.getTargetColumn(property);
-                    sb.append(sa).append(column).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(property), escapeSymbol));
                 }
+                sb.append(sa).append(column).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(property), escapeSymbol));
             } else {
                 sb.append(sa).append(body);
             }
