@@ -18,6 +18,8 @@ public class Entity implements Serializable {
     @TableField("`name`")
     private String name;
 
+    private Integer age;
+
     @TableField(exist = false)
     private EntitySub es;
 

@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +37,8 @@ import java.util.regex.Pattern;
  * @since 2016-11-13
  */
 public abstract class SqlUtils implements Constants {
-
-    private static final Pattern pattern = Pattern.compile("\\{@((\\w+?)|(\\w+?:\\w+?)|(\\w+?:\\w+?:\\w+?))}");
+    private static final String tp = "[\\w-,]+?";
+    private static final Pattern pattern = Pattern.compile(String.format("\\{@((%s)|(%s:\\w+?)|(%s:\\w+?:\\w+?))}", tp, tp, tp));
 
     /**
      * 用%连接like
@@ -92,9 +93,15 @@ public abstract class SqlUtils implements Constants {
 
     @SuppressWarnings("all")
     public static String getSelectBody(String tableName, String alisa, String asAlisa, String escapeSymbol) {
+        int notSel = tableName.indexOf("-");
+        List<String> notSelColl = null;
+        if (notSel > 0) {
+            notSelColl = Arrays.asList(tableName.substring(notSel + 1).split(COMMA));
+            tableName = tableName.substring(0, notSel);
+        }
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
         Assert.notNull(tableInfo, "can not find TableInfo Cache by \"%s\"", tableName);
-        String s = tableInfo.chooseSelect(TableFieldInfo::isSelect);
+        String s = tableInfo.chooseSelect(TableFieldInfo::isSelect, notSelColl);
         if (alisa == null) {
             return s;
         }

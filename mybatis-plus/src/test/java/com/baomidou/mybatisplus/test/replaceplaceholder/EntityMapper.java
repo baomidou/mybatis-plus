@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface EntityMapper extends BaseMapper<Entity> {
 
-    @Select("select {@entity} from entity")
+    @Select("select {@entity-name,id} from entity")
     List<Entity> selectAll();
 
-    @Select("select {@entity:e:es} from entity e")
+    @Select("select {@entity:e},{@entity_sub-id:es:es} from entity e left join entity_sub es on e.id = es.id")
     List<Entity> selectAll2();
 }

@@ -14,8 +14,9 @@ class SqlUtilsTest {
 
     @Test
     void m1() {
-        List<String> list = SqlUtils.findPlaceholder("select {@table},{@table:t},{@table:t:r} from table");
-        assertThat(list).contains("{@table}", "{@table:t}", "{@table:t:r}");
+        List<String> list = SqlUtils.findPlaceholder("select {@table},{@table-id,name},{@table:t},{@table-id,name:t}," +
+            "{@table:t:r},{@table-id,name:t:r}, from table");
+        assertThat(list).contains("{@table}", "{@table-id,name}", "{@table:t}", "{@table-id,name:t}", "{@table:t:r}", "{@table-id,name:t:r}");
     }
 
     @Test

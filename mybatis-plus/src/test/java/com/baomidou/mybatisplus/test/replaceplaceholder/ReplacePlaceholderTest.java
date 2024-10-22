@@ -21,9 +21,14 @@ public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
     @Test
     void replace() {
         doTest(i -> {
-            System.out.println(i.selectAll());
-            List<Entity> list = i.selectAll2();
+            List<Entity> list = i.selectAll();
             System.out.println(list);
+            assertThat(list.getFirst().getId()).isNull();
+            assertThat(list.getFirst().getName()).isNull();
+            assertThat(list.getFirst().getAge()).isNotNull();
+            list = i.selectAll2();
+            System.out.println(list);
+            assertThat(list.getFirst().getEs().getId()).isNull();
             assertThat(list.getFirst().getEs().getName()).isNotBlank();
         });
     }
@@ -45,17 +50,18 @@ public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');" +
+        return "insert into entity(id,name,age) values(1,'1',1),(2,'2',2);" +
             "insert into entity_sub(id,name) values(1,'1'),(2,'2');";
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity","drop table if exists entity_sub",
+        return Arrays.asList("drop table if exists entity", "drop table if exists entity_sub",
             "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))",
+                "id BIGINT NOT NULL," +
+                "name VARCHAR(30) NULL DEFAULT NULL," +
+                "age int NULL DEFAULT NULL," +
+                "PRIMARY KEY (id))",
             "CREATE TABLE IF NOT EXISTS entity_sub (" +
                 "id BIGINT NOT NULL," +
                 "name VARCHAR(30) NULL DEFAULT NULL," +

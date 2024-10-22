@@ -30,11 +30,7 @@ import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -270,6 +266,26 @@ public class TableInfo implements Constants {
             return fieldsSqlSelect;
         }
         return sqlSelect;
+    }
+
+    /**
+     * 获取需要进行查询的 select sql 片段
+     *
+     * @param predicate 过滤条件
+     * @return sql 片段
+     */
+    public String chooseSelect(Predicate<TableFieldInfo> predicate, List<String> noSelectProperty) {
+        if (CollectionUtils.isEmpty(noSelectProperty)) {
+            return chooseSelect(predicate);
+        }
+        String fieldsSqlSelect = fieldList.stream().filter(predicate)
+            .filter(i -> !noSelectProperty.contains(i.getProperty()))
+            .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
+        if (!havePK() || noSelectProperty.contains(keyProperty)) {
+            return fieldsSqlSelect;
+        } else {
+            return getKeySqlSelect() + COMMA + fieldsSqlSelect;
+        }
     }
 
     /**
