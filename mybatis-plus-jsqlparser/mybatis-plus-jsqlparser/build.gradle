@@ -8,7 +8,7 @@ dependencies {
     implementation "${lib."slf4j-api"}"
     implementation "de.ruedigermoeller:fst:3.0.3"
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
-    testImplementation "io.github.classgraph:classgraph:4.8.176"
+    testImplementation "io.github.classgraph:classgraph:4.8.177"
     testImplementation "${lib."spring-context-support"}"
     testImplementation "${lib.h2}"
     testImplementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
