@@ -46,6 +46,10 @@ public interface IH2UserService extends IService<H2User> {
 
     List<H2User> testCustomSqlSegment(Wrapper wrapper);
 
+    List<H2User> testWrapperSetAliasByParam(Wrapper wrapper);
+
+    List<H2User> testMultiWrapperQuery(Wrapper wrapper, Wrapper wrapper2);
+
     void testSaveOrUpdateTransactional1(List<H2User> users);
 
     void testSaveOrUpdateTransactional2(List<H2User> users);
