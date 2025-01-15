@@ -99,7 +99,7 @@ public class JdbcUtils {
             return DbType.GBASE;
         } else if (url.contains(":gbasedbt-sqli:") || url.contains(":informix-sqli:")) {
             return DbType.GBASE_8S;
-        } else if (url.contains(":gbase8s-pg:")){
+        } else if (url.contains(":gbase8s-pg:")) {
             return DbType.GBASE8S_PG;
         } else if (url.contains(":gbase8c:")) {
             return DbType.GBASE_8C;
@@ -149,8 +149,10 @@ public class JdbcUtils {
             return DbType.VASTBASE;
         } else if (url.contains(":goldendb:")) {
             return DbType.GOLDENDB;
-        } else if (url.contains(":duckdb:")){
+        } else if (url.contains(":duckdb:")) {
             return DbType.DUCKDB;
+        } else if (url.contains(":yasdb:")) {
+            return DbType.YashanDB;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;

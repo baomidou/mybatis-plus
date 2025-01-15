@@ -223,6 +223,10 @@ public enum DbType {
      */
     DUCKDB("duckdb", "duckdb数据库"),
     /**
+     * YashanDB
+     */
+    YashanDB("yashandb", "崖山数据库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
@@ -260,7 +264,8 @@ public enum DbType {
             || this == DbType.OCEAN_BASE
             || this == DbType.CUBRID
             || this == DbType.SUNDB
-            || this == DbType.GOLDENDB;
+            || this == DbType.GOLDENDB
+            || this == DbType.YashanDB;
     }
 
     public boolean oracleSameType() {
