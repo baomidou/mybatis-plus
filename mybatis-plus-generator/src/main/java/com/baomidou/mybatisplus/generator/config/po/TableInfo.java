@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
 import com.baomidou.mybatisplus.generator.config.builder.Service;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -42,11 +44,13 @@ public class TableInfo {
     /**
      * 策略配置
      */
+    @Getter
     private final StrategyConfig strategyConfig;
 
     /**
      * 全局配置信息
      */
+    @Getter
     private final GlobalConfig globalConfig;
 
     /**
@@ -135,6 +139,30 @@ public class TableInfo {
     private final Entity entity;
 
     /**
+     * 索引信息
+     *
+     * @since 3.5.10
+     */
+    @Setter
+    @Getter
+    private List<DatabaseMetaDataWrapper.Index> indexList;
+
+    /**
+     * 字段信息
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private final Map<String, TableField> tableFieldMap = new HashMap<>();
+
+    /**
+     * @since 3.5.10
+     */
+    @Getter
+    @Setter
+    private String schemaName;
+
+    /**
      * 构造方法
      *
      * @param configBuilder 配置构建
@@ -184,7 +212,9 @@ public class TableInfo {
         if (entity.matchIgnoreColumns(field.getColumnName())) {
             // 忽略字段不在处理
             return;
-        } else if (entity.matchSuperEntityColumns(field.getColumnName())) {
+        }
+        tableFieldMap.put(field.getName(), field);
+        if (entity.matchSuperEntityColumns(field.getColumnName())) {
             this.commonFields.add(field);
         } else {
             this.fields.add(field);
@@ -293,8 +323,8 @@ public class TableInfo {
     }
 
     public TableInfo setComment(String comment) {
-        //TODO 暂时挪动到这
-        this.comment = this.globalConfig.isSwagger()
+        //TODO 待重构此处
+        this.comment = (this.globalConfig.isSwagger() || this.globalConfig.isSpringdoc())
             && StringUtils.isNotBlank(comment) ? comment.replace("\"", "\\\"") : comment;
         return this;
     }

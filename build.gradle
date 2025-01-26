@@ -11,19 +11,19 @@ ext {
     ]
 
     libraries = [
-        mybatisVersion = '3.5.16',
+        mybatisVersion = '3.5.19',
         mybatisSpringVersion = '2.1.2',
         mybatisSpringBootStarterVersion = '2.3.2',
         springVersion = '5.3.39',
         springBootVersion = '2.7.18',
-        springBoot3Version = '3.3.4',
+        springBoot3Version = '3.4.1',
         springCloudVersion = '3.1.8',
         junitVersion = '5.11.0',
     ]
 
     lib = [
-        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.0.20",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.20",
+        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.4",
@@ -47,7 +47,7 @@ ext {
         "assertj-core"               : "org.assertj:assertj-core:3.26.3",
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.53",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.17.2",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.17.3",
         "gson"                       : "com.google.code.gson:gson:2.11.0",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
         //datasource
@@ -63,12 +63,12 @@ ext {
         //cache
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.2.0",
         //code generator
-        "velocity"            : "org.apache.velocity:velocity-engine-core:2.4",
+        "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
         "freemarker"          : "org.freemarker:freemarker:2.3.33",
         "beetl"               : "com.ibeetl:beetl:3.17.0.RELEASE",
         "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
         "enjoy"               : "com.jfinal:enjoy:5.2.2",
-        "logback-classic"     : "ch.qos.logback:logback-classic:1.5.8",
+        "logback-classic"     : "ch.qos.logback:logback-classic:1.5.15",
     ]
 }
 

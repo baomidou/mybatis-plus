@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,10 +124,25 @@ public class PackageConfig {
      * 获取包配置信息
      *
      * @return 包配置信息
+     * @see #getPackageInfo(InjectionConfig)
      * @since 3.5.0
+     * @deprecated 3.5.10
      */
     @NotNull
+    @Deprecated
     public Map<String, String> getPackageInfo() {
+        return getPackageInfo((InjectionConfig) null);
+    }
+
+    /**
+     * 获取包配置信息
+     *
+     * @param injectionConfig 配置文件信息
+     * @return 包配置信息
+     * @since 3.5.10
+     */
+    @NotNull
+    public Map<String, String> getPackageInfo(InjectionConfig injectionConfig) {
         if (packageInfo.isEmpty()) {
             packageInfo.put(ConstVal.MODULE_NAME, this.getModuleName());
             packageInfo.put(ConstVal.ENTITY, this.joinPackage(this.getEntity()));
@@ -135,6 +152,20 @@ public class PackageConfig {
             packageInfo.put(ConstVal.SERVICE_IMPL, this.joinPackage(this.getServiceImpl()));
             packageInfo.put(ConstVal.CONTROLLER, this.joinPackage(this.getController()));
             packageInfo.put(ConstVal.PARENT, this.getParent());
+            if (injectionConfig != null) {
+                List<CustomFile> customFiles = injectionConfig.getCustomFiles();
+                for (CustomFile customFile : customFiles) {
+                    if (StringUtils.isNotBlank(customFile.getPackageName())) {
+                        String name = customFile.getShortName();
+                        if (StringUtils.isNotBlank(this.parent)
+                            && customFile.getPackageName().startsWith(this.parent)) {
+                            packageInfo.put(name, customFile.getPackageName());
+                        } else {
+                            packageInfo.put(name, this.joinPackage(customFile.getPackageName()));
+                        }
+                    }
+                }
+            }
         }
         return Collections.unmodifiableMap(this.packageInfo);
     }
@@ -144,10 +175,22 @@ public class PackageConfig {
      *
      * @param module 模块
      * @return 配置信息
+     * @see #getPackageInfo(InjectionConfig, String)
      * @since 3.5.0
      */
+    @Deprecated
     public String getPackageInfo(String module) {
         return getPackageInfo().get(module);
+    }
+
+    /**
+     * @since 3.5.10
+     * @param injectionConfig 注入配置
+     * @param module 模块
+     * @return 配置信息
+     */
+    public String getPackageInfo(InjectionConfig injectionConfig, String module) {
+        return getPackageInfo(injectionConfig).get(module);
     }
 
     /**

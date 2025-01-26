@@ -167,7 +167,7 @@ class TableInfoHelperTest {
 
     @Data
     @EqualsAndHashCode(callSuper = true)
-    @TableName(properties = {"id", "name"}, excludeProperty = {"id", "name"})
+    @TableName(properties = {"id", "name"}, excludeProperty = {"sex", "test"})
     private static class ModelFour2 extends BaseModel {
 
         private String sex;

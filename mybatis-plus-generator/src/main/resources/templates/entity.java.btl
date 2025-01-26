@@ -1,20 +1,7 @@
 package ${package.Entity};
 
-<% for(pkg in table.importPackages){ %>
+<% for(pkg in importEntityPackages){ %>
 import ${pkg};
-<% } %>
-<% if(springdoc){ %>
-import io.swagger.v3.oas.annotations.media.Schema;
-<% }else if(swagger){ %>
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-<% } %>
-<% if(entityLombokModel){ %>
-import lombok.Getter;
-import lombok.Setter;
-<% if(chainModel){ %>
-import lombok.experimental.Accessors;
-<% } %>
 <% } %>
 
 /**
@@ -25,20 +12,8 @@ import lombok.experimental.Accessors;
  * @author ${author}
  * @since ${date}
  */
-<% if(entityLombokModel){ %>
-@Getter
-@Setter
-    <% if(chainModel){ %>
-@Accessors(chain = true)
-    <% } %>
-<% } %>
-<% if(table.convert){ %>
-@TableName("${schemaName}${table.name}")
-<% } %>
-<% if(springdoc){ %>
-@Schema(name = "${entity}", description = "${table.comment!''}")
-<% }else if(swagger){ %>
-@ApiModel(value = "${entity}对象", description = "${table.comment!''}")
+<% for(an in entityClassAnnotations){ %>
+${an.displayName}
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
 public class ${entity} extends ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
@@ -56,57 +31,21 @@ public class ${entity} {
 <% var keyPropertyName; %>
 <% /** -----------BEGIN 字段循环遍历----------- **/ %>
 <% for(field in table.fields){ %>
+
     <%
     if(field.keyFlag){
         keyPropertyName = field.propertyName;
     }
     %>
     <% if(isNotEmpty(field.comment)){ %>
-
-        <% if(springdoc){ %>
-    @Schema(description = "${field.comment}")
-        <% }else if(swagger){ %>
-    @ApiModelProperty(value = "${field.comment}")
-        <% }else{ %>
+        <% if(entityFieldUseJavaDoc){ %>
     /**
      * ${field.comment}
      */
         <% } %>
     <% } %>
-    <% if(field.keyFlag){ %>
-    <%
-    /*主键*/
-    %>
-        <% if(field.keyIdentityFlag){ %>
-    @TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
-        <% }else if(isNotEmpty(idType)){ %>
-    @TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
-        <% }else if(field.convert){ %>
-    @TableId("${field.annotationColumnName}")
-         <% } %>
-    <%
-    /*普通字段*/
-    %>
-    <% }else if(isNotEmpty(field.fill)){ %>
-        <% if(field.convert){ %>
-    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
-        <% }else{ %>
-    @TableField(fill = FieldFill.${field.fill})
-        <% } %>
-    <% }else if(field.convert){ %>
-    @TableField("${field.annotationColumnName}")
-    <% } %>
-    <%
-    /*乐观锁注解*/
-    %>
-    <% if(field.versionField){ %>
-    @Version
-    <% } %>
-    <%
-    /*逻辑删除注解*/
-    %>
-    <% if(field.logicDeleteField){ %>
-    @TableLogic
+    <% for(an in field.annotationAttributesList){ %>
+    ${an.displayName}
     <% } %>
     private ${field.propertyType} ${field.propertyName};
 <% } %>
@@ -155,7 +94,7 @@ public class ${entity} {
     <% } %>
     }
 <% } %>
-<% if(!entityLombokModel){ %>
+<% if(!entityLombokModel && entityToString){ %>
 
     @Override
     public String toString() {

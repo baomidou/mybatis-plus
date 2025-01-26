@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -59,7 +58,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
     private TenantLineHandler tenantLineHandler;
 
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
             return;
         }
@@ -85,10 +84,10 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
     protected void processSelect(Select select, int index, String sql, Object obj) {
         final String whereSegment = (String) obj;
         processSelectBody(select, whereSegment);
-        List<WithItem> withItemsList = select.getWithItemsList();
+        List<WithItem<?>> withItemsList = select.getWithItemsList();
         if (!CollectionUtils.isEmpty(withItemsList)) {
             for (WithItem withItem : withItemsList) {
-                processSelectBody(withItem, whereSegment);
+                processSelectBody(withItem.getSelect(), whereSegment);
             }
         }
     }

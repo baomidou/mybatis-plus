@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,6 @@ package com.baomidou.mybatisplus.annotation;
  * @since 2016-09-09
  */
 public enum FieldStrategy {
-    /**
-     * 忽略判断
-     *
-     * @deprecated 3.5.3.2 该字段存在语义理解问题效果等于{@link #ALWAYS}
-     */
-    @Deprecated
-    IGNORED,
     /**
      * 任何时候都加入 SQL
      */

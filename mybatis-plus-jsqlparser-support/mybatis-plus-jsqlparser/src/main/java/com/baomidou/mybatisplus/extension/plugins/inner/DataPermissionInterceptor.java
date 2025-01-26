@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,10 +96,10 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
             // 参照 com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor.processSelect 做的修改
             final String whereSegment = (String) obj;
             processSelectBody(select, whereSegment);
-            List<WithItem> withItemsList = select.getWithItemsList();
+            List<WithItem<?>> withItemsList = select.getWithItemsList();
             if (!CollectionUtils.isEmpty(withItemsList)) {
                 for (WithItem withItem : withItemsList) {
-                    processSelectBody(withItem, whereSegment);
+                    processSelectBody(withItem.getSelect(), whereSegment);
                 }
             }
         } else {

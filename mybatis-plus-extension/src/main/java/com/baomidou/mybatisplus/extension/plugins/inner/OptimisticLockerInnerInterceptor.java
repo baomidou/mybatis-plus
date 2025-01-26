@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.Setter;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.lang.reflect.Field;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -71,26 +71,30 @@ import java.util.regex.Pattern;
  */
 @SuppressWarnings({"unchecked"})
 public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
-    private RuntimeException exception;
 
-    public void setException(RuntimeException exception) {
-        this.exception = exception;
-    }
+    /**
+     * 自定义异常处理
+     */
+    @Setter
+    private RuntimeException exception;
 
     /**
      * entity类缓存
      */
     private static final Map<String, Class<?>> ENTITY_CLASS_CACHE = new ConcurrentHashMap<>();
+
     /**
      * 变量占位符正则
      */
     private static final Pattern PARAM_PAIRS_RE = Pattern.compile("#\\{ew\\.paramNameValuePairs\\.(" + Constants.WRAPPER_PARAM + "\\d+)\\}");
+
     /**
      * paramNameValuePairs存放的version值的key
      */
     private static final String UPDATED_VERSION_VAL_KEY = "#updatedVersionVal#";
+
     /**
-     * Support wrapper mode
+     * Support wrapper mode (update(LambdaUpdateWrapper) or update(UpdateWrapper))
      */
     private final boolean wrapperMode;
 
@@ -103,7 +107,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
     }
 
     @Override
-    public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+    public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) {
         if (SqlCommandType.UPDATE != ms.getSqlCommandType()) {
             return;
         }
@@ -130,9 +134,6 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                 Object originalVersionVal = versionField.get(et);
                 if (originalVersionVal == null) {
                     if (null != exception) {
-                        /**
-                         * 自定义异常处理
-                         */
                         throw exception;
                     }
                     return;
@@ -157,10 +158,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
             } catch (IllegalAccessException e) {
                 throw ExceptionUtils.mpe(e);
             }
-        }
-
-        // update(LambdaUpdateWrapper) or update(UpdateWrapper)
-        else if (wrapperMode && map.entrySet().stream().anyMatch(t -> Objects.equals(t.getKey(), Constants.WRAPPER))) {
+        } else if (wrapperMode && map.containsKey(Constants.WRAPPER)) {
             setVersionByWrapper(map, msId);
         }
     }
@@ -221,7 +219,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
             INIT,
             FIELD_FOUND,
             EQ_FOUND,
-            VERSION_VALUE_PRESENT;
+            VERSION_VALUE_PRESENT
 
         }
 

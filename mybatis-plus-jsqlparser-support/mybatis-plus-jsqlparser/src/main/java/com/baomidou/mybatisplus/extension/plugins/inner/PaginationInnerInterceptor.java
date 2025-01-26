@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -391,10 +391,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 List<OrderByElement> orderByElementsReturn = addOrderByElements(orderList, orderByElements);
                 setOperationList.setOrderByElements(orderByElementsReturn);
                 return setOperationList.toString();
-            } else if (selectBody instanceof WithItem) {
-                // todo: don't known how to resole
-                return originalSql;
-            } else {
+            }  else {
                 return originalSql;
             }
         } catch (JSQLParserException e) {

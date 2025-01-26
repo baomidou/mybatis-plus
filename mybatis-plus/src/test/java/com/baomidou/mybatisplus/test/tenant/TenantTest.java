@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.test.tenant;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
@@ -9,6 +11,7 @@ import com.baomidou.mybatisplus.test.BaseDbTest;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -81,6 +84,56 @@ public class TenantTest extends BaseDbTest<EntityMapper> {
         doTest(m -> {
             Page<Entity> page = m.selectPage(new Page<>(), null);
             assertThat(page.getTotal()).as("count 正常").isEqualTo(0);
+        });
+
+        doTest(m -> {
+            Entity entity = new Entity().setName("秋秋").setTenantId(2);
+            m.insert(entity);
+            Assertions.assertNull(m.selectById(entity.getId()));
+            Assertions.assertNotNull(m.selectByIdWithIgnore(entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore2(entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore3(entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore4(entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore5(entity.getId()));
+
+            Assertions.assertNotNull(m.selectByIdWithIgnore6(IgnoreStrategy.builder().tenantLine(true).build(), entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore6(IgnoreStrategy.builder().tenantLine(false).build(), entity.getId()));
+            Assertions.assertNotNull(m.selectByIdWithIgnore7(IgnoreStrategy.builder().tenantLine(true).build(), entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore7(IgnoreStrategy.builder().tenantLine(false).build(), entity.getId()));
+            Assertions.assertNotNull(m.selectByIdWithIgnore8(IgnoreStrategy.builder().tenantLine(true).build(), entity.getId()));
+            Assertions.assertNull(m.selectByIdWithIgnore8(IgnoreStrategy.builder().tenantLine(false).build(), entity.getId()));
+
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(),()->m.selectByIdWithIgnore(entity.getId())));
+            Assertions.assertNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(false).build(),()->m.selectByIdWithIgnore(entity.getId())));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(),()->m.selectByIdWithIgnore2(entity.getId())));
+            Assertions.assertNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(false).build(),()->m.selectByIdWithIgnore2(entity.getId())));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(),()->m.selectByIdWithIgnore3(entity.getId())));
+            Assertions.assertNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(false).build(),()->m.selectByIdWithIgnore3(entity.getId())));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(),()->m.selectByIdWithIgnore4(entity.getId())));
+            Assertions.assertNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(false).build(),()->m.selectByIdWithIgnore4(entity.getId())));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(),()->m.selectByIdWithIgnore5(entity.getId())));
+            Assertions.assertNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(false).build(),()->m.selectByIdWithIgnore5(entity.getId())));
+            Assertions.assertEquals(0, m.deleteById(entity.getId()));
+            Assertions.assertEquals(1, m.deleteByIdWithIgnore(entity.getId()));
+        });
+
+        doTest(m -> {
+            Entity entity = new Entity().setName("秋秋").setTenantId(2);
+            m.insert(entity);
+            Assertions.assertNull(m.selectById(entity.getId()));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(), () -> m.selectById(entity.getId())));
+            Assertions.assertEquals(0, m.deleteById(entity.getId()));
+            Assertions.assertEquals(1, InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(), () -> m.deleteById(entity.getId())));
+        });
+
+        doTest(m -> {
+            Entity entity = new Entity().setName("秋秋").setTenantId(2);
+            m.insert(entity);
+            Assertions.assertNull(m.selectById(entity.getId()));
+            InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(), () -> {
+                Assertions.assertNotNull(m.selectById(entity.getId()));
+                Assertions.assertEquals(1, m.deleteById(entity.getId()));
+            });
         });
     }
 

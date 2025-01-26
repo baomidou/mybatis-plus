@@ -8,7 +8,7 @@ buildscript {
 
     dependencies {
         //noinspection DifferentKotlinGradleVersion
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.20"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.0"
         classpath "io.freefair.gradle:lombok-plugin:8.10"
         classpath "tech.yanand.maven-central-publish:tech.yanand.maven-central-publish.gradle.plugin:1.1.0"
     }
@@ -33,3 +33,4 @@ include 'mybatis-plus-jsqlparser-support'
 include ':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser'
 include ':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common'
 include ':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-4.9'
+include ':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-5.0'

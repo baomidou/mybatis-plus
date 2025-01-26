@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author miemie
@@ -48,8 +49,9 @@ public abstract class InterceptorIgnoreHelper {
      * InterceptorIgnoreHelper.handle(IgnoreStrategy.builder().tenantLine(true).build());
      * </p>
      * <p>
-     * 注意，需要手动关闭调用方法 InterceptorIgnoreHelper.clearIgnoreStrategy();
+     * 注意，需要手动关闭调用方法 {@link #clearIgnoreStrategy()}
      * </p>
+     * <p>简化操作可请使用{@link #execute(IgnoreStrategy, Supplier)}</p>
      *
      * @param ignoreStrategy {@link IgnoreStrategy}
      */
@@ -62,6 +64,16 @@ public abstract class InterceptorIgnoreHelper {
      */
     public static void clearIgnoreStrategy() {
         IGNORE_STRATEGY_LOCAL.remove();
+    }
+
+    /**
+     * 判断当前线程是否有忽略策略
+     *
+     * @return 是否有忽略策略
+     * @since 3.5.10
+     */
+    public static boolean hasIgnoreStrategy() {
+        return IGNORE_STRATEGY_LOCAL.get() != null;
     }
 
     /**
@@ -80,6 +92,83 @@ public abstract class InterceptorIgnoreHelper {
             return cache;
         }
         return null;
+    }
+
+    /**
+     * 获取忽略策略缓存信息
+     *
+     * @param key key
+     * @return 策略信息
+     * @since 3.5.10
+     */
+    public static IgnoreStrategy getIgnoreStrategy(String key) {
+        return IGNORE_STRATEGY_CACHE.get(key);
+    }
+
+    /**
+     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高)
+     * 方法执行完成后后释放掉当前线程上的忽略策略.
+     * <p>
+     * 注意:
+     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误<li/>
+     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准<li/>
+     * <li>3.记住,一旦调用了此方法,开始会覆盖你当前执行线程上的策略,结束必定会释放掉当前线程上的策略</>
+     * </p>
+     *
+     * @param ignoreStrategy 忽略策略
+     * @param supplier       执行方法
+     * @param <T>            T
+     * @return 返回值
+     * @since 3.5.10
+     */
+    public static <T> T execute(IgnoreStrategy ignoreStrategy, Supplier<T> supplier) {
+        try {
+            handle(ignoreStrategy);
+            return supplier.get();
+        } finally {
+            clearIgnoreStrategy();
+        }
+    }
+
+    /**
+     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高)
+     * 方法执行完成后后释放掉当前线程上的忽略策略.
+     * <p>
+     * 注意:
+     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误<li/>
+     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准<li/>
+     * <li>3.记住,一旦调用了此方法,开始会覆盖你当前执行线程上的策略,结束必定会释放掉当前线程上的策略</>
+     * </p>
+     *
+     * @param ignoreStrategy 忽略策略
+     * @param runnable       执行方法
+     * @since 3.5.10
+     */
+    public static void execute(IgnoreStrategy ignoreStrategy, Runnable runnable) {
+        try {
+            handle(ignoreStrategy);
+            runnable.run();
+        } finally {
+            clearIgnoreStrategy();
+        }
+    }
+
+    /**
+     * 通过方法获取策略信息(优先级方法注解>当前类注解)
+     *
+     * @param method 方法信息
+     * @return 忽略策略信息
+     * @see #initSqlParserInfoCache(Class)
+     * @see #initSqlParserInfoCache(IgnoreStrategy, String, Method)
+     * @since 3.5.10
+     */
+    public static IgnoreStrategy findIgnoreStrategy(Class<?> clz, Method method) {
+        String className = clz.getName();
+        IgnoreStrategy ignoreStrategy = getIgnoreStrategy(method.getDeclaringClass().getName() + StringPool.DOT + method.getName());
+        if (ignoreStrategy == null) {
+            ignoreStrategy = getIgnoreStrategy(className);
+        }
+        return ignoreStrategy;
     }
 
     /**

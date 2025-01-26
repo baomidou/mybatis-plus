@@ -19,6 +19,9 @@ class InterceptorIgnoreHelperTest {
         init(Xx.class);
         init(Pp.class);
         init(Gg.class);
+        init(ExtPp1.class);
+        init(ExtPp2.class);
+        init(ExtPp3.class);
     }
 
     @Test
@@ -43,6 +46,19 @@ class InterceptorIgnoreHelperTest {
 
         // 不存在的
         checkOthers(Pp.class, "mj", "xxxxx", false);
+
+        checkTenantLine(ExtPp1.class, "pp", false);
+        checkTenantLine(ExtPp1.class, "dd", true);
+        checkTenantLine(ExtPp1.class, "mj", false);
+
+        checkTenantLine(ExtPp2.class, "pp", false);
+        checkTenantLine(ExtPp2.class, "dd", true);
+
+        // 缺省取当前类的
+        checkTenantLine(ExtPp2.class, "mj", false);
+
+        checkTenantLine(ExtPp3.class, "mj", true);
+
     }
 
     private void init(Class<?> clazz) {
@@ -101,5 +117,22 @@ class InterceptorIgnoreHelperTest {
     interface Gg {
 
         void uu();
+    }
+
+    interface ExtPp1 extends Pp {
+
+    }
+
+    @InterceptorIgnore(tenantLine = "1")
+    interface ExtPp2 extends Pp {
+
+        @InterceptorIgnore(tenantLine = "false")
+        void mj();
+    }
+
+    @InterceptorIgnore(tenantLine = "true")
+    interface ExtPp3 extends ExtPp2 {
+
+        void mj();
     }
 }

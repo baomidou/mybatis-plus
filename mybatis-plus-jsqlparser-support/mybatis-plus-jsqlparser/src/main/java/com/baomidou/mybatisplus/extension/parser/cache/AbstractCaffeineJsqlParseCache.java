@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,6 +77,7 @@ public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
      * @param sql 执行 SQL
      * @return 返回泛型对象
      */
+    @SuppressWarnings("unchecked")
     protected <T> T get(String sql) {
         byte[] bytes = cache.getIfPresent(sql);
         if (null != bytes) {
@@ -97,14 +98,15 @@ public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
      * @param value 解析对象
      */
     protected void put(String sql, Object value) {
+        final byte[] serialVal = serialize(value);
         if (async) {
             if (executor != null) {
-                CompletableFuture.runAsync(() -> cache.put(sql, serialize(value)), executor);
+                CompletableFuture.runAsync(() -> cache.put(sql, serialVal), executor);
             } else {
-                CompletableFuture.runAsync(() -> cache.put(sql, serialize(value)));
+                CompletableFuture.runAsync(() -> cache.put(sql, serialVal));
             }
         } else {
-            cache.put(sql, serialize(value));
+            cache.put(sql, serialVal);
         }
     }
 
@@ -117,5 +119,4 @@ public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
      * 反序列化
      */
     public abstract Object deserialize(String sql, byte[] bytes);
-
 }

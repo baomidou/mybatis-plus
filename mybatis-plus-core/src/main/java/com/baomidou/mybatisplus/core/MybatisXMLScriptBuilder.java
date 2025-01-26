@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
@@ -44,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <p>试验性功能,解决mybatis堆内存过大的问题(看后期mybatis官方会不会解决堆内存占用问题)</p>
@@ -123,6 +126,21 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
         return str;
     }
 
+    private static final StaticTextSqlNode SPACE_SQL_NODE = new StaticTextSqlNode(StringPool.SPACE);
+
+    private static final Pattern PATTERN = Pattern.compile("^\\s+|\\s+$");
+
+    /**
+     * 将前后空白符替换成空格
+     *
+     * @param str 字符串 (非空)
+     * @return 处理后文本
+     * @since 3.5.10.1
+     */
+    public static String replaceLeadingAndTrailingWhitespace(String str) {
+        Matcher matcher = PATTERN.matcher(str);
+        return matcher.replaceAll(StringPool.SPACE);
+    }
 
     protected MixedSqlNode parseDynamicTags(XNode node) {
         List<SqlNode> contents = new ArrayList<>();
@@ -131,6 +149,12 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             XNode child = node.newXNode(children.item(i));
             if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
                 String text = cacheStr(child.getStringBody(""));
+                String trimText = text.trim();
+                if (trimText.isEmpty()) {
+                    contents.add(SPACE_SQL_NODE);
+                    continue;
+                }
+                text = replaceLeadingAndTrailingWhitespace(text);
                 TextSqlNode textSqlNode = new TextSqlNode(text);
                 if (textSqlNode.isDynamic()) {
                     contents.add(textSqlNode);

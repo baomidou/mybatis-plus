@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,21 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.DefaultTableAnnotationHandler;
+import com.baomidou.mybatisplus.generator.DefaultTableFieldAnnotationHandler;
 import com.baomidou.mybatisplus.generator.IFill;
+import com.baomidou.mybatisplus.generator.ITableAnnotationHandler;
+import com.baomidou.mybatisplus.generator.ITableFieldAnnotationHandler;
 import com.baomidou.mybatisplus.generator.ITemplate;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.INameConvert;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.function.ConverterFileName;
+import com.baomidou.mybatisplus.generator.model.AnnotationAttributes;
+import com.baomidou.mybatisplus.generator.model.ClassAnnotationAttributes;
 import com.baomidou.mybatisplus.generator.util.ClassUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +63,8 @@ import java.util.stream.Collectors;
  */
 public class Entity implements ITemplate {
 
-    private final AnnotationHandler annotationHandler = new AnnotationHandler(){};
+    private final AnnotationHandler annotationHandler = new AnnotationHandler() {
+    };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Entity.class);
 
@@ -68,7 +77,7 @@ public class Entity implements ITemplate {
     private String javaTemplate = ConstVal.TEMPLATE_ENTITY_JAVA;
 
     /**
-     * Kotlin模板默认撸
+     * Kotlin模板默认路径
      */
     @Getter
     private String kotlinTemplate = ConstVal.TEMPLATE_ENTITY_KT;
@@ -224,6 +233,57 @@ public class Entity implements ITemplate {
     private boolean generate = true;
 
     /**
+     * 默认lombok(低版本属性默认只有Getter和Setter)
+     * <p>当升级至3.5.10后,默认启用@ToString,如果不需要,可通过{@link Builder#toString(boolean)}关闭</p>
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private boolean defaultLombok = true;
+
+    /**
+     * 是否生成ToString
+     * <p>低版本下,lombok没有处理ToString逻辑,现在处理生成@ToString</p>
+     * <p>支持控制toString方法是否生成</p>
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private boolean toString = true;
+
+
+    /**
+     * 启用字段文档注释 (当注释字段注释不为空才生效)
+     * <p>低版本下,如果是启用swagger或者springdoc时,不会生成,现在统一修改为生成文档注释</p>
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private boolean fieldUseJavaDoc = true;
+
+    /**
+     * 实体类注解
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private final List<ClassAnnotationAttributes> classAnnotations = new ArrayList<>();
+
+    /**
+     * 表注解处理器
+     *
+     * @since 3.5.10
+     */
+    private ITableAnnotationHandler tableAnnotationHandler = new DefaultTableAnnotationHandler();
+
+    /**
+     * 字段注解处理器
+     *
+     * @since 3.5.10
+     */
+    private ITableFieldAnnotationHandler tableFieldAnnotationHandler = new DefaultTableFieldAnnotationHandler();
+
+    /**
      * <p>
      * 父类 Class 反射属性转换为公共字段
      * </p>
@@ -342,6 +402,32 @@ public class Entity implements ITemplate {
         data.put("entityLombokModel", this.lombok);
         data.put("entityBooleanColumnRemoveIsPrefix", this.booleanColumnRemoveIsPrefix);
         data.put("superEntityClass", ClassUtils.getSimpleName(this.superClass));
+        Set<String> importPackages = new HashSet<>(tableInfo.getImportPackages());
+        List<ClassAnnotationAttributes> classAnnotationAttributes = new ArrayList<>(this.getClassAnnotations());
+        if (tableAnnotationHandler != null) {
+            List<ClassAnnotationAttributes> classAnnotationAttributesList = tableAnnotationHandler.handle(tableInfo, this);
+            if (classAnnotationAttributesList != null && !classAnnotationAttributesList.isEmpty()) {
+                classAnnotationAttributes.addAll(classAnnotationAttributesList);
+            }
+        }
+        classAnnotationAttributes.forEach(attributes -> {
+            attributes.handleDisplayName(tableInfo);
+            importPackages.addAll(attributes.getImportPackages());
+        });
+        if (tableFieldAnnotationHandler != null) {
+            tableInfo.getFields().forEach(tableField -> {
+                List<AnnotationAttributes> annotationAttributes = tableFieldAnnotationHandler.handle(tableInfo, tableField);
+                if (annotationAttributes != null && !annotationAttributes.isEmpty()) {
+                    tableField.addAnnotationAttributesList(annotationAttributes);
+                    annotationAttributes.forEach(attributes -> importPackages.addAll(attributes.getImportPackages()));
+                }
+            });
+        }
+        data.put("entityFieldUseJavaDoc", fieldUseJavaDoc);
+        data.put("entityClassAnnotations", classAnnotationAttributes.stream()
+            .sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList()));
+        data.put("importEntityPackages", importPackages.stream().sorted().collect(Collectors.toList()));
+        data.put("entityToString", this.toString);
         return data;
     }
 
@@ -420,13 +506,33 @@ public class Entity implements ITemplate {
         }
 
         /**
-         * 开启lombok模型
+         * 开启lombok模型 (默认添加Getter和Setter)
+         * <p>自3.5.10开始,默认添加ToString搭配,如果想关闭可通过{@link #toString(boolean)}关闭</p>
          *
          * @return this
          * @since 3.5.0
          */
         public Builder enableLombok() {
             this.entity.lombok = true;
+            return this;
+        }
+
+        /**
+         * 开启lombok模型 (会把注解属性都加入进去,无论是否启用{@link GlobalConfig#isKotlin()})
+         * <p>注意如果通过此方法开启lombok模型,默认的lombok注解(get,set,toString)都将不会生成,请自行控制添加</p>
+         * <p>由{@link #toString(boolean)}控制的也会失效</p>
+         * 使用@Data示例: enableLombok(new ClassAnnotationAttributes("@Data","lombok.Data"))
+         *
+         * @param attributes 注解属性集合
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder enableLombok(@NotNull ClassAnnotationAttributes... attributes) {
+            this.entity.lombok = true;
+            this.entity.defaultLombok = false;
+            for (ClassAnnotationAttributes attribute : attributes) {
+                this.addClassAnnotation(attribute);
+            }
             return this;
         }
 
@@ -675,6 +781,66 @@ public class Entity implements ITemplate {
             this.entity.generate = false;
             return this;
         }
+
+        /**
+         * 添加类注解
+         *
+         * @param attributes 注解属性
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder addClassAnnotation(@NotNull ClassAnnotationAttributes attributes) {
+            this.entity.classAnnotations.add(attributes);
+            return this;
+        }
+
+        /**
+         * 指定字段注解处理器
+         *
+         * @param tableFieldAnnotationHandler 字段处理器
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder tableFieldAnnotationHandler(@NotNull ITableFieldAnnotationHandler tableFieldAnnotationHandler) {
+            this.entity.tableFieldAnnotationHandler = tableFieldAnnotationHandler;
+            return this;
+        }
+
+        /**
+         * 指定表注解处理器
+         * @param tableAnnotationHandler 表注解处理器
+         * @since 3.5.10
+         * @return this
+         */
+        public Builder tableAnnotationHandler(@NotNull ITableAnnotationHandler tableAnnotationHandler){
+            this.entity.tableAnnotationHandler = tableAnnotationHandler;
+            return this;
+        }
+
+        /**
+         * 设置是否生成ToString方法
+         *
+         * @param toString 是否生成
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder toString(boolean toString) {
+            this.entity.toString = toString;
+            return this;
+        }
+
+        /**
+         * 设置字段是否生成文档注释
+         *
+         * @param fieldUseJavaDoc 是否生成文档注释
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder fieldUseJavaDoc(boolean fieldUseJavaDoc) {
+            this.entity.fieldUseJavaDoc = fieldUseJavaDoc;
+            return this;
+        }
+
 
         public Entity get() {
             String superClass = this.entity.superClass;

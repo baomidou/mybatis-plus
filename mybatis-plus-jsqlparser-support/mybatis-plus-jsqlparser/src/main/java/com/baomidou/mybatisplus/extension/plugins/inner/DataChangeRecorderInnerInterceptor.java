@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import net.sf.jsqlparser.statement.select.Values;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -121,8 +122,10 @@ import net.sf.jsqlparser.statement.update.UpdateSet;
  * </p>
  *
  * @author yuxiaobin
+ * @deprecated 3.5.10 问题太多,计划移除
  * @date 2022-8-21
  */
+@Deprecated
 public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -660,7 +663,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             selectItems.add(new SelectItem<>(column));
         }
         TableInfo tableInfo = getTableInfoByTableName(tableName);
-        if (tableInfo == null) {
+        if (tableInfo == null || StringUtils.isBlank(tableInfo.getKeyColumn())) {
             return Columns2SelectItemsResult.build(selectItems, 0);
         }
         Column pk = new Column(tableInfo.getKeyColumn());

@@ -19,4 +19,5 @@ public class DatabaseMetaDataWrapperTest {
         Assertions.assertTrue(name.isNullable());
         Assertions.assertEquals(JdbcType.VARCHAR, name.getJdbcType());
     }
+
 }

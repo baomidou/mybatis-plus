@@ -2,6 +2,10 @@ package #(package.Mapper);
 
 import #(package.Entity).#(entity);
 import #(superMapperClassPackage);
+
+#for(pkg : importPackages)
+import #(pkg);
+#end
 #if(mapperAnnotationClass)
 import #(mapperAnnotationClass.name);
 #end
@@ -18,9 +22,19 @@ import #(mapperAnnotationClass.name);
 @#(mapperAnnotationClass.simpleName)
 #end
 #if(kotlin)
-interface #(table.mapperName) : #(superMapperClass)<#(entity)>
+interface #(table.mapperName) : #(superMapperClass)<#(entity)> {
 #else
 public interface #(table.mapperName) extends #(superMapperClass)<#(entity)> {
-
-}
 #end
+
+#for(m : mapperMethodList)
+    /**
+     * generate by #(m.indexName)
+     *
+     #for(f : m.tableFieldList)
+     * @param #(f.propertyName) #(f.comment)
+     #end
+     */
+    #(m.method)
+#end
+}

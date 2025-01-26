@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.core.env.SimpleCommandLinePropertySource;
 
 import java.util.HashMap;
 
@@ -38,17 +37,7 @@ public class SafetyEncryptProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        /**
-         * 命令行中获取密钥
-         */
-        String mpwKey = null;
-        for (PropertySource<?> ps : environment.getPropertySources()) {
-            if (ps instanceof SimpleCommandLinePropertySource) {
-                SimpleCommandLinePropertySource source = (SimpleCommandLinePropertySource) ps;
-                mpwKey = source.getProperty("mpw.key");
-                break;
-            }
-        }
+        String mpwKey = environment.getProperty("mpw.key");
         /**
          * 处理加密内容
          */

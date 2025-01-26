@@ -14,11 +14,11 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
     implementation "${lib['mybatis-thymeleaf']}"
-    implementation "${lib.'mybatis-velocity'}"
+    implementation "org.mybatis.scripting:mybatis-velocity:2.3.0"
     implementation "${lib.'mybatis-freemarker'}"
     implementation "org.springframework.cloud:spring-cloud-commons:4.1.4"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4"
     testImplementation "${lib.h2}"
 }
 

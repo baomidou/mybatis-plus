@@ -26,5 +26,6 @@ dependencyManagement {
         dependency "com.baomidou:mybatis-plus-spring-boot3-starter-test:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-jsqlparser:${APP_VERSION}"
         dependency "com.baomidou:mybatis-plus-jsqlparser-4.9:${APP_VERSION}"
+        dependency "com.baomidou:mybatis-plus-jsqlparser-5.0:${APP_VERSION}"
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,16 @@ public class CustomFile {
      * 是否覆盖已有文件（默认 false）
      */
     private boolean fileOverride;
+
+    /**
+     * 获取文件短名称(去除后缀)
+     *
+     * @return 文件名
+     * @since 3.5.10
+     */
+    public String getShortName() {
+        return fileName.substring(0, fileName.lastIndexOf("."));
+    }
 
     /**
      * 构建者

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,6 +223,10 @@ public enum DbType {
      */
     DUCKDB("duckdb", "duckdb数据库"),
     /**
+     * yasdb
+     */
+    YASDB("yasdb", "崖山数据库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
@@ -260,7 +264,8 @@ public enum DbType {
             || this == DbType.OCEAN_BASE
             || this == DbType.CUBRID
             || this == DbType.SUNDB
-            || this == DbType.GOLDENDB;
+            || this == DbType.GOLDENDB
+            || this == DbType.YASDB;
     }
 
     public boolean oracleSameType() {

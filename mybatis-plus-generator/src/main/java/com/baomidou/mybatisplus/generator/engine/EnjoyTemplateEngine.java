@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class EnjoyTemplateEngine extends AbstractTemplateEngine {
 
     @Override
     public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
-        Template template = engine.getTemplate(templateString);
+        Template template = engine.getTemplateByString(templateString);
         return template.renderToString(objectMap);
     }
 

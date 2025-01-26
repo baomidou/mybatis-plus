@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,15 +132,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private ObjectFactory objectFactory;
 
     private ObjectWrapperFactory objectWrapperFactory;
-
-    /**
-     * 不再需要这个配置,放心删除
-     *
-     * @deprecated 2022-03-07
-     */
-    @Setter
-    @Deprecated
-    private String typeEnumsPackage;
 
     @Setter
     private GlobalConfig globalConfig;

@@ -75,7 +75,6 @@ public class MybatisPlusConfigLogicDelete {
             }
         });
         sqlSessionFactory.setGlobalConfig(globalConfig);
-        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
     }
 

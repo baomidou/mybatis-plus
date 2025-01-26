@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,6 +218,12 @@ public abstract class AbstractMethod implements Constants {
         }
     }
 
+    private static final String BIND_SQL_SEGMENT = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
+
+    private static final String AND_SQL_SEGMENT = SqlScriptUtils.convertIf(" AND ${" + WRAPPER_SQLSEGMENT + "}", "_sgEs_ and " + WRAPPER_NONEMPTYOFNORMAL, true);
+
+    private static final String LAST_SQL_SEGMENT = SqlScriptUtils.convertIf(" ${" + WRAPPER_SQLSEGMENT + "}", "_sgEs_ and " + WRAPPER_EMPTYOFNORMAL, true);
+
     /**
      * EntityWrapper方式获取select where
      *
@@ -227,31 +233,23 @@ public abstract class AbstractMethod implements Constants {
      */
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         /*
-         * Wrapper SQL
-         */
-        String _sgEs_ = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
-        String andSqlSegment = SqlScriptUtils.convertIf(String.format(" AND ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_NONEMPTYOFNORMAL), true);
-        String lastSqlSegment = SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT), String.format("_sgEs_ and %s", WRAPPER_EMPTYOFNORMAL), true);
-
-        /*
          * 存在逻辑删除 SQL 注入
          */
         if (table.isWithLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, true, WRAPPER_ENTITY_DOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
-            sqlScript = SqlScriptUtils.convertIf(_sgEs_ + NEWLINE + sqlScript + NEWLINE + andSqlSegment + NEWLINE + lastSqlSegment,
-                String.format("%s != null", WRAPPER), true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY + " != null", true);
+            sqlScript = SqlScriptUtils.convertIf(BIND_SQL_SEGMENT + NEWLINE + sqlScript + NEWLINE + AND_SQL_SEGMENT + NEWLINE + LAST_SQL_SEGMENT,
+                WRAPPER + " != null", true);
             sqlScript = SqlScriptUtils.convertWhere(table.getLogicDeleteSql(false, true) + NEWLINE + sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
-
         /*
          * 普通 SQL 注入
          */
         String sqlScript = table.getAllSqlWhere(false, false, true, WRAPPER_ENTITY_DOT);
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
-        sqlScript = SqlScriptUtils.convertWhere(sqlScript + NEWLINE + andSqlSegment) + NEWLINE + lastSqlSegment;
-        sqlScript = SqlScriptUtils.convertIf(_sgEs_ + NEWLINE + sqlScript, String.format("%s != null", WRAPPER), true);
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY + " != null", true);
+        sqlScript = SqlScriptUtils.convertWhere(sqlScript + NEWLINE + AND_SQL_SEGMENT) + NEWLINE + LAST_SQL_SEGMENT;
+        sqlScript = SqlScriptUtils.convertIf(BIND_SQL_SEGMENT + NEWLINE + sqlScript, WRAPPER + " != null", true);
         return newLine ? NEWLINE + sqlScript : sqlScript;
     }
 
@@ -444,7 +442,7 @@ public abstract class AbstractMethod implements Constants {
      * @since 3.5.3.2
      */
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
-        return languageDriver.createSqlSource(configuration, SqlSourceBuilder.removeExtraWhitespaces(script), parameterType);
+        return languageDriver.createSqlSource(configuration, script, parameterType);
     }
 
 }

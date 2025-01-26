@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.function.ConverterFileName;
+import com.baomidou.mybatisplus.generator.IGenerateMapperMethodHandler;
+import com.baomidou.mybatisplus.generator.model.MapperMethod;
 import com.baomidou.mybatisplus.generator.util.ClassUtils;
 import lombok.Getter;
 import org.apache.ibatis.cache.Cache;
@@ -29,8 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 控制器属性配置
@@ -160,6 +165,13 @@ public class Mapper implements ITemplate {
         return this.cache == null ? LoggingCache.class : this.cache;
     }
 
+    /**
+     * Mapper层方法生成
+     *
+     * @since 3.5.10
+     */
+    private IGenerateMapperMethodHandler generateMapperMethodHandler;
+
     @Override
     @NotNull
     public Map<String, Object> renderData(@NotNull TableInfo tableInfo) {
@@ -179,6 +191,14 @@ public class Mapper implements ITemplate {
         data.put("superMapperClass", ClassUtils.getSimpleName(this.superClass));
         data.put("generateMapperXml", this.generateMapperXml);
         data.put("generateMapper", this.generateMapper);
+        List<MapperMethod> methodList = null;
+        Set<String> importPackages = null;
+        if (generateMapperMethodHandler != null) {
+            methodList = generateMapperMethodHandler.getMethodList(tableInfo);
+            importPackages = generateMapperMethodHandler.getImportPackages(tableInfo);
+        }
+        data.put("importPackages", importPackages == null ? Collections.emptySet() : importPackages);
+        data.put("mapperMethodList", methodList == null ? Collections.emptyList() : methodList);
         return data;
     }
 
@@ -393,6 +413,18 @@ public class Mapper implements ITemplate {
          */
         public Builder disableMapperXml() {
             this.mapper.generateMapperXml = false;
+            return this;
+        }
+
+        /**
+         * Mapper层方法生成处理器
+         *
+         * @param generateMapperMethodHandler 处理器
+         * @return this
+         * @since 3.5.10
+         */
+        public Builder generateMapperMethodHandler(IGenerateMapperMethodHandler generateMapperMethodHandler) {
+            this.mapper.generateMapperMethodHandler = generateMapperMethodHandler;
             return this;
         }
 

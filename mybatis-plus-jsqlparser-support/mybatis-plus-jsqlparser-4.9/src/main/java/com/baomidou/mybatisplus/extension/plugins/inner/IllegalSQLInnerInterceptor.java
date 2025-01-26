@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,8 +85,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>7.where条件使用了 使用子查询</p>
  *
  * @author willenfoo
+ * @deprecated 3.5.10 实用性不高,语法分析太差,计划移除
  * @since 3.4.0
  */
+@Deprecated
 public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
     /**
