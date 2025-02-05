@@ -139,7 +139,6 @@ class TenantLineInnerInterceptorTest {
 
     @Test
     void selectSubSelectIn() {
-        tenantIdColumnFirst = true;
         /* in */
         assertSql("SELECT * FROM entity e WHERE e.id IN (select e1.id from entity1 e1 where e1.id = ?)",
             "SELECT * FROM entity e WHERE e.id IN (SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.tenant_id = 1");
