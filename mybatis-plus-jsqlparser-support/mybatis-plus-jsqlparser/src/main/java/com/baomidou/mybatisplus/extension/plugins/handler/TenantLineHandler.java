@@ -48,6 +48,18 @@ public interface TenantLineHandler {
     }
 
     /**
+     * where语句租户字段名是否前置
+     * <p>
+     * 默认为不前置 where id=? and name=? and tenant_id=?
+     * 前置，可以使用索引 where tenant_id=? and id=? and name=?
+     *
+     * @return 是否前置
+     */
+    default boolean tenantIdColumnFirst() {
+        return false;
+    }
+
+    /**
      * 根据表名判断是否忽略拼接多租户条件
      * <p>
      * 默认都要进行解析并拼接多租户条件

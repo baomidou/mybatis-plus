@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
@@ -260,5 +262,17 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             return null;
         }
         return new EqualsTo(getAliasColumn(table), tenantLineHandler.getTenantId());
+    }
+
+    @Override
+    public Expression builderExpression(Expression currentExpression, List<Table> tables, final String whereSegment) {
+        Expression expression = super.builderExpression(currentExpression, tables, whereSegment);
+        if (tenantLineHandler.tenantIdColumnFirst() && expression instanceof AndExpression) {
+            AndExpression andExpression = (AndExpression) expression;
+            Expression leftExpression = andExpression.getLeftExpression();
+            andExpression.setLeftExpression(andExpression.getRightExpression());
+            andExpression.setRightExpression(leftExpression);
+        }
+        return expression;
     }
 }

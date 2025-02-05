@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-07-30
  */
 class TenantLineInnerInterceptorTest {
+    private boolean tenantIdColumnFirst = false;
 
     private final TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(new TenantLineHandler() {
         private boolean ignoreFirst;// 需要执行 getTenantId 前必须先执行 ignoreTable
@@ -28,6 +29,11 @@ class TenantLineInnerInterceptorTest {
         public boolean ignoreTable(String tableName) {
             ignoreFirst = true;
             return tableName.startsWith("with_as");
+        }
+
+        @Override
+        public boolean tenantIdColumnFirst() {
+            return tenantIdColumnFirst;
         }
     });
 
@@ -110,7 +116,30 @@ class TenantLineInnerInterceptorTest {
     }
 
     @Test
+    void selectSingleTenantIdColumnFirst() {
+        tenantIdColumnFirst = true;
+        // 单表
+        assertSql("select * from entity where id = ?",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND id = ?");
+
+        assertSql("select * from entity where id = ? or name = ?",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND (id = ? OR name = ?)");
+
+        assertSql("SELECT * FROM entity WHERE (id = ? OR name = ?)",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND (id = ? OR name = ?)");
+
+        /* not */
+        assertSql("SELECT * FROM entity WHERE not (id = ? OR name = ?)",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND NOT (id = ? OR name = ?)");
+
+        assertSql("SELECT * FROM entity u WHERE not (u.id = ? OR u.name = ?)",
+            "SELECT * FROM entity u WHERE u.tenant_id = 1 AND NOT (u.id = ? OR u.name = ?)");
+        tenantIdColumnFirst = false;
+    }
+
+    @Test
     void selectSubSelectIn() {
+        tenantIdColumnFirst = true;
         /* in */
         assertSql("SELECT * FROM entity e WHERE e.id IN (select e1.id from entity1 e1 where e1.id = ?)",
             "SELECT * FROM entity e WHERE e.id IN (SELECT e1.id FROM entity1 e1 WHERE e1.id = ? AND e1.tenant_id = 1) AND e.tenant_id = 1");
