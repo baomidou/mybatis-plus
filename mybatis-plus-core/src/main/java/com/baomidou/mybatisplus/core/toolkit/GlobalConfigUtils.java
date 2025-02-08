@@ -45,6 +45,8 @@ public class GlobalConfigUtils {
      */
     private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
+    private static final GlobalConfig GLOBAL = new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+
     /**
      * 获取当前的SqlSessionFactory
      *
@@ -63,7 +65,7 @@ public class GlobalConfigUtils {
      * 获取默认 MybatisGlobalConfig
      */
     public static GlobalConfig defaults() {
-        return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+        return GLOBAL;
     }
 
     /**
