@@ -45,7 +45,7 @@ public class DefaultTableAnnotationHandler implements ITableAnnotationHandler {
         boolean kotlin = globalConfig.isKotlin();
         if (!kotlin) {
             // 原先kt模板没有处理这些,作为兼容项
-            if (entity.isChain()) {
+            if (entity.isChain() && entity.isLombok()) {
                 annotationAttributesList.add(new ClassAnnotationAttributes("@Accessors(chain = true)", "lombok.experimental.Accessors"));
             }
             if (entity.isLombok()) {

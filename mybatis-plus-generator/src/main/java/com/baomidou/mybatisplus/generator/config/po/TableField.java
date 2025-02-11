@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -138,6 +139,13 @@ public class TableField {
      * @since 3.5.10
      */
     private final List<AnnotationAttributes> annotationAttributesList = new ArrayList<>();
+
+    /**
+     * 字段注解处理
+     *
+     * @since 3.5.10.2
+     */
+    private Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction;
 
     /**
      * 构造方法
@@ -380,7 +388,16 @@ public class TableField {
      * @since 3.5.10
      */
     public void addAnnotationAttributesList(@NotNull List<AnnotationAttributes> annotationAttributesList) {
+        this.addAnnotationAttributesList(annotationAttributesList, null);
+    }
+
+    /**
+     * @param annotationAttributesList 注解属性集合
+     * @since 3.5.10.2
+     */
+    public void addAnnotationAttributesList(@NotNull List<AnnotationAttributes> annotationAttributesList, Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
         this.annotationAttributesList.addAll(annotationAttributesList);
+        this.annotationAttributesFunction = annotationAttributesFunction;
     }
 
     /**
@@ -394,13 +411,13 @@ public class TableField {
     }
 
     /**
-     * 获取字段注解属性(按{@link AnnotationAttributes#getDisplayName()}长度进行升序)
+     * 获取字段注解属性(默认按{@link AnnotationAttributes#getDisplayName()}长度进行升序)
      *
      * @return 字段注解属性
      * @since 3.5.10
      */
     public List<AnnotationAttributes> getAnnotationAttributesList() {
-        return this.annotationAttributesList.stream()
+        return annotationAttributesFunction != null ? annotationAttributesFunction.apply(this.annotationAttributesList) : this.annotationAttributesList.stream()
             .sorted(Comparator.comparingInt(s -> s.getDisplayName().length()))
             .collect(Collectors.toList());
     }

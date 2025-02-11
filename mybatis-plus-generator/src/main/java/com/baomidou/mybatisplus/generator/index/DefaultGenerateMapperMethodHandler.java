@@ -113,6 +113,9 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
                 if (globalConfig.isKotlin()) {
                     argsBuilder.append(tableField.getPropertyName()).append(":").append(" ")
                         .append(KotlinTypeUtils.getStringType(tableField.getColumnType()));
+                    if (i > 0) {
+                        argsBuilder.append("?");
+                    }
                 } else {
                     argsBuilder.append(tableField.getColumnType().getType()).append(" ").append(tableField.getPropertyName());
                 }

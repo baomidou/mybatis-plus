@@ -107,6 +107,9 @@ public class DefaultGenerateMapperLambdaMethodHandler extends AbstractMapperMeth
                     baseWrapperBuilder.append(tableField.getPropertyName()).append(",").append(" ").append(tableField.getPropertyName()).append(")");
                     argsBuilder.append(tableField.getPropertyName()).append(":").append(" ")
                         .append(KotlinTypeUtils.getStringType(tableField.getColumnType()));
+                    if (i > 0) {
+                        argsBuilder.append("?");
+                    }
                 } else {
                     if ("boolean".equals(tableField.getPropertyType())) {
                         baseWrapperBuilder.append("is").append(tableField.getCapitalName());

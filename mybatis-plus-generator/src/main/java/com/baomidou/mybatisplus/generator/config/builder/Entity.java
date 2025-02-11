@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -284,6 +285,21 @@ public class Entity implements ITemplate {
     private ITableFieldAnnotationHandler tableFieldAnnotationHandler = new DefaultTableFieldAnnotationHandler();
 
     /**
+     * 导包处理方法
+     *
+     * @since 3.5.10.2
+     */
+    private Function<Set<String>, List<String>> importPackageFunction;
+
+    /**
+     * 处理类注解方法 (含类与字段)
+     *
+     * @since 3.5.10.2
+     */
+    private Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction;
+
+
+    /**
      * <p>
      * 父类 Class 反射属性转换为公共字段
      * </p>
@@ -418,15 +434,16 @@ public class Entity implements ITemplate {
             tableInfo.getFields().forEach(tableField -> {
                 List<AnnotationAttributes> annotationAttributes = tableFieldAnnotationHandler.handle(tableInfo, tableField);
                 if (annotationAttributes != null && !annotationAttributes.isEmpty()) {
-                    tableField.addAnnotationAttributesList(annotationAttributes);
+                    tableField.addAnnotationAttributesList(annotationAttributes, annotationAttributesFunction);
                     annotationAttributes.forEach(attributes -> importPackages.addAll(attributes.getImportPackages()));
                 }
             });
         }
         data.put("entityFieldUseJavaDoc", fieldUseJavaDoc);
-        data.put("entityClassAnnotations", classAnnotationAttributes.stream()
-            .sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList()));
-        data.put("importEntityPackages", importPackages.stream().sorted().collect(Collectors.toList()));
+        data.put("entityClassAnnotations", annotationAttributesFunction != null ? annotationAttributesFunction.apply(classAnnotationAttributes) :
+            classAnnotationAttributes.stream().sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList()));
+        data.put("importEntityPackages", importPackageFunction != null ? importPackageFunction.apply(importPackages) :
+            importPackages.stream().sorted().collect(Collectors.toList()));
         data.put("entityToString", this.toString);
         return data;
     }
@@ -841,6 +858,29 @@ public class Entity implements ITemplate {
             return this;
         }
 
+        /**
+         * 导包处理方法
+         *
+         * @param importPackageFunction 导包处理
+         * @return this
+         * @since 3.5.10.2
+         */
+        public Builder importPackageFunction(Function<Set<String>, List<String>> importPackageFunction) {
+            this.entity.importPackageFunction = importPackageFunction;
+            return this;
+        }
+
+        /**
+         * 注解处理方法 (含类与字段)
+         *
+         * @param annotationAttributesFunction 注解处理
+         * @return this
+         * @since 3.5.10.2
+         */
+        public Builder annotationAttributesFunction(Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
+            this.entity.annotationAttributesFunction = annotationAttributesFunction;
+            return this;
+        }
 
         public Entity get() {
             String superClass = this.entity.superClass;

@@ -21,6 +21,8 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -32,6 +34,8 @@ import java.util.concurrent.TimeUnit;
  * @since 2023-08-05
  */
 public class JsqlParserGlobal {
+
+    private static final Log LOG = LogFactory.getLog(JsqlParserGlobal.class);
 
     /**
      * 默认线程数大小
@@ -53,6 +57,17 @@ public class JsqlParserGlobal {
         thread.setDaemon(true);
         return thread;
     });
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!executorService.isShutdown()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("close jsqlParser thread pool ...");
+                }
+                executorService.shutdown();
+            }
+        }, "mybatis-plus-jsqlParser-shutdown-hook"));
+    }
 
     @Setter
     private static JsqlParserFunction<String, Statement> parserSingleFunc = sql -> CCJSqlParserUtil.parse(sql, executorService, null);
