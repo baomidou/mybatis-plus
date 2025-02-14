@@ -231,17 +231,9 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         //是否使用索引
         boolean useIndexFlag = false;
         if (StringUtils.isNotBlank(columnName)) {
-            String tableInfo = table.getName();
             //表存在的索引
-            String dbName = null;
-            String tableName;
-            String[] tableArray = tableInfo.split("\\.");
-            if (tableArray.length == 1) {
-                tableName = tableArray[0];
-            } else {
-                dbName = tableArray[0];
-                tableName = tableArray[1];
-            }
+            String dbName = table.getSchemaName();
+            String tableName = table.getName();
             columnName = SqlParserUtils.removeWrapperSymbol(columnName);
             List<IndexInfo> indexInfos = getIndexInfos(dbName, tableName, connection);
             for (IndexInfo indexInfo : indexInfos) {
