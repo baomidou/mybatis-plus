@@ -99,6 +99,8 @@ public final class TableNameParser {
             visitNameToken(tokens.get(index + 1), visitor);
         } else if (isCreateIndex(first, tokens, index)) {
             visitNameToken(tokens.get(index + 4), visitor);
+        } else if (isCreateTableIfNotExist(first, tokens, index)) {
+            visitNameToken(tokens.get(index + 5), visitor);
         } else {
             while (hasMoreTokens(tokens, index)) {
                 String current = tokens.get(index++).getValue();
@@ -176,6 +178,18 @@ public final class TableNameParser {
         if (TOKEN_CREATE.equalsIgnoreCase(current) && hasIthToken(tokens, index)) {
             String next = tokens.get(index).getValue();
             return TOKEN_INDEX.equalsIgnoreCase(next);
+        }
+        return false;
+    }
+    
+    private boolean isCreateTableIfNotExist(String current, List<SqlToken> tokens, int index) {
+        index++; // Point to next token
+        if (TOKEN_CREATE.equalsIgnoreCase(current) && hasIthToken(tokens, index)) {
+            String tableIfNotExist = tokens.get(index).getValue();
+            tableIfNotExist += tokens.get(++index).getValue();
+            tableIfNotExist += tokens.get(++index).getValue();
+            tableIfNotExist += tokens.get(++index).getValue();
+            return "tableifnotexists".equalsIgnoreCase(tableIfNotExist);
         }
         return false;
     }
