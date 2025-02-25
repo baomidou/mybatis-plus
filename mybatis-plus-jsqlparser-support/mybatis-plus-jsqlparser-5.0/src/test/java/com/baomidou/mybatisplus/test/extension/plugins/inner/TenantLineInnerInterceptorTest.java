@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +32,28 @@ class TenantLineInnerInterceptorTest {
             return tableName.startsWith("with_as");
         }
     });
+
+    private final TenantLineInnerInterceptor interceptor2 = new TenantLineInnerInterceptor(new TenantLineHandler() {
+        private boolean ignoreFirst;// 需要执行 getTenantId 前必须先执行 ignoreTable
+
+        @Override
+        public Expression getTenantId() {
+            assertThat(ignoreFirst).isEqualTo(true);
+            ignoreFirst = false;
+            return new LongValue(1);
+        }
+
+        @Override
+        public boolean ignoreTable(String tableName) {
+            ignoreFirst = true;
+            return tableName.startsWith("with_as");
+        }
+    });
+
+    @BeforeEach
+    void init() {
+        interceptor2.setExpressionAppendMode(false);
+    }
 
     @Test
     void insert() {
@@ -64,6 +88,59 @@ class TenantLineInnerInterceptorTest {
 
         assertSql("insert into entity (id,name) select t.* from (select id,name from entity3 e3) t",
             "INSERT INTO entity (id, name, tenant_id) SELECT t.* FROM (SELECT id, name, tenant_id FROM entity3 e3 WHERE e3.tenant_id = 1) t");
+    }
+    @Test
+    void crud2() {
+        assertSql2("select * from entity where id = ?",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND id = ?");
+
+        assertSql2("select * from entity where id = ? or name = ?",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND (id = ? OR name = ?)");
+
+        assertSql2("SELECT * FROM entity WHERE (id = ? OR name = ?)",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND (id = ? OR name = ?)");
+
+        /* not */
+        assertSql2("SELECT * FROM entity WHERE not (id = ? OR name = ?)",
+            "SELECT * FROM entity WHERE tenant_id = 1 AND NOT (id = ? OR name = ?)");
+
+        assertSql2("SELECT * FROM entity u WHERE not (u.id = ? OR u.name = ?)",
+            "SELECT * FROM entity u WHERE u.tenant_id = 1 AND NOT (u.id = ? OR u.name = ?)");
+
+        //leftjoin
+        assertSql2("SELECT * FROM entity e " +
+                "left join entity1 e1 on e1.id = e.id " +
+                "WHERE e.id = ? OR e.name = ?",
+            "SELECT * FROM entity e " +
+                "LEFT JOIN entity1 e1 ON e1.tenant_id = 1 AND e1.id = e.id " +
+                "WHERE e.tenant_id = 1 AND (e.id = ? OR e.name = ?)");
+
+
+
+        assertSql2("SELECT * FROM entity e WHERE e.id IN (select e1.id from entity1 e1 where e1.id = ?)",
+            "SELECT * FROM entity e WHERE e.tenant_id = 1 AND e.id IN (SELECT e1.id FROM entity1 e1 WHERE e1.tenant_id = 1 AND e1.id = ?)");
+        // 在最前
+        assertSql2("SELECT * FROM entity e WHERE e.id IN " +
+                "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
+            "SELECT * FROM entity e WHERE e.tenant_id = 1 AND e.id IN " +
+                "(SELECT e1.id FROM entity1 e1 WHERE e1.tenant_id = 1 AND e1.id = ?) AND e.id = ?");
+        // 在最后
+        assertSql2("SELECT * FROM entity e WHERE e.id = ? and e.id IN " +
+                "(select e1.id from entity1 e1 where e1.id = ?)",
+            "SELECT * FROM entity e WHERE e.tenant_id = 1 AND e.id = ? AND e.id IN " +
+                "(SELECT e1.id FROM entity1 e1 WHERE e1.tenant_id = 1 AND e1.id = ?)");
+        // 在中间
+        assertSql2("SELECT * FROM entity e WHERE e.id = ? and e.id IN " +
+                "(select e1.id from entity1 e1 where e1.id = ?) and e.id = ?",
+            "SELECT * FROM entity e WHERE e.tenant_id = 1 AND e.id = ? AND e.id IN " +
+                "(SELECT e1.id FROM entity1 e1 WHERE e1.tenant_id = 1 AND e1.id = ?) AND e.id = ?");
+
+        /* EXISTS */
+        assertSql2("SELECT * FROM entity e WHERE EXISTS (select e1.id from entity1 e1 where e1.id = ?)",
+            "SELECT * FROM entity e WHERE e.tenant_id = 1 AND EXISTS (SELECT e1.id FROM entity1 e1 WHERE e1.tenant_id = 1 AND e1.id = ?)");
+
+        assertSql2("SELECT EXISTS (SELECT 1 FROM entity1 e WHERE e.id = ? LIMIT 1)","SELECT EXISTS (SELECT 1 FROM entity1 e WHERE e.tenant_id = 1 AND e.id = ? LIMIT 1)");
+
     }
 
     @Test
@@ -466,5 +543,9 @@ class TenantLineInnerInterceptorTest {
 
     void assertSql(String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, null)).isEqualTo(targetSql);
+    }
+
+    void assertSql2(String sql, String targetSql) {
+        assertThat(interceptor2.parserSingle(sql, null)).isEqualTo(targetSql);
     }
 }

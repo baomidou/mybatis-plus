@@ -47,6 +47,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes"})
 public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport implements InnerInterceptor {
 
+    /**
+     * 条件表达式追加模式：true表示是后面追加（条件放最后），false表示插入到第一个位置（条件放第一个）
+     */
+    private boolean expressionAppendMode = true;
+
     protected void processSelectBody(Select selectBody, final String whereSegment) {
         if (selectBody == null) {
             return;
@@ -76,12 +81,27 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         if (where != null) {
             if (where instanceof OrExpression) {
-                return new AndExpression(new Parenthesis(where), expression);
+                return appendExpression(new Parenthesis(where), expression);
             } else {
-                return new AndExpression(where, expression);
+                return appendExpression(where, expression);
             }
         }
         return expression;
+    }
+
+    /**
+     * 追加表达式，默认追加到后面，可以配置变量 {@link #expressionAppendMode} 来控制追加到前面还是后面
+     *
+     * @param currentExpression 原sql的条件表达式
+     * @param injectExpression  注入的表达式
+     * @return 追加了条件的完整表达式(where条件 / on条件)
+     */
+    protected Expression appendExpression(Expression currentExpression, Expression injectExpression) {
+        if (expressionAppendMode) {
+            return new AndExpression(currentExpression, injectExpression);
+        } else {
+            return new AndExpression(injectExpression, currentExpression);
+        }
     }
 
     /**
@@ -403,9 +423,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             return injectExpression;
         }
         if (currentExpression instanceof OrExpression) {
-            return new AndExpression(new Parenthesis(currentExpression), injectExpression);
+            return appendExpression(new Parenthesis(currentExpression), injectExpression);
         } else {
-            return new AndExpression(currentExpression, injectExpression);
+            return appendExpression(currentExpression, injectExpression);
         }
     }
 
