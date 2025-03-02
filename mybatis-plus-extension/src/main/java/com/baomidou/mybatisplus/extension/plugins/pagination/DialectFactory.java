@@ -73,6 +73,8 @@ public class DialectFactory {
             } else if (dbType == DbType.TRINO
                 || dbType == DbType.PRESTO) {
                 dialect = new TrinoDialect();
+            } else if (dbType == DbType.HIVE2) {
+                dialect = new Hive2Dialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

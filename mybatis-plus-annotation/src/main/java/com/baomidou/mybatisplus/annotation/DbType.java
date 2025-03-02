@@ -227,6 +227,10 @@ public enum DbType {
      */
     YASDB("yasdb", "崖山数据库"),
     /**
+     * Hadoop的数据仓库
+     */
+    HIVE2("hive2", "Hadoop数据仓库"),
+    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");

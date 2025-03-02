@@ -153,6 +153,8 @@ public class JdbcUtils {
             return DbType.DUCKDB;
         } else if (url.contains(":yasdb:")) {
             return DbType.YASDB;
+        } else if (url.contains(":hive2:") || url.contains(":inceptor2:")) {
+            return DbType.HIVE2;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
