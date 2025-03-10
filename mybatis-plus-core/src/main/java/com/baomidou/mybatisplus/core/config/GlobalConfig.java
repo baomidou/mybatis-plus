@@ -30,11 +30,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -80,7 +84,26 @@ public class GlobalConfig implements Serializable {
     /**
      * 元对象字段填充控制器
      */
-    private MetaObjectHandler metaObjectHandler;
+    private Set<MetaObjectHandler> metaObjectHandler = new ConcurrentSkipListSet<>(AnnotationAwareOrderComparator.INSTANCE);
+
+    /**
+     * 添加 元对象字段填充控制器
+     * @param metaObjectHandler
+     * @return
+     */
+    public GlobalConfig addMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
+        this.metaObjectHandler.add(metaObjectHandler);
+        return this;
+    }
+
+    /**
+     * 移除 元对象字段填充控制器
+     * @param metaObjectHandler
+     */
+    public void removeMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
+        this.metaObjectHandler.remove(metaObjectHandler);
+    }
+
     /**
      * 注解控制器
      */

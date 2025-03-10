@@ -31,7 +31,7 @@ public class FillPerformanceConfig {
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
-        sqlSessionFactory.setGlobalConfig(new GlobalConfig().setMetaObjectHandler(metaObjectHandler()));
+        sqlSessionFactory.setGlobalConfig(new GlobalConfig().addMetaObjectHandler(metaObjectHandler()));
 
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
         mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor());

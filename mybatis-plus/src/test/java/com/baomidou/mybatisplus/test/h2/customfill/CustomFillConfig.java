@@ -46,7 +46,7 @@ public class CustomFillConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
         GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setMetaObjectHandler(metaObjectHandler());
+        globalConfig.addMetaObjectHandler(metaObjectHandler());
         globalConfig.setAnnotationHandler(annotationHandler());
         sqlSessionFactory.setGlobalConfig(globalConfig);
 
@@ -87,7 +87,7 @@ public class CustomFillConfig {
             }
         };
     }
-    
+
     @Bean
     public AnnotationHandler annotationHandler() {
         return new AnnotationHandler() {

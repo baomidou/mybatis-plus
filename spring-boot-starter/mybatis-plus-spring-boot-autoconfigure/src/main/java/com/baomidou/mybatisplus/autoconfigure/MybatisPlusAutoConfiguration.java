@@ -203,7 +203,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         applySqlSessionFactoryBeanCustomizers(factory);
 
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
-        this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
+        this.getBeanThen(MetaObjectHandler.class, globalConfig::addMetaObjectHandler);
         this.getBeanThen(AnnotationHandler.class, globalConfig::setAnnotationHandler);
         this.getBeanThen(PostInitTableInfoHandler.class, globalConfig::setPostInitTableInfoHandler);
         this.getBeansThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerators(i));

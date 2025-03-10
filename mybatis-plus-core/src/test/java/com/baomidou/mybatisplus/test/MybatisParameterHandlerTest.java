@@ -66,7 +66,7 @@ class MybatisParameterHandlerTest {
         Configuration configuration = new MybatisConfiguration();
         BoundSql boundSql = mock(BoundSql.class);
         StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
-        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(new DefaultIdentifierGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(new DefaultIdentifierGenerator()).addMetaObjectHandler(new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {
                 setFieldValByName("id", 666L, metaObject);
@@ -295,7 +295,7 @@ class MybatisParameterHandlerTest {
         Configuration configuration = new MybatisConfiguration();
         BoundSql boundSql = mock(BoundSql.class);
         StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
-        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(DefaultIdentifierGenerator.getInstance()).setMetaObjectHandler(new MetaObjectHandler() {
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(DefaultIdentifierGenerator.getInstance()).addMetaObjectHandler(new MetaObjectHandler() {
 
             @Override
             public boolean openInsertFill(MappedStatement mappedStatement) {

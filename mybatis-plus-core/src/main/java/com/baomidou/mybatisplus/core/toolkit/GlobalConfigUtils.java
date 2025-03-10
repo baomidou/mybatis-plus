@@ -107,7 +107,7 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getSqlInjector();
     }
 
-    public static Optional<MetaObjectHandler> getMetaObjectHandler(Configuration configuration) {
+    public static Optional<Set<MetaObjectHandler>> getMetaObjectHandler(Configuration configuration) {
         return Optional.ofNullable(getGlobalConfig(configuration).getMetaObjectHandler());
     }
 

@@ -59,7 +59,7 @@ public class MybatisPlusConfig {
         mybatisPlusInterceptor.addInnerInterceptor(new DataChangeRecorderInnerInterceptor());
         sqlSessionFactory.setPlugins(mybatisPlusInterceptor);
 
-        globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        globalConfig.addMetaObjectHandler(new H2MetaObjectHandler());
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
 
             /**

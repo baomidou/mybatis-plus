@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -137,17 +138,21 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     }
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement) && tableInfo.isWithInsertFill()) {
-                metaObjectHandler.insertFill(metaObject);
+        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandlerSet -> {
+            for (MetaObjectHandler metaObjectHandler : metaObjectHandlerSet) {
+                if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement) && tableInfo.isWithInsertFill()) {
+                    metaObjectHandler.insertFill(metaObject);
+                }
             }
         });
     }
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement) && tableInfo.isWithUpdateFill()) {
-                metaObjectHandler.updateFill(metaObject);
+        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandlerSet -> {
+            for (MetaObjectHandler metaObjectHandler : metaObjectHandlerSet) {
+                if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement) && tableInfo.isWithUpdateFill()) {
+                    metaObjectHandler.updateFill(metaObject);
+                }
             }
         });
     }

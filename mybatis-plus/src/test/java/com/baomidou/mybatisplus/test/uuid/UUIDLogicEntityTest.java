@@ -75,7 +75,7 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
 
     @Override
     protected GlobalConfig globalConfig() {
-        return super.globalConfig().setMetaObjectHandler(new MetaObjectHandler() {
+        return super.globalConfig().addMetaObjectHandler(new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {
 

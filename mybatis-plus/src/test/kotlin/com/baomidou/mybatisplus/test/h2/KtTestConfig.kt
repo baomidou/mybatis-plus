@@ -41,7 +41,7 @@ open class KtTestConfig {
         mybatisPlusInterceptor.addInnerInterceptor(PaginationInnerInterceptor())
         sqlSessionFactory.setPlugins(mybatisPlusInterceptor)
         val globalConfig = GlobalConfig()
-        globalConfig.setMetaObjectHandler(MyMetaObjectHandler())
+        globalConfig.addMetaObjectHandler(MyMetaObjectHandler())
         globalConfig.setSqlInjector(DefaultSqlInjector())
         sqlSessionFactory.setGlobalConfig(globalConfig)
         return sqlSessionFactory.getObject()

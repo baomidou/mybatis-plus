@@ -115,7 +115,7 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
     @Override
     protected GlobalConfig globalConfig() {
         GlobalConfig globalConfig = super.globalConfig();
-        globalConfig.setMetaObjectHandler(new MetaObjectHandler() {
+        globalConfig.addMetaObjectHandler(new MetaObjectHandler() {
 
             @Override
             public void insertFill(MetaObject metaObject) {
