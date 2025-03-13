@@ -86,6 +86,7 @@ public class MybatisConfiguration extends Configuration {
 
     /**
      * 初始化调用
+     * 配置默认的驼峰命名规则和枚举类型处理器
      */
     public MybatisConfiguration() {
         super();
