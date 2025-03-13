@@ -62,6 +62,13 @@ public class DdlScript {
     private boolean autoCommit;
 
     /**
+     * 自定义脚本运行器
+     *
+     * @since 3.5.11
+     */
+    private Consumer<ScriptRunner> scriptRunnerConsumer;
+
+    /**
      * 非池化执行 (非自动提交)
      *
      * @since 3.5.11
@@ -138,7 +145,24 @@ public class DdlScript {
      */
     @Deprecated
     public void run(List<String> sqlFiles, boolean autoCommit) {
-        DdlHelper.runScript(this.ddlGenerator, this.dataSource, sqlFiles, autoCommit);
+        try (Connection connection = this.dataSource.getConnection()) {
+            DdlHelper.runScript(this.ddlGenerator, connection, sqlFiles, this.scriptRunnerConsumer, autoCommit, DdlScriptErrorHandler.PrintlnLogErrorHandler.INSTANCE);
+        } catch (Exception e) {
+            // TODO 保持兼容,吞掉所有异常
+            LOG.error("Run script error: ", e);
+        }
+    }
+
+    /**
+     * 自定义 ScriptRunner
+     *
+     * @param scriptRunnerConsumer 处理函数
+     * @return this
+     * @since 3.5.11
+     */
+    public DdlScript scriptRunner(Consumer<ScriptRunner> scriptRunnerConsumer) {
+        this.scriptRunnerConsumer = scriptRunnerConsumer;
+        return this;
     }
 
     /**
@@ -186,11 +210,12 @@ public class DdlScript {
      */
     public void run(Connection connection, Reader reader, boolean autoCommit, String delimiter) {
         ScriptRunner scriptRunner = DdlHelper.getScriptRunner(connection, autoCommit);
-        // 设置自定义 SQL 分隔符，默认 ; 符号分割
+        if (scriptRunnerConsumer != null) {
+            scriptRunnerConsumer.accept(scriptRunner);
+        }
         if (StringUtils.isNotBlank(delimiter)) {
             scriptRunner.setDelimiter(delimiter);
         }
-        // 执行 SQL 脚本
         scriptRunner.runScript(reader);
     }
 

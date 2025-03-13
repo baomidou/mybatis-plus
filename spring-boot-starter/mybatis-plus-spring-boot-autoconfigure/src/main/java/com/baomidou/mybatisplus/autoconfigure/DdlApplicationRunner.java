@@ -17,12 +17,17 @@ package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.ddl.DdlHelper;
+import com.baomidou.mybatisplus.extension.ddl.DdlScriptErrorHandler;
 import com.baomidou.mybatisplus.extension.ddl.IDdl;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * DDL 启动应用后执行
@@ -35,16 +40,46 @@ public class DdlApplicationRunner implements ApplicationRunner {
 
     private final List<IDdl> ddlList;
 
+    /**
+     * 是否自动提交 (默认自动提交)
+     *
+     * @since 3.5.11
+     */
+    @Setter
+    private boolean autoCommit = true;
+
+    /**
+     * 错误处理器 (默认打印错误日志继续执行)
+     *
+     * @since 3.5.11
+     */
+    @Setter
+    private DdlScriptErrorHandler ddlScriptErrorHandler = DdlScriptErrorHandler.PrintlnLogErrorHandler.INSTANCE;
+
+    /**
+     * 自定义 ScriptRunner 函数
+     *
+     * @since 3.5.11
+     */
+    @Setter
+    private Consumer<ScriptRunner> scriptRunnerConsumer;
+
     public DdlApplicationRunner(List<IDdl> ddlList) {
         this.ddlList = ddlList;
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         if (CollectionUtils.isNotEmpty(ddlList)) {
             log.debug("  ...  DDL start create  ...  ");
-            ddlList.forEach(ddl -> ddl.runScript(dataSource -> DdlHelper.runScript(ddl.getDdlGenerator(),
-                dataSource, ddl.getSqlFiles(), true)));
+            ddlList.forEach(ddl -> ddl.runScript(dataSource -> {
+                try {
+                    DdlHelper.runScript(ddl.getDdlGenerator(),
+                        dataSource, ddl.getSqlFiles(), this.scriptRunnerConsumer, this.autoCommit, this.ddlScriptErrorHandler);
+                } catch (SQLException e) {
+                    log.error("Run script error: ", e);
+                }
+            }));
             log.debug("  ...  DDL end create  ...  ");
         }
     }

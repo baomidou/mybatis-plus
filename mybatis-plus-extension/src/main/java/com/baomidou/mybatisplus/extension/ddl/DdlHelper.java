@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * DDL 辅助类
@@ -50,7 +51,7 @@ public class DdlHelper {
      * 运行 SQL 脚本文件
      *
      * @param ddlGenerator DDL 生成器
-     * @param connection   数据库连接
+     * @param connection   数据库连接 (自行控制回收)
      * @param sqlFiles     SQL 文件列表
      * @param autoCommit   是否自动提交事务
      * @throws SQLException SQLException
@@ -62,19 +63,57 @@ public class DdlHelper {
     /**
      * 运行 SQL 脚本文件
      *
-     * @param ddlGenerator             DDL 生成器
-     * @param connection               数据库连接
-     * @param sqlFiles                 SQL 文件列表
-     * @param autoCommit               是否自动提交事务
+     * @param ddlGenerator          DDL 生成器
+     * @param connection            数据库连接 (自行控制回收)
+     * @param sqlFiles              SQL 文件列表
+     * @param autoCommit            是否自动提交事务
      * @param ddlScriptErrorHandler 错误处理器
      * @throws SQLException SQLException
      * @since 3.5.11
      */
-    public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles, boolean autoCommit, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
+    public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles,
+                                 boolean autoCommit, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
+        runScript(ddlGenerator, connection, sqlFiles, null, autoCommit, ddlScriptErrorHandler);
+    }
+
+    /**
+     * 运行 SQL 脚本文件
+     *
+     * @param ddlGenerator          DDL 生成器
+     * @param connection            数据库连接 (自行控制回收)
+     * @param sqlFiles              SQL 文件列表
+     * @param scriptRunnerConsumer  自定义 ScriptRunner 函数
+     * @param ddlScriptErrorHandler 错误处理器
+     * @throws SQLException SQLException
+     * @since 3.5.11
+     */
+    public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles,
+                                 Consumer<ScriptRunner> scriptRunnerConsumer, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
+        runScript(ddlGenerator, connection, sqlFiles, scriptRunnerConsumer, false, ddlScriptErrorHandler);
+    }
+
+
+    /**
+     * 运行 SQL 脚本文件
+     *
+     * @param ddlGenerator          DDL 生成器
+     * @param connection            数据库连接 (自行控制回收)
+     * @param sqlFiles              SQL 文件列表
+     * @param scriptRunnerConsumer  自定义 ScriptRunner 函数
+     * @param autoCommit            是否自动提交事务
+     * @param ddlScriptErrorHandler 错误处理器
+     * @throws SQLException SQLException
+     * @since 3.5.11
+     */
+    public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles, Consumer<ScriptRunner> scriptRunnerConsumer,
+                                 boolean autoCommit, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
         final String jdbcUrl = connection.getMetaData().getURL();
         final String schema = DdlHelper.getDatabase(jdbcUrl);
         SqlRunner sqlRunner = new SqlRunner(connection);
         ScriptRunner scriptRunner = getScriptRunner(connection, autoCommit);
+        if (scriptRunnerConsumer != null) {
+            scriptRunnerConsumer.accept(scriptRunner);
+        }
         if (null == ddlGenerator) {
             ddlGenerator = getDdlGenerator(jdbcUrl);
         }
@@ -128,7 +167,11 @@ public class DdlHelper {
      * @param dataSource   数据源
      * @param sqlFiles     SQL 文件列表
      * @param autoCommit   是否自动提交事务
+     * @see #runScript(IDdlGenerator, Connection, List, boolean)
+     * @see #runScript(IDdlGenerator, DataSource, List, boolean, DdlScriptErrorHandler)
+     * @deprecated 3.5.11 方法会吞掉所有异常,建议自行处理.
      */
+    @Deprecated
     public static void runScript(IDdlGenerator ddlGenerator, DataSource dataSource, List<String> sqlFiles, boolean autoCommit) {
         try (Connection connection = dataSource.getConnection()) {
             runScript(ddlGenerator, connection, sqlFiles, autoCommit);
@@ -152,6 +195,42 @@ public class DdlHelper {
                                  DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             runScript(ddlGenerator, connection, sqlFiles, autoCommit, ddlScriptErrorHandler);
+        }
+    }
+
+
+    /**
+     * 运行 SQL 脚本文件
+     *
+     * @param ddlGenerator          DDL 生成器
+     * @param dataSource            数据源
+     * @param sqlFiles              SQL 文件列表
+     * @param scriptRunnerConsumer  自定义 ScriptRunner 处理函数
+     * @param ddlScriptErrorHandler 错误处理器
+     * @since 3.5.11
+     */
+    public static void runScript(IDdlGenerator ddlGenerator,
+                                 DataSource dataSource, List<String> sqlFiles, Consumer<ScriptRunner> scriptRunnerConsumer,
+                                 DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            runScript(ddlGenerator, connection, sqlFiles, scriptRunnerConsumer, false, ddlScriptErrorHandler);
+        }
+    }
+
+    /**
+     * 运行 SQL 脚本文件
+     *
+     * @param ddlGenerator          DDL 生成器
+     * @param dataSource            数据源
+     * @param sqlFiles              SQL 文件列表
+     * @param scriptRunnerConsumer  自定义 ScriptRunner 处理函数
+     * @param ddlScriptErrorHandler 错误处理器
+     * @since 3.5.11
+     */
+    public static void runScript(IDdlGenerator ddlGenerator, DataSource dataSource, List<String> sqlFiles,
+                                 Consumer<ScriptRunner> scriptRunnerConsumer, boolean autoCommit, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            runScript(ddlGenerator, connection, sqlFiles, scriptRunnerConsumer, autoCommit, ddlScriptErrorHandler);
         }
     }
 
