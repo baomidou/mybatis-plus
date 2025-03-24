@@ -7,6 +7,7 @@ import ${pkg};
 <#list importEntityJavaPackages as pkg>
 import ${pkg};
 </#list>
+
 /**
  * <p>
  * ${table.comment!}
