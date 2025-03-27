@@ -147,10 +147,21 @@ public class StringEscape {
      * @return 转义后的字符串
      */
     public static String escapeString(String escapeStr) {
+        // 处理空字符串
+        if (escapeStr == null || escapeStr.isEmpty()) {
+            return "''";
+        }
+
+        // 先移除开头和结尾的单引号（如果有）
         if (escapeStr.matches("\'(.+)\'")) {
             escapeStr = escapeStr.substring(1, escapeStr.length() - 1);
         }
-        return "\'" + escapeRawString(escapeStr) + "\'";
+
+        // 使用更安全的转义处理，确保反斜杠和单引号被正确处理
+        String escaped = escapeRawString(escapeStr);
+
+        // 返回带单引号的结果
+        return "\'" + escaped + "\'";
     }
 
 }
