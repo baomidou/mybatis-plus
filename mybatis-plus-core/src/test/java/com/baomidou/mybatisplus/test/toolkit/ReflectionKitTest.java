@@ -101,6 +101,16 @@ class ReflectionKitTest {
     }
 
     @Test
+    void testGetField() throws NoSuchFieldException {
+        Field sexField = ReflectionKit.getField(C.class, "sex");
+        Field ageField = ReflectionKit.getField(C.class, "age");
+        Field nameField = ReflectionKit.getField(C.class, "name");
+        Assertions.assertNotNull(sexField);
+        Assertions.assertNotNull(ageField);
+        Assertions.assertNotNull(nameField);
+    }
+
+    @Test
     void testGetFieldMap() throws NoSuchFieldException {
         Map<String, Field> fieldMap = ReflectionKit.getFieldMap(C.class);
         Assertions.assertEquals(5, fieldMap.size());
