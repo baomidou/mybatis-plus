@@ -71,7 +71,7 @@ public class MybatisUtils {
         }
         Field declaredField;
         try {
-            declaredField = sqlSession.getClass().getDeclaredField("sqlSessionFactory");
+            declaredField = ReflectionKit.getField(sqlSession.getClass(), "sqlSessionFactory");
             declaredField.setAccessible(true);
             return (SqlSessionFactory) declaredField.get(sqlSession);
         } catch (NoSuchFieldException | IllegalAccessException e) {

@@ -119,6 +119,24 @@ public final class ReflectionKit {
 
     /**
      * <p>
+     * 获取该类的指定属性
+     * </p>
+     *
+     * @param clazz 反射类
+     */
+    public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        List<Field> fieldList = getFieldList(clazz);
+
+        for (Field field : fieldList) {
+            if (Objects.equals(fieldName, field.getName())) {
+                return field;
+            }
+        }
+        throw new NoSuchFieldException(fieldName);
+    }
+
+    /**
+     * <p>
      * 获取该类的所有属性列表
      * </p>
      *
