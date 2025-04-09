@@ -162,7 +162,7 @@ public class MybatisUtils {
         Object result = mapper;
         if (AopUtils.setLoadQuarkusArc()) {
             //Quarkus's proxy detection
-            if (result instanceof ClientProxy) {
+            while (result instanceof ClientProxy) {
                 result = ((ClientProxy) result).arc_contextualInstance();
             }
         }
