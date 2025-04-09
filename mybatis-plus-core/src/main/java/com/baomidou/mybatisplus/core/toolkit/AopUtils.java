@@ -44,6 +44,22 @@ public class AopUtils {
         }
     }
 
+    /**
+     * 是否加载Quarkus-Arc模块
+     *
+     * @since 3.5.12
+     */
+    private static boolean loadQuarkusArc = false;
+
+    static {
+        try {
+            ClassUtils.toClassConfident("io.quarkus.arc.ClientProxy");
+            loadQuarkusArc = true;
+        } catch (Exception exception) {
+            // ignore
+        }
+    }
+
     private static final Log logger = LogFactory.getLog(AopUtils.class);
 
     /**
@@ -54,6 +70,16 @@ public class AopUtils {
      */
     public static boolean isLoadSpringAop() {
         return loadAop;
+    }
+
+    /**
+     * 是否加载Quarkus-Arc模块
+     *
+     * @return 是否加载Spring-Aop模块
+     * @since 3.5.12
+     */
+    public static boolean setLoadQuarkusArc() {
+        return loadQuarkusArc;
     }
 
 

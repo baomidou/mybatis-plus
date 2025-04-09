@@ -125,9 +125,11 @@ public class MybatisUtils {
             return (MybatisMapperProxy<?>) mapper;
         }
         Object result = mapper;
-        //Quarkus's proxy detection
-        if (result instanceof ClientProxy) {
-            result = ((ClientProxy) result).arc_contextualInstance();
+        if (AopUtils.setLoadQuarkusArc()) {
+            //Quarkus's proxy detection
+            while (result instanceof ClientProxy) {
+                result = ((ClientProxy) result).arc_contextualInstance();
+            }
         }
         if (AopUtils.isLoadSpringAop()) {
             while (org.springframework.aop.support.AopUtils.isAopProxy(result)) {
@@ -158,9 +160,11 @@ public class MybatisUtils {
             return mapper;
         }
         Object result = mapper;
-        //Quarkus's proxy detection
-        if (result instanceof ClientProxy) {
-            result = ((ClientProxy) result).arc_contextualInstance();
+        if (AopUtils.setLoadQuarkusArc()) {
+            //Quarkus's proxy detection
+            if (result instanceof ClientProxy) {
+                result = ((ClientProxy) result).arc_contextualInstance();
+            }
         }
         if (AopUtils.isLoadSpringAop()) {
             while (org.springframework.aop.support.AopUtils.isAopProxy(result)) {
