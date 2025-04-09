@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
+import io.quarkus.arc.ClientProxy;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
@@ -124,6 +125,10 @@ public class MybatisUtils {
             return (MybatisMapperProxy<?>) mapper;
         }
         Object result = mapper;
+        //Quarkus's proxy detection
+        if (result instanceof ClientProxy) {
+            result = ((ClientProxy) result).arc_contextualInstance();
+        }
         if (AopUtils.isLoadSpringAop()) {
             while (org.springframework.aop.support.AopUtils.isAopProxy(result)) {
                 result = AopProxyUtils.getSingletonTarget(result);
@@ -153,6 +158,10 @@ public class MybatisUtils {
             return mapper;
         }
         Object result = mapper;
+        //Quarkus's proxy detection
+        if (result instanceof ClientProxy) {
+            result = ((ClientProxy) result).arc_contextualInstance();
+        }
         if (AopUtils.isLoadSpringAop()) {
             while (org.springframework.aop.support.AopUtils.isAopProxy(result)) {
                 result = AopProxyUtils.getSingletonTarget(result);

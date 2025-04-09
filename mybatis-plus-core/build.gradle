@@ -4,6 +4,7 @@ dependencies {
 
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
+    implementation "${lib.'quarkus-arc'}"
     implementation "${lib.'imadcn'}"
 
     testImplementation "${lib.'logback-classic'}"
