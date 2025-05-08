@@ -346,7 +346,8 @@ public class Db {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectCount(queryWrapper));
+         Long count = SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectCount(queryWrapper));
+         return count == null ? 0L : count;
     }
 
     /**

@@ -280,6 +280,12 @@ class DbTest extends BaseDbTest<EntityMapper> {
         Assertions.assertEquals("ruben", name);
     }
 
+    @Test
+    void count() {
+        long count = Db.count(Wrappers.lambdaQuery(Entity.class).eq(Entity::getName, UUID.randomUUID().toString()));
+        Assertions.assertSame(0L, count);
+    }
+
 
     @Override
     protected String tableDataSql() {
