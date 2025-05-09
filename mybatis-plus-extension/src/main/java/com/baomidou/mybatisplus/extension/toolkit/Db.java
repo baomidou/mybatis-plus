@@ -328,7 +328,7 @@ public class Db {
      * @see Wrappers#emptyWrapper()
      */
     public static <T> long count(Class<T> entityClass) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectCount(null));
+        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.retCount(baseMapper.selectCount(null)));
     }
 
     /**
