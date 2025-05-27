@@ -31,6 +31,14 @@ import java.util.*;
 class DbTest extends BaseDbTest<EntityMapper> {
 
     @Test
+    void testCount() {
+        Entity entity = new Entity();
+        entity.setId(-1L);
+        long count = Db.count(entity);
+        Assertions.assertEquals(0, count);
+    }
+
+    @Test
     void testSave() {
         Entity entity = new Entity();
         entity.setName("ruben");
@@ -163,7 +171,7 @@ class DbTest extends BaseDbTest<EntityMapper> {
         map.put("id", 1L);
         List<Entity> list = Db.listByMap(map, Entity.class);
         Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("ruben", list.get(0).getName());
+        Assertions.assertEquals("ruben", list.getFirst().getName());
     }
 
     @Test

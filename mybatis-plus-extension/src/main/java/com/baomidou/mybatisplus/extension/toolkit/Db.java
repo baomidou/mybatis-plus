@@ -19,11 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -346,7 +342,8 @@ public class Db {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retCount(baseMapper.selectCount(queryWrapper)));
+        Long count = SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retCount(baseMapper.selectCount(queryWrapper)));
+        return ObjectUtils.isEmpty(count) ? 0 : count;
     }
 
     /**
