@@ -51,8 +51,11 @@ public enum SqlKeyword implements ISqlSegment {
     BETWEEN("BETWEEN"),
     NOT_BETWEEN("NOT BETWEEN"),
     ASC("ASC"),
-    DESC("DESC");
-
+    DESC("DESC"),
+    COMMA(StringPool.COMMA),
+    LEFT_BRACKET(StringPool.LEFT_BRACKET),
+    RIGHT_BRACKET(StringPool.RIGHT_BRACKET),
+    ;
     private final String keyword;
 
     @Override

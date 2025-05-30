@@ -27,7 +27,7 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,6 +39,131 @@ import static org.mockito.Mockito.when;
  * @since 2022-05-03
  */
 class DbTest extends BaseDbTest<EntityMapper> {
+
+    @Test
+    void testMulIn() {
+        List<List<?>> values = new ArrayList<>();
+        values.add(Arrays.asList("1", "ruben"));
+        values.add(Arrays.asList("2", "chocolate"));
+
+        // 测试 1：匹配一个不存在的组合，预期结果为空
+        List<Entity> list = Db.lambdaQuery(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), List.of(Arrays.asList("2", "ruben")))
+            .list();
+        assertEquals(0, list.size());
+
+        // 测试 2：根据单个字段 id 匹配 "2"，预期返回一条记录
+        list = Db.lambdaQuery(Entity.class)
+            .in(List.of(Entity::getId), List.of(List.of("2")))
+            .list();
+        assertEquals(1, list.size());
+
+        // 测试 3：匹配组合条件，预期返回一条记录
+        list = Db.lambdaQuery(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), List.of(Arrays.asList("1", "ruben")))
+            .list();
+        assertEquals(1, list.size());
+
+        // 测试 4：匹配 values 列表中的两个组合值，预期返回两条记录
+        list = Db.lambdaQuery(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), values)
+            .list();
+        assertEquals(2, list.size());
+
+        // 测试 5：普通 Query 方式实现相同的 IN 查询（字段名写法），预期同样返回两条记录
+        list = Db.query(Entity.class)
+            .in(true, List.of("id", "name"), values)
+            .list();
+        assertEquals(2, list.size());
+
+        // 测试 6：抛出异常的情况
+        assertThrows(Exception.class, () -> Db.lambdaQuery(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), new ArrayList<>())
+            .list()
+        );
+
+        assertThrows(Exception.class, () -> Db.lambdaQuery(Entity.class)
+            .in(true, new ArrayList<>(), new ArrayList<>())
+            .list()
+        );
+
+        // 字段数量和值数量不匹配的情况
+        assertThrows(Exception.class, () -> Db.lambdaQuery(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), List.of(List.of("1")))
+            .list()
+        );
+
+        // 测试 7：Lambda Update 使用 in 进行更新操作，将匹配 values 中的组合记录的 name 改为 "hjl"
+        boolean update = Db.lambdaUpdate(Entity.class)
+            .in(true, List.of(Entity::getId, Entity::getName), values)
+            .set(Entity::getName, "hjl")
+            .update();
+        assertTrue(update);
+
+        // 测试 8：普通 Update 使用 in 进行更新操作，上面的name已被更新， 所以预期更新失败
+        update = Db.update(Entity.class)
+            .in(true, List.of("id", "name"), values)
+            .set("name", "robot")
+            .update();
+        assertFalse(update);
+    }
+
+    @Test
+    void testMulNotIn() {
+        List<List<?>> values = new ArrayList<>();
+        values.add(Arrays.asList("1", "ruben"));
+        values.add(Arrays.asList("2", "chocolate"));
+
+        // 测试 1：排除一个不存在的组合 ("2", "ruben")，预期返回所有其他记录
+        List<Entity> list = Db.lambdaQuery(Entity.class)
+            .notIn(true, List.of(Entity::getId, Entity::getName), List.of(Arrays.asList("2", "ruben")))
+            .list();
+        assertEquals(2, list.size());
+
+        // 测试 2：排除单个字段 id 为 "2" 的记录，预期返回除该记录外的所有数据
+        list = Db.lambdaQuery(Entity.class)
+            .notIn(List.of(Entity::getId), List.of(List.of("2")))
+            .list();
+        assertEquals(1, list.size());
+
+        // 测试 3：排除组合条件，预期返回除该记录外的所有数据
+        list = Db.lambdaQuery(Entity.class)
+            .notIn(true, List.of(Entity::getId, Entity::getName), List.of(Arrays.asList("1", "ruben")))
+            .list();
+        assertEquals(1, list.size());
+
+        // 测试 4：排除 values 列表中的两个组合值，预期返回除这两条外的所有数据
+        list = Db.lambdaQuery(Entity.class)
+            .notIn(true, List.of(Entity::getId, Entity::getName), values)
+            .list();
+        assertEquals(0, list.size());
+
+        // 测试 5：普通 Query 方式实现相同的 NOT IN 查询（字段名写法），预期结果一致
+        list = Db.query(Entity.class)
+            .notIn(true, List.of("id", "name"), values)
+            .list();
+        assertEquals(0, list.size());
+
+        // 测试 6：当查询值为空时，会抛出异常，和in查询一个效果
+        assertThrows(Exception.class, () -> Db.lambdaQuery(Entity.class)
+            .notIn(true, List.of(Entity::getId, Entity::getName), new ArrayList<>())
+            .list()
+        );
+
+        // 测试 7：LambdaUpdate，排除单个记录
+        boolean update = Db.lambdaUpdate(Entity.class)
+            .notIn(true, List.of(Entity::getId, Entity::getName), List.of(Arrays.asList("1", "ruben")))
+            .set(Entity::getName, "hjl")
+            .update();
+        assertTrue(update);
+
+        // 测试 8：普通 Update
+        update = Db.update(Entity.class)
+            .notIn(true, List.of("id", "name"), values)
+            .set("name", "robot")
+            .update();
+        assertTrue(update);
+    }
 
     @Test
     void testSave() {

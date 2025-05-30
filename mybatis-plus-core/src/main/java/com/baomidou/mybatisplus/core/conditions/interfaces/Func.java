@@ -77,7 +77,7 @@ public interface Func<Children, R> extends Serializable {
      * 字段 IN (value.get(0), value.get(1), ...)
      * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
+     * <li> 注意！当集合为值是空或null时,或者字段和值长度不一致时，会报错</li>
      * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
      *
      * @param column    字段
@@ -101,6 +101,64 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      */
     Children in(boolean condition, R column, Collection<?> coll);
+
+    /**
+     * (grade, age) IN (('A', 1), ('B', 2))
+     * <p>例: in("id", Arrays.asList(Arrays.asList('A', 1), Arrays.asList('B', 2)))</p>
+     *
+     * <li> 注意！当集合为值是空或null时,或者字段和值长度不一致时，会报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     *
+     * @param columns    字段
+     * @param values      数据集合
+     * @return children
+     */
+    default Children in(List<R> columns, List<List<?>> values) {
+        return in(true, columns, values);
+    }
+
+    /**
+     * (grade, age) IN (('A', 1), ('B', 2))
+     * <p>例: in("id", Arrays.asList(Arrays.asList('A', 1), Arrays.asList('B', 2)))</p>
+     *
+     * <li> 注意！当集合为值是空或null时,或者字段和值长度不一致时，会报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     *
+     * @param condition 执行条件
+     * @param columns    字段
+     * @param values      数据集合
+     * @return children
+     */
+    Children in(boolean condition, List<R> columns, List<List<?>> values);
+
+    /**
+     * (grade, age) NOT IN (('A', 1), ('B', 2))
+     * <p>例: notIn("id", Arrays.asList(Arrays.asList('A', 1), Arrays.asList('B', 2)))</p>
+     *
+     * <li> 注意！当集合为值是空或null时,或者字段和值长度不一致时，会报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     *
+     * @param columns    字段
+     * @param values      数据集合
+     * @return children
+     */
+    default Children notIn(List<R> columns, List<List<?>> values) {
+        return notIn(true, columns, values);
+    }
+
+    /**
+     * (grade, age) NOT IN (('A', 1), ('B', 2))
+     * <p>例: notIn("id", Arrays.asList(Arrays.asList('A', 1), Arrays.asList('B', 2)))</p>
+     *
+     * <li> 注意！当集合为值是空或null时,或者字段和值长度不一致时，会报错</li>
+     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     *
+     * @param condition 执行条件
+     * @param columns    字段
+     * @param values      数据集合
+     * @return children
+     */
+    Children notIn(boolean condition, List<R> columns, List<List<?>> values);
 
     /**
      * 字段 IN (v0, v1, ...)

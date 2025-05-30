@@ -35,6 +35,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
@@ -288,6 +289,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IS_NOT_NULL));
     }
 
+    public Children in(boolean condition, List<R> columns, List<List<?>> values) {
+        return maybeDo(condition, () -> appendSqlSegments(buildMulSqlSegment(columns, IN, values)));
+    }
+
     @Override
     public Children in(boolean condition, R column, Collection<?> coll) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN, inExpression(coll)));
@@ -296,6 +301,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children in(boolean condition, R column, Object... values) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), IN, inExpression(values)));
+    }
+
+    @Override
+    public Children notIn(boolean condition, List<R> columns, List<List<?>> values) {
+        return maybeDo(condition, () -> appendSqlSegments(buildMulSqlSegment(columns, NOT_IN, values)));
     }
 
     @Override
@@ -558,6 +568,38 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         }
         return () -> value.stream().map(i -> formatParam(null, i))
             .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+    }
+
+    private ISqlSegment[] buildMulSqlSegment(List<R> columns, SqlKeyword sqlKeyword, List<List<?>> values) {
+        Assert.notEmpty(columns, "columns can not be empty!");
+        Assert.notEmpty(values, "values can not be empty!");
+
+        List<ISqlSegment> segments = new ArrayList<>();
+        segments.add(LEFT_BRACKET);
+        columns.stream().map(this::columnToSqlSegment).forEach(e -> {
+            segments.add(e);
+            segments.add(COMMA);
+        });
+        segments.remove(segments.size() - 1);
+        segments.add(RIGHT_BRACKET);
+        segments.add(sqlKeyword);
+        segments.addAll(inMulExpression(values));
+        return segments.toArray(new ISqlSegment[0]);
+    }
+
+    protected List<ISqlSegment> inMulExpression(List<List<?>> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return Collections.singletonList(() -> "()");
+        }
+        List<ISqlSegment> sqlSegments = new ArrayList<>();
+        sqlSegments.add(0, LEFT_BRACKET);
+        value.stream().map(this::inExpression).collect(Collectors.toList()).forEach(e -> {
+            sqlSegments.add(e);
+            sqlSegments.add(COMMA);
+        });
+        sqlSegments.remove(sqlSegments.size() - 1);
+        sqlSegments.add(RIGHT_BRACKET);
+        return sqlSegments;
     }
 
     /**
