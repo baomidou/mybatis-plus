@@ -35,7 +35,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
@@ -593,7 +592,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         }
         List<ISqlSegment> sqlSegments = new ArrayList<>();
         sqlSegments.add(0, LEFT_BRACKET);
-        value.stream().map(this::inExpression).collect(Collectors.toList()).forEach(e -> {
+        value.stream().map(this::inExpression).forEach(e -> {
             sqlSegments.add(e);
             sqlSegments.add(COMMA);
         });
