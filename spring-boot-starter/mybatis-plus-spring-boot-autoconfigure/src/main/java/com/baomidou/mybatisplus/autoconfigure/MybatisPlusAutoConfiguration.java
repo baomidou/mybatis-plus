@@ -19,6 +19,7 @@ package com.baomidou.mybatisplus.autoconfigure;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
+import com.baomidou.mybatisplus.core.handlers.CompositeMetaObjectHandler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -205,7 +206,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         applySqlSessionFactoryBeanCustomizers(factory);
 
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
-        this.getBeanThen(MetaObjectHandler.class, globalConfig::setMetaObjectHandler);
+        this.getBeansThen(MetaObjectHandler.class, h -> globalConfig.setMetaObjectHandler(new CompositeMetaObjectHandler(h)));
         this.getBeanThen(AnnotationHandler.class, globalConfig::setAnnotationHandler);
         this.getBeanThen(PostInitTableInfoHandler.class, globalConfig::setPostInitTableInfoHandler);
         this.getBeansThen(IKeyGenerator.class, i -> globalConfig.getDbConfig().setKeyGenerators(i));
