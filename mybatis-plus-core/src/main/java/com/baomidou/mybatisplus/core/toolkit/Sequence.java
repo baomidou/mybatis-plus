@@ -88,7 +88,7 @@ public class Sequence {
         this.inetAddress = inetAddress;
         long start = System.nanoTime();
         this.datacenterId = getDatacenterId(maxDatacenterId);
-        this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
+        this.workerId = getWorkerId(datacenterId, maxWorkerId);
         long end = System.nanoTime();
         if (end - start > Sequence.MAX_START_INTERVAL_TIME) {
             // 一般这里启动慢,是未指定inetAddress时出现,请查看本机hostname,将本机hostname写入至本地系统hosts文件之中进行解析
@@ -121,9 +121,9 @@ public class Sequence {
     }
 
     /**
-     * 获取 maxWorkerId
+     * 获取 workerId
      */
-    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+    protected long getWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
