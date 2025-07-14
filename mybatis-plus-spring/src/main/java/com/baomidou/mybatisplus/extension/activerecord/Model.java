@@ -28,12 +28,12 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
  * @author hubin
  * @since 2016-11-06
  */
-public abstract class Model<T extends Model<?>> extends AbstractModel<T> {
+public interface Model<T extends Model<?>> extends AbstractModel<T> {
 
     /**
      * 执行 SQL
      */
-    public SqlRunner sql() {
-        return new SqlRunner(this.entityClass);
+    default SqlRunner sql() {
+        return new SqlRunner(this.getEntityClass());
     }
 }
