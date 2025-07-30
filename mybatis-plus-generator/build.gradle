@@ -25,6 +25,7 @@ dependencies {
     testImplementation "${lib.mysql}"
     testImplementation "${lib.sqlite}"
     testImplementation "${lib.firebird}"
+    testImplementation "${lib.gaussdb}"
     testImplementation "${lib.'swagger-annotations'}"
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.'spring-web'}"

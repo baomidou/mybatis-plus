@@ -44,6 +44,7 @@ public class DbQueryRegistry {
         db_query_enum_map.put(DbType.KINGBASE_ES, new KingbaseESQuery());
         db_query_enum_map.put(DbType.MYSQL, new MySqlQuery());
         db_query_enum_map.put(DbType.GAUSS, new GaussQuery());
+        db_query_enum_map.put(DbType.GAUSS_DB, new GaussDBSqlQuery());
         db_query_enum_map.put(DbType.OSCAR, new OscarQuery());
         db_query_enum_map.put(DbType.FIREBIRD, new FirebirdQuery());
         db_query_enum_map.put(DbType.XU_GU, new XuguQuery());

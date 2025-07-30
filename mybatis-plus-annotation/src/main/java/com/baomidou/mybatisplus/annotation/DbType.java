@@ -90,8 +90,21 @@ public enum DbType {
     PHOENIX("phoenix", "Phoenix HBase数据库"),
     /**
      * Gauss
+     * <p>
+     * 低版本为 zenith，为贡献者提供，非标准官方驱动，3.5.11 修改成 gauss
+     * </p>
+     *
+     * @see #GAUSS_DB
+     * @deprecated 3.5.13 使用官方标准名称
      */
+    @Deprecated
     GAUSS("gauss", "Gauss 数据库"),
+    /**
+     * GaussDB
+     *
+     * @since 3.5.13
+     */
+    GAUSS_DB("gaussDB", "GaussDB 数据库"),
     /**
      * ClickHouse
      */

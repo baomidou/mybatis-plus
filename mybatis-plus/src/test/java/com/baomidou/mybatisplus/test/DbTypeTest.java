@@ -17,4 +17,13 @@ class DbTypeTest {
         Assertions.assertEquals(DbType.OTHER, DbType.getDbType("other"));
         Assertions.assertEquals(DbType.OTHER, DbType.getDbType("unknown"));
     }
+
+    @Test
+    void testGaussDb(){
+        Assertions.assertEquals(DbType.GAUSS, DbType.getDbType("gauss"));
+        Assertions.assertEquals(DbType.GAUSS, DbType.getDbType("Gauss"));
+        Assertions.assertEquals(DbType.GAUSS_DB, DbType.getDbType("gaussdb"));
+        Assertions.assertEquals(DbType.GAUSS_DB, DbType.getDbType("GaussDB"));
+    }
+
 }
