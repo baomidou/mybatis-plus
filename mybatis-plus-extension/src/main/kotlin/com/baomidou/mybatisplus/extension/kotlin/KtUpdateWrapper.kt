@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.math.BigDecimal
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 /**
@@ -41,6 +42,11 @@ open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, 
      * SQL 更新字段内容，例如：name='1', age=2
      */
     private val sqlSet = ArrayList<String>()
+
+    constructor(entity: KClass<T>) {
+        this.entityClass = entity.java
+        super.initNeed()
+    }
 
     constructor(entity: T) {
         this.entity = entity
