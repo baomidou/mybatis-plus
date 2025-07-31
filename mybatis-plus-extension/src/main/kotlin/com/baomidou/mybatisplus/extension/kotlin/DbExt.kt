@@ -8,8 +8,8 @@ import kotlin.reflect.KClass
  * @CreateTime 2025/7/31 16:15
  */
 
-inline fun <reified T : Any> ktQuery(query: KtQueryChainWrapper<T>.() -> Unit): KtQueryChainWrapper<T> =
-    Db.ktQuery<T>(T::class.java).apply(query)
+inline fun <reified T : Any> ktQuery(noinline query: (KtQueryChainWrapper<T>.() -> Unit)? = null): KtQueryChainWrapper<T> =
+    Db.ktQuery<T>(T::class.java).also { query?.invoke(it) }
 
-inline fun <reified T : Any, C : KClass<T>> C.ktQuery(query: KtQueryChainWrapper<T>.() -> Unit): KtQueryChainWrapper<T> =
-    Db.ktQuery<T>(T::class.java).apply(query)
+inline fun <reified T : Any, C : KClass<T>> C.ktQuery(noinline query: (KtQueryChainWrapper<T>.() -> Unit)? = null): KtQueryChainWrapper<T> =
+    Db.ktQuery<T>(T::class.java).also { query?.invoke(it) }
