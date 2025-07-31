@@ -11,5 +11,5 @@ import kotlin.reflect.KClass
 inline fun <reified T : Any> ktQuery(query: KtQueryChainWrapper<T>.() -> Unit): KtQueryChainWrapper<T> =
     Db.ktQuery<T>(T::class.java).apply(query)
 
-inline fun <reified T : KClass<*>> T.ktQuery(query: KtQueryChainWrapper<T>.() -> Unit): KtQueryChainWrapper<T> =
+inline fun <reified T : Any, C : KClass<T>> C.ktQuery(query: KtQueryChainWrapper<T>.() -> Unit): KtQueryChainWrapper<T> =
     Db.ktQuery<T>(T::class.java).apply(query)
