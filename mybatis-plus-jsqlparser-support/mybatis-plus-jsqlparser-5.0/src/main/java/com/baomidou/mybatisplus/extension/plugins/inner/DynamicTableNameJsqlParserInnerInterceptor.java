@@ -56,26 +56,26 @@ public class DynamicTableNameJsqlParserInnerInterceptor extends DynamicTableName
     }
 
     @Override
-    protected String processTableName(String sql) {
+    protected String processTableName(String sql, TableNameHandler handler) {
         boolean unsupported = false;
         try {
             Statement statement = JsqlParserGlobal.parse(sql);
-            statement.accept(new DynamicTableNameHandler(sql, super.getTableNameHandler()));
+            statement.accept(new DynamicTableNameHandler(sql, handler));
             if (statement instanceof UnsupportedStatement) {
                 unsupported = true;
-                return super.processTableName(sql);
+                return super.processTableName(sql, handler);
             }
             return statement.toString();
         } catch (Exception exception) {
-            return handleFallback(unsupported, sql, exception);
+            return handleFallback(unsupported, sql, handler, exception);
         }
     }
 
-    private String handleFallback(boolean unsupported, String sql, Exception originalException) {
+    private String handleFallback(boolean unsupported, String sql, TableNameHandler handler, Exception originalException) {
         Exception exception = originalException;
         if (!unsupported || shouldFallback) {
             try {
-                return super.processTableName(sql);
+                return super.processTableName(sql, handler);
             } catch (Exception e) {
                 exception = e;
             }

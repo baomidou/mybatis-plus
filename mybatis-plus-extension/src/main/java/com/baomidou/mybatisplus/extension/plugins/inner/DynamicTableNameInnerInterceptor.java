@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
+import com.baomidou.mybatisplus.extension.plugins.handler.QueryParameterWrapper;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
+import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandlerFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.executor.Executor;
@@ -53,8 +55,12 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     /**
      * 表名处理器，是否 处理表名的情况都在该处理器中自行判断
      */
+    @Deprecated
     private TableNameHandler tableNameHandler = (sql, tableName) -> sql;
-
+    /**
+     * 表名处理器工厂，在实现中决定是静态处理还是每个handler都携带捕获到的BoundSql中的参数
+     */
+    private TableNameHandlerFactory tableNameHandlerFactory = null;
     /**
      * 默认构建
      *
@@ -65,15 +71,23 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     public DynamicTableNameInnerInterceptor() {
     }
 
+    @Deprecated
     public DynamicTableNameInnerInterceptor(TableNameHandler tableNameHandler) {
         this.tableNameHandler = tableNameHandler;
+    }
+
+    public DynamicTableNameInnerInterceptor(TableNameHandlerFactory tableNameHandlerFactory) {
+        this.tableNameHandlerFactory = tableNameHandlerFactory;
     }
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        mpBs.sql(this.changeTable(mpBs.sql()));
+        TableNameHandler handler = tableNameHandlerFactory != null ?
+            tableNameHandlerFactory.createContextTableNameHandler(QueryParameterWrapper.createWrapper(mpBs))
+            : this.tableNameHandler;
+        mpBs.sql(this.changeTable(mpBs.sql(), handler));
     }
 
     @Override
@@ -86,13 +100,16 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
                 return;
             }
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            mpBs.sql(this.changeTable(mpBs.sql()));
+            TableNameHandler handler = tableNameHandlerFactory != null ?
+                tableNameHandlerFactory.createContextTableNameHandler(QueryParameterWrapper.createWrapper(mpBs))
+                : this.tableNameHandler;
+            mpBs.sql(this.changeTable(mpBs.sql(), handler));
         }
     }
 
-    public String changeTable(String sql) {
+    public String changeTable(String sql, TableNameHandler handler) {
         try {
-            return processTableName(sql);
+            return processTableName(sql, handler);
         } finally {
             if (hook != null) {
                 hook.run();
@@ -107,7 +124,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
      * @return 处理完的sql
      * @since 3.5.11
      */
-    protected String processTableName(String sql) {
+    protected String processTableName(String sql, TableNameHandler handler) {
         TableNameParser parser = new TableNameParser(sql);
         List<TableNameParser.SqlToken> names = new ArrayList<>();
         parser.accept(names::add);
@@ -117,7 +134,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
             int start = name.getStart();
             if (start != last) {
                 builder.append(sql, last, start);
-                builder.append(tableNameHandler.dynamicTableName(sql, name.getValue()));
+                builder.append(handler.dynamicTableName(sql, name.getValue()));
             }
             last = name.getEnd();
         }
