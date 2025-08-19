@@ -60,6 +60,7 @@ ext {
         "mysql"                      : "com.mysql:mysql-connector-j:9.0.0",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.46.1.0",
         "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.5.java8",
+        "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
         //cache
         "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.2.0",
         //code generator
@@ -164,6 +165,7 @@ subprojects {
         useJUnitPlatform()
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
+        exclude("**/gaussdb/**")
 //        exclude("**/generator/**")
     }
 

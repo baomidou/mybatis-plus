@@ -54,14 +54,14 @@ public class DatabaseMetaDataWrapper {
     public DatabaseMetaDataWrapper(Connection connection, String schemaName) {
         try {
             if (null == connection) {
-                throw new RuntimeException("数据库连接不能为空");
+                throw new RuntimeException("connection cannot be null");
             }
             this.connection = connection;
             this.databaseMetaData = connection.getMetaData();
             this.catalog = connection.getCatalog();
             this.schema = schemaName;
         } catch (SQLException e) {
-            throw new RuntimeException("获取元数据错误:", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class DatabaseMetaDataWrapper {
             try {
                 con.close();
             } catch (SQLException sqlException) {
-                logger.error("关闭数据库连接出现错误:", sqlException);
+                logger.error("close connection exception:", sqlException);
             }
         });
     }
@@ -93,7 +93,7 @@ public class DatabaseMetaDataWrapper {
                 }
             }
         } catch (SQLException e) {
-            logger.error("读取{}索引信息出现错误:", tableName, e);
+            logger.error("reading index information for [{}]:", tableName, e);
         }
         return indexList;
     }
@@ -112,10 +112,10 @@ public class DatabaseMetaDataWrapper {
                     primaryKeys.add(columnName);
                 }
                 if (primaryKeys.size() > 1) {
-                    logger.warn("当前表:{}，存在多主键情况！", tableName);
+                    logger.warn("The current table [{}] has multiple primary keys defined.", tableName);
                 }
             } catch (SQLException e) {
-                throw new RuntimeException("读取表主键信息:" + tableName + "错误:", e);
+                throw new RuntimeException(e);
             }
         }
         Map<String, Column> columnsInfoMap = new LinkedHashMap<>();
@@ -144,7 +144,7 @@ public class DatabaseMetaDataWrapper {
             }
             return Collections.unmodifiableMap(columnsInfoMap);
         } catch (SQLException e) {
-            throw new RuntimeException("读取表字段信息:" + tableName + "错误:", e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -181,7 +181,7 @@ public class DatabaseMetaDataWrapper {
                 tables.add(table);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("读取数据库表信息出现错误", e);
+            throw new RuntimeException(e);
         }
         return tables;
     }
@@ -196,7 +196,7 @@ public class DatabaseMetaDataWrapper {
                 table.tableType = resultSet.getString("TABLE_TYPE");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("读取表信息:" + tableName + "错误:", e);
+            throw new RuntimeException(e);
         }
         return table;
     }

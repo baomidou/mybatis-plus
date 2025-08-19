@@ -78,6 +78,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.OracleNamedFunctionParameter.class);
         conf.registerClass(net.sf.jsqlparser.expression.OrderByClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.OverlapsCondition.class);
+        conf.registerClass(net.sf.jsqlparser.expression.Parenthesis.class);
         conf.registerClass(net.sf.jsqlparser.expression.PartitionByClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.PreferringClause.class);
         conf.registerClass(net.sf.jsqlparser.expression.RangeExpression.class);
@@ -134,6 +135,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsBooleanExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsDistinctExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsNullExpression.class);
+        conf.registerClass(net.sf.jsqlparser.expression.operators.relational.IsUnknownExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.JsonOperator.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.LikeExpression.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.Matches.class);
@@ -180,6 +182,8 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.statement.alter.AlterExpression.ColumnDataType.class);
         conf.registerClass(net.sf.jsqlparser.statement.alter.AlterExpression.ColumnDropDefault.class);
         conf.registerClass(net.sf.jsqlparser.statement.alter.AlterExpression.ColumnDropNotNull.class);
+        conf.registerClass(net.sf.jsqlparser.statement.alter.AlterExpression.ColumnSetDefault.class);
+        conf.registerClass(net.sf.jsqlparser.statement.alter.AlterExpression.ColumnSetVisibility.class);
         conf.registerClass(net.sf.jsqlparser.statement.alter.AlterSession.class);
         conf.registerClass(net.sf.jsqlparser.statement.alter.AlterSystemStatement.class);
         conf.registerClass(net.sf.jsqlparser.statement.alter.RenameTableStatement.class);
@@ -218,6 +222,24 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.statement.merge.MergeDelete.class);
         conf.registerClass(net.sf.jsqlparser.statement.merge.MergeInsert.class);
         conf.registerClass(net.sf.jsqlparser.statement.merge.MergeUpdate.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.AggregatePipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.AsPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.CallPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.DropPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.ExtendPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.FromQuery.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.JoinPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.LimitPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.OrderByPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.PivotPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.RenamePipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.SelectPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.SetOperationPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.SetPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.TableSamplePipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.UnPivotPipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.WherePipeOperator.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.WindowPipeOperator.class);
         conf.registerClass(net.sf.jsqlparser.statement.refresh.RefreshMaterializedViewStatement.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.AllColumns.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.AllTableColumns.class);
@@ -226,6 +248,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.statement.select.Fetch.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.First.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.ForClause.class);
+        conf.registerClass(net.sf.jsqlparser.statement.select.FunctionAllColumns.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.GroupByElement.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.IntersectOp.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.Join.class);
@@ -254,6 +277,7 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.statement.select.Values.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.Wait.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.WithIsolation.class);
+        conf.registerClass(net.sf.jsqlparser.statement.select.WithItem.class);
         conf.registerClass(net.sf.jsqlparser.statement.show.ShowIndexStatement.class);
         conf.registerClass(net.sf.jsqlparser.statement.show.ShowTablesStatement.class);
         conf.registerClass(net.sf.jsqlparser.statement.truncate.Truncate.class);
@@ -267,10 +291,10 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.ComparisonOperator.class);
         conf.registerClass(net.sf.jsqlparser.expression.operators.relational.OldOracleJoinBinaryExpression.class);
         conf.registerClass(net.sf.jsqlparser.statement.CreateFunctionalStatement.class);
+        conf.registerClass(net.sf.jsqlparser.statement.piped.PipeOperator.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.Select.class);
         conf.registerClass(net.sf.jsqlparser.statement.select.SetOperation.class);
         conf.registerClass(net.sf.jsqlparser.util.cnfexpression.MultipleExpression.class);
-
     }
 
     public byte[] asByteArray(Object obj) {

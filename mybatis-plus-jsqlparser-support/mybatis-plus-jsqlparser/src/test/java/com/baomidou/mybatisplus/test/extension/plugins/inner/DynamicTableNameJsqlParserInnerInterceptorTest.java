@@ -515,7 +515,7 @@ class DynamicTableNameJsqlParserInnerInterceptorTest {
         var sql = "CREATE FULLTEXT INDEX index_name ON table1 (a, b)";
         assertEquals("CREATE FULLTEXT INDEX index_name ON table1_r (a, b)", interceptor.changeTable(sql, interceptor.getTableNameHandler()));
         sql = "ALTER TABLE table1 ADD FULLTEXT INDEX `a`(`a`)";
-        assertEquals("ALTER TABLE table1_r ADD FULLTEXT INDEX `a`(`a`)", interceptor.changeTable(sql, interceptor.getTableNameHandler()));
+        assertEquals("ALTER TABLE table1_r ADD FULLTEXT INDEX `a` (`a`)", interceptor.changeTable(sql, interceptor.getTableNameHandler()));
     }
 
 

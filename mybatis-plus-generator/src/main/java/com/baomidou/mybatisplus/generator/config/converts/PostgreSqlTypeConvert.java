@@ -19,10 +19,18 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.INTEGER;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
 
 /**
  * PostgreSQL 字段类型转换
@@ -31,13 +39,14 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
  * @since 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {
+
     public static final PostgreSqlTypeConvert INSTANCE = new PostgreSqlTypeConvert();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
+    public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType)
             .test(containsAny("char", "text", "json", "enum").then(STRING))
             .test(contains("bigint").then(LONG))

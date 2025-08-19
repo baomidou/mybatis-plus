@@ -26,7 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * 用 https://github.com/imadcn/idworker 的实现
+ * 用 <a href="https://github.com/imadcn/idworker">idworker</a> 的实现
  *
  * @author miemie
  * @since 3.4.0

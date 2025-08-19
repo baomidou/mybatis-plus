@@ -19,25 +19,38 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BLOB;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.CLOB;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.INTEGER;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
 
 /**
  * MYSQL 数据库字段类型转换
  * bit类型数据转换 bit(1) -> Boolean类型  bit(2->64)  -> Byte类型
+ *
  * @author hubin, hanchunlin, xiaoliang
  * @since 2017-01-20
  */
 public class MySqlTypeConvert implements ITypeConvert {
+
     public static final MySqlTypeConvert INSTANCE = new MySqlTypeConvert();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
+    public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType)
             .test(contains("point").then(BYTE_ARRAY))
             .test(containsAny("char", "text", "json", "enum").then(STRING))

@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.extension.spi;
 
 import com.baomidou.mybatisplus.core.toolkit.AopUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.extension.spring.MybatisPlusApplicationContextAware;
 import lombok.SneakyThrows;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
@@ -44,6 +43,8 @@ import java.util.function.Consumer;
 public class SpringCompatibleSet implements CompatibleSet {
 
     private static final Log LOG = LogFactory.getLog(SpringCompatibleSet.class);
+
+    public static volatile ApplicationContext applicationContext;
 
     @Override
     public SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
@@ -99,12 +100,11 @@ public class SpringCompatibleSet implements CompatibleSet {
 
     @Override
     public <T> T getBean(Class<T> clz) {
-        if (MybatisPlusApplicationContextAware.hasApplicationContext()) {
-            ApplicationContext applicationContext = MybatisPlusApplicationContextAware.getApplicationContext();
+        if (applicationContext != null) {
             ObjectProvider<T> provider = applicationContext.getBeanProvider(clz);
             return provider.getIfAvailable();
         }
-        LOG.warn("MybatisPlusApplicationContextAware is not initialized. Please ensure that MybatisPlusApplicationContextAware is properly registered as a Spring Bean in the application context.");
+        LOG.warn("The applicationContext property is empty. Please initialize it via the static field of applicationContext in SpringContextHolder or by calling the setApplicationContext method of MybatisSqlSessionFactoryBean.");
         return null;
     }
 
@@ -117,6 +117,11 @@ public class SpringCompatibleSet implements CompatibleSet {
             }
         }
         return result;
+    }
+
+    @Override
+    public void setContext(Object context) {
+        applicationContext = (ApplicationContext) context;
     }
 
 }

@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.ddl.history;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.function.Function;
 
 /**
@@ -31,8 +35,27 @@ public interface IDdlGenerator {
      * @param databaseName    数据库名称
      * @param executeFunction 执行判断函数
      * @return exist or no
+     * @deprecated 3.5.13 {@link #existTable(Connection)}
      */
-    boolean existTable(String databaseName, Function<String, Boolean> executeFunction);
+    @Deprecated
+    default boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
+        return false;
+    }
+
+    /**
+     *
+     * 检查{@link #getDdlHistory()}表是否存在
+     * @since 3.5.13
+     * @param connection 数据库连接
+     * @return 是否存在
+     * @throws SQLException SQLException
+     */
+    default boolean existTable(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(), connection.getSchema(), getDdlHistory(), new String[]{"TABLE"})) {
+            return resultSet.next();
+        }
+    }
 
     /**
      * 返回 DDL_HISTORY 表名

@@ -15,6 +15,13 @@
  */
 package com.baomidou.mybatisplus.extension.ddl.history;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.function.Function;
 
 /**
@@ -25,18 +32,53 @@ import java.util.function.Function;
  */
 public class OracleDdlGenerator implements IDdlGenerator {
 
+    /**
+     * 默认使用当前用户模式
+     * @since 3.5.13
+     */
+    private String schema;
+
+    public OracleDdlGenerator() {
+    }
+
+    public OracleDdlGenerator(String schema) {
+        this.schema = schema;
+    }
+
+    /**
+     * 基于当前用户模式实例
+     * @return OracleDdlGenerator
+     */
     public static IDdlGenerator newInstance() {
         return new OracleDdlGenerator();
     }
 
     @Override
+    public boolean existTable(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        String schema = StringUtils.isNotBlank(this.schema) ? this.schema : connection.getSchema();
+        String tableName = getDdlHistory();
+        int index = tableName.lastIndexOf(StringPool.DOT);
+        if (index > 0) {
+            tableName = tableName.substring(index + 1);
+        }
+        tableName = tableName.replace(StringPool.QUOTE, StringPool.EMPTY);
+        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(), schema, tableName, new String[]{"TABLE"})) {
+            return resultSet.next();
+        }
+    }
+
+    @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
         return executeFunction.apply("SELECT COUNT(1) AS NUM FROM user_tables WHERE table_name='"
-                + getDdlHistory() + "'");
+            + getDdlHistory() + "'");
     }
 
     @Override
     public String getDdlHistory() {
+        if (StringUtils.isNotBlank(schema)) {
+            return schema + ".DDL_HISTORY";
+        }
         return "DDL_HISTORY";
     }
 

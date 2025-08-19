@@ -47,11 +47,11 @@ public final class ClassUtils {
      * 代理 class 的名称
      */
     private static final List<String> PROXY_CLASS_NAMES = Arrays.asList("net.sf.cglib.proxy.Factory"
-            // cglib
-            , "org.springframework.cglib.proxy.Factory"
-            , "javassist.util.proxy.ProxyObject"
-            // javassist
-            , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
+        // cglib
+        , "org.springframework.cglib.proxy.Factory"
+        , "javassist.util.proxy.ProxyObject"
+        // javassist
+        , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
 
     private ClassUtils() {
     }
@@ -126,7 +126,8 @@ public final class ClassUtils {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 %s 添加无参的构造方法", e, clazz.getName());
         }
     }
@@ -134,7 +135,7 @@ public final class ClassUtils {
     /**
      * 实例化对象.
      *
-     * @param clazzName 类名
+     * @param clazzName 全类名
      * @param <T>       类型
      * @return 实例
      * @since 3.3.2
@@ -150,7 +151,7 @@ public final class ClassUtils {
      * 请仅在确定类存在的情况下调用该方法
      * </p>
      *
-     * @param name 类名称
+     * @param name 全类名
      * @return 返回转换后的 Class
      */
     public static Class<?> toClassConfident(String name) {
@@ -158,9 +159,9 @@ public final class ClassUtils {
     }
 
     /**
-     * @param name
-     * @param classLoader
-     * @return
+     * @param name        全类名
+     * @param classLoader 类加载器
+     * @return Class信息
      * @since 3.4.3
      */
     public static Class<?> toClassConfident(String name, ClassLoader classLoader) {

@@ -186,6 +186,7 @@ public abstract class AbstractTemplateEngine {
                     File parentFile = file.getParentFile();
                     FileUtils.forceMkdir(parentFile);
                 }
+                LOGGER.debug("templatePath:{};  file:{}", templatePath, file);
                 writer(objectMap, templatePath, file);
             } catch (Exception exception) {
                 throw new RuntimeException(exception);
@@ -249,7 +250,7 @@ public abstract class AbstractTemplateEngine {
                 outputController(tableInfo, objectMap);
             });
         } catch (Exception e) {
-            throw new RuntimeException("无法创建文件，请检查配置信息！", e);
+            throw new RuntimeException("An exception occurred in the output file: ", e);
         }
         return this;
     }
@@ -280,9 +281,15 @@ public abstract class AbstractTemplateEngine {
      */
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
-        if (StringUtils.isBlank(outDir) || !new File(outDir).exists()) {
-            System.err.println("未找到输出目录：" + outDir);
-        } else if (getConfigBuilder().getGlobalConfig().isOpen()) {
+        if(StringUtils.isBlank(outDir)){
+            LOGGER.warn("The output directory is not configured");
+            return;
+        }
+        if(!new File(outDir).exists()){
+            LOGGER.warn("The output directory [{}] does not exist", outDir);
+            return;
+        }
+        if (getConfigBuilder().getGlobalConfig().isOpen()) {
             try {
                 RuntimeUtils.openDir(outDir);
             } catch (IOException e) {
@@ -354,7 +361,7 @@ public abstract class AbstractTemplateEngine {
      */
     protected boolean isCreate(@NotNull File file, boolean fileOverride) {
         if (file.exists() && !fileOverride) {
-            LOGGER.warn("文件[{}]已存在，且未开启文件覆盖配置，需要开启配置可到策略配置中设置！！！", file.getName());
+            LOGGER.warn("File [{}] already exists. Overwrite mode is disabled. Enable this feature in the policy settings", file.getName());
         }
         return !file.exists() || fileOverride;
     }

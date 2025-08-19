@@ -24,6 +24,8 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.NetUtils;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -81,15 +83,20 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     public SqlSessionFactory build(Configuration configuration) {
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
 
-        final IdentifierGenerator identifierGenerator;
+        IdentifierGenerator identifierGenerator;
         if (null == globalConfig.getIdentifierGenerator()) {
             GlobalConfig.Sequence sequence = globalConfig.getSequence();
             if (sequence.getWorkerId() != null && sequence.getDatacenterId() != null) {
                 identifierGenerator = new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
             } else {
                 NetUtils.NetProperties netProperties = new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
-                InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
-                identifierGenerator = new DefaultIdentifierGenerator(inetAddress);
+                try {
+                    InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
+                    identifierGenerator = new DefaultIdentifierGenerator(inetAddress);
+                } catch (Exception e) {
+                    Log log = LogFactory.getLog(MybatisSqlSessionFactoryBuilder.class);
+                    identifierGenerator = DefaultIdentifierGenerator.getFixedIdentifierGenerator(log);
+                }
             }
             globalConfig.setIdentifierGenerator(identifierGenerator);
         } else {

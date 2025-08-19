@@ -44,6 +44,8 @@ public class TypeConverts {
             case DM:
             case GAUSS:
                 return DmTypeConvert.INSTANCE;
+            case GAUSS_DB:
+                return GaussDBSqlTypeConvert.INSTANCE;
             case KINGBASE_ES:
                 return KingbaseESTypeConvert.INSTANCE;
             case OSCAR:

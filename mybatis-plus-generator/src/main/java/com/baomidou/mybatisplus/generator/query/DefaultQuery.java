@@ -99,6 +99,9 @@ public class DefaultQuery extends AbstractDatabaseQuery {
         if (strategyConfig.getLikeTable() != null) {
             tableNamePattern = strategyConfig.getLikeTable().getValue();
         }
+        if (strategyConfig.getNotLikeTable() != null) {
+            LOGGER.warn("Unsupported 'notLikeTable' configuration");
+        }
         return databaseMetaDataWrapper.getTables(tableNamePattern, skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"});
     }
 
@@ -114,7 +117,7 @@ public class DefaultQuery extends AbstractDatabaseQuery {
                 field.primaryKey(columnInfo.isAutoIncrement());
                 tableInfo.setHavePrimaryKey(true);
                 if (field.isKeyIdentityFlag() && entity.getIdType() != null) {
-                    LOGGER.warn("当前表[{}]的主键为自增主键，会导致全局主键的ID类型设置失效!", tableName);
+                    LOGGER.warn("The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.", tableName);
                 }
             }
             field.setColumnName(columnName).setComment(columnInfo.getRemarks());

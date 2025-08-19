@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,6 +40,11 @@ public class IdentifierGeneratorAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public IdentifierGenerator identifierGenerator(InetUtils inetUtils) {
-        return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
+        try {
+            return new DefaultIdentifierGenerator(inetUtils.findFirstNonLoopbackAddress());
+        } catch (Exception e) {
+            Log log = LogFactory.getLog(IdentifierGeneratorAutoConfiguration.class);
+            return DefaultIdentifierGenerator.getFixedIdentifierGenerator(log);
+        }
     }
 }

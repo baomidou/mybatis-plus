@@ -171,7 +171,7 @@ public class AutoGenerator {
      * @param templateEngine 模板引擎
      */
     public void execute(AbstractTemplateEngine templateEngine) {
-        logger.debug("==========================准备生成文件...==========================");
+        logger.debug("==========================Ready to generate the file...==========================");
         // 初始化配置
         if (null == config) {
             config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig, injection);
@@ -183,7 +183,7 @@ public class AutoGenerator {
         templateEngine.setConfigBuilder(config);
         // 模板引擎初始化执行文件输出
         templateEngine.init(config).batchOutput().open();
-        logger.debug("==========================文件生成完成！！！==========================");
+        logger.debug("==========================The file is generated！！！==========================");
     }
 
     /**

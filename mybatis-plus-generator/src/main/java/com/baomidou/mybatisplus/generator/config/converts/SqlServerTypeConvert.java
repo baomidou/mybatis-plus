@@ -18,10 +18,25 @@ package com.baomidou.mybatisplus.generator.config.converts;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DATE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DATE_SQL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.INTEGER;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE_TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIMESTAMP;
 
 /**
  * SQLServer 字段类型转换
@@ -37,7 +52,7 @@ public class SqlServerTypeConvert implements ITypeConvert {
      * {@inheritDoc}
      */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
+    public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType)
             .test(containsAny("char", "xml", "text").then(STRING))
             .test(contains("bigint").then(LONG))
@@ -54,8 +69,8 @@ public class SqlServerTypeConvert implements ITypeConvert {
     /**
      * 转换为日期类型
      *
-     * @param config 配置信息
-     * @param fieldType   类型
+     * @param config    配置信息
+     * @param fieldType 类型
      * @return 返回对应的列类型
      */
     public static IColumnType toDateType(GlobalConfig config, String fieldType) {

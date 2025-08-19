@@ -17,12 +17,20 @@ package com.baomidou.mybatisplus.core.toolkit.support;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
+import java.io.Serializable;
 
 /**
  * 当前类是 {@link java.lang.invoke.SerializedLambda } 的一个镜像
  * <p>
- * Create by hcl at 2020/7/17
+ *
+ * @author HCL
+ * Create at 2020/7/17
  */
 @SuppressWarnings("ALL")
 public class SerializedLambda implements Serializable {

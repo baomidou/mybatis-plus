@@ -17,7 +17,7 @@ body:
           required: true
         - label: 我已经在 [issue](https://github.com/baomidou/mybatis-plus/issues) 中搜索过, 确认问题没有被提出过
           required: true
-        - label: 我已经修改标题, 将标题中的 描述 替换为遇到的问题
+        - label: 我已经修改标题, 将标题中的 **描述** 替换为你的想法(不得删除 **描述** 前面的部分)
           required: true
   - type: textarea
     id: feature-request

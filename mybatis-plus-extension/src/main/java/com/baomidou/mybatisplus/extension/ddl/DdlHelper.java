@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.ddl.history.*;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.jdbc.RuntimeSqlException;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.logging.Log;
@@ -108,7 +107,6 @@ public class DdlHelper {
     public static void runScript(IDdlGenerator ddlGenerator, Connection connection, List<String> sqlFiles, Consumer<ScriptRunner> scriptRunnerConsumer,
                                  boolean autoCommit, DdlScriptErrorHandler ddlScriptErrorHandler) throws SQLException {
         final String jdbcUrl = connection.getMetaData().getURL();
-        final String schema = DdlHelper.getDatabase(jdbcUrl);
         SqlRunner sqlRunner = new SqlRunner(connection);
         ScriptRunner scriptRunner = getScriptRunner(connection, autoCommit);
         if (scriptRunnerConsumer != null) {
@@ -117,14 +115,7 @@ public class DdlHelper {
         if (null == ddlGenerator) {
             ddlGenerator = getDdlGenerator(jdbcUrl);
         }
-        if (!ddlGenerator.existTable(schema, sql -> {
-            try {
-                Map<String, Object> resultMap = sqlRunner.selectOne(sql);
-                return null != resultMap && !StringPool.ZERO.equals(String.valueOf(resultMap.get(StringPool.NUM)));
-            } catch (SQLException e) {
-                throw new RuntimeSqlException("Check exist table error:", e);
-            }
-        })) {
+        if (!ddlGenerator.existTable(connection)) {
             scriptRunner.runScript(new StringReader(ddlGenerator.createDdlHistory()));
         }
         // 执行 SQL 脚本

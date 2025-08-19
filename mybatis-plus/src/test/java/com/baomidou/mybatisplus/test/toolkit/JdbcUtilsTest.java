@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,4 +23,12 @@ public class JdbcUtilsTest {
         Assertions.assertTrue(JdbcUtils.regexFind(regex, "a12ds:dm71:"));
         Assertions.assertFalse(JdbcUtils.regexFind(regex, "a12ds:dmc1:abc"));
     }
+
+    @Test
+    void testGetDbType(){
+        Assertions.assertEquals(DbType.GAUSS_DB, JdbcUtils.getDbType("jdbc:gaussdb://127.0.0.1:8000/baomidou"));
+        // zenith 为第三方驱动，非官方标准驱动
+        Assertions.assertEquals(DbType.GAUSS, JdbcUtils.getDbType("jdbc:zenith://127.0.0.1:8000/baomidou"));
+    }
+
 }

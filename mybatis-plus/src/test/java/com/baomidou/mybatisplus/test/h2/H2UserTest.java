@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -959,6 +960,24 @@ class H2UserTest extends BaseTest {
         var userList = List.of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
         userService.testSaveOrUpdateTransactional2(userList);
         Assertions.assertEquals(userService.getById(id).getName(), "test-3");
+    }
+
+    @Test
+    void testOrderByExpression() {
+        Page<H2User> page = new Page<>();
+        page.addOrder(OrderItem.withExpression("""
+            CASE
+              WHEN age > 1 THEN 2
+              WHEN age < 1 THEN 1
+            END
+            """));
+        page.addOrder(OrderItem.withExpression("""
+            CASE
+              WHEN name IS NOT NULL THEN 0
+              ELSE 1
+            END
+            """, false));
+        Assertions.assertDoesNotThrow(() -> userService.page(page));
     }
 
 }

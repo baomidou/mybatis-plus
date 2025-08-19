@@ -17,8 +17,10 @@ package com.baomidou.mybatisplus.extension.spring;
 
 import com.baomidou.mybatisplus.core.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -41,6 +43,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -76,7 +80,7 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
  * @author hubin
  * @since 2017-01-04
  */
-public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ContextRefreshedEvent> {
+public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisSqlSessionFactoryBean.class);
 
@@ -100,7 +104,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private SqlSessionFactory sqlSessionFactory;
 
     private String environment = SqlSessionFactoryBean.class.getSimpleName();
-
 
     private boolean failFast;
 
@@ -133,6 +136,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private ObjectFactory objectFactory;
 
     private ObjectWrapperFactory objectWrapperFactory;
+
+    /**
+     * @since 3.5.13
+     */
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Setter
     private GlobalConfig globalConfig;
@@ -520,6 +529,20 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 newList.addAll(Arrays.asList(newArrays));
                 return newList.toArray(generator.apply(0));
             }
+        }
+    }
+
+    /**
+     * 设置上下文对象
+     * <p>注意: 手动构建的bean对象需要手动赋值,通过xml属性初始化的会自动赋值</p>
+     * @since 3.5.13
+     * @param applicationContext ApplicationContext
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        if (CompatibleHelper.hasCompatibleSet()) {
+            CompatibleHelper.getCompatibleSet().setContext(applicationContext);
         }
     }
 

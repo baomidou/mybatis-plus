@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.util;
 
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
@@ -49,15 +48,7 @@ public final class ClassUtils {
      * @return 返回转换后的 Class
      */
     public static Class<?> toClassConfident(String name) {
-        try {
-            return Class.forName(name, false, getDefaultClassLoader());
-        } catch (ClassNotFoundException e) {
-            try {
-                return Class.forName(name);
-            } catch (ClassNotFoundException ex) {
-                throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
-            }
-        }
+        return com.baomidou.mybatisplus.core.toolkit.ClassUtils.toClassConfident(name);
     }
 
     /**
@@ -75,7 +66,9 @@ public final class ClassUtils {
      * @see Thread#getContextClassLoader()
      * @see ClassLoader#getSystemClassLoader()
      * @since 3.3.2
+     * @deprecated 3.5.13
      */
+    @Deprecated
     public static ClassLoader getDefaultClassLoader() {
         ClassLoader cl = null;
         try {

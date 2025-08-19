@@ -15,8 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.ddl.history;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Setter;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.function.Function;
 
 
@@ -28,9 +34,57 @@ import java.util.function.Function;
  */
 public class PostgreDdlGenerator implements IDdlGenerator {
 
-    public static IDdlGenerator newInstance() {
-        return new PostgreDdlGenerator();
+    /**
+     * schema模式(默认:public)
+     * <p>为了兼容,默认使用public,但指定为null时,使用jdbc指定的schema</p>
+     * @since 3.5.13
+     */
+    @Setter
+    private String schema = "public";
+
+    /**
+     * @deprecated 3.5.13 {@link #newInstance}
+     */
+    @Deprecated
+    public PostgreDdlGenerator() {
     }
+
+    /**
+     * 创建PostgreDdlGenerator实例
+     * @since 3.5.13
+     * @param schema schema (可为null,当为null时为自动识别数据库连接的schema)
+     */
+    public PostgreDdlGenerator(String schema) {
+        this.schema = schema;
+    }
+
+    /**
+     * 默认实例 (基于public模式)
+     * @return PostgreDdlGenerator
+     */
+    public static IDdlGenerator newInstance() {
+        return newInstanceWithSchema("public");
+    }
+
+    /**
+     * 手动指定schema
+     * @param schema schema
+     * @since 3.5.13
+     *  @return PostgreDdlGenerator
+     */
+    public static IDdlGenerator newInstanceWithSchema(String schema) {
+        return new PostgreDdlGenerator(schema);
+    }
+
+    /**
+     * 基于数据库连接自动识别schema
+     * @since 3.5.13
+     * @return PostgreDdlGenerator
+     */
+    public static IDdlGenerator newInstanceWithAutoSchema() {
+        return new PostgreDdlGenerator(StringPool.EMPTY);
+    }
+
 
     @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
@@ -43,8 +97,27 @@ public class PostgreDdlGenerator implements IDdlGenerator {
     }
 
     @Override
+    public boolean existTable(Connection connection) throws SQLException {
+        DatabaseMetaData metaData = connection.getMetaData();
+        String tableName = getDdlHistory();
+        int index = tableName.lastIndexOf(StringPool.DOT);
+        if (index > 0) {
+            tableName = tableName.substring(index + 1);
+        }
+        tableName = tableName.replace(StringPool.QUOTE, StringPool.EMPTY);
+        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(),
+            StringUtils.isBlank(getSchema()) ? connection.getSchema() : getSchema(), tableName, new String[]{"TABLE"})) {
+            return resultSet.next();
+        }
+    }
+
+    @Override
     public String getDdlHistory() {
-        return "\"" + this.getSchema() + "\".\"ddl_history\"";
+        String schema = getSchema();
+        if (StringUtils.isNotBlank(schema)) {
+            return "\"" + schema + "\".\"ddl_history\"";
+        }
+        return "\"ddl_history\"";
     }
 
     @Override
@@ -63,7 +136,13 @@ public class PostgreDdlGenerator implements IDdlGenerator {
         return sql.toString();
     }
 
+    /**
+     * @return scheme
+     * @deprecated 3.5.13 指定请使用 {@link #setSchema(String)}
+     */
+    @Deprecated
     protected String getSchema() {
-        return "public";
+        return schema;
     }
+
 }

@@ -121,7 +121,7 @@ public class ConfigBuilder {
             Constructor<? extends IDatabaseQuery> declaredConstructor = databaseQueryClass.getDeclaredConstructor(this.getClass());
             this.databaseQuery = declaredConstructor.newInstance(this);
         } catch (ReflectiveOperationException exception) {
-            throw new RuntimeException("创建IDatabaseQuery实例出现错误:", exception);
+            throw new RuntimeException(exception);
         }
     }
 

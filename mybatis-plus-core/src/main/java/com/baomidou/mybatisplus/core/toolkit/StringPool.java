@@ -24,7 +24,7 @@ package com.baomidou.mybatisplus.core.toolkit;
  * they will be inlined by java compiler and
  * reference to this class will be dropped.
  * There is <b>no</b> performance gain of using this pool.
- * Read: https://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.5
+ * Read: <a href="https://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.5">Java SE Specifications</a>
  * <ul>
  * <li>Literal strings within the same class in the same package represent references to the same <code>String</code> object.</li>
  * <li>Literal strings within different classes in the same package represent references to the same <code>String</code> object.</li>

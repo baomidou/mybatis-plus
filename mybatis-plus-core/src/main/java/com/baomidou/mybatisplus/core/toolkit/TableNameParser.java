@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 /**
  * SQL 表名解析
  * <p>
- * <a href="https://github.com/mnadeem/sql-table-name-parser">...</a>
+ * <a href="https://github.com/mnadeem/sql-table-name-parser">sql-table-name-parser</a>
  * <p>
  * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well.
  * USE: new TableNameParser(sql).tables()

@@ -2,7 +2,10 @@ package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
+import com.baomidou.mybatisplus.core.spi.CompatibleSet;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
@@ -19,8 +22,15 @@ import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * 以静态方式调用Service中的函数
@@ -36,7 +46,7 @@ class DbTest extends BaseDbTest<EntityMapper> {
         entity.setName("ruben");
         boolean isSuccess = Db.save(entity);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(3L, Db.count(Entity.class));
+        assertEquals(3L, Db.count(Entity.class));
     }
 
     @Test
@@ -44,7 +54,7 @@ class DbTest extends BaseDbTest<EntityMapper> {
         List<Entity> list = Arrays.asList(new Entity(), new Entity());
         boolean isSuccess = Db.saveBatch(list);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(4, Db.count(Entity.class));
+        assertEquals(4, Db.count(Entity.class));
     }
 
     @Test
@@ -55,7 +65,7 @@ class DbTest extends BaseDbTest<EntityMapper> {
         List<Entity> list = Arrays.asList(new Entity(), entity);
         boolean isSuccess = Db.saveOrUpdateBatch(list);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(3, Db.count(Entity.class));
+        assertEquals(3, Db.count(Entity.class));
     }
 
     @Test
@@ -64,10 +74,10 @@ class DbTest extends BaseDbTest<EntityMapper> {
         entity.setId(1L);
         boolean isSuccess = Db.removeById(entity);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(1, Db.count(Entity.class));
+        assertEquals(1, Db.count(Entity.class));
         isSuccess = Db.removeById(2L, Entity.class);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(0, Db.count(Entity.class));
+        assertEquals(0, Db.count(Entity.class));
     }
 
     @Test
@@ -77,21 +87,21 @@ class DbTest extends BaseDbTest<EntityMapper> {
         entity.setName("bee bee I'm a sheep");
         boolean isSuccess = Db.updateById(entity);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
+        assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
     }
 
     @Test
     void testUpdate() {
         boolean isSuccess = Db.update(Wrappers.lambdaUpdate(Entity.class).eq(Entity::getId, 1L).set(Entity::getName, "be better"));
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("be better", Db.getById(1L, Entity.class).getName());
+        assertEquals("be better", Db.getById(1L, Entity.class).getName());
 
         Entity entity = new Entity();
         entity.setId(1L);
         entity.setName("bee bee I'm a sheep");
         isSuccess = Db.update(entity, Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L));
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
+        assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
     }
 
     @Test
@@ -105,29 +115,29 @@ class DbTest extends BaseDbTest<EntityMapper> {
         ruben.setName("rabbit");
         boolean isSuccess = Db.updateBatchById(Arrays.asList(sheep, ruben));
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
-        Assertions.assertEquals("rabbit", Db.getById(2L, Entity.class).getName());
+        assertEquals("bee bee I'm a sheep", Db.getById(1L, Entity.class).getName());
+        assertEquals("rabbit", Db.getById(2L, Entity.class).getName());
     }
 
     @Test
     void testRemove() {
         boolean isSuccess = Db.remove(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L));
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(1, Db.count(Entity.class));
+        assertEquals(1, Db.count(Entity.class));
     }
 
     @Test
     void testRemoveByIds() {
         boolean isSuccess = Db.removeByIds(Arrays.asList(1L, 2L), Entity.class);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(0, Db.count(Entity.class));
+        assertEquals(0, Db.count(Entity.class));
     }
 
     @Test
     void testRemoveByMap() {
         boolean isSuccess = Db.removeByMap(Collections.singletonMap("id", 1L), Entity.class);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals(1, Db.count(Entity.class));
+        assertEquals(1, Db.count(Entity.class));
     }
 
     @Test
@@ -137,12 +147,12 @@ class DbTest extends BaseDbTest<EntityMapper> {
         entity.setName("bee bee I'm a sheep");
         boolean isSuccess = Db.saveOrUpdate(entity);
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("bee bee I'm a sheep", Db.getById(entity.getId(), Entity.class).getName());
+        assertEquals("bee bee I'm a sheep", Db.getById(entity.getId(), Entity.class).getName());
 
         entity.setName("be better");
         isSuccess = Db.saveOrUpdate(entity, Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, entity.getId()));
         Assertions.assertTrue(isSuccess);
-        Assertions.assertEquals("be better", Db.getById(entity.getId(), Entity.class).getName());
+        assertEquals("be better", Db.getById(entity.getId(), Entity.class).getName());
     }
 
     @Test
@@ -162,14 +172,14 @@ class DbTest extends BaseDbTest<EntityMapper> {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1L);
         List<Entity> list = Db.listByMap(map, Entity.class);
-        Assertions.assertEquals(1, list.size());
-        Assertions.assertEquals("ruben", list.get(0).getName());
+        assertEquals(1, list.size());
+        assertEquals("ruben", list.get(0).getName());
     }
 
     @Test
     void testByIds() {
         List<Entity> list = Db.listByIds(Arrays.asList(1L, 2L), Entity.class);
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
     }
 
     @Test
@@ -186,38 +196,38 @@ class DbTest extends BaseDbTest<EntityMapper> {
     @Test
     void testList() {
         List<Entity> list = Db.list(Wrappers.lambdaQuery(Entity.class));
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
 
         list = Db.list(Entity.class);
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
 
         Entity entity = new Entity();
         entity.setId(1L);
         list = Db.list(entity);
-        Assertions.assertEquals(1, list.size());
+        assertEquals(1, list.size());
     }
 
     @Test
     void testListMaps() {
         List<Map<String, Object>> list = Db.listMaps(Wrappers.lambdaQuery(Entity.class));
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
 
         list = Db.listMaps(Entity.class);
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
 
         Entity entity = new Entity();
         entity.setId(1L);
         list = Db.listMaps(entity);
-        Assertions.assertEquals(1, list.size());
+        assertEquals(1, list.size());
     }
 
     @Test
     void testListObjs() {
         List<Entity> list = Db.listObjs(Entity.class);
-        Assertions.assertEquals(2, list.size());
+        assertEquals(2, list.size());
 
         List<Long> objectList = Db.listObjs(Wrappers.lambdaQuery(Entity.class), Entity::getId);
-        Assertions.assertEquals(2, objectList.size());
+        assertEquals(2, objectList.size());
 
         List<String> names = Db.listObjs(Entity.class, Entity::getName);
         Assertions.assertArrayEquals(new String[]{"ruben", "chocolate"}, names.toArray());
@@ -233,53 +243,75 @@ class DbTest extends BaseDbTest<EntityMapper> {
     @Test
     void testPageMaps() {
         Page<Map<String, Object>> page = Db.pageMaps(new Page<>(1, 1), Entity.class);
-        Assertions.assertEquals(2, page.getTotal());
+        assertEquals(2, page.getTotal());
 
-        Assertions.assertEquals(Db.listMaps(new Page<>(1, 1, false), Entity.class).size(), page.getRecords().size());
+        assertEquals(Db.listMaps(new Page<>(1, 1, false), Entity.class).size(), page.getRecords().size());
 
         page = Db.pageMaps(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
-        Assertions.assertEquals(1, page.getRecords().size());
+        assertEquals(1, page.getRecords().size());
 
-        Assertions.assertEquals(Db.listMaps(new Page<>(1, 1, false), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
+        assertEquals(Db.listMaps(new Page<>(1, 1, false), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
     }
 
     @Test
     void testPage() {
         IPage<Entity> page = Db.page(new Page<>(1, 1), Entity.class);
-        Assertions.assertEquals(2, page.getTotal());
-        Assertions.assertEquals(Db.list(new Page<Entity>(1, 1), Entity.class).size(),page.getRecords().size());
+        assertEquals(2, page.getTotal());
+        assertEquals(Db.list(new Page<Entity>(1, 1), Entity.class).size(), page.getRecords().size());
 
         page = Db.page(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
-        Assertions.assertEquals(1, page.getRecords().size());
+        assertEquals(1, page.getRecords().size());
 
-        Assertions.assertEquals(Db.list(new Page<Entity>(1, 1), Wrappers.lambdaQuery(Entity.class)).size(),page.getRecords().size());
+        assertEquals(Db.list(new Page<Entity>(1, 1), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
     }
 
     @Test
     void testChain() {
         QueryChainWrapper<Entity> query = Db.query(Entity.class);
         List<Entity> list = query.eq("id", 1L).list();
-        Assertions.assertEquals(1, list.size());
+        assertEquals(1, list.size());
 
         LambdaQueryChainWrapper<Entity> lambdaQuery = Db.lambdaQuery(Entity.class);
         list = lambdaQuery.eq(Entity::getId, 1L).list();
-        Assertions.assertEquals(1, list.size());
+        assertEquals(1, list.size());
 
         UpdateChainWrapper<Entity> update = Db.update(Entity.class);
         update.eq("id", 1L).set("name", "bee bee I'm a sheep").update();
-        Assertions.assertEquals("bee bee I'm a sheep", lambdaQuery.eq(Entity::getId, 1L).one().getName());
+        assertEquals("bee bee I'm a sheep", lambdaQuery.eq(Entity::getId, 1L).one().getName());
 
         LambdaUpdateChainWrapper<Entity> lambdaUpdate = Db.lambdaUpdate(Entity.class);
         lambdaUpdate.eq(Entity::getId, 1L).set(Entity::getName, "be better").update();
-        Assertions.assertEquals("be better", lambdaQuery.eq(Entity::getId, 1L).one().getName());
+        assertEquals("be better", lambdaQuery.eq(Entity::getId, 1L).one().getName());
     }
 
     @Test
     void testGetObj() {
         String name = Db.getObj(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L), Entity::getName);
-        Assertions.assertEquals("ruben", name);
+        assertEquals("ruben", name);
     }
 
+    @Test
+    void testCount() {
+        verifyCount(0, null);
+        verifyCount(0, 0L);
+        verifyCount(1, 1L);
+        verifyCount(12, 12L);
+    }
+
+    private void verifyCount(long expected, Long mockValue) {
+        BaseMapper<Entity> entityMapper = mock(EntityMapper.class);
+        when(entityMapper.selectCount(any())).thenReturn(mockValue);
+        CompatibleSet compatibleSet = mock(CompatibleSet.class);
+        when(compatibleSet.getBean(EntityMapper.class)).thenReturn((EntityMapper) entityMapper);
+        try (MockedStatic<CompatibleHelper> compatibleHelperMockedStatic = Mockito.mockStatic(CompatibleHelper.class)) {
+            compatibleHelperMockedStatic.when(CompatibleHelper::hasCompatibleSet).thenReturn(true);
+            compatibleHelperMockedStatic.when(CompatibleHelper::getCompatibleSet).thenReturn(compatibleSet);
+            assertEquals(expected, Db.count(Entity.class));
+            assertEquals(expected, Db.count(new Entity()));
+            assertEquals(expected, Db.count(Wrappers.lambdaQuery(new Entity())));
+            assertEquals(expected, Db.count(Wrappers.lambdaQuery(Entity.class)));
+        }
+    }
 
     @Override
     protected String tableDataSql() {

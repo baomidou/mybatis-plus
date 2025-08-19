@@ -26,7 +26,6 @@ import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.reflect.GenericTypeUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.BatchResult;
@@ -124,12 +123,16 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default int deleteById(Object obj, boolean useFill) {
-        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(getClass(), BaseMapper.class, 0);
+        Assert.notNull(entityClass, "entityClass must not be null");
         if (!entityClass.isAssignableFrom(obj.getClass()) && useFill) {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+            Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
+            String keyProperty = tableInfo.getKeyProperty();
+            Assert.notEmpty(keyProperty, "The current table has no primary key.");
             if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
                 T instance = tableInfo.newInstance();
-                tableInfo.setPropertyValue(instance, tableInfo.getKeyProperty(), OgnlOps.convertValue(obj, tableInfo.getKeyType()));
+                tableInfo.setPropertyValue(instance, keyProperty, OgnlOps.convertValue(obj, tableInfo.getKeyType()));
                 return this.deleteById(instance);
             }
         }
@@ -207,10 +210,12 @@ public interface BaseMapper<T> extends Mapper<T> {
             return 0;
         }
         MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(this);
-        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(getClass(), BaseMapper.class, 0);
+        Assert.notNull(entityClass, "entityClass must not be null");
         SqlSession sqlSession = mapperProxyMetadata.getSqlSession();
         Class<?> mapperInterface = mapperProxyMetadata.getMapperInterface();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
         Map<String, Object> params = new HashMap<>();
         if (useFill && tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()) {
             params.put(Constants.MP_FILL_ET, tableInfo.newInstance());
@@ -477,12 +482,13 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.7
      */
     default boolean insertOrUpdate(T entity) {
-        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(getClass(), BaseMapper.class, 0);
+        Assert.notNull(entityClass, "entityClass must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-        Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
+        Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
         String keyProperty = tableInfo.getKeyProperty();
-        Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        Object idVal = tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty());
+        Assert.notEmpty(keyProperty, "The current table has no primary key.");
+        Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
         return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal)) ? insert(entity) > 0 : updateById(entity) > 0;
     }
 
@@ -554,9 +560,12 @@ public interface BaseMapper<T> extends Mapper<T> {
      */
     default List<BatchResult> insertOrUpdate(Collection<T> entityList, int batchSize) {
         MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(this);
-        Class<?> entityClass = GenericTypeUtils.resolveTypeArguments(getClass(), BaseMapper.class)[0];
+        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(getClass(), BaseMapper.class, 0);
+        Assert.notNull(entityClass, "entityClass must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
         String keyProperty = tableInfo.getKeyProperty();
+        Assert.notEmpty(keyProperty, "The current table has no primary key.");
         String statement = mapperProxyMetadata.getMapperInterface().getName() + StringPool.DOT + SqlMethod.SELECT_BY_ID.getMethod();
         return insertOrUpdate(entityList, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);

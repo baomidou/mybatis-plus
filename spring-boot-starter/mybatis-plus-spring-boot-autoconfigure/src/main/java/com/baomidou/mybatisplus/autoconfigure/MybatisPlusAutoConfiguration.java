@@ -165,6 +165,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
+        factory.setApplicationContext(this.applicationContext);
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
@@ -376,7 +377,13 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
     }
 
+    /**
+     * @deprecated 3.5.13
+     * @see MybatisSqlSessionFactoryBean#setApplicationContext(ApplicationContext)
+     * @return MybatisPlusApplicationContextAware
+     */
     @Bean
+    @Deprecated
     @ConditionalOnMissingBean(MybatisPlusApplicationContextAware.class)
     public MybatisPlusApplicationContextAware mybatisPlusSpringApplicationContextAware() {
         return new MybatisPlusApplicationContextAware();

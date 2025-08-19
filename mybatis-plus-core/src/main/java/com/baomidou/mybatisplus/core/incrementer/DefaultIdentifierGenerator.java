@@ -16,13 +16,14 @@
 package com.baomidou.mybatisplus.core.incrementer;
 
 import com.baomidou.mybatisplus.core.toolkit.Sequence;
+import org.apache.ibatis.logging.Log;
 
 import java.net.InetAddress;
 
 /**
  * 默认生成器
  *
- * @author  nieqiuqiu
+ * @author nieqiuqiu
  * @since 2019-10-15
  * @since 3.3.0
  */
@@ -49,6 +50,19 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
 
     public DefaultIdentifierGenerator(Sequence sequence) {
         this.sequence = sequence;
+    }
+
+    /**
+     * 获取固定的生成器实例
+     * <p>当无法通过网卡信息获取时，使用固定的一个主键生成器实例.</p>
+     *
+     * @param log 日志对象
+     * @return 主键生成器
+     * @since 3.5.13
+     */
+    public static IdentifierGenerator getFixedIdentifierGenerator(Log log) {
+        log.warn("Unable to obtain correct IP address information, the machine ID and serial number of the fixed machine will be used to generate the primary key.");
+        return new DefaultIdentifierGenerator(1, 1);
     }
 
     @Override

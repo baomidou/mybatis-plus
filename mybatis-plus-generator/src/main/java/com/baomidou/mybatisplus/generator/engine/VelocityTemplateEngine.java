@@ -82,7 +82,6 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
              BufferedWriter writer = new BufferedWriter(ow)) {
             template.merge(new VelocityContext(objectMap), writer);
         }
-        LOGGER.debug("模板:{};  文件:{}", templatePath, outputFile);
     }
 
 

@@ -1,0 +1,10 @@
+- fix: 修复在`Spring`中使用`@PostConstruct`调用`Db`方法查询出现警告日志
+- fix: 修复`Db`使用`count`返回`null`导致的空指针异常
+- fix: 修复`BaseMapper`在非`Spring`项目中报错
+- feat: 升级`Jsqlparser`5.2
+- feat: `OrderItem`增加`withExpression`根据表达式排序(注意:不支持序列化方式使用,自行控制Sql注入)
+- feat: `OracleDdlGenerator`支持指定`schema`模式运行
+- feat: 适配华为云`GaussDb`数据库
+- feat: 主键生成器初始化增加错误降级处理
+- opt: `SqlUtils`中`replaceSqlPlaceholder`方法增加缓存处理
+- opt： 优化`DDL`执行记录表检查是否存在

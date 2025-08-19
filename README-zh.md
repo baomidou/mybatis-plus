@@ -9,6 +9,19 @@
 </p>
 
 <p align="center">
+
+  <a href="https://github.com/baomidou/mybatis-plus">
+    <img alt="code style" src="https://img.shields.io/github/stars/baomidou/mybatis-plus?style=social">
+  </a>
+
+  <a href="https://gitee.com/baomidou/mybatis-plus">
+    <img alt="code style" src="https://gitee.com/baomidou/mybatis-plus/badge/star.svg">
+  </a>
+
+  <a href="https://gitcode.com/baomidou/mybatis-plus">
+    <img alt="code style" src="https://gitcode.com/baomidou/mybatis-plus/star/badge.svg">
+  </a>
+
   <a href="https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*">
     <img alt="maven" src="https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg?style=flat-square">
   </a>
@@ -110,21 +123,10 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 - [文档](https://baomidou.com)
 - [代码生成](https://github.com/baomidou/generator)
-- [功能示例](https://gitee.com/baomidou/mybatis-plus-samples)
+- [功能示例](https://github.com/baomidou/mybatis-plus-samples)
 - [展示](https://github.com/baomidou/awesome-mybatis-plus)
-- [企业版 Mybatis-Mate 高级特性](https://gitee.com/baomidou/mybatis-mate-examples)
+- [企业版 Mybatis-Mate 高级特性](https://github.com/baomidou/mybatis-mate-examples)
 
-# 原理 | Principle
-
-[Mybatis-Plus 实践及架构原理](https://gitee.com/baomidou/mybatis-plus/attach_files)
-
-# 应用实例 | Demo
-
-[Spring-MVC](https://gitee.com/baomidou/mybatisplus-spring-mvc)
-
-[Spring-Boot](https://gitee.com/baomidou/mybatisplus-spring-boot)
-
-[SSM-实战 Demo](https://gitee.com/juapk/SpringWind)
 
 # 其他开源项目 | Other Project
 
@@ -135,8 +137,8 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 王者荣耀
 
-![MPTrophy](https://foruda.gitee.com/images/1703034397683946868/c9bf2ba5_12260.jpeg "mybatis-plus.jpg")
-
+![MPTrophy](./images/c9bf2ba5_12260.jpeg "mybatis-plus.jpg")
+![GitCode](./images/2025-05-21_163231_398.jpg "2025-05-21_163231_398.jpg")
 # 期望 | Futures
 
 > 欢迎提出更好的意见，帮助完善 Mybatis-Plus
@@ -145,8 +147,10 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
-![捐赠 mybatis-plus](https://gitee.com/uploads/images/2015/1222/211207_0acab44e_12260.png "支持一下mybatis-plus")
+![捐赠 mybatis-plus](./images/211207_0acab44e_12260.png "支持一下mybatis-plus")
 
 # 关注我 | About Me
-
-![程序员日记](https://images.gitee.com/uploads/images/2019/0619/181933_46d5b802_12260.png "程序员日记")
+* Github: https://github.com/baomidou/mybatis-plus
+* Gitee: https://gitee.com/baomidou/mybatis-plus
+* GitCode: https://gitcode.com/baomidou/mybatis-plus
+![程序员日记](./images/181933_46d5b802_12260.png "程序员日记")

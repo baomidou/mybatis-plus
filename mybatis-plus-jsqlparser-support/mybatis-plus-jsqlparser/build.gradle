@@ -3,7 +3,7 @@ compileJava {
 }
 
 dependencies {
-    api "com.github.jsqlparser:jsqlparser:5.1"
+    api "com.github.jsqlparser:jsqlparser:5.2"
     api project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common")
     implementation "${lib."slf4j-api"}"
     implementation "de.ruedigermoeller:fst:3.0.3"

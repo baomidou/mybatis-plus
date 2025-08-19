@@ -83,7 +83,7 @@ public abstract class AbstractDatabaseQuery implements IDatabaseQuery {
                 notExistTables.remove(tabInfo.getName().toLowerCase());
             }
             if (!notExistTables.isEmpty()) {
-                LOGGER.warn("表[{}]在数据库中不存在！！！", String.join(StringPool.COMMA, notExistTables.values()));
+                LOGGER.warn("Table [{}] does not exist in the database!", String.join(StringPool.COMMA, notExistTables.values()));
             }
             // 需要反向生成的表信息
             if (isExclude) {

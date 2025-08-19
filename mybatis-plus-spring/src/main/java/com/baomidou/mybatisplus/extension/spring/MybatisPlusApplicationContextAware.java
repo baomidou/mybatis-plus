@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
+import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -28,7 +29,9 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author nieqiurong
  * @since 3.5.12
+ * @deprecated 3.5.13 初始化顺序不太好兼容Bean初始化方法执行逻辑，使用{@link MybatisSqlSessionFactoryBean#setApplicationContext(ApplicationContext)}替代.
  */
+@Deprecated
 public class MybatisPlusApplicationContextAware implements ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisPlusApplicationContextAware.class);
@@ -39,6 +42,9 @@ public class MybatisPlusApplicationContextAware implements ApplicationContextAwa
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         LOGGER.info("Register ApplicationContext instances {}", applicationContext.getDisplayName());
         MybatisPlusApplicationContextAware.applicationContext = applicationContext;
+        if (CompatibleHelper.hasCompatibleSet()) {
+            CompatibleHelper.getCompatibleSet().setContext(applicationContext);
+        }
     }
 
     public static boolean hasApplicationContext() {

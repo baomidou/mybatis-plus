@@ -121,8 +121,8 @@ public class CollectionUtils {
 
     /**
      * 用来过渡下Jdk1.8下ConcurrentHashMap的性能bug
-     * https://bugs.openjdk.java.net/browse/JDK-8161372
-     *
+     * <a href="https://bugs.openjdk.java.net/browse/JDK-8161372">JDK-8161372</a>
+     * <p>
      *  A temporary workaround for Java 8 ConcurrentHashMap#computeIfAbsent specific performance issue: JDK-8161372.</br>
      *  @see <a href="https://bugs.openjdk.java.net/browse/JDK-8161372">https://bugs.openjdk.java.net/browse/JDK-8161372</a>
      *
@@ -218,7 +218,7 @@ public class CollectionUtils {
     public static <K, V> List<V> getCollection(Map<K, V> map, Iterable<K> keys, Comparator<V> comparator) {
         Objects.requireNonNull(comparator);
         List<V> result = getCollection(map, keys);
-        Collections.sort(result, comparator);
+        result.sort(comparator);
         return result;
     }
 
