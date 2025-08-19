@@ -58,7 +58,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     @Deprecated
     private TableNameHandler tableNameHandler = (sql, tableName) -> sql;
     /**
-     * 表名处理器工厂，在实现中决定是静态处理还是每个handler都携带捕获到的BoundSql中的参数
+     * 表名处理器Factory，在实现中决定是静态处理, 还是每个handler都携带捕获到的BoundSql中的参数
      */
     private TableNameHandlerFactory tableNameHandlerFactory = null;
     /**
@@ -84,6 +84,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
+        //兼容直接使用类内静态tableNameHandler
         TableNameHandler handler = tableNameHandlerFactory != null ?
             tableNameHandlerFactory.createContextTableNameHandler(QueryParameterWrapper.createWrapper(mpBs))
             : this.tableNameHandler;
@@ -100,6 +101,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
                 return;
             }
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+            //兼容直接使用类内静态tableNameHandler
             TableNameHandler handler = tableNameHandlerFactory != null ?
                 tableNameHandlerFactory.createContextTableNameHandler(QueryParameterWrapper.createWrapper(mpBs))
                 : this.tableNameHandler;
@@ -121,6 +123,7 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
      * 处理表名解析替换
      *
      * @param sql 原始sql
+     * @param handler 表名处理器
      * @return 处理完的sql
      * @since 3.5.11
      */
