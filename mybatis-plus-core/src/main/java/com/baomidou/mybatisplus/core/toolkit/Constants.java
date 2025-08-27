@@ -15,7 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * mybatis_plus 自用常量集中管理
@@ -193,4 +198,56 @@ public interface Constants extends StringPool, Serializable {
      * 默认批次提交数量
      */
     int DEFAULT_BATCH_SIZE = 1000;
+
+    IPage SELECT_ONE = new IPage() {
+        @Override
+        public List<OrderItem> orders() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public List getRecords() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public IPage setRecords(List records) {
+            return this;
+        }
+
+        @Override
+        public long getTotal() {
+            return 0;
+        }
+
+        @Override
+        public IPage setTotal(long total) {
+            return this;
+        }
+
+        @Override
+        public long getSize() {
+            return 2;
+        }
+
+        @Override
+        public IPage setSize(long size) {
+            return this;
+        }
+
+        @Override
+        public long getCurrent() {
+            return 1;
+        }
+
+        @Override
+        public IPage setCurrent(long current) {
+            return this;
+        }
+
+        @Override
+        public boolean searchCount() {
+            return false;
+        }
+    };
 }

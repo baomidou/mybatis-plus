@@ -318,7 +318,6 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录
-     * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
@@ -328,19 +327,18 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录，现在会根据{@code throwEx}参数判断是否抛出异常，如果为false就直接返回一条数据
-     * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, boolean throwEx) {
-        List<T> list = this.selectList(queryWrapper);
+        List<T> list = this.selectList(Constants.SELECT_ONE, queryWrapper);
         int size = list.size();
         if (size == 1) {
             return list.get(0);
         } else if (size > 1) {
             if (throwEx) {
-                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + size);
+                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found more item!");
             }
             return list.get(0);
         }
