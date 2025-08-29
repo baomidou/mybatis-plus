@@ -76,9 +76,16 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
-    public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, String mapping) {
+    public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val, final String mapping) {
         return maybeDo(condition, () -> {
-            String sql = formatParam(mapping, val);
+            String usedMapping = mapping;
+            if (usedMapping == null) {
+                // 如果使用set未显示指定mapping，则根据实体字段的定义注入。
+                // fix issue：https://github.com/baomidou/mybatis-plus/issues/6519
+                ColumnCache cache = getColumnCache(column);
+                usedMapping = cache.getMapping();
+            }
+            String sql = formatParam(usedMapping, val);
             sqlSet.add(columnToString(column) + Constants.EQUALS + sql);
         });
     }
