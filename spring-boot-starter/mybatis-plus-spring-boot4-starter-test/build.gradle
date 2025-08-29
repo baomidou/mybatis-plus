@@ -9,9 +9,6 @@ dependencies {
     api "org.springframework.boot:spring-boot-autoconfigure"
     api "org.springframework.boot:spring-boot-starter-test"
     api "org.springframework:spring-tx"
-    testImplementation("org.junit.platform:junit-platform-engine:6.0.0-M2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
-    testImplementation("org.junit.platform:junit-platform-launcher:6.0.0-M2")
     testImplementation "org.springframework.boot:spring-boot-starter-jdbc"
     testImplementation "org.springframework.boot:spring-boot-starter-cache"
     testImplementation "${lib.h2}"

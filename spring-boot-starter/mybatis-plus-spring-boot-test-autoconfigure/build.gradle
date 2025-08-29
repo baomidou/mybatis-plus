@@ -1,7 +1,7 @@
 dependencies {
     implementation "org.springframework:spring-tx:${springVersion}"
-    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBoot3Version}"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc:${springBoot3Version}"
+    implementation "org.springframework.boot:spring-boot-autoconfigure:${springBoot3Version}"
+    implementation "org.springframework.boot:spring-boot-starter-test:${springBoot3Version}"
 }

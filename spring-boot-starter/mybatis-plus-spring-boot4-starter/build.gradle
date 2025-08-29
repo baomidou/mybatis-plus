@@ -18,9 +18,6 @@ dependencies {
     implementation "${lib.'mybatis-freemarker'}"
     implementation "org.springframework.cloud:spring-cloud-commons:5.0.0-M1"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation("org.junit.platform:junit-platform-engine:6.0.0-M2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
-    testImplementation("org.junit.platform:junit-platform-launcher:6.0.0-M2")
 //    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0-SNAPSHOT"
     testImplementation "${lib.h2}"
 }

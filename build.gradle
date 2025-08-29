@@ -15,8 +15,7 @@ ext {
         mybatisSpringVersion = '3.0.5',
         mybatisSpringBootStarterVersion = '2.3.2',
         springVersion = '6.2.10',
-        springBootVersion = '2.7.18',
-        springBoot3Version = '3.4.1',
+        springBoot3Version = '3.5.0',
         springBoot4Version = '4.0.0-M2',
         springCloudVersion = '3.1.8',
         junitVersion = '5.11.0',
@@ -106,6 +105,9 @@ subprojects {
         testImplementation "${lib["junit-jupiter"]}"
         testImplementation "org.mockito:mockito-junit-jupiter:5.13.0"
         testImplementation "${lib["lagarto"]}"
+        testImplementation("org.junit.platform:junit-platform-engine:6.0.0-M2")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
+        testImplementation("org.junit.platform:junit-platform-launcher:6.0.0-M2")
     }
 
     tasks.withType(JavaCompile) {
