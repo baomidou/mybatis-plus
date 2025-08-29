@@ -12,9 +12,9 @@ ext {
 
     libraries = [
         mybatisVersion = '3.5.19',
-        mybatisSpringVersion = '2.1.2',
+        mybatisSpringVersion = '3.0.5',
         mybatisSpringBootStarterVersion = '2.3.2',
-        springVersion = '5.3.39',
+        springVersion = '6.2.10',
         springBootVersion = '2.7.18',
         springBoot3Version = '3.4.1',
         springBoot4Version = '4.0.0-M2',
@@ -24,7 +24,7 @@ ext {
 
     lib = [
         "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0",
+        "kotlin-stdlib"              : "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.0.4",
@@ -91,7 +91,7 @@ subprojects {
     }
 
     compileJava {
-        options.release = 8
+        options.release = 17
     }
 
     repositories {

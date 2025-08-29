@@ -47,10 +47,10 @@ class GeneratePomTest {
             Dependency mybatisSpring = dependenciesMap.get("mybatis-spring");
             Assertions.assertEquals("compile", mybatisSpring.getScope());
             Assertions.assertTrue(mybatisSpring.isOptional());
-            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
+            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib");
             Assertions.assertEquals("compile", kotlinStdlib.getScope());
             Assertions.assertTrue(kotlinStdlib.isOptional());
-            Dependency jsqlparserLib = dependenciesMap.get("mybatis-plus-jsqlparser-4.9");
+            Dependency jsqlparserLib = dependenciesMap.get("mybatis-plus-jsqlparser");
             Assertions.assertEquals("compile", jsqlparserLib.getScope());
             Assertions.assertTrue(jsqlparserLib.isOptional());
 

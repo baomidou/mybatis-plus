@@ -13,7 +13,7 @@ dependencies {
     implementation "${lib.enjoy}"
     implementation "${lib.'swagger-annotations'}"
     implementation "io.springfox:springfox-swagger2:3.0.0"
-    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-stdlib"}"
 
 
     compileOnly "org.jetbrains:annotations:24.1.0"

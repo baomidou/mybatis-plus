@@ -1,7 +1,3 @@
-compileJava {
-    options.release = 11
-}
-
 dependencies {
     api "com.github.jsqlparser:jsqlparser:5.2"
     api project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common")

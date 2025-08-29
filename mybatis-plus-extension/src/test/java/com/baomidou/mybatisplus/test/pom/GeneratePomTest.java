@@ -44,7 +44,7 @@ class GeneratePomTest {
             Dependency core = dependenciesMap.get("mybatis-plus-core");
             Assertions.assertEquals("compile", core.getScope());
             Assertions.assertFalse(core.isOptional());
-            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
+            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib");
             Assertions.assertEquals("compile", kotlinStdlib.getScope());
             Assertions.assertTrue(kotlinStdlib.isOptional());
             Dependency kotlinReflect = dependenciesMap.get("kotlin-reflect");

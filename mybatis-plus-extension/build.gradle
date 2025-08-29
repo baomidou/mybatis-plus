@@ -1,13 +1,13 @@
 apply plugin: 'kotlin'
 
 compileKotlin{
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
 dependencies {
     api project(":mybatis-plus-core")
 
-    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-stdlib"}"
     implementation "${lib."kotlin-reflect"}"
     implementation "${lib."slf4j-api"}"
     implementation "${lib."p6spy"}"

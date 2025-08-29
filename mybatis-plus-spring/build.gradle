@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -16,7 +16,7 @@ dependencies {
     api project(":mybatis-plus-extension")
     implementation "${lib."mybatis-spring"}"
 
-    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-stdlib"}"
     implementation "${lib."kotlin-reflect"}"
     implementation "${lib."spring-context-support"}"
     implementation "${lib."spring-jdbc"}"

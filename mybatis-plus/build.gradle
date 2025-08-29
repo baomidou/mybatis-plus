@@ -1,17 +1,13 @@
 apply plugin: 'kotlin'
 
 compileKotlin{
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjvm-default=all']
     }
-}
-
-configurations {
-    testImplementation.exclude module: 'mybatis-plus-jsqlparser-4.9'
 }
 
 dependencies {
@@ -22,8 +18,8 @@ dependencies {
     api "${lib.mybatis}"
 
     implementation "${lib."mybatis-spring"}"
-    implementation "${lib."kotlin-stdlib-jdk8"}"
-    implementation project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-4.9")
+    implementation "${lib."kotlin-stdlib"}"
+    implementation project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser")
 
     testImplementation "${lib.'spring-web'}"
 
