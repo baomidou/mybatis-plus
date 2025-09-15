@@ -1,8 +1,6 @@
 package com.baomidou.mybatisplus.code;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,14 +11,24 @@ import java.util.List;
 @Data
 @Builder
 public class Overwrite {
-    private String front;
-    private String behind;
-    private int interval;
+    private Point front;
+    private Point behind;
     /*  */
     @Singular
     private List<Content> contents;
     @Singular("addImport")
     private List<String> imports;
+
+    @Getter
+    @AllArgsConstructor
+    public static class Point {
+        private int line;
+        private String content;
+
+        public Point(String content) {
+            this.content = content;
+        }
+    }
 
     @Data
     @Builder

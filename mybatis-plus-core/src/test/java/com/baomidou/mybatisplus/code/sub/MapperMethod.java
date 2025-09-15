@@ -14,13 +14,13 @@ public class MapperMethod extends OverwriteFile {
     public MapperMethod() {
         // import
         addStep(i -> i
+            .front(new Overwrite.Point("import org.apache.ibatis.session.SqlSession;"))
             .addImport("com.baomidou.mybatisplus.core.metadata.IPage")
             .addImport("com.baomidou.mybatisplus.core.toolkit.Assert"));
         // execute
         addStep(i -> i
-            .front("result = executeForCursor(sqlSession, args);")
-            .interval(8)
-            .behind("case FLUSH:")
+            .front(new Overwrite.Point(84, "result = executeForCursor(sqlSession, args);"))
+            .behind(new Overwrite.Point(93, "case FLUSH:"))
             .content(Overwrite.Content.builder()
                 .code("""
                     if (IPage.class.isAssignableFrom(method.getReturnType())) {
@@ -34,7 +34,8 @@ public class MapperMethod extends OverwriteFile {
                 .build())
         );
         addStep(i -> i
-            .behind("private Object rowCountResult(int rowCount) {")
+            .front(new Overwrite.Point(106, "private Object rowCountResult(int rowCount) {"))
+            .behind(new Overwrite.Point(123, "private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {"))
             .content(Overwrite.Content.builder()
                 .code("""
                     @SuppressWarnings("all")
@@ -53,7 +54,7 @@ public class MapperMethod extends OverwriteFile {
                         return result;
                     }
                     """)
-                .behindUp(2).build())
+                .behindUp(0).build())
         );
     }
 }
