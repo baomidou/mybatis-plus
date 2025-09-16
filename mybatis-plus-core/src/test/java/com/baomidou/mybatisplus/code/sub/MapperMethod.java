@@ -15,8 +15,10 @@ public class MapperMethod extends OverwriteFile {
         // import
         addStep(i -> i
             .front(new Overwrite.Point("import org.apache.ibatis.session.SqlSession;"))
-            .addImport("com.baomidou.mybatisplus.core.metadata.IPage")
-            .addImport("com.baomidou.mybatisplus.core.toolkit.Assert"));
+            .imports("""
+                import com.baomidou.mybatisplus.core.metadata.IPage;
+                import com.baomidou.mybatisplus.core.toolkit.Assert;
+                """));
         // execute
         addStep(i -> i
             .front(new Overwrite.Point(84, "result = executeForCursor(sqlSession, args);"))
@@ -30,8 +32,7 @@ public class MapperMethod extends OverwriteFile {
                 .frontDown(1).build())
             .content(Overwrite.Content.builder()
                 .code("}")
-                .behindUp(3)
-                .build())
+                .behindUp(3).build())
         );
         addStep(i -> i
             .front(new Overwrite.Point(106, "private Object rowCountResult(int rowCount) {"))

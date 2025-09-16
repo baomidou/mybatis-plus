@@ -16,18 +16,12 @@ public class Overwrite {
     /*  */
     @Singular
     private List<Content> contents;
-    @Singular("addImport")
-    private List<String> imports;
+    private String imports;
 
-    @Getter
-    @AllArgsConstructor
-    public static class Point {
-        private int line;
-        private String content;
-
-        public Point(String content) {
-            this.content = content;
-        }
+    public enum Operate {
+        INSERT,
+        DELETE,
+        COVERAGE,
     }
 
     @Data
@@ -40,8 +34,20 @@ public class Overwrite {
         private String code;
     }
 
-    enum Operate {
-        INSERT,
-        DELETE
+    @Getter
+    @AllArgsConstructor
+    public static class Point {
+        private int line;
+        private boolean includeSelf;
+        private String content;
+
+        public Point(String content) {
+            this.content = content;
+        }
+
+        public Point(int line, String content) {
+            this.line = line;
+            this.content = content;
+        }
     }
 }
