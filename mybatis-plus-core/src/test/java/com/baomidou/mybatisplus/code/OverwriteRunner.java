@@ -10,12 +10,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author miemie
@@ -42,62 +46,26 @@ public class OverwriteRunner {
                 String className = name.substring(name.lastIndexOf("/") + 1, name.length() - 5);
                 if (map.containsKey(className)) {
                     List<String> lines = IoUtil.readUtf8Lines(jarFile.getInputStream(entry), new ArrayList<>());
+                    String sourceCode = lines.stream().map(String::trim).collect(Collectors.joining("\n"));
                     for (Overwrite step : map.get(className).getSteps()) {
-                        List<String> tl = new ArrayList<>();
-                        int index = -1;
-                        for (int i = 0; i < lines.size(); i++) {
-                            String line = lines.get(i).trim();
-                            if (index > 1) {
-                                if (step.getImports() != null) {
-                                    tl.addAll(Arrays.asList(step.getImports().split("\n")));
-                                    lines.addAll(i + 1, tl);
-                                    break;
-                                }
-                                if (line.equals(step.getBehind().getContent())) {
-                                    if (tl.size() != step.getBehind().getLine() - step.getFront().getLine() - 1) {
-                                        System.err.println(name + " - 定位间隔行数错误");
-                                        return;
-                                    }
-                                    if (step.getBehind().isIncludeSelf()) {
-                                        tl.add(lines.remove(i));
-                                    }
-                                    for (Overwrite.Content content : step.getContents()) {
-                                        List<String> code = Arrays.asList(content.getCode().split("\n"));
-                                        switch (content.getOperate()) {
-                                            case DELETE -> {
-                                                // todo
-                                            }
-                                            case INSERT -> {
-                                                if (content.getFrontDown() > 0) {
-                                                    tl.addAll(content.getFrontDown(), code);
-                                                } else {
-                                                    tl.addAll(tl.size() - content.getBehindUp() - 1, code);
-                                                }
-                                            }
-                                            case COVERAGE -> {
-                                                tl.clear();
-                                                tl.addAll(code);
-                                            }
-                                        }
-                                    }
-                                    lines.addAll(i, tl);
-                                    break;
-                                } else {
-                                    tl.add(lines.remove(i));
-                                    i--;
-                                }
-                            } else {
-                                if (line.equals(step.getFront().getContent())) {
-                                    index = i;
-                                }
-                            }
-                        }
-                        if (tl.isEmpty()) {
-                            System.err.println(name + " - 无法进行定位");
+                        String s = Stream.of(step.getSource().split("\n")).map(String::trim).collect(Collectors.joining("\n"));
+                        if (!sourceCode.contains(s)) {
+                            System.err.println(name + " - 无法进行定位 \n" + step.getSource());
                             return;
                         }
+                        switch (step.getOperate()) {
+                            case DELETE -> sourceCode = sourceCode.replace(s, "");
+                            case APPEND -> {
+                                String t = Stream.of(step.getTarget().split("\n")).map(String::trim).collect(Collectors.joining("\n"));
+                                sourceCode = sourceCode.replace(s, s + "\n" + t);
+                            }
+                            case COVERAGE -> {
+                                String t = Stream.of(step.getTarget().split("\n")).map(String::trim).collect(Collectors.joining("\n"));
+                                sourceCode = sourceCode.replace(s, t);
+                            }
+                        }
                     }
-                    targets.put(name, String.join("\n", lines).getBytes(StandardCharsets.UTF_8));
+                    targets.put(name, sourceCode.getBytes(StandardCharsets.UTF_8));
                 } else {
 //                    targets.put(name, IoUtil.readBytes(jarFile.getInputStream(entry)));
                 }

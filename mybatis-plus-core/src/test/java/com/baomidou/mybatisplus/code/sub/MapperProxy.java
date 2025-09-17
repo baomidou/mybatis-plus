@@ -13,18 +13,26 @@ public class MapperProxy extends OverwriteFile {
 
     public MapperProxy() {
         addStep(i -> i
-            .front(new Overwrite.Point("import java.util.Map;"))
-            .imports("""
+            .source("""
+                import org.apache.ibatis.util.MapUtil;
+                """)
+            .target("""
                 import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
                 import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
                 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
                 import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
-                """));
+                """)
+        );
         addStep(i -> i
-            .front(new Overwrite.Point(148, "public DefaultMethodInvoker(MethodHandle methodHandle) {"))
-            .behind(new Overwrite.Point(154, true, "return methodHandle.bindTo(proxy).invokeWithArguments(args);"))
-            .content(Overwrite.Content.builder()
-                .code("""
+            .source("""
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
+                  return methodHandle.bindTo(proxy).invokeWithArguments(args);
+                }
+                """)
+            .target("""
+                @Override
+                public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
                     boolean hasIgnoreStrategy = InterceptorIgnoreHelper.hasIgnoreStrategy();
                     if (hasIgnoreStrategy) {
                         return methodHandle.bindTo(proxy).invokeWithArguments(args);
@@ -37,16 +45,14 @@ public class MapperProxy extends OverwriteFile {
                                 ignoreStrategy = IgnoreStrategy.builder().build();
                             }
                             InterceptorIgnoreHelper.handle(ignoreStrategy);
-                    """)
-                .frontDown(5).build())
-            .content(Overwrite.Content.builder()
-                .code("""
-                    } finally {
+                            return methodHandle.bindTo(proxy).invokeWithArguments(args);
+                        } finally {
                             InterceptorIgnoreHelper.clearIgnoreStrategy();
                         }
                     }
-                    """)
-                .behindUp(-1).build())
+                }
+                """)
+            .operate(Overwrite.Operate.COVERAGE)
         );
     }
 }
