@@ -4,6 +4,7 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.code.sub.MapperMethod;
 import com.baomidou.mybatisplus.code.sub.MapperProxy;
+import com.baomidou.mybatisplus.code.sub.XMLConfigBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +32,7 @@ public class OverwriteRunner {
     private static final String[] pathParent = new String[]{"mybatis-plus-core", "src", "main", "java"};
 
     public static void main(String[] args) throws Exception {
-        List<OverwriteFile> OverwriteFileList = List.of(new MapperMethod(), new MapperProxy());
+        List<OverwriteFile> OverwriteFileList = List.of(new MapperMethod(), new MapperProxy(), new XMLConfigBuilder());
         Map<String, OverwriteFile> map = OverwriteFileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
         String ver = findVer();
         Path jarPath = Paths.get(System.getProperty("user.home"), ".m2", "repository", "org", "mybatis", "mybatis",
