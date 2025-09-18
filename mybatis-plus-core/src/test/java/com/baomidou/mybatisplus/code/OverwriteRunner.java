@@ -2,9 +2,7 @@ package com.baomidou.mybatisplus.code;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
-import com.baomidou.mybatisplus.code.sub.MapperMethod;
-import com.baomidou.mybatisplus.code.sub.MapperProxy;
-import com.baomidou.mybatisplus.code.sub.XMLConfigBuilder;
+import com.baomidou.mybatisplus.code.sub.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,9 +29,17 @@ public class OverwriteRunner {
     private static final String userDir = System.getProperty("user.dir");
     private static final String[] pathParent = new String[]{"mybatis-plus-core", "src", "main", "java"};
 
+    public static List<OverwriteFile> overwriteFileList = List.of(
+        new Configuration(),
+        new MapperMethod(),
+        new MapperProxy(),
+        new TypeHandlerRegistry(),
+        new XMLConfigBuilder(),
+        new XMLLanguageDriver()
+    );
+
     public static void main(String[] args) throws Exception {
-        List<OverwriteFile> OverwriteFileList = List.of(new MapperMethod(), new MapperProxy(), new XMLConfigBuilder());
-        Map<String, OverwriteFile> map = OverwriteFileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
+        Map<String, OverwriteFile> map = overwriteFileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
         String ver = findVer();
         Path jarPath = Paths.get(System.getProperty("user.home"), ".m2", "repository", "org", "mybatis", "mybatis",
             ver, "mybatis-" + ver + "-sources.jar");
