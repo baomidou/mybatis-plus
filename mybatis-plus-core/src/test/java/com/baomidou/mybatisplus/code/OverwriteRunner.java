@@ -31,6 +31,7 @@ public class OverwriteRunner {
 
     public static List<OverwriteFile> overwriteFileList = List.of(
         new Configuration(),
+        new DefaultParameterHandler(),
         new MapperMethod(),
         new MapperProxy(),
         new TypeHandlerRegistry(),
