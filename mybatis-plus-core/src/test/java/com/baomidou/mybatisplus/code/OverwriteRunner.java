@@ -2,7 +2,11 @@ package com.baomidou.mybatisplus.code;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.XmlUtil;
 import com.baomidou.mybatisplus.code.sub.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +52,24 @@ public class OverwriteRunner {
             Map<String, byte[]> targets = new LinkedHashMap<>();
             for (JarEntry entry : jarFile.stream().toList()) {
                 String name = entry.getName();
+                if (name.endsWith("pom.xml") && name.contains("mybatis")) {
+                    Document pom = XmlUtil.readXML(jarFile.getInputStream(entry));
+                    NodeList dependencyNodes = pom.getElementsByTagName("dependency");
+                    for (int i = 0; i < dependencyNodes.getLength(); i++) {
+                        Element dependency = (Element) dependencyNodes.item(i);
+                        String optional = XmlUtil.elementText(dependency, "optional");
+                        if ("true".equals(optional)) {
+                            String groupId = XmlUtil.elementText(dependency, "groupId");
+                            String artifactId = XmlUtil.elementText(dependency, "artifactId");
+                            String version = XmlUtil.elementText(dependency, "version");
+                            if (version.startsWith("${") && version.endsWith("}")) {
+                                String key = version.substring(2, version.length() - 1);
+                                version = XmlUtil.elementText((Element) pom.getElementsByTagName("properties").item(0), key);
+                            }
+                            System.out.printf("implementation '%s:%s:%s'%n", groupId, artifactId, version);
+                        }
+                    }
+                }
                 if (!name.endsWith(".java")) {
                     continue;
                 }
@@ -75,7 +97,7 @@ public class OverwriteRunner {
                     }
                     targets.put(name, sourceCode.getBytes(StandardCharsets.UTF_8));
                 } else {
-//                    targets.put(name, IoUtil.readBytes(jarFile.getInputStream(entry)));
+                    targets.put(name, IoUtil.readBytes(jarFile.getInputStream(entry)));
                 }
             }
             targets.forEach(OverwriteRunner::writeFile);

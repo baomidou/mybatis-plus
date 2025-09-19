@@ -16,11 +16,13 @@ public class XMLLanguageDriver extends OverwriteFile {
                 import org.apache.ibatis.session.Configuration;
                 """)
             .target("""
+                import java.util.List;
                 import com.baomidou.mybatisplus.core.config.GlobalConfig;
                 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
                 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
                 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
                 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+                import org.apache.ibatis.builder.IncompleteElementException;
                 """)
         );
         addStep(i -> i
