@@ -30,5 +30,14 @@ public class TypeHandlerRegistry extends OverwriteFile {
                 """)
             .operate(Overwrite.Operate.COVERAGE)
         );
+        addStep(i -> i
+            .source("""
+                this.defaultEnumTypeHandler = typeHandler;
+                """)
+            .target("""
+                CompositeEnumTypeHandler.setDefaultEnumTypeHandler(typeHandler);
+                """)
+            .operate(Overwrite.Operate.COVERAGE)
+        );
     }
 }
