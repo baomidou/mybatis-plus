@@ -1,6 +1,7 @@
-package com.baomidou.mybatisplus.code.sub;
+package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.code.OverwriteFile;
+
+import com.baomidou.mybatisplus.base.OverwriteFile;
 
 /**
  * {@link org.apache.ibatis.scripting.xmltags.XMLLanguageDriver}

@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.code;
+package com.baomidou.mybatisplus.base;
 
 import lombok.Data;
 

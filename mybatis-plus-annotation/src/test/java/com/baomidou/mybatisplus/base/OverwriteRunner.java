@@ -1,12 +1,11 @@
-package com.baomidou.mybatisplus.code;
+package com.baomidou.mybatisplus.base;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.XmlUtil;
-import com.baomidou.mybatisplus.code.sub.*;
-import com.baomidou.mybatisplus.code.sub.javassist.ClassPool;
-import com.baomidou.mybatisplus.code.sub.javassist.ClassPoolTail;
-import com.baomidou.mybatisplus.code.sub.javassist.CtClassType;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,29 +30,22 @@ import java.util.stream.Stream;
  * @author miemie
  * @since 2025/9/1
  */
+@RequiredArgsConstructor
 public class OverwriteRunner {
-
     private static final String userDir = System.getProperty("user.dir");
-    private static final String[] pathParent = new String[]{"mybatis-plus-core", "src", "main", "java"};
+    protected final String baseModule;
+    protected final String buildVerDf;
+    protected final String mybatisModule;
+    protected final List<OverwriteFile> fileList;
+    @Setter
+    @Accessors(chain = true)
+    protected boolean onlyFile = true;
 
-    public static List<OverwriteFile> overwriteFileList = List.of(
-        new Configuration(),
-        new DefaultParameterHandler(),
-        new MapperMethod(),
-        new MapperProxy(),
-        new TypeHandlerRegistry(),
-        new XMLConfigBuilder(),
-        new XMLLanguageDriver(),
-        new ClassPool(),
-        new ClassPoolTail(),
-        new CtClassType()
-    );
-
-    public static void main(String[] args) throws Exception {
-        Map<String, OverwriteFile> map = overwriteFileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
+    public void run() throws Exception {
+        Map<String, OverwriteFile> map = fileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
         String ver = findVer();
         Path jarPath = Paths.get(System.getProperty("user.home"), ".m2", "repository", "org", "mybatis", "mybatis",
-            ver, "mybatis-" + ver + "-sources.jar");
+            ver, "%s-%s-sources.jar".formatted(mybatisModule, ver));
         try (JarFile jarFile = new JarFile(jarPath.toFile())) {
             Map<String, byte[]> targets = new LinkedHashMap<>();
             for (JarEntry entry : jarFile.stream().toList()) {
@@ -90,12 +82,12 @@ public class OverwriteRunner {
                             return;
                         }
                         switch (step.getOperate()) {
-                            case DELETE -> sourceCode = sourceCode.replace(s, "");
-                            case APPEND -> {
+                            case Overwrite.Operate.DELETE -> sourceCode = sourceCode.replace(s, "");
+                            case Overwrite.Operate.APPEND -> {
                                 String t = Stream.of(step.getTarget().split("\n")).map(String::trim).collect(Collectors.joining("\n"));
                                 sourceCode = sourceCode.replace(s, s + "\n" + t);
                             }
-                            case COVERAGE -> {
+                            case Overwrite.Operate.COVERAGE -> {
                                 String t = Stream.of(step.getTarget().split("\n")).map(String::trim).collect(Collectors.joining("\n"));
                                 sourceCode = sourceCode.replace(s, t);
                             }
@@ -103,16 +95,19 @@ public class OverwriteRunner {
                     }
                     targets.put(name, sourceCode.getBytes(StandardCharsets.UTF_8));
                 } else {
-                    targets.put(name, IoUtil.readBytes(jarFile.getInputStream(entry)));
+                    if (!onlyFile) {
+                        targets.put(name, IoUtil.readBytes(jarFile.getInputStream(entry)));
+                    }
                 }
             }
-            targets.forEach(OverwriteRunner::writeFile);
+            targets.forEach(this::writeFile);
         }
     }
 
-    private static void writeFile(String jarEntryName, byte[] bytes) {
+    private void writeFile(String jarEntryName, byte[] bytes) {
         // 写入到本地
         try {
+            String[] pathParent = new String[]{baseModule, "src", "main", "java"};
             Path classPath = Paths.get(userDir, ArrayUtil.addAll(pathParent, jarEntryName.split("/")));
             Path parentDir = classPath.getParent();
             if (parentDir != null && !Files.exists(parentDir)) {
@@ -125,10 +120,9 @@ public class OverwriteRunner {
         }
     }
 
-    private static String findVer() throws IOException {
+    private String findVer() throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(userDir + "/build.gradle")));
-        // 定义正则表达式，匹配 mybatisVersion = '3.5.19'
-        Pattern pattern = Pattern.compile("mybatisVersion\\s*=\\s*['\"]([\\d.]+)['\"]");
+        Pattern pattern = Pattern.compile(buildVerDf + "Version\\s*=\\s*['\"]([\\d.]+)['\"]");
         Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             return matcher.group(1);

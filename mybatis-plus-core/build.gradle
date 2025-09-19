@@ -9,5 +9,4 @@ dependencies {
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib."mybatis-spring"}"
     testImplementation "${lib.'spring-jdbc'}"
-    testImplementation 'cn.hutool:hutool-all:5.8.40'
 }

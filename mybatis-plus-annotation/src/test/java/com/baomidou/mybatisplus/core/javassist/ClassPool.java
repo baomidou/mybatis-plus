@@ -1,7 +1,8 @@
-package com.baomidou.mybatisplus.code.sub.javassist;
+package com.baomidou.mybatisplus.core.javassist;
 
-import com.baomidou.mybatisplus.code.Overwrite;
-import com.baomidou.mybatisplus.code.OverwriteFile;
+
+import com.baomidou.mybatisplus.base.Overwrite;
+import com.baomidou.mybatisplus.base.OverwriteFile;
 
 /**
  * @author miemie
