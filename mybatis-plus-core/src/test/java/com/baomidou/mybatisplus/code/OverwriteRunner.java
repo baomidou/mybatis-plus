@@ -4,6 +4,9 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.XmlUtil;
 import com.baomidou.mybatisplus.code.sub.*;
+import com.baomidou.mybatisplus.code.sub.javassist.ClassPool;
+import com.baomidou.mybatisplus.code.sub.javassist.ClassPoolTail;
+import com.baomidou.mybatisplus.code.sub.javassist.CtClassType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -40,7 +43,10 @@ public class OverwriteRunner {
         new MapperProxy(),
         new TypeHandlerRegistry(),
         new XMLConfigBuilder(),
-        new XMLLanguageDriver()
+        new XMLLanguageDriver(),
+        new ClassPool(),
+        new ClassPoolTail(),
+        new CtClassType()
     );
 
     public static void main(String[] args) throws Exception {
