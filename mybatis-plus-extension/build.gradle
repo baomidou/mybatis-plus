@@ -12,6 +12,7 @@ dependencies {
     implementation "${lib."slf4j-api"}"
     implementation "${lib."p6spy"}"
     implementation "${lib."jackson"}"
+    implementation "${lib."jackson3"}"
     implementation "${lib."fastjson"}"
     implementation "${lib."gson"}"
     implementation "${lib['mybatis-thymeleaf']}"
