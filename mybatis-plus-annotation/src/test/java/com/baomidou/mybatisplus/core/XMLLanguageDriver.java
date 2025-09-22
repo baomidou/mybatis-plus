@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.core;
 
 
+import com.baomidou.mybatisplus.base.Overwrite;
 import com.baomidou.mybatisplus.base.OverwriteFile;
 
 /**
@@ -23,8 +24,18 @@ public class XMLLanguageDriver extends OverwriteFile {
                 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
                 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
                 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+                import com.baomidou.mybatisplus.core.MybatisXMLScriptBuilder;
                 import org.apache.ibatis.builder.IncompleteElementException;
                 """)
+        );
+        addStep(i -> i
+            .source("""
+                XMLScriptBuilder builder = new XMLScriptBuilder(configuration, script, parameterType);
+                """)
+            .target("""
+                MybatisXMLScriptBuilder builder = new MybatisXMLScriptBuilder(configuration, script, parameterType);
+                """)
+            .operate(Overwrite.Operate.COVERAGE)
         );
         addStep(i -> i
             .source("""

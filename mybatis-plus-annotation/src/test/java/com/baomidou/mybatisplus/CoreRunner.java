@@ -18,8 +18,12 @@ public class CoreRunner {
         new OverwriteRunner("mybatis-plus-core", "mybatis", "mybatis", List.of(
             new Configuration(),
             new DefaultParameterHandler(),
+            new MapperAnnotationBuilder(),
+            new MapperBuilderAssistant(),
             new MapperMethod(),
             new MapperProxy(),
+            new MapperRegistry(),
+            new MethodResolver(),
             new TypeHandlerRegistry(),
             new XMLConfigBuilder(),
             new XMLLanguageDriver(),

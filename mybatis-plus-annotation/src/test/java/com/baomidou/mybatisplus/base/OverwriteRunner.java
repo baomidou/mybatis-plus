@@ -40,11 +40,14 @@ public class OverwriteRunner {
     @Setter
     @Accessors(chain = true)
     protected boolean onlyFile = true;
+    @Setter
+    @Accessors(chain = true)
+    protected List<String> ignoreClasses = new ArrayList<>();
 
     public void run() throws Exception {
         Map<String, OverwriteFile> map = fileList.stream().collect(Collectors.toMap(i -> i.getClass().getSimpleName(), i -> i));
         String ver = findVer();
-        Path jarPath = Paths.get(System.getProperty("user.home"), ".m2", "repository", "org", "mybatis", "mybatis",
+        Path jarPath = Paths.get(System.getProperty("user.home"), ".m2", "repository", "org", "mybatis", mybatisModule,
             ver, "%s-%s-sources.jar".formatted(mybatisModule, ver));
         try (JarFile jarFile = new JarFile(jarPath.toFile())) {
             Map<String, byte[]> targets = new LinkedHashMap<>();
@@ -72,6 +75,9 @@ public class OverwriteRunner {
                     continue;
                 }
                 String className = name.substring(name.lastIndexOf("/") + 1, name.length() - 5);
+                if (ignoreClasses.contains(className)) {
+                    continue;
+                }
                 if (map.containsKey(className)) {
                     List<String> lines = IoUtil.readUtf8Lines(jarFile.getInputStream(entry), new ArrayList<>());
                     String sourceCode = lines.stream().map(String::trim).collect(Collectors.joining("\n"));
