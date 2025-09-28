@@ -33,11 +33,11 @@ class PageTest {
     @Test
     @EnabledOnJre(JRE.JAVA_8)
     void testCopy() {
-        Page page1 = new Page(2, 10, 100, false);
+        Page<?> page1 = new Page<>(2, 10, 100, false);
         page1.setOptimizeCountSql(false);
         page1.setOrders(Collections.singletonList(OrderItem.asc("test")));
 
-        Page page2 = new Page();
+        Page<?> page2 = new Page<>();
         PropertyCopier.copyBeanProperties(Page.class, page1, page2);
         Assertions.assertEquals(page1.getCurrent(), page2.getCurrent());
         Assertions.assertEquals(page1.getTotal(), page2.getTotal());
@@ -46,7 +46,7 @@ class PageTest {
         Assertions.assertEquals(page1.searchCount(), page2.searchCount());
         Assertions.assertEquals(page1.orders().size(), page2.orders().size());
 
-        Page page3 = new Page();
+        Page<?> page3 = new Page<>();
         BeanUtils.copyProperties(page1, page3);
         Assertions.assertEquals(page1.getCurrent(), page3.getCurrent());
         Assertions.assertEquals(page1.getTotal(), page3.getTotal());
@@ -55,7 +55,7 @@ class PageTest {
         Assertions.assertEquals(page1.searchCount(), page3.searchCount());
         Assertions.assertEquals(page1.orders().size(), page3.orders().size());
 
-        Page page4 = new Page();
+        Page<?> page4 = new Page<>();
         BeanCopier.create(page1.getClass(), page4.getClass(), false).copy(page1, page4, null);
         //链式的set方法会导致属性BeanCopier的拷贝方法失败  https://github.com/cglib/cglib/issues/108.
         Assertions.assertTrue(page4.optimizeCountSql());

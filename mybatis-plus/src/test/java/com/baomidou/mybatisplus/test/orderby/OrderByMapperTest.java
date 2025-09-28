@@ -26,14 +26,14 @@ public class OrderByMapperTest extends BaseDbTest<OrderByMapper> {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(OrderByEntity.class);
         for (OrderFieldInfo orderByField : tableInfo.getOrderByFields()) {
             if ("oid".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(orderByField.getSort(), 3);
-                Assertions.assertEquals(orderByField.getType(), Constants.DESC);
+                Assertions.assertEquals(3, orderByField.getSort());
+                Assertions.assertEquals(Constants.DESC, orderByField.getType());
             } else if ("age".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(orderByField.getSort(), 2);
-                Assertions.assertEquals(orderByField.getType(), Constants.ASC);
+                Assertions.assertEquals(2, orderByField.getSort());
+                Assertions.assertEquals(Constants.ASC, orderByField.getType());
             } else if ("tel".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(orderByField.getSort(), Short.MAX_VALUE);
-                Assertions.assertEquals(orderByField.getType(), Constants.DESC);
+                Assertions.assertEquals(Short.MAX_VALUE, orderByField.getSort());
+                Assertions.assertEquals(Constants.DESC, orderByField.getType());
             }
         }
     }

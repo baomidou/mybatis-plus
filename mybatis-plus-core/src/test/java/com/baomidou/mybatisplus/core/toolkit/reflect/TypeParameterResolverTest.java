@@ -37,13 +37,13 @@ class TypeParameterResolverTest {
 
     @Test
     void test() {
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(Mapper1.class, Mapper.class, 0), null);
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(Mapper2.class, Mapper.class, 0), MyEntity.class);
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(Mapper3.class, Mapper.class, 0), MyEntity.class);
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(Mapper5.class, Mapper.class, 0), MyEntity.class);
+        assertSame(null, TypeParameterResolver.resolveClassIndexedParameter(Mapper1.class, Mapper.class, 0));
+        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper2.class, Mapper.class, 0));
+        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper3.class, Mapper.class, 0));
+        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper5.class, Mapper.class, 0));
 
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CA.class, 0), Number.class);
-        assertSame(TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CB.class, 1), Number.class);
+        assertSame(Number.class, TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CA.class, 0));
+        assertSame(Number.class, TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CB.class, 1));
     }
 
 }

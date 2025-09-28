@@ -63,9 +63,7 @@ public class UUIDEntityTest extends BaseDbTest<UUIDEntityMapper> {
 
     @Override
     protected Consumer<Configuration> consumer() {
-        return configuration -> {
-            configuration.getTypeHandlerRegistry().register(UUIDTypeHandler.class);
-        };
+        return configuration -> configuration.getTypeHandlerRegistry().register(UUIDTypeHandler.class);
     }
 
     @Override

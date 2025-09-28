@@ -1,0 +1,28 @@
+compileJava {
+    options.release = 17
+}
+
+dependencies {
+    api project(":mybatis-plus")
+    api "org.mybatis:mybatis-spring:3.0.5"
+    api project(":spring-boot-starter:mybatis-plus-spring-boot-autoconfigure")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot4Version}")
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBoot4Version}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBoot4Version}"
+    api "org.springframework.boot:spring-boot-autoconfigure"
+    api "org.springframework.boot:spring-boot-starter-jdbc"
+    implementation "org.springframework.boot:spring-boot-configuration-processor"
+    implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
+    implementation "${lib['mybatis-thymeleaf']}"
+    implementation "org.mybatis.scripting:mybatis-velocity:2.3.0"
+    implementation "${lib.'mybatis-freemarker'}"
+    implementation "org.springframework.cloud:spring-cloud-commons:5.0.0-M1"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation("org.junit.platform:junit-platform-engine:6.0.0-M2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
+    testImplementation("org.junit.platform:junit-platform-launcher:6.0.0-M2")
+//    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0-SNAPSHOT"
+    testImplementation "${lib.h2}"
+}
+
+compileJava.dependsOn(processResources)

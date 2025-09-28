@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -64,9 +66,9 @@ public class ServiceTest {
     @Test
     void testSuperClassGenericType() {
         // 多重继承测试
-        assertThat(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
-            ServiceImpl.class, 0).equals(DemoMapper.class));
-        assertThat(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
-            ServiceImpl.class, 1).equals(Demo.class));
+        assertThat(Objects.equals(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
+            ServiceImpl.class, 0), DemoMapper.class));
+        assertThat(Objects.equals(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
+            ServiceImpl.class, 1), Demo.class));
     }
 }

@@ -17,9 +17,9 @@ public class GlobalConfigTest {
         Assertions.assertTrue(globalConfig.isKotlin());
         Assertions.assertTrue(globalConfig.isSwagger());
         Assertions.assertTrue(globalConfig.isOpen());
-        Assertions.assertEquals(globalConfig.getAuthor(), "mp");
-        Assertions.assertEquals(globalConfig.getOutputDir(), "/temp/code");
-        Assertions.assertEquals(globalConfig.getDateType(), DateType.SQL_PACK);
+        Assertions.assertEquals("mp", globalConfig.getAuthor());
+        Assertions.assertEquals("/temp/code", globalConfig.getOutputDir());
+        Assertions.assertEquals(DateType.SQL_PACK, globalConfig.getDateType());
         Assertions.assertTrue(globalConfig.isServiceInterface());
     }
 

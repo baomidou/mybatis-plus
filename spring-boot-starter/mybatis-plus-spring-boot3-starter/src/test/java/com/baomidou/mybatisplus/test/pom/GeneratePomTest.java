@@ -61,7 +61,7 @@ class GeneratePomTest {
             Assertions.assertEquals("import", bom.getScope());
             Assertions.assertFalse(bom.isOptional());
             Assertions.assertEquals("4.1.4", dependenciesMap.get("spring-cloud-commons").getVersion());
-            Assertions.assertEquals("3.0.4", dependenciesMap.get("mybatis-spring").getVersion());
+            Assertions.assertEquals("3.0.5", dependenciesMap.get("mybatis-spring").getVersion());
             Assertions.assertEquals("3.4.1", dependenciesMap.get("spring-boot-dependencies").getVersion());
         }
     }

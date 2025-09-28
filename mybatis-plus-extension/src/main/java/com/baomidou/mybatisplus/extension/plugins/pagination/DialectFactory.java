@@ -29,6 +29,7 @@ import java.util.Map;
  * @since 2016-01-23
  */
 public class DialectFactory {
+
     private static final Map<DbType, IDialect> DIALECT_ENUM_MAP = new EnumMap<>(DbType.class);
 
     public static IDialect getDialect(DbType dbType) {
@@ -75,6 +76,8 @@ public class DialectFactory {
                 dialect = new TrinoDialect();
             } else if (dbType == DbType.HIVE2) {
                 dialect = new Hive2Dialect();
+            } else if (dbType == DbType.GAUSS_DB) {
+                dialect = new GaussDBDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }

@@ -1,0 +1,14 @@
+# AutoConfigureMybatis auto-configuration imports
+com.baomidou.mybatisplus.test.autoconfigure.AutoConfigureMybatisPlus=\
+org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration,\
+org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration,\
+org.springframework.boot.jdbc.autoconfigure.DataSourceTransactionManagerAutoConfiguration,\
+org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration,\
+org.springframework.boot.liquibase.autoconfigure.LiquibaseAutoConfiguration,\
+org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration,\
+org.springframework.boot.jdbc.autoconfigure.DataSourceInitializationAutoConfiguration,\
+com.baomidou.mybatisplus.autoconfigure.IdentifierGeneratorAutoConfiguration,\
+com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration,\
+com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+
+

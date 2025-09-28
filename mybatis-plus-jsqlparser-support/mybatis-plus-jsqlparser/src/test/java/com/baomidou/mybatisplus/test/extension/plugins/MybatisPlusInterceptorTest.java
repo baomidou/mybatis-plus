@@ -30,7 +30,7 @@ class MybatisPlusInterceptorTest {
         assertThat(interceptors).isNotEmpty();
         assertThat(interceptors.size()).isEqualTo(1);
 
-        InnerInterceptor page = interceptors.get(0);
+        InnerInterceptor page = interceptors.getFirst();
         assertThat(page).isInstanceOf(PaginationInnerInterceptor.class);
 
         PaginationInnerInterceptor pii = (PaginationInnerInterceptor) page;

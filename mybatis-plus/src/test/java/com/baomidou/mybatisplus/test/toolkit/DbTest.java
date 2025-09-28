@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import com.baomidou.mybatisplus.core.spi.CompatibleSet;
@@ -298,7 +297,7 @@ class DbTest extends BaseDbTest<EntityMapper> {
         map.put("id", 1L);
         List<Entity> list = Db.listByMap(map, Entity.class);
         assertEquals(1, list.size());
-        assertEquals("ruben", list.get(0).getName());
+        assertEquals("ruben", list.getFirst().getName());
     }
 
     @Test
@@ -424,10 +423,10 @@ class DbTest extends BaseDbTest<EntityMapper> {
     }
 
     private void verifyCount(long expected, Long mockValue) {
-        BaseMapper<Entity> entityMapper = mock(EntityMapper.class);
+        EntityMapper entityMapper = mock(EntityMapper.class);
         when(entityMapper.selectCount(any())).thenReturn(mockValue);
         CompatibleSet compatibleSet = mock(CompatibleSet.class);
-        when(compatibleSet.getBean(EntityMapper.class)).thenReturn((EntityMapper) entityMapper);
+        when(compatibleSet.getBean(EntityMapper.class)).thenReturn(entityMapper);
         try (MockedStatic<CompatibleHelper> compatibleHelperMockedStatic = Mockito.mockStatic(CompatibleHelper.class)) {
             compatibleHelperMockedStatic.when(CompatibleHelper::hasCompatibleSet).thenReturn(true);
             compatibleHelperMockedStatic.when(CompatibleHelper::getCompatibleSet).thenReturn(compatibleSet);

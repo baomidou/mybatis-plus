@@ -189,9 +189,6 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 Expression inExpression = expression.getRightExpression();
                 if (inExpression instanceof Select) {
                     processSelectBody(((Select) inExpression), whereSegment);
-                } else if (inExpression instanceof AndExpression) {
-                    Expression leftExpression = ((AndExpression) inExpression).getLeftExpression();
-                    processWhereSubSelect(leftExpression, whereSegment);
                 }
             } else if (where instanceof ExistsExpression) {
                 // exists

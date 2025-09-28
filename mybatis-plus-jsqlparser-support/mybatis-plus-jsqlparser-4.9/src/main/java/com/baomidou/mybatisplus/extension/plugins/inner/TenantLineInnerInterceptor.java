@@ -23,7 +23,6 @@ import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.RowConstructor;
-import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
@@ -115,9 +114,6 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         // fixed gitee pulls/141 duplicate update
         List<UpdateSet> duplicateUpdateColumns = insert.getDuplicateUpdateSets();
         if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
-            EqualsTo equalsTo = new EqualsTo();
-            equalsTo.setLeftExpression(new StringValue(tenantIdColumn));
-            equalsTo.setRightExpression(tenantId);
             duplicateUpdateColumns.add(new UpdateSet(new Column(tenantIdColumn), tenantId));
         }
 

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -20,17 +21,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 3.4.1 +
  */
+@Slf4j
 public class DataPermissionInterceptorTest {
-    private static String TEST_1 = "com.baomidou.userMapper.selectByUsername";
-    private static String TEST_2 = "com.baomidou.userMapper.selectById";
-    private static String TEST_3 = "com.baomidou.roleMapper.selectByCompanyId";
-    private static String TEST_4 = "com.baomidou.roleMapper.selectById";
-    private static String TEST_5 = "com.baomidou.roleMapper.selectByRoleId";
+    private static final String TEST_1 = "com.baomidou.userMapper.selectByUsername";
+    private static final String TEST_2 = "com.baomidou.userMapper.selectById";
+    private static final String TEST_3 = "com.baomidou.roleMapper.selectByCompanyId";
+    private static final String TEST_4 = "com.baomidou.roleMapper.selectById";
+    private static final String TEST_5 = "com.baomidou.roleMapper.selectByRoleId";
 
     /**
      * 这里可以理解为数据库配置的数据权限规则 SQL
      */
-    private static Map<String, String> sqlSegmentMap = new HashMap<String, String>() {
+    private static final Map<String, String> SQL_SEGMENT_MAP = new HashMap<>() {
         {
             put(TEST_1, "username='123' or userId IN (1,2,3)");
             put(TEST_2, "u.state=1 and u.amount > 1000");
@@ -40,27 +42,23 @@ public class DataPermissionInterceptorTest {
         }
     };
 
-    private static DataPermissionInterceptor interceptor = new DataPermissionInterceptor(new DataPermissionHandler() {
-
-        @Override
-        public Expression getSqlSegment(Expression where, String mappedStatementId) {
-            try {
-                String sqlSegment = sqlSegmentMap.get(mappedStatementId);
-                Expression sqlSegmentExpression = CCJSqlParserUtil.parseCondExpression(sqlSegment);
-                if (null != where) {
-                    System.out.println("原 where : " + where.toString());
-                    if (mappedStatementId.equals(TEST_4)) {
-                        // 这里测试返回 OR 条件
-                        return new OrExpression(where, sqlSegmentExpression);
-                    }
-                    return new AndExpression(where, sqlSegmentExpression);
+    private static final DataPermissionInterceptor INTERCEPTOR = new DataPermissionInterceptor((where, mappedStatementId) -> {
+        try {
+            String sqlSegment = SQL_SEGMENT_MAP.get(mappedStatementId);
+            Expression sqlSegmentExpression = CCJSqlParserUtil.parseCondExpression(sqlSegment);
+            if (null != where) {
+                System.out.println("原 where : " + where);
+                if (mappedStatementId.equals(TEST_4)) {
+                    // 这里测试返回 OR 条件
+                    return new OrExpression(where, sqlSegmentExpression);
                 }
-                return sqlSegmentExpression;
-            } catch (JSQLParserException e) {
-                e.printStackTrace();
+                return new AndExpression(where, sqlSegmentExpression);
             }
-            return null;
+            return sqlSegmentExpression;
+        } catch (JSQLParserException e) {
+            log.error("解析错误:", e);
         }
+        return null;
     });
 
     @Test
@@ -100,6 +98,6 @@ public class DataPermissionInterceptorTest {
     }
 
     void assertSql(String mappedStatementId, String sql, String targetSql) {
-        assertThat(interceptor.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
+        assertThat(INTERCEPTOR.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
     }
 }

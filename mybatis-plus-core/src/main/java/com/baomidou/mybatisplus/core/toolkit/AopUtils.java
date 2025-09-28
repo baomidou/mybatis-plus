@@ -24,9 +24,10 @@ import java.lang.reflect.Field;
  * AopUtils Aop工具类
  *
  * @author Caratacus
- * @date 2018-08-02
+ * @since  2018-08-02
  */
-public class AopUtils {
+public class
+AopUtils {
 
     /**
      * 是否加载Spring-Aop模块

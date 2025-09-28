@@ -217,9 +217,9 @@ class TableInfoHelperTest {
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Logic.class);
         assertThat(tableInfo.isWithLogicDelete()).isTrue();
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-        List<TableFieldInfo> logic = fieldList.stream().filter(TableFieldInfo::isLogicDelete).collect(Collectors.toList());
+        List<TableFieldInfo> logic = fieldList.stream().filter(TableFieldInfo::isLogicDelete).toList();
         assertThat(logic.size()).isEqualTo(1);
-        assertThat(logic.get(0).getProperty()).isEqualTo("deleted");
+        assertThat(logic.getFirst().getProperty()).isEqualTo("deleted");
     }
 
     @Test

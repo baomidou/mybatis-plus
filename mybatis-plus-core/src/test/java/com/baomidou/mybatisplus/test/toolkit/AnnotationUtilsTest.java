@@ -31,7 +31,7 @@ public class AnnotationUtilsTest {
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-    @TableField(exist = true)
+    @TableField
     @interface TableField3 {
 
     }
@@ -146,7 +146,7 @@ public class AnnotationUtilsTest {
     void test8() {
         TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, Demo.class);
         Assertions.assertNotNull(tableName);
-        Assertions.assertEquals(tableName.schema(),"test");
+        Assertions.assertEquals("test", tableName.schema());
     }
 
 }

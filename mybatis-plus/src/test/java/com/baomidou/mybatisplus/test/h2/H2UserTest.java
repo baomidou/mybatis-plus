@@ -198,7 +198,7 @@ class H2UserTest extends BaseTest {
 
         H2User userDB = userService.getById(id);
         Assertions.assertEquals(1, userDB.getVersion().intValue());
-        Assertions.assertTrue(userDB.getCreatedDt().compareTo(dateTime) == 0);
+        Assertions.assertEquals(0, userDB.getCreatedDt().compareTo(dateTime));
 
         userDB.setName("992");
         userDB.setCreatedDt(dateTime);
@@ -356,14 +356,14 @@ class H2UserTest extends BaseTest {
     void testUpdateBatch() {
         Assertions.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010"),
             new H2User(1011L, "batch1011"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012"))));
-        Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.getById(1011L).getName(), "batch1011");
-        Assertions.assertEquals(userService.getById(1012L).getName(), "batch1012");
+        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
+        Assertions.assertEquals("batch1011", userService.getById(1011L).getName());
+        Assertions.assertEquals("batch1012", userService.getById(1012L).getName());
         Assertions.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010A"),
             new H2User(1011L, "batch1011A"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012")), 1));
-        Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.getById(1011L).getName(), "batch1011A");
-        Assertions.assertEquals(userService.getById(1012L).getName(), "batch1012");
+        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
+        Assertions.assertEquals("batch1011A", userService.getById(1011L).getName());
+        Assertions.assertEquals("batch1012", userService.getById(1012L).getName());
     }
 
     @Test
@@ -371,14 +371,14 @@ class H2UserTest extends BaseTest {
     void testSaveOrUpdateBatch() {
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010"),
             new H2User("batch1011"), new H2User(1010L, "batch1010"), new H2User("batch1015"))));
-        Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011")), 1);
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1015")), 1);
+        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
+        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1011")));
+        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1015")));
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010A"),
             new H2User("batch1011AB"), new H2User(1010L, "batch1010"), new H2User("batch1016")), 1));
-        Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011AB")), 1);
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1016")), 1);
+        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
+        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1011AB")));
+        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1016")));
     }
 
     @Test
@@ -497,15 +497,15 @@ class H2UserTest extends BaseTest {
     void notParser() throws Exception {
         final String targetSql1 = "SELECT * FROM user WHERE id NOT LIKE ?";
         final Select select = (Select) CCJSqlParserUtil.parse(targetSql1);
-        Assertions.assertEquals(select.toString(), targetSql1);
+        Assertions.assertEquals(targetSql1, select.toString());
 
         final String targetSql2 = "SELECT * FROM user WHERE id NOT IN (?)";
         final Select select2 = (Select) CCJSqlParserUtil.parse(targetSql2);
-        Assertions.assertEquals(select2.toString(), targetSql2);
+        Assertions.assertEquals(targetSql2, select2.toString());
 
         final String targetSql3 = "SELECT * FROM user WHERE id IS NOT NULL";
         final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
-        Assertions.assertEquals(select3.toString(), targetSql3);
+        Assertions.assertEquals(targetSql3, select3.toString());
     }
 
     /**
@@ -652,7 +652,7 @@ class H2UserTest extends BaseTest {
     void testPageNegativeSize() {
         Page<H2User> page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
-        Assertions.assertEquals(page.getTotal(), 0);
+        Assertions.assertEquals(0, page.getTotal());
         Assertions.assertEquals(userService.lambdaQuery().list(Page.of(1, -1, false)).size(), page.getRecords().size());
     }
 
@@ -907,7 +907,7 @@ class H2UserTest extends BaseTest {
     @Test
     void testSelectObjs() {
         for (Object o : userService.listObjs()) {
-            Assertions.assertEquals(o.getClass(), Long.class);
+            Assertions.assertEquals(Long.class, o.getClass());
         }
         for (Long id : userService.<Long>listObjs()) {
             System.out.println(id);
@@ -959,7 +959,7 @@ class H2UserTest extends BaseTest {
         var id = IdWorker.getId();
         var userList = List.of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
         userService.testSaveOrUpdateTransactional2(userList);
-        Assertions.assertEquals(userService.getById(id).getName(), "test-3");
+        Assertions.assertEquals("test-3", userService.getById(id).getName());
     }
 
     @Test

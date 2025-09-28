@@ -48,20 +48,20 @@ public class LastSqlTest {
     @Order(3)
     public void selectList() {
         List<H2Student> h2Students = mapper.selectList(new LambdaQueryWrapper<H2Student>().last("limit 1"));
-        Assertions.assertTrue(h2Students.size() == 1);
+        Assertions.assertEquals(1, h2Students.size());
     }
 
     @Test
     @Order(4)
     public void selectMaps() {
         List<Map<String, Object>> maps = mapper.selectMaps(new LambdaQueryWrapper<H2Student>().last("limit 1"));
-        Assertions.assertTrue(maps.size() == 1);
+        Assertions.assertEquals(1, maps.size());
     }
 
     @Test
     @Order(5)
     public void selectMapsPage() {
-        IPage page = Page.of(0, 10);
+        IPage<Map<String,Object>> page = Page.of(0, 10);
         mapper.selectMapsPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
     }
 
@@ -69,20 +69,20 @@ public class LastSqlTest {
     @Order(6)
     public void selectObjs() {
         List<Object> objects = mapper.selectObjs(new QueryWrapper<H2Student>().last(" limit 1"));
-        Assertions.assertTrue(objects.size() == 1);
+        Assertions.assertEquals(1, objects.size());
     }
 
     @Test
     @Order(7)
     public void SelectOne() {
         H2Student h2Student = mapper.selectOne(new QueryWrapper<H2Student>().last(" where 1 = 2"));
-        Assertions.assertTrue(h2Student == null);
+        Assertions.assertNull(h2Student);
     }
 
     @Test
     @Order(8)
     public void selectPage() {
-        IPage page = Page.of(0, 10);
+        IPage<H2Student> page = Page.of(0, 10);
         mapper.selectPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ "));
     }
 
@@ -97,11 +97,11 @@ public class LastSqlTest {
     @Order(10)
     public void selectListOrderBy() {
         List<H2Student> h2Students = mapper.selectList(null);
-        Assertions.assertEquals(h2Students.size(), 6);
-        Assertions.assertEquals(mapper.selectList(new LambdaQueryWrapper<H2Student>()
-            .eq(H2Student::getAge, 1)).size(), 6);
-        Assertions.assertEquals(mapper.selectList(new QueryWrapper<H2Student>()
-            .orderByAsc("age")).size(), 6);
+        Assertions.assertEquals(6, h2Students.size());
+        Assertions.assertEquals(6, mapper.selectList(new LambdaQueryWrapper<H2Student>()
+            .eq(H2Student::getAge, 1)).size());
+        Assertions.assertEquals(6, mapper.selectList(new QueryWrapper<H2Student>()
+            .orderByAsc("age")).size());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class LastSqlTest {
     @Order(12)
     public void selectMapsOrderBy() {
         List<Map<String, Object>> maps = mapper.selectMaps(null);
-        Assertions.assertEquals(maps.size(), 6);
+        Assertions.assertEquals(6, maps.size());
     }
 
     @Test
@@ -127,6 +127,6 @@ public class LastSqlTest {
     @Order(12)
     public void selectObjsOrderBy() {
         List<Object> objs = mapper.selectObjs(null);
-        Assertions.assertEquals(objs.size(), 6);
+        Assertions.assertEquals(6, objs.size());
     }
 }

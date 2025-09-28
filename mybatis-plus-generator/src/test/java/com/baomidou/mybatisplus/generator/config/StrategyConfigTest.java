@@ -69,7 +69,7 @@ class StrategyConfigTest {
         Set<String> columns = strategyConfig.entity().getSuperEntityColumns();
         columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "createTime", "id"));
-        Assertions.assertEquals(columns.size(), 3);
+        Assertions.assertEquals(3, columns.size());
     }
 
     @Test
@@ -79,16 +79,16 @@ class StrategyConfigTest {
         Set<String> columns = strategyConfig.entity().getSuperEntityColumns();
         columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "create_time", "id"));
-        Assertions.assertEquals(columns.size(), 3);
+        Assertions.assertEquals(3, columns.size());
 
         strategyConfig = GeneratorBuilder.strategyConfig();
         strategyConfig.entityBuilder().addSuperEntityColumns("aa", "bb").entityBuilder().superClass(BaseEntity.class).columnNaming(NamingStrategy.underline_to_camel);
-        Assertions.assertEquals(strategyConfig.entity().getSuperEntityColumns().size(), 5);
+        Assertions.assertEquals(5, strategyConfig.entity().getSuperEntityColumns().size());
         assertThat(strategyConfig.entity().getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
 
         strategyConfig = GeneratorBuilder.strategyConfig();
         strategyConfig.entityBuilder().superClass(BaseEntity.class).columnNaming(NamingStrategy.underline_to_camel).addSuperEntityColumns("aa", "bb");
-        Assertions.assertEquals(strategyConfig.entity().getSuperEntityColumns().size(), 5);
+        Assertions.assertEquals(5, strategyConfig.entity().getSuperEntityColumns().size());
         assertThat(strategyConfig.entity().getSuperEntityColumns()).containsAll(Arrays.asList("aa", "bb", "deleted", "create_time", "id"));
     }
 
@@ -99,7 +99,7 @@ class StrategyConfigTest {
         Set<String> columns = strategyConfig.entity().getSuperEntityColumns();
         columns.forEach(System.out::println);
         assertThat(columns).containsAll(Arrays.asList("deleted", "id"));
-        Assertions.assertEquals(columns.size(), 2);
+        Assertions.assertEquals(2, columns.size());
     }
 
     @Test

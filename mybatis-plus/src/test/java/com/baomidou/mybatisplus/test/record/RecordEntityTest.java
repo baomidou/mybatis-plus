@@ -28,7 +28,7 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
             RecordEntity recordEntity = new RecordEntity(2L, "苗人凤2", null);
             Assertions.assertEquals(1, mapper.updateById(recordEntity));
             recordEntity = mapper.selectById(2L);
-            Assertions.assertEquals(recordEntity.name(), "苗人凤2");
+            Assertions.assertEquals("苗人凤2", recordEntity.name());
             Assertions.assertNotNull(recordEntity.phone(), "13322222222");
         });
     }
@@ -37,16 +37,14 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
     void testSelect() {
         doTest(mapper -> {
             RecordEntity recordEntity = mapper.selectById(3L);
-            Assertions.assertEquals(recordEntity.name(), "demo3");
+            Assertions.assertEquals("demo3", recordEntity.name());
             Assertions.assertNotNull(recordEntity.phone(), "13333333333");
         });
     }
 
     @Test
     void testDelete() {
-        doTest(mapper -> {
-            Assertions.assertEquals(1, mapper.deleteById(new RecordEntity(1L, "-----", "1")));
-        });
+        doTest(mapper -> Assertions.assertEquals(1, mapper.deleteById(new RecordEntity(1L, "-----", "1"))));
     }
 
     @Override

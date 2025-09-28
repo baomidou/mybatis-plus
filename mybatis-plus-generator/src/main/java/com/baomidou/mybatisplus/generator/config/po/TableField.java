@@ -64,7 +64,7 @@ public class TableField {
     /**
      * 字段名称
      */
-    private String name;
+    private final String name;
 
     /**
      * 字段类型（已弃用，使用 {@link #columnType} 代替）
@@ -168,10 +168,24 @@ public class TableField {
      * @param propertyName 属性名
      * @param columnType   字段类型
      * @return this
+     * @see #setColumnType(IColumnType)
+     * @see #setPropertyName(String)
      * @since 3.5.0
+     * @deprecated 3.5.15
      */
+    @Deprecated
     public TableField setPropertyName(@NotNull String propertyName, @NotNull IColumnType columnType) {
-        this.columnType = columnType;
+        return setColumnType(columnType).setPropertyName(propertyName);
+    }
+
+    /**
+     * 设置属性名称
+     *
+     * @param propertyName 属性名
+     * @return this
+     * @since 3.5.15
+     */
+    public TableField setPropertyName(@NotNull String propertyName) {
         if (entity.isBooleanColumnRemoveIsPrefix()
             && "boolean".equalsIgnoreCase(this.getPropertyType()) && propertyName.startsWith("is")) {
             this.convert = true;
@@ -194,6 +208,19 @@ public class TableField {
             }
         }
         this.propertyName = propertyName;
+        return this;
+    }
+
+
+    /**
+     * 指定字段类型
+     *
+     * @param columnType 字段类型
+     * @return this
+     * @since 3.5.15
+     */
+    public TableField setColumnType(@NotNull IColumnType columnType) {
+        this.columnType = columnType;
         return this;
     }
 

@@ -41,7 +41,7 @@ class H2UserStrategyTest extends BaseTest {
         Assertions.assertEquals(1, userStrategyMapper.updateById(updateUser));
 
         H2UserStrategy selectUser = userStrategyMapper.selectById(id);
-        Assertions.assertEquals(selectUser.getName(), "update");
+        Assertions.assertEquals("update", selectUser.getName());
         Assertions.assertNull(selectUser.getDesc(), "desc is updateStrategy=IGNORE, so should have set desc=null when updateById");
         Assertions.assertNull(selectUser.getTestType(), "handle: strategy=IGNORED, should be set test_type=null when updateById ");
 

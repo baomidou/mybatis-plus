@@ -111,7 +111,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
 
         generator.strategy(strategyConfig().addTablePrefix("t_")
             .entityBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
-            .mapperBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
+            .mapperBuilder().enableFileOverride().enableBaseResultMap().importPackageFunction(ArrayList::new)
             .controllerBuilder().enableFileOverride().serviceBuilder().enableFileOverride()
             .build());
         generator.packageInfo(new PackageConfig.Builder().moduleName(engine).build());

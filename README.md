@@ -95,6 +95,14 @@ It provides efficient, and out-of-the-box features (such as code generation, con
         <version>Latest Version</version>
       </dependency>
       ```
+    - SpringBoot4 `^3.5.13`
+      ```xml
+      <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+      <version>Latest Version</version>
+      </dependency>
+      ```
     - `^3.5.9` may need additional citations
         - jdk11+
       ```xml

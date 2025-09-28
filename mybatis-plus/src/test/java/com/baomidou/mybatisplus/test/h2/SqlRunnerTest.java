@@ -71,12 +71,12 @@ class SqlRunnerTest {
     @Test
     @Order(4)
     void testSelectPage() {
-        IPage page1 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student");
-        Assertions.assertEquals(page1.getRecords().size(), 3);
-        IPage page2 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student where id >= {0}", 0);
-        Assertions.assertEquals(page2.getRecords().size(), 3);
-        IPage page3 = SqlRunner.db().selectPage(new Page(1, 3), "select * from h2student where id = {0}", 10086);
-        Assertions.assertEquals(page3.getRecords().size(), 0);
+        IPage<Map<String,Object>> page1 = SqlRunner.db().selectPage(new Page<>(1, 3), "select * from h2student");
+        Assertions.assertEquals(3, page1.getRecords().size());
+        IPage<Map<String,Object>> page2 = SqlRunner.db().selectPage(new Page<>(1, 3), "select * from h2student where id >= {0}", 0);
+        Assertions.assertEquals(3, page2.getRecords().size());
+        IPage<Map<String,Object>> page3 = SqlRunner.db().selectPage(new Page<>(1, 3), "select * from h2student where id = {0}", 10086);
+        Assertions.assertEquals(0, page3.getRecords().size());
     }
 
     @Test

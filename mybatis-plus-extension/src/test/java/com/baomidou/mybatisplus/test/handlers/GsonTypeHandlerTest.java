@@ -42,8 +42,8 @@ public class GsonTypeHandlerTest extends BaseTypeHandlerTest {
         Assertions.assertNull(bean);
         when(resultSet.getString("column")).thenReturn("{\"id\":123,\"name\":\"测试\"}");
         bean = (UserBean) GSON_TYPE_HANDLER.getResult(resultSet, "column");
-        assertEquals(bean.getId(), 123L);
-        assertEquals(bean.getName(), "测试");
+        assertEquals(123L, bean.getId());
+        assertEquals("测试", bean.getName());
     }
 
     @Test
@@ -58,8 +58,8 @@ public class GsonTypeHandlerTest extends BaseTypeHandlerTest {
         Assertions.assertNull(bean);
         when(resultSet.getString(3)).thenReturn("{\"id\":123,\"name\":\"测试\"}");
         bean = (UserBean) GSON_TYPE_HANDLER.getResult(resultSet, 3);
-        assertEquals(bean.getId(), 123L);
-        assertEquals(bean.getName(), "测试");
+        assertEquals(123L, bean.getId());
+        assertEquals("测试", bean.getName());
     }
 
     @Test

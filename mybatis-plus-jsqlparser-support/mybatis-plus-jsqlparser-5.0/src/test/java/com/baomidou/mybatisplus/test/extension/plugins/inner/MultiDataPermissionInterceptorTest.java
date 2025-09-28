@@ -27,18 +27,18 @@ public class MultiDataPermissionInterceptorTest {
      */
     private static final com.google.common.collect.Table<String, String, String> sqlSegmentMap;
     private static final DataPermissionInterceptor interceptor;
-    private static String TEST_1 = "com.baomidou.userMapper.selectByUsername";
-    private static String TEST_2 = "com.baomidou.userMapper.selectById";
-    private static String TEST_3 = "com.baomidou.roleMapper.selectByCompanyId";
-    private static String TEST_4 = "com.baomidou.roleMapper.selectById";
-    private static String TEST_5 = "com.baomidou.roleMapper.selectByRoleId";
-    private static String TEST_6 = "com.baomidou.roleMapper.selectUserInfo";
-    private static String TEST_7 = "com.baomidou.roleMapper.summarySum";
-    private static String TEST_8_1 = "com.baomidou.CustomMapper.selectByOnlyMyData";
-    private static String TEST_8_2 = "com.baomidou.CustomMapper.selectByOnlyOrgData";
-    private static String TEST_8_3 = "com.baomidou.CustomMapper.selectByOnlyDeptData";
-    private static String TEST_8_4 = "com.baomidou.CustomMapper.selectByMyDataOrDeptData";
-    private static String TEST_8_5 = "com.baomidou.CustomMapper.selectByMyData";
+    private static final String TEST_1 = "com.baomidou.userMapper.selectByUsername";
+    private static final String TEST_2 = "com.baomidou.userMapper.selectById";
+    private static final String TEST_3 = "com.baomidou.roleMapper.selectByCompanyId";
+    private static final String TEST_4 = "com.baomidou.roleMapper.selectById";
+    private static final String TEST_5 = "com.baomidou.roleMapper.selectByRoleId";
+    private static final String TEST_6 = "com.baomidou.roleMapper.selectUserInfo";
+    private static final String TEST_7 = "com.baomidou.roleMapper.summarySum";
+    private static final String TEST_8_1 = "com.baomidou.CustomMapper.selectByOnlyMyData";
+    private static final String TEST_8_2 = "com.baomidou.CustomMapper.selectByOnlyOrgData";
+    private static final String TEST_8_3 = "com.baomidou.CustomMapper.selectByOnlyDeptData";
+    private static final String TEST_8_4 = "com.baomidou.CustomMapper.selectByMyDataOrDeptData";
+    private static final String TEST_8_5 = "com.baomidou.CustomMapper.selectByMyData";
 
     static {
         sqlSegmentMap = HashBasedTable.create();
@@ -75,7 +75,7 @@ public class MultiDataPermissionInterceptorTest {
                     logger.info("{} {} AS {} : {}", mappedStatementId, table.getName(), table.getAlias(), sqlSegmentExpression.toString());
                     return sqlSegmentExpression;
                 } catch (JSQLParserException e) {
-                    e.printStackTrace();
+                    logger.error("解析错误:", e);
                 }
                 return null;
             }

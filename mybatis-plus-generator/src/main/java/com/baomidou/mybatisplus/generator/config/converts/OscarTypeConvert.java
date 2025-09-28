@@ -20,18 +20,34 @@ import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.CLOB;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DATE_SQL;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.INTEGER;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_DATE_TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LOCAL_TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIME;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIMESTAMP;
 
 /**
- * KingbaseES 字段类型转换
+ * Oscar数据库字段类型转换
  *
  * @author kingbase, hanchunlin
  * @since 2019-10-12
  */
 public class OscarTypeConvert implements ITypeConvert {
+
     public static final OscarTypeConvert INSTANCE = new OscarTypeConvert();
 
     /**
@@ -40,7 +56,7 @@ public class OscarTypeConvert implements ITypeConvert {
      * @return 返回对应的字段类型
      */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
+    public IColumnType processTypeConvert(@NotNull GlobalConfig globalConfig, @NotNull String fieldType) {
         return TypeConverts.use(fieldType)
             .test(containsAny("CHARACTER", "char", "varchar", "text", "character varying").then(STRING))
             .test(containsAny("bigint", "int8").then(LONG))

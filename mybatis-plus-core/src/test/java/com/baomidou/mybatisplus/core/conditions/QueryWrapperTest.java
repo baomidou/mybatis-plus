@@ -170,11 +170,11 @@ class QueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testCheckSqlInjection() {
-        QueryWrapper qw = new QueryWrapper<Entity>().checkSqlInjection().eq("a", "b");
+        QueryWrapper<Entity> qw = new QueryWrapper<Entity>().checkSqlInjection().eq("a", "b");
         Assertions.assertEquals("WHERE (a = #{ew.paramNameValuePairs.MPGENVAL1})", qw.getCustomSqlSegment());
 
         qw.orderByAsc("select 1 from xxx");
-        Assertions.assertThrows(MybatisPlusException.class, () -> qw.getCustomSqlSegment());
+        Assertions.assertThrows(MybatisPlusException.class, qw::getCustomSqlSegment);
     }
 
     @Test

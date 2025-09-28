@@ -20,12 +20,15 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +42,7 @@ import java.util.regex.Pattern;
 public abstract class SqlUtils implements Constants {
     private static final String tp = "[\\w-,]+?";
     private static final Pattern pattern = Pattern.compile(String.format("\\{@((%s)|(%s:\\w+?)|(%s:\\w+?:\\w+?))}", tp, tp, tp));
+    private static final Map<String, String> PLACEHOLDER_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 用%连接like
@@ -68,27 +72,32 @@ public abstract class SqlUtils implements Constants {
 
     public static String replaceSqlPlaceholder(String sql, List<String> placeHolder, String escapeSymbol) {
         for (String s : placeHolder) {
-            String s1 = s.substring(2, s.length() - 1);
-            int i1 = s1.indexOf(COLON);
-            String tableName;
-            String alisa = null;
-            String asAlisa = null;
-            if (i1 < 0) {
-                tableName = s1;
-            } else {
-                tableName = s1.substring(0, i1);
-                s1 = s1.substring(i1 + 1);
-                i1 = s1.indexOf(COLON);
-                if (i1 < 0) {
-                    alisa = s1;
-                } else {
-                    alisa = s1.substring(0, i1);
-                    asAlisa = s1.substring(i1 + 1);
-                }
-            }
-            sql = sql.replace(s, getSelectBody(tableName, alisa, asAlisa, escapeSymbol));
+            String body = CollectionUtils.computeIfAbsent(PLACEHOLDER_CACHE, s + escapeSymbol, s1 -> getSelectBody(s, escapeSymbol));
+            sql = sql.replace(s, body);
         }
         return sql;
+    }
+
+    public static String getSelectBody(String placeHolder, String escapeSymbol) {
+        String s1 = placeHolder.substring(2, placeHolder.length() - 1);
+        int i1 = s1.indexOf(COLON);
+        String tableName;
+        String alisa = null;
+        String asAlisa = null;
+        if (i1 < 0) {
+            tableName = s1;
+        } else {
+            tableName = s1.substring(0, i1);
+            s1 = s1.substring(i1 + 1);
+            i1 = s1.indexOf(COLON);
+            if (i1 < 0) {
+                alisa = s1;
+            } else {
+                alisa = s1.substring(0, i1);
+                asAlisa = s1.substring(i1 + 1);
+            }
+        }
+        return getSelectBody(tableName, alisa, asAlisa, escapeSymbol);
     }
 
     @SuppressWarnings("all")

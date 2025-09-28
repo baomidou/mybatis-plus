@@ -18,7 +18,7 @@ class H2KeyWordsHandlerTest {
         Assertions.assertTrue(keyWordsHandler.isKeyWords("check"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("USER_NAME"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("user_name"));
-        Assertions.assertEquals(keyWordsHandler.formatColumn("CHECK"), "\"CHECK\"");
+        Assertions.assertEquals("\"CHECK\"", keyWordsHandler.formatColumn("CHECK"));
 
         keyWordsHandler.getKeyWords().remove("CHECK");
         Assertions.assertFalse(keyWordsHandler.isKeyWords("CHECK"));

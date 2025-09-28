@@ -23,6 +23,6 @@ public class InjectionConfigTest {
         Assertions.assertEquals(1, injectionConfig.getCustomMap().size());
         Assertions.assertEquals("baomidou",injectionConfig.getCustomMap().get("test"));
         Assertions.assertEquals(1, injectionConfig.getCustomFiles().size());
-        Assertions.assertEquals("/templates/test.vm",injectionConfig.getCustomFiles().get(0).getTemplatePath());
+        Assertions.assertEquals("/templates/test.vm",injectionConfig.getCustomFiles().getFirst().getTemplatePath());
     }
 }

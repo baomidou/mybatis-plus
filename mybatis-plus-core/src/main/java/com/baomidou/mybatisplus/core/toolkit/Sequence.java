@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 分布式高效有序 ID 生产黑科技(sequence)
  *
- * <p>优化开源项目：https://gitee.com/yu120/sequence</p>
+ * <p>优化开源项目：<a href="https://gitee.com/yu120/sequence">sequence</a></p>
  *
  * @author hubin
  * @since 2016-08-18
@@ -121,22 +121,10 @@ public class Sequence {
     }
 
     /**
-     * 获取 maxWorkerId
+     * 反解id的时间戳部分
      */
-    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
-        StringBuilder mpid = new StringBuilder();
-        mpid.append(datacenterId);
-        String name = ManagementFactory.getRuntimeMXBean().getName();
-        if (StringUtils.isNotBlank(name)) {
-            /*
-             * GET jvmPid
-             */
-            mpid.append(name.split(StringPool.AT)[0]);
-        }
-        /*
-         * MAC + PID 的 hashcode 获取16个低位
-         */
-        return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
+    public static long parseIdTimestamp(long id) {
+        return (id >> 22) + twepoch;
     }
 
     /**
@@ -233,9 +221,25 @@ public class Sequence {
     }
 
     /**
-     * 反解id的时间戳部分
+     * 获取 maxWorkerId
      */
-    public static long parseIdTimestamp(long id) {
-        return (id>>22)+twepoch;
+    protected long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+        StringBuilder mpid = new StringBuilder();
+        mpid.append(datacenterId);
+        String name = ManagementFactory.getRuntimeMXBean().getName();
+        if (StringUtils.isNotBlank(name)) {
+            /*
+             * GET jvmPid
+             */
+            int pid = Integer.parseInt(name.split(StringPool.AT)[0]);
+            if (pid < 10) { // 疑似容器环境
+                pid = ThreadLocalRandom.current().nextInt(10, 4194304);
+            }
+            mpid.append(pid);
+        }
+        /*
+         * MAC + PID 的 hashcode 获取16个低位
+         */
+        return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
 }

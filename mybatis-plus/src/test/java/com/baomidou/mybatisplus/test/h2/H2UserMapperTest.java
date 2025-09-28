@@ -237,7 +237,7 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertEquals(batchSize, batchResults.size());
         // 使用共享的sqlSession,等于每次都是刷新了,批次总结果集就等于数据大小了
         for (BatchResult batchResult : batchResults) {
-            Assertions.assertEquals(batchResult.getUpdateCounts().length, 1);
+            Assertions.assertEquals(1, batchResult.getUpdateCounts().length);
             Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
         }
     }
@@ -261,9 +261,7 @@ class H2UserMapperTest extends BaseTest {
         var id = IdWorker.getId();
         var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatchMapper3"), new H2User(id, "testSaveOrUpdateBatchMapper3-1"));
         // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
-        Assertions.assertThrowsExactly(PersistenceException.class, () -> {
-            userMapper.insertOrUpdate(h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null));
-        });
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> userMapper.insertOrUpdate(h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null)));
     }
 
     @Test
@@ -276,7 +274,7 @@ class H2UserMapperTest extends BaseTest {
             ((sqlSession, h2User) -> sqlSession.selectList(mapperMethod.get("selectById").getStatementId(), h2User.getTestId()).isEmpty()));
         Assertions.assertTrue(SqlHelper.retBool(batchResults));
         Assertions.assertEquals(h2UserList.size(), batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).count());
-        Assertions.assertEquals(userMapper.selectById(id).getName(), "testSaveOrUpdateBatchMapper4-1");
+        Assertions.assertEquals("testSaveOrUpdateBatchMapper4-1", userMapper.selectById(id).getName());
     }
 
     @Test
@@ -307,7 +305,7 @@ class H2UserMapperTest extends BaseTest {
         // 使用共享的sqlSession,等于每次都是刷新了,批次总结果集就等于数据大小了
         Assertions.assertEquals(batchSize, batchResults.size());
         for (BatchResult batchResult : batchResults) {
-            Assertions.assertEquals(batchResult.getUpdateCounts().length, 1);
+            Assertions.assertEquals(1, batchResult.getUpdateCounts().length);
             Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
         }
     }
@@ -318,12 +316,10 @@ class H2UserMapperTest extends BaseTest {
         var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch3"), new H2User(id, "testSaveOrUpdateBatch3-1"));
         var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
         // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
-        Assertions.assertThrowsExactly(PersistenceException.class, () -> {
-            MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, h2UserList,
-                mapperMethod.insert(),
-                ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null),
-                mapperMethod.updateById());
-        });
+        Assertions.assertThrowsExactly(PersistenceException.class, () -> MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, h2UserList,
+            mapperMethod.insert(),
+            ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null),
+            mapperMethod.updateById()));
 
     }
 
@@ -337,11 +333,11 @@ class H2UserMapperTest extends BaseTest {
             mapperMethod.insert(),
             ((sqlSession, h2User) -> sqlSession.selectList(mapperMethod.get("selectById").getStatementId(), h2User.getTestId()).isEmpty()),
             mapperMethod.updateById());
-        var updateCounts = batchResults.get(0).getUpdateCounts();
+        var updateCounts = batchResults.getFirst().getUpdateCounts();
         for (int updateCount : updateCounts) {
             Assertions.assertEquals(1, updateCount);
         }
-        Assertions.assertEquals(userMapper.selectById(id).getName(), "testSaveOrUpdateBatch4-1");
+        Assertions.assertEquals("testSaveOrUpdateBatch4-1", userMapper.selectById(id).getName());
     }
 
 
@@ -372,7 +368,7 @@ class H2UserMapperTest extends BaseTest {
         map.put("age", AgeEnum.ONE);
 
         // 根据 map 查询
-        h2User = userMapper.selectByMap(map).get(0);
+        h2User = userMapper.selectByMap(map).getFirst();
         Assertions.assertSame(AgeEnum.ONE, h2User.getAge());
 
         // 根据 map 删除
@@ -513,8 +509,8 @@ class H2UserMapperTest extends BaseTest {
         var h2User = new H2User();
         userMapper.insert(h2User);
         var wrapper = Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "testUpdateByWrapper").eq(H2User::getTestId, h2User.getTestId());
-        Assertions.assertEquals(userMapper.update(wrapper), 1);
-        Assertions.assertEquals(userMapper.selectById(h2User.getTestId()).getName(), "testUpdateByWrapper");
+        Assertions.assertEquals(1, userMapper.update(wrapper));
+        Assertions.assertEquals("testUpdateByWrapper", userMapper.selectById(h2User.getTestId()).getName());
     }
 
     @Test

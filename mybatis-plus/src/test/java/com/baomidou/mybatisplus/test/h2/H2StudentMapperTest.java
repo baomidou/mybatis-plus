@@ -92,7 +92,7 @@ class H2StudentMapperTest extends BaseTest {
     void testDeleteByIdWithEntity() {
         H2Student h2Student = new H2Student(111L, "测试根据实体删除", 12);
         studentMapper.insert(h2Student);
-        Assertions.assertEquals(studentMapper.deleteById(h2Student), 1);
+        Assertions.assertEquals(1, studentMapper.deleteById(h2Student));
     }
 
     @Test

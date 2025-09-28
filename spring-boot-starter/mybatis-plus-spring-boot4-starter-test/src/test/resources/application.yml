@@ -1,0 +1,13 @@
+spring:
+    sql:
+        init:
+            schema-locations: classpath:schema.sql
+    datasource:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        username: sa
+
+logging:
+    level:
+        org.springframework: debug
+        com.baomidou.mybatisplus.test.autoconfigure: debug

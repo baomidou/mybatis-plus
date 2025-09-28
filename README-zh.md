@@ -76,6 +76,14 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
         <version>Latest Version</version>
       </dependency>
       ```
+    - SpringBoot4 `^3.5.13`
+      ```xml
+      <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+      <version>Latest Version</version>
+      </dependency>
+      ```
     - `^3.5.9` 你可能需要额外的引用
         - jdk11+
       ```xml

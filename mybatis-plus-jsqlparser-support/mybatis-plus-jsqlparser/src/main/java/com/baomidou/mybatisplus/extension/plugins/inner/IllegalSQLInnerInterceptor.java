@@ -196,9 +196,6 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
                 Subtraction subSelect = (Subtraction) inExpression.getRightExpression();
                 throw new MybatisPlusException("非法SQL，where条件中不能使用子查询，错误子查询SQL信息：" + subSelect.toString());
             }
-            if (inExpression.getRightExpression() instanceof OrExpression) {
-                validExpression(inExpression.getRightExpression());
-            }
         }
 
     }

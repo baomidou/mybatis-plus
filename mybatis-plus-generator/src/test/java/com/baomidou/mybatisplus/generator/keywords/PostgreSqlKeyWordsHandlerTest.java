@@ -15,7 +15,7 @@ class PostgreSqlKeyWordsHandlerTest {
         Assertions.assertTrue(keyWordsHandler.isKeyWords("WITH"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("system"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("SYSTEM"));
-        Assertions.assertEquals(keyWordsHandler.formatColumn("with"), "\"with\"");
+        Assertions.assertEquals("\"with\"", keyWordsHandler.formatColumn("with"));
     }
 
 }

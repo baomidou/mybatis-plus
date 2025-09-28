@@ -30,12 +30,12 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
 
     @Test
     void testLambdaOrderBySqlSegment() {
-        LambdaQueryWrapper lqw = Wrappers.<Table>lambdaQuery().orderByDesc(Table::getId);
-        Assertions.assertEquals(lqw.getSqlSegment(), " ORDER BY `id` DESC");
+        LambdaQueryWrapper<?> lqw = Wrappers.<Table>lambdaQuery().orderByDesc(Table::getId);
+        Assertions.assertEquals(" ORDER BY `id` DESC", lqw.getSqlSegment());
         lqw.clear();
-        Assertions.assertEquals(lqw.getSqlSegment(), "");
+        Assertions.assertEquals("", lqw.getSqlSegment());
         lqw = Wrappers.<Table>lambdaQuery().eq(Table::getId, 1).nested(false, x -> x.eq(Table::getName, "李白"));
-        Assertions.assertEquals(lqw.getSqlSegment(), "(`id` = #{ew.paramNameValuePairs.MPGENVAL1})");
+        Assertions.assertEquals("(`id` = #{ew.paramNameValuePairs.MPGENVAL1})", lqw.getSqlSegment());
     }
 
 

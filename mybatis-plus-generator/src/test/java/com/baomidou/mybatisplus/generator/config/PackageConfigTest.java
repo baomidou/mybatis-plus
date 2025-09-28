@@ -22,13 +22,13 @@ public class PackageConfigTest {
     }
 
     private void buildAssert(PackageConfig packageConfig){
-        Assertions.assertEquals(packageConfig.getParent(),"com.baomihua.demo");
-        Assertions.assertEquals(packageConfig.getModuleName(),"demo");
-        Assertions.assertEquals(packageConfig.getController(),"action");
-        Assertions.assertEquals(packageConfig.getEntity(),"entity");
-        Assertions.assertEquals(packageConfig.getMapper(),"dao");
-        Assertions.assertEquals(packageConfig.getService(),"iservice");
-        Assertions.assertEquals(packageConfig.getServiceImpl(),"serviceIm");
+        Assertions.assertEquals("com.baomihua.demo", packageConfig.getParent());
+        Assertions.assertEquals("demo", packageConfig.getModuleName());
+        Assertions.assertEquals("action", packageConfig.getController());
+        Assertions.assertEquals("entity", packageConfig.getEntity());
+        Assertions.assertEquals("dao", packageConfig.getMapper());
+        Assertions.assertEquals("iservice", packageConfig.getService());
+        Assertions.assertEquals("serviceIm", packageConfig.getServiceImpl());
         Assertions.assertEquals(1,packageConfig.getPathInfo().size());
         Assertions.assertTrue(packageConfig.getPathInfo().containsKey(OutputFile.controller));
     }

@@ -38,7 +38,7 @@ public class MethodTest {
             .add(new Update())
             .add(new SelectPage())
             .add(new TestMethod());
-        List<AbstractMethod> collect = builder.build().collect(toList());
+        List<AbstractMethod> collect = builder.build().toList();
         Assert.isTrue(collect.size() == 5, "创建失败！");
     }
 

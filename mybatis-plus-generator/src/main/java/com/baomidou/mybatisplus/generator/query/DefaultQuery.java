@@ -110,6 +110,7 @@ public class DefaultQuery extends AbstractDatabaseQuery {
         Map<String, DatabaseMetaDataWrapper.Column> columnsInfoMap = getColumnsInfo(tableName);
         Entity entity = strategyConfig.entity();
         columnsInfoMap.forEach((k, columnInfo) -> {
+            TableField.MetaInfo metaInfo = new TableField.MetaInfo(columnInfo, tableInfo);
             String columnName = columnInfo.getName();
             TableField field = new TableField(this.configBuilder, columnName);
             // 处理ID
@@ -120,10 +121,6 @@ public class DefaultQuery extends AbstractDatabaseQuery {
                     LOGGER.warn("The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.", tableName);
                 }
             }
-            field.setColumnName(columnName).setComment(columnInfo.getRemarks());
-            String propertyName = entity.getNameConvert().propertyNameConvert(field);
-            // 设置字段的元数据信息
-            TableField.MetaInfo metaInfo = new TableField.MetaInfo(columnInfo, tableInfo);
             IColumnType columnType;
             ITypeConvertHandler typeConvertHandler = dataSourceConfig.getTypeConvertHandler();
             if (typeConvertHandler != null) {
@@ -131,8 +128,9 @@ public class DefaultQuery extends AbstractDatabaseQuery {
             } else {
                 columnType = typeRegistry.getColumnType(metaInfo);
             }
+            field.setColumnName(columnName).setColumnType(columnType).setComment(columnInfo.getRemarks()).setMetaInfo(metaInfo);
+            String propertyName = entity.getNameConvert().propertyNameConvert(field);
             field.setPropertyName(propertyName, columnType);
-            field.setMetaInfo(metaInfo);
             tableInfo.addField(field);
         });
         tableInfo.setIndexList(getIndex(tableName));

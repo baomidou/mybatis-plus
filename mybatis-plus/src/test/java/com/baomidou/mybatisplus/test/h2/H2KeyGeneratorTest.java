@@ -37,32 +37,32 @@ class H2KeyGeneratorTest {
         keyGeneratorModel.setName("我举起了咩咩");
         keyGeneratorMapper.insert(keyGeneratorModel);
         Assertions.assertNotNull(keyGeneratorModel.getUid());
-        Assertions.assertEquals(keyGeneratorModel.getUid(), 1L);
+        Assertions.assertEquals(1L, keyGeneratorModel.getUid());
 
         LongKeyGeneratorModel longKeyGeneratorModel = new LongKeyGeneratorModel();
         longKeyGeneratorModel.setName("我举起了个栗子");
         longKeyGeneratorMapper.insert(longKeyGeneratorModel);
         Assertions.assertNotNull(longKeyGeneratorModel.getId());
-        Assertions.assertEquals(longKeyGeneratorModel.getId(), 2L);
+        Assertions.assertEquals(2L, longKeyGeneratorModel.getId());
 
         StringKeyGeneratorModel stringKeyGeneratorModel = new StringKeyGeneratorModel();
         stringKeyGeneratorModel.setName("我举起了个锤子");
         stringKeyGeneratorMapper.insert(stringKeyGeneratorModel);
         Assertions.assertNotNull(stringKeyGeneratorModel.getId());
-        Assertions.assertEquals(stringKeyGeneratorModel.getId(), "3");
+        Assertions.assertEquals("3", stringKeyGeneratorModel.getId());
 
         ExtendKeyGeneratorModel extendKeyGeneratorModel = new ExtendKeyGeneratorModel();
         extendKeyGeneratorModel.setName("我举起了句号");
         extendKeyGeneratorMapper.insert(extendKeyGeneratorModel);
         Assertions.assertNotNull(extendKeyGeneratorModel.getUid());
-        Assertions.assertEquals(extendKeyGeneratorModel.getUid(), 4L);
+        Assertions.assertEquals(4L, extendKeyGeneratorModel.getUid());
 
         //这个受限数据库，如果返回是long的话,那就救不了.
         IntegerKeyGeneratorModel integerKeyGeneratorModel = new IntegerKeyGeneratorModel();
         integerKeyGeneratorModel.setName("我举起了K神");
         integerKeyGeneratorMapper.insert(integerKeyGeneratorModel);
         Assertions.assertNotNull(integerKeyGeneratorModel.getUid());
-        Assertions.assertEquals(integerKeyGeneratorModel.getUid(), 5);
+        Assertions.assertEquals(5, integerKeyGeneratorModel.getUid());
     }
 
 }

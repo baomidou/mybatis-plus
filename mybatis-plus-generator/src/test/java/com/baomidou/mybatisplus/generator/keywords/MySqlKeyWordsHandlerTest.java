@@ -18,7 +18,7 @@ class MySqlKeyWordsHandlerTest {
         Assertions.assertTrue(keyWordsHandler.isKeyWords("file"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("USER_NAME"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("user_name"));
-        Assertions.assertEquals(keyWordsHandler.formatColumn("FILE"), "`FILE`");
+        Assertions.assertEquals("`FILE`", keyWordsHandler.formatColumn("FILE"));
 
         keyWordsHandler.getKeyWords().remove("FILE");
         Assertions.assertFalse(keyWordsHandler.isKeyWords("FILE"));

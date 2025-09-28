@@ -19,10 +19,14 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import org.jetbrains.annotations.NotNull;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BLOB;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.FLOAT;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
 
 /**
  * Oracle 数据库生成对应实体类时字段类型转换，跟据 Oracle 中的数据类型，返回对应的 Java 类型
@@ -31,6 +35,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
  * @since 2017-01-20
  */
 public class OracleTypeConvert implements ITypeConvert {
+
     public static final OracleTypeConvert INSTANCE = new OracleTypeConvert();
 
     /**
@@ -41,7 +46,7 @@ public class OracleTypeConvert implements ITypeConvert {
      * @return 返回的对应的列类型
      */
     @Override
-    public IColumnType processTypeConvert(GlobalConfig config, String fieldType) {
+    public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType)
             .test(containsAny("char", "clob").then(STRING))
             .test(containsAny("date", "timestamp").then(p -> toDateType(config)))

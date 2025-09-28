@@ -1,4 +1,22 @@
 ﻿# CHANGELOG
+## [v3.5.14] 2025.08.29
+- feat: 增加`bom`对`mybatis-plus-spring-boot4-starter`与`mybatis-plus-spring-boot4-starter-test`管理
+
+## [v3.5.13] 2025.08.29
+- fix: 修复在`Spring`中使用`@PostConstruct`调用`Db`方法查询出现警告日志
+- fix: 修复`Db`使用`count`返回`null`导致的空指针异常
+- fix: 修复`BaseMapper`在非`Spring`项目中报错
+- feat: 升级`Jsqlparser`5.2
+- feat: `OrderItem`增加`withExpression`根据表达式排序(注意:不支持序列化方式使用,自行控制`sql`注入)
+- feat: `OracleDdlGenerator`支持指定`schema`模式运行
+- feat: 适配华为云`GaussDb`数据库
+- feat: 雪花生成器初始化错误增加降级处理
+- feat: 新增`spring-boot4`支持
+- feat: 升级`gradle`8.13
+- opt: `SqlUtils`中`replaceSqlPlaceholder`方法增加缓存处理
+- opt：优化`DDL`执行记录表检查是否存在
+- opt: 容器环境下`workerId`获取优化
+
 ## [v3.5.12] 2025.04.27
 - fix: 修复批量操作异步执行首次可能的出现`NoSuchElementException`错误
 - fix: 修复默认`SQL`解析线程池在`JVM`退出关闭导致的任务拒绝

@@ -47,9 +47,6 @@ class EnumTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected Consumer<Configuration> consumer() {
-        /**
-         * see {@link Entity#enumOrdinal}
-         */
         return i -> i.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
     }
 

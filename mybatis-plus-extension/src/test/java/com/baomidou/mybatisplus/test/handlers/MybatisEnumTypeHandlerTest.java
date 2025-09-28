@@ -127,8 +127,8 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
 
         MAN(1, "1"),
         WO_MAN(2, "2");
-        Integer code;
-        String desc;
+        final Integer code;
+        final String desc;
 
         @Override
         public Integer getValue() {
@@ -157,7 +157,7 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         WO_MAN('2', "女");
 
         @EnumValue
-        char code;
-        String desc;
+        final char code;
+        final String desc;
     }
 }

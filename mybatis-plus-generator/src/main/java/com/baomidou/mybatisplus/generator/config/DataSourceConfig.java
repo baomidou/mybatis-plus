@@ -191,6 +191,8 @@ public class DataSourceConfig {
             return DbType.DM;
         } else if (str.contains(":zenith:")) {
             return DbType.GAUSS;
+        } else if (str.contains(":gaussdb:")) {
+            return DbType.GAUSS_DB;
         } else if (str.contains(":oscar:")) {
             return DbType.OSCAR;
         } else if (str.contains(":firebird:")) {

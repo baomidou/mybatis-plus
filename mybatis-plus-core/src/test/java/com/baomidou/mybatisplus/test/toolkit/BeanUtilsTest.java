@@ -28,7 +28,7 @@ class BeanUtilsTest {
             setId(123);
             setName("baomidou");
         }});
-        Assertions.assertEquals(2, map.keySet().size());
+        Assertions.assertEquals(2, map.size());
         Assertions.assertEquals(123, map.get("id"));
         Assertions.assertEquals("baomidou", map.get("name"));
         // 测试反向转换过程

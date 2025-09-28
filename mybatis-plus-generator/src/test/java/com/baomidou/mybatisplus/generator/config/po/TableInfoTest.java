@@ -32,20 +32,20 @@ public class TableInfoTest {
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, GeneratorBuilder.strategyConfig(), null, null, null);
         tableInfo = new TableInfo(configBuilder, "name");
         tableInfo.addField(new TableField(configBuilder, "name").setColumnName("name"));
-        Assertions.assertEquals(tableInfo.getFieldNames(), "name");
+        Assertions.assertEquals("name", tableInfo.getFieldNames());
 
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, GeneratorBuilder.strategyConfig(), null, null, null);
         tableInfo = new TableInfo(configBuilder, "name");
         tableInfo.addField(new TableField(configBuilder, "name").setColumnName("name"));
         tableInfo.addField(new TableField(configBuilder, "age").setColumnName("age"));
-        Assertions.assertEquals(tableInfo.getFieldNames(), "name, age");
+        Assertions.assertEquals("name, age", tableInfo.getFieldNames());
 
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig, GeneratorBuilder.strategyConfig(), null, null, null);
         tableInfo = new TableInfo(configBuilder, "name");
         tableInfo.addField(new TableField(configBuilder, "name").setColumnName("name"));
         tableInfo.addField(new TableField(configBuilder, "age").setColumnName("age"));
         tableInfo.addField(new TableField(configBuilder, "phone").setColumnName("phone"));
-        Assertions.assertEquals(tableInfo.getFieldNames(), "name, age, phone");
+        Assertions.assertEquals("name, age, phone", tableInfo.getFieldNames());
     }
 
     @Test

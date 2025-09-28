@@ -61,19 +61,19 @@ class MybatisTest {
     void test() {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
-            Assertions.assertEquals(mapper.myInsertWithNameVersion("test", 2), 1);
-            Assertions.assertEquals(mapper.insert(new H2User("test")), 1);
-            Assertions.assertEquals(mapper.selectCount(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")), 2);
-            Assertions.assertEquals(mapper.delete(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")), 2);
+            Assertions.assertEquals(1, mapper.myInsertWithNameVersion("test", 2));
+            Assertions.assertEquals(1, mapper.insert(new H2User("test")));
+            Assertions.assertEquals(2, mapper.selectCount(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")));
+            Assertions.assertEquals(2, mapper.delete(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")));
             H2User h2User = new H2User(66L, "66666", AgeEnum.THREE, 666);
-            Assertions.assertEquals(mapper.insert(h2User), 1);
+            Assertions.assertEquals(1, mapper.insert(h2User));
             h2User.setName("7777777777");
             H2User user = mapper.selectById(66L);
             Assertions.assertNotNull(user);
-            Assertions.assertEquals(user.getAge(), AgeEnum.THREE);
+            Assertions.assertEquals(AgeEnum.THREE, user.getAge());
             Assertions.assertNotNull(user.getTestType());
-            Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
-            Assertions.assertEquals(mapper.deleteById(66L), 1);
+            Assertions.assertEquals(1, mapper.updateById(new H2User(66L, "777777")));
+            Assertions.assertEquals(1, mapper.deleteById(66L));
             Assertions.assertNull(mapper.selectById(66L));
         }
     }

@@ -21,7 +21,7 @@ class ParameterUtilsTest {
         private long total = 0;
         private long size = 10;
         private List<T> records = Collections.emptyList();
-        private List<OrderItem> orders = new ArrayList<>();
+        private final List<OrderItem> orders = new ArrayList<>();
 
         @Override
         public List<OrderItem> orders() {
@@ -79,7 +79,7 @@ class ParameterUtilsTest {
         MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
         param.put(Constants.ENTITY, null);
         Assertions.assertFalse(ParameterUtils.findPage(param).isPresent());
-        param.put("page", new Page());
+        param.put("page", new Page<>());
         Assertions.assertTrue(ParameterUtils.findPage(param).isPresent());
         Assertions.assertTrue(ParameterUtils.findPage(new Page<>()).isPresent());
         Assertions.assertFalse(ParameterUtils.findPage(new HashMap<>()).isPresent());

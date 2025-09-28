@@ -73,9 +73,11 @@ public @interface TableField {
     /**
      * 字段验证策略之 insert: 当insert操作时，该字段拼接insert语句时的策略
      * <p>
-     * IGNORED: 直接拼接 insert into table_a(column) values (#{columnProperty});
+     * ALWAYS: 直接拼接 insert into table_a(column) values (#{columnProperty});
      * NOT_NULL: insert into table_a(<if test="columnProperty != null">column</if>) values (<if test="columnProperty != null">#{columnProperty}</if>)
      * NOT_EMPTY: insert into table_a(<if test="columnProperty != null and columnProperty!=''">column</if>) values (<if test="columnProperty != null and columnProperty!=''">#{columnProperty}</if>)
+     * NEVER: 该字段不参加 insert 语句
+     * <p>
      * NOT_EMPTY 如果针对的是非 CharSequence 类型的字段则效果等于 NOT_NULL
      *
      * @since 3.1.2
@@ -85,9 +87,11 @@ public @interface TableField {
     /**
      * 字段验证策略之 update: 当更新操作时，该字段拼接set语句时的策略
      * <p>
-     * IGNORED: 直接拼接 update table_a set column=#{columnProperty}, 属性为null/空string都会被set进去
+     * ALWAYS: 直接拼接 update table_a set column=#{columnProperty}, 属性为null/空string都会被set进去
      * NOT_NULL: update table_a set <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: update table_a set <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     * NEVER: 该字段不参加 update 语句
+     * <p>
      * NOT_EMPTY 如果针对的是非 CharSequence 类型的字段则效果等于 NOT_NULL
      *
      * @since 3.1.2
@@ -97,9 +101,11 @@ public @interface TableField {
     /**
      * 字段验证策略之 where: 表示该字段在拼接where条件时的策略
      * <p>
-     * IGNORED: 直接拼接 column=#{columnProperty}
+     * ALWAYS: 直接拼接 column=#{columnProperty}
      * NOT_NULL: <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     * NEVER: 该字段不参加 where 语句
+     * <p>
      * NOT_EMPTY 如果针对的是非 CharSequence 类型的字段则效果等于 NOT_NULL
      *
      * @since 3.1.2
