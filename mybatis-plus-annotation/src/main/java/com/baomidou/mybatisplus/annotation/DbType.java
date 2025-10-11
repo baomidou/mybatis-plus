@@ -281,14 +281,14 @@ public enum DbType {
             || this == DbType.OCEAN_BASE
             || this == DbType.CUBRID
             || this == DbType.SUNDB
-            || this == DbType.GOLDENDB
-            || this == DbType.YASDB;
+            || this == DbType.GOLDENDB;
     }
 
     public boolean oracleSameType() {
         return this == DbType.ORACLE
             || this == DbType.DM
-            || this == DbType.GAUSS;
+            || this == DbType.GAUSS
+            || this == DbType.YASDB;
     }
 
     public boolean postgresqlSameType() {
