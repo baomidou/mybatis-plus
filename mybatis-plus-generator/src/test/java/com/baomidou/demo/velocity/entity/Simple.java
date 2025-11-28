@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @author baomidou
  * @since 2025-03-27
  */
-@TableName("t_simple")
+@TableName("T_SIMPLE")
 public class Simple implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -23,7 +23,7 @@ public class Simple implements Serializable {
     /**
      * id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "ID", type = IdType.AUTO)
     private Integer id;
 
     /**

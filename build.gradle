@@ -17,7 +17,7 @@ ext {
         springVersion = '5.3.39',
         springBootVersion = '2.7.18',
         springBoot3Version = '3.4.1',
-        springBoot4Version = '4.0.0-M3',
+        springBoot4Version = '4.0.0',
         springCloudVersion = '3.1.8',
         junitVersion = '5.11.0',
     ]

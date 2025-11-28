@@ -15,13 +15,13 @@ import java.io.Serializable
  * @author baomidou
  * @since 2025-03-27
  */
-@TableName("t_simple")
+@TableName("T_SIMPLE")
 class Simple : Serializable {
 
     /**
      * id
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "ID", type = IdType.AUTO)
     var id: Int? = null
 
     /**

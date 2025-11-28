@@ -4,15 +4,15 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.baomidou.enjoy.entity.Simple">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="age" property="age" />
-        <result column="delete_flag" property="deleteFlag" />
-        <result column="deleted" property="deleted" />
-        <result column="is_ok" property="isOk" />
-        <result column="version" property="version" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <id column="ID" property="id" />
+        <result column="NAME" property="name" />
+        <result column="AGE" property="age" />
+        <result column="DELETE_FLAG" property="deleteFlag" />
+        <result column="DELETED" property="deleted" />
+        <result column="IS_OK" property="isOk" />
+        <result column="VERSION" property="version" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
     </resultMap>
 
 </mapper>
