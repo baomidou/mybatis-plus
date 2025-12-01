@@ -48,7 +48,7 @@ class GeneratePomTest {
             Dependency autoconfigure = dependenciesMap.get("spring-boot-autoconfigure");
             Assertions.assertEquals("compile", autoconfigure.getScope());
             Assertions.assertFalse(autoconfigure.isOptional());
-            Dependency jdbc = dependenciesMap.get("spring-boot-starter-jdbc");
+            Dependency jdbc = dependenciesMap.get("spring-boot-jdbc");
             Assertions.assertEquals("compile", jdbc.getScope());
             Assertions.assertFalse(jdbc.isOptional());
             Dependency configurationProcessor = dependenciesMap.get("spring-boot-configuration-processor");
@@ -61,7 +61,7 @@ class GeneratePomTest {
             Assertions.assertEquals("import", bom.getScope());
             Assertions.assertFalse(bom.isOptional());
             Assertions.assertEquals("5.0.0", dependenciesMap.get("spring-cloud-commons").getVersion());
-            Assertions.assertEquals("3.0.5", dependenciesMap.get("mybatis-spring").getVersion());
+            Assertions.assertEquals("4.0.0", dependenciesMap.get("mybatis-spring").getVersion());
             Assertions.assertEquals("4.0.0", dependenciesMap.get("spring-boot-dependencies").getVersion());
         }
     }
