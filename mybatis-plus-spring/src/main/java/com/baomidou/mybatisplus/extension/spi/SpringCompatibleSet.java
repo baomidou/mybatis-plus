@@ -90,7 +90,9 @@ public class SpringCompatibleSet implements CompatibleSet {
             }
             throw ExceptionUtils.mpe(unwrapped);
         } finally {
-            sqlSession.close();
+            if (!transaction) {
+                sqlSession.close();
+            }
         }
     }
 

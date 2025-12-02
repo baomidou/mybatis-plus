@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
@@ -16,9 +15,6 @@ import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
-import com.baomidou.mybatisplus.generator.type.ITypeConvertHandler;
-import com.baomidou.mybatisplus.generator.type.TypeRegistry;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,7 +55,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         return new StrategyConfig.Builder().addInclude("t_simple"); // 设置需要生成的表名
     }
 
-    private static final String H2URL = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";
+    private static final String H2URL = "jdbc:h2:mem:test-h2;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";
 
     /**
      * 数据源配置
@@ -111,7 +107,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
 
         generator.strategy(strategyConfig().addTablePrefix("t_")
             .entityBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
-            .mapperBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
+            .mapperBuilder().enableFileOverride().enableBaseResultMap().importPackageFunction(ArrayList::new)
             .controllerBuilder().enableFileOverride().serviceBuilder().enableFileOverride()
             .build());
         generator.packageInfo(new PackageConfig.Builder().moduleName(engine).build());
@@ -323,7 +319,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
             // 禁用Controller默认模板
             .controllerBuilder().disable()
             .build());
-        generator.injection(injectionConfig().customFile(new ArrayList<CustomFile>() {{
+        generator.injection(injectionConfig().customFile(new ArrayList<>() {{
             add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build());
             add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo").build());
             // 通过格式化函数添加文件最后缀
@@ -340,11 +336,13 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testOutputFile() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
+        GlobalConfig globalConfig = globalConfig().build();
+        generator.global(globalConfig);
         generator.strategy(strategyConfig().outputFile(((filePath, outputFile) -> {
             File file = new File(filePath);
             if (outputFile == OutputFile.controller) {
-                // 调整输出路径为当前目录
-                return new File("." + File.separator + file.getName());
+                String outputDir = globalConfig.getOutputDir();
+                return new File(outputDir + File.separator + file.getName());
             }
             return file;
         })).build());
@@ -391,16 +389,13 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testEnableRemoveIsPrefix() {
         AutoGenerator generator = new AutoGenerator(new DataSourceConfig.Builder(H2URL, "sa", "")
-            .typeConvertHandler(new ITypeConvertHandler() {
-                @Override
-                public @NotNull IColumnType convert(GlobalConfig globalConfig, TypeRegistry typeRegistry, TableField.MetaInfo metaInfo) {
-                    IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
-                    if (dbColumnType == DbColumnType.BYTE) {
-                        // 这里按照自己的要求转换为指定类型
-                        return DbColumnType.BOOLEAN;
-                    }
-                    return dbColumnType;
+            .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
+                if (dbColumnType == DbColumnType.BYTE) {
+                    // 这里按照自己的要求转换为指定类型
+                    return DbColumnType.BOOLEAN;
                 }
+                return dbColumnType;
             }).build());
         generator.strategy(strategyConfig().entityBuilder().enableRemoveIsPrefix().build());
         generator.execute();

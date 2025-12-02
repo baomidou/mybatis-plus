@@ -4,7 +4,7 @@ compileJava {
 
 dependencies {
     api project(":mybatis-plus")
-    api "org.mybatis:mybatis-spring:3.0.5"
+    api "org.mybatis:mybatis-spring:4.0.0"
     api project(":spring-boot-starter:mybatis-plus-spring-boot-autoconfigure")
     implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot4Version}")
     annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBoot4Version}"
@@ -16,7 +16,7 @@ dependencies {
     implementation "${lib['mybatis-thymeleaf']}"
     implementation "org.mybatis.scripting:mybatis-velocity:2.3.0"
     implementation "${lib.'mybatis-freemarker'}"
-    implementation "org.springframework.cloud:spring-cloud-commons:5.0.0-M1"
+    implementation "org.springframework.cloud:spring-cloud-commons:5.0.0"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 //    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0-SNAPSHOT"
     testImplementation "${lib.h2}"

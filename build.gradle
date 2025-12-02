@@ -16,7 +16,7 @@ ext {
         mybatisSpringBootStarterVersion = '2.3.2',
         springVersion = '6.2.10',
         springBoot3Version = '3.5.0',
-        springBoot4Version = '4.0.0-M2',
+        springBoot4Version = '4.0.0',
         springCloudVersion = '3.1.8',
         junitVersion = '5.11.0',
     ]
@@ -48,6 +48,7 @@ ext {
         "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:2.0.53",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.17.3",
+        "jackson3"                   : "tools.jackson.core:jackson-databind:3.0.3",
         "gson"                       : "com.google.code.gson:gson:2.11.0",
         "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
         //datasource

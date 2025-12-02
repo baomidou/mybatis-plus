@@ -1,0 +1,1 @@
+- feat: `mybatis-plus-spring-boot4-starter`依赖升级`mybatis-spring`4.0.0

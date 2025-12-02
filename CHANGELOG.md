@@ -1,4 +1,11 @@
 ﻿# CHANGELOG
+## [v3.5.15] 2025.11.30
+- fix: 修复`Enjoy`模板生成xml错误
+- feat: 调整代码生成器元数据构建
+- feat: 优化`CrudRepository`批量执行前判断非事务中关闭连接
+- feat: 支持`SpringBoot`4.0.0
+- feat: 支持`Jackson`3.0
+
 ## [v3.5.14] 2025.08.29
 - feat: 增加`bom`对`mybatis-plus-spring-boot4-starter`与`mybatis-plus-spring-boot4-starter-test`管理
 

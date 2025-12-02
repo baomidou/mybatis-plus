@@ -71,15 +71,21 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
     }
 
     public static ObjectMapper getObjectMapper() {
-        if (null == OBJECT_MAPPER) {
-            OBJECT_MAPPER = new ObjectMapper();
-        }
-        return OBJECT_MAPPER;
+        return OBJECT_MAPPER == null ? Instance.OBJECT_MAPPER : OBJECT_MAPPER;
     }
 
     public static void setObjectMapper(ObjectMapper objectMapper) {
         Assert.notNull(objectMapper, "ObjectMapper should not be null");
         JacksonTypeHandler.OBJECT_MAPPER = objectMapper;
+    }
+
+    /**
+     * @since 3.5.15
+     */
+    private static class Instance {
+
+        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     }
 
 }

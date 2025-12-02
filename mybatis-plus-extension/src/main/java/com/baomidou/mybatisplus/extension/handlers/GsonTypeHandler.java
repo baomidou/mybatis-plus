@@ -54,15 +54,21 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
     }
 
     public static Gson getGson() {
-        if (null == GSON) {
-            GSON = new Gson();
-        }
-        return GSON;
+        return GSON == null ? Instance.GSON  : GSON;
     }
 
     public static void setGson(Gson gson) {
         Assert.notNull(gson, "Gson should not be null");
         GsonTypeHandler.GSON = gson;
+    }
+
+    /**
+     * @since 3.5.15
+     */
+    private static class Instance {
+
+         private static final Gson GSON = new Gson();
+
     }
 
 }
