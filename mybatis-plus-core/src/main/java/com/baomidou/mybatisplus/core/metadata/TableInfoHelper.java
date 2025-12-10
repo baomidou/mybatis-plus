@@ -338,6 +338,10 @@ public class TableInfoHelper {
                 if (orderBy != null) {
                     tableInfo.getOrderByFields().add(new OrderFieldInfo(tableInfo.getKeyColumn(), orderBy.asc(), orderBy.sort()));
                 }
+                TableFieldInfo tableFieldInfo = new TableFieldInfo(globalConfig, tableInfo, field, reflector, existTableLogic, isOrderBy);
+                if (tableFieldInfo != null) {
+                    fieldList.add(tableFieldInfo);
+                }
                 continue;
             }
             final TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
