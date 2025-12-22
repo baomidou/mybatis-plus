@@ -1,1 +1,2 @@
 - feat: `mybatis-plus-spring-boot4-starter`依赖升级`mybatis-spring`4.0.0
+- feat: `mybatis-plus-spring-boot3-starter`测试依赖升级`mybatis-spring-boot-starter`至3.0.5
