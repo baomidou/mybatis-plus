@@ -53,6 +53,11 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
     private final Class<E> enumClassType;
     private final Class<?> propertyType;
     private final Invoker getInvoker;
+    /**
+     * 枚举值缓存：用于快速查找枚举实例，避免每次都遍历所有枚举值
+     * key: 枚举的value值，value: 对应的枚举实例
+     */
+    private final Map<Object, E> enumValueCache;
 
     public MybatisEnumTypeHandler(Class<E> enumClassType) {
         if (enumClassType == null) {
@@ -66,6 +71,8 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
         }
         this.propertyType = ReflectionKit.resolvePrimitiveIfNecessary(metaClass.getGetterType(name));
         this.getInvoker = metaClass.getGetInvoker(name);
+        // 初始化枚举值缓存，避免每次查询都遍历
+        this.enumValueCache = initEnumValueCache();
     }
 
     /**
@@ -140,9 +147,38 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
         return this.valueOf(value);
     }
 
+    /**
+     * 初始化枚举值缓存
+     * 在构造函数中调用一次，将所有枚举实例的value值映射到枚举实例
+     * 
+     * @return 枚举值缓存Map
+     */
+    private Map<Object, E> initEnumValueCache() {
+        E[] enumConstants = this.enumClassType.getEnumConstants();
+        Map<Object, E> cache = CollectionUtils.newHashMapWithExpectedSize(enumConstants.length);
+        for (E enumConstant : enumConstants) {
+            Object value = getValue(enumConstant);
+            cache.put(value, enumConstant);
+        }
+        return cache;
+    }
+
     private E valueOf(Object value) {
-        E[] es = this.enumClassType.getEnumConstants();
-        return Arrays.stream(es).filter((e) -> equalsValue(value, getValue(e))).findAny().orElse(null);
+        // 首先尝试直接从缓存中获取
+        E result = enumValueCache.get(value);
+        if (result != null) {
+            return result;
+        }
+        
+        // 如果直接获取失败，尝试类型转换后再查找
+        // 这主要处理数据库返回的类型与枚举value类型不完全一致的情况
+        for (Map.Entry<Object, E> entry : enumValueCache.entrySet()) {
+            if (equalsValue(value, entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -154,12 +190,22 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
      * @since 3.3.0
      */
     protected boolean equalsValue(Object sourceValue, Object targetValue) {
-        String sValue = StringUtils.toStringTrim(sourceValue);
-        String tValue = StringUtils.toStringTrim(targetValue);
-        if (sourceValue instanceof Number && targetValue instanceof Number
-            && new BigDecimal(sValue).compareTo(new BigDecimal(tValue)) == 0) {
+        // 先尝试直接比较，这是最快的路径
+        if (Objects.equals(sourceValue, targetValue)) {
             return true;
         }
+        
+        // 如果都是数字类型，进行数值比较
+        if (sourceValue instanceof Number && targetValue instanceof Number) {
+            // 对于数字，使用BigDecimal比较以处理不同的数字类型
+            String sValue = String.valueOf(sourceValue);
+            String tValue = String.valueOf(targetValue);
+            return new BigDecimal(sValue).compareTo(new BigDecimal(tValue)) == 0;
+        }
+        
+        // 最后才进行字符串比较（需要trim）
+        String sValue = StringUtils.toStringTrim(sourceValue);
+        String tValue = StringUtils.toStringTrim(targetValue);
         return Objects.equals(sValue, tValue);
     }
 
