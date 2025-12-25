@@ -17,6 +17,7 @@ dependencies {
 
 
     compileOnly "org.jetbrains:annotations:24.1.0"
+    compileOnly "org.jspecify:jspecify:1.0.0"
     testImplementation "${lib.sqlserver}"
     testImplementation "${lib.postgresql}"
     testImplementation "${lib.oracle}"
@@ -30,4 +31,5 @@ dependencies {
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.'spring-web'}"
     testCompileOnly "org.jetbrains:annotations:24.1.0"
+    testCompileOnly "org.jspecify:jspecify:1.0.0"
 }

@@ -581,6 +581,19 @@ public class Entity implements ITemplate {
         }
 
         /**
+         * 开启 JSpecify NullMarked 模式
+         * <p>该方法会在生成的实体类上添加 {@code @NullMarked} 注解，表示该类中所有引用类型默认为非空</p>
+         *
+         * @return this
+         * @see <a href="https://jspecify.dev/">JSpecify</a>
+         * @since 3.5.11
+         */
+        public Builder enableNullMarked() {
+            this.addClassAnnotation(new ClassAnnotationAttributes("@NullMarked", "org.jspecify.annotations.NullMarked"));
+            return this;
+        }
+
+        /**
          * 开启Boolean类型字段移除is前缀
          *
          * @return this

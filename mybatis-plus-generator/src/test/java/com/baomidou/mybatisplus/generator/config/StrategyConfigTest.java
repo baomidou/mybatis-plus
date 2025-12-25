@@ -285,6 +285,19 @@ class StrategyConfigTest {
         buildAssert(strategyConfig);
     }
 
+    @Test
+    void enableNullMarkedTest() {
+        StrategyConfig strategyConfig = GeneratorBuilder.strategyConfigBuilder()
+            .entityBuilder().enableNullMarked().build();
+        var classAnnotations = strategyConfig.entity().getClassAnnotations();
+        Assertions.assertFalse(classAnnotations.isEmpty());
+        var nullMarkedAnnotation = classAnnotations.stream()
+            .filter(attr -> "@NullMarked".equals(attr.getDisplayName()))
+            .findFirst();
+        Assertions.assertTrue(nullMarkedAnnotation.isPresent());
+        Assertions.assertTrue(nullMarkedAnnotation.get().getImportPackages().contains("org.jspecify.annotations.NullMarked"));
+    }
+
     @Data
     static class SuperBean {
         @com.baomidou.mybatisplus.annotation.TableId(value = "test_id")
