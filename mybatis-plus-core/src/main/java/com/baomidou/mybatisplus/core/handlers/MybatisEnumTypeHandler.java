@@ -167,9 +167,9 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
 
     private E valueOf(Object value) {
         // 首先尝试直接从缓存中获取
-        E result = enumValueCache.get(value);
-        if (result != null) {
-            return result;
+        // 使用 containsKey 检查以正确处理 null value 的情况
+        if (enumValueCache.containsKey(value)) {
+            return enumValueCache.get(value);
         }
         
         // 如果直接获取失败，尝试类型转换后再查找
@@ -199,7 +199,21 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
         
         // 如果都是数字类型，进行数值比较
         if (sourceValue instanceof Number && targetValue instanceof Number) {
-            // 对于数字，使用BigDecimal比较以处理不同的数字类型
+            // 优先使用高效的类型转换比较，避免创建 BigDecimal 对象
+            Number sNum = (Number) sourceValue;
+            Number tNum = (Number) targetValue;
+            
+            // 对于常见的整数类型，直接比较 long 值
+            if (isIntegerType(sourceValue) && isIntegerType(targetValue)) {
+                return sNum.longValue() == tNum.longValue();
+            }
+            
+            // 对于浮点类型或混合类型，使用 double 比较
+            if (isFloatingPointType(sourceValue) || isFloatingPointType(targetValue)) {
+                return Double.compare(sNum.doubleValue(), tNum.doubleValue()) == 0;
+            }
+            
+            // 其他情况使用 BigDecimal 比较（如 BigInteger 等特殊类型）
             String sValue = String.valueOf(sourceValue);
             String tValue = String.valueOf(targetValue);
             return new BigDecimal(sValue).compareTo(new BigDecimal(tValue)) == 0;
@@ -209,6 +223,21 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
         String sValue = StringUtils.toStringTrim(sourceValue);
         String tValue = StringUtils.toStringTrim(targetValue);
         return Objects.equals(sValue, tValue);
+    }
+    
+    /**
+     * 判断是否为整数类型
+     */
+    private boolean isIntegerType(Object value) {
+        return value instanceof Integer || value instanceof Long 
+            || value instanceof Short || value instanceof Byte;
+    }
+    
+    /**
+     * 判断是否为浮点类型
+     */
+    private boolean isFloatingPointType(Object value) {
+        return value instanceof Float || value instanceof Double;
     }
 
     private Object getValue(Object object) {
