@@ -229,8 +229,8 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
      * 判断是否为整数类型
      */
     private boolean isIntegerType(Object value) {
-        return value instanceof Integer || value instanceof Long 
-            || value instanceof Short || value instanceof Byte;
+        return value instanceof Integer || value instanceof Long
+                || value instanceof Short || value instanceof Byte;
     }
     
     /**
