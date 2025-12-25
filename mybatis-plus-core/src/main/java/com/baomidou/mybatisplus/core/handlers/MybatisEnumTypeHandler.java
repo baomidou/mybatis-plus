@@ -158,7 +158,9 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
         Map<Object, E> cache = CollectionUtils.newHashMapWithExpectedSize(enumConstants.length);
         for (E enumConstant : enumConstants) {
             Object value = getValue(enumConstant);
-            cache.put(value, enumConstant);
+            // 只缓存第一个具有该value的枚举常量，保持与原实现一致
+            // 如果多个枚举常量有相同的value，这是设计问题，原实现也只返回第一个匹配项
+            cache.putIfAbsent(value, enumConstant);
         }
         return cache;
     }
