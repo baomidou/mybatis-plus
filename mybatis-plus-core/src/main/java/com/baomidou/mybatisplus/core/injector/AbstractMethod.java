@@ -271,6 +271,12 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 过滤 TableFieldInfo 集合, join 成字符串
+     *
+     * @param fieldList 表字段集合
+     * @param predicate 过滤规则
+     * @param function 转换脚本
+     * @param joiningVal 连接字符
+     * @return 转换脚本
      */
     protected String filterTableFieldInfo(List<TableFieldInfo> fieldList, Predicate<TableFieldInfo> predicate,
                                           Function<TableFieldInfo, String> function, String joiningVal) {
@@ -287,7 +293,7 @@ public abstract class AbstractMethod implements Constants {
      * @param tableInfo 表信息
      * @return String
      */
-    protected String optlockVersion(TableInfo tableInfo) {
+    protected String optLockVersion(TableInfo tableInfo) {
         if (tableInfo.isWithVersion()) {
             return tableInfo.getVersionFieldInfo().getVersionOli(ENTITY, ENTITY_DOT);
         }

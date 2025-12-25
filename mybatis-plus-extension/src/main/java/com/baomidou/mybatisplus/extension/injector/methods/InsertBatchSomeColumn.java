@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.Setter;
@@ -31,7 +32,9 @@ import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
+import java.io.Serial;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Predicate;
 
 /**
@@ -61,6 +64,9 @@ import java.util.function.Predicate;
  */
 public class InsertBatchSomeColumn extends AbstractMethod {
 
+    @Serial
+    private static final long serialVersionUID = -800448092683620466L;
+
     /**
      * 字段筛选条件
      */
@@ -69,10 +75,20 @@ public class InsertBatchSomeColumn extends AbstractMethod {
     private Predicate<TableFieldInfo> predicate;
 
     /**
+     * 构造方法
+     *
+     * @param name 方法名
+     * @since 3.5.16
+     */
+    public InsertBatchSomeColumn(String name) {
+        super(name);
+    }
+
+    /**
      * 默认方法名
      */
     public InsertBatchSomeColumn() {
-        super("insertBatchSomeColumn");
+        this("insertBatchSomeColumn");
     }
 
     /**
@@ -81,7 +97,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
      * @param predicate 字段筛选条件
      */
     public InsertBatchSomeColumn(Predicate<TableFieldInfo> predicate) {
-        super("insertBatchSomeColumn");
+        this();
         this.predicate = predicate;
     }
 
@@ -110,10 +126,10 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
         String keyProperty = null;
         String keyColumn = null;
-        // 表包含主键处理逻辑,如果不包含主键当普通字段处理
+        // 表包含主键处理逻辑，如果不包含主键当普通字段处理
         if (tableInfo.havePK()) {
             if (tableInfo.getIdType() == IdType.AUTO) {
-                /* 自增主键 */
+                // 自增主键
                 keyGenerator = Jdbc3KeyGenerator.INSTANCE;
                 keyProperty = tableInfo.getKeyProperty();
                 // 去除转义符
@@ -126,9 +142,23 @@ public class InsertBatchSomeColumn extends AbstractMethod {
                 }
             }
         }
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
+        String value = valuesScript;
+        String customValueScript = customValueScript();
+        if (StringUtils.isNotBlank(customValueScript)) {
+            value += NEWLINE + customValueScript;
+        }
+        String sql = String.format(Locale.ROOT, sqlMethod.getSql(), tableInfo.getTableName(), columnScript, value);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty,
+            keyColumn);
     }
 
+    /**
+     * 扩展sql语句，以MySQL为例可实现“ON DUPLICATE KEY UPDATE”
+     *
+     * @return 扩展sql语句，比如：“ON DUPLICATE KEY UPDATE”
+     */
+    protected String customValueScript() {
+        return EMPTY;
+    }
 }

@@ -25,6 +25,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
+import java.io.Serial;
 import java.util.function.Predicate;
 
 /**
@@ -43,6 +44,9 @@ import java.util.function.Predicate;
  * @since 2019-04-12
  */
 public class AlwaysUpdateSomeColumnById extends AbstractMethod {
+
+    @Serial
+    private static final long serialVersionUID = 6923678812516296232L;
 
     /**
      * 字段筛选条件
@@ -76,7 +80,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
+        final String additional = optLockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
         String sqlSet = this.filterTableFieldInfo(tableInfo.getFieldList(), getPredicate(),
             i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
         sqlSet = SqlScriptUtils.convertSet(sqlSet);
