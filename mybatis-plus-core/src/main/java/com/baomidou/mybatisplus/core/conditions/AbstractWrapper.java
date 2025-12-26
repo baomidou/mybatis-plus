@@ -309,6 +309,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children in(boolean condition, List<R> columns, Collection<? extends Collection<?>> values) {
+        return maybeDo(condition, () -> appendSqlSegments(multiColumnSegment(columns), IN, multiColumnInExpression(values)));
+    }
+
+    @Override
+    public Children notIn(boolean condition, List<R> columns, Collection<? extends Collection<?>> values) {
+        return maybeDo(condition, () -> appendSqlSegments(multiColumnSegment(columns), NOT_IN, multiColumnInExpression(values)));
+    }
+
+    @Override
     public Children eqSql(boolean condition, R column, String eqValue) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), EQ,
             () -> String.format("(%s)", eqValue)));
@@ -570,6 +580,42 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return () -> "()";
         }
         return () -> Arrays.stream(values).map(i -> formatParam(null, i))
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+    }
+
+    /**
+     * 获取多字段的列名表达式 包含括号
+     * <p>例如: (grade, age)</p>
+     *
+     * @param columns 字段列表
+     */
+    protected ISqlSegment multiColumnSegment(List<R> columns) {
+        if (CollectionUtils.isEmpty(columns)) {
+            return () -> "()";
+        }
+        return () -> columns.stream().map(this::columnToString)
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+    }
+
+    /**
+     * 获取多字段in表达式 包含括号
+     * <p>例如: (('A', 1), ('B', 2))</p>
+     *
+     * @param values 值列表的列表
+     */
+    protected ISqlSegment multiColumnInExpression(Collection<? extends Collection<?>> values) {
+        if (CollectionUtils.isEmpty(values)) {
+            return () -> "()";
+        }
+        return () -> values.stream()
+            .map(tuple -> {
+                if (CollectionUtils.isEmpty(tuple)) {
+                    return "()";
+                }
+                return tuple.stream()
+                    .map(val -> formatParam(null, val))
+                    .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+            })
             .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 

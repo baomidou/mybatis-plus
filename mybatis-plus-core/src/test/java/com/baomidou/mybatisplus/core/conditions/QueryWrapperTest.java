@@ -157,6 +157,58 @@ class QueryWrapperTest extends BaseWrapperTest {
     }
 
     @Test
+    void testMultiColumnIn() {
+        // Test multi-column IN
+        List<String> columns = Arrays.asList("grade", "age");
+        List<List<Object>> values = Arrays.asList(
+            Arrays.asList("A", 1),
+            Arrays.asList("B", 2),
+            Arrays.asList("C", 3)
+        );
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().in(columns, values);
+        logSqlWhere("测试多列 IN", queryWrapper, "((grade,age) IN ((?,?),(?,?),(?,?)))");
+        logParams(queryWrapper);
+    }
+
+    @Test
+    void testMultiColumnNotIn() {
+        // Test multi-column NOT IN
+        List<String> columns = Arrays.asList("grade", "age");
+        List<List<Object>> values = Arrays.asList(
+            Arrays.asList("A", 1),
+            Arrays.asList("B", 2)
+        );
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().notIn(columns, values);
+        logSqlWhere("测试多列 NOT IN", queryWrapper, "((grade,age) NOT IN ((?,?),(?,?)))");
+        logParams(queryWrapper);
+    }
+
+    @Test
+    void testMultiColumnInWithCondition() {
+        // Test multi-column IN with condition and other clauses
+        List<String> columns = Arrays.asList("grade", "age");
+        List<List<Object>> values = Arrays.asList(
+            Arrays.asList("A", 1),
+            Arrays.asList("B", 2)
+        );
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
+            .eq("status", 1)
+            .in(true, columns, values)
+            .gt("score", 90);
+        logSqlWhere("测试多列 IN 带条件", queryWrapper, "(status = ? AND (grade,age) IN ((?,?),(?,?)) AND score > ?)");
+        logParams(queryWrapper);
+    }
+
+    @Test
+    void testMultiColumnInEmpty() {
+        // Test multi-column IN with empty values
+        List<String> columns = Arrays.asList("grade", "age");
+        List<List<Object>> values = Collections.emptyList();
+        QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().in(columns, values);
+        logSqlWhere("测试多列 IN 空值", queryWrapper, "((grade,age) IN ())");
+    }
+
+    @Test
     void testExistsValue() {
         QueryWrapper<Entity> wrapper = new QueryWrapper<Entity>().eq("a", "b")
             .exists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
