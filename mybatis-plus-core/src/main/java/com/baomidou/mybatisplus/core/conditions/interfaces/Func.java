@@ -194,8 +194,8 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: in(Arrays.asList("grade", "age"), Arrays.asList(Arrays.asList("A", 1), Arrays.asList("B", 2)))</p>
      * <p>生成SQL: (grade, age) IN (('A', 1), ('B', 2))</p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE ((字段名1, 字段名2) IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li> 注意！当集合为空时, sql会拼接为：(字段名1, 字段名2) IN (), 可能导致SQL语法错误</li>
+     * <li> 建议在使用前检查集合是否为空，或使用 condition 参数进行条件控制 </li>
      *
      * @param columns   字段列表
      * @param values    值列表的列表，每个内部列表对应一组值
@@ -211,8 +211,8 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: in(true, Arrays.asList("grade", "age"), Arrays.asList(Arrays.asList("A", 1), Arrays.asList("B", 2)))</p>
      * <p>生成SQL: (grade, age) IN (('A', 1), ('B', 2))</p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE ((字段名1, 字段名2) IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li> 注意！当集合为空时, sql会拼接为：(字段名1, 字段名2) IN (), 可能导致SQL语法错误</li>
+     * <li> 建议在使用前检查集合是否为空，或使用 condition 参数进行条件控制 </li>
      *
      * @param condition 执行条件
      * @param columns   字段列表
@@ -227,8 +227,8 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: notIn(Arrays.asList("grade", "age"), Arrays.asList(Arrays.asList("A", 1), Arrays.asList("B", 2)))</p>
      * <p>生成SQL: (grade, age) NOT IN (('A', 1), ('B', 2))</p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE ((字段名1, 字段名2) NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li> 注意！当集合为空时, sql会拼接为：(字段名1, 字段名2) NOT IN (), 可能导致SQL语法错误</li>
+     * <li> 建议在使用前检查集合是否为空，或使用 condition 参数进行条件控制 </li>
      *
      * @param columns   字段列表
      * @param values    值列表的列表，每个内部列表对应一组值
@@ -244,8 +244,8 @@ public interface Func<Children, R> extends Serializable {
      * <p>例: notIn(true, Arrays.asList("grade", "age"), Arrays.asList(Arrays.asList("A", 1), Arrays.asList("B", 2)))</p>
      * <p>生成SQL: (grade, age) NOT IN (('A', 1), ('B', 2))</p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE ((字段名1, 字段名2) NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li> 注意！当集合为空时, sql会拼接为：(字段名1, 字段名2) NOT IN (), 可能导致SQL语法错误</li>
+     * <li> 建议在使用前检查集合是否为空，或使用 condition 参数进行条件控制 </li>
      *
      * @param condition 执行条件
      * @param columns   字段列表
