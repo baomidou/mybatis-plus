@@ -309,12 +309,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children in(boolean condition, List<R> columns, Collection<? extends Collection<?>> values) {
+    public Children in(boolean condition, List<R> columns, Collection<? extends List<?>> values) {
         return maybeDo(condition, () -> appendSqlSegments(multiColumnSegment(columns), IN, multiColumnInExpression(values)));
     }
 
     @Override
-    public Children notIn(boolean condition, List<R> columns, Collection<? extends Collection<?>> values) {
+    public Children notIn(boolean condition, List<R> columns, Collection<? extends List<?>> values) {
         return maybeDo(condition, () -> appendSqlSegments(multiColumnSegment(columns), NOT_IN, multiColumnInExpression(values)));
     }
 
@@ -603,7 +603,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      *
      * @param values 值列表的列表
      */
-    protected ISqlSegment multiColumnInExpression(Collection<? extends Collection<?>> values) {
+    protected ISqlSegment multiColumnInExpression(Collection<? extends List<?>> values) {
         if (CollectionUtils.isEmpty(values)) {
             return () -> "()";
         }

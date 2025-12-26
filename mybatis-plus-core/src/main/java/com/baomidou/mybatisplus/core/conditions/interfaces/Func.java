@@ -202,7 +202,7 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      * @since 3.5.10
      */
-    default Children in(List<R> columns, Collection<? extends Collection<?>> values) {
+    default Children in(List<R> columns, Collection<? extends List<?>> values) {
         return in(true, columns, values);
     }
 
@@ -220,7 +220,7 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      * @since 3.5.10
      */
-    Children in(boolean condition, List<R> columns, Collection<? extends Collection<?>> values);
+    Children in(boolean condition, List<R> columns, Collection<? extends List<?>> values);
 
     /**
      * 多字段 NOT IN ((value1, value2), (value3, value4), ...)
@@ -235,7 +235,7 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      * @since 3.5.10
      */
-    default Children notIn(List<R> columns, Collection<? extends Collection<?>> values) {
+    default Children notIn(List<R> columns, Collection<? extends List<?>> values) {
         return notIn(true, columns, values);
     }
 
@@ -253,7 +253,7 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      * @since 3.5.10
      */
-    Children notIn(boolean condition, List<R> columns, Collection<? extends Collection<?>> values);
+    Children notIn(boolean condition, List<R> columns, Collection<? extends List<?>> values);
 
     /**
      * 字段 EQ ( sql语句 )
