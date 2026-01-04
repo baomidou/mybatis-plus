@@ -20,6 +20,7 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5"
     testImplementation "${lib.h2}"
+    compileOnly 'org.graalvm.sdk:nativeimage:25.0.1'
 }
 
 compileJava.dependsOn(processResources)
