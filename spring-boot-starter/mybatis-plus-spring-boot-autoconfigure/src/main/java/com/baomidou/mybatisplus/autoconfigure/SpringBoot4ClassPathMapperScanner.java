@@ -80,11 +80,7 @@ public class SpringBoot4ClassPathMapperScanner extends ClassPathMapperScanner {
             if (factoryBeanObjectType instanceof String) {
                 String className = (String) factoryBeanObjectType;
                 try {
-                    // Use the bean class loader if available, otherwise use the current class loader
-                    ClassLoader classLoader = definition.getBeanClass() != null ? 
-                            definition.getBeanClass().getClassLoader() : 
-                            Thread.currentThread().getContextClassLoader();
-                    
+                    ClassLoader classLoader = getClassLoaderForDefinition(definition);
                     Class<?> clazz = Class.forName(className, false, classLoader);
                     definition.setAttribute(FACTORY_BEAN_OBJECT_TYPE, clazz);
                     
@@ -98,5 +94,15 @@ public class SpringBoot4ClassPathMapperScanner extends ClassPathMapperScanner {
                 }
             }
         }
+    }
+
+    /**
+     * Get the appropriate ClassLoader for loading the mapper interface class.
+     */
+    private ClassLoader getClassLoaderForDefinition(GenericBeanDefinition definition) {
+        if (definition.getBeanClass() != null) {
+            return definition.getBeanClass().getClassLoader();
+        }
+        return Thread.currentThread().getContextClassLoader();
     }
 }
