@@ -38,17 +38,14 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -74,15 +71,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a
@@ -292,6 +285,10 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
      * This will just scan the same base package as Spring Boot does. If you want more power, you can explicitly use
      * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed mappers working correctly, out-of-the-box,
      * similar to using Spring Data JPA repositories.
+     * <p>
+     * For Spring Boot 4 / Spring Framework 7 compatibility, this registrar uses a custom ClassPathMapperScanner
+     * that fixes the factoryBeanObjectType attribute to be a Class instead of String.
+     * </p>
      */
     public static class AutoConfiguredMapperScannerRegistrar
         implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
@@ -314,20 +311,22 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                 packages.forEach(pkg -> logger.debug("Using auto-configuration base package '{}'", pkg));
             }
 
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
-            builder.addPropertyValue("processPropertyPlaceHolders", true);
-            builder.addPropertyValue("annotationClass", Mapper.class);
-            builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
-            BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
-            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)
-                .collect(Collectors.toSet());
-            if (propertyNames.contains("lazyInitialization")) {
-                // Need to mybatis-spring 2.0.2+
-                builder.addPropertyValue("lazyInitialization", "${mybatis-plus.lazy-initialization:${mybatis.lazy-initialization:false}}");
+            // Use custom scanner for Spring Framework 7 compatibility
+            ClassPathMapperScanner scanner = new SpringBoot4ClassPathMapperScanner(registry);
+            scanner.setAnnotationClass(Mapper.class);
+            scanner.setResourceLoader((org.springframework.core.io.ResourceLoader) this.beanFactory);
+
+            // Configure lazy initialization
+            Boolean lazyInitialization = environment.getProperty("mybatis-plus.lazy-initialization", Boolean.class);
+            if (lazyInitialization == null) {
+                lazyInitialization = environment.getProperty("mybatis.lazy-initialization", Boolean.class, false);
             }
-            if (propertyNames.contains("defaultScope")) {
-                // Need to mybatis-spring 2.0.6+
-                builder.addPropertyValue("defaultScope", "${mybatis-plus.mapper-default-scope:}");
+            scanner.setLazyInitialization(lazyInitialization);
+
+            // Configure default scope
+            String defaultScope = environment.getProperty("mybatis-plus.mapper-default-scope");
+            if (hasLength(defaultScope)) {
+                scanner.setDefaultScope(defaultScope);
             }
 
             // for spring-native
@@ -342,15 +341,15 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                 Optional<String> sqlSessionFactoryBeanName = Optional
                     .ofNullable(getBeanNameForType(SqlSessionFactory.class, listableBeanFactory));
                 if (sqlSessionTemplateBeanName.isPresent() || !sqlSessionFactoryBeanName.isPresent()) {
-                    builder.addPropertyValue("sqlSessionTemplateBeanName",
-                        sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));
+                    scanner.setSqlSessionTemplateBeanName(sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));
                 } else {
-                    builder.addPropertyValue("sqlSessionFactoryBeanName", sqlSessionFactoryBeanName.get());
+                    scanner.setSqlSessionFactoryBeanName(sqlSessionFactoryBeanName.get());
                 }
             }
-            builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 
-            registry.registerBeanDefinition(MapperScannerConfigurer.class.getName(), builder.getBeanDefinition());
+            // Register filter to scan
+            scanner.registerFilters();
+            scanner.doScan(StringUtils.toStringArray(packages));
         }
 
         @Override
@@ -366,6 +365,10 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         private String getBeanNameForType(Class<?> type, ListableBeanFactory factory) {
             String[] beanNames = factory.getBeanNamesForType(type);
             return beanNames.length > 0 ? beanNames[0] : null;
+        }
+
+        private boolean hasLength(String str) {
+            return str != null && !str.isEmpty();
         }
     }
 
