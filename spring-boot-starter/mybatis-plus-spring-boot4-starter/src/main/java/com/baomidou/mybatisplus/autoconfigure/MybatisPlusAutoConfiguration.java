@@ -325,7 +325,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
             // Configure default scope
             String defaultScope = environment.getProperty("mybatis-plus.mapper-default-scope");
-            if (hasLength(defaultScope)) {
+            if (StringUtils.hasText(defaultScope)) {
                 scanner.setDefaultScope(defaultScope);
             }
 
@@ -365,10 +365,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         private String getBeanNameForType(Class<?> type, ListableBeanFactory factory) {
             String[] beanNames = factory.getBeanNamesForType(type);
             return beanNames.length > 0 ? beanNames[0] : null;
-        }
-
-        private boolean hasLength(String str) {
-            return str != null && !str.isEmpty();
         }
     }
 
