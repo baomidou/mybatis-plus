@@ -50,8 +50,9 @@ public class SafetyEncryptProcessor implements EnvironmentPostProcessor {
                         Object value = source.getProperty(name);
                         if (value instanceof String) {
                             String str = (String) value;
-                            if (str.startsWith("mpw:")) {
-                                map.put(name, AES.decrypt(str.substring(4), mpwKey));
+                            String resolvedValue = environment.resolveRequiredPlaceholders(str);
+                            if (resolvedValue.startsWith("mpw:")) {
+                                map.put(name, AES.decrypt(resolvedValue.substring(4), mpwKey));
                             }
                         }
                     }
