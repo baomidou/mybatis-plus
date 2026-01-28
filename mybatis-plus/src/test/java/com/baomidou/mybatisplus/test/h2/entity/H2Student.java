@@ -23,8 +23,7 @@ import lombok.experimental.Accessors;
 @TableName("h2student")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class H2Student extends Model<H2Student> {
+public class H2Student implements Model<H2Student> {
 
 
     /**

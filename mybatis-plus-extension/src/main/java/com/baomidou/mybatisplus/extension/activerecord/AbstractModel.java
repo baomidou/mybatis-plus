@@ -42,16 +42,16 @@ import java.util.Objects;
  * @author hubin
  * @since 2016-11-06
  */
-public abstract class AbstractModel<T extends AbstractModel<?>> implements Serializable {
+public interface AbstractModel<T extends AbstractModel<?>> extends Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    protected final transient Class<?> entityClass = this.getClass();
+    default Class<?> getEntityClass() {
+        return this.getClass();
+    }
 
     /**
      * 插入（字段选择插入）
      */
-    public boolean insert() {
+    default boolean insert() {
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.retBool(sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
@@ -63,7 +63,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 插入 OR 更新
      */
-    public boolean insertOrUpdate() {
+    default boolean insertOrUpdate() {
         return StringUtils.checkValNull(pkVal()) || Objects.isNull(selectById(pkVal())) ? insert() : updateById();
     }
 
@@ -72,7 +72,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param id 主键ID
      */
-    public boolean deleteById(Serializable id) {
+    default boolean deleteById(Serializable id) {
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
@@ -84,7 +84,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 根据主键删除
      */
-    public boolean deleteById() {
+    default boolean deleteById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
         SqlSession sqlSession = sqlSession();
         try {
@@ -99,7 +99,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public boolean delete(Wrapper<T> queryWrapper) {
+    default boolean delete(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
@@ -113,7 +113,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 更新（字段选择更新）
      */
-    public boolean updateById() {
+    default boolean updateById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
@@ -130,7 +130,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
-    public boolean update(Wrapper<T> updateWrapper) {
+    default boolean update(Wrapper<T> updateWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
@@ -145,7 +145,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 查询所有
      */
-    public List<T> selectAll() {
+    default List<T> selectAll() {
         SqlSession sqlSession = sqlSession();
         try {
             return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST));
@@ -159,7 +159,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param id 主键ID
      */
-    public T selectById(Serializable id) {
+    default T selectById(Serializable id) {
         SqlSession sqlSession = sqlSession();
         try {
             return sqlSession.selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
@@ -171,7 +171,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 根据主键查询
      */
-    public T selectById() {
+    default T selectById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "selectById primaryKey is null.");
         return selectById(pkVal());
     }
@@ -181,7 +181,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public List<T> selectList(Wrapper<T> queryWrapper) {
+    default List<T> selectList(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
@@ -197,8 +197,8 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public T selectOne(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(() -> LogFactory.getLog(this.entityClass), selectList(queryWrapper));
+    default T selectOne(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(() -> LogFactory.getLog(this.getEntityClass()), selectList(queryWrapper));
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      * @param page         翻页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
+    default <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);
@@ -225,7 +225,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public long selectCount(Wrapper<T> queryWrapper) {
+    default long selectCount(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
@@ -239,8 +239,8 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 获取Session 默认自动提交
      */
-    protected SqlSession sqlSession() {
-        return SqlHelper.sqlSession(this.entityClass);
+    default SqlSession sqlSession() {
+        return SqlHelper.sqlSession(this.getEntityClass());
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param sqlMethod sqlMethod
      */
-    protected String sqlStatement(SqlMethod sqlMethod) {
+    default String sqlStatement(SqlMethod sqlMethod) {
         return sqlStatement(sqlMethod.getMethod());
     }
 
@@ -257,16 +257,16 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param sqlMethod sqlMethod
      */
-    protected String sqlStatement(String sqlMethod) {
+    default String sqlStatement(String sqlMethod) {
         //无法确定对应的mapper，只能用注入时候绑定的了。
-        return SqlHelper.table(this.entityClass).getSqlStatement(sqlMethod);
+        return SqlHelper.table(this.getEntityClass()).getSqlStatement(sqlMethod);
     }
 
     /**
      * 主键值
      */
-    public Serializable pkVal() {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(this.entityClass);
+    default Serializable pkVal() {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(this.getEntityClass());
         return (Serializable) tableInfo.getPropertyValue(this, tableInfo.getKeyProperty());
     }
 
@@ -275,7 +275,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      *
      * @param sqlSession session
      */
-    protected void closeSqlSession(SqlSession sqlSession) {
-        CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
+    default void closeSqlSession(SqlSession sqlSession) {
+        CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.getEntityClass()));
     }
 }
