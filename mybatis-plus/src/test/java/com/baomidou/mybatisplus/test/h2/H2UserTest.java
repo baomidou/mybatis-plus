@@ -1,19 +1,14 @@
 package com.baomidou.mybatisplus.test.h2;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
@@ -978,6 +973,30 @@ class H2UserTest extends BaseTest {
             END
             """, false));
         Assertions.assertDoesNotThrow(() -> userService.page(page));
+    }
+
+    @Test
+    @Transactional
+    void selectUsersWithCursor() {
+        // 使用 try-with-resources 确保 Cursor 被正确关闭
+        // 注意：必须添加 @Transactional 注解，保证 SqlSession 在迭代期间保持打开状态
+        try (Cursor<H2User> cursor = userService.getBaseMapper().selectWithCursor(null)) {
+
+            // 遍历游标，逐条处理数据
+            Iterator<H2User> iterator = cursor.iterator();
+            while (iterator.hasNext()) {
+                // 每次读取一条数据
+                H2User user = iterator.next();
+
+                // 处理单条记录
+                System.out.println("Processing user: " + user.getName());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        H2User user = userService.getBaseMapper().selectOne(null);
+        Assertions.assertNotNull(user);
     }
 
 }

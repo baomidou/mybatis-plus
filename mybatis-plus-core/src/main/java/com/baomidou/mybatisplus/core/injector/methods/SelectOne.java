@@ -44,9 +44,8 @@ public class SelectOne extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
-        SqlSource sqlSource = super.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
+        SqlSource sqlSource = super.createSqlSource(configuration, SqlMethod.SELECT_ONE.format(sqlFirst(),
+            sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             sqlWhereEntityWrapper(true, tableInfo), sqlComment()), modelClass);
         return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }

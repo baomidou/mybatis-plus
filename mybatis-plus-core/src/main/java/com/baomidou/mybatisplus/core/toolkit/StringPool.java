@@ -110,4 +110,7 @@ public interface StringPool {
     String[] EMPTY_ARRAY = new String[0];
 
     byte[] BYTES_NEW_LINE = StringPool.NEWLINE.getBytes();
+
+    // SQL method
+    String SELECT_WITH_CURSOR = "selectWithCursor";
 }

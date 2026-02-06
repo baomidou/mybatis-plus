@@ -108,6 +108,10 @@ public enum SqlMethod {
         this.sql = sql;
     }
 
+    public String format(Object... args) {
+        return String.format(sql, args);
+    }
+
     public String getMethod() {
         return method;
     }

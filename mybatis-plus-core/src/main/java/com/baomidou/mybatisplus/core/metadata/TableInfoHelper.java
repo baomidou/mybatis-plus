@@ -20,9 +20,11 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
@@ -38,6 +40,7 @@ import org.apache.ibatis.type.SimpleTypeRegistry;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -97,6 +100,21 @@ public class TableInfoHelper {
             TABLE_INFO_CACHE.put(targetClass, tableInfo);
         }
         return tableInfo;
+    }
+
+    /**
+     * <p>
+     * SelectProvider 方式上下文中获取 SQL 脚本
+     * </p>
+     *
+     * @param context {@link ProviderContext}
+     * @param sqlFunc 回调执行 SQL 函数
+     * @return SQL 脚本
+     */
+    public static String getSqlScript(ProviderContext context, Function<TableInfo, String> sqlFunc) {
+        final Class<?> mapperClass = context.getMapperType();
+        Class<?> entityClass = ReflectionKit.getSuperClassGenericType(mapperClass, BaseMapper.class, 0);
+        return sqlFunc.apply(getTableInfo(entityClass));
     }
 
     /**

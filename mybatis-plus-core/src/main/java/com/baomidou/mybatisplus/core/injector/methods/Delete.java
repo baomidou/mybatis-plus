@@ -43,21 +43,22 @@ public class Delete extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        String sql;
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE;
         if (tableInfo.isWithLogicDelete()) {
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
+            /*
+             * 逻辑删除
+             */
+            String sql = SqlMethod.LOGIC_DELETE.format(tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 sqlWhereEntityWrapper(true, tableInfo),
                 sqlComment());
             SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
-        } else {
-            sqlMethod = SqlMethod.DELETE;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-                sqlWhereEntityWrapper(true, tableInfo),
-                sqlComment());
-            SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
-            return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
         }
+
+        // 真实删除
+        String sql = SqlMethod.DELETE.format(tableInfo.getTableName(),
+            sqlWhereEntityWrapper(true, tableInfo),
+            sqlComment());
+        SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
+        return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
     }
 }

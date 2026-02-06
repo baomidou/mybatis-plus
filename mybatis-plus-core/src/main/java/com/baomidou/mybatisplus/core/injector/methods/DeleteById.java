@@ -52,9 +52,7 @@ public class DeleteById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
-        SqlMethod sqlMethod;
         if (tableInfo.isWithLogicDelete()) {
-            sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
             List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
                 .filter(TableFieldInfo::isWithUpdateFill)
                 .filter(f -> !f.isLogicDelete())
@@ -64,19 +62,17 @@ public class DeleteById extends AbstractMethod {
                     .map(i -> i.getSqlSet(EMPTY)).collect(joining(EMPTY)),
                     "@org.apache.ibatis.reflection.SystemMetaObject@forObject(_parameter).findProperty('" + tableInfo.getKeyProperty() + "', false) != null", true)
                     + tableInfo.getLogicDeleteSql(false, false);
-                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
+                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
                     tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
             } else {
-                sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
+                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(tableInfo.getTableName(), sqlLogicSet(tableInfo),
                     tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
                     tableInfo.getLogicDeleteSql(true, true));
             }
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
         } else {
-            sqlMethod = SqlMethod.DELETE_BY_ID;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-                tableInfo.getKeyProperty());
+            sql = SqlMethod.DELETE_BY_ID.format(tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
             return this.addDeleteMappedStatement(mapperClass, methodName, super.createSqlSource(configuration, sql, Object.class));
         }
     }

@@ -55,14 +55,12 @@ public class DeleteByIds extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_IDS;
         if (tableInfo.isWithLogicDelete()) {
-            sql = logicDeleteScript(tableInfo, sqlMethod);
+            sql = logicDeleteScript(tableInfo, SqlMethod.LOGIC_DELETE_BY_IDS);
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
         } else {
-            sqlMethod = SqlMethod.DELETE_BY_IDS;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo));
+            sql = SqlMethod.DELETE_BY_IDS.format(tableInfo.getTableName(), tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo));
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
         }
@@ -91,8 +89,8 @@ public class DeleteByIds extends AbstractMethod {
                 .map(i -> i.getSqlSet(Constants.MP_FILL_ET + StringPool.DOT)).collect(joining(EMPTY)), String.format("%s != null", Constants.MP_FILL_ET), true);
         }
         sqlSet += StringPool.EMPTY + tableInfo.getLogicDeleteSql(false, false);
-        return String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet, tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo), tableInfo.getLogicDeleteSql(true, true));
+        return sqlMethod.format(tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
+            getConvertForeachScript(tableInfo), tableInfo.getLogicDeleteSql(true, true));
     }
 
 }

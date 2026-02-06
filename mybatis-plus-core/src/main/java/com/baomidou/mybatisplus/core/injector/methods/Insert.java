@@ -79,7 +79,6 @@ public class Insert extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
-        SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null, ignoreAutoIncrementColumn),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null, ignoreAutoIncrementColumn),
@@ -100,7 +99,7 @@ public class Insert extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             }
         }
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
+        String sql = SqlMethod.INSERT_ONE.format(tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }

@@ -43,11 +43,10 @@ public class SelectById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
-        SqlSource sqlSource = super.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-                sqlSelectColumns(tableInfo, false),
-                tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
-                tableInfo.getLogicDeleteSql(true, true)), Object.class);
+        SqlSource sqlSource = super.createSqlSource(configuration, SqlMethod.SELECT_BY_ID.format(
+            sqlSelectColumns(tableInfo, false),
+            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
+            tableInfo.getLogicDeleteSql(true, true)), Object.class);
         return this.addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }
