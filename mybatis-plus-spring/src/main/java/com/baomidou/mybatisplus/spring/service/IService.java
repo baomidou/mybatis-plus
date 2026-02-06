@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.service;
+package com.baomidou.mybatisplus.spring.service;
 
 import com.baomidou.mybatisplus.extension.repository.IRepository;
 import org.springframework.transaction.annotation.Transactional;

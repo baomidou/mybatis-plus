@@ -2,7 +2,7 @@
 package com.baomidou.mybatisplus.test.h2.issues.repositoryscan;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;

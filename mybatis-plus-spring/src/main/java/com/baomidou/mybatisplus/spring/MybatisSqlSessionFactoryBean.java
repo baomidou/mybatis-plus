@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.spring;
+package com.baomidou.mybatisplus.spring;
 
 import com.baomidou.mybatisplus.core.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.spi;
+package com.baomidou.mybatisplus.spring.spi;
 
+import com.baomidou.mybatisplus.core.spi.CompatibleSet;
 import com.baomidou.mybatisplus.core.toolkit.AopUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import lombok.SneakyThrows;

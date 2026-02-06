@@ -8,7 +8,7 @@
 //import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 //import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 //import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
-//import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+//import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 //import net.sf.jsqlparser.expression.Expression;
 //import net.sf.jsqlparser.expression.LongValue;
 //import org.apache.ibatis.executor.Executor;

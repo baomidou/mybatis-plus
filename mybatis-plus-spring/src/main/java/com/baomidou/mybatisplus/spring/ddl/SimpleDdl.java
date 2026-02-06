@@ -13,27 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.activerecord;
+package com.baomidou.mybatisplus.spring.ddl;
 
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+import com.baomidou.mybatisplus.extension.ddl.IDdl;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.sql.DataSource;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * ActiveRecord 模式 CRUD
- * <p>
- * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下
- * 才能使用此 AR 模式 !!!
- * </p>
+ * 非多数据源 DDL 实现
  *
- * @param <T>
  * @author hubin
- * @since 2016-11-06
+ * @since 2021-09-23
  */
-public interface Model<T extends Model<?>> extends AbstractModel<T> {
+public class SimpleDdl implements IDdl {
 
-    /**
-     * 执行 SQL
-     */
-    default SqlRunner sql() {
-        return new SqlRunner(this.getEntityClass());
+    @Autowired
+    private DataSource dataSource;
+
+    @Override
+    public void runScript(Consumer<DataSource> consumer) {
+        consumer.accept(dataSource);
     }
+
+    @Override
+    public List<String> getSqlFiles() {
+        return null;
+    }
+
 }

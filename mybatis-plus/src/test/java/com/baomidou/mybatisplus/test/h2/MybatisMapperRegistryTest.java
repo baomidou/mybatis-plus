@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.MybatisMapperRegistry;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.config.DBConfig;
 import com.baomidou.mybatisplus.test.h2.config.MybatisPlusConfig;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
