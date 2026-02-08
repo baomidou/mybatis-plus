@@ -92,7 +92,8 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
     @Override
     protected void processInsert(Insert insert, int index, String sql, Object obj) {
-        if (tenantLineHandler.ignoreTable(insert.getTable().getName())) {
+        String tableName = insert.getTable().getName();
+        if (tenantLineHandler.ignoreTable(tableName, SqlCommandType.INSERT)) {
             // 过滤退出执行
             return;
         }
@@ -101,7 +102,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             // 针对不给列名的insert 不处理
             return;
         }
-        String tenantIdColumn = tenantLineHandler.getTenantIdColumn();
+        String tenantIdColumn = tenantLineHandler.getTenantIdColumn(tableName);
         if (tenantLineHandler.ignoreInsert(columns, tenantIdColumn)) {
             // 针对已给出租户列的insert 不处理
             return;
@@ -116,7 +117,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
         Select select = insert.getSelect();
         if (select instanceof PlainSelect) { //fix github issue 4998  修复升级到4.5版本的问题
-            this.processInsertSelect(select, (String) obj);
+            this.processInsertSelect(tableName, select, (String) obj);
         } else if (insert.getValues() != null) {
             // fixed github pull/295
             Values values = insert.getValues();
@@ -149,7 +150,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
     @Override
     protected void processUpdate(Update update, int index, String sql, Object obj) {
         final Table table = update.getTable();
-        if (tenantLineHandler.ignoreTable(table.getName())) {
+        if (tenantLineHandler.ignoreTable(table.getName(), SqlCommandType.UPDATE)) {
             // 过滤退出执行
             return;
         }
@@ -169,7 +170,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      */
     @Override
     protected void processDelete(Delete delete, int index, String sql, Object obj) {
-        if (tenantLineHandler.ignoreTable(delete.getTable().getName())) {
+        if (tenantLineHandler.ignoreTable(delete.getTable().getName(), SqlCommandType.DELETE)) {
             // 过滤退出执行
             return;
         }
@@ -181,24 +182,25 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      * <p>
      * 进入这里表示需要 insert 的表启用了多租户,则 select 的表都启动了
      *
+     * @param tableName 表名
      * @param selectBody SelectBody
      */
-    protected void processInsertSelect(Select selectBody, final String whereSegment) {
+    protected void processInsertSelect(String tableName, Select selectBody, final String whereSegment) {
         if(selectBody instanceof PlainSelect){
             PlainSelect plainSelect = (PlainSelect) selectBody;
             FromItem fromItem = plainSelect.getFromItem();
             if (fromItem instanceof Table) {
                 // fixed gitee pulls/141 duplicate update
                 processPlainSelect(plainSelect, whereSegment);
-                appendSelectItem(plainSelect.getSelectItems());
+                appendSelectItem(tableName, plainSelect.getSelectItems());
             } else if (fromItem instanceof Select) {
                 Select subSelect = (Select) fromItem;
-                appendSelectItem(plainSelect.getSelectItems());
-                processInsertSelect(subSelect, whereSegment);
+                appendSelectItem(tableName, plainSelect.getSelectItems());
+                processInsertSelect(tableName, subSelect, whereSegment);
             }
         } else if(selectBody instanceof ParenthesedSelect){
             ParenthesedSelect parenthesedSelect = (ParenthesedSelect) selectBody;
-            processInsertSelect(parenthesedSelect.getSelect(), whereSegment);
+            processInsertSelect(tableName, parenthesedSelect.getSelect(), whereSegment);
 
         }
     }
@@ -208,7 +210,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      *
      * @param selectItems SelectItem
      */
-    protected void appendSelectItem(List<SelectItem<?>> selectItems) {
+    protected void appendSelectItem(String tableName, List<SelectItem<?>> selectItems) {
         if (CollectionUtils.isEmpty(selectItems)) {
             return;
         }
@@ -219,7 +221,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                 return;
             }
         }
-        selectItems.add(new SelectItem<>(new Column(tenantLineHandler.getTenantIdColumn())));
+        selectItems.add(new SelectItem<>(new Column(tenantLineHandler.getTenantIdColumn(tableName))));
     }
 
     /**
@@ -256,7 +258,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      */
     @Override
     public Expression buildTableExpression(final Table table, final Expression where, final String whereSegment) {
-        if (tenantLineHandler.ignoreTable(table.getName())) {
+        if (tenantLineHandler.ignoreTable(table.getName(), SqlCommandType.SELECT)) {
             return null;
         }
         return new EqualsTo(getAliasColumn(table), tenantLineHandler.getTenantId());
