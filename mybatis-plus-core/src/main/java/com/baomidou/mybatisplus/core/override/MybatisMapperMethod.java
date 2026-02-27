@@ -83,6 +83,17 @@ public class MybatisMapperMethod {
                     if (IPage.class.isAssignableFrom(method.getReturnType())) {
                         result = executeForIPage(sqlSession, args);
                     } else {
+                        // 对 selectById 方法做 String 类型的空白字符串主键校验（解决API调用+空指针问题）
+                        if ("selectById".equals(command.getName()) && args != null && args.length == 1) {
+                            Object id = args[0];
+                            // 仅校验 String 类型的空白字符串，其他类型（Integer/Long）不存在“空白”概念，不需要处理
+                            if (id instanceof String) {
+                                String idStr = ((String) id).trim();
+                                if (idStr.isEmpty()) {
+                                    throw new IllegalArgumentException("Primary key cannot be blank string (trimmed to empty) for selectById method.");
+                                }
+                            }
+                        }
                         Object param = method.convertArgsToSqlCommandParam(args);
                         result = sqlSession.selectOne(command.getName(), param);
                         if (method.returnsOptional()
