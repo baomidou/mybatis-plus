@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ public enum SqlMethod {
      * 插入
      */
     INSERT_ONE("insert", "插入一条数据（选择字段插入）", "<script>\nINSERT INTO %s %s VALUES %s\n</script>"),
+    INSERT_ONE_ARGO("insert", "argoDB插入一条数据（选择字段插入）", "<script>\nINSERT INTO TABLE  %s %s VALUES %s\n</script>"),
+
+
     UPSERT_ONE("upsert", "Phoenix插入一条数据（选择字段插入）", "<script>\nUPSERT INTO %s %s VALUES %s\n</script>"),
 
     /**
@@ -106,10 +109,6 @@ public enum SqlMethod {
         this.method = method;
         this.desc = desc;
         this.sql = sql;
-    }
-
-    public String format(Object... args) {
-        return String.format(sql, args);
     }
 
     public String getMethod() {
