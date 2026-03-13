@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DbType {
 
+    /**
+     * MYSQL
+     */
+    ARGODB("argodb", "星环数据库"),
     /**
      * MYSQL
      */
@@ -90,21 +94,8 @@ public enum DbType {
     PHOENIX("phoenix", "Phoenix HBase数据库"),
     /**
      * Gauss
-     * <p>
-     * 低版本为 zenith，为贡献者提供，非标准官方驱动，3.5.11 修改成 gauss
-     * </p>
-     *
-     * @see #GAUSS_DB
-     * @deprecated 3.5.13 使用官方标准名称
      */
-    @Deprecated
-    GAUSS("gauss", "Gauss 数据库"),
-    /**
-     * GaussDB
-     *
-     * @since 3.5.13
-     */
-    GAUSS_DB("gaussDB", "GaussDB 数据库"),
+    GAUSS("zenith", "Gauss 数据库"),
     /**
      * ClickHouse
      */
@@ -236,14 +227,6 @@ public enum DbType {
      */
     DUCKDB("duckdb", "duckdb数据库"),
     /**
-     * yasdb
-     */
-    YASDB("yasdb", "崖山数据库"),
-    /**
-     * Hadoop的数据仓库
-     */
-    HIVE2("hive2", "Hadoop数据仓库"),
-    /**
      * UNKNOWN DB
      */
     OTHER("other", "其他数据库");
@@ -281,8 +264,7 @@ public enum DbType {
             || this == DbType.OCEAN_BASE
             || this == DbType.CUBRID
             || this == DbType.SUNDB
-            || this == DbType.GOLDENDB
-            || this == DbType.YASDB;
+            || this == DbType.GOLDENDB;
     }
 
     public boolean oracleSameType() {
