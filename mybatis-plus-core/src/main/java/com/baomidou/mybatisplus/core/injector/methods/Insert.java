@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,12 @@ public class Insert extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
+
+        //加入数据库判断，如果是argodb，则使用另一条配置
+        // 暂时没读懂代码，后续再调整吧
+        SqlMethod sqlMethod =   SqlMethod.INSERT_ONE;
+
+
         String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null, ignoreAutoIncrementColumn),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null, ignoreAutoIncrementColumn),
@@ -99,7 +105,7 @@ public class Insert extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             }
         }
-        String sql = SqlMethod.INSERT_ONE.format(tableInfo.getTableName(), columnScript, valuesScript);
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
