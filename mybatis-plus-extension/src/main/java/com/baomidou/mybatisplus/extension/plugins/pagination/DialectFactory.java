@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2024, baomidou (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.util.Map;
  * @since 2016-01-23
  */
 public class DialectFactory {
-
     private static final Map<DbType, IDialect> DIALECT_ENUM_MAP = new EnumMap<>(DbType.class);
 
     public static IDialect getDialect(DbType dbType) {
@@ -74,10 +73,8 @@ public class DialectFactory {
             } else if (dbType == DbType.TRINO
                 || dbType == DbType.PRESTO) {
                 dialect = new TrinoDialect();
-            } else if (dbType == DbType.HIVE2) {
-                dialect = new Hive2Dialect();
-            } else if (dbType == DbType.GAUSS_DB) {
-                dialect = new GaussDBDialect();
+            } else if (dbType == DbType.ARGODB) {
+                dialect = new ArgoDBDialect();
             }
             DIALECT_ENUM_MAP.put(dbType, dialect);
         }
