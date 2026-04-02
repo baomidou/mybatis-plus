@@ -21,17 +21,27 @@ import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.Setter;
 import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author miemie
@@ -45,6 +55,7 @@ import java.util.*;
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
+        @Signature(type = Executor.class, method = "queryCursor", args = {MappedStatement.class, Object.class, RowBounds.class}),
     }
 )
 public class MybatisPlusInterceptor implements Interceptor {
@@ -62,20 +73,24 @@ public class MybatisPlusInterceptor implements Interceptor {
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
             if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+                boolean isQueryCursor = args.length == 3;
                 RowBounds rowBounds = (RowBounds) args[2];
-                ResultHandler resultHandler = (ResultHandler) args[3];
+                ResultHandler resultHandler = isQueryCursor ? Executor.NO_RESULT_HANDLER : (ResultHandler) args[3];
                 BoundSql boundSql;
-                if (args.length == 4) {
+                if (isQueryCursor || args.length == 4) {
                     boundSql = ms.getBoundSql(parameter);
                 } else {
-                    // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
+                    // Almost impossible to reach here unless another Executor proxy passes query args[6].
                     boundSql = (BoundSql) args[5];
                 }
                 for (InnerInterceptor query : interceptors) {
                     if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
-                        return Collections.emptyList();
+                        return isQueryCursor ? EmptyCursor.instance() : Collections.emptyList();
                     }
                     query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+                }
+                if (isQueryCursor) {
+                    return executor.queryCursor(ms, parameter, rowBounds);
                 }
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
                 return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
@@ -90,7 +105,7 @@ public class MybatisPlusInterceptor implements Interceptor {
         } else {
             // StatementHandler
             final StatementHandler sh = (StatementHandler) target;
-            // 目前只有StatementHandler.getBoundSql方法args才为null
+            // Only StatementHandler.getBoundSql reaches this branch with null args.
             if (null == args) {
                 for (InnerInterceptor innerInterceptor : interceptors) {
                     innerInterceptor.beforeGetBoundSql(sh);
@@ -123,16 +138,13 @@ public class MybatisPlusInterceptor implements Interceptor {
     }
 
     /**
-     * 使用内部规则,拿分页插件举个栗子:
+     * Use internal rules, with pagination as an example:
      * <p>
-     * - key: "@page" ,value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor"
-     * - key: "page:limit" ,value: "100"
+     * - key: "@page", value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor"
+     * - key: "page:limit", value: "100"
      * <p>
-     * 解读1: key 以 "@" 开头定义了这是一个需要组装的 `InnerInterceptor`, 以 "page" 结尾表示别名
-     * value 是 `InnerInterceptor` 的具体的 class 全名
-     * 解读2: key 以上面定义的 "别名 + ':'" 开头指这个 `value` 是定义的该 `InnerInterceptor` 属性需要设置的值
-     * <p>
-     * 如果这个 `InnerInterceptor` 不需要配置属性也要加别名
+     * Rule 1: a key starting with "@" defines an InnerInterceptor alias.
+     * Rule 2: a key starting with "alias:" maps a property onto that interceptor instance.
      */
     @Override
     public void setProperties(Properties properties) {
@@ -152,4 +164,38 @@ public class MybatisPlusInterceptor implements Interceptor {
             '}';
     }
 
+    private static final class EmptyCursor<T> implements Cursor<T> {
+
+        private static final EmptyCursor<?> INSTANCE = new EmptyCursor<>();
+
+        @SuppressWarnings("unchecked")
+        static <T> EmptyCursor<T> instance() {
+            return (EmptyCursor<T>) INSTANCE;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return false;
+        }
+
+        @Override
+        public boolean isConsumed() {
+            return true;
+        }
+
+        @Override
+        public int getCurrentIndex() {
+            return -1;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        public void close() {
+            // no-op
+        }
+    }
 }
