@@ -57,4 +57,15 @@ public interface PostInitTableInfoHandler {
     default void postFieldInfo(TableFieldInfo fieldInfo, Configuration configuration) {
         // ignore
     }
+
+    /**
+     * 参与 TableFieldInfo.column 初始化
+     *
+     * @param tableInfo TableInfo
+     * @param column    字段名
+     * @return 列名
+     */
+    default String postFieldColumn(TableInfo tableInfo, String column) {
+        return column;
+    }
 }

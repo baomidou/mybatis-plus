@@ -269,6 +269,7 @@ public class TableFieldInfo implements Constants {
                 column = String.format(columnFormat, column);
             }
         }
+        column = globalConfig.getPostInitTableInfoHandler().postFieldColumn(tableInfo, column);
         this.column = column;
         this.sqlSelect = column;
         if (needAs) {
