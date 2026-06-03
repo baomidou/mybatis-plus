@@ -99,11 +99,31 @@ class PaginationInnerInterceptorTest {
             "SELECT COUNT(*) AS total FROM order_info LEFT JOIN (SELECT count(1) FROM order_info WHERE create_time BETWEEN ? AND ?) tt ON 1 = 1 WHERE equipment_id = ?");
     }
 
+    @Test
+    void placeholderCountShouldNotBeDropped() {
+        String sql = "SELECT featureDeliveryGroup.name FROM feature_delivery_team_t featureDeliveryGroup " +
+            "WHERE status = 1 AND (((featureDeliveryGroup.dimension_value = ? AND featureDeliveryGroup.dimension_type = ?) " +
+            "OR (featureDeliveryGroup.dimension_value = ? AND featureDeliveryGroup.dimension_type = ?))) " +
+            "ORDER BY featureDeliveryGroup.dimension_type ASC, featureDeliveryGroup.id DESC";
+        String countSql = interceptor.autoCountSql(new Page<>(), sql);
+        assertThat(countPlaceholders(countSql)).isEqualTo(countPlaceholders(sql));
+    }
+
     void assertsCountSql(String sql, String targetSql) {
         assertThat(interceptor.autoCountSql(new Page<>(), sql)).isEqualTo(targetSql);
     }
 
     void assertsConcatOrderBy(String sql, String targetSql, OrderItem... orderItems) {
         assertThat(interceptor.concatOrderBy(sql, Arrays.asList(orderItems))).isEqualTo(targetSql);
+    }
+
+    private int countPlaceholders(String sql) {
+        int count = 0;
+        for (int i = 0; i < sql.length(); i++) {
+            if (sql.charAt(i) == '?') {
+                count++;
+            }
+        }
+        return count;
     }
 }

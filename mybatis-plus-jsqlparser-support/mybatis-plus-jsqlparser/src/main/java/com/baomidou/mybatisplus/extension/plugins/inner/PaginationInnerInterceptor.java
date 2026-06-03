@@ -288,12 +288,12 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             GroupByElement groupBy = plainSelect.getGroupBy();
             // 包含 distinct、groupBy 不优化
             if (null != distinct || null != groupBy) {
-                return lowLevelCountSql(select.toString());
+                return lowLevelCountSql(hasSamePlaceholderCount(sql, select.toString()) ? select.toString() : sql);
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
                 if (item.toString().contains(StringPool.QUESTION_MARK)) {
-                    return lowLevelCountSql(select.toString());
+                    return lowLevelCountSql(hasSamePlaceholderCount(sql, select.toString()) ? select.toString() : sql);
                 }
             }
 
@@ -350,7 +350,11 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
 
             // 优化 SQL
             plainSelect.setSelectItems(COUNT_SELECT_ITEM);
-            return select.toString();
+            String optimizedSql = select.toString();
+            if (!hasSamePlaceholderCount(sql, optimizedSql)) {
+                return lowLevelCountSql(sql);
+            }
+            return optimizedSql;
         } catch (JSQLParserException e) {
             // 无法优化使用原 SQL
             logger.warn("optimize this sql to a count sql has exception, sql:\"" + sql + "\", exception:\n" + e.getCause());
@@ -368,6 +372,20 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected String lowLevelCountSql(String originalSql) {
         return SqlParserUtils.getOriginalCountSql(originalSql);
+    }
+
+    private boolean hasSamePlaceholderCount(String sourceSql, String targetSql) {
+        return countPlaceholder(sourceSql) == countPlaceholder(targetSql);
+    }
+
+    private int countPlaceholder(String sql) {
+        int count = 0;
+        for (int i = 0; i < sql.length(); i++) {
+            if (sql.charAt(i) == '?') {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
