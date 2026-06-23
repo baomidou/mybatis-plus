@@ -39,7 +39,7 @@ public enum DbType {
     /**
      * ORACLE
      */
-    ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_NEW)"),
+    ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_12C)"),
     /**
      * oracle12c new pagination
      */
