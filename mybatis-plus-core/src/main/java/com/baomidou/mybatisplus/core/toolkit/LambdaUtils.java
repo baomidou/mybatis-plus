@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.*;
 
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
@@ -56,11 +57,130 @@ public final class LambdaUtils {
         try {
             Method method = func.getClass().getDeclaredMethod("writeReplace");
             method.setAccessible(true);
-            return new ReflectLambdaMeta((SerializedLambda) method.invoke(func), func.getClass().getClassLoader());
+            SerializedLambda lambda = (SerializedLambda) method.invoke(func);
+            // 2.1 Kotlin (>=1.6) 的属性引用会被编译为捕获了 KProperty 的 lambda，
+            //     其 implMethodName 为合成方法名，需直接从被捕获的 KProperty 解析字段名
+            Object kProperty = findKotlinProperty(lambda);
+            if (kProperty != null) {
+                return KotlinLambdaMeta.ofCapturedProperty(kProperty, lambda);
+            }
+            // 2.2 Kotlin 引用 Java getter（如 UserDO::getName）时会编译出形如 enclosing$getName 的合成适配方法，
+            //     此时没有捕获 KProperty，从合成方法名末段还原出 getter 名
+            String kotlinGetter = kotlinGetterAdapterName(lambda.getImplMethodName());
+            if (kotlinGetter != null) {
+                return KotlinLambdaMeta.ofGetterMethodName(kotlinGetter, lambda, func.getClass().getClassLoader());
+            }
+            return new ReflectLambdaMeta(lambda, func.getClass().getClassLoader());
+        } catch (NoSuchMethodException e) {
+            // 2.3 Kotlin (<1.6) 将引用编译为 class-based 的 SAM 包装类（没有 writeReplace），
+            //     被引用的 Kotlin 可调用引用（KProperty / KFunction）作为包装类的字段保存，直接读取解析字段名
+            Object callable = findKotlinCallableInFields(func);
+            if (callable != null) {
+                return KotlinLambdaMeta.ofCallableReference(callable);
+            }
+            return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
         } catch (Throwable e) {
             // 3. 反射失败使用序列化的方式读取
             return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
         }
+    }
+
+    /**
+     * Kotlin 标准库中可调用引用接口的全限定名，使用名称匹配以避免 core 模块对 Kotlin 产生编译期依赖
+     */
+    private static final String KOTLIN_KPROPERTY = "kotlin.reflect.KProperty";
+    private static final String KOTLIN_KFUNCTION = "kotlin.reflect.KFunction";
+
+    /**
+     * 在 lambda 捕获的参数中查找 Kotlin 的属性引用（KProperty）
+     */
+    private static Object findKotlinProperty(SerializedLambda lambda) {
+        for (int i = 0; i < lambda.getCapturedArgCount(); i++) {
+            Object arg = lambda.getCapturedArg(i);
+            if (isKotlinProperty(arg)) {
+                return arg;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 在对象自身或其字段中查找 Kotlin 的可调用引用（KProperty 或 KFunction）。
+     * 用于 class-based 的 SAM 包装类：Kotlin 将被引用的 KProperty / KFunction 作为包装类的字段保存。
+     */
+    private static Object findKotlinCallableInFields(Object func) {
+        if (isKotlinCallableReference(func)) {
+            return func;
+        }
+        for (Class<?> clazz = func.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            for (Field field : clazz.getDeclaredFields()) {
+                Object value;
+                try {
+                    value = ReflectionKit.setAccessible(field).get(func);
+                } catch (Throwable e) {
+                    continue;
+                }
+                if (isKotlinCallableReference(value)) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从 invokedynamic 合成适配方法名中还原 getter 名。
+     * <p>
+     * Kotlin 引用 Java getter（如 {@code UserDO::getName}）时会编译出形如 {@code enclosing$getName} 的合成方法，
+     * 其末段即真实的 getter 名。仅当方法名含 {@code $} 且末段形如 getXxx/isXxx/setXxx 时才识别，
+     * 以免影响普通 Java 方法引用（其 implMethodName 直接就是 getName，无 {@code $}）。
+     */
+    private static String kotlinGetterAdapterName(String implMethodName) {
+        int idx = implMethodName.lastIndexOf('$');
+        if (idx <= 0) {
+            return null;
+        }
+        String candidate = implMethodName.substring(idx + 1);
+        return isGetterName(candidate) ? candidate : null;
+    }
+
+    private static boolean isGetterName(String name) {
+        if ((name.startsWith("get") || name.startsWith("set")) && name.length() > 3) {
+            return Character.isUpperCase(name.charAt(3));
+        }
+        if (name.startsWith("is") && name.length() > 2) {
+            return Character.isUpperCase(name.charAt(2));
+        }
+        return false;
+    }
+
+    private static boolean isKotlinProperty(Object arg) {
+        return isKotlinReference(arg, KOTLIN_KPROPERTY);
+    }
+
+    private static boolean isKotlinCallableReference(Object arg) {
+        return isKotlinReference(arg, KOTLIN_KPROPERTY) || isKotlinReference(arg, KOTLIN_KFUNCTION);
+    }
+
+    private static boolean isKotlinReference(Object arg, String interfaceName) {
+        if (arg == null) {
+            return false;
+        }
+        for (Class<?> clazz = arg.getClass(); clazz != null; clazz = clazz.getSuperclass()) {
+            if (implementsInterface(clazz, interfaceName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean implementsInterface(Class<?> clazz, String interfaceName) {
+        for (Class<?> anInterface : clazz.getInterfaces()) {
+            if (interfaceName.equals(anInterface.getName()) || implementsInterface(anInterface, interfaceName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
