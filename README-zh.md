@@ -104,11 +104,15 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
         - Gradle
         - SpringBoot2
           ```groovy
-          compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+          implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
           ```
         - SpringBoot3
           ```groovy
-          compile group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
+          implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
+          ```
+        - SpringBoot4
+          ```groovy
+          implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot4-starter', version: 'Latest Version'
           ```
 
 # 优点 | Advantages

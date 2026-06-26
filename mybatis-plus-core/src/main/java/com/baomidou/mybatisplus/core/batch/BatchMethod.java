@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.batch;
 
+import lombok.Getter;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
@@ -23,6 +24,7 @@ import org.apache.ibatis.mapping.MappedStatement;
  * @author nieqiurong
  * @since 3.5.4
  */
+@Getter
 public class BatchMethod<T> {
 
     /**
@@ -42,14 +44,6 @@ public class BatchMethod<T> {
     public BatchMethod(String statementId, ParameterConvert<T> parameterConvert) {
         this.statementId = statementId;
         this.parameterConvert = parameterConvert;
-    }
-
-    public String getStatementId() {
-        return statementId;
-    }
-
-    public ParameterConvert<T> getParameterConvert() {
-        return parameterConvert;
     }
 
 }

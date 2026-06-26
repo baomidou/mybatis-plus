@@ -124,12 +124,17 @@ It provides efficient, and out-of-the-box features (such as code generation, con
     - Gradle
     - SpringBoot2
       ```groovy
-      compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
+      implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
       ```
     - SpringBoot3
       ```groovy
-      compile group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
+      implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
       ```
+    - SpringBoot4
+      ```groovy
+      implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot4-starter', version: 'Latest Version'
+      ```
+
 - Modify mapper file extends BaseMapper interface
 
   ```java
