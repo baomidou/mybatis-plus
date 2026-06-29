@@ -107,9 +107,9 @@ subprojects {
         testImplementation "${lib["junit-jupiter"]}"
         testImplementation "org.mockito:mockito-junit-jupiter:5.21.0"
         testImplementation "${lib["lagarto"]}"
-        testImplementation("org.junit.platform:junit-platform-engine:6.0.1")
+        testImplementation("org.junit.platform:junit-platform-engine:6.1.1")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:6.0.1")
-        testImplementation("org.junit.platform:junit-platform-launcher:6.0.1")
+        testImplementation("org.junit.platform:junit-platform-launcher:6.1.1")
     }
 
     tasks.withType(JavaCompile) {
