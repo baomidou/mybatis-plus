@@ -7,7 +7,7 @@ dependencies {
     api project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common")
     implementation "${lib."slf4j-api"}"
     implementation "de.ruedigermoeller:fst:3.0.3"
-    implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
+    implementation "com.github.ben-manes.caffeine:caffeine:3.2.4"
     testImplementation "io.github.classgraph:classgraph:4.8.177"
     testImplementation "${lib."spring-context-support"}"
     testImplementation "${lib.h2}"
