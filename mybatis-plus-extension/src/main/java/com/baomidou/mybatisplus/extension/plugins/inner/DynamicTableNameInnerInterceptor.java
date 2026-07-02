@@ -46,6 +46,15 @@ import java.util.List;
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
 
     /**
+     * Key stored in {@link BoundSql#setAdditionalParameter} to mark that this interceptor has
+     * already rewritten the SQL in {@link #beforeQuery}.  The flag prevents a second rewrite in
+     * {@link #beforePrepare} for the same main-query statement while still allowing
+     * {@link #beforePrepare} to rewrite nested-select statements (used by {@code @Many} /
+     * {@code @One}) that bypass the {@code Executor} interceptor chain.
+     */
+    private static final String DYNAMIC_TABLE_NAME_ALREADY_PARSED = "_MP_DYNAMIC_TABLE_NAME_ALREADY_PARSED";
+
+    /**
      * 回调处理
      */
     private Runnable hook;
@@ -74,6 +83,9 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) return;
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(this.changeTable(mpBs.sql()));
+        // Mark the BoundSql so that beforePrepare can detect it was already processed
+        // and skip the rewrite, avoiding double processing for the same query.
+        boundSql.setAdditionalParameter(DYNAMIC_TABLE_NAME_ALREADY_PARSED, Boolean.TRUE);
     }
 
     @Override
@@ -81,7 +93,19 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
         PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+        if (sct == SqlCommandType.SELECT) {
+            // Nested selects from @Many / @One bypass the Executor interceptor chain and therefore
+            // never reach beforeQuery.  Handle them here so the table-name replacement is applied.
+            // Skip if beforeQuery already rewrote the SQL for the same BoundSql instance.
+            if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
+                return;
+            }
+            BoundSql boundSql = mpSh.boundSql();
+            if (!boundSql.hasAdditionalParameter(DYNAMIC_TABLE_NAME_ALREADY_PARSED)) {
+                PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+                mpBs.sql(this.changeTable(mpBs.sql()));
+            }
+        } else if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
                 return;
             }

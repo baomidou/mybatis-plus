@@ -55,6 +55,15 @@ import java.util.Properties;
 @SuppressWarnings({"rawtypes"})
 public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor implements InnerInterceptor {
 
+    /**
+     * Key stored in {@link BoundSql#setAdditionalParameter} to mark that this interceptor has
+     * already rewritten the SQL in {@link #beforeQuery}.  The flag prevents a second rewrite in
+     * {@link #beforePrepare} for the same main-query statement while still allowing
+     * {@link #beforePrepare} to rewrite nested-select statements (used by {@code @Many} /
+     * {@code @One}) that bypass the {@code Executor} interceptor chain.
+     */
+    private static final String TENANT_LINE_ALREADY_PARSED = "_MP_TENANT_LINE_ALREADY_PARSED";
+
     private TenantLineHandler tenantLineHandler;
 
     @Override
@@ -64,6 +73,9 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         }
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
         mpBs.sql(parserSingle(mpBs.sql(), null));
+        // Mark the BoundSql so that beforePrepare can detect it was already processed
+        // and skip the rewrite, avoiding double injection for the same query.
+        boundSql.setAdditionalParameter(TENANT_LINE_ALREADY_PARSED, Boolean.TRUE);
     }
 
     @Override
@@ -71,7 +83,19 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         PluginUtils.MPStatementHandler mpSh = PluginUtils.mpStatementHandler(sh);
         MappedStatement ms = mpSh.mappedStatement();
         SqlCommandType sct = ms.getSqlCommandType();
-        if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
+        if (sct == SqlCommandType.SELECT) {
+            // Nested selects from @Many / @One bypass the Executor interceptor chain and therefore
+            // never reach beforeQuery.  Handle them here so the tenant condition is still applied.
+            // Skip if beforeQuery already rewrote the SQL for the same BoundSql instance.
+            if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
+                return;
+            }
+            BoundSql boundSql = mpSh.boundSql();
+            if (!boundSql.hasAdditionalParameter(TENANT_LINE_ALREADY_PARSED)) {
+                PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
+                mpBs.sql(parserSingle(mpBs.sql(), null));
+            }
+        } else if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
                 return;
             }
