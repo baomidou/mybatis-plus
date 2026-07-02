@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -28,7 +29,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -258,7 +258,7 @@ public class MybatisBatch<T> {
          */
         public BatchMethod<T> updateById() {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE_BY_ID.getMethod(), (entity) -> {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, entity);
                 return param;
             });
@@ -273,7 +273,7 @@ public class MybatisBatch<T> {
          */
         public <E> BatchMethod<E> updateById(Function<E, T> etFunction) {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE_BY_ID.getMethod(), (parameter) -> {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, etFunction.apply(parameter));
                 return param;
             });
@@ -288,7 +288,7 @@ public class MybatisBatch<T> {
          */
         public <E> BatchMethod<E> update(Function<E, Wrapper<T>> wrapperFunction) {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (parameter) -> {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.WRAPPER, wrapperFunction.apply(parameter));
                 return param;
             });
@@ -304,7 +304,7 @@ public class MybatisBatch<T> {
          */
         public <E> BatchMethod<E> update(Function<E, T> entityFunction, Function<E, Wrapper<T>> wrapperFunction) {
             return new BatchMethod<>(namespace + StringPool.DOT + SqlMethod.UPDATE.getMethod(), (parameter) -> {
-                Map<String, Object> param = new HashMap<>();
+                Map<String, Object> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, entityFunction.apply(parameter));
                 param.put(Constants.WRAPPER, wrapperFunction.apply(parameter));
                 return param;
