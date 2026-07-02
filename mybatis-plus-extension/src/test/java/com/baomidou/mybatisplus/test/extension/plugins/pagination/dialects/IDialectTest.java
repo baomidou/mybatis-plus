@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.core.plugins.pagination.DialectModel;
+import com.baomidou.mybatisplus.core.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.plugins.pagination.dialects.IDialect;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class IDialectTest {
         Map<String, List<Class<?>>> map = new ConcurrentHashMap<>();
         classList.forEach(i -> {
             IDialect o = (IDialect) ReflectionUtils.newInstance(i);
-            DialectModel model = o.buildPaginationSql("select * from table", 1, 10);
+            DialectModel model = o.buildPaginationSql("select * from table", Page.of(1, 10));
             String sql = model.getDialectSql();
             if (!map.containsKey(sql)) {
                 ArrayList<Class<?>> list = new ArrayList<>();
