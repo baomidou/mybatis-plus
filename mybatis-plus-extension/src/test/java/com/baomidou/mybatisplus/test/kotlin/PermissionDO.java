@@ -16,15 +16,11 @@
 package com.baomidou.mybatisplus.test.kotlin;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 一个普通的 Java 实体（带 JavaBean getter），用于验证 Kotlin 代码中
  * 形如 {@code PermissionDO::getBizType} 的 getter 方法引用（KFunction）能被正确解析。
  */
-@Setter
-@Getter
 @TableName("crm_permission")
 public class PermissionDO {
 
@@ -32,5 +28,37 @@ public class PermissionDO {
     private Integer bizType;
     private Long bizId;
     private Long userId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getBizType() {
+        return bizType;
+    }
+
+    public void setBizType(Integer bizType) {
+        this.bizType = bizType;
+    }
+
+    public Long getBizId() {
+        return bizId;
+    }
+
+    public void setBizId(Long bizId) {
+        this.bizId = bizId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
 }
