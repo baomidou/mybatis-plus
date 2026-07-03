@@ -457,6 +457,8 @@ public class Entity implements ITemplate {
                 }
             });
         }
+        tableInfo.getFields().forEach(tableField -> tableField.getAnnotationAttributesList()
+            .forEach(attributes -> importPackages.addAll(attributes.getImportPackages())));
         data.put("entityFieldUseJavaDoc", fieldUseJavaDoc);
         data.put("entityClassAnnotations", annotationAttributesFunction != null ? annotationAttributesFunction.apply(classAnnotationAttributes) :
             classAnnotationAttributes.stream().sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList()));
