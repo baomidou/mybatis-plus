@@ -1,15 +1,19 @@
 package com.baomidou.mybatisplus.test.h2;
 
+import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,9 @@ class H2StudentMapperTest extends BaseTest {
 
     @Autowired
     protected H2StudentMapper studentMapper;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     @Test
     @Order(1)
@@ -93,6 +100,19 @@ class H2StudentMapperTest extends BaseTest {
         H2Student h2Student = new H2Student(111L, "测试根据实体删除", 12);
         studentMapper.insert(h2Student);
         Assertions.assertEquals(1, studentMapper.deleteById(h2Student));
+    }
+
+    @Test
+    void insertBatchShouldKeepManuallyAssignedAutoId() {
+        Long id = 300000L;
+        H2Student h2Student = new H2Student(id, "manual-auto-id", 18);
+        H2Student generated = new H2Student(null, "generated-auto-id", 19);
+        MybatisBatch.Method<H2Student> mapperMethod = new MybatisBatch.Method<>(H2StudentMapper.class);
+
+        Assertions.assertTrue(SqlHelper.retBool(MybatisBatchUtils.execute(sqlSessionFactory, List.of(h2Student, generated), mapperMethod.insert())));
+        Assertions.assertEquals(id, h2Student.getId());
+        Assertions.assertNotNull(generated.getId());
+        Assertions.assertNotNull(studentMapper.selectById(id));
     }
 
     @Test

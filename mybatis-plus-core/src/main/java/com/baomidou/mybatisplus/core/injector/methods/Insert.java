@@ -17,13 +17,13 @@ package com.baomidou.mybatisplus.core.injector.methods;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.executor.keygen.AutoIdKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlInjectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -89,7 +89,7 @@ public class Insert extends AbstractMethod {
         if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
             if (tableInfo.getIdType() == IdType.AUTO) {
                 /* 自增主键 */
-                keyGenerator = Jdbc3KeyGenerator.INSTANCE;
+                keyGenerator = AutoIdKeyGenerator.INSTANCE;
                 keyProperty = tableInfo.getKeyProperty();
                 // 去除转义符
                 keyColumn = SqlInjectionUtils.removeEscapeCharacter(tableInfo.getKeyColumn());
