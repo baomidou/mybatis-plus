@@ -88,6 +88,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children eqOrIsNull(boolean condition, R column, Object val) {
+        getWrapper().eqOrIsNull(condition, column, val);
+        return typedThis;
+    }
+
+    @Override
     public Children ne(boolean condition, R column, Object val) {
         getWrapper().ne(condition, column, val);
         return typedThis;
