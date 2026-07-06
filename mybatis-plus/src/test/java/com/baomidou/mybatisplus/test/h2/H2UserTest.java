@@ -311,11 +311,13 @@ class H2UserTest extends BaseTest {
             Configuration configuration = sqlSessionFactory.getConfiguration();
             for (Interceptor interceptor : configuration.getInterceptors()) {
                 if (interceptor instanceof MybatisPlusInterceptor) {
-                    List<InnerInterceptor> innerInterceptors = ((MybatisPlusInterceptor) interceptor).getInterceptors();
+                    MybatisPlusInterceptor mybatisPlusInterceptor = (MybatisPlusInterceptor) interceptor;
+                    List<InnerInterceptor> innerInterceptors = new ArrayList<>(mybatisPlusInterceptor.getInterceptors());
                     for (int i = 0; i < innerInterceptors.size(); i++) {
                         InnerInterceptor innerInterceptor = innerInterceptors.get(i);
                         if (innerInterceptor instanceof DataChangeRecorderInnerInterceptor) {
                             innerInterceptors.set(i, replacement);
+                            mybatisPlusInterceptor.setInterceptors(innerInterceptors);
                             return (DataChangeRecorderInnerInterceptor) innerInterceptor;
                         }
                     }
@@ -877,8 +879,9 @@ class H2UserTest extends BaseTest {
             DataChangeRecorderInnerInterceptor.OperationResult operationResult = recorder.getOperationResult();
             Assertions.assertNotNull(operationResult);
             Assertions.assertTrue(operationResult.isRecordStatus());
-            Assertions.assertTrue(operationResult.getChangedData().contains("\"NAME\":\"null->xmlForeachInsertA\""));
-            Assertions.assertTrue(operationResult.getChangedData().contains("\"NAME\":\"null->xmlForeachInsertB\""));
+            String changedData = operationResult.getChangedData();
+            Assertions.assertTrue(changedData.contains("\"TESTID\":\"null->" + id1 + "\""), changedData);
+            Assertions.assertTrue(changedData.contains("\"NAME\":\"null->xmlForeachInsertA\""), changedData);
         } finally {
             replaceDataChangeRecorder(original);
         }
