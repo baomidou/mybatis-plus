@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.segments;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -80,6 +81,17 @@ public class MergeSegments implements ISqlSegment {
         groupBy.clearSqlSegmentCache();
         having.clearSqlSegmentCache();
         orderBy.clearSqlSegmentCache();
+    }
+
+    public void changeParamAlias(String oldParamAlias, String paramAlias) {
+        if (cacheSqlSegment) {
+            sqlSegment = sqlSegment.replace("#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
+                "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
+        }
+        normal.changeParamAlias(oldParamAlias, paramAlias);
+        groupBy.changeParamAlias(oldParamAlias, paramAlias);
+        having.changeParamAlias(oldParamAlias, paramAlias);
+        orderBy.changeParamAlias(oldParamAlias, paramAlias);
     }
 
     /**

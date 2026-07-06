@@ -115,6 +115,16 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
+    protected void onParamAliasChanged(String oldParamAlias, String paramAlias) {
+        if (sqlSet == null) {
+            return;
+        }
+        String oldPrefix = "#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE;
+        String newPrefix = "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE;
+        sqlSet.replaceAll(sql -> sql.replace(oldPrefix, newPrefix));
+    }
+
+    @Override
     public void clear() {
         super.clear();
         sqlSet.clear();

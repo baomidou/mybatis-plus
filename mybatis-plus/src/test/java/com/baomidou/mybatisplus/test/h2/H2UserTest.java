@@ -72,6 +72,9 @@ class H2UserTest extends BaseTest {
     @Autowired
     private H2StudentMapper h2StudentMapper;
 
+    @Autowired
+    private H2UserMapper h2UserMapper;
+
     public void initBatchLimitation(int limitation) {
         if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
             Configuration configuration = sqlSessionFactory.getConfiguration();
@@ -513,6 +516,20 @@ class H2UserTest extends BaseTest {
         }.eq("name", "Jerry");
         List<H2User> h2Users = userService.testMultiWrapperQuery(leftTable, rightTable);
         Assertions.assertEquals(1, h2Users.size());
+    }
+
+    @Test
+    @Order(35)
+    void testUpdateWrapperSetAliasByParam() {
+        H2User user = new H2User("aliasBefore", AgeEnum.ONE);
+        Assertions.assertTrue(userService.save(user));
+
+        UpdateWrapper<H2User> updateWrapper = new UpdateWrapper<H2User>()
+            .set("name", "aliasAfter")
+            .eq("test_id", user.getTestId());
+
+        Assertions.assertEquals(1, h2UserMapper.testUpdateWrapperSetAliasByParam(updateWrapper));
+        Assertions.assertEquals("aliasAfter", userService.getById(user.getTestId()).getName());
     }
 
     @Test

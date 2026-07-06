@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.segments;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 import java.util.ArrayList;
@@ -123,5 +124,12 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     public void clearSqlSegmentCache() {
         sqlSegment = EMPTY;
         cacheSqlSegment = false;
+    }
+
+    public void changeParamAlias(String oldParamAlias, String paramAlias) {
+        if (cacheSqlSegment) {
+            sqlSegment = sqlSegment.replace("#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
+                "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
+        }
     }
 }

@@ -669,12 +669,24 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @return Children
      */
     public Children setParamAlias(String paramAlias) {
+        Assert.notEmpty(paramAlias, "paramAlias can not be empty!");
         String oldParamAlias = getParamAlias();
         this.paramAlias = new SharedString(paramAlias);
         if (this.expression != null && !oldParamAlias.equals(paramAlias)) {
-            expression.clearSqlSegmentCache();
+            expression.changeParamAlias(oldParamAlias, paramAlias);
+            onParamAliasChanged(oldParamAlias, paramAlias);
         }
         return typedThis;
+    }
+
+    /**
+     * 参数别名变化后的扩展处理
+     *
+     * @param oldParamAlias 原参数别名
+     * @param paramAlias    新参数别名
+     */
+    protected void onParamAliasChanged(String oldParamAlias, String paramAlias) {
+        // do nothing
     }
 
     /**
