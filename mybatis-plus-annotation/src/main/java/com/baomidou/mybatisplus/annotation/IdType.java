@@ -26,7 +26,7 @@ import lombok.Getter;
 @Getter
 public enum IdType {
     /**
-     * 数据库ID自增
+     * 数据库ID自增（该策略保存前手动设置ID无效且会被自动生成的ID回写，正确用法是保存对象插入成功后拿到自动生成的ID，然后再去关联业务使用）
      * <p>该类型请确保数据库设置了 ID自增 否则无效</p>
      */
     AUTO(0),
