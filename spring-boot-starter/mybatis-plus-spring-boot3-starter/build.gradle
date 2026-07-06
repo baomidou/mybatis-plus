@@ -4,7 +4,7 @@ compileJava {
 
 dependencies {
     api project(":mybatis-plus")
-    api "org.mybatis:mybatis-spring:3.0.5"
+    api "org.mybatis:mybatis-spring:4.1.0"
     api project(":spring-boot-starter:mybatis-plus-spring-boot-autoconfigure")
     api project(":spring-boot-starter:mybatis-plus-spring-boot-native-image")
     implementation platform("org.springframework.boot:spring-boot-dependencies:${springBoot3Version}")
@@ -19,7 +19,7 @@ dependencies {
     implementation "${lib.'mybatis-freemarker'}"
     implementation "org.springframework.cloud:spring-cloud-commons:4.1.6"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.1.0"
     testImplementation "${lib.h2}"
 }
 
