@@ -86,6 +86,13 @@
         </foreach>
     </insert>
 
+    <insert id="insertUsersByXmlForeach">
+        insert into h2user(test_id, name, age, test_type) values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.testId}, #{item.name}, #{item.age}, #{item.testType})
+        </foreach>
+    </insert>
+
     <update id="updateFillByCustomMethod1">
         update h2user set deleted = 1,last_updated_dt = #{et.lastUpdatedDt} where test_id in (
         <foreach collection="list" item="col" separator=",">
