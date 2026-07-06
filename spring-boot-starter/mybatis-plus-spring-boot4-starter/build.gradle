@@ -17,7 +17,7 @@ dependencies {
     implementation "${lib['mybatis-thymeleaf']}"
     implementation "org.mybatis.scripting:mybatis-velocity:2.3.1"
     implementation "${lib.'mybatis-freemarker'}"
-    implementation "org.springframework.cloud:spring-cloud-commons:5.0.0"
+    implementation "org.springframework.cloud:spring-cloud-commons:5.0.2"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1"
     testImplementation "${lib.h2}"
