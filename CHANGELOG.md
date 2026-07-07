@@ -10,6 +10,7 @@
 - feat: 新增 `wrapper` 支持 `xml` 别名配置
 - feat: 新增 `mybatis-plus-spring-boot-native-image` 模块支持 `graalvm` 编译能力
 - feat: 新增 `Wrapper` 支持自动识别 `typeHandler` 类型处理器
+- feat: 新增 `Wrapper` 对比 `eqOrIsNull` 方法
 - feat: 新增 `i18n` 逻辑删除日期格式及自动更新填充能力
 - feat: 新增 `Groovy` 支持 `LambdaQueryWrapper` 执行能力
 - feat: 新增 `Kotlin` 支持 `LambdaQueryWrapper` 执行能力
