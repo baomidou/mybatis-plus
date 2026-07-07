@@ -94,7 +94,8 @@ public class IdWorker {
     }
 
     /**
-     * 有参构造器
+     * 初始化雪花 ID 生成器
+     * <p>多实例部署时，需要为每个实例分配唯一的 workerId 和 dataCenterId 组合，避免不同实例生成重复 ID。</p>
      *
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
