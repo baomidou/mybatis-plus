@@ -6,6 +6,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -25,11 +27,23 @@ jobs:
 
       - name: Decode
         run: |
-          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > ~/.gradle/secring.gpg.b64
-          base64 -d ~/.gradle/secring.gpg.b64 > ~/.gradle/secring.gpg
+          mkdir -p ~/.gradle
+          printf '%s' "$SIGNING_SECRET_KEY_RING_FILE" | base64 -d > ~/.gradle/secring.gpg
+        env:
+          SIGNING_SECRET_KEY_RING_FILE: ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }}
 
       - name: Publish
-        run: ./gradlew publish -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=$(echo ~/.gradle/secring.gpg)
+        run: |
+          AUTH_TOKEN=$(printf '%s:%s' "$OSSRH_USERNAME" "$OSSRH_TOKEN" | base64 -w0)
+          echo "::add-mask::$AUTH_TOKEN"
+          ./gradlew publishMavenJavaPublicationToLocalRepository publishToMavenCentralPortal \
+            -x test \
+            -DauthToken="$AUTH_TOKEN" \
+            -Psigning.keyId="$SIGNING_KEY_ID" \
+            -Psigning.password="$SIGNING_PASSWORD" \
+            -Psigning.secretKeyRingFile="$HOME/.gradle/secring.gpg"
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
