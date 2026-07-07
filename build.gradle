@@ -23,8 +23,8 @@ ext {
     ]
 
     lib = [
-        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
-        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0",
+        "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.4.0",
+        "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.0",
         "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
         "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.1.1",
