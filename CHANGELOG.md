@@ -1,5 +1,29 @@
 ﻿# CHANGELOG
 
+## [v3.5.17] 2026.07.07
+- fix: 修复 `issues/6899` 多租户插件 `@Many` 注解查无效问题
+- fix: 修复 `issues/6938` `HashMap` 设置类型转换器异常
+- fix: 修复 `issues/7081` 解决拦截全表存在 `schema` 校验问题
+- fix: 修复 `issues/6905` 关于 `saveOrUpdateBatch` 导致 `ParameterHandler` 被重复执行问题
+- fix: 修复 `issues/7056` 支持 `GraalVM Native` 二进制编译问题，案例 https://gitee.com/baomidou/mybatis-plus-native-image-demo
+- fix: 修复 `issues/7027` 支持 `JDK 9+` 模块化包重名问题，注意 `mybatis-plus-spring` 模块下文件包名调整
+- feat: 新增 `wrapper` 支持 `xml` 别名配置
+- feat: 新增 `mybatis-plus-spring-boot-native-image` 模块支持 `graalvm` 编译能力
+- feat: 新增 `Wrapper` 支持自动识别 `typeHandler` 类型处理器
+- feat: 新增 `i18n` 逻辑删除日期格式及自动更新填充能力
+- feat: 新增 `Groovy` 支持 `LambdaQueryWrapper` 执行能力
+- feat: 新增 `Kotlin` 支持 `LambdaQueryWrapper` 执行能力
+- feat: 新增 `MybatisEnumTypeHandler` 枚举类型处理器支持缓存处理机制
+- feat: 新增 `ITableFieldMetaInfoCustomizer` 代码生成器扩展属性元数据处理能力
+- opt: 优化 `Sequence` 减少增加上下文切换
+- opt: 优化 `LambdaQueryWrapper.sqlSelect` 属性修改为 `protected`
+- opt: 优化 `sql` 注入性能调整为函数方式拼接减少字符串`format`使用
+- opt: 优化 `Cursor` 游标查询一条记录能力
+- opt: 优化 `format` 部分修改为字符串组合
+- opt: 优化 `executeBatch` 根据执行影响行数返回确定结果布尔值
+- opt: 优化 `TableInfo` 扩展允许返回新的自定义实例对象
+- opt: 优化 `IJsonTypeHandler` 处理逻辑
+
 ## [v3.5.16] 2026.1.11
 - fix: 修复`Jackson3TypeHandler`自定义`ObjectMapper`无效
 - fix: 处理代码生成器`PackageConfig`指定模块为空时拼接错误
