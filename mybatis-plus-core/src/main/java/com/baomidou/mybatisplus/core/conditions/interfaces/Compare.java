@@ -115,6 +115,27 @@ public interface Compare<Children, R> extends Serializable {
     Children eq(boolean condition, R column, Object val);
 
     /**
+     * 等于 = ，值为 null 时自动转为 IS NULL
+     *
+     * @param column 字段
+     * @param val    值
+     * @return children
+     */
+    default Children eqOrIsNull(R column, Object val) {
+        return eqOrIsNull(true, column, val);
+    }
+
+    /**
+     * 等于 = ，值为 null 时自动转为 IS NULL
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    Children eqOrIsNull(boolean condition, R column, Object val);
+
+    /**
      * 不等于 &lt;&gt;
      *
      * @param column    字段

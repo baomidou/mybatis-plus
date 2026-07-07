@@ -147,6 +147,17 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children eqOrIsNull(boolean condition, R column, Object val) {
+        return maybeDo(condition, () -> {
+            if (StringUtils.checkValNotNull(val)) {
+                addCondition(true, column, EQ, val);
+            } else {
+                appendSqlSegments(columnToSqlSegment(column), IS_NULL);
+            }
+        });
+    }
+
+    @Override
     public Children ne(boolean condition, R column, Object val) {
         return addCondition(condition, column, NE, val);
     }
