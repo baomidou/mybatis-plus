@@ -216,10 +216,13 @@ public class GlobalConfig implements Serializable {
     /**
      * 雪花ID配置
      * <p>
-     * 1. 手动指定{@link #workerId} 和 {@link #datacenterId}
+     * 1. 手动指定{@link #workerId} 和 {@link #datacenterId}，多实例部署时需保证两者组合在所有实例中唯一
      * </p>
      * <p>
      * 2. 基于网卡信息和进程PID计算 {@link #workerId} 和 {@link #datacenterId}
+     * </p>
+     * <p>
+     * 注意：随机值不能保证全局唯一，重启或扩容时仍可能和其他实例碰撞
      * </p>
      *
      * @since 3.5.7
@@ -230,11 +233,13 @@ public class GlobalConfig implements Serializable {
 
         /**
          * 工作机器 ID
+         * <p>取值范围 0-31，多实例部署时需与 {@link #datacenterId} 组合保持唯一</p>
          */
         private Long workerId;
 
         /**
          * 数据标识 ID 部分
+         * <p>取值范围 0-31，多实例部署时需与 {@link #workerId} 组合保持唯一</p>
          */
         private Long datacenterId;
 

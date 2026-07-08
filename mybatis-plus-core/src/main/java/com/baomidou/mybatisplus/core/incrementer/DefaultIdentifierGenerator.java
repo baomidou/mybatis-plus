@@ -44,6 +44,13 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
         this.sequence = new Sequence(inetAddress);
     }
 
+    /**
+     * 使用指定的工作机器 ID 和数据中心 ID 初始化雪花 ID 生成器
+     * <p>生产多实例部署时，请确保 workerId 与 dataCenterId 的组合全局唯一。</p>
+     *
+     * @param workerId     工作机器 ID，取值范围 0-31
+     * @param dataCenterId 数据中心 ID，取值范围 0-31
+     */
     public DefaultIdentifierGenerator(long workerId, long dataCenterId) {
         this.sequence = new Sequence(workerId, dataCenterId);
     }
