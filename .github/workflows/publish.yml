@@ -1,49 +1,45 @@
 name: Publish package to the Maven Central Repository
+
 on:
-  push:
-    tags:
-      - v*
+    create:
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: 'Tag to publish, for example v3.5.17'
+                required: true
+                type: string
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+    build:
+        if: (github.event_name == 'create' && github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')) || (github.event_name == 'workflow_dispatch' && startsWith(inputs.tag, 'v'))
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.ref }}
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+            - name: Set up JDK 21
+              uses: actions/setup-java@v4
+              with:
+                  java-version: '21'
+                  distribution: 'temurin'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+            - name: Setup Gradle
+              uses: gradle/actions/setup-gradle@v3
 
-      - name: Build without tests
-        run: ./gradlew build -x test
+            - name: Grant execute permission for gradlew
+              run: chmod +x gradlew
 
-      - name: Decode
-        run: |
-          mkdir -p ~/.gradle
-          printf '%s' "$SIGNING_SECRET_KEY_RING_FILE" | base64 -d > ~/.gradle/secring.gpg
-        env:
-          SIGNING_SECRET_KEY_RING_FILE: ${{ secrets.SIGNING_SECRET_KEY_RING_FILE }}
+            - name: Build without tests
+              run: ./gradlew build -x test
 
-      - name: Publish
-        run: |
-          AUTH_TOKEN=$(printf '%s:%s' "$OSSRH_USERNAME" "$OSSRH_TOKEN" | base64 -w0)
-          echo "::add-mask::$AUTH_TOKEN"
-          ./gradlew publishMavenJavaPublicationToLocalRepository publishToMavenCentralPortal \
-            -x test \
-            -DauthToken="$AUTH_TOKEN" \
-            -Psigning.keyId="$SIGNING_KEY_ID" \
-            -Psigning.password="$SIGNING_PASSWORD" \
-            -Psigning.secretKeyRingFile="$HOME/.gradle/secring.gpg"
-        env:
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+            - name: Publish package to maven central
+              env:
+                  ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+                  ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_PASSPHRASE }}
+                  ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SECRET_KEY }}
+              run: ./gradlew publishAllPublicationsToMavenCentralRepository
