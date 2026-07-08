@@ -19,7 +19,7 @@ dependencies {
     implementation "${lib.'mybatis-freemarker'}"
     implementation "org.springframework.cloud:spring-cloud-commons:4.1.6"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5"
+    testImplementation "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1"
     testImplementation "${lib.h2}"
 }
 
