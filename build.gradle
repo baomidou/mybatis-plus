@@ -61,7 +61,7 @@ buildscript {
             "oracle"                     : "com.oracle.database.jdbc:ojdbc8:23.7.0.25.01",
             "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
             "h2"                         : "com.h2database:h2:2.4.240",
-            "mysql"                      : "com.mysql:mysql-connector-j:9.5.0",
+            "mysql"                      : "com.mysql:mysql-connector-j:9.7.0",
             "sqlite"                     : "org.xerial:sqlite-jdbc:3.53.2.0",
             "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.10.java8",
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
