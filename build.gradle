@@ -59,7 +59,7 @@ buildscript {
             "p6spy"                      : "p6spy:p6spy:3.9.1",
             "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
             "postgresql"                 : "org.postgresql:postgresql:42.7.8",
-            "oracle"                     : "com.oracle.database.jdbc:ojdbc8:23.7.0.25.01",
+            "oracle"                     : "com.oracle.database.jdbc:ojdbc8:23.26.2.0.0",
             "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
             "h2"                         : "com.h2database:h2:2.4.240",
             "mysql"                      : "com.mysql:mysql-connector-j:9.5.0",
