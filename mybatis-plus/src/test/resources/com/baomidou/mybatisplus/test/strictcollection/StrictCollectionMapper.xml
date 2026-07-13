@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.mybatisplus.test.strictcollection.StrictCollectionMapper">
+
+    <resultMap id="GroupWithUsersMap" type="com.baomidou.mybatisplus.test.strictcollection.StrictGroupEntity">
+        <id property="id" column="group_id"/>
+        <result property="groupName" column="group_name"/>
+        <result property="description" column="description"/>
+        <collection property="users"
+                    ofType="com.baomidou.mybatisplus.test.strictcollection.StrictUserEntity">
+            <id property="id" column="user_id"/>
+            <result property="groupId" column="user_group_id"/>
+            <result property="userName" column="user_name"/>
+            <result property="email" column="email"/>
+            <result property="age" column="age"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllWithUsers" resultMap="GroupWithUsersMap">
+        SELECT
+            g.id   AS group_id,
+            g.group_name,
+            g.description,
+            u.id   AS user_id,
+            u.group_id AS user_group_id,
+            u.user_name,
+            u.email,
+            u.age
+        FROM t_strict_group g
+        LEFT JOIN t_strict_user u ON u.group_id = g.id
+        ORDER BY g.id
+    </select>
+
+</mapper>

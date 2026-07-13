@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.mybatisplus.test.strictcollection.StrictCollectionWrongMapper">
+
+    <!--
+        Deliberately incorrect: ofType declares StrictWrongUserEntity
+        while StrictGroupEntity.users is List<StrictUserEntity>.
+        When strictResultMapCollectionTypeCheck is enabled, parsing
+        this XML must throw a BuilderException.
+    -->
+    <resultMap id="GroupWithWrongUsersMap" type="com.baomidou.mybatisplus.test.strictcollection.StrictGroupEntity">
+        <id property="id" column="group_id"/>
+        <result property="groupName" column="group_name"/>
+        <result property="description" column="description"/>
+        <collection property="users"
+                    ofType="com.baomidou.mybatisplus.test.strictcollection.StrictWrongUserEntity">
+            <id property="id" column="user_id"/>
+            <result property="groupId" column="user_group_id"/>
+            <result property="userName" column="user_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllWithWrongUsers" resultMap="GroupWithWrongUsersMap">
+        SELECT
+            g.id   AS group_id,
+            g.group_name,
+            g.description,
+            u.id   AS user_id,
+            u.group_id AS user_group_id,
+            u.user_name
+        FROM t_strict_group g
+        LEFT JOIN t_strict_user u ON u.group_id = g.id
+        ORDER BY g.id
+    </select>
+
+</mapper>

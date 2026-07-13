@@ -339,6 +339,13 @@ public class MybatisPlusProperties {
 
         private Boolean useGeneratedShortKey;
 
+        /**
+         * Whether to enable strict type checking for {@code <collection>} elements in ResultMap.
+         * When enabled, the {@code ofType} attribute is validated against the generic element
+         * type of the corresponding collection field in the entity class. Default is false.
+         */
+        private Boolean strictResultMapCollectionTypeCheck;
+
         public void applyTo(MybatisConfiguration target) {
             Optional.ofNullable(getSafeRowBoundsEnabled()).ifPresent(target::setSafeRowBoundsEnabled);
             Optional.ofNullable(getSafeResultHandlerEnabled()).ifPresent(target::setSafeResultHandlerEnabled);
@@ -374,6 +381,7 @@ public class MybatisPlusProperties {
             Optional.ofNullable(getDefaultScriptingLanguageDriver()).ifPresent(target::setDefaultScriptingLanguage);
             Optional.ofNullable(getDatabaseId()).ifPresent(target::setDatabaseId);
             Optional.ofNullable(getUseGeneratedShortKey()).ifPresent(target::setUseGeneratedShortKey);
+            Optional.ofNullable(getStrictResultMapCollectionTypeCheck()).ifPresent(target::setStrictResultMapCollectionTypeCheck);
         }
     }
 

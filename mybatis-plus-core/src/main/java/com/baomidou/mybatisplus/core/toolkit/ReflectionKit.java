@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.reflect.TypeParameterResolver;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
 import java.security.AccessController;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -201,4 +202,50 @@ public final class ReflectionKit {
         return AccessController.doPrivileged(new SetAccessibleAction<>(object));
     }
 
+    /**
+     * Resolves the generic element type of a collection-typed field on the given entity class.
+     * <p>
+     * For example, given a class {@code Group} with field {@code List<User> users},
+     * calling {@code getCollectionElementType(Group.class, "users")} returns {@code User.class}.
+     * </p>
+     *
+     * @param entityClass  the entity class to inspect
+     * @param propertyName the field name
+     * @return the collection element type, or {@code null} if the field is not a
+     *         parameterized collection or does not exist
+     */
+    public static Class<?> getCollectionElementType(Class<?> entityClass, String propertyName) {
+        try {
+            Field field = findField(entityClass, propertyName);
+            return extractCollectionElementType(field);
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+    }
+
+    private static Field findField(Class<?> clazz, String name) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(name);
+        } catch (NoSuchFieldException e) {
+            Class<?> parent = clazz.getSuperclass();
+            if (parent != null && parent != Object.class) {
+                return findField(parent, name);
+            }
+            throw e;
+        }
+    }
+
+    private static Class<?> extractCollectionElementType(Field field) {
+        java.lang.reflect.Type genericType = field.getGenericType();
+        if (genericType instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) genericType;
+            if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
+                java.lang.reflect.Type[] typeArgs = pt.getActualTypeArguments();
+                if (typeArgs.length == 1 && typeArgs[0] instanceof Class) {
+                    return (Class<?>) typeArgs[0];
+                }
+            }
+        }
+        return null;
+    }
 }

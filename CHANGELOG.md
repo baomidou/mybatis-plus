@@ -1,5 +1,8 @@
 ﻿# CHANGELOG
 
+## [v3.5.18] 2026.07.13
+- feat: 新增 `strictResultMapCollectionTypeCheck` ResultMap `collection` 元素 `ofType` 类型严格校验
+
 ## [v3.5.17] 2026.07.07
 - fix: 修复 `issues/6899` 多租户插件 `@Many` 注解查无效问题
 - fix: 修复 `issues/6938` `HashMap` 设置类型转换器异常
