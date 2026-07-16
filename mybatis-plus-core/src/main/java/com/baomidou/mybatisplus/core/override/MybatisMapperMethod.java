@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.core.override;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
@@ -49,6 +47,22 @@ public class MybatisMapperMethod {
     private final MapperMethod.MethodSignature method;
     private final Map<Integer, String> wrapperParamsAliasNameMap;
 
+    /**
+     * execute 级共享数据持有者，生命周期覆盖 MyBatis 拦截器全部生命周期。
+     * 由 {@code MybatisPlusInterceptor} 通过 {@link #getExecuteSharedData()} 读取并传入拦截器链。
+     *
+     * @since 3.5.18
+     */
+    private static final ThreadLocal<Map<String, Object>> EXECUTE_SHARED_DATA = new ThreadLocal<>();
+
+    /**
+     * 获取当前 execute 周期内的共享数据 Map。
+     * 供 {@code MybatisPlusInterceptor} 调用。
+     */
+    public static Map<String, Object> getExecuteSharedData() {
+        return EXECUTE_SHARED_DATA.get();
+    }
+
     public MybatisMapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
         wrapperParamsAliasNameMap = this.getWrapperParamsAliasNameMap(method);
         this.command = new MapperMethod.SqlCommand(config, mapperInterface, method);
@@ -75,71 +89,65 @@ public class MybatisMapperMethod {
 
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
-        switch (command.getType()) {
-            case INSERT: {
-                Object param = this.convertArgsToSqlCommandParam(args);
-                result = rowCountResult(sqlSession.insert(command.getName(), param));
-                break;
-            }
-            case UPDATE: {
-                Object param = this.convertArgsToSqlCommandParam(args);
-                result = rowCountResult(sqlSession.update(command.getName(), param));
-                break;
-            }
-            case DELETE: {
-                Object param = this.convertArgsToSqlCommandParam(args);
-                result = rowCountResult(sqlSession.delete(command.getName(), param));
-                break;
-            }
-            case SELECT:
-                if (method.returnsVoid() && method.hasResultHandler()) {
-                    executeWithResultHandler(sqlSession, args);
-                    result = null;
-                } else if (method.returnsMany()) {
-                    result = executeForMany(sqlSession, args);
-                } else if (method.returnsMap()) {
-                    result = executeForMap(sqlSession, args);
-                } else if (method.returnsCursor()) {
-                    result = executeForCursor(sqlSession, args);
-                } else {
-                    if (IPage.class.isAssignableFrom(method.getReturnType())) {
-                        result = executeForIPage(sqlSession, args);
+        EXECUTE_SHARED_DATA.set(new HashMap<>());
+        try {
+            switch (command.getType()) {
+                case INSERT: {
+                    Object param = this.convertArgsToSqlCommandParam(args);
+                    result = rowCountResult(sqlSession.insert(command.getName(), param));
+                    break;
+                }
+                case UPDATE: {
+                    Object param = this.convertArgsToSqlCommandParam(args);
+                    result = rowCountResult(sqlSession.update(command.getName(), param));
+                    break;
+                }
+                case DELETE: {
+                    Object param = this.convertArgsToSqlCommandParam(args);
+                    result = rowCountResult(sqlSession.delete(command.getName(), param));
+                    break;
+                }
+                case SELECT:
+                    if (method.returnsVoid() && method.hasResultHandler()) {
+                        executeWithResultHandler(sqlSession, args);
+                        result = null;
+                    } else if (method.returnsMany()) {
+                        result = executeForMany(sqlSession, args);
+                    } else if (method.returnsMap()) {
+                        result = executeForMap(sqlSession, args);
+                    } else if (method.returnsCursor()) {
+                        result = executeForCursor(sqlSession, args);
                     } else {
                         Object param = this.convertArgsToSqlCommandParam(args);
-                        result = sqlSession.selectOne(command.getName(), param);
-                        if (method.returnsOptional()
-                            && (result == null || !method.getReturnType().equals(result.getClass()))) {
-                            result = Optional.ofNullable(result);
+                        SelectReturnTypeHandler handler = SelectReturnTypeHandlerRegistry.findHandler(method.getReturnType());
+                        if (handler != null && handler.selectMethod() == SelectReturnTypeHandler.SelectMethod.SELECT_LIST) {
+                            result = sqlSession.selectList(command.getName(), param);
+                        } else {
+                            result = sqlSession.selectOne(command.getName(), param);
+                            if (method.returnsOptional()
+                                && (result == null || !method.getReturnType().equals(result.getClass()))) {
+                                result = Optional.ofNullable(result);
+                            }
+                        }
+                        // transform：在拦截器链全部执行完毕后进行类型转换
+                        if (handler != null) {
+                            result = handler.transform(result, args, method, EXECUTE_SHARED_DATA.get());
                         }
                     }
-                }
-                break;
-            case FLUSH:
-                result = sqlSession.flushStatements();
-                break;
-            default:
-                throw new BindingException("Unknown execution method for: " + command.getName());
+                    break;
+                case FLUSH:
+                    result = sqlSession.flushStatements();
+                    break;
+                default:
+                    throw new BindingException("Unknown execution method for: " + command.getName());
+            }
+        } finally {
+            EXECUTE_SHARED_DATA.remove();
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
             throw new BindingException("Mapper method '" + command.getName()
                 + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
         }
-        return result;
-    }
-
-    @SuppressWarnings("all")
-    private <E> Object executeForIPage(SqlSession sqlSession, Object[] args) {
-        IPage<E> result = null;
-        for (Object arg : args) {
-            if (arg instanceof IPage) {
-                result = (IPage<E>) arg;
-                break;
-            }
-        }
-        Assert.notNull(result, "can't found IPage for args!");
-        Object param = this.convertArgsToSqlCommandParam(args);
-        List<E> list = sqlSession.selectList(command.getName(), param);
-        result.setRecords(list);
         return result;
     }
 

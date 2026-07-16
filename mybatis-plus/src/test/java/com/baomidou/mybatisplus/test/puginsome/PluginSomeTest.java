@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author miemie
@@ -37,34 +38,39 @@ public class PluginSomeTest extends BaseDbTest<AMapper> {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new InnerInterceptor() {
             @Override
-            public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+            public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql,
+                                         Map<String, Object> executeSharedData) throws SQLException {
                 System.out.println("willDoQuery");
                 return true;
             }
 
             @Override
-            public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+            public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql,
+                                       Map<String, Object> executeSharedData) throws SQLException {
                 System.out.println("beforeQuery");
             }
 
             @Override
-            public boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+            public boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter,
+                                          Map<String, Object> executeSharedData) throws SQLException {
                 System.out.println("willDoUpdate");
                 return true;
             }
 
             @Override
-            public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
+            public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter,
+                                       Map<String, Object> executeSharedData) throws SQLException {
                 System.out.println("beforeUpdate");
             }
 
             @Override
-            public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
+            public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout,
+                                        Map<String, Object> executeSharedData) {
                 System.out.println("beforePrepare");
             }
 
             @Override
-            public void beforeGetBoundSql(StatementHandler sh) {
+            public void beforeGetBoundSql(StatementHandler sh, Map<String, Object> executeSharedData) {
                 System.out.println("beforeGetBoundSql");
             }
         });

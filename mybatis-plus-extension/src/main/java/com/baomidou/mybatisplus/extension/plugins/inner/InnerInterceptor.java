@@ -28,6 +28,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -50,8 +51,31 @@ public interface InnerInterceptor {
      * @param boundSql      boundSql
      * @return 新的 boundSql
      */
-    default boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    default boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                                ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         return true;
+    }
+
+    /**
+     * 判断是否执行 {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)}
+     * <p>
+     * 如果不执行query操作,则返回 {@link Collections#emptyList()}
+     *
+     * @param executor          Executor(可能是代理对象)
+     * @param ms                MappedStatement
+     * @param parameter         parameter
+     * @param rowBounds         rowBounds
+     * @param resultHandler     resultHandler
+     * @param boundSql          boundSql
+     * @param executeSharedData 执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                          建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @return 新的 boundSql
+     * @since 3.5.18
+     */
+    default boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                                ResultHandler resultHandler, BoundSql boundSql,
+                                Map<String, Object> executeSharedData) throws SQLException {
+        return willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
     }
 
     /**
@@ -66,8 +90,30 @@ public interface InnerInterceptor {
      * @param resultHandler resultHandler
      * @param boundSql      boundSql
      */
-    default void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    default void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                             ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // do nothing
+    }
+
+    /**
+     * {@link Executor#query(MappedStatement, Object, RowBounds, ResultHandler, CacheKey, BoundSql)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
+     * @param executor          Executor(可能是代理对象)
+     * @param ms                MappedStatement
+     * @param parameter         parameter
+     * @param rowBounds         rowBounds
+     * @param resultHandler     resultHandler
+     * @param boundSql          boundSql
+     * @param executeSharedData 执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                          建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @since 3.5.18
+     */
+    default void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                             ResultHandler resultHandler, BoundSql boundSql,
+                             Map<String, Object> executeSharedData) throws SQLException {
+        beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
     }
 
     /**
@@ -78,9 +124,28 @@ public interface InnerInterceptor {
      * @param executor  Executor(可能是代理对象)
      * @param ms        MappedStatement
      * @param parameter parameter
+     * @return 是否执行 update 操作
      */
     default boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
         return true;
+    }
+
+    /**
+     * 判断是否执行 {@link Executor#update(MappedStatement, Object)}
+     * <p>
+     * 如果不执行update操作,则影响行数的值为 -1
+     *
+     * @param executor          Executor(可能是代理对象)
+     * @param ms                MappedStatement
+     * @param parameter         parameter
+     * @param executeSharedData 执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                          建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @return 是否执行 update 操作
+     * @since 3.5.18
+     */
+    default boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter,
+                                 Map<String, Object> executeSharedData) throws SQLException {
+        return willDoUpdate(executor, ms, parameter);
     }
 
     /**
@@ -97,6 +162,23 @@ public interface InnerInterceptor {
     }
 
     /**
+     * {@link Executor#update(MappedStatement, Object)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
+     * @param executor          Executor(可能是代理对象)
+     * @param ms                MappedStatement
+     * @param parameter         parameter
+     * @param executeSharedData 执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                          建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @since 3.5.18
+     */
+    default void beforeUpdate(Executor executor, MappedStatement ms, Object parameter,
+                              Map<String, Object> executeSharedData) throws SQLException {
+        beforeUpdate(executor, ms, parameter);
+    }
+
+    /**
      * {@link StatementHandler#prepare(Connection, Integer)} 操作前置处理
      * <p>
      * 改改sql啥的
@@ -110,6 +192,23 @@ public interface InnerInterceptor {
     }
 
     /**
+     * {@link StatementHandler#prepare(Connection, Integer)} 操作前置处理
+     * <p>
+     * 改改sql啥的
+     *
+     * @param sh                 StatementHandler(可能是代理对象)
+     * @param connection         Connection
+     * @param transactionTimeout transactionTimeout
+     * @param executeSharedData  执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                           建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @since 3.5.18
+     */
+    default void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout,
+                               Map<String, Object> executeSharedData) {
+        beforePrepare(sh, connection, transactionTimeout);
+    }
+
+    /**
      * {@link StatementHandler#getBoundSql()} 操作前置处理
      * <p>
      * 只有 {@link BatchExecutor} 和 {@link ReuseExecutor} 才会调用到这个方法
@@ -118,6 +217,20 @@ public interface InnerInterceptor {
      */
     default void beforeGetBoundSql(StatementHandler sh) {
         // do nothing
+    }
+
+    /**
+     * {@link StatementHandler#getBoundSql()} 操作前置处理
+     * <p>
+     * 只有 {@link BatchExecutor} 和 {@link ReuseExecutor} 才会调用到这个方法
+     *
+     * @param sh                StatementHandler(可能是代理对象)
+     * @param executeSharedData 执行级共享数据，由 {@code MybatisMapperMethod} 创建，
+     *                          建议使用 {@code getClass().getName() + ".xxx"} 格式的 key 避免冲突。
+     * @since 3.5.18
+     */
+    default void beforeGetBoundSql(StatementHandler sh, Map<String, Object> executeSharedData) {
+        beforeGetBoundSql(sh);
     }
 
     default void setProperties(Properties properties) {

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
+import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
@@ -56,6 +57,7 @@ public class MybatisPlusInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         Object target = invocation.getTarget();
         Object[] args = invocation.getArgs();
+        Map<String, Object> sharedData = MybatisMapperMethod.getExecuteSharedData();
         if (target instanceof Executor) {
             final Executor executor = (Executor) target;
             Object parameter = args[1];
@@ -72,19 +74,19 @@ public class MybatisPlusInterceptor implements Interceptor {
                     boundSql = (BoundSql) args[5];
                 }
                 for (InnerInterceptor query : interceptors) {
-                    if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
+                    if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql, sharedData)) {
                         return Collections.emptyList();
                     }
-                    query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+                    query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql, sharedData);
                 }
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
                 return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
             } else if (isUpdate) {
                 for (InnerInterceptor update : interceptors) {
-                    if (!update.willDoUpdate(executor, ms, parameter)) {
+                    if (!update.willDoUpdate(executor, ms, parameter, sharedData)) {
                         return -1;
                     }
-                    update.beforeUpdate(executor, ms, parameter);
+                    update.beforeUpdate(executor, ms, parameter, sharedData);
                 }
             }
         } else {
@@ -93,13 +95,13 @@ public class MybatisPlusInterceptor implements Interceptor {
             // 目前只有StatementHandler.getBoundSql方法args才为null
             if (null == args) {
                 for (InnerInterceptor innerInterceptor : interceptors) {
-                    innerInterceptor.beforeGetBoundSql(sh);
+                    innerInterceptor.beforeGetBoundSql(sh, sharedData);
                 }
             } else {
                 Connection connections = (Connection) args[0];
                 Integer transactionTimeout = (Integer) args[1];
                 for (InnerInterceptor innerInterceptor : interceptors) {
-                    innerInterceptor.beforePrepare(sh, connections, transactionTimeout);
+                    innerInterceptor.beforePrepare(sh, connections, transactionTimeout, sharedData);
                 }
             }
         }

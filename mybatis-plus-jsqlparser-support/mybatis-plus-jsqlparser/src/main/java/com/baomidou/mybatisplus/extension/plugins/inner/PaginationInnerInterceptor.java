@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.override.SelectReturnTypeHandlerRegistry;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserGlobal;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
@@ -72,7 +73,6 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-
     /**
      * 溢出总页数后是否进行处理
      */
@@ -101,6 +101,17 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected boolean optimizeJoin = true;
 
+    /**
+     * executeSharedData 中存储 count 总数的 key，以当前类全限定名作为前缀避免键冲突。
+     */
+    static final String SHARED_KEY_PAGE_TOTAL =
+        PaginationInnerInterceptor.class.getName() + ".PAGE_TOTAL";
+
+    static {
+        // IPage 与分页插件是绑定关系：没有分页插件就没有 count 查询，IPage 的 total 将无意义
+        SelectReturnTypeHandlerRegistry.register(new IPageReturnTypeHandler());
+    }
+
     public PaginationInnerInterceptor(DbType dbType) {
         this.dbType = dbType;
     }
@@ -113,7 +124,9 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 这里进行count,如果count为0这返回false(就是不再执行sql了)
      */
     @Override
-    public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                               ResultHandler resultHandler, BoundSql boundSql,
+                               Map<String, Object> executeSharedData) throws SQLException {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         if (page == null || page.getSize() < 0 || !page.searchCount() || resultHandler != Executor.NO_RESULT_HANDLER) {
             return true;
@@ -141,7 +154,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 total = Long.parseLong(o.toString());
             }
         }
-        page.setTotal(total);
+        executeSharedData.put(SHARED_KEY_PAGE_TOTAL, total);
         return continuePage(page);
     }
 
