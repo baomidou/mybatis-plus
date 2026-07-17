@@ -21,6 +21,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.CodeSource;
+import java.util.jar.Manifest;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 
@@ -31,11 +32,14 @@ import java.util.jar.JarFile;
  */
 public class MybatisPlusVersion {
 
+    private static final String UNKNOWN_VERSION = "0.0.0";
+
     private MybatisPlusVersion() {
     }
 
     public static String getVersion() {
-        return determineSpringBootVersion();
+        String version = determineSpringBootVersion();
+        return version != null ? version : UNKNOWN_VERSION;
     }
 
     private static String determineSpringBootVersion() {
@@ -62,7 +66,8 @@ public class MybatisPlusVersion {
     }
 
     private static String getImplementationVersion(JarFile jarFile) throws IOException {
-        return jarFile.getManifest().getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
+        Manifest manifest = jarFile.getManifest();
+        return manifest == null ? null : manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
     }
 
 }

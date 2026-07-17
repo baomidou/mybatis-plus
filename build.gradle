@@ -154,6 +154,12 @@ subprojects {
         logging.captureStandardError LogLevel.DEBUG
     }
 
+    tasks.withType(Jar).configureEach {
+        manifest {
+            attributes("Implementation-Version": project.version)
+        }
+    }
+
     plugins.withId('kotlin') {
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
