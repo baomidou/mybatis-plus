@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.override.DefaultMybatisMapperMethodFactory;
+import com.baomidou.mybatisplus.core.override.MybatisMapperMethodFactory;
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -82,7 +84,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
             }
             boolean loadCompleted = false;
             try {
-                knownMappers.put(type, new MybatisMapperProxyFactory<>(type));
+                knownMappers.put(type, new MybatisMapperProxyFactory<>(type, getMapperMethodFactory()));
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
@@ -103,6 +105,25 @@ public class MybatisMapperRegistry extends MapperRegistry {
     @Override
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
+    }
+
+    /**
+     * 从 MybatisConfiguration 中获取 MybatisMapperMethodFactory。
+     * <p>
+     * 若 config 非 MybatisConfiguration 实例或未设置工厂，回退到默认实现。
+     * </p>
+     *
+     * @return MybatisMapperMethodFactory 实例
+     * @since 3.5.18
+     */
+    private MybatisMapperMethodFactory getMapperMethodFactory() {
+        if (config instanceof MybatisConfiguration) {
+            MybatisMapperMethodFactory factory = ((MybatisConfiguration) config).getMybatisMapperMethodFactory();
+            if (factory != null) {
+                return factory;
+            }
+        }
+        return new DefaultMybatisMapperMethodFactory();
     }
 
 }

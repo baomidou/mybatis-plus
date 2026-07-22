@@ -51,11 +51,19 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
     private final SqlSession sqlSession;
     private final Class<T> mapperInterface;
     private final Map<Method, MapperMethodInvoker> methodCache;
+    private final MybatisMapperMethodFactory methodFactory;
 
     public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
+        this(sqlSession, mapperInterface, methodCache, new DefaultMybatisMapperMethodFactory());
+    }
+
+    public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface,
+                              Map<Method, MapperMethodInvoker> methodCache,
+                              MybatisMapperMethodFactory methodFactory) {
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
         this.methodCache = methodCache;
+        this.methodFactory = methodFactory;
     }
 
     static {
@@ -100,7 +108,7 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
         try {
             return MapUtil.computeIfAbsent(methodCache, method, m -> {
                 if (!m.isDefault()) {
-                    return new PlainMethodInvoker(new MybatisMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
+                    return new PlainMethodInvoker(methodFactory.create(mapperInterface, method, sqlSession.getConfiguration()));
                 }
                 try {
                     if (privateLookupInMethod == null) {

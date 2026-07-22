@@ -37,9 +37,15 @@ public class MybatisMapperProxyFactory<T> {
     private final Class<T> mapperInterface;
     @Getter
     private final Map<Method, MybatisMapperProxy.MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
+    private final MybatisMapperMethodFactory methodFactory;
 
     public MybatisMapperProxyFactory(Class<T> mapperInterface) {
+        this(mapperInterface, new DefaultMybatisMapperMethodFactory());
+    }
+
+    public MybatisMapperProxyFactory(Class<T> mapperInterface, MybatisMapperMethodFactory methodFactory) {
         this.mapperInterface = mapperInterface;
+        this.methodFactory = methodFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -48,7 +54,7 @@ public class MybatisMapperProxyFactory<T> {
     }
 
     public T newInstance(SqlSession sqlSession) {
-        final MybatisMapperProxy<T> mapperProxy = new MybatisMapperProxy<>(sqlSession, mapperInterface, methodCache);
+        final MybatisMapperProxy<T> mapperProxy = new MybatisMapperProxy<>(sqlSession, mapperInterface, methodCache, methodFactory);
         return newInstance(mapperProxy);
     }
 }

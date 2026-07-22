@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.core;
 import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.override.DefaultMybatisMapperMethodFactory;
+import com.baomidou.mybatisplus.core.override.MybatisMapperMethodFactory;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -78,6 +80,20 @@ public class MybatisConfiguration extends Configuration {
     @Setter
     @Getter
     private boolean useGeneratedShortKey = true;
+
+    /**
+     * MybatisMapperMethod 工厂。
+     * <p>
+     * 允许用户自定义 {@link com.baomidou.mybatisplus.core.override.MybatisMapperMethod} 的创建逻辑。
+     * 默认为 {@link com.baomidou.mybatisplus.core.override.DefaultMybatisMapperMethodFactory}，
+     * 行为与原逻辑完全一致。
+     * </p>
+     *
+     * @since 3.5.18
+     */
+    @Setter
+    @Getter
+    protected MybatisMapperMethodFactory mybatisMapperMethodFactory = new DefaultMybatisMapperMethodFactory();
 
     public MybatisConfiguration(Environment environment) {
         this();
