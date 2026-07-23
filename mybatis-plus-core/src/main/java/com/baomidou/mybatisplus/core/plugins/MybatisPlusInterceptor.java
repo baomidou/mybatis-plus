@@ -71,7 +71,7 @@ public class MybatisPlusInterceptor implements Interceptor {
         Object[] args = invocation.getArgs();
         if (target instanceof Executor) {
             final Executor executor = (Executor) target;
-            Object mapperMethodParameter = args[1];
+            Object parameter = args[1];
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
             SqlCommandType sqlCommandType = ms.getSqlCommandType();
@@ -82,32 +82,32 @@ public class MybatisPlusInterceptor implements Interceptor {
                 ResultHandler resultHandler = (ResultHandler) args[3];
                 BoundSql boundSql;
                 if (args.length == 4) {
-                    boundSql = ms.getBoundSql(mapperMethodParameter);
+                    boundSql = ms.getBoundSql(parameter);
                 } else {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
 
                 for (InnerInterceptor query : interceptors) {
-                    if (!query.willDoQuery(executor, ms, mapperMethodParameter, rowBounds, resultHandler, boundSql)) {
-                        return afterIntercept(sqlCommandType, invocation, mapperMethodParameter,
+                    if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
+                        return afterIntercept(sqlCommandType, invocation, parameter,
                             Collections.emptyList(), mapperMethod, false);
                     }
-                    query.beforeQuery(executor, ms, mapperMethodParameter, rowBounds, resultHandler, boundSql);
+                    query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
                 }
-                CacheKey cacheKey = executor.createCacheKey(ms, mapperMethodParameter, rowBounds, boundSql);
-                Object queryResult = executor.query(ms, mapperMethodParameter, rowBounds, resultHandler, cacheKey, boundSql);
-                return afterIntercept(sqlCommandType, invocation, mapperMethodParameter, queryResult, mapperMethod, true);
+                CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
+                Object queryResult = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                return afterIntercept(sqlCommandType, invocation, parameter, queryResult, mapperMethod, true);
             } else if (isUpdate) {
                 for (InnerInterceptor update : interceptors) {
-                    if (!update.willDoUpdate(executor, ms, mapperMethodParameter)) {
-                        return afterIntercept(sqlCommandType, invocation, mapperMethodParameter, -1, mapperMethod, false);
+                    if (!update.willDoUpdate(executor, ms, parameter)) {
+                        return afterIntercept(sqlCommandType, invocation, parameter, -1, mapperMethod, false);
                     }
-                    update.beforeUpdate(executor, ms, mapperMethodParameter);
+                    update.beforeUpdate(executor, ms, parameter);
                 }
-                return afterIntercept(sqlCommandType, invocation, mapperMethodParameter, invocation.proceed(), mapperMethod, true);
+                return afterIntercept(sqlCommandType, invocation, parameter, invocation.proceed(), mapperMethod, true);
             }
-            return afterIntercept(sqlCommandType, invocation, mapperMethodParameter, invocation.proceed(), mapperMethod, true);
+            return afterIntercept(sqlCommandType, invocation, parameter, invocation.proceed(), mapperMethod, true);
         } else {
             // StatementHandler
             final StatementHandler sh = (StatementHandler) target;
@@ -141,20 +141,20 @@ public class MybatisPlusInterceptor implements Interceptor {
      *
      * @param sqlCommandType SQL 命令类型（StatementHandler 路径时为 null）
      * @param invocation     原始 Invocation（兜底）
-     * @param mapperMethodParameter Mapper 方法的调用实参（StatementHandler 路径时为 null）
+     * @param parameter Mapper 方法的调用实参（StatementHandler 路径时为 null）
      * @param result               Executor 操作或 invocation.proceed() 的返回结果
      * @param mapperMethod         Mapper 方法（带缓存，SELECT 外为 null）
      * @param executed 是否实际执行了底层操作（false 表示被 InnerInterceptor 短路跳过）
      * @return 加工后的结果。IPage 场景返回单元素 List（元素为 IPage），由 selectOne 解包后返回 IPage 对象；非 IPage 场景原样返回
      */
-    protected Object afterIntercept(SqlCommandType sqlCommandType, Invocation invocation, Object mapperMethodParameter,
+    protected Object afterIntercept(SqlCommandType sqlCommandType, Invocation invocation, Object parameter,
                                      Object result, Method mapperMethod, boolean executed) {
         // 默认仅处理 SELECT 返回 IPage 的场景：将查询结果 List 载入 IPage 后包装为单元素
         // List，使调用方 selectOne 解包后拿到完整的 IPage 对象。其他定制需求（如 UPDATE
         // 后置校验、INSERT 审计日志、DELETE 缓存失效等）可通过继承重写本方法实现。
         if (sqlCommandType == SqlCommandType.SELECT
             && mapperMethod != null && IPage.class.isAssignableFrom(mapperMethod.getReturnType())) {
-            return processPageResult(mapperMethodParameter, result, mapperMethod, executed);
+            return processPageResult(parameter, result, mapperMethod, executed);
         }
         // 非目标场景，原样返回
         return result;
@@ -170,19 +170,19 @@ public class MybatisPlusInterceptor implements Interceptor {
      * </p>
      * <p>子类可重写此方法自定义 Page 结果的加工逻辑。</p>
      *
-     * @param mapperMethodParameter Mapper 方法的调用实参
+     * @param parameter Mapper 方法的调用实参
      * @param queryResult          executor.query() 的返回结果
      * @param mapperMethod         Mapper 方法
      * @param executed             是否实际执行了底层操作（false 表示被 InnerInterceptor 短路跳过）
      * @return 单元素 List（元素为 IPage），由 selectOne 解包后返回 IPage 对象；非 List 或未找到 IPage 参数时原样返回
      */
     @SuppressWarnings("unchecked")
-    protected Object processPageResult(Object mapperMethodParameter, Object queryResult,
+    protected Object processPageResult(Object parameter, Object queryResult,
                                         Method mapperMethod, boolean executed) {
         if (!(queryResult instanceof List)) {
             return queryResult;
         }
-        IPage page = ParameterUtils.findPage(mapperMethodParameter).orElse(null);
+        IPage page = ParameterUtils.findPage(parameter).orElse(null);
         if (page != null) {
             page.setRecords((List) queryResult);
             return Collections.singletonList(page);
@@ -242,7 +242,7 @@ public class MybatisPlusInterceptor implements Interceptor {
      * @param statementId MappedStatement.getId()，格式：com.example.UserMapper.selectPage
      * @return 对应的 Method 对象，解析失败时返回 null
      */
-    protected Method resolveMapperMethod(String statementId) {
+    public static Method resolveMapperMethod(String statementId) {
         return METHOD_CACHE.computeIfAbsent(statementId, key -> {
             try {
                 String className = key.substring(0, key.lastIndexOf('.'));
