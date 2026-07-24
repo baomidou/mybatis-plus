@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -34,9 +35,11 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author miemie
@@ -58,9 +61,10 @@ public class MybatisPlusInterceptor implements Interceptor {
     /**
      * Mapper 方法反射缓存。
      * key = MappedStatement.getId()（格式：com.example.UserMapper.selectPage）
+     * value = 同名方法的有序列表（按参数数量降序），空 List 表示解析失败的负缓存。
      * 通过 ConcurrentHashMap 保证同一 MappedStatement 的反射解析仅执行一次。
      */
-    protected static final ConcurrentHashMap<String, Method> METHOD_CACHE = new ConcurrentHashMap<>();
+    protected static final ConcurrentHashMap<String, List<Method>> METHOD_CACHE = new ConcurrentHashMap<>();
 
     @Setter
     private List<InnerInterceptor> interceptors = new ArrayList<>();
@@ -76,7 +80,7 @@ public class MybatisPlusInterceptor implements Interceptor {
             MappedStatement ms = (MappedStatement) args[0];
             SqlCommandType sqlCommandType = ms.getSqlCommandType();
             // 提前解析 Mapper 方法（带缓存），同一 Executor 内所有 afterIntercept 调用共享
-            Method mapperMethod = resolveMapperMethod(ms.getId());
+            Method mapperMethod = resolveMapperMethod(ms.getId(), parameter);
             if (!isUpdate && sqlCommandType == SqlCommandType.SELECT) {
                 RowBounds rowBounds = (RowBounds) args[2];
                 ResultHandler resultHandler = (ResultHandler) args[3];
@@ -237,27 +241,125 @@ public class MybatisPlusInterceptor implements Interceptor {
     }
 
     /**
-     * 从 MappedStatement ID 反查 Mapper 方法（带缓存）。
+     * 从 MappedStatement ID + 运行参数反查 Mapper 方法。
+     * <p>处理同名重载方法：通过实际参数 ParamMap 匹配最合适的方法。</p>
      *
      * @param statementId MappedStatement.getId()，格式：com.example.UserMapper.selectPage
-     * @return 对应的 Method 对象，解析失败时返回 null
+     * @param parameter   MyBatis 传入的调用参数（单参数为原始对象，多参数为 {@code MapperMethod.ParamMap}）
+     * @return 对应的 Method 对象，解析失败或匹配失败时返回 null
      */
-    public static Method resolveMapperMethod(String statementId) {
-        return METHOD_CACHE.computeIfAbsent(statementId, key -> {
-            try {
-                String className = key.substring(0, key.lastIndexOf('.'));
-                String methodName = key.substring(key.lastIndexOf('.') + 1);
-                Class<?> clazz = Class.forName(className);
-                for (Method m : clazz.getMethods()) {
-                    if (m.getName().equals(methodName)) {
-                        return m;
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Failed to resolve mapper method for statement: {} - {}: {}", statementId,
-                    e.getClass().getSimpleName(), e.getMessage());
-            }
+    public static Method resolveMapperMethod(String statementId, Object parameter) {
+        List<Method> methods = getMethodsByStatementId(statementId);
+        if (methods.isEmpty()) {
             return null;
+        }
+        if (methods.size() == 1) {
+            return methods.get(0);
+        }
+        // 多方法按参数数量降序匹配，避免子集窃取
+        for (Method method : methods) {
+            if (matchMethodWithParameter(method, parameter)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从缓存加载 statementId 对应的同名方法列表（带负缓存）。
+     *
+     * @param statementId MappedStatement.getId()
+     * @return 同名方法列表（按参数数量降序），解析失败时为空 List
+     */
+    private static List<Method> getMethodsByStatementId(String statementId) {
+        return METHOD_CACHE.computeIfAbsent(statementId, id -> {
+            int lastDot = id.lastIndexOf('.');
+            if (lastDot <= 0 || lastDot == id.length() - 1) {
+                return Collections.emptyList();
+            }
+            try {
+                String className = id.substring(0, lastDot);
+                String methodName = id.substring(lastDot + 1);
+                Class<?> clazz = Class.forName(className);
+                return Arrays.stream(clazz.getMethods())
+                        .filter(m -> m.getName().equals(methodName))
+                        .sorted(Comparator.comparingInt(Method::getParameterCount).reversed())
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                log.warn("Failed to resolve mapper method for statement: {} - {}: {}", id,
+                        e.getClass().getSimpleName(), e.getMessage());
+                return Collections.emptyList();
+            }
         });
+    }
+
+    /**
+     * 检查 method 的参数是否与运行时 parameter 匹配。
+     * <p>匹配规则：
+     * <ul>
+     *   <li>单参数未被 MyBatis 包装 → 直接类型匹配</li>
+     *   <li>{@link MapperMethod.ParamMap} → 按 {@code param1...paramN} 位置逐一类型匹配</li>
+     *   <li>null 值兼容任意类型，基本类型与包装类型等价</li>
+     * </ul>
+     * </p>
+     *
+     * @param method    候选方法
+     * @param parameter 运行时参数（单参数为原始对象，多参数为 ParamMap）
+     * @return 匹配成功返回 true
+     */
+    private static boolean matchMethodWithParameter(Method method, Object parameter) {
+        Parameter[] methodParams = method.getParameters();
+        if (methodParams.length == 0 && parameter == null) {
+            return true;
+        }
+
+        // 单参数未被 MyBatis 包装 → 直接类型匹配
+        // MapperMethod.ParamMap 是 MyBatis 的明确包装标记：多参数 / 单参数 @Param / 集合类型
+        if (methodParams.length == 1 && !(parameter instanceof MapperMethod.ParamMap)) {
+            return isTypeCompatible(methodParams[0].getType(), parameter);
+        }
+
+        // 多参数 / 单参数被 ParamMap 包装 → 按 param1...paramN 位置逐一类型匹配
+        if (parameter instanceof MapperMethod.ParamMap) {
+            @SuppressWarnings("unchecked")
+            MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap<Object>) parameter;
+            for (int i = 0; i < methodParams.length; i++) {
+                String key = "param" + (i + 1);
+                if (!paramMap.containsKey(key)) {
+                    return false;
+                }
+                Object value = paramMap.get(key);
+                if (value != null && !isTypeCompatible(methodParams[i].getType(), value)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断值类型是否与方法参数类型兼容。
+     * <p>null 值视为与任何类型兼容；基本类型与对应包装类型等价。</p>
+     *
+     * @param expectedType 方法参数声明的类型
+     * @param actualValue  实际值
+     * @return 兼容返回 true
+     */
+    private static boolean isTypeCompatible(Class<?> expectedType, Object actualValue) {
+        if (actualValue == null) {
+            return true;
+        }
+        // 基本类型 → 包装类型，引用类型原样
+        Class<?> type = expectedType;
+        if (type == int.class) type = Integer.class;
+        else if (type == long.class) type = Long.class;
+        else if (type == double.class) type = Double.class;
+        else if (type == float.class) type = Float.class;
+        else if (type == boolean.class) type = Boolean.class;
+        else if (type == char.class) type = Character.class;
+        else if (type == byte.class) type = Byte.class;
+        else if (type == short.class) type = Short.class;
+        return type.isInstance(actualValue);
     }
 }
