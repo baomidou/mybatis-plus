@@ -15,11 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.plugins;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import com.baomidou.mybatisplus.core.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -30,13 +34,18 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.sql.Connection;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author miemie
  * @since 3.4.0
  */
+@Slf4j
 @SuppressWarnings({"rawtypes"})
 @Intercepts(
     {
@@ -48,6 +57,14 @@ import java.util.*;
     }
 )
 public class MybatisPlusInterceptor implements Interceptor {
+
+    /**
+     * Mapper 方法反射缓存。
+     * key = MappedStatement.getId()（格式：com.example.UserMapper.selectPage）
+     * value = 同名方法的有序列表（按参数数量降序），空 List 表示解析失败的负缓存。
+     * 通过 ConcurrentHashMap 保证同一 MappedStatement 的反射解析仅执行一次。
+     */
+    protected static final ConcurrentHashMap<String, List<Method>> METHOD_CACHE = new ConcurrentHashMap<>();
 
     @Setter
     private List<InnerInterceptor> interceptors = new ArrayList<>();
@@ -61,7 +78,10 @@ public class MybatisPlusInterceptor implements Interceptor {
             Object parameter = args[1];
             boolean isUpdate = args.length == 2;
             MappedStatement ms = (MappedStatement) args[0];
-            if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+            SqlCommandType sqlCommandType = ms.getSqlCommandType();
+            // 提前解析 Mapper 方法（带缓存），同一 Executor 内所有 afterIntercept 调用共享
+            Method mapperMethod = resolveMapperMethod(ms.getId(), parameter);
+            if (!isUpdate && sqlCommandType == SqlCommandType.SELECT) {
                 RowBounds rowBounds = (RowBounds) args[2];
                 ResultHandler resultHandler = (ResultHandler) args[3];
                 BoundSql boundSql;
@@ -71,22 +91,27 @@ public class MybatisPlusInterceptor implements Interceptor {
                     // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
                     boundSql = (BoundSql) args[5];
                 }
+
                 for (InnerInterceptor query : interceptors) {
                     if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
-                        return Collections.emptyList();
+                        return afterIntercept(sqlCommandType, invocation, parameter,
+                            Collections.emptyList(), mapperMethod, false);
                     }
                     query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
                 }
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
-                return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                Object queryResult = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                return afterIntercept(sqlCommandType, invocation, parameter, queryResult, mapperMethod, true);
             } else if (isUpdate) {
                 for (InnerInterceptor update : interceptors) {
                     if (!update.willDoUpdate(executor, ms, parameter)) {
-                        return -1;
+                        return afterIntercept(sqlCommandType, invocation, parameter, -1, mapperMethod, false);
                     }
                     update.beforeUpdate(executor, ms, parameter);
                 }
+                return afterIntercept(sqlCommandType, invocation, parameter, invocation.proceed(), mapperMethod, true);
             }
+            return afterIntercept(sqlCommandType, invocation, parameter, invocation.proceed(), mapperMethod, true);
         } else {
             // StatementHandler
             final StatementHandler sh = (StatementHandler) target;
@@ -102,8 +127,71 @@ public class MybatisPlusInterceptor implements Interceptor {
                     innerInterceptor.beforePrepare(sh, connections, transactionTimeout);
                 }
             }
+            return afterIntercept(null, invocation, null, invocation.proceed(), null, true);
         }
-        return invocation.proceed();
+    }
+
+    /**
+     * 拦截器后置处理，覆盖 {@link #intercept(Invocation)} 的所有返回路径。
+     * 默认实现仅对 SELECT 结果做 IPage 自动包装，其余类型原样返回。
+     * <p>
+     * 当 Mapper 方法返回类型为 IPage 时，MyBatis 底层会走 {@code selectOne}，
+     * 而 {@code selectOne} 内部实际调用 {@code selectList} 获取 List 结果。
+     * 为了让 {@code selectOne} 能正确返回 IPage 对象，此处将查询结果 List
+     * 载入 IPage 后包装为单元素 List（{@code Collections.singletonList(page)}），
+     * {@code selectOne} 取 {@code get(0)} 即得到完整的 IPage 对象。
+     * </p>
+     * <p>子类可重写此方法实现自定义的结果加工。</p>
+     *
+     * @param sqlCommandType SQL 命令类型（StatementHandler 路径时为 null）
+     * @param invocation     原始 Invocation（兜底）
+     * @param parameter Mapper 方法的调用实参（StatementHandler 路径时为 null）
+     * @param result               Executor 操作或 invocation.proceed() 的返回结果
+     * @param mapperMethod         Mapper 方法（带缓存，SELECT 外为 null）
+     * @param executed 是否实际执行了底层操作（false 表示被 InnerInterceptor 短路跳过）
+     * @return 加工后的结果。IPage 场景返回单元素 List（元素为 IPage），由 selectOne 解包后返回 IPage 对象；非 IPage 场景原样返回
+     */
+    protected Object afterIntercept(SqlCommandType sqlCommandType, Invocation invocation, Object parameter,
+                                     Object result, Method mapperMethod, boolean executed) {
+        // 默认仅处理 SELECT 返回 IPage 的场景：将查询结果 List 载入 IPage 后包装为单元素
+        // List，使调用方 selectOne 解包后拿到完整的 IPage 对象。其他定制需求（如 UPDATE
+        // 后置校验、INSERT 审计日志、DELETE 缓存失效等）可通过继承重写本方法实现。
+        if (sqlCommandType == SqlCommandType.SELECT
+            && mapperMethod != null && IPage.class.isAssignableFrom(mapperMethod.getReturnType())) {
+            return processPageResult(parameter, result, mapperMethod, executed);
+        }
+        // 非目标场景，原样返回
+        return result;
+    }
+
+    /**
+     * Page 返回值处理。从参数中查找 IPage 实例，将查询结果 List 写入后包装为
+     * 单元素 List（{@code Collections.singletonList(page)}）。
+     * <p>
+     * IPage 返回值经 {@code selectOne} 获取——{@code selectOne} 内部调用
+     * {@code selectList} 拿到 List 后按 {@code size==1 取 get(0)} 解包，
+     * 此处将 List 载入 IPage 并包装为单元素 List，使解包后得到完整的 IPage 对象。
+     * </p>
+     * <p>子类可重写此方法自定义 Page 结果的加工逻辑。</p>
+     *
+     * @param parameter Mapper 方法的调用实参
+     * @param queryResult          executor.query() 的返回结果
+     * @param mapperMethod         Mapper 方法
+     * @param executed             是否实际执行了底层操作（false 表示被 InnerInterceptor 短路跳过）
+     * @return 单元素 List（元素为 IPage），由 selectOne 解包后返回 IPage 对象；非 List 或未找到 IPage 参数时原样返回
+     */
+    @SuppressWarnings("unchecked")
+    protected Object processPageResult(Object parameter, Object queryResult,
+                                        Method mapperMethod, boolean executed) {
+        if (!(queryResult instanceof List)) {
+            return queryResult;
+        }
+        IPage page = ParameterUtils.findPage(parameter).orElse(null);
+        if (page != null) {
+            page.setRecords((List) queryResult);
+            return Collections.singletonList(page);
+        }
+        return queryResult;
     }
 
     @Override
@@ -150,5 +238,128 @@ public class MybatisPlusInterceptor implements Interceptor {
         return "MybatisPlusInterceptor{" +
             "interceptors=" + interceptors +
             '}';
+    }
+
+    /**
+     * 从 MappedStatement ID + 运行参数反查 Mapper 方法。
+     * <p>处理同名重载方法：通过实际参数 ParamMap 匹配最合适的方法。</p>
+     *
+     * @param statementId MappedStatement.getId()，格式：com.example.UserMapper.selectPage
+     * @param parameter   MyBatis 传入的调用参数（单参数为原始对象，多参数为 {@code MapperMethod.ParamMap}）
+     * @return 对应的 Method 对象，解析失败或匹配失败时返回 null
+     */
+    public static Method resolveMapperMethod(String statementId, Object parameter) {
+        List<Method> methods = getMethodsByStatementId(statementId);
+        if (methods.isEmpty()) {
+            return null;
+        }
+        if (methods.size() == 1) {
+            return methods.get(0);
+        }
+        // 多方法按参数数量降序匹配，避免子集窃取
+        for (Method method : methods) {
+            if (matchMethodWithParameter(method, parameter)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 从缓存加载 statementId 对应的同名方法列表（带负缓存）。
+     *
+     * @param statementId MappedStatement.getId()
+     * @return 同名方法列表（按参数数量降序），解析失败时为空 List
+     */
+    private static List<Method> getMethodsByStatementId(String statementId) {
+        return METHOD_CACHE.computeIfAbsent(statementId, id -> {
+            int lastDot = id.lastIndexOf('.');
+            if (lastDot <= 0 || lastDot == id.length() - 1) {
+                return Collections.emptyList();
+            }
+            try {
+                String className = id.substring(0, lastDot);
+                String methodName = id.substring(lastDot + 1);
+                Class<?> clazz = Class.forName(className);
+                return Arrays.stream(clazz.getMethods())
+                        .filter(m -> m.getName().equals(methodName))
+                        .sorted(Comparator.comparingInt(Method::getParameterCount).reversed())
+                        .collect(Collectors.toList());
+            } catch (Exception e) {
+                log.warn("Failed to resolve mapper method for statement: {} - {}: {}", id,
+                        e.getClass().getSimpleName(), e.getMessage());
+                return Collections.emptyList();
+            }
+        });
+    }
+
+    /**
+     * 检查 method 的参数是否与运行时 parameter 匹配。
+     * <p>匹配规则：
+     * <ul>
+     *   <li>单参数未被 MyBatis 包装 → 直接类型匹配</li>
+     *   <li>{@link MapperMethod.ParamMap} → 按 {@code param1...paramN} 位置逐一类型匹配</li>
+     *   <li>null 值兼容任意类型，基本类型与包装类型等价</li>
+     * </ul>
+     * </p>
+     *
+     * @param method    候选方法
+     * @param parameter 运行时参数（单参数为原始对象，多参数为 ParamMap）
+     * @return 匹配成功返回 true
+     */
+    private static boolean matchMethodWithParameter(Method method, Object parameter) {
+        Parameter[] methodParams = method.getParameters();
+        if (methodParams.length == 0 && parameter == null) {
+            return true;
+        }
+
+        // 单参数未被 MyBatis 包装 → 直接类型匹配
+        // MapperMethod.ParamMap 是 MyBatis 的明确包装标记：多参数 / 单参数 @Param / 集合类型
+        if (methodParams.length == 1 && !(parameter instanceof MapperMethod.ParamMap)) {
+            return isTypeCompatible(methodParams[0].getType(), parameter);
+        }
+
+        // 多参数 / 单参数被 ParamMap 包装 → 按 param1...paramN 位置逐一类型匹配
+        if (parameter instanceof MapperMethod.ParamMap) {
+            @SuppressWarnings("unchecked")
+            MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap<Object>) parameter;
+            for (int i = 0; i < methodParams.length; i++) {
+                String key = "param" + (i + 1);
+                if (!paramMap.containsKey(key)) {
+                    return false;
+                }
+                Object value = paramMap.get(key);
+                if (value != null && !isTypeCompatible(methodParams[i].getType(), value)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断值类型是否与方法参数类型兼容。
+     * <p>null 值视为与任何类型兼容；基本类型与对应包装类型等价。</p>
+     *
+     * @param expectedType 方法参数声明的类型
+     * @param actualValue  实际值
+     * @return 兼容返回 true
+     */
+    private static boolean isTypeCompatible(Class<?> expectedType, Object actualValue) {
+        if (actualValue == null) {
+            return true;
+        }
+        // 基本类型 → 包装类型，引用类型原样
+        Class<?> type = expectedType;
+        if (type == int.class) type = Integer.class;
+        else if (type == long.class) type = Long.class;
+        else if (type == double.class) type = Double.class;
+        else if (type == float.class) type = Float.class;
+        else if (type == boolean.class) type = Boolean.class;
+        else if (type == char.class) type = Character.class;
+        else if (type == byte.class) type = Byte.class;
+        else if (type == short.class) type = Short.class;
+        return type.isInstance(actualValue);
     }
 }
