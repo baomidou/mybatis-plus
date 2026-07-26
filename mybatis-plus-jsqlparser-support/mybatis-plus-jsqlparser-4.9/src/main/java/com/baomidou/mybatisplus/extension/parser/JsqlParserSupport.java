@@ -82,7 +82,7 @@ public abstract class JsqlParserSupport {
      */
     protected String processParser(Statement statement, int index, String sql, Object obj) {
         if (logger.isDebugEnabled()) {
-            logger.debug("SQL to parse, SQL: " + sql);
+            logger.debug("SQL to parse, SQL: " + statement);
         }
         if (statement instanceof Insert) {
             this.processInsert((Insert) statement, index, sql, obj);

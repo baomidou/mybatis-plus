@@ -7,9 +7,13 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,7 +100,87 @@ public class DataPermissionInterceptorTest {
             "SELECT * FROM sys_role WHERE id = 3 AND id = 1 AND role_id IN (SELECT id FROM sys_role)");
     }
 
+    @Test
+    void parserMultiShouldLogCurrentStatementInsteadOfEntireBatch() {
+        CapturingLog.clear();
+        LogFactory.useCustomLogging(CapturingLog.class);
+
+        DataPermissionInterceptor interceptor = new DataPermissionInterceptor();
+        String firstSql = "update sys_user set name = 'a' where id = 1";
+        String secondSql = "delete from sys_role where id = 2";
+        String thirdSql = "update sys_dept set enabled = 1 where id = 3";
+        String batchSql = firstSql + "; " + secondSql + "; " + thirdSql;
+
+        String parsedSql;
+        List<String> sqlToParseLogs;
+        try {
+            parsedSql = interceptor.parserMulti(batchSql, TEST_1);
+            sqlToParseLogs = CapturingLog.debugMessages().stream()
+                .filter(message -> message.startsWith(CapturingLog.SQL_TO_PARSE_PREFIX))
+                .map(message -> message.substring(CapturingLog.SQL_TO_PARSE_PREFIX.length()))
+                .toList();
+        } finally {
+            LogFactory.useSlf4jLogging();
+            CapturingLog.clear();
+        }
+
+        String[] parsedStatements = parsedSql.split(";");
+        assertThat(parsedStatements).hasSize(3);
+        assertThat(sqlToParseLogs).hasSize(3);
+        assertThat(sqlToParseLogs).containsExactly(parsedStatements);
+        assertThat(sqlToParseLogs).noneMatch(batchSql::equals);
+    }
+
     void assertSql(String mappedStatementId, String sql, String targetSql) {
         assertThat(INTERCEPTOR.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
+    }
+
+    public static class CapturingLog implements Log {
+
+        private static final String SQL_TO_PARSE_PREFIX = "SQL to parse, SQL: ";
+
+        private static final List<String> DEBUG_MESSAGES = new ArrayList<>();
+
+        public CapturingLog(String clazz) {
+        }
+
+        static void clear() {
+            DEBUG_MESSAGES.clear();
+        }
+
+        static List<String> debugMessages() {
+            return DEBUG_MESSAGES;
+        }
+
+        @Override
+        public boolean isDebugEnabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isTraceEnabled() {
+            return false;
+        }
+
+        @Override
+        public void error(String s, Throwable e) {
+        }
+
+        @Override
+        public void error(String s) {
+        }
+
+        @Override
+        public void debug(String s) {
+            DEBUG_MESSAGES.add(s);
+        }
+
+        @Override
+        public void trace(String s) {
+        }
+
+        @Override
+        public void warn(String s) {
+        }
     }
 }
