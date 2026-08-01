@@ -79,6 +79,9 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     IPage<H2User> testPage1(@Param(value = "user") H2User h2User, @Param(value = "page") Page page);
 
     @Select("select * from h2user")
+    IPage<H2User> selectPage(IPage<H2User> page);
+
+    @Select("select * from h2user")
     IPage<H2User> testPage2(@Param(value = "user") Page page, @Param(value = "page") H2User h2User);
 
     @Select("select count(*) from h2user")

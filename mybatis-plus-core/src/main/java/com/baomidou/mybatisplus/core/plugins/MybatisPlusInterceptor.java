@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.plugins;
 
 import com.baomidou.mybatisplus.core.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.PageExecutionContext;
 import com.baomidou.mybatisplus.core.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Setter;
@@ -78,7 +79,8 @@ public class MybatisPlusInterceptor implements Interceptor {
                     query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
                 }
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
-                return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                Object queryResult = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+                return PageExecutionContext.processResult(ms.getId(), queryResult);
             } else if (isUpdate) {
                 for (InnerInterceptor update : interceptors) {
                     if (!update.willDoUpdate(executor, ms, parameter)) {

@@ -489,6 +489,19 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
+    void selectPageDoesNotNestThePageAsARecord() {
+        Page<H2User> page = new Page<>(1, 2);
+
+        IPage<H2User> result = userMapper.selectPage(page);
+
+        Assertions.assertSame(page, result);
+        Assertions.assertEquals(2, result.getRecords().size());
+        Assertions.assertFalse(result.getRecords().stream().anyMatch(IPage.class::isInstance));
+        Assertions.assertTrue(result.getRecords().stream().allMatch(H2User.class::isInstance));
+        Assertions.assertTrue(result.getTotal() >= result.getRecords().size());
+    }
+
+    @Test
     void testCountLong() {
         Long count = userMapper.selectCountLong();
         System.out.println(count);
