@@ -38,4 +38,21 @@ class BaseMapperSelectOneCompatibilityTest {
         assertThatThrownBy(() -> mapper.selectOne(new QueryWrapper<>()))
             .isInstanceOf(TooManyResultsException.class);
     }
+
+    @Test
+    void selectOneReturnsFirstResultWhenThrowExIsFalse() {
+        BaseMapper<Object> mapper = Mockito.mock(BaseMapper.class, Mockito.CALLS_REAL_METHODS);
+        Object first = new Object();
+        when(mapper.selectList(any(Wrapper.class))).thenReturn(List.of(first, new Object()));
+
+        assertThat(mapper.selectOne(new QueryWrapper<>(), false)).isSameAs(first);
+    }
+
+    @Test
+    void selectOneReturnsNullForAnEmptyList() {
+        BaseMapper<Object> mapper = Mockito.mock(BaseMapper.class, Mockito.CALLS_REAL_METHODS);
+        when(mapper.selectList(any(Wrapper.class))).thenReturn(List.of());
+
+        assertThat(mapper.selectOne(new QueryWrapper<>())).isNull();
+    }
 }
