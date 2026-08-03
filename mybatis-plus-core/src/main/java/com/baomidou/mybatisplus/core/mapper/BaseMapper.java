@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.BatchResult;
@@ -36,7 +35,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -329,36 +327,20 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，查询一条记录，现在会根据{@code throwEx}参数判断是否抛出异常，如果为false就直接返回一条数据
      * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
-     * <p>数据库必须支持游标查询，如果不支持请切换使用其它方法或者自定义 XML SQL 处理</p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
-        MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(this);
-        SqlSessionFactory factory = MybatisUtils.getSqlSessionFactory(mapperProxyMetadata.getSqlSession());
-        try (SqlSession sqlSession = factory.openSession()) {
-            MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.WRAPPER, queryWrapper);
-            // 使用游标方式查询
-            try (Cursor<T> cursor = sqlSession.selectCursor(mapperProxyMetadata.getMapperInterface().getName() + Constants.DOT +
-                Constants.SELECT_WITH_CURSOR, param)) {
-                Iterator<T> iterator = cursor.iterator();
-                if (!iterator.hasNext()) {
-                    return null;
-                }
-                T first = iterator.next();
-                if (iterator.hasNext()) {
-                    if (throwEx) {
-                        throw new TooManyResultsException("Expected one result (or null) but found more than one");
-                    }
-                }
-                return first;
-            } catch (IOException e) {
-                if (throwEx) {
-                    throw new RuntimeException(e);
-                }
+        List<T> list = this.selectList(queryWrapper);
+        int size = list.size();
+        if (size == 1) {
+            return list.get(0);
+        } else if (size > 1) {
+            if (throwEx) {
+                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + size);
             }
+            return list.get(0);
         }
         return null;
     }
