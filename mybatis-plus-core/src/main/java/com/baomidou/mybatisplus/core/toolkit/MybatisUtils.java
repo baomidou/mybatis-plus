@@ -23,6 +23,10 @@ import com.baomidou.mybatisplus.core.override.MybatisMapperProxy;
 import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.TransactionalCacheManager;
+import org.apache.ibatis.executor.CachingExecutor;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -134,6 +138,50 @@ public class MybatisUtils {
         SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.getGlobalConfig(sqlSession.getConfiguration()).getSqlSessionFactory();
         Assert.isTrue(sqlSessionFactory != null, "Please implement access to the sqlSessionFactory property or bind sqlSessionFactory to global access.");
         return sqlSessionFactory;
+    }
+
+    /**
+     * 清理 Mapper 调用会话中指定语句关联的一级和二级缓存。
+     *
+     * @param mapperProxyMetadata Mapper 代理元数据
+     * @param statementId         {@link org.apache.ibatis.mapping.MappedStatement} ID
+     * @since 3.5.18
+     */
+    public static void clearMapperCache(MapperProxyMetadata mapperProxyMetadata, String statementId) {
+        SqlSession sqlSession = mapperProxyMetadata.getSqlSession();
+        if (CompatibleHelper.hasCompatibleSet()) {
+            CompatibleHelper.getCompatibleSet().clearMapperCache(sqlSession, statementId);
+        } else {
+            clearMapperCache(sqlSession, statementId);
+        }
+    }
+
+    /**
+     * 清理指定会话的一级缓存，并使指定语句关联的二级缓存随当前事务失效。
+     *
+     * @param sqlSession  MyBatis 会话
+     * @param statementId {@link org.apache.ibatis.mapping.MappedStatement} ID
+     * @since 3.5.18
+     */
+    public static void clearMapperCache(SqlSession sqlSession, String statementId) {
+        sqlSession.clearCache();
+        Cache cache = sqlSession.getConfiguration().getMappedStatement(statementId).getCache();
+        if (cache == null) {
+            return;
+        }
+        MetaObject sqlSessionMetaObject = PluginUtils.getMetaObject(sqlSession);
+        Assert.isTrue(sqlSessionMetaObject.hasGetter("executor"),
+            "Please implement access to the executor property in the custom SqlSession.");
+        Executor executor = PluginUtils.realTarget(sqlSessionMetaObject.getValue("executor"));
+        if (executor instanceof CachingExecutor) {
+            // clearCache 仅清理一级缓存，这里还需丢弃当前事务中尚未提交的二级缓存条目。
+            MetaObject executorMetaObject = PluginUtils.getMetaObject(executor);
+            Assert.isTrue(executorMetaObject.hasGetter("tcm"),
+                "Unable to access the transactional cache manager in CachingExecutor.");
+            TransactionalCacheManager transactionalCacheManager =
+                (TransactionalCacheManager) executorMetaObject.getValue("tcm");
+            transactionalCacheManager.clear(cache);
+        }
     }
 
     /**

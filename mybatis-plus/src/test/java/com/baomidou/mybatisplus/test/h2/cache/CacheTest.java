@@ -5,15 +5,22 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
+import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheRefMapper;
 import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.exceptions.PersistenceException;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +35,15 @@ class CacheTest {
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
+
+    @Autowired
+    private CacheMapper cacheMapper;
+
+    @Autowired
+    private CacheRefMapper cacheRefMapper;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Test
     @Order(1)
@@ -159,6 +175,181 @@ class CacheTest {
         CacheModel cacheModel = cacheService.getById(id);
         Assertions.assertEquals(1, cache.getSize());
         Assertions.assertNull(cacheModel);
+    }
+
+    @Test
+    @Order(10)
+    @Transactional
+    void testBaseMapperBatchInsertClearsFirstLevelCache() {
+        CacheModel model = new CacheModel(10001L, "batch-insert");
+        Assertions.assertNull(cacheMapper.selectById(model.getId()));
+
+        cacheMapper.insert(Collections.singletonList(model));
+
+        Assertions.assertEquals("batch-insert", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(11)
+    @Transactional
+    void testBaseMapperBatchUpdateClearsFirstLevelCache() {
+        CacheModel model = new CacheModel(10002L, "before-batch");
+        cacheMapper.insert(model);
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+        cacheMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(12)
+    @Transactional
+    void testBaseMapperBatchInsertOrUpdateClearsFirstLevelCacheAfterInsert() {
+        CacheModel model = new CacheModel(10003L, "batch-insert-or-update");
+        Assertions.assertNull(cacheMapper.selectById(model.getId()));
+
+        cacheMapper.insertOrUpdate(Collections.singletonList(model));
+
+        Assertions.assertEquals("batch-insert-or-update", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(13)
+    @Transactional
+    void testBaseMapperBatchInsertOrUpdateClearsFirstLevelCacheAfterUpdate() {
+        CacheModel model = new CacheModel(10004L, "before-batch");
+        cacheMapper.insert(model);
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+        cacheMapper.insertOrUpdate(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(14)
+    void testBaseMapperBatchClearsSecondLevelCache() {
+        Cache cache = getCache();
+        cache.clear();
+        CacheModel model = new CacheModel("before-batch");
+        cacheMapper.insert(model);
+        cacheMapper.selectById(model.getId());
+        Assertions.assertEquals(1, cache.getSize());
+
+        cacheMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+
+        Assertions.assertEquals(0, cache.getSize());
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(15)
+    @Transactional
+    void testBaseMapperBatchClearsFirstLevelCacheAfterPartialFailure() {
+        CacheModel inserted = new CacheModel(10005L, "inserted-before-failure");
+        Assertions.assertNull(cacheMapper.selectById(inserted.getId()));
+        CacheModel duplicate = new CacheModel(1L, "duplicate");
+
+        Assertions.assertThrows(PersistenceException.class,
+            () -> cacheMapper.insert(Arrays.asList(inserted, duplicate), 1));
+
+        Assertions.assertEquals("inserted-before-failure", cacheMapper.selectById(inserted.getId()).getName());
+    }
+
+    @Test
+    @Order(16)
+    void testBaseMapperBatchDoesNotPublishStaleSecondLevelCacheOnCommit() {
+        Cache cache = getCache();
+        cache.clear();
+        Long id = new TransactionTemplate(transactionManager).execute(status -> {
+            CacheModel model = new CacheModel(10006L, "before-batch");
+            cacheMapper.insert(model);
+            Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+            cacheMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+            return model.getId();
+        });
+
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(id).getName());
+    }
+
+    @Test
+    @Order(17)
+    void testBaseMapperBatchClearsReferencedSecondLevelCache() {
+        Cache cache = getCache();
+        cache.clear();
+        Long id = new TransactionTemplate(transactionManager).execute(status -> {
+            CacheModel model = new CacheModel(10007L, "before-batch");
+            cacheMapper.insert(model);
+            Assertions.assertEquals("before-batch", cacheRefMapper.selectById(model.getId()).getName());
+
+            cacheRefMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+            return model.getId();
+        });
+
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(id).getName());
+    }
+
+    @Test
+    @Order(18)
+    void testBaseMapperBatchCacheInvalidationRollsBackWithTransaction() {
+        Cache cache = getCache();
+        cache.clear();
+        CacheModel model = new CacheModel(10008L, "before-batch");
+        cacheMapper.insert(model);
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+        new TransactionTemplate(transactionManager).executeWithoutResult(status -> {
+            cacheMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+            Assertions.assertEquals("after-batch", cacheMapper.selectById(model.getId()).getName());
+            status.setRollbackOnly();
+        });
+
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+    }
+
+    @Test
+    @Order(19)
+    void testBaseMapperBatchPublishesFreshSecondLevelCacheOnCommit() {
+        Cache cache = getCache();
+        cache.clear();
+        Long id = new TransactionTemplate(transactionManager).execute(status -> {
+            CacheModel model = new CacheModel(10009L, "before-batch");
+            cacheMapper.insert(model);
+            Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+            cacheMapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+            Assertions.assertEquals("after-batch", cacheMapper.selectById(model.getId()).getName());
+            return model.getId();
+        });
+
+        Assertions.assertEquals(1, cache.getSize());
+        Assertions.assertEquals("after-batch", cacheMapper.selectById(id).getName());
+    }
+
+    @Test
+    @Order(20)
+    void testDirectSpringSqlSessionDoesNotPublishBatchResultOnRollback() {
+        Cache cache = getCache();
+        cache.clear();
+        CacheModel model = new CacheModel(10010L, "before-batch");
+        cacheMapper.insert(model);
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
+
+        new TransactionTemplate(transactionManager).executeWithoutResult(status -> {
+            SqlSession sqlSession = SqlSessionUtils.getSqlSession(sqlSessionFactory);
+            try {
+                CacheMapper mapper = sqlSession.getMapper(CacheMapper.class);
+                mapper.updateById(Collections.singletonList(new CacheModel(model.getId(), "after-batch")));
+                Assertions.assertEquals("after-batch", mapper.selectById(model.getId()).getName());
+                status.setRollbackOnly();
+            } finally {
+                SqlSessionUtils.closeSqlSession(sqlSession, sqlSessionFactory);
+            }
+        });
+
+        Assertions.assertEquals("before-batch", cacheMapper.selectById(model.getId()).getName());
     }
 
     @Test
