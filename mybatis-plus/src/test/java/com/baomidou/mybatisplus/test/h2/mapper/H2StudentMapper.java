@@ -40,6 +40,8 @@ public interface H2StudentMapper extends SuperMapper<H2Student> {
 
     long insertFillByCustomMethod13(Map<String, Object> paramMap);
 
+    long insertUsersByXmlForeach(@Param("list") List<H2User> h2Users);
+
     long updateFillByCustomMethod1(Map<String, Object> paramMap);
 
     long updateFillByCustomMethod2(@Param("coll") Collection<Long> ids, @Param("et") H2User h2User);
