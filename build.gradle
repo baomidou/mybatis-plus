@@ -154,6 +154,18 @@ subprojects {
         logging.captureStandardError LogLevel.DEBUG
     }
 
+    // Restored after 3.5.17 publish script rewrite dropped jar manifest metadata.
+    // MybatisPlusVersion reads Implementation-Version for the startup banner (#7150).
+    jar {
+        manifest {
+            attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version,
+                'Automatic-Module-Name': "${project.group}.${project.name.replaceAll("-", ".")}"
+            )
+        }
+    }
+
     plugins.withId('kotlin') {
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
