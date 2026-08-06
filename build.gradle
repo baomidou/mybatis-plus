@@ -73,7 +73,7 @@ buildscript {
             "freemarker"          : "org.freemarker:freemarker:2.3.34",
             "beetl"               : "com.ibeetl:beetl:3.17.0.RELEASE",
             "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
-            "enjoy"               : "com.jfinal:enjoy:5.2.2",
+            "enjoy"               : "com.jfinal:enjoy:5.2.5",
             "logback-classic"     : "ch.qos.logback:logback-classic:1.5.15",
         ]
     }
