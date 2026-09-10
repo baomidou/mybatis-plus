@@ -62,6 +62,17 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     /**
      * 获取单个
      *
+     * @param throwEx 多条结果时是否抛出异常，为 false 时返回第一条记录
+     * @return 单个，无结果时返回 null
+     * @since 3.5.17
+     */
+    default T one(boolean throwEx) {
+        return execute(mapper -> mapper.selectOne(getWrapper(), throwEx));
+    }
+
+    /**
+     * 获取单个
+     *
      * @return 单个
      * @since 3.3.0
      */
