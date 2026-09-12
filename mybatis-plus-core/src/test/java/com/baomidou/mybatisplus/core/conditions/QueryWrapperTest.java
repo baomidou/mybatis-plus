@@ -99,6 +99,24 @@ class QueryWrapperTest extends BaseWrapperTest {
     }
 
     @Test
+    void testComparePredicateCondition() {
+        String companyCode = null;
+        QueryWrapper<Entity> wrapper = new QueryWrapper<Entity>()
+            .eq(v -> v != null, "id", 1)
+            .eq(v -> v != null, "company_code", companyCode)
+            .ne(v -> v > 0, "id", 2)
+            .ne(v -> v > 0, "id", 0)
+            .like(v -> !v.isEmpty(), "name", "abc")
+            .like(v -> !v.isEmpty(), "name", "")
+            .ge(v -> v >= 18, "age", 20)
+            .ge(v -> v >= 18, "age", 10)
+            .le(v -> v <= 100, "age", 80)
+            .le(v -> v <= 100, "age", 200);
+        logSqlWhere("测试 Compare 谓词条件", wrapper,
+            "(id = ? AND id <> ? AND name LIKE ? AND age >= ? AND age <= ?)");
+    }
+
+    @Test
     void testFunc() {
         Entity entity = new Entity();
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()

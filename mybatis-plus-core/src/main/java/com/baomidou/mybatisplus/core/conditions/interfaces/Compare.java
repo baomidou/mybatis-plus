@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * 查询条件封装
@@ -107,6 +108,18 @@ public interface Compare<Children, R> extends Serializable {
     /**
      * 等于 =
      *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children eq(Predicate<V> condition, R column, V val) {
+        return eq(condition.test(val), column, val);
+    }
+
+    /**
+     * 等于 =
+     *
      * @param condition 执行条件
      * @param column    字段
      * @param val       值
@@ -123,6 +136,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children eqOrIsNull(R column, Object val) {
         return eqOrIsNull(true, column, val);
+    }
+
+    /**
+     * 等于 = ，值为 null 时自动转为 IS NULL
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children eqOrIsNull(Predicate<V> condition, R column, V val) {
+        return eqOrIsNull(condition.test(val), column, val);
     }
 
     /**
@@ -147,6 +172,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 不等于 <>
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children ne(Predicate<V> condition, R column, V val) {
+        return ne(condition.test(val), column, val);
+    }
+
+    /**
      * 不等于 &lt;&gt;
      *
      * @param condition 执行条件
@@ -165,6 +202,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children gt(R column, Object val) {
         return gt(true, column, val);
+    }
+
+    /**
+     * 大于 >
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children gt(Predicate<V> condition, R column, V val) {
+        return gt(condition.test(val), column, val);
     }
 
     /**
@@ -189,6 +238,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 大于等于 >=
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children ge(Predicate<V> condition, R column, V val) {
+        return ge(condition.test(val), column, val);
+    }
+
+    /**
      * 大于等于 &gt;=
      *
      * @param condition 执行条件
@@ -210,6 +271,18 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
+     * 小于 <
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children lt(Predicate<V> condition, R column, V val) {
+        return lt(condition.test(val), column, val);
+    }
+
+    /**
      * 小于 &lt;
      *
      * @param condition 执行条件
@@ -228,6 +301,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children le(R column, Object val) {
         return le(true, column, val);
+    }
+
+    /**
+     * 小于等于 <=
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children le(Predicate<V> condition, R column, V val) {
+        return le(condition.test(val), column, val);
     }
 
     /**
@@ -301,6 +386,18 @@ public interface Compare<Children, R> extends Serializable {
     /**
      * LIKE '%值%'
      *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children like(Predicate<V> condition, R column, V val) {
+        return like(condition.test(val), column, val);
+    }
+
+    /**
+     * LIKE '%值%'
+     *
      * @param condition 执行条件
      * @param column    字段
      * @param val       值
@@ -317,6 +414,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children notLike(R column, Object val) {
         return notLike(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '%值%'
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children notLike(Predicate<V> condition, R column, V val) {
+        return notLike(condition.test(val), column, val);
     }
 
     /**
@@ -343,6 +452,18 @@ public interface Compare<Children, R> extends Serializable {
     /**
      * NOT LIKE '%值'
      *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children notLikeLeft(Predicate<V> condition, R column, V val) {
+        return notLikeLeft(condition.test(val), column, val);
+    }
+
+    /**
+     * NOT LIKE '%值'
+     *
      * @param condition 执行条件
      * @param column    字段
      * @param val       值
@@ -359,6 +480,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children notLikeRight(R column, Object val) {
         return notLikeRight(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '值%'
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children notLikeRight(Predicate<V> condition, R column, V val) {
+        return notLikeRight(condition.test(val), column, val);
     }
 
     /**
@@ -385,6 +518,18 @@ public interface Compare<Children, R> extends Serializable {
     /**
      * LIKE '%值'
      *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children likeLeft(Predicate<V> condition, R column, V val) {
+        return likeLeft(condition.test(val), column, val);
+    }
+
+    /**
+     * LIKE '%值'
+     *
      * @param condition 执行条件
      * @param column    字段
      * @param val       值
@@ -401,6 +546,18 @@ public interface Compare<Children, R> extends Serializable {
      */
     default Children likeRight(R column, Object val) {
         return likeRight(true, column, val);
+    }
+
+    /**
+     * LIKE '值%'
+     *
+     * @param condition 执行条件, 入参为 val, 返回 true 时才拼接该条件
+     * @param column    字段
+     * @param val       值
+     * @return children
+     */
+    default <V> Children likeRight(Predicate<V> condition, R column, V val) {
+        return likeRight(condition.test(val), column, val);
     }
 
     /**
