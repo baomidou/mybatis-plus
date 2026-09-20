@@ -8,11 +8,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 /**
  * LambdaQueryWrapper 测试
@@ -36,6 +39,20 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
         Assertions.assertEquals("", lqw.getSqlSegment());
         lqw = Wrappers.<Table>lambdaQuery().eq(Table::getId, 1).nested(false, x -> x.eq(Table::getName, "李白"));
         Assertions.assertEquals("(`id` = #{ew.paramNameValuePairs.MPGENVAL1})", lqw.getSqlSegment());
+    }
+
+    @Test
+    void testGetColumnMap() {
+        LambdaQueryWrapper<Table> lqw = Wrappers.lambdaQuery(Table.class);
+        Map<String, ColumnCache> columnMap = lqw.getColumnMap();
+        Assertions.assertNotNull(columnMap);
+        Assertions.assertFalse(columnMap.isEmpty());
+        Assertions.assertTrue(columnMap.containsKey("ID"));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> columnMap.put("TEST", null));
+
+        LambdaQueryWrapper<?> emptyWrapper = Wrappers.lambdaQuery();
+        Assertions.assertNotNull(emptyWrapper.getColumnMap());
+        Assertions.assertTrue(emptyWrapper.getColumnMap().isEmpty());
     }
 
 

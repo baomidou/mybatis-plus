@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -154,5 +155,18 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
             fieldName, lambdaClass.getName());
         return columnCache;
+    }
+
+    /**
+     * 获取列信息映射（只读）
+     *
+     * @return 列信息映射
+     * @since 3.5.18
+     */
+    public Map<String, ColumnCache> getColumnMap() {
+        if (!initColumnMap && getEntityClass() != null) {
+            tryInitCache(getEntityClass());
+        }
+        return columnMap == null ? Collections.emptyMap() : Collections.unmodifiableMap(columnMap);
     }
 }
