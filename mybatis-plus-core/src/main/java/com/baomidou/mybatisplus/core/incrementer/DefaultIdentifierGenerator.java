@@ -32,27 +32,35 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
     private final Sequence sequence;
 
     /**
+     * 使用本机网卡信息推导机器标识, 同一 JVM 内机器标识相同的生成器共享同一个序列
+     *
      * @see #getInstance()
      * @deprecated 3.5.3.2 共享默认单例
      */
     @Deprecated
     public DefaultIdentifierGenerator() {
-        this.sequence = new Sequence(null);
+        this.sequence = Sequence.getSharedInstance((InetAddress) null);
     }
 
+    /**
+     * 使用指定的网卡信息推导机器标识, 同一 JVM 内机器标识相同的生成器共享同一个序列
+     *
+     * @param inetAddress IP 地址
+     */
     public DefaultIdentifierGenerator(InetAddress inetAddress) {
-        this.sequence = new Sequence(inetAddress);
+        this.sequence = Sequence.getSharedInstance(inetAddress);
     }
 
     /**
      * 使用指定的工作机器 ID 和数据中心 ID 初始化雪花 ID 生成器
+     * <p>同一 JVM 内 workerId 与 dataCenterId 相同的生成器共享同一个序列, 避免生成重复 ID。</p>
      * <p>生产多实例部署时，请确保 workerId 与 dataCenterId 的组合全局唯一。</p>
      *
      * @param workerId     工作机器 ID，取值范围 0-31
      * @param dataCenterId 数据中心 ID，取值范围 0-31
      */
     public DefaultIdentifierGenerator(long workerId, long dataCenterId) {
-        this.sequence = new Sequence(workerId, dataCenterId);
+        this.sequence = Sequence.getSharedInstance(workerId, dataCenterId);
     }
 
     public DefaultIdentifierGenerator(Sequence sequence) {
