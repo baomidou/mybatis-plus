@@ -21,6 +21,8 @@ import org.apache.ibatis.logging.LogFactory;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -83,6 +85,10 @@ public class Sequence {
      * IP 地址
      */
     private InetAddress inetAddress;
+    /**
+     * 共享序列缓存: 同一 JVM 内 workerId + datacenterId 相同的序列复用同一个实例
+     */
+    private static final Map<String, Sequence> SHARED_SEQUENCES = new ConcurrentHashMap<>(8);
 
     public Sequence(InetAddress inetAddress) {
         this.inetAddress = inetAddress;
@@ -118,6 +124,42 @@ public class Sequence {
         this.workerId = workerId;
         this.datacenterId = datacenterId;
         initLog();
+    }
+
+    /**
+     * 获取共享序列实例
+     *
+     * <p>同一 JVM 内 {@code workerId} 与 {@code datacenterId} 相同的多个序列各自维护序列号,
+     * 交错生成 ID 时会相互覆盖, 必然产生重复 ID, 因此机器标识相同的序列统一复用同一个实例.</p>
+     *
+     * @param inetAddress IP 地址
+     * @return 共享序列实例
+     * @since 3.5.18
+     */
+    public static Sequence getSharedInstance(InetAddress inetAddress) {
+        return share(new Sequence(inetAddress));
+    }
+
+    /**
+     * 获取共享序列实例
+     *
+     * @param workerId     工作机器 ID
+     * @param datacenterId 序列号
+     * @return 共享序列实例
+     * @since 3.5.18
+     */
+    public static Sequence getSharedInstance(long workerId, long datacenterId) {
+        return share(new Sequence(workerId, datacenterId));
+    }
+
+    /**
+     * 按机器标识缓存序列实例
+     *
+     * @param sequence 序列
+     * @return 共享序列实例
+     */
+    private static Sequence share(Sequence sequence) {
+        return SHARED_SEQUENCES.computeIfAbsent(sequence.workerId + StringPool.DASH + sequence.datacenterId, key -> sequence);
     }
 
     /**
