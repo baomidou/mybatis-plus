@@ -306,6 +306,41 @@ class H2UserTest extends BaseTest {
         return checkIsDataUpdateLimitationException(e.getCause());
     }
 
+    private DataChangeRecorderInnerInterceptor replaceDataChangeRecorder(DataChangeRecorderInnerInterceptor replacement) {
+        if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
+            Configuration configuration = sqlSessionFactory.getConfiguration();
+            for (Interceptor interceptor : configuration.getInterceptors()) {
+                if (interceptor instanceof MybatisPlusInterceptor) {
+                    MybatisPlusInterceptor mybatisPlusInterceptor = (MybatisPlusInterceptor) interceptor;
+                    List<InnerInterceptor> innerInterceptors = new ArrayList<>(mybatisPlusInterceptor.getInterceptors());
+                    for (int i = 0; i < innerInterceptors.size(); i++) {
+                        InnerInterceptor innerInterceptor = innerInterceptors.get(i);
+                        if (innerInterceptor instanceof DataChangeRecorderInnerInterceptor) {
+                            innerInterceptors.set(i, replacement);
+                            mybatisPlusInterceptor.setInterceptors(innerInterceptors);
+                            return (DataChangeRecorderInnerInterceptor) innerInterceptor;
+                        }
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("DataChangeRecorderInnerInterceptor not found");
+    }
+
+    private static class CapturingDataChangeRecorderInnerInterceptor extends DataChangeRecorderInnerInterceptor {
+
+        private OperationResult operationResult;
+
+        @Override
+        protected void dealOperationResult(OperationResult operationResult) {
+            this.operationResult = operationResult;
+        }
+
+        private OperationResult getOperationResult() {
+            return operationResult;
+        }
+    }
+
     @Test
     @Order(18)
     void testBatchTransactional() {
@@ -822,6 +857,34 @@ class H2UserTest extends BaseTest {
         map.put("array", h2Users);
         h2StudentMapper.insertFillByCustomMethod13(map);
         list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+    }
+
+    @Test
+    void testDataChangeRecorderWithRealXmlForeachInsert() {
+        CapturingDataChangeRecorderInnerInterceptor recorder = new CapturingDataChangeRecorderInnerInterceptor();
+        DataChangeRecorderInnerInterceptor original = replaceDataChangeRecorder(recorder);
+        Long id1 = IdWorker.getId();
+        Long id2 = IdWorker.getId();
+        List<H2User> users = Arrays.asList(
+            new H2User(id1, "xmlForeachInsertA", AgeEnum.ONE, 1),
+            new H2User(id2, "xmlForeachInsertB", AgeEnum.TWO, 1)
+        );
+
+        try {
+            long rows = Assertions.assertDoesNotThrow(() -> h2StudentMapper.insertUsersByXmlForeach(users));
+
+            Assertions.assertEquals(2, rows);
+            Assertions.assertEquals("xmlForeachInsertA", userService.getById(id1).getName());
+            Assertions.assertEquals("xmlForeachInsertB", userService.getById(id2).getName());
+            DataChangeRecorderInnerInterceptor.OperationResult operationResult = recorder.getOperationResult();
+            Assertions.assertNotNull(operationResult);
+            Assertions.assertTrue(operationResult.isRecordStatus());
+            String changedData = operationResult.getChangedData();
+            Assertions.assertTrue(changedData.contains("\"TESTID\":\"null->" + id1 + "\""), changedData);
+            Assertions.assertTrue(changedData.contains("\"NAME\":\"null->xmlForeachInsertA\""), changedData);
+        } finally {
+            replaceDataChangeRecorder(original);
+        }
     }
 
     @Test
