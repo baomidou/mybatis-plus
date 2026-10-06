@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.query;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
@@ -102,7 +103,11 @@ public class DefaultQuery extends AbstractDatabaseQuery {
         if (strategyConfig.getNotLikeTable() != null) {
             LOGGER.warn("Unsupported 'notLikeTable' configuration");
         }
-        return databaseMetaDataWrapper.getTables(tableNamePattern, skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"});
+        String[] types = skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"};
+        if (StringUtils.isNotBlank(dataSourceConfig.getUrl()) && DbType.POSTGRE_SQL == dataSourceConfig.getDbType()) {
+            types = skipView ? new String[]{"TABLE", "PARTITIONED TABLE"} : new String[]{"TABLE", "VIEW", "PARTITIONED TABLE"};
+        }
+        return databaseMetaDataWrapper.getTables(tableNamePattern, types);
     }
 
     protected void convertTableFields(@NotNull TableInfo tableInfo) {
