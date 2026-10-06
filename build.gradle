@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+
 allprojects {
     group APP_GROUP
     version APP_VERSION
@@ -164,6 +166,31 @@ subprojects {
 
     tasks.withType(GenerateModuleMetadata).configureEach {
         enabled = false
+    }
+
+    tasks.named('jar', Jar) {
+        into('META-INF') {
+            from rootProject.file('LICENSE')
+        }
+        manifest {
+            attributes(
+                'Implementation-Title': archiveBaseName.get(),
+                'Implementation-Version': archiveVersion.get(),
+                'Built-Gradle': gradle.gradleVersion,
+                'Bundle-DocURL': 'https://baomidou.com/',
+                'Build-OS': System.getProperty('os.name'),
+                'Built-By': System.getProperty('user.name'),
+                'Build-Jdk': System.getProperty('java.version'),
+                'Build-Timestamp': LocalDateTime.now().format('yyyy-MM-dd HH:mm:ss'),
+                'Automatic-Module-Name': "${project.group}.${project.name.replaceAll('-', '.')}"
+            )
+        }
+        if (!skipPublishingProjects.contains(project.path)) {
+            from(tasks.named('generatePomFileForMavenPublication')) {
+                into "META-INF/maven/${project.group}/${project.name}"
+                rename { 'pom.xml' }
+            }
+        }
     }
 
     tasks.register('sourcesJar', Jar) {
