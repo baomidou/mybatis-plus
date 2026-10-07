@@ -87,16 +87,55 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/spring' }
         maven { url 'https://maven.aliyun.com/repository/google' }
         mavenCentral()
+        gradlePluginPortal()
     }
 
     dependencies {
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0"
         classpath "io.freefair.gradle:lombok-plugin:8.10"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.3"
+        classpath "com.github.jakemarsden.git-hooks:com.github.jakemarsden.git-hooks.gradle.plugin:0.0.2"
     }
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
+
+apply plugin: 'com.diffplug.spotless'
+apply plugin: 'com.github.jakemarsden.git-hooks'
+
+gitHooks {
+    gradleCommand = 'bash ./gradlew'
+    hooks = ['pre-commit': 'spotlessCheck || { bash ./gradlew spotlessApply; echo "Review formatting changes, stage them, and commit again."; exit 1; }']
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Paths are relative to the repository root; add files here for full formatting.
+def formattedFiles = [
+    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java'
+]
+def formattingExcludes = ['**/build/**', '**/target/**', '**/.gradle/**', '**/out/**']
+def javaImportOrder = ['', 'java|javax|jakarta', '\\#']
+
+spotless {
+    enforceCheck false
+    java {
+        target '**/*.java'
+        targetExclude(formattingExcludes + formattedFiles)
+        removeUnusedImports()
+        importOrder(*javaImportOrder)
+    }
+    format('selectedJava', com.diffplug.gradle.spotless.JavaExtension) {
+        target formattedFiles
+        targetExclude formattingExcludes
+        removeUnusedImports()
+        palantirJavaFormat()
+        importOrder(*javaImportOrder)
+    }
+}
 
 def skipPublishingProjects = [
     ':mybatis-plus-jsqlparser-support',
@@ -111,8 +150,10 @@ subprojects {
     }
     apply plugin: 'io.freefair.lombok'
 
-    sourceCompatibility = "${javaVersion}"
-    targetCompatibility = "${javaVersion}"
+    java {
+        sourceCompatibility = "${javaVersion}"
+        targetCompatibility = "${javaVersion}"
+    }
 
     lombok {
         version = "1.18.32"

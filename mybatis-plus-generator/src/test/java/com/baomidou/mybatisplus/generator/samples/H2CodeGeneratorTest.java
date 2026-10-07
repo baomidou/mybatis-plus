@@ -1,8 +1,28 @@
 package com.baomidou.mybatisplus.generator.samples;
 
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.OutputFile;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
@@ -15,27 +35,16 @@ import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * H2 代码生成
+ * <p>
+ * 用例输出到 Windows 默认目录 {@code D://}，缺少该盘符的环境会失败，故不参与构建
  *
  * @author hubin, lanjerry
  * @since 3.5.3
  */
+@Disabled
 public class H2CodeGeneratorTest extends BaseGeneratorTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(H2CodeGeneratorTest.class);
@@ -61,8 +70,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
      * 数据源配置
      */
     private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(H2URL, "sa", "")
-        // 设置SQL查询方式，默认的是元数据查询方式
-        .databaseQueryClass(DefaultQuery.class).build();
+            // 设置SQL查询方式，默认的是元数据查询方式
+            .databaseQueryClass(DefaultQuery.class).build();
 
     /**
      * 简单生成
@@ -77,11 +86,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
 
     static Stream<Arguments> testByTemplateEngine() {
         return Stream.of(
-            Arguments.arguments("velocity", new VelocityTemplateEngine()),
-            Arguments.arguments("freemarker", new FreemarkerTemplateEngine()),
-            Arguments.arguments("beetl", new BeetlTemplateEngine()),
-            Arguments.arguments("enjoy", new EnjoyTemplateEngine())
-        );
+                Arguments.arguments("velocity", new VelocityTemplateEngine()),
+                Arguments.arguments("freemarker", new FreemarkerTemplateEngine()),
+                Arguments.arguments("beetl", new BeetlTemplateEngine()),
+                Arguments.arguments("enjoy", new EnjoyTemplateEngine()));
     }
 
     @MethodSource
@@ -92,10 +100,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         LOGGER.info("当前执行引擎:{}, 输出目录:{}", engine, outputDir);
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().addTablePrefix("t_")
-            .entityBuilder().enableFileOverride()
-            .mapperBuilder().enableFileOverride()
+                .entityBuilder().enableFileOverride()
+                .mapperBuilder().enableFileOverride()
                 .controllerBuilder().enableFileOverride().serviceBuilder().enableFileOverride()
-            .build());
+                .build());
         generator.packageInfo(new PackageConfig.Builder().moduleName("demo" + "." + engine).build());
         generator.global(globalConfig().commentDate(() -> "2025-03-27").disableOpenDir().outputDir(outputDir).build());
         generator.execute(templateEngine);
@@ -106,12 +114,13 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         generator = new AutoGenerator(DATA_SOURCE_CONFIG);
 
         generator.strategy(strategyConfig().addTablePrefix("t_")
-            .entityBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
-            .mapperBuilder().enableFileOverride().enableBaseResultMap().importPackageFunction(ArrayList::new)
-            .controllerBuilder().enableFileOverride().serviceBuilder().enableFileOverride()
-            .build());
+                .entityBuilder().enableFileOverride().importPackageFunction(ArrayList::new)
+                .mapperBuilder().enableFileOverride().enableBaseResultMap().importPackageFunction(ArrayList::new)
+                .controllerBuilder().enableFileOverride().serviceBuilder().enableFileOverride()
+                .build());
         generator.packageInfo(new PackageConfig.Builder().moduleName(engine).build());
-        generator.global(globalConfig().enableKotlin().commentDate(() -> "2025-03-27").disableOpenDir().outputDir(outputDir).build());
+        generator.global(globalConfig().enableKotlin().commentDate(() -> "2025-03-27").disableOpenDir()
+                .outputDir(outputDir).build());
         generator.execute(templateEngine);
     }
 
@@ -149,11 +158,11 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testVersionAndFill() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().entityBuilder()
-            .versionColumnName("version") // 基于数据库字段
-            .versionPropertyName("version")// 基于模型属性
-            .addTableFills(new Column("create_time", FieldFill.INSERT))    //基于数据库字段填充
-            .addTableFills(new Property("updateTime", FieldFill.INSERT_UPDATE))    //基于模型属性填充
-            .build());
+                .versionColumnName("version") // 基于数据库字段
+                .versionPropertyName("version")// 基于模型属性
+                .addTableFills(new Column("create_time", FieldFill.INSERT)) // 基于数据库字段填充
+                .addTableFills(new Property("updateTime", FieldFill.INSERT_UPDATE)) // 基于模型属性填充
+                .build());
         generator.global(globalConfig().build());
         generator.execute();
     }
@@ -168,10 +177,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testLogicDeleteAndIgnoreColumn() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().entityBuilder()
-            .logicDeleteColumnName("deleted") // 基于数据库字段
-            .logicDeletePropertyName("deleteFlag")// 基于模型属性
-            .addIgnoreColumns("age") // 基于数据库字段
-            .build());
+                .logicDeleteColumnName("deleted") // 基于数据库字段
+                .logicDeletePropertyName("deleteFlag")// 基于模型属性
+                .addIgnoreColumns("age") // 基于数据库字段
+                .build());
         generator.global(globalConfig().build());
         generator.execute();
     }
@@ -184,11 +193,11 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testCustomTemplateName() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig()
-            .entityBuilder().formatFileName("%sEntity")
-            .mapperBuilder().formatMapperFileName("%sDao").formatXmlFileName("%sXml")
-            .controllerBuilder().formatFileName("%sAction")
-            .serviceBuilder().formatServiceFileName("%sService").formatServiceImplFileName("%sServiceImp")
-            .build());
+                .entityBuilder().formatFileName("%sEntity")
+                .mapperBuilder().formatMapperFileName("%sDao").formatXmlFileName("%sXml")
+                .controllerBuilder().formatFileName("%sAction")
+                .serviceBuilder().formatServiceFileName("%sService").formatServiceImplFileName("%sServiceImp")
+                .build());
         generator.global(globalConfig().build());
         generator.execute();
     }
@@ -218,8 +227,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testCustomTemplate() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig()
-            .entityBuilder().javaTemplate("/templates/entity1.java")
-            .build());
+                .entityBuilder().javaTemplate("/templates/entity1.java")
+                .build());
         generator.global(globalConfig().build());
         generator.execute();
     }
@@ -231,15 +240,15 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testFileOverride() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig()
-            // 实体文件覆盖
-            .entityBuilder().enableFileOverride()
-            // Mapper文件覆盖
-            .mapperBuilder().enableFileOverride()
-            // Service文件覆盖
-            .serviceBuilder().enableFileOverride()
-            // Controller文件覆盖
-            .controllerBuilder().enableFileOverride()
-            .build());
+                // 实体文件覆盖
+                .entityBuilder().enableFileOverride()
+                // Mapper文件覆盖
+                .mapperBuilder().enableFileOverride()
+                // Service文件覆盖
+                .serviceBuilder().enableFileOverride()
+                // Controller文件覆盖
+                .controllerBuilder().enableFileOverride()
+                .build());
         generator.execute();
     }
 
@@ -252,10 +261,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         generator.strategy(strategyConfig().build());
         // 关闭其它模块生成只生成实体
         generator.strategy(strategyConfig()
-            .controllerBuilder().disable()
-            .serviceBuilder().disable()
-            .mapperBuilder().disable()
-            .build());
+                .controllerBuilder().disable()
+                .serviceBuilder().disable()
+                .mapperBuilder().disable()
+                .build());
         // 日期类型强制设置为 Date 类型
         generator.global(globalConfig().dateType(DateType.ONLY_DATE).build());
         generator.execute();
@@ -271,8 +280,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         map.put("abc", 123);
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig()
-            .entityBuilder().javaTemplate("/templates/entity1.java")
-            .build());
+                .entityBuilder().javaTemplate("/templates/entity1.java")
+                .build());
         generator.injection(injectionConfig().customMap(map).build());
         generator.global(globalConfig().build());
         generator.execute();
@@ -300,7 +309,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testCustomFileBySingle() {
         // 设置自定义输出文件
-        CustomFile customFile = new CustomFile.Builder().fileName("DTO.java").templatePath("templates/dto.java.vm").packageName("dto").build();
+        CustomFile customFile = new CustomFile.Builder().fileName("DTO.java").templatePath("templates/dto.java.vm")
+                .packageName("dto").build();
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         generator.injection(injectionConfig().customFile(customFile).build());
@@ -316,16 +326,22 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         // 设置自定义输出文件
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig()
-            // 禁用Controller默认模板
-            .controllerBuilder().disable()
-            .build());
-        generator.injection(injectionConfig().customFile(new ArrayList<>() {{
-            add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm").packageName("dto").build());
-            add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo").build());
-            // 通过格式化函数添加文件最后缀
-            add(new CustomFile.Builder().formatNameFunction(tableInfo -> "Prefix" + tableInfo.getEntityName() + "Suffix")
-                .fileName("Controller.java").templatePath("/templates/controller.java.vm").packageName("controller").build());
-        }}).build());
+                // 禁用Controller默认模板
+                .controllerBuilder().disable()
+                .build());
+        generator.injection(injectionConfig().customFile(new ArrayList<>() {
+            {
+                add(new CustomFile.Builder().fileName("DTO.java").templatePath("/templates/dto.java.vm")
+                        .packageName("dto").build());
+                add(new CustomFile.Builder().fileName("VO.java").templatePath("/templates/vo.java.vm").packageName("vo")
+                        .build());
+                // 通过格式化函数添加文件最后缀
+                add(new CustomFile.Builder()
+                        .formatNameFunction(tableInfo -> "Prefix" + tableInfo.getEntityName() + "Suffix")
+                        .fileName("Controller.java").templatePath("/templates/controller.java.vm")
+                        .packageName("controller").build());
+            }
+        }).build());
         generator.global(globalConfig().build());
         generator.execute();
     }
@@ -376,11 +392,10 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     public void testAddExcludeTables() {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(new StrategyConfig.Builder().addExclude(
-            // 排除 st 结尾的表
-            ".*st$",
-            // 排除非 t_ 开头的表
-            "^(?!t_).*"
-        ).build()).execute();
+                // 排除 st 结尾的表
+                ".*st$",
+                // 排除非 t_ 开头的表
+                "^(?!t_).*").build()).execute();
     }
 
     /**
@@ -389,14 +404,14 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
     @Test
     public void testEnableRemoveIsPrefix() {
         AutoGenerator generator = new AutoGenerator(new DataSourceConfig.Builder(H2URL, "sa", "")
-            .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
-                IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
-                if (dbColumnType == DbColumnType.BYTE) {
-                    // 这里按照自己的要求转换为指定类型
-                    return DbColumnType.BOOLEAN;
-                }
-                return dbColumnType;
-            }).build());
+                .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                    IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
+                    if (dbColumnType == DbColumnType.BYTE) {
+                        // 这里按照自己的要求转换为指定类型
+                        return DbColumnType.BOOLEAN;
+                    }
+                    return dbColumnType;
+                }).build());
         generator.strategy(strategyConfig().entityBuilder().enableRemoveIsPrefix().build());
         generator.execute();
     }
@@ -413,17 +428,15 @@ public class H2CodeGeneratorTest extends BaseGeneratorTest {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         generator.injection(injectionConfig()
-            .customMap(map)
-            .customFile(file ->
-                file.fileName("DTO.java")
-                    .templatePath("/templates/dto.java.vm")
-                    .filePath("D://"))
-            .customFile(file ->
-                file.fileName("VO.java")
-                    .templatePath("/templates/vo.java.vm")
-                    .enableFileOverride()
-                    .filePath("D://"))
-            .build());
+                .customMap(map)
+                .customFile(file -> file.fileName("DTO.java")
+                        .templatePath("/templates/dto.java.vm")
+                        .filePath("D://"))
+                .customFile(file -> file.fileName("VO.java")
+                        .templatePath("/templates/vo.java.vm")
+                        .enableFileOverride()
+                        .filePath("D://"))
+                .build());
         generator.global(globalConfig().build());
         generator.execute();
     }
