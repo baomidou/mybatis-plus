@@ -24,13 +24,13 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import javax.sql.DataSource;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
 
 /**
  * Ddl 脚本执行

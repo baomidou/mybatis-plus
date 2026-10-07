@@ -57,13 +57,13 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.util.ClassUtils;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.IntFunction;
 import java.util.stream.Stream;
+import javax.sql.DataSource;
 
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;

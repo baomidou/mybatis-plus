@@ -44,4 +44,3 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         this.strictUpdateFill(metaObject, "lastUpdatedDt", Date.class, new Timestamp(System.currentTimeMillis()));
     }
 }
-

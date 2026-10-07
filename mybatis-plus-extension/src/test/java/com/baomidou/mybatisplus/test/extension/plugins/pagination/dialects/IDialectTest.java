@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author miemie

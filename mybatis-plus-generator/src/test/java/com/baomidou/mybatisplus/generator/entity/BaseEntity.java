@@ -1,9 +1,9 @@
 package com.baomidou.mybatisplus.generator.entity;
 
-import java.util.Date;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 /**
  * <p>

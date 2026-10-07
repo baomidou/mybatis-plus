@@ -40,10 +40,10 @@ import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
+import javax.sql.DataSource;
 
 /**
  * 从 {@link XMLConfigBuilder} copy 过来, 使用自己的 MybatisConfiguration 而不是 Configuration

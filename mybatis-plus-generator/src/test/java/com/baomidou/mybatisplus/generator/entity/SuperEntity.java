@@ -1,8 +1,8 @@
 package com.baomidou.mybatisplus.generator.entity;
 
-import java.io.Serializable;
-
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * <p>

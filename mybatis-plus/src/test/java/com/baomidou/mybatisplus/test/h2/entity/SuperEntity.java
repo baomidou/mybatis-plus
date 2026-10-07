@@ -28,4 +28,3 @@ public class SuperEntity extends SuSuperEntity implements Serializable {
     private Long testId;
 
 }
-

@@ -11,9 +11,9 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.core.io.FileSystemResource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
+import javax.sql.DataSource;
 
 /**
  * 检查元数据生成

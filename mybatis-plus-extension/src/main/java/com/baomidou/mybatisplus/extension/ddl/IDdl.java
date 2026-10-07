@@ -17,9 +17,9 @@ package com.baomidou.mybatisplus.extension.ddl;
 
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
 
 /**
  * DDL 处理器

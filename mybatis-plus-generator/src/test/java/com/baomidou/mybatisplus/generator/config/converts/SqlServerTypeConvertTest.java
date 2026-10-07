@@ -1,13 +1,12 @@
 package com.baomidou.mybatisplus.generator.config.converts;
 
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
-
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 
 /**
  * @author lanjerry 2020/10/23.

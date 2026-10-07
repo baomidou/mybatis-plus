@@ -18,9 +18,9 @@ package com.baomidou.mybatisplus.spring.ddl;
 import com.baomidou.mybatisplus.extension.ddl.IDdl;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
 
 /**
  * 非多数据源 DDL 实现

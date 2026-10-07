@@ -22,12 +22,12 @@ import org.h2.Driver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
 
 /**
  * @author miemie

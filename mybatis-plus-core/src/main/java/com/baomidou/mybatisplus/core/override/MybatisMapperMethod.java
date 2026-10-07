@@ -108,7 +108,7 @@ public class MybatisMapperMethod {
                         Object param = this.convertArgsToSqlCommandParam(args);
                         result = sqlSession.selectOne(command.getName(), param);
                         if (method.returnsOptional()
-                            && (result == null || !method.getReturnType().equals(result.getClass()))) {
+                                && (result == null || !method.getReturnType().equals(result.getClass()))) {
                             result = Optional.ofNullable(result);
                         }
                     }
@@ -122,7 +122,8 @@ public class MybatisMapperMethod {
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
             throw new BindingException("Mapper method '" + command.getName()
-                + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
+                    + " attempted to return null from a method with a primitive return type (" + method.getReturnType()
+                    + ").");
         }
         return result;
     }
@@ -154,7 +155,8 @@ public class MybatisMapperMethod {
         } else if (Boolean.class.equals(method.getReturnType()) || Boolean.TYPE.equals(method.getReturnType())) {
             result = rowCount > 0;
         } else {
-            throw new BindingException("Mapper method '" + command.getName() + "' has an unsupported return type: " + method.getReturnType());
+            throw new BindingException("Mapper method '" + command.getName() + "' has an unsupported return type: "
+                    + method.getReturnType());
         }
         return result;
     }
@@ -162,10 +164,10 @@ public class MybatisMapperMethod {
     private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
         MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
         if (!StatementType.CALLABLE.equals(ms.getStatementType())
-            && void.class.equals(ms.getResultMaps().get(0).getType())) {
+                && void.class.equals(ms.getResultMaps().get(0).getType())) {
             throw new BindingException("method " + command.getName()
-                + " needs either a @ResultMap annotation, a @ResultType annotation,"
-                + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
+                    + " needs either a @ResultMap annotation, a @ResultType annotation,"
+                    + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
         }
         Object param = this.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {

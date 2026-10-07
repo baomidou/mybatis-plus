@@ -42,4 +42,3 @@ public class H2userNameJsonTypeHandler extends BaseTypeHandler<String> {
         return null;
     }
 }
-

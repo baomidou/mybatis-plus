@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.generator.config.querys.DMQuery;
 import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
 import com.baomidou.mybatisplus.generator.config.querys.FirebirdQuery;
 import com.baomidou.mybatisplus.generator.config.querys.GaussDBSqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.ZenithQuery;
 import com.baomidou.mybatisplus.generator.config.querys.GbaseQuery;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.querys.KingbaseESQuery;
@@ -20,6 +19,7 @@ import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
 import com.baomidou.mybatisplus.generator.config.querys.SqliteQuery;
 import com.baomidou.mybatisplus.generator.config.querys.SybaseQuery;
 import com.baomidou.mybatisplus.generator.config.querys.XuguQuery;
+import com.baomidou.mybatisplus.generator.config.querys.ZenithQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

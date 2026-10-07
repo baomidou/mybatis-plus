@@ -66,4 +66,3 @@ public class EnjoyTemplateEngine extends AbstractTemplateEngine {
         return filePath.endsWith(dotVm) ? filePath : filePath + dotVm;
     }
 }
-

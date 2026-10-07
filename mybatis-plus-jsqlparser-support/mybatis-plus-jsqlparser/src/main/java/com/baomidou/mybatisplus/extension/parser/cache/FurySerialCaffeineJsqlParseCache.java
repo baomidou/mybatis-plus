@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.parser.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+
 import java.util.function.Consumer;
 
 /**

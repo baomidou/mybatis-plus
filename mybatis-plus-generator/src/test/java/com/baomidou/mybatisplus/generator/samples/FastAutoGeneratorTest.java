@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.generator.samples;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.engine.EnjoyTemplateEngine;
 
 import java.sql.SQLException;
 

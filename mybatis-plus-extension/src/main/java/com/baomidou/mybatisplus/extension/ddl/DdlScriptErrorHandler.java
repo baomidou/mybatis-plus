@@ -69,5 +69,3 @@ public interface DdlScriptErrorHandler {
     }
 
 }
-
-

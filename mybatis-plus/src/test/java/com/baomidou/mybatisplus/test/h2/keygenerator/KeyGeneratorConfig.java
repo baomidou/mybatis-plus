@@ -17,8 +17,8 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
+import javax.sql.DataSource;
 
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.keygenerator.mapper")

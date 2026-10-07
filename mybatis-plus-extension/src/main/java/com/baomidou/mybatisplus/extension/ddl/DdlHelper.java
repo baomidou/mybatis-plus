@@ -25,7 +25,6 @@ import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import javax.sql.DataSource;
 import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import javax.sql.DataSource;
 
 /**
  * DDL 辅助类

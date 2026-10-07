@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import static com.baomidou.mybatisplus.core.MybatisXMLScriptBuilder.replaceLeadingAndTrailingWhitespace;
 
 public class MybatisXMLScriptBuilderTest {

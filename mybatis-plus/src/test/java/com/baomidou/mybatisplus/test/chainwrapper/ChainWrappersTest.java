@@ -1,13 +1,12 @@
 package com.baomidou.mybatisplus.test.chainwrapper;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
+import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author VampireAchao
@@ -43,4 +42,3 @@ public class ChainWrappersTest extends BaseDbTest<EntityMapper> {
             "PRIMARY KEY (id))");
     }
 }
-

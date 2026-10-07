@@ -30,4 +30,3 @@ public class SuperEntityCamel extends SuSuperEntityCamel implements Serializable
         this.id = id;
     }
 }
-
