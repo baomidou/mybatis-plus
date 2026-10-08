@@ -42,6 +42,31 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
 
+    /**
+     * 是否自动使用字段参数映射，默认关闭以兼容旧行为。
+     */
+    protected boolean autoMapping = false;
+
+    /**
+     * 开启字段参数自动映射，请在添加条件前调用。
+     *
+     * @return this
+     */
+    public Children enableAutoMapping() {
+        this.autoMapping = true;
+        return typedThis;
+    }
+
+    /**
+     * 关闭字段参数自动映射，请在添加条件前调用。
+     *
+     * @return this
+     */
+    public Children disableAutoMapping() {
+        this.autoMapping = false;
+        return typedThis;
+    }
+
     @Override
     @SafeVarargs
     protected final String columnsToString(SFunction<T, ?>... columns) {
@@ -69,7 +94,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     @Override
     protected String columnToMapping(SFunction<T, ?> column) {
-        return getColumnCache(column).getMapping();
+        return autoMapping ? getColumnCache(column).getMapping() : null;
     }
 
     @Override

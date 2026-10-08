@@ -22,7 +22,7 @@ class H2User2Test extends BaseTest {
     @Test
     @Order(1)
     void testLambdaTypeHandler() {
-        List<H2User2> h2User2List = h2User2Mapper.selectList(Wrappers.<H2User2>lambdaQuery()
+        List<H2User2> h2User2List = h2User2Mapper.selectList(Wrappers.<H2User2>lambdaQuery().enableAutoMapping()
             .eq(H2User2::getName, "{\"id\":101,\"name\":\"Tomcat\"}"));
         Assertions.assertEquals(1, h2User2List.size());
         Assertions.assertEquals("Tomcat OK", h2User2List.get(0).getName());
