@@ -256,6 +256,10 @@ public class FstFactory {
         conf.registerClass(net.sf.jsqlparser.util.cnfexpression.MultipleExpression.class);
     }
 
+    public FSTConfiguration getConfig() {
+        return conf;
+    }
+
     public byte[] asByteArray(Object obj) {
         return conf.asByteArray(obj);
     }

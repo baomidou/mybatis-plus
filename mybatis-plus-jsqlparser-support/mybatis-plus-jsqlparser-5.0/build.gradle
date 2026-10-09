@@ -15,3 +15,18 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+// FST inspects JDK fields reflectively when FstFactory is constructed.
+test {
+    doFirst {
+        if (javaLauncher.get().metadata.languageVersion.asInt() >= 9) {
+            jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.math=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED',
+                '--add-opens=java.base/java.util.concurrent=ALL-UNNAMED',
+                '--add-opens=java.base/java.net=ALL-UNNAMED',
+                '--add-opens=java.base/java.text=ALL-UNNAMED',
+                '--add-opens=java.sql/java.sql=ALL-UNNAMED'
+        }
+    }
+}
