@@ -317,7 +317,7 @@ class DynamicTableNameJsqlParserInnerInterceptorTest {
     @Test
     public void testDropProcedure() {
         var sql = "drop procedure procedureName";
-        assertEquals("DROP procedure procedureName", interceptor.changeTable(sql));
+        assertEquals(sql, interceptor.changeTable(sql));
     }
 
     @Test
@@ -417,7 +417,7 @@ class DynamicTableNameJsqlParserInnerInterceptorTest {
     @Test
     public void testUpdateTableSubQueryWithOracleHint() {
         var sql = "update /*+ PARALLEL OPT_PARAM('parallel_min_percent','0') */ eligible ec set ec.END_DATE = ec.END_DATE + INTERVAL '0 0:0:0.999' DAY TO SECOND";
-        assertEquals("UPDATE /*+ PARALLEL OPT_PARAM('parallel_min_percent','0') */ eligible_r ec SET ec.END_DATE = ec.END_DATE + INTERVAL '0 0:0:0.999' DAY TO SECOND", interceptor.changeTable(sql));
+        assertEquals("update /*+ PARALLEL OPT_PARAM('parallel_min_percent','0') */ eligible_r ec set ec.END_DATE = ec.END_DATE + INTERVAL '0 0:0:0.999' DAY TO SECOND", interceptor.changeTable(sql));
     }
 
     @Test

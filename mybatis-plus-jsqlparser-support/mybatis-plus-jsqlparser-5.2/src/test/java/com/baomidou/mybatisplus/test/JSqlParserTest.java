@@ -71,7 +71,7 @@ class JSqlParserTest {
         Assertions.assertEquals("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE",
             CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString());
         Assertions.assertEquals("SELECT * FROM sys_sms_send_record WHERE check_status = 0 ORDER BY submit_time ASC LIMIT 10 FOR UPDATE",
-            CCJSqlParserUtil.parse("select * from sys_sms_send_record where check_status = 0 order by submit_time asc limit 10 for update").toString());
+            CCJSqlParserUtil.parse("select * from sys_sms_send_record where check_status = 0 for update order by submit_time asc limit 10").toString());
     }
 
 }

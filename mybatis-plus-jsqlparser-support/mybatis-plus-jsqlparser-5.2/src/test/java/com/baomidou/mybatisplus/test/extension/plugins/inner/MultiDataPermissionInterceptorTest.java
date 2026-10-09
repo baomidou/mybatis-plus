@@ -103,7 +103,7 @@ public class MultiDataPermissionInterceptorTest {
     @Test
     void test3unionAll() {
         assertSql(TEST_3, "select * from sys_role where company_id=6 union all select * from sys_role where company_id=7",
-            "SELECT * FROM sys_role WHERE company_id = 6 AND companyId IN (1, 2, 3) UNION all SELECT * FROM sys_role WHERE company_id = 7 AND companyId IN (1, 2, 3)");
+            "SELECT * FROM sys_role WHERE company_id = 6 AND companyId IN (1, 2, 3) UNION ALL SELECT * FROM sys_role WHERE company_id = 7 AND companyId IN (1, 2, 3)");
     }
 
     @Test

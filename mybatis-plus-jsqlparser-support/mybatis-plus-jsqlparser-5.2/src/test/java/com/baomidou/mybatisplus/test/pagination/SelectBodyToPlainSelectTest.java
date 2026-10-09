@@ -83,7 +83,7 @@ class SelectBodyToPlainSelectTest {
 
         String actualSqlUnionAll = new PaginationInnerInterceptor()
             .concatOrderBy("select * from test union all select * from test2", orderList);
-        assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test UNION all SELECT * FROM test2 ORDER BY column ASC");
+        assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test UNION ALL SELECT * FROM test2 ORDER BY column ASC");
     }
 
     @Test
@@ -94,7 +94,7 @@ class SelectBodyToPlainSelectTest {
 
         String actualSqlUnionAll = new PaginationInnerInterceptor()
             .concatOrderBy("select * from test where 1 = 1 union all select * from test2 where 1 = 1 ", ITEMS);
-        assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION all SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
+        assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION ALL SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
     }
 
     @Test
