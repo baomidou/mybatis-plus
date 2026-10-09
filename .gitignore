@@ -16,6 +16,12 @@ html
 **/.settings/
 **/bin/
 
+# VS Code
+.vscode/
+
+# Zed
+.zed/
+
 # gradle
 .gradle
 **/build
