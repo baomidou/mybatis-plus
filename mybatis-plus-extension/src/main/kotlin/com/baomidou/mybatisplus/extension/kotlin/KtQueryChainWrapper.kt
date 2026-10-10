@@ -31,7 +31,9 @@ import kotlin.reflect.KProperty1
 open class KtQueryChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>?
 ) : AbstractChainWrapper<T, KProperty1<in T, *>, KtQueryChainWrapper<T>, KtQueryWrapper<T>>(),
-    ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty1<in T, *>> {
+    ChainQuery<T>, Query<KtQueryChainWrapper<T>, T, KProperty1<in T, *>>,
+    CompareDsl<KtQueryChainWrapper<T>, T>,
+    FuncDsl<KtQueryChainWrapper<T>, T> {
 
     constructor(baseMapper: BaseMapper<T>, entityClass: Class<T>) : this(baseMapper) {
         super.wrapperChildren = KtQueryWrapper(entityClass)
