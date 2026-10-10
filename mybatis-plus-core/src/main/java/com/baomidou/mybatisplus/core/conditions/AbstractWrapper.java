@@ -468,7 +468,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected Children likeValue(boolean condition, SqlKeyword keyword, R column, Object val, SqlLike sqlLike) {
         return maybeDo(condition, () -> appendSqlSegments(columnToSqlSegment(column), keyword,
-            () -> formatParam(columnToMapping(column), SqlUtils.concatLike(val, sqlLike))));
+            () -> formatParam(null, SqlUtils.concatLike(val, sqlLike))));
     }
 
     /**
