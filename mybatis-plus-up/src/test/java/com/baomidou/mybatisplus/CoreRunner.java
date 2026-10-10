@@ -20,12 +20,11 @@ public class CoreRunner {
                         "mybatis-plus-core",
                         Path.of(args[0]),
                         List.of(
-                                new Configuration(),
+                                // new Configuration(),
                                 // new DefaultParameterHandler(),
                                 // new MapperAnnotationBuilder(),
                                 // new MapperBuilderAssistant(),
-                                // new MapperMethod(),
-                                new MapperProxy()
+                                new MapperMethod(), new MapperProxy()
                                 // new MapperRegistry(),
                                 // new MethodResolver(),
                                 // new TypeHandlerRegistry(),

@@ -12,12 +12,10 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class MapperBuilderAssistant extends OverwriteFile {
 
     public MapperBuilderAssistant() {
-        addStep(i -> i.source("""
-				import org.apache.ibatis.type.TypeHandler;
-				""").target("""
+        setImports("""
 				import com.baomidou.mybatisplus.core.handlers.IJsonTypeHandler;
 				import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
-				"""));
+				""");
         addStep(i -> i.source("""
 				Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
 				TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);

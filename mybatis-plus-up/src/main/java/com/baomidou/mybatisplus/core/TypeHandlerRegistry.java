@@ -12,11 +12,9 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class TypeHandlerRegistry extends OverwriteFile {
 
     public TypeHandlerRegistry() {
-        addStep(i -> i.source("""
-				import java.util.Map;
-				""").target("""
+        setImports("""
 				import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
-				"""));
+				""");
         addStep(i -> i.source("""
 				private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
 				""").target("""

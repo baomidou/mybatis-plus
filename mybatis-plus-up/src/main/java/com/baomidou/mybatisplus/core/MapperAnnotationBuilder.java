@@ -12,14 +12,12 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class MapperAnnotationBuilder extends OverwriteFile {
 
     public MapperAnnotationBuilder() {
-        addStep(i -> i.source("""
-				import java.util.stream.Stream;
-				""").target("""
+        setImports("""
 				import com.baomidou.mybatisplus.core.metadata.IPage;
 				import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
 				import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 				import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-				"""));
+				""");
         addStep(i -> i.source("""
 				for (Method method : type.getMethods()) {
 				""").target("""

@@ -12,9 +12,7 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class DefaultParameterHandler extends OverwriteFile {
 
     public DefaultParameterHandler() {
-        addStep(i -> i.source("""
-				import java.util.List;
-				""").target("""
+        setImports("""
 				import com.baomidou.mybatisplus.annotation.IdType;
 				import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 				import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -28,7 +26,10 @@ public class DefaultParameterHandler extends OverwriteFile {
 				import org.apache.ibatis.type.SimpleTypeRegistry;
 				import org.apache.ibatis.ognl.OgnlOps;
 				import java.util.*;
-				""").operate(Overwrite.Operate.COVERAGE));
+				""");
+        addStep(i -> i.source("""
+				import java.util.List;
+				""").operate(Overwrite.Operate.DELETE));
         addStep(i -> i.source("""
 				private final Configuration configuration;
 				""").target("""

@@ -12,9 +12,7 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class SqlSessionFactoryBean extends OverwriteFile {
 
     public SqlSessionFactoryBean() {
-        addStep(i -> i.source("""
-				import java.util.stream.Stream;
-				""").target("""
+        setImports("""
 				import com.baomidou.mybatisplus.core.MpSqlSessionFactoryBuilder;
 				import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 				import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -24,7 +22,7 @@ public class SqlSessionFactoryBean extends OverwriteFile {
 				import lombok.Getter;
 				import lombok.Setter;
 				import org.springframework.context.ApplicationContextAware;
-				"""));
+				""");
         addStep(i -> i.source("""
 						implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ContextRefreshedEvent> {
 						""").target("""

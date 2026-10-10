@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 
 /**
  * {@link org.apache.ibatis.binding.MapperProxy}
+ * <li> 使用 MybatisMapperMethod </li>
  *
  * @author miemie
  * @since 2025/9/16
@@ -12,15 +13,13 @@ import com.baomidou.mybatisplus.base.OverwriteFile;
 public class MapperProxy extends OverwriteFile {
 
     public MapperProxy() {
-        setOverwriteClass("com.baomidou.mybatisplus.core.override.MapperProxy2");
-        addStep(i -> i.source("""
-				import org.apache.ibatis.util.MapUtil;
-				""").target("""
+        setOverwriteClass("com.baomidou.mybatisplus.core.override.MapperProxy");
+        setImports("""
 				import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
 				import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
 				import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 				import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
-				"""));
+				""");
         addStep(i -> i.source("""
 						@Override
 						public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {

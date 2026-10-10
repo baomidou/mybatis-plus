@@ -13,12 +13,10 @@ public class Configuration extends OverwriteFile {
 
     public Configuration() {
         setOverwriteClass("com.baomidou.mybatisplus.core.override.Configuration");
-        addStep(i -> i.source("""
-				import java.util.function.BiFunction;
-				""").target("""
+        setImports("""
 				import lombok.Getter;
 				import lombok.Setter;
-				"""));
+				""");
         addStep(i -> i.source("""
 				protected boolean mapUnderscoreToCamelCase;
 				""").target("""

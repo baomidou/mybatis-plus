@@ -32,6 +32,10 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class OverwriteRunner {
+    private static final Pattern SOURCE_TOKENS =
+            Pattern.compile("//[^\\r\\n]*|/\\*[\\s\\S]*?\\*/|\"\"\"(?:\\\\[\\s\\S]|[^\\\\])*?\"\"\""
+                    + "|\"(?:\\\\[\\s\\S]|[^\"\\\\])*\"|'(?:\\\\[\\s\\S]|[^'\\\\])*'"
+                    + "|\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*|[{}]");
     private static final String userDir = System.getProperty("user.dir");
     protected final String baseModule;
     /**
@@ -91,6 +95,7 @@ public class OverwriteRunner {
                         sourceCode = applyStep(sourceCode, step, name);
                     }
                     sourceCode = renameClass(sourceCode, className, overwriteClass);
+                    sourceCode = addImports(sourceCode, overwriteFile.getImports());
                     String targetName = overwriteClass.replace('.', '/') + ".java";
                     targets.put(targetName, sourceCode.getBytes(StandardCharsets.UTF_8));
                 }
@@ -99,19 +104,41 @@ public class OverwriteRunner {
         }
     }
 
+    private static String addImports(String sourceCode, String imports) {
+        if (imports == null || imports.isBlank()) {
+            return sourceCode;
+        }
+        Matcher matcher = Pattern.compile(
+                        "(?m)^[\\t ]*(?:import[\\t ]+(?:static[\\t ]+)?[\\w.$*]+|package[\\t ]+[\\w.$]+)[\\t ]*;[\\t ]*")
+                .matcher(sourceCode);
+        int offset = 0;
+        while (matcher.find()) {
+            offset = matcher.end();
+        }
+        String separator = lineSeparator(sourceCode, offset);
+        String declarations = imports.lines()
+                .map(String::strip)
+                .collect(Collectors.joining(separator))
+                .strip();
+        return sourceCode.substring(0, offset)
+                + (offset == 0 ? "" : separator)
+                + declarations
+                + (offset == 0 ? separator : "")
+                + sourceCode.substring(offset);
+    }
+
     private static String renameClass(String sourceCode, String className, String overwriteClass) {
         int separator = overwriteClass.lastIndexOf('.');
         String targetPackage = separator < 0 ? "" : overwriteClass.substring(0, separator);
         String targetClass = overwriteClass.substring(separator + 1);
-        // 跳过注释和字面量，只替换完整 Java 标识符，避免修改相似类名。
-        Pattern tokens = Pattern.compile("//[^\\r\\n]*|/\\*[\\s\\S]*?\\*/|\"\"\"(?:\\\\[\\s\\S]|[^\\\\])*?\"\"\""
-                + "|\"(?:\\\\[\\s\\S]|[^\"\\\\])*\"|'(?:\\\\[\\s\\S]|[^'\\\\])*'"
-                + "|\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*");
-        Matcher matcher = tokens.matcher(sourceCode);
+        // 跳过注释、字面量及“原类名.”引用，只替换完整 Java 标识符。
+        Matcher matcher = SOURCE_TOKENS.matcher(sourceCode);
         StringBuilder result = new StringBuilder();
         while (matcher.find()) {
             String token = matcher.group();
-            matcher.appendReplacement(result, Matcher.quoteReplacement(token.equals(className) ? targetClass : token));
+            boolean followedByDot = matcher.end() < sourceCode.length() && sourceCode.charAt(matcher.end()) == '.';
+            matcher.appendReplacement(
+                    result, Matcher.quoteReplacement(token.equals(className) && !followedByDot ? targetClass : token));
         }
         matcher.appendTail(result);
         String packageDeclaration = targetPackage.isEmpty() ? "" : "package " + targetPackage + ";";
@@ -120,7 +147,19 @@ public class OverwriteRunner {
                 .replaceFirst(Matcher.quoteReplacement(packageDeclaration));
     }
 
-    private static String applyStep(String sourceCode, Overwrite step, String entryName) {
+    private static String applyStep(String sourceCode, Overwrite step, String entryName) throws IOException {
+        if (step.getOperate() == Overwrite.Operate.APPEND_METHOD) {
+            return appendMethod(sourceCode, step.getSource(), entryName);
+        }
+        if (step.getOperate() == Overwrite.Operate.REPLACE) {
+            return sourceCode.replace(step.getSource(), step.getTarget());
+        }
+        if (step.getOperate() == Overwrite.Operate.DELETE_INNER_CLASS) {
+            if (step.getSource() == null || step.getSource().isBlank()) {
+                throw new IllegalArgumentException(entryName + " - 删除内部类的类名不能为空");
+            }
+            return InnerClassRemover.remove(sourceCode, step.getSource().strip(), entryName);
+        }
         List<String> sourceLines = fragmentLines(step.getSource());
         String expression = sourceLines.stream()
                 .map(String::trim)
@@ -191,6 +230,37 @@ public class OverwriteRunner {
             cursor = end;
         } while (matcher.find());
         return result.append(sourceCode, cursor, sourceCode.length()).toString();
+    }
+
+    private static String appendMethod(String sourceCode, String method, String entryName) {
+        if (method == null || method.isBlank()) {
+            throw new IllegalArgumentException(entryName + " - 追加的方法源码不能为空");
+        }
+        // 跳过注释和字面量，避免将文件尾部注释中的 } 当作类结束位置。
+        Matcher matcher = SOURCE_TOKENS.matcher(sourceCode);
+        int closingBrace = -1;
+        while (matcher.find()) {
+            if (matcher.group().equals("}")) {
+                closingBrace = matcher.start();
+            }
+        }
+        if (closingBrace < 0) {
+            throw new IllegalArgumentException(entryName + " - 无法定位类结束位置");
+        }
+        int lineStart =
+                Math.max(sourceCode.lastIndexOf('\n', closingBrace - 1), sourceCode.lastIndexOf('\r', closingBrace - 1))
+                        + 1;
+        String prefix = sourceCode.substring(lineStart, closingBrace);
+        boolean startsLine = prefix.isBlank();
+        String indent = indentation(prefix);
+        String separator = lineSeparator(sourceCode, closingBrace);
+        int offset = startsLine ? lineStart : closingBrace;
+        return sourceCode.substring(0, offset)
+                + (startsLine ? separator : separator + separator)
+                + renderTarget(fragmentLines(method), indent + "    ", separator, true)
+                + separator
+                + (startsLine ? "" : indent)
+                + sourceCode.substring(offset);
     }
 
     private static List<String> fragmentLines(String fragment) {
