@@ -18,8 +18,10 @@ package com.baomidou.mybatisplus.spring.spi;
 import com.baomidou.mybatisplus.core.spi.CompatibleSet;
 import com.baomidou.mybatisplus.core.toolkit.AopUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.SneakyThrows;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -29,14 +31,19 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionHolder;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -93,6 +100,59 @@ public class SpringCompatibleSet implements CompatibleSet {
         } finally {
             if (!transaction) {
                 sqlSession.close();
+            }
+        }
+    }
+
+    @Override
+    public void clearMapperCache(SqlSession sqlSession, String statementId) {
+        if (sqlSession instanceof SqlSessionTemplate) {
+            SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(sqlSession);
+            clearCacheOnRollback(sqlSessionFactory, statementId);
+            SqlSessionHolder holder =
+                (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+            if (holder != null) {
+                MybatisUtils.clearMapperCache(holder.getSqlSession(), statementId);
+            }
+            return;
+        }
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            clearCacheOnRollback(MybatisUtils.getSqlSessionFactory(sqlSession), statementId);
+        }
+        MybatisUtils.clearMapperCache(sqlSession, statementId);
+    }
+
+    private void clearCacheOnRollback(SqlSessionFactory sqlSessionFactory, String statementId) {
+        Cache cache = sqlSessionFactory.getConfiguration().getMappedStatement(statementId).getCache();
+        if (cache == null || !TransactionSynchronizationManager.isSynchronizationActive()) {
+            return;
+        }
+        for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+            if (synchronization instanceof CacheCleanupSynchronization) {
+                ((CacheCleanupSynchronization) synchronization).add(cache);
+                return;
+            }
+        }
+        // MyBatis-Spring 可能在 JDBC 回滚前关闭会话并发布二级缓存，因此回滚完成后需再次清理。
+        TransactionSynchronizationManager.registerSynchronization(new CacheCleanupSynchronization(cache));
+    }
+
+    private static class CacheCleanupSynchronization implements TransactionSynchronization {
+
+        private final Set<Cache> caches = Collections.newSetFromMap(new IdentityHashMap<>());
+
+        private CacheCleanupSynchronization(Cache cache) {
+            add(cache);
+        }
+
+        private void add(Cache cache) {
+            caches.add(cache);
+        }
+
+        @Override
+        public void afterCompletion(int status) {
+            if (status != TransactionSynchronization.STATUS_COMMITTED) {
+                caches.forEach(Cache::clear);
             }
         }
     }
