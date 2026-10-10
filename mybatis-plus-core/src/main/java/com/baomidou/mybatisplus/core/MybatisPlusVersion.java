@@ -23,6 +23,7 @@ import java.net.URLConnection;
 import java.security.CodeSource;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 /**
  * 获取Mybatis-Plus版本
@@ -62,7 +63,8 @@ public class MybatisPlusVersion {
     }
 
     private static String getImplementationVersion(JarFile jarFile) throws IOException {
-        return jarFile.getManifest().getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
+        Manifest manifest = jarFile.getManifest();
+        return manifest == null ? null : manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION);
     }
 
 }
