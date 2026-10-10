@@ -35,6 +35,7 @@ public class MybatisMapperProxyFactory<T> {
 
     @Getter
     private final Class<T> mapperInterface;
+
     @Getter
     private final Map<Method, MybatisMapperProxy.MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
 
@@ -44,7 +45,7 @@ public class MybatisMapperProxyFactory<T> {
 
     @SuppressWarnings("unchecked")
     protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
-        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);
+        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] {mapperInterface}, mapperProxy);
     }
 
     public T newInstance(SqlSession sqlSession) {

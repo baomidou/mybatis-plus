@@ -1,0 +1,58 @@
+description = 'MyBatis source upgrade tools'
+
+compileJava {
+    options.release = 21
+}
+
+configurations {
+    mybatisSources {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+    mybatisSpringSources {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+dependencies {
+    implementation "${lib.mybatis}"
+    implementation "cn.hutool:hutool-core:5.8.40"
+    mybatisSources "${lib.mybatis}:sources@jar"
+    mybatisSpringSources "${lib.'mybatis-spring'}:sources@jar"
+}
+
+tasks.register('runCoreRunner', JavaExec) {
+    group = 'mybatis upgrade'
+    description = 'Rewrite MyBatis sources using CoreRunner'
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.baomidou.mybatisplus.CoreRunner'
+    workingDir = rootProject.projectDir
+    doFirst {
+        setArgs([configurations.mybatisSources.singleFile.absolutePath])
+    }
+}
+
+tasks.register('runSpringRunner', JavaExec) {
+    group = 'mybatis upgrade'
+    description = 'Rewrite MyBatis Spring sources using SpringRunner'
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.baomidou.mybatisplus.SpringRunner'
+    workingDir = rootProject.projectDir
+    doFirst {
+        setArgs([configurations.mybatisSpringSources.singleFile.absolutePath])
+    }
+}
+
+def upgradeRunners = tasks.withType(JavaExec)
+upgradeRunners.configureEach {
+    finalizedBy rootProject.tasks.named('spotlessApply')
+}
+
+rootProject.tasks.matching { it.name.startsWith('spotless') }.configureEach {
+    mustRunAfter upgradeRunners
+}
