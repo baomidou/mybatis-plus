@@ -1,0 +1,125 @@
+diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
+index 29149d9e3aaae53cae3572dec4b33f35ab963c58..fc26e207fed82f13625c854bfa25d48bab0d875f 100644
+--- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
++++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
+@@ -1,20 +1,26 @@
+ /*
+- *    Copyright 2009-2024 the original author or authors.
++ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+  *
+- *    Licensed under the Apache License, Version 2.0 (the "License");
+- *    you may not use this file except in compliance with the License.
+- *    You may obtain a copy of the License at
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
+  *
+- *       https://www.apache.org/licenses/LICENSE-2.0
++ *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+- *    Unless required by applicable law or agreed to in writing, software
+- *    distributed under the License is distributed on an "AS IS" BASIS,
+- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- *    See the License for the specific language governing permissions and
+- *    limitations under the License.
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
+  */
+-package org.apache.ibatis.binding;
+-
++package com.baomidou.mybatisplus.core.override;
++
++import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
++import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
++import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
++import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
++import lombok.Getter;
++import org.apache.ibatis.binding.MapperProxy;
+ import org.apache.ibatis.reflection.ExceptionUtil;
+ import org.apache.ibatis.session.SqlSession;
+ import org.apache.ibatis.util.MapUtil;
+@@ -31,10 +37,13 @@ import java.lang.reflect.Method;
+ import java.util.Map;
+ 
+ /**
+- * @author Clinton Begin
+- * @author Eduardo Macarron
++ * <p> 从 {@link MapperProxy}  copy 过来 </p>
++ * <li> 使用 MybatisMapperMethod </li>
++ *
++ * @author miemie
++ * @since 2018-06-09
+  */
+-public class MapperProxy<T> implements InvocationHandler, Serializable {
++public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
+ 
+     private static final long serialVersionUID = -4724728412955527868L;
+     private static final int ALLOWED_MODES = MethodHandles.Lookup.PRIVATE
+@@ -43,11 +52,17 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+             | MethodHandles.Lookup.PUBLIC;
+     private static final Constructor<Lookup> lookupConstructor;
+     private static final Method privateLookupInMethod;
++
++    @Getter
+     private final SqlSession sqlSession;
++
++    @Getter
+     private final Class<T> mapperInterface;
++
+     private final Map<Method, MapperMethodInvoker> methodCache;
+ 
+-    public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
++    public MybatisMapperProxy(
++            SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
+         this.sqlSession = sqlSession;
+         this.mapperInterface = mapperInterface;
+         this.methodCache = methodCache;
+@@ -96,7 +111,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+             return MapUtil.computeIfAbsent(methodCache, method, m -> {
+                 if (!m.isDefault()) {
+                     return new PlainMethodInvoker(
+-                            new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
++                            new MybatisMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
+                 }
+                 try {
+                     if (privateLookupInMethod == null) {
+@@ -138,9 +153,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+     }
+ 
+     private static class PlainMethodInvoker implements MapperMethodInvoker {
+-        private final MapperMethod mapperMethod;
++        private final MybatisMapperMethod mapperMethod;
+ 
+-        public PlainMethodInvoker(MapperMethod mapperMethod) {
++        public PlainMethodInvoker(MybatisMapperMethod mapperMethod) {
+             this.mapperMethod = mapperMethod;
+         }
+ 
+@@ -159,7 +174,23 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+ 
+         @Override
+         public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
+-            return methodHandle.bindTo(proxy).invokeWithArguments(args);
++            boolean hasIgnoreStrategy = InterceptorIgnoreHelper.hasIgnoreStrategy();
++            if (hasIgnoreStrategy) {
++                return methodHandle.bindTo(proxy).invokeWithArguments(args);
++            } else {
++                try {
++                    MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(proxy);
++                    Class<?> mapperInterface = mapperProxyMetadata.getMapperInterface();
++                    IgnoreStrategy ignoreStrategy = InterceptorIgnoreHelper.findIgnoreStrategy(mapperInterface, method);
++                    if (ignoreStrategy == null) {
++                        ignoreStrategy = IgnoreStrategy.builder().build();
++                    }
++                    InterceptorIgnoreHelper.handle(ignoreStrategy);
++                    return methodHandle.bindTo(proxy).invokeWithArguments(args);
++                } finally {
++                    InterceptorIgnoreHelper.clearIgnoreStrategy();
++                }
++            }
+         }
+     }
+ }
