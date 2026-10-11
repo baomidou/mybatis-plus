@@ -33,10 +33,18 @@ class MetadataTest {
     @Test
     void checkSpringAutoconfigureMetadataProperties() throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileSystemResource("build/classes/java/main/META-INF/spring-autoconfigure-metadata.properties").getInputStream());
-        Assertions.assertEquals(DataSourceAutoConfiguration.class.getName() + "," + MybatisPlusLanguageDriverAutoConfiguration.class.getName(), properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".AutoConfigureAfter"));
-        Assertions.assertEquals(DataSource.class.getName(), properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"));
-        Assertions.assertEquals(SqlSessionFactory.class.getName() + "," + SqlSessionFactoryBean.class.getName(), properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnClass"));
+        properties.load(
+                new FileSystemResource("build/classes/java/main/META-INF/spring-autoconfigure-metadata.properties")
+                        .getInputStream());
+        Assertions.assertEquals(
+                DataSourceAutoConfiguration.class.getName() + ","
+                        + MybatisPlusLanguageDriverAutoConfiguration.class.getName(),
+                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".AutoConfigureAfter"));
+        Assertions.assertEquals(
+                DataSource.class.getName(),
+                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"));
+        Assertions.assertEquals(
+                SqlSessionFactory.class.getName() + "," + SqlSessionFactoryBean.class.getName(),
+                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnClass"));
     }
-
 }

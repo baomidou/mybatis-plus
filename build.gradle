@@ -16,11 +16,15 @@ buildscript {
         libraries = [
             mybatisVersion = '3.5.19',
             mybatisSpringVersion = '2.1.2',
+            mybatisSpring3Version = '3.0.6',
+            mybatisSpring4Version = '4.1.0',
             mybatisSpringBootStarterVersion = '2.3.2',
+            mybatisSpringBoot3StarterVersion = '3.0.5',
+            mybatisSpringBoot4StarterVersion = '4.1.0',
             springVersion = '5.3.39',
             springBootVersion = '2.7.18',
             springBoot3Version = '3.5.9',
-            springBoot4Version = '4.0.1',
+            springBoot4Version = '4.1.0',
             springCloudVersion = '3.1.8',
             junitVersion = '6.1.1',
         ]
@@ -44,8 +48,6 @@ buildscript {
 
             "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.22.1",
             "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.36",
-            //copy
-            "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
             //test
             "spring-test"                : "org.springframework:spring-test:${springVersion}",
             "assertj-core"               : "org.assertj:assertj-core:3.27.7",
@@ -119,7 +121,10 @@ def formattedFiles = [
     // override 目录及其子目录的所有 Java 文件
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/**/*.java',
     // 新模块的全部 Java 文件
-    'mybatis-plus-up/src/**/*.java'
+    'mybatis-plus-up/src/**/*.java',
+    'spring-boot-starter/mybatis-plus-boot-starter/src/**/*.java',
+    'spring-boot-starter/mybatis-plus-spring-boot3-starter/src/**/*.java',
+    'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java'
 ]
 def formattingExcludes = ['**/build/**', '**/target/**', '**/.gradle/**', '**/out/**']
 def javaImportOrder = ['', 'java|javax|jakarta', '\\#']

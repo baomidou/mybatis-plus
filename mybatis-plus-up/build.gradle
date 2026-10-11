@@ -87,18 +87,17 @@ tasks.named(coreSourceSet.compileJavaTaskName, JavaCompile) {
 }
 upstreamSourceSets.add(coreSourceSet)
 
-def autoConfigurationSource = 'org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java'
 def autoConfigurationGroups = [
-    boot2: [directory: 'boot2', release: 8,
+    boot2: [directory: 'boot2', release: 8, version: mybatisSpringBootStarterVersion,
             owner: localProject(sourceMappings.boot2.getProperty('moudle'))],
-    boot3: [directory: 'boot3', release: 17,
+    boot3: [directory: 'boot3', release: 17, version: mybatisSpringBoot3StarterVersion,
             owner: localProject(sourceMappings.boot3.getProperty('moudle'))],
-    boot4: [directory: 'boot4', release: 17,
+    boot4: [directory: 'boot4', release: 17, version: mybatisSpringBoot4StarterVersion,
             owner: localProject(sourceMappings.boot4.getProperty('moudle'))]
 ]
 
 def resolvedBootModuleVersion = { group, String module ->
-    def component = group.owner.configurations.testRuntimeClasspath.incoming.resolutionResult
+    def component = group.classpath.incoming.resolutionResult
         .allComponents.find {
             it.moduleVersion?.group == 'org.mybatis.spring.boot' && it.moduleVersion?.name == module
         }
@@ -109,7 +108,13 @@ def resolvedBootModuleVersion = { group, String module ->
 }
 
 autoConfigurationGroups.each { id, upstream ->
-    def ownerClasspath = upstream.owner.configurations.testRuntimeClasspath
+    def ownerClasspath = configurations.create("${id}Upstream") {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    upstream.classpath = ownerClasspath
+    dependencies.add(ownerClasspath.name,
+        "org.mybatis.spring.boot:mybatis-spring-boot-starter:${upstream.version}")
     def upstreamSources = configurations.create("${id}Sources") {
         canBeResolved = true
         canBeConsumed = false
@@ -121,12 +126,11 @@ autoConfigurationGroups.each { id, upstream ->
         "org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:${version}:sources@jar".toString()
     })
     upstreamArtifacts[id] = [group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure',
-                             sources: upstreamSources, owner: upstream.owner,
-                             configuration: 'testRuntimeClasspath']
+                             sources: upstreamSources, owner: project,
+                             configuration: ownerClasspath.name]
 
     def upstreamSourceSet = sourceSets.create(id)
     upstreamSourceSet.java.setSrcDirs(["src/main/java/${upstream.directory}"])
-    upstreamSourceSet.java.include(autoConfigurationSource)
     sourceSets.main.java.exclude("${upstream.directory}/**")
     configurations.getByName(upstreamSourceSet.compileClasspathConfigurationName)
         .shouldResolveConsistentlyWith(ownerClasspath)
@@ -231,10 +235,13 @@ tasks.named('check') {
                 throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
             }
         }
-        autoConfigurationGroups.values().each { upstream ->
-            def source = file("src/main/java/${upstream.directory}/${autoConfigurationSource}")
-            if (!source.isFile()) {
-                throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
+        autoConfigurationGroups.each { id, upstream ->
+            sourceMappings[id].stringPropertyNames().findAll { it !in ['version', 'moudle'] }.each { sourceClass ->
+                def sourcePath = sourceClass.replace('.', '/') + '.java'
+                def source = file("src/main/java/${upstream.directory}/${sourcePath}")
+                if (!source.isFile()) {
+                    throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
+                }
             }
         }
     }
