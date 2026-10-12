@@ -1,15 +1,20 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.extension.parser.JsqlParserGlobal;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerInterceptor;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -50,6 +55,32 @@ class DataChangeRecorderInnerInterceptorTest {
         Assertions.assertEquals(operationResult.getTableName(), "H2USER:*");
         Assertions.assertFalse(operationResult.isRecordStatus());
         Assertions.assertNull(operationResult.getChangedData());
+    }
+
+    @Test
+    void processInsertWithForeachAdditionalParameter() throws Exception {
+        Configuration configuration = new Configuration();
+        List<ParameterMapping> parameterMappings = List.of(
+            new ParameterMapping.Builder(configuration, "__frch_item_0.id", Long.class).build(),
+            new ParameterMapping.Builder(configuration, "__frch_item_0.name", String.class).build(),
+            new ParameterMapping.Builder(configuration, "__frch_item_1.id", Long.class).build(),
+            new ParameterMapping.Builder(configuration, "__frch_item_1.name", String.class).build()
+        );
+        BoundSql boundSql = new BoundSql(configuration, "insert into sys_user (id, name) values (?, ?), (?, ?)",
+            parameterMappings, Map.of("list", List.of(
+                Map.of("id", 1L, "name", "Alice"),
+                Map.of("id", 2L, "name", "Bob")
+            )));
+        boundSql.setAdditionalParameter("__frch_item_0", Map.of("id", 1L, "name", "Alice"));
+        boundSql.setAdditionalParameter("__frch_item_1", Map.of("id", 2L, "name", "Bob"));
+        Insert insert = (Insert) JsqlParserGlobal.parse("insert into sys_user (id, name) values (?, ?), (?, ?)");
+
+        DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor.processInsert(insert, boundSql);
+
+        Assertions.assertEquals("sys_user", operationResult.getTableName());
+        Assertions.assertTrue(operationResult.isRecordStatus());
+        Assertions.assertTrue(operationResult.getChangedData().contains("\"ID\":\"null->1\""));
+        Assertions.assertTrue(operationResult.getChangedData().contains("\"NAME\":\"null->Alice\""));
     }
 
     @Test

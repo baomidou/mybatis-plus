@@ -337,7 +337,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                 final String columnName = columnSetIndexMap.getOrDefault(index++, getColumnNameByProperty(propertyNameTrim, tableName));
                 if (relatedColumnsUpperCaseWithoutUnderline.containsKey(propertyNameTrim)) {
                     final String colkey = relatedColumnsUpperCaseWithoutUnderline.get(propertyNameTrim);
-                    Object valObj = metaObject.getValue(propertyName);
+                    Object valObj = getParameterValue(updateSql, metaObject, propertyName);
                     if (valObj instanceof IEnum) {
                         valObj = ((IEnum<?>) valObj).getValue();
                     } else if (valObj instanceof Enum) {
@@ -351,7 +351,7 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                     }
                 } else {
                     if (columnName != null) {
-                        columnNameValMap.put(columnName, metaObject.getValue(propertyName));
+                        columnNameValMap.put(columnName, getParameterValue(updateSql, metaObject, propertyName));
                     }
                 }
             } catch (Exception e) {
@@ -503,11 +503,18 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             if (propertyName.startsWith("ew.paramNameValuePairs")) {
                 continue;
             }
-            Object propertyValue = metaObject.getValue(propertyName);
+            Object propertyValue = getParameterValue(boundSql, metaObject, propertyName);
             propertyValMap.put(propertyName, propertyValue);
         }
         return propertyValMap;
 
+    }
+
+    private Object getParameterValue(BoundSql boundSql, MetaObject metaObject, String propertyName) {
+        if (boundSql.hasAdditionalParameter(propertyName)) {
+            return boundSql.getAdditionalParameter(propertyName);
+        }
+        return metaObject.getValue(propertyName);
     }
 
 
