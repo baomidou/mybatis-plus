@@ -67,12 +67,12 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 
 ## 三个任务
 
-使用 JDK 21，在仓库根目录执行。Windows 命令如下，其他平台使用 `./gradlew`：
+使用 JDK 21，在仓库根目录执行：
 
-```powershell
-.\gradlew.bat :mybatis-plus-up:up
-.\gradlew.bat :mybatis-plus-up:patch
-.\gradlew.bat :mybatis-plus-up:check
+```shell
+./gradlew :mybatis-plus-up:up
+./gradlew :mybatis-plus-up:patch
+./gradlew :mybatis-plus-up:check
 ```
 
 - `up`：从实际依赖的源码 JAR 中提取已登记的上游类，调用根项目 `spotlessApply`，格式化成功后更新版本记录。
