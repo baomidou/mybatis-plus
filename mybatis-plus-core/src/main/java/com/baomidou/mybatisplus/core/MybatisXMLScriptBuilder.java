@@ -115,12 +115,12 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     /**
      * 也可以将XNode节点包裹增强一下,来减少方法的引用,但需要创建对象,这里就直接将每个地方手动改一下了.
      */
-    private synchronized static String cacheStr(String str) {
+    private static synchronized String cacheStr(String str) {
         if (str == null) {
             return null;
         }
         String value = CACHE_STRING.computeIfAbsent(str, WeakReference::new).get();
-        //增强安全处理一下,如果实在是GC处理掉了(可能性小),就返回原来.
+        // 增强安全处理一下,如果实在是GC处理掉了(可能性小),就返回原来.
         if (StringUtils.isNotBlank(value)) {
             return value;
         }
@@ -128,9 +128,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private static final StaticTextSqlNode SPACE_SQL_NODE = new StaticTextSqlNode(StringPool.SPACE);
-
     private static final Pattern PATTERN = Pattern.compile("^\\s+|\\s+$");
-
     private static final Map<String, StaticTextSqlNode> CACHE_EMPTY_SQL_NODE = new ConcurrentHashMap<>();
 
     /**
@@ -150,10 +148,12 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
         NodeList children = node.getNode().getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             XNode child = node.newXNode(children.item(i));
-            if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
+            if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE
+                    || child.getNode().getNodeType() == Node.TEXT_NODE) {
                 String text = cacheStr(child.getStringBody(""));
                 if (text.trim().isEmpty()) {
-                    StaticTextSqlNode staticTextSqlNode = CACHE_EMPTY_SQL_NODE.computeIfAbsent(text, StaticTextSqlNode::new);
+                    StaticTextSqlNode staticTextSqlNode =
+                            CACHE_EMPTY_SQL_NODE.computeIfAbsent(text, StaticTextSqlNode::new);
                     contents.add(staticTextSqlNode);
                     continue;
                 }
@@ -181,7 +181,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
         void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);
     }
 
-    private class BindHandler implements NodeHandler {
+    private static class BindHandler implements NodeHandler {
         public BindHandler() {
             // Prevent Synthetic Access
         }
@@ -207,7 +207,8 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             String prefixOverrides = cacheStr(nodeToHandle.getStringAttribute("prefixOverrides"));
             String suffix = cacheStr(nodeToHandle.getStringAttribute("suffix"));
             String suffixOverrides = cacheStr(nodeToHandle.getStringAttribute("suffixOverrides"));
-            TrimSqlNode trim = new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
+            TrimSqlNode trim =
+                    new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
             targetContents.add(trim);
         }
     }
@@ -253,7 +254,8 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             String open = cacheStr(nodeToHandle.getStringAttribute("open"));
             String close = cacheStr(nodeToHandle.getStringAttribute("close"));
             String separator = cacheStr(nodeToHandle.getStringAttribute("separator"));
-            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(configuration, mixedSqlNode, collection, nullable, index, item, open, close, separator);
+            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(
+                    configuration, mixedSqlNode, collection, nullable, index, item, open, close, separator);
             targetContents.add(forEachSqlNode);
         }
     }
@@ -299,7 +301,8 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             targetContents.add(chooseSqlNode);
         }
 
-        private void handleWhenOtherwiseNodes(XNode chooseSqlNode, List<SqlNode> ifSqlNodes, List<SqlNode> defaultSqlNodes) {
+        private void handleWhenOtherwiseNodes(
+                XNode chooseSqlNode, List<SqlNode> ifSqlNodes, List<SqlNode> defaultSqlNodes) {
             List<XNode> children = chooseSqlNode.getChildren();
             for (XNode child : children) {
                 String nodeName = child.getNode().getNodeName();
@@ -322,5 +325,4 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             return defaultSqlNode;
         }
     }
-
 }

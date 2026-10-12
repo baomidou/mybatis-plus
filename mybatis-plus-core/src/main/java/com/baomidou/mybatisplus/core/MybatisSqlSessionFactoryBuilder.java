@@ -37,7 +37,9 @@ import java.net.InetAddress;
 import java.util.Properties;
 
 /**
- * 重写SqlSessionFactoryBuilder
+ * 重写自 {@link SqlSessionFactoryBuilder}
+ * 使用 MybatisXMLConfigBuilder 替换 XMLConfigBuilder
+ * build 函数加入一些mp必要初始化
  *
  * @author nieqiurong 2019/2/23.
  */
@@ -54,7 +56,9 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         } finally {
             ErrorContext.instance().reset();
             try {
-                reader.close();
+                if (reader != null) {
+                    reader.close();
+                }
             } catch (IOException e) {
                 // Intentionally ignore. Prefer previous error.
             }
@@ -72,7 +76,9 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         } finally {
             ErrorContext.instance().reset();
             try {
-                inputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             } catch (IOException e) {
                 // Intentionally ignore. Prefer previous error.
             }
@@ -80,16 +86,18 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     }
 
     @Override
-    public SqlSessionFactory build(Configuration configuration) {
-        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+    public SqlSessionFactory build(Configuration config) {
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(config);
 
         IdentifierGenerator identifierGenerator;
         if (null == globalConfig.getIdentifierGenerator()) {
             GlobalConfig.Sequence sequence = globalConfig.getSequence();
             if (sequence.getWorkerId() != null && sequence.getDatacenterId() != null) {
-                identifierGenerator = new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
+                identifierGenerator =
+                        new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
             } else {
-                NetUtils.NetProperties netProperties = new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
+                NetUtils.NetProperties netProperties =
+                        new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
                 try {
                     InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
                     identifierGenerator = new DefaultIdentifierGenerator(inetAddress);
@@ -105,10 +113,10 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         IdWorker.setIdentifierGenerator(identifierGenerator);
 
         if (globalConfig.isEnableSqlRunner()) {
-            new SqlRunnerInjector().inject(configuration);
+            new SqlRunnerInjector().inject(config);
         }
 
-        SqlSessionFactory sqlSessionFactory = super.build(configuration);
+        SqlSessionFactory sqlSessionFactory = super.build(config);
 
         // 缓存 sqlSessionFactory
         globalConfig.setSqlSessionFactory(sqlSessionFactory);

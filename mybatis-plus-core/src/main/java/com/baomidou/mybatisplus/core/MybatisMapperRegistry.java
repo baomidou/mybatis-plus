@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 继承至MapperRegistry
+ * 替换 knownMappers
+ * MybatisMapperProxyFactory 替换 MapperProxyFactory
  *
  * @author Caratacus hubin
  * @since 2017-04-19
@@ -35,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MybatisMapperRegistry extends MapperRegistry {
 
     private final Configuration config;
-
     private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new ConcurrentHashMap<>();
 
     public MybatisMapperRegistry(Configuration config) {
@@ -50,8 +50,11 @@ public class MybatisMapperRegistry extends MapperRegistry {
         MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
             mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.entrySet().stream()
-                .filter(t -> t.getKey().getName().equals(type.getName())).findFirst().map(Map.Entry::getValue)
-                .orElseThrow(() -> new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry."));
+                    .filter(t -> t.getKey().getName().equals(type.getName()))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .orElseThrow(() ->
+                            new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry."));
         }
         try {
             return mapperProxyFactory.newInstance(sqlSession);
@@ -69,8 +72,10 @@ public class MybatisMapperRegistry extends MapperRegistry {
      * 清空 Mapper 缓存信息
      */
     protected <T> void removeMapper(Class<T> type) {
-        knownMappers.entrySet().stream().filter(t -> t.getKey().getName().equals(type.getName()))
-            .findFirst().ifPresent(t -> knownMappers.remove(t.getKey()));
+        knownMappers.entrySet().stream()
+                .filter(t -> t.getKey().getName().equals(type.getName()))
+                .findFirst()
+                .ifPresent(t -> knownMappers.remove(t.getKey()));
     }
 
     @Override
@@ -78,7 +83,6 @@ public class MybatisMapperRegistry extends MapperRegistry {
         if (type.isInterface()) {
             if (hasMapper(type)) {
                 return;
-//                throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
             }
             boolean loadCompleted = false;
             try {
@@ -104,5 +108,4 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
     }
-
 }
