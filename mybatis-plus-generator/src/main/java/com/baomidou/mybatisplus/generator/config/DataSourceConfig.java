@@ -171,6 +171,8 @@ public class DataSourceConfig {
             return DbType.MYSQL;
         } else if (str.contains(":oracle:")) {
             return DbType.ORACLE;
+        } else if (str.contains(":polardb:") || str.contains(":polardb2:")) {
+            return DbType.POLARDB;
         } else if (str.contains(":postgresql:")) {
             return DbType.POSTGRE_SQL;
         } else if (str.contains(":sqlserver:")) {
@@ -272,6 +274,7 @@ public class DataSourceConfig {
                     properties.put("useInformationSchema", "true");
                     break;
                 case ORACLE:
+                case POLARDB:
                     properties.put("remarks", "true");
                     properties.put("remarksReporting", "true");
                     break;
@@ -298,7 +301,7 @@ public class DataSourceConfig {
         } else if (DbType.DB2 == dbType) {
             //db2 默认 schema=current schema
             schema = "current schema";
-        } else if (DbType.ORACLE == dbType) {
+        } else if (DbType.ORACLE == dbType || DbType.POLARDB == dbType) {
             //oracle 默认 schema=username
             schema = this.username.toUpperCase();
         }

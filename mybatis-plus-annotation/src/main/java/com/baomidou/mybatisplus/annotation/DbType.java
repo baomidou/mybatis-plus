@@ -41,6 +41,10 @@ public enum DbType {
      */
     ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_NEW)"),
     /**
+     * PolarDB Oracle compatible database
+     */
+    POLARDB("polardb", "PolarDB Oracle兼容数据库"),
+    /**
      * oracle12c new pagination
      */
     ORACLE_12C("oracle12c", "Oracle12c+数据库"),
@@ -287,6 +291,7 @@ public enum DbType {
 
     public boolean oracleSameType() {
         return this == DbType.ORACLE
+            || this == DbType.POLARDB
             || this == DbType.DM
             || this == DbType.GAUSS;
     }

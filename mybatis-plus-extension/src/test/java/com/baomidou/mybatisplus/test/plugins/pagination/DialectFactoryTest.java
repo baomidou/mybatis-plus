@@ -30,6 +30,7 @@ public class DialectFactoryTest {
 
         Assertions.assertInstanceOf(OracleDialect.class, DialectFactory.getDialect(DbType.DM));
         Assertions.assertInstanceOf(OracleDialect.class, DialectFactory.getDialect(DbType.ORACLE));
+        Assertions.assertInstanceOf(OracleDialect.class, DialectFactory.getDialect(DbType.POLARDB));
         Assertions.assertInstanceOf(OracleDialect.class, DialectFactory.getDialect(DbType.GAUSS));
 
         Assertions.assertInstanceOf(PostgreDialect.class, DialectFactory.getDialect(DbType.POSTGRE_SQL));

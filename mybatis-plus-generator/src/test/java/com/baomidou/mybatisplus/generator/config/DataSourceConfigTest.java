@@ -1,9 +1,11 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
 import com.baomidou.mybatisplus.generator.keywords.MySqlKeyWordsHandler;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.h2.Driver;
@@ -58,5 +60,18 @@ public class DataSourceConfigTest {
         Assertions.assertNotNull(dataSourceConfig.getTypeConvert());
         Assertions.assertEquals(DbType.H2, dataSourceConfig.getDbType());
         Assertions.assertEquals(H2Query.class, dataSourceConfig.getDbQuery().getClass());
+    }
+
+    @Test
+    void polarDbTest() {
+        assertPolarDb("jdbc:polardb://localhost/test");
+        assertPolarDb("jdbc:polardb2://localhost/test");
+    }
+
+    private void assertPolarDb(String url) {
+        DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(url, "system", "password").build();
+        Assertions.assertEquals(DbType.POLARDB, dataSourceConfig.getDbType());
+        Assertions.assertInstanceOf(OracleQuery.class, dataSourceConfig.getDbQuery());
+        Assertions.assertInstanceOf(OracleTypeConvert.class, dataSourceConfig.getTypeConvert());
     }
 }

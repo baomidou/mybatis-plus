@@ -33,6 +33,7 @@ public class DbQueryRegistry {
 
     public DbQueryRegistry() {
         db_query_enum_map.put(DbType.ORACLE, new OracleQuery());
+        db_query_enum_map.put(DbType.POLARDB, new OracleQuery());
         db_query_enum_map.put(DbType.SQL_SERVER, new SqlServerQuery());
         db_query_enum_map.put(DbType.POSTGRE_SQL, new PostgreSqlQuery());
         db_query_enum_map.put(DbType.DB2, new DB2Query());

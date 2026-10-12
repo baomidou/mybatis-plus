@@ -33,6 +33,7 @@ public class DbQueryRegistryTest {
         DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
         dbQueryRegistry.getDbQuery(DbType.GAUSS_DB);
         Assertions.assertInstanceOf(OracleQuery.class, dbQueryRegistry.getDbQuery(DbType.ORACLE));
+        Assertions.assertInstanceOf(OracleQuery.class, dbQueryRegistry.getDbQuery(DbType.POLARDB));
         Assertions.assertInstanceOf(SqlServerQuery.class, dbQueryRegistry.getDbQuery(DbType.SQL_SERVER));
         Assertions.assertInstanceOf(PostgreSqlQuery.class, dbQueryRegistry.getDbQuery(DbType.POSTGRE_SQL));
         Assertions.assertInstanceOf(DB2Query.class, dbQueryRegistry.getDbQuery(DbType.DB2));

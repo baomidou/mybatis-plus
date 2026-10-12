@@ -38,6 +38,7 @@ public class TypeConverts {
     public static ITypeConvert getTypeConvert(DbType dbType) {
         switch (dbType) {
             case ORACLE:
+            case POLARDB:
                 return OracleTypeConvert.INSTANCE;
             case DB2:
                 return DB2TypeConvert.INSTANCE;
