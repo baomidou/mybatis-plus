@@ -7,7 +7,7 @@ dependencies {
     testImplementation "io.github.classgraph:classgraph:4.8.184"
     testImplementation "${lib."spring-context-support"}"
     testImplementation "${lib.h2}"
-    testImplementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
+    testImplementation group: 'com.google.guava', name: 'guava', version: '33.6.0-jre'
 
 }
 
