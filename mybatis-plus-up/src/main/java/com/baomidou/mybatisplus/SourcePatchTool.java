@@ -14,6 +14,7 @@ import java.util.jar.JarFile;
 
 /** Maintains formatted upstream copies, enhancement patches and upstream version patches. */
 public final class SourcePatchTool {
+
     private final Path repository;
     private final Path module;
     private final Map<Path, Properties> recordFiles = new LinkedHashMap<>();
@@ -33,18 +34,14 @@ public final class SourcePatchTool {
         }
         try (var files = Files.list(recordsDirectory)) {
             for (Path candidate : files.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().endsWith(".properties"))
-                    .sorted()
-                    .toList()) {
-                Path recordFile =
-                        resolve(recordsDirectory, candidate.getFileName().toString());
+                    .filter(path -> path.getFileName().toString().endsWith(".properties")).sorted().toList()) {
+                Path recordFile = resolve(recordsDirectory, candidate.getFileName().toString());
                 Properties fragment = new Properties();
                 try (var reader = Files.newBufferedReader(recordFile, StandardCharsets.UTF_8)) {
                     fragment.load(reader);
                 }
                 String artifact = recordId(recordFile);
-                if (!artifact.matches("[a-zA-Z0-9_-]+")
-                        || fragment.getProperty("version", "").isBlank()
+                if (!artifact.matches("[a-zA-Z0-9_-]+") || fragment.getProperty("version", "").isBlank()
                         || fragment.getProperty("moudle", "").isBlank()) {
                     throw new IllegalArgumentException("Expected version and moudle in " + recordFile);
                 }
@@ -55,8 +52,7 @@ public final class SourcePatchTool {
                 if (artifact.equals("core") || artifact.matches("(?:boot|spring)[0-9]+")) {
                     sourceRoot = sourceRoot.resolve(artifact);
                 }
-                for (String sourceClass :
-                        fragment.stringPropertyNames().stream().sorted().toList()) {
+                for (String sourceClass : fragment.stringPropertyNames().stream().sorted().toList()) {
                     if (sourceClass.equals("version") || sourceClass.equals("moudle")) {
                         continue;
                     }
@@ -73,16 +69,15 @@ public final class SourcePatchTool {
                     Path enhanced = localClass.isEmpty()
                             ? null
                             : resolve(localModule.resolve("src/main/java"), classPath(localClass));
-                    if (enhanced != null
-                            && mappings.stream()
-                                    .anyMatch(m -> artifact.equals(m.artifact()) && enhanced.equals(m.enhanced()))) {
+                    if (enhanced != null && mappings.stream()
+                            .anyMatch(m -> artifact.equals(m.artifact()) && enhanced.equals(m.enhanced()))) {
                         throw new IllegalArgumentException("Duplicate enhanced source mapping: " + localClass);
                     }
                     String target = enhanced == null
                             ? null
                             : this.repository.relativize(enhanced).toString().replace('\\', '/');
-                    Path patch = upstream.resolveSibling(
-                            upstream.getFileName().toString().replaceFirst("\\.java$", ".patch"));
+                    Path patch = upstream
+                            .resolveSibling(upstream.getFileName().toString().replaceFirst("\\.java$", ".patch"));
                     mappings.add(new Mapping(artifact, sourceClass, target, upstream, enhanced, patch));
                 }
             }
@@ -157,17 +152,11 @@ public final class SourcePatchTool {
                 throw new IllegalArgumentException("Missing dependency version for " + record.getKey());
             }
             fragment.setProperty("version", version);
-            StringBuilder text = new StringBuilder("version=")
-                    .append(version)
-                    .append("\nmoudle=")
-                    .append(fragment.getProperty("moudle"))
-                    .append('\n');
+            StringBuilder text = new StringBuilder("version=").append(version).append("\nmoudle=")
+                    .append(fragment.getProperty("moudle")).append('\n');
             for (String key : fragment.stringPropertyNames().stream().sorted().toList()) {
                 if (!key.equals("version") && !key.equals("moudle")) {
-                    text.append(key)
-                            .append('=')
-                            .append(fragment.getProperty(key))
-                            .append('\n');
+                    text.append(key).append('=').append(fragment.getProperty(key)).append('\n');
                 }
             }
             write(record.getKey(), text.toString());
@@ -184,8 +173,9 @@ public final class SourcePatchTool {
         for (var patch : patches.entrySet()) {
             write(patch.getKey(), patch.getValue());
         }
-        System.out.println("Generated " + patches.size() + " patches alongside upstream sources in "
-                + module.resolve("src/main/java"));
+        System.out.println(
+                "Generated " + patches.size() + " patches alongside upstream sources in "
+                        + module.resolve("src/main/java"));
     }
 
     public void check(Map<String, String> versions) throws IOException, InterruptedException {
@@ -226,20 +216,12 @@ public final class SourcePatchTool {
                         continue;
                     }
                     Source before = sources.stream()
-                            .filter(s ->
-                                    s.artifact().equals(previous) && s.entry().equals(source.entry()))
-                            .findFirst()
+                            .filter(s -> s.artifact().equals(previous) && s.entry().equals(source.entry())).findFirst()
                             .orElse(null);
                     if (before != null) {
-                        String target = repository
-                                .relativize(source.upstream())
-                                .toString()
-                                .replace('\\', '/');
-                        Path patch = source.upstream()
-                                .resolveSibling(source.upstream()
-                                        .getFileName()
-                                        .toString()
-                                        .replaceFirst("\\.java$", ".upstream.patch"));
+                        String target = repository.relativize(source.upstream()).toString().replace('\\', '/');
+                        Path patch = source.upstream().resolveSibling(
+                                source.upstream().getFileName().toString().replaceFirst("\\.java$", ".upstream.patch"));
                         comparisons.add(new Comparison(target, before.upstream(), source.upstream(), patch));
                     }
                 }
@@ -259,22 +241,9 @@ public final class SourcePatchTool {
             String output = git(
                     work,
                     List.of(
-                            "diff",
-                            "--no-index",
-                            "--no-renames",
-                            "--text",
-                            "--no-color",
-                            "--no-ext-diff",
-                            "--no-textconv",
-                            "--full-index",
-                            "--diff-algorithm=myers",
-                            "--no-indent-heuristic",
-                            "--unified=3",
-                            "--src-prefix=a/",
-                            "--dst-prefix=b/",
-                            "--",
-                            "before.java",
-                            "after.java"),
+                            "diff", "--no-index", "--no-renames", "--text", "--no-color", "--no-ext-diff",
+                            "--no-textconv", "--full-index", "--diff-algorithm=myers", "--no-indent-heuristic",
+                            "--unified=3", "--src-prefix=a/", "--dst-prefix=b/", "--", "before.java", "after.java"),
                     true);
             if (output.isEmpty()) {
                 return "";
@@ -319,8 +288,8 @@ public final class SourcePatchTool {
 
     private static String git(Path work, List<String> arguments, boolean diff)
             throws IOException, InterruptedException {
-        List<String> command =
-                new ArrayList<>(List.of("git", "-c", "core.autocrlf=false", "-c", "core.quotePath=false"));
+        List<String> command = new ArrayList<>(
+                List.of("git", "-c", "core.autocrlf=false", "-c", "core.quotePath=false"));
         command.addAll(arguments);
         ProcessBuilder builder = new ProcessBuilder(command).directory(work.toFile());
         // Keep patch checks outside the enclosing repository's index and working tree.
@@ -372,10 +341,8 @@ public final class SourcePatchTool {
         }
         if (!relative.contains("/")) {
             try (var paths = Files.find(
-                    repository,
-                    2,
-                    (path, attributes) -> attributes.isDirectory()
-                            && path.getFileName().toString().equals(relative)
+                    repository, 2,
+                    (path, attributes) -> attributes.isDirectory() && path.getFileName().toString().equals(relative)
                             && (Files.isRegularFile(path.resolve("build.gradle"))
                                     || Files.isRegularFile(path.resolve("build.gradle.kts"))))) {
                 List<Path> matches = paths.limit(2).toList();
@@ -411,11 +378,8 @@ public final class SourcePatchTool {
     private Path resolve(Path root, String relative) throws IOException {
         Path name = Path.of(relative);
         Path path = root.resolve(name).toAbsolutePath().normalize();
-        if (name.isAbsolute()
-                || !path.startsWith(root.toAbsolutePath().normalize())
-                || relative.contains("\\")
-                || relative.contains("\n")
-                || relative.contains("\r")) {
+        if (name.isAbsolute() || !path.startsWith(root.toAbsolutePath().normalize()) || relative.contains("\\")
+                || relative.contains("\n") || relative.contains("\r")) {
             throw new IllegalArgumentException("Expected a contained relative path with forward slashes: " + relative);
         }
         Path ancestor = path;
@@ -447,9 +411,12 @@ public final class SourcePatchTool {
         Files.writeString(path, content, StandardCharsets.UTF_8);
     }
 
-    private record Mapping(String artifact, String source, String target, Path upstream, Path enhanced, Path patch) {}
+    private record Mapping(String artifact, String source, String target, Path upstream, Path enhanced, Path patch) {
+    }
 
-    private record Source(String artifact, String entry, Path upstream) {}
+    private record Source(String artifact, String entry, Path upstream) {
+    }
 
-    private record Comparison(String target, Path before, Path after, Path patch) {}
+    private record Comparison(String target, Path before, Path after, Path patch) {
+    }
 }

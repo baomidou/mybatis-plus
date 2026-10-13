@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java b/mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java
-index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48a972b199 100644
+index 96591e6383fe51bf6515c1a3474682dba67d2f01..67ec1ca717362e4f17f5074cb7a2eb8b635906e7 100644
 --- a/mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java
 +++ b/mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java
 @@ -1,11 +1,11 @@
@@ -64,7 +64,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
  import java.util.function.IntFunction;
  import java.util.stream.Stream;
  import javax.sql.DataSource;
-@@ -70,35 +72,28 @@ import static org.springframework.util.StringUtils.hasLength;
+@@ -70,38 +72,29 @@ import static org.springframework.util.StringUtils.hasLength;
  import static org.springframework.util.StringUtils.tokenizeToStringArray;
  
  /**
@@ -93,12 +93,13 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
 + * @since 2017-01-04
   */
 -public class SqlSessionFactoryBean
--        implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ContextRefreshedEvent> {
 +public class MybatisSqlSessionFactoryBean
-+        implements FactoryBean<SqlSessionFactory>,
-+                InitializingBean,
-+                ApplicationListener<ContextRefreshedEvent>,
-+                ApplicationContextAware {
+         implements
+             FactoryBean<SqlSessionFactory>,
+             InitializingBean,
+-            ApplicationListener<ContextRefreshedEvent> {
++            ApplicationListener<ContextRefreshedEvent>,
++            ApplicationContextAware {
  
 -    private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean.class);
 +    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisSqlSessionFactoryBean.class);
@@ -113,7 +114,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
  
      private Resource[] mapperLocations;
  
-@@ -108,11 +103,10 @@ public class SqlSessionFactoryBean
+@@ -111,11 +104,10 @@ public class SqlSessionFactoryBean
  
      private Properties configurationProperties;
  
@@ -126,7 +127,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
      private String environment = SqlSessionFactoryBean.class.getSimpleName();
  
      private boolean failFast;
-@@ -148,12 +142,19 @@ public class SqlSessionFactoryBean
+@@ -151,12 +143,19 @@ public class SqlSessionFactoryBean
      private ObjectWrapperFactory objectWrapperFactory;
  
      /**
@@ -149,7 +150,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setObjectFactory(ObjectFactory objectFactory) {
          this.objectFactory = objectFactory;
-@@ -162,10 +163,8 @@ public class SqlSessionFactoryBean
+@@ -165,10 +164,8 @@ public class SqlSessionFactoryBean
      /**
       * Sets the ObjectWrapperFactory.
       *
@@ -161,7 +162,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
          this.objectWrapperFactory = objectWrapperFactory;
-@@ -174,9 +173,8 @@ public class SqlSessionFactoryBean
+@@ -177,9 +174,8 @@ public class SqlSessionFactoryBean
      /**
       * Gets the DatabaseIdProvider
       *
@@ -172,7 +173,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public DatabaseIdProvider getDatabaseIdProvider() {
          return databaseIdProvider;
-@@ -185,10 +183,8 @@ public class SqlSessionFactoryBean
+@@ -188,10 +184,8 @@ public class SqlSessionFactoryBean
      /**
       * Sets the DatabaseIdProvider. As of version 1.2.2 this variable is not initialized by default.
       *
@@ -184,7 +185,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setDatabaseIdProvider(DatabaseIdProvider databaseIdProvider) {
          this.databaseIdProvider = databaseIdProvider;
-@@ -206,8 +202,7 @@ public class SqlSessionFactoryBean
+@@ -209,8 +203,7 @@ public class SqlSessionFactoryBean
      /**
       * Sets the VFS.
       *
@@ -194,7 +195,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setVfs(Class<? extends VFS> vfs) {
          this.vfs = vfs;
-@@ -225,8 +220,7 @@ public class SqlSessionFactoryBean
+@@ -228,8 +221,7 @@ public class SqlSessionFactoryBean
      /**
       * Sets the Cache.
       *
@@ -204,7 +205,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setCache(Cache cache) {
          this.cache = cache;
-@@ -235,10 +229,8 @@ public class SqlSessionFactoryBean
+@@ -238,10 +230,8 @@ public class SqlSessionFactoryBean
      /**
       * Mybatis plugin list.
       *
@@ -216,7 +217,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setPlugins(Interceptor... plugins) {
          this.plugins = plugins;
-@@ -246,13 +238,12 @@ public class SqlSessionFactoryBean
+@@ -249,13 +239,12 @@ public class SqlSessionFactoryBean
  
      /**
       * Packages to search for type aliases.
@@ -232,7 +233,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setTypeAliasesPackage(String typeAliasesPackage) {
          this.typeAliasesPackage = typeAliasesPackage;
-@@ -262,10 +253,8 @@ public class SqlSessionFactoryBean
+@@ -265,10 +254,8 @@ public class SqlSessionFactoryBean
       * Super class which domain objects have to extend to have a type alias created. No effect if there is no package to
       * scan configured.
       *
@@ -244,7 +245,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
          this.typeAliasesSuperType = typeAliasesSuperType;
-@@ -273,13 +262,12 @@ public class SqlSessionFactoryBean
+@@ -276,13 +263,12 @@ public class SqlSessionFactoryBean
  
      /**
       * Packages to search for type handlers.
@@ -260,7 +261,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setTypeHandlersPackage(String typeHandlersPackage) {
          this.typeHandlersPackage = typeHandlersPackage;
-@@ -288,35 +276,27 @@ public class SqlSessionFactoryBean
+@@ -291,35 +277,27 @@ public class SqlSessionFactoryBean
      /**
       * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
       *
@@ -299,7 +300,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setTypeAliases(Class<?>... typeAliases) {
          this.typeAliases = typeAliases;
-@@ -326,10 +306,8 @@ public class SqlSessionFactoryBean
+@@ -329,10 +307,8 @@ public class SqlSessionFactoryBean
       * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there is
       * no one still pending to resolve includes. Defaults to false.
       *
@@ -311,7 +312,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setFailFast(boolean failFast) {
          this.failFast = failFast;
-@@ -339,8 +317,7 @@ public class SqlSessionFactoryBean
+@@ -342,8 +318,7 @@ public class SqlSessionFactoryBean
       * Set the location of the MyBatis {@code SqlSessionFactory} config file. A typical value is
       * "WEB-INF/mybatis-configuration.xml".
       *
@@ -321,7 +322,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setConfigLocation(Resource configLocation) {
          this.configLocation = configLocation;
-@@ -349,15 +326,17 @@ public class SqlSessionFactoryBean
+@@ -352,15 +327,17 @@ public class SqlSessionFactoryBean
      /**
       * Set a customized MyBatis configuration.
       *
@@ -343,7 +344,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
      /**
       * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
       * at runtime.
-@@ -366,8 +345,7 @@ public class SqlSessionFactoryBean
+@@ -369,8 +346,7 @@ public class SqlSessionFactoryBean
       * based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
       * "classpath*:sqlmap/*-mapper.xml".
       *
@@ -353,7 +354,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setMapperLocations(Resource... mapperLocations) {
          this.mapperLocations = mapperLocations;
-@@ -378,8 +356,7 @@ public class SqlSessionFactoryBean
+@@ -381,8 +357,7 @@ public class SqlSessionFactoryBean
       * {@code &lt;properties&gt;} tag in the configuration xml file. This will be used to resolve placeholders in the
       * config file.
       *
@@ -363,7 +364,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setConfigurationProperties(Properties sqlSessionFactoryProperties) {
          this.configurationProperties = sqlSessionFactoryProperties;
-@@ -399,8 +376,7 @@ public class SqlSessionFactoryBean
+@@ -402,8 +377,7 @@ public class SqlSessionFactoryBean
       * {@code DataSource}. If there's nevertheless a {@code TransactionAwareDataSourceProxy} passed in, it will be
       * unwrapped to extract its target {@code DataSource}.
       *
@@ -373,7 +374,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void setDataSource(DataSource dataSource) {
          if (dataSource instanceof TransactionAwareDataSourceProxy) {
-@@ -456,13 +432,10 @@ public class SqlSessionFactoryBean
+@@ -459,13 +433,10 @@ public class SqlSessionFactoryBean
      public void setEnvironment(String environment) {
          this.environment = environment;
      }
@@ -388,7 +389,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       * @since 2.0.2
       */
      public void setScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
-@@ -472,9 +445,7 @@ public class SqlSessionFactoryBean
+@@ -475,9 +446,7 @@ public class SqlSessionFactoryBean
      /**
       * Set a default scripting language driver class.
       *
@@ -399,7 +400,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       * @since 2.0.2
       */
      public void setDefaultScriptingLanguageDriver(Class<? extends LanguageDriver> defaultScriptingLanguageDriver) {
-@@ -494,7 +465,7 @@ public class SqlSessionFactoryBean
+@@ -497,7 +466,7 @@ public class SqlSessionFactoryBean
       *
       * @see #setMapperLocations(Resource...)
       *
@@ -408,7 +409,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void addMapperLocations(Resource... mapperLocations) {
          setMapperLocations(appendArrays(this.mapperLocations, mapperLocations, Resource[]::new));
-@@ -506,7 +477,7 @@ public class SqlSessionFactoryBean
+@@ -509,7 +478,7 @@ public class SqlSessionFactoryBean
       * @param typeHandlers
       *          Type handler list
       *
@@ -417,7 +418,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void addTypeHandlers(TypeHandler<?>... typeHandlers) {
          setTypeHandlers(appendArrays(this.typeHandlers, typeHandlers, TypeHandler[]::new));
-@@ -518,7 +489,7 @@ public class SqlSessionFactoryBean
+@@ -521,7 +490,7 @@ public class SqlSessionFactoryBean
       * @param scriptingLanguageDrivers
       *          scripting language drivers
       *
@@ -426,7 +427,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void addScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
          setScriptingLanguageDrivers(
-@@ -531,7 +502,7 @@ public class SqlSessionFactoryBean
+@@ -534,7 +503,7 @@ public class SqlSessionFactoryBean
       * @param plugins
       *          list of plugins
       *
@@ -435,7 +436,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void addPlugins(Interceptor... plugins) {
          setPlugins(appendArrays(this.plugins, plugins, Interceptor[]::new));
-@@ -543,7 +514,7 @@ public class SqlSessionFactoryBean
+@@ -546,7 +515,7 @@ public class SqlSessionFactoryBean
       * @param typeAliases
       *          Type aliases list
       *
@@ -444,7 +445,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
       */
      public void addTypeAliases(Class<?>... typeAliases) {
          setTypeAliases(appendArrays(this.typeAliases, typeAliases, Class[]::new));
-@@ -564,16 +535,28 @@ public class SqlSessionFactoryBean
+@@ -567,16 +536,28 @@ public class SqlSessionFactoryBean
      }
  
      /**
@@ -475,7 +476,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
          this.sqlSessionFactory = buildSqlSessionFactory();
      }
  
-@@ -581,19 +564,18 @@ public class SqlSessionFactoryBean
+@@ -584,19 +565,18 @@ public class SqlSessionFactoryBean
       * Build a {@code SqlSessionFactory} instance.
       * <p>
       * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
@@ -500,18 +501,17 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
          if (this.configuration != null) {
              targetConfiguration = this.configuration;
              if (targetConfiguration.getVariables() == null) {
-@@ -602,16 +584,22 @@ public class SqlSessionFactoryBean
+@@ -605,16 +585,22 @@ public class SqlSessionFactoryBean
                  targetConfiguration.getVariables().putAll(this.configurationProperties);
              }
          } else if (this.configLocation != null) {
--            xmlConfigBuilder =
--                    new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
-+            xmlConfigBuilder = new MybatisXMLConfigBuilder(
-+                    this.configLocation.getInputStream(), null, this.configurationProperties);
+-            xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null,
++            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
+                     this.configurationProperties);
              targetConfiguration = xmlConfigBuilder.getConfiguration();
          } else {
-             LOGGER.debug(() ->
-                     "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+             LOGGER.debug(
+                     () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
 -            targetConfiguration = new Configuration();
 +            targetConfiguration = new MybatisConfiguration();
              Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
@@ -526,16 +526,19 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..c48e366bfb947c5b64934673e5136f48
          Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
          Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
          Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
-@@ -699,7 +687,7 @@ public class SqlSessionFactoryBean
+@@ -701,8 +687,9 @@ public class SqlSessionFactoryBean
                          continue;
                      }
                      try {
--                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
+-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+-                                targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
 +                        MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-                                 mapperLocation.getInputStream(),
-                                 targetConfiguration,
-                                 mapperLocation.toString(),
-@@ -717,7 +705,18 @@ public class SqlSessionFactoryBean
++                                mapperLocation.getInputStream(), targetConfiguration, mapperLocation.toString(),
++                                targetConfiguration.getSqlFragments());
+                         xmlMapperBuilder.parse();
+                     } catch (Exception e) {
+                         throw new IOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+@@ -716,7 +703,18 @@ public class SqlSessionFactoryBean
              LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
          }
  

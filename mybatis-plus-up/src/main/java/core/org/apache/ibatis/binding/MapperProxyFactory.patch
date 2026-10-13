@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
-index aa71254c503bada99d76a6f037bbd3ac91aaf29d..b65839e97c4888586ab387623c0b50e38fdf43b8 100644
+index 997a656868bd870258adbba8a2275ad770ed1ae5..a64890e750eefc836a802805c748147d53aeb666 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
 @@ -1,21 +1,22 @@
@@ -65,7 +65,7 @@ index aa71254c503bada99d76a6f037bbd3ac91aaf29d..b65839e97c4888586ab387623c0b50e3
      @SuppressWarnings("unchecked")
 -    protected T newInstance(MapperProxy<T> mapperProxy) {
 +    protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
-         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] {mapperInterface}, mapperProxy);
+         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);
      }
  
      public T newInstance(SqlSession sqlSession) {

@@ -64,47 +64,33 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
     private final String resource;
 
     @Deprecated
-    public MybatisXMLMapperBuilder(
-            Reader reader,
-            Configuration configuration,
-            String resource,
-            Map<String, XNode> sqlFragments,
-            String namespace) {
+    public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
+            Map<String, XNode> sqlFragments, String namespace) {
         this(reader, configuration, resource, sqlFragments);
         this.builderAssistant.setCurrentNamespace(namespace);
     }
 
     @Deprecated
-    public MybatisXMLMapperBuilder(
-            Reader reader, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        this(
-                new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-                configuration,
-                resource,
-                sqlFragments);
+    public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
+            Map<String, XNode> sqlFragments) {
+        this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration,
+                resource, sqlFragments);
     }
 
-    public MybatisXMLMapperBuilder(
-            InputStream inputStream,
-            Configuration configuration,
-            String resource,
-            Map<String, XNode> sqlFragments,
-            String namespace) {
+    public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
+            Map<String, XNode> sqlFragments, String namespace) {
         this(inputStream, configuration, resource, sqlFragments);
         this.builderAssistant.setCurrentNamespace(namespace);
     }
 
-    public MybatisXMLMapperBuilder(
-            InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        this(
-                new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-                configuration,
-                resource,
-                sqlFragments);
+    public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
+            Map<String, XNode> sqlFragments) {
+        this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
+                configuration, resource, sqlFragments);
     }
 
-    private MybatisXMLMapperBuilder(
-            XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
+    private MybatisXMLMapperBuilder(XPathParser parser, Configuration configuration, String resource,
+            Map<String, XNode> sqlFragments) {
         super(configuration);
         this.builderAssistant = new MybatisMapperBuilderAssistant(configuration, resource);
         this.parser = parser;
@@ -141,8 +127,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
             sqlElement(context.evalNodes("/mapper/sql"));
             buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
         } catch (Exception e) {
-            throw new BuilderException(
-                    "Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
+            throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e,
+                    e);
         }
     }
 
@@ -155,8 +141,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 
     private void buildStatementFromContext(List<XNode> list, String requiredDatabaseId) {
         for (XNode context : list) {
-            final XMLStatementBuilder statementParser =
-                    new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
+            final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant,
+                    context, requiredDatabaseId);
             try {
                 statementParser.parseStatementNode();
             } catch (IncompleteElementException e) {
@@ -168,8 +154,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
     private void cacheRefElement(XNode context) {
         if (context != null) {
             configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("namespace"));
-            CacheRefResolver cacheRefResolver =
-                    new CacheRefResolver(builderAssistant, context.getStringAttribute("namespace"));
+            CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant,
+                    context.getStringAttribute("namespace"));
             try {
                 cacheRefResolver.resolveCacheRef();
             } catch (IncompleteElementException e) {
@@ -213,13 +199,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
                 JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
                 Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(
-                        parameterClass,
-                        property,
-                        javaTypeClass,
-                        jdbcTypeEnum,
-                        resultMap,
-                        modeEnum,
-                        typeHandlerClass,
+                        parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass,
                         numericScale);
                 parameterMappings.add(parameterMapping);
             }
@@ -241,8 +221,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         return resultMapElement(resultMapNode, Collections.emptyList(), null);
     }
 
-    private ResultMap resultMapElement(
-            XNode resultMapNode, List<ResultMapping> additionalResultMappings, Class<?> enclosingType) {
+    private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings,
+            Class<?> enclosingType) {
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
         String type = resultMapNode.getStringAttribute(
                 "type",
@@ -272,8 +252,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         String id = resultMapNode.getStringAttribute("id", resultMapNode::getValueBasedIdentifier);
         String extend = resultMapNode.getStringAttribute("extends");
         Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
-        ResultMapResolver resultMapResolver = new ResultMapResolver(
-                builderAssistant, id, typeClass, extend, discriminator, resultMappings, autoMapping);
+        ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, typeClass, extend,
+                discriminator, resultMappings, autoMapping);
         try {
             return resultMapResolver.resolve();
         } catch (IncompleteElementException e) {
@@ -307,8 +287,8 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    private Discriminator processDiscriminatorElement(
-            XNode context, Class<?> resultType, List<ResultMapping> resultMappings) {
+    private Discriminator processDiscriminatorElement(XNode context, Class<?> resultType,
+            List<ResultMapping> resultMappings) {
         String column = context.getStringAttribute("column");
         String javaType = context.getStringAttribute("javaType");
         String jdbcType = context.getStringAttribute("jdbcType");
@@ -378,31 +358,18 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         String typeHandler = context.getStringAttribute("typeHandler");
         String resultSet = context.getStringAttribute("resultSet");
         String foreignColumn = context.getStringAttribute("foreignColumn");
-        boolean lazy = "lazy"
-                .equals(context.getStringAttribute(
-                        "fetchType", configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
+        boolean lazy = "lazy".equals(
+                context.getStringAttribute("fetchType", configuration.isLazyLoadingEnabled() ? "lazy" : "eager"));
         Class<?> javaTypeClass = resolveClass(javaType);
         Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
         return builderAssistant.buildResultMapping(
-                resultType,
-                property,
-                column,
-                javaTypeClass,
-                jdbcTypeEnum,
-                nestedSelect,
-                nestedResultMap,
-                notNullColumn,
-                columnPrefix,
-                typeHandlerClass,
-                flags,
-                resultSet,
-                foreignColumn,
-                lazy);
+                resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn,
+                columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
     }
 
-    private String processNestedResultMappings(
-            XNode context, List<ResultMapping> resultMappings, Class<?> enclosingType) {
+    private String processNestedResultMappings(XNode context, List<ResultMapping> resultMappings,
+            Class<?> enclosingType) {
         if (Arrays.asList("association", "collection", "case").contains(context.getName())
                 && context.getStringAttribute("select") == null) {
             validateCollection(context, enclosingType);
@@ -413,8 +380,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
     }
 
     protected void validateCollection(XNode context, Class<?> enclosingType) {
-        if ("collection".equals(context.getName())
-                && context.getStringAttribute("resultMap") == null
+        if ("collection".equals(context.getName()) && context.getStringAttribute("resultMap") == null
                 && context.getStringAttribute("javaType") == null) {
             MetaClass metaResultType = MetaClass.forClass(enclosingType, configuration.getReflectorFactory());
             String property = context.getStringAttribute("property");

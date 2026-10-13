@@ -46,10 +46,8 @@ import java.util.Map;
 public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
 
     private static final long serialVersionUID = -4724728412955527868L;
-    private static final int ALLOWED_MODES = MethodHandles.Lookup.PRIVATE
-            | MethodHandles.Lookup.PROTECTED
-            | MethodHandles.Lookup.PACKAGE
-            | MethodHandles.Lookup.PUBLIC;
+    private static final int ALLOWED_MODES = MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED
+            | MethodHandles.Lookup.PACKAGE | MethodHandles.Lookup.PUBLIC;
     private static final Constructor<Lookup> lookupConstructor;
     private static final Method privateLookupInMethod;
 
@@ -61,8 +59,8 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
 
     private final Map<Method, MapperMethodInvoker> methodCache;
 
-    public MybatisMapperProxy(
-            SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
+    public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface,
+            Map<Method, MapperMethodInvoker> methodCache) {
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
         this.methodCache = methodCache;
@@ -118,9 +116,7 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
                         return new DefaultMethodInvoker(getMethodHandleJava8(method));
                     }
                     return new DefaultMethodInvoker(getMethodHandleJava9(method));
-                } catch (IllegalAccessException
-                        | InstantiationException
-                        | InvocationTargetException
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException
                         | NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
@@ -134,12 +130,9 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
     private MethodHandle getMethodHandleJava9(Method method)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         final Class<?> declaringClass = method.getDeclaringClass();
-        return ((Lookup) privateLookupInMethod.invoke(null, declaringClass, MethodHandles.lookup()))
-                .findSpecial(
-                        declaringClass,
-                        method.getName(),
-                        MethodType.methodType(method.getReturnType(), method.getParameterTypes()),
-                        declaringClass);
+        return ((Lookup) privateLookupInMethod.invoke(null, declaringClass, MethodHandles.lookup())).findSpecial(
+                declaringClass, method.getName(),
+                MethodType.methodType(method.getReturnType(), method.getParameterTypes()), declaringClass);
     }
 
     private MethodHandle getMethodHandleJava8(Method method)
@@ -149,10 +142,12 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     interface MapperMethodInvoker {
+
         Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable;
     }
 
     private static class PlainMethodInvoker implements MapperMethodInvoker {
+
         private final MybatisMapperMethod mapperMethod;
 
         public PlainMethodInvoker(MybatisMapperMethod mapperMethod) {
@@ -166,6 +161,7 @@ public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     private static class DefaultMethodInvoker implements MapperMethodInvoker {
+
         private final MethodHandle methodHandle;
 
         public DefaultMethodInvoker(MethodHandle methodHandle) {

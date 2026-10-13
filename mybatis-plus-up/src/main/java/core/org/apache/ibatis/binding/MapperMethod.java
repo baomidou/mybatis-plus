@@ -57,22 +57,22 @@ public class MapperMethod {
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {
-            case INSERT: {
+            case INSERT : {
                 Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.insert(command.getName(), param));
                 break;
             }
-            case UPDATE: {
+            case UPDATE : {
                 Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.update(command.getName(), param));
                 break;
             }
-            case DELETE: {
+            case DELETE : {
                 Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.delete(command.getName(), param));
                 break;
             }
-            case SELECT:
+            case SELECT :
                 if (method.returnsVoid() && method.hasResultHandler()) {
                     executeWithResultHandler(sqlSession, args);
                     result = null;
@@ -91,10 +91,10 @@ public class MapperMethod {
                     }
                 }
                 break;
-            case FLUSH:
+            case FLUSH :
                 result = sqlSession.flushStatements();
                 break;
-            default:
+            default :
                 throw new BindingException("Unknown execution method for: " + command.getName());
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
@@ -248,8 +248,8 @@ public class MapperMethod {
             return type;
         }
 
-        private MappedStatement resolveMappedStatement(
-                Class<?> mapperInterface, String methodName, Class<?> declaringClass, Configuration configuration) {
+        private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
+                Class<?> declaringClass, Configuration configuration) {
             String statementId = mapperInterface.getName() + "." + methodName;
             if (configuration.hasStatement(statementId)) {
                 return configuration.getMappedStatement(statementId);
@@ -259,8 +259,8 @@ public class MapperMethod {
             }
             for (Class<?> superInterface : mapperInterface.getInterfaces()) {
                 if (declaringClass.isAssignableFrom(superInterface)) {
-                    MappedStatement ms =
-                            resolveMappedStatement(superInterface, methodName, declaringClass, configuration);
+                    MappedStatement ms = resolveMappedStatement(
+                            superInterface, methodName, declaringClass, configuration);
                     if (ms != null) {
                         return ms;
                     }
@@ -293,8 +293,8 @@ public class MapperMethod {
                 this.returnType = method.getReturnType();
             }
             this.returnsVoid = void.class.equals(this.returnType);
-            this.returnsMany =
-                    configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray();
+            this.returnsMany = configuration.getObjectFactory().isCollection(this.returnType)
+                    || this.returnType.isArray();
             this.returnsCursor = Cursor.class.equals(this.returnType);
             this.returnsOptional = Optional.class.equals(this.returnType);
             this.mapKey = getMapKey(method);

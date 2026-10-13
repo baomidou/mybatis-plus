@@ -81,10 +81,11 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
  * @since 2017-01-04
  */
 public class MybatisSqlSessionFactoryBean
-        implements FactoryBean<SqlSessionFactory>,
-                InitializingBean,
-                ApplicationListener<ContextRefreshedEvent>,
-                ApplicationContextAware {
+        implements
+            FactoryBean<SqlSessionFactory>,
+            InitializingBean,
+            ApplicationListener<ContextRefreshedEvent>,
+            ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisSqlSessionFactoryBean.class);
 
@@ -584,12 +585,12 @@ public class MybatisSqlSessionFactoryBean
                 targetConfiguration.getVariables().putAll(this.configurationProperties);
             }
         } else if (this.configLocation != null) {
-            xmlConfigBuilder = new MybatisXMLConfigBuilder(
-                    this.configLocation.getInputStream(), null, this.configurationProperties);
+            xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
+                    this.configurationProperties);
             targetConfiguration = xmlConfigBuilder.getConfiguration();
         } else {
-            LOGGER.debug(() ->
-                    "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+            LOGGER.debug(
+                    () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             targetConfiguration = new MybatisConfiguration();
             Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
         }
@@ -606,8 +607,7 @@ public class MybatisSqlSessionFactoryBean
 
         if (hasLength(this.typeAliasesPackage)) {
             scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType).stream()
-                    .filter(clazz -> !clazz.isAnonymousClass())
-                    .filter(clazz -> !clazz.isInterface())
+                    .filter(clazz -> !clazz.isAnonymousClass()).filter(clazz -> !clazz.isInterface())
                     .filter(clazz -> !clazz.isMemberClass())
                     .forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
         }
@@ -627,10 +627,8 @@ public class MybatisSqlSessionFactoryBean
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream()
-                    .filter(clazz -> !clazz.isAnonymousClass())
-                    .filter(clazz -> !clazz.isInterface())
-                    .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
+                    .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
                     .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
         }
 
@@ -673,10 +671,12 @@ public class MybatisSqlSessionFactoryBean
             }
         }
 
-        targetConfiguration.setEnvironment(new Environment(
-                this.environment,
-                this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
-                this.dataSource));
+        targetConfiguration.setEnvironment(
+                new Environment(this.environment,
+                        this.transactionFactory == null
+                                ? new SpringManagedTransactionFactory()
+                                : this.transactionFactory,
+                        this.dataSource));
 
         if (this.mapperLocations != null) {
             if (this.mapperLocations.length == 0) {
@@ -688,9 +688,7 @@ public class MybatisSqlSessionFactoryBean
                     }
                     try {
                         MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-                                mapperLocation.getInputStream(),
-                                targetConfiguration,
-                                mapperLocation.toString(),
+                                mapperLocation.getInputStream(), targetConfiguration, mapperLocation.toString(),
                                 targetConfiguration.getSqlFragments());
                         xmlMapperBuilder.parse();
                     } catch (Exception e) {
@@ -760,16 +758,16 @@ public class MybatisSqlSessionFactoryBean
 
     private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {
         Set<Class<?>> classes = new HashSet<>();
-        String[] packagePatternArray =
-                tokenizeToStringArray(packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+        String[] packagePatternArray = tokenizeToStringArray(
+                packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
         for (String packagePattern : packagePatternArray) {
-            Resource[] resources =
-                    RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+            Resource[] resources = RESOURCE_PATTERN_RESOLVER.getResources(
+                    ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
                             + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
             for (Resource resource : resources) {
                 try {
-                    ClassMetadata classMetadata =
-                            METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
+                    ClassMetadata classMetadata = METADATA_READER_FACTORY.getMetadataReader(resource)
+                            .getClassMetadata();
                     Class<?> clazz = Resources.classForName(classMetadata.getClassName());
                     if (assignableType == null || assignableType.isAssignableFrom(clazz)) {
                         classes.add(clazz);

@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java
-index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cbe5af1dfb 100644
+index 93417de501d0fb033279396810b17462009a5f50..7aad06ac7cbd4a901c217bf16de90a68ac6fa4fd 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java
 @@ -1,49 +1,88 @@
@@ -152,8 +152,8 @@ index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cb
 -                TextSqlNode textSqlNode = new TextSqlNode(data);
 +                String text = cacheStr(child.getStringBody(""));
 +                if (text.trim().isEmpty()) {
-+                    StaticTextSqlNode staticTextSqlNode =
-+                            CACHE_EMPTY_SQL_NODE.computeIfAbsent(text, StaticTextSqlNode::new);
++                    StaticTextSqlNode staticTextSqlNode = CACHE_EMPTY_SQL_NODE
++                            .computeIfAbsent(text, StaticTextSqlNode::new);
 +                    contents.add(staticTextSqlNode);
 +                    continue;
 +                }
@@ -167,7 +167,7 @@ index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cb
                  }
              } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
                  String nodeName = child.getNode().getNodeName();
-@@ -112,8 +188,8 @@ public class XMLScriptBuilder extends BaseBuilder {
+@@ -114,8 +190,8 @@ public class XMLScriptBuilder extends BaseBuilder {
  
          @Override
          public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
@@ -178,7 +178,7 @@ index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cb
              final VarDeclSqlNode node = new VarDeclSqlNode(name, expression);
              targetContents.add(node);
          }
-@@ -127,10 +203,10 @@ public class XMLScriptBuilder extends BaseBuilder {
+@@ -130,10 +206,10 @@ public class XMLScriptBuilder extends BaseBuilder {
          @Override
          public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
              MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);
@@ -190,10 +190,10 @@ index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cb
 +            String prefixOverrides = cacheStr(nodeToHandle.getStringAttribute("prefixOverrides"));
 +            String suffix = cacheStr(nodeToHandle.getStringAttribute("suffix"));
 +            String suffixOverrides = cacheStr(nodeToHandle.getStringAttribute("suffixOverrides"));
-             TrimSqlNode trim =
-                     new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
+             TrimSqlNode trim = new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix,
+                     suffixOverrides);
              targetContents.add(trim);
-@@ -171,13 +247,13 @@ public class XMLScriptBuilder extends BaseBuilder {
+@@ -177,13 +253,13 @@ public class XMLScriptBuilder extends BaseBuilder {
          @Override
          public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
              MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);
@@ -210,10 +210,10 @@ index 52e534853325a3a91853ca6538dd65926b254b9f..3c56eff00efb3cf6e65341145ab787cb
 +            String open = cacheStr(nodeToHandle.getStringAttribute("open"));
 +            String close = cacheStr(nodeToHandle.getStringAttribute("close"));
 +            String separator = cacheStr(nodeToHandle.getStringAttribute("separator"));
-             ForEachSqlNode forEachSqlNode = new ForEachSqlNode(
-                     configuration, mixedSqlNode, collection, nullable, index, item, open, close, separator);
+             ForEachSqlNode forEachSqlNode = new ForEachSqlNode(configuration, mixedSqlNode, collection, nullable, index,
+                     item, open, close, separator);
              targetContents.add(forEachSqlNode);
-@@ -192,7 +268,7 @@ public class XMLScriptBuilder extends BaseBuilder {
+@@ -199,7 +275,7 @@ public class XMLScriptBuilder extends BaseBuilder {
          @Override
          public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
              MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);

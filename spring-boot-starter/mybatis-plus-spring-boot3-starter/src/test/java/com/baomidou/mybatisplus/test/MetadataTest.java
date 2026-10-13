@@ -25,6 +25,7 @@ class MetadataTest {
     @Data
     @AllArgsConstructor
     private static class Metadata {
+
         private String name;
         private String type;
         private String sourceType;

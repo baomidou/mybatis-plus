@@ -50,6 +50,7 @@ public class MybatisLanguageDriverAutoConfiguration {
     @ConditionalOnClass(FreeMarkerLanguageDriver.class)
     @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
     public static class LegacyFreeMarkerConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver() {
@@ -63,6 +64,7 @@ public class MybatisLanguageDriverAutoConfiguration {
     @Configuration
     @ConditionalOnClass({FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class})
     public static class FreeMarkerConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver(FreeMarkerLanguageDriverConfig config) {
@@ -85,6 +87,7 @@ public class MybatisLanguageDriverAutoConfiguration {
     @ConditionalOnMissingClass("org.mybatis.scripting.velocity.VelocityLanguageDriverConfig")
     @SuppressWarnings("deprecation")
     public static class LegacyVelocityConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         org.mybatis.scripting.velocity.Driver velocityLanguageDriver() {
@@ -98,6 +101,7 @@ public class MybatisLanguageDriverAutoConfiguration {
     @Configuration
     @ConditionalOnClass({VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class})
     public static class VelocityConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         VelocityLanguageDriver velocityLanguageDriver(VelocityLanguageDriverConfig config) {
@@ -115,6 +119,7 @@ public class MybatisLanguageDriverAutoConfiguration {
     @Configuration
     @ConditionalOnClass(ThymeleafLanguageDriver.class)
     public static class ThymeleafConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         ThymeleafLanguageDriver thymeleafLanguageDriver(ThymeleafLanguageDriverConfig config) {

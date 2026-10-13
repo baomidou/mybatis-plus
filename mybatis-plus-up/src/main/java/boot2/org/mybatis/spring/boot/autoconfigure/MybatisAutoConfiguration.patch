@@ -1,5 +1,5 @@
 diff --git a/spring-boot-starter/mybatis-plus-boot-starter/src/main/java/com/baomidou/mybatisplus/autoconfigure/MybatisPlusAutoConfiguration.java b/spring-boot-starter/mybatis-plus-boot-starter/src/main/java/com/baomidou/mybatisplus/autoconfigure/MybatisPlusAutoConfiguration.java
-index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f96a9c2336 100644
+index 12c463bea6c090684acdf9d076487fb6da9b91b3..00cac13858b1d109afa6097ded03a107e0f72ab4 100644
 --- a/spring-boot-starter/mybatis-plus-boot-starter/src/main/java/com/baomidou/mybatisplus/autoconfigure/MybatisPlusAutoConfiguration.java
 +++ b/spring-boot-starter/mybatis-plus-boot-starter/src/main/java/com/baomidou/mybatisplus/autoconfigure/MybatisPlusAutoConfiguration.java
 @@ -1,27 +1,37 @@
@@ -129,22 +129,19 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
  
      private final Interceptor[] interceptors;
  
-@@ -104,15 +116,21 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -104,12 +116,18 @@ public class MybatisAutoConfiguration implements InitializingBean {
  
      private final List<SqlSessionFactoryBeanCustomizer> sqlSessionFactoryBeanCustomizers;
  
--    public MybatisAutoConfiguration(
--            MybatisProperties properties,
+-    public MybatisAutoConfiguration(MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
+-            ObjectProvider<TypeHandler[]> typeHandlersProvider,
 +    private final List<MybatisPlusPropertiesCustomizer> mybatisPlusPropertiesCustomizers;
 +
 +    private final ApplicationContext applicationContext;
 +
-+    public MybatisPlusAutoConfiguration(
-+            MybatisPlusProperties properties,
-             ObjectProvider<Interceptor[]> interceptorsProvider,
-             ObjectProvider<TypeHandler[]> typeHandlersProvider,
-             ObjectProvider<LanguageDriver[]> languageDriversProvider,
-             ResourceLoader resourceLoader,
++    public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
++            ObjectProvider<Interceptor[]> interceptorsProvider, ObjectProvider<TypeHandler[]> typeHandlersProvider,
+             ObjectProvider<LanguageDriver[]> languageDriversProvider, ResourceLoader resourceLoader,
              ObjectProvider<DatabaseIdProvider> databaseIdProvider,
              ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
 -            ObjectProvider<List<SqlSessionFactoryBeanCustomizer>> sqlSessionFactoryBeanCustomizers) {
@@ -154,7 +151,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
          this.properties = properties;
          this.interceptors = interceptorsProvider.getIfAvailable();
          this.typeHandlers = typeHandlersProvider.getIfAvailable();
-@@ -121,10 +139,15 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -118,10 +136,15 @@ public class MybatisAutoConfiguration implements InitializingBean {
          this.databaseIdProvider = databaseIdProvider.getIfAvailable();
          this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
          this.sqlSessionFactoryBeanCustomizers = sqlSessionFactoryBeanCustomizers.getIfAvailable();
@@ -170,7 +167,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
          checkConfigFileExists();
      }
  
-@@ -141,9 +164,10 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -137,9 +160,10 @@ public class MybatisAutoConfiguration implements InitializingBean {
      @Bean
      @ConditionalOnMissingBean
      public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
@@ -182,7 +179,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
          if (StringUtils.hasText(this.properties.getConfigLocation())) {
              factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
          }
-@@ -169,34 +193,67 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -165,33 +189,67 @@ public class MybatisAutoConfiguration implements InitializingBean {
          if (!ObjectUtils.isEmpty(this.typeHandlers)) {
              factory.setTypeHandlers(this.typeHandlers);
          }
@@ -192,10 +189,9 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
 +        if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
 +            factory.setMapperLocations(this.properties.resolveMapperLocations());
          }
--        Set<String> factoryPropertyNames = Stream.of(
--                        new BeanWrapperImpl(SqlSessionFactoryBean.class).getPropertyDescriptors())
--                .map(PropertyDescriptor::getName)
--                .collect(Collectors.toSet());
+-        Set<String> factoryPropertyNames = Stream
+-                .of(new BeanWrapperImpl(SqlSessionFactoryBean.class).getPropertyDescriptors())
+-                .map(PropertyDescriptor::getName).collect(Collectors.toSet());
 +        this.getBeanThen(TransactionFactory.class, factory::setTransactionFactory);
 +
          Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();
@@ -270,7 +266,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
          }
          if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
              for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
-@@ -206,7 +263,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -201,7 +259,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
          factory.setConfiguration(configuration);
      }
  
@@ -279,7 +275,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
          if (!CollectionUtils.isEmpty(this.sqlSessionFactoryBeanCustomizers)) {
              for (SqlSessionFactoryBeanCustomizer customizer : this.sqlSessionFactoryBeanCustomizers) {
                  customizer.customize(factory);
-@@ -262,16 +319,22 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -259,16 +317,22 @@ public class MybatisAutoConfiguration implements InitializingBean {
                      .collect(Collectors.toSet());
              if (propertyNames.contains("lazyInitialization")) {
                  // Need to mybatis-spring 2.0.2+
@@ -295,18 +291,18 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
              }
  
              // for spring-native
--            boolean injectSqlSession =
--                    environment.getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
-+            Boolean injectSqlSession =
-+                    environment.getProperty("mybatis-plus.inject-sql-session-on-mapper-scan", Boolean.class);
+-            boolean injectSqlSession = environment
+-                    .getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
++            Boolean injectSqlSession = environment
++                    .getProperty("mybatis-plus.inject-sql-session-on-mapper-scan", Boolean.class);
 +            if (injectSqlSession == null) {
-+                injectSqlSession = environment.getProperty(
-+                        "mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
++                injectSqlSession = environment
++                        .getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
 +            }
              if (injectSqlSession && this.beanFactory instanceof ListableBeanFactory) {
                  ListableBeanFactory listableBeanFactory = (ListableBeanFactory) this.beanFactory;
-                 Optional<String> sqlSessionTemplateBeanName =
-@@ -310,7 +373,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
+                 Optional<String> sqlSessionTemplateBeanName = Optional
+@@ -307,7 +371,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
       * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to scan
       * mappers based on the same component-scanning path as Spring Boot itself.
       */
@@ -315,7 +311,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..cb9fea08474774deee1ceeedfb8d93f9
      @Import(AutoConfiguredMapperScannerRegistrar.class)
      @ConditionalOnMissingBean({MapperFactoryBean.class, MapperScannerConfigurer.class})
      public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
-@@ -321,4 +384,16 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -318,4 +382,16 @@ public class MybatisAutoConfiguration implements InitializingBean {
                      "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
          }
      }

@@ -50,7 +50,7 @@ public class MybatisMapperProxyFactory<T> {
 
     @SuppressWarnings("unchecked")
     protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
-        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] {mapperInterface}, mapperProxy);
+        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);
     }
 
     public T newInstance(SqlSession sqlSession) {

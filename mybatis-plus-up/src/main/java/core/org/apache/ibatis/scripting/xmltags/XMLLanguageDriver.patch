@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLLanguageDriver.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLLanguageDriver.java
-index b7a558af5481261f98628975da1e8d23320334d5..47087dbe0b3c3b6adfb15f4f60e5e29be4d06fd2 100644
+index 4aaa7623cb5d17ae61c055508c2dbb856dbc7f78..9e23a7eac0b012146a47feb1dcedc7dd9cfe6143 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLLanguageDriver.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLLanguageDriver.java
 @@ -1,20 +1,26 @@
@@ -64,8 +64,8 @@ index b7a558af5481261f98628975da1e8d23320334d5..47087dbe0b3c3b6adfb15f4f60e5e29b
 +public class MybatisXMLLanguageDriver implements LanguageDriver {
  
      @Override
-     public ParameterHandler createParameterHandler(
-             MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+     public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+             BoundSql boundSql) {
 -        return new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
 +        return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
      }
@@ -92,4 +92,4 @@ index b7a558af5481261f98628975da1e8d23320334d5..47087dbe0b3c3b6adfb15f4f60e5e29b
 +        }
          // issue #3
          if (script.startsWith("<script>")) {
-             XPathParser parser =
+             XPathParser parser = new XPathParser(script, false, configuration.getVariables(),

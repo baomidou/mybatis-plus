@@ -37,10 +37,8 @@ import java.util.Map;
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     private static final long serialVersionUID = -4724728412955527868L;
-    private static final int ALLOWED_MODES = MethodHandles.Lookup.PRIVATE
-            | MethodHandles.Lookup.PROTECTED
-            | MethodHandles.Lookup.PACKAGE
-            | MethodHandles.Lookup.PUBLIC;
+    private static final int ALLOWED_MODES = MethodHandles.Lookup.PRIVATE | MethodHandles.Lookup.PROTECTED
+            | MethodHandles.Lookup.PACKAGE | MethodHandles.Lookup.PUBLIC;
     private static final Constructor<Lookup> lookupConstructor;
     private static final Method privateLookupInMethod;
     private final SqlSession sqlSession;
@@ -103,9 +101,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
                         return new DefaultMethodInvoker(getMethodHandleJava8(method));
                     }
                     return new DefaultMethodInvoker(getMethodHandleJava9(method));
-                } catch (IllegalAccessException
-                        | InstantiationException
-                        | InvocationTargetException
+                } catch (IllegalAccessException | InstantiationException | InvocationTargetException
                         | NoSuchMethodException e) {
                     throw new RuntimeException(e);
                 }
@@ -119,12 +115,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     private MethodHandle getMethodHandleJava9(Method method)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         final Class<?> declaringClass = method.getDeclaringClass();
-        return ((Lookup) privateLookupInMethod.invoke(null, declaringClass, MethodHandles.lookup()))
-                .findSpecial(
-                        declaringClass,
-                        method.getName(),
-                        MethodType.methodType(method.getReturnType(), method.getParameterTypes()),
-                        declaringClass);
+        return ((Lookup) privateLookupInMethod.invoke(null, declaringClass, MethodHandles.lookup())).findSpecial(
+                declaringClass, method.getName(),
+                MethodType.methodType(method.getReturnType(), method.getParameterTypes()), declaringClass);
     }
 
     private MethodHandle getMethodHandleJava8(Method method)
@@ -134,10 +127,12 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     interface MapperMethodInvoker {
+
         Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable;
     }
 
     private static class PlainMethodInvoker implements MapperMethodInvoker {
+
         private final MapperMethod mapperMethod;
 
         public PlainMethodInvoker(MapperMethod mapperMethod) {
@@ -151,6 +146,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     private static class DefaultMethodInvoker implements MapperMethodInvoker {
+
         private final MethodHandle methodHandle;
 
         public DefaultMethodInvoker(MethodHandle methodHandle) {

@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
-index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7b8b30ba6 100644
+index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c431187fb376d4 100644
 --- a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
 +++ b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
 @@ -1,5 +1,5 @@
@@ -17,7 +17,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
  import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
  import org.springframework.core.type.classreading.MetadataReaderFactory;
  import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
-@@ -494,7 +493,7 @@ public class SqlSessionFactoryBean
+@@ -497,7 +496,7 @@ public class SqlSessionFactoryBean
       *
       * @see #setMapperLocations(Resource...)
       *
@@ -26,7 +26,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
       */
      public void addMapperLocations(Resource... mapperLocations) {
          setMapperLocations(appendArrays(this.mapperLocations, mapperLocations, Resource[]::new));
-@@ -506,7 +505,7 @@ public class SqlSessionFactoryBean
+@@ -509,7 +508,7 @@ public class SqlSessionFactoryBean
       * @param typeHandlers
       *          Type handler list
       *
@@ -35,7 +35,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
       */
      public void addTypeHandlers(TypeHandler<?>... typeHandlers) {
          setTypeHandlers(appendArrays(this.typeHandlers, typeHandlers, TypeHandler[]::new));
-@@ -518,7 +517,7 @@ public class SqlSessionFactoryBean
+@@ -521,7 +520,7 @@ public class SqlSessionFactoryBean
       * @param scriptingLanguageDrivers
       *          scripting language drivers
       *
@@ -44,7 +44,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
       */
      public void addScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
          setScriptingLanguageDrivers(
-@@ -531,7 +530,7 @@ public class SqlSessionFactoryBean
+@@ -534,7 +533,7 @@ public class SqlSessionFactoryBean
       * @param plugins
       *          list of plugins
       *
@@ -53,7 +53,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
       */
      public void addPlugins(Interceptor... plugins) {
          setPlugins(appendArrays(this.plugins, plugins, Interceptor[]::new));
-@@ -543,7 +542,7 @@ public class SqlSessionFactoryBean
+@@ -546,7 +545,7 @@ public class SqlSessionFactoryBean
       * @param typeAliases
       *          Type aliases list
       *
@@ -62,7 +62,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
       */
      public void addTypeAliases(Class<?>... typeAliases) {
          setTypeAliases(appendArrays(this.typeAliases, typeAliases, Class[]::new));
-@@ -552,27 +551,22 @@ public class SqlSessionFactoryBean
+@@ -555,27 +554,22 @@ public class SqlSessionFactoryBean
      private <T> T[] appendArrays(T[] oldArrays, T[] newArrays, IntFunction<T[]> generator) {
          if (oldArrays == null) {
              return newArrays;
@@ -98,16 +98,16 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
  
          this.sqlSessionFactory = buildSqlSessionFactory();
      }
-@@ -699,7 +693,7 @@ public class SqlSessionFactoryBean
+@@ -701,7 +695,7 @@ public class SqlSessionFactoryBean
                          continue;
                      }
                      try {
--                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
-+                        var xmlMapperBuilder = new XMLMapperBuilder(
-                                 mapperLocation.getInputStream(),
-                                 targetConfiguration,
-                                 mapperLocation.toString(),
-@@ -720,9 +714,6 @@ public class SqlSessionFactoryBean
+-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
++                        var xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+                                 targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
+                         xmlMapperBuilder.parse();
+                     } catch (Exception e) {
+@@ -719,9 +713,6 @@ public class SqlSessionFactoryBean
          return this.sqlSessionFactoryBuilder.build(targetConfiguration);
      }
  
@@ -117,7 +117,7 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
      @Override
      public SqlSessionFactory getObject() throws Exception {
          if (this.sqlSessionFactory == null) {
-@@ -732,25 +723,16 @@ public class SqlSessionFactoryBean
+@@ -731,25 +722,16 @@ public class SqlSessionFactoryBean
          return this.sqlSessionFactory;
      }
  
@@ -143,23 +143,23 @@ index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7
      @Override
      public void onApplicationEvent(ContextRefreshedEvent event) {
          if (failFast) {
-@@ -761,15 +743,14 @@ public class SqlSessionFactoryBean
+@@ -760,16 +742,15 @@ public class SqlSessionFactoryBean
  
      private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {
          Set<Class<?>> classes = new HashSet<>();
--        String[] packagePatternArray =
-+        var packagePatternArray =
-                 tokenizeToStringArray(packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+-        String[] packagePatternArray = tokenizeToStringArray(
++        var packagePatternArray = tokenizeToStringArray(
+                 packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
          for (String packagePattern : packagePatternArray) {
--            Resource[] resources =
--                    RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
--                            + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
-+            var resources = RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
-+                    + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
+-            Resource[] resources = RESOURCE_PATTERN_RESOLVER.getResources(
++            var resources = RESOURCE_PATTERN_RESOLVER.getResources(
+                     ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+                             + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
              for (Resource resource : resources) {
                  try {
--                    ClassMetadata classMetadata =
-+                    var classMetadata =
-                             METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
+-                    ClassMetadata classMetadata = METADATA_READER_FACTORY.getMetadataReader(resource)
+-                            .getClassMetadata();
++                    var classMetadata = METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
                      Class<?> clazz = Resources.classForName(classMetadata.getClassName());
                      if (assignableType == null || assignableType.isAssignableFrom(clazz)) {
+                         classes.add(clazz);

@@ -1,8 +1,8 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
-index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..abe618e0ac3a01e4931bfdadad01de2e36939661 100644
+index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c297be2c690 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
-@@ -1,50 +1,60 @@
+@@ -1,50 +1,59 @@
  /*
 - *    Copyright 2009-2023 the original author or authors.
 + * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
@@ -77,15 +77,14 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..abe618e0ac3a01e4931bfdadad01de2e
          if (mapperProxyFactory == null) {
 -            throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
 +            mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.entrySet().stream()
-+                    .filter(t -> t.getKey().getName().equals(type.getName()))
-+                    .findFirst()
-+                    .map(Map.Entry::getValue)
-+                    .orElseThrow(() ->
-+                            new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry."));
++                    .filter(t -> t.getKey().getName().equals(type.getName())).findFirst().map(Map.Entry::getValue)
++                    .orElseThrow(
++                            () -> new BindingException(
++                                    "Type " + type + " is not known to the MybatisPlusMapperRegistry."));
          }
          try {
              return mapperProxyFactory.newInstance(sqlSession);
-@@ -53,22 +63,34 @@ public class MapperRegistry {
+@@ -53,22 +62,32 @@ public class MapperRegistry {
          }
      }
  
@@ -98,9 +97,7 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..abe618e0ac3a01e4931bfdadad01de2e
 +     * 清空 Mapper 缓存信息
 +     */
 +    protected <T> void removeMapper(Class<T> type) {
-+        knownMappers.entrySet().stream()
-+                .filter(t -> t.getKey().getName().equals(type.getName()))
-+                .findFirst()
++        knownMappers.entrySet().stream().filter(t -> t.getKey().getName().equals(type.getName())).findFirst()
 +                .ifPresent(t -> knownMappers.remove(t.getKey()));
 +    }
 +
@@ -123,7 +120,7 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..abe618e0ac3a01e4931bfdadad01de2e
                  parser.parse();
                  loadCompleted = true;
              } finally {
-@@ -80,44 +102,10 @@ public class MapperRegistry {
+@@ -80,44 +99,10 @@ public class MapperRegistry {
      }
  
      /**

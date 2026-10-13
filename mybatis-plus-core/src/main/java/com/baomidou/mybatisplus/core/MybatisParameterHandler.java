@@ -58,7 +58,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
      * @deprecated 3.5.4
      */
     @Deprecated
-    public static final String[] COLLECTION_KEYS = new String[] {"collection", "coll", "list", "array"};
+    public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
 
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
@@ -126,8 +126,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         if (logicDeleteFieldInfo == null || !logicDeleteFieldInfo.isWithUpdateFill()) {
             return;
         }
-        String methodName =
-                mappedStatement.getId().substring(mappedStatement.getId().lastIndexOf('.') + 1);
+        String methodName = mappedStatement.getId().substring(mappedStatement.getId().lastIndexOf('.') + 1);
         if (!SqlMethod.DELETE_BY_ID.getMethod().equals(methodName)
                 && !SqlMethod.DELETE_BY_IDS.getMethod().equals(methodName)) {
             return;
@@ -137,8 +136,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         if (currentValue == null
                 || String.valueOf(currentValue).equals(logicDeleteFieldInfo.getLogicNotDeleteValue())) {
             metaObject.setValue(
-                    property,
-                    OgnlOps.convertValue(
+                    property, OgnlOps.convertValue(
                             logicDeleteFieldInfo.getLogicDeleteValue(), logicDeleteFieldInfo.getPropertyType()));
         }
     }
@@ -147,8 +145,8 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator =
-                    GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
+            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration)
+                    .getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (identifierGenerator.assignId(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
@@ -167,8 +165,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill()
-                    && metaObjectHandler.openInsertFill(mappedStatement)
+            if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement)
                     && tableInfo.isWithInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
@@ -177,8 +174,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openUpdateFill()
-                    && metaObjectHandler.openUpdateFill(mappedStatement)
+            if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement)
                     && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }

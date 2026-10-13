@@ -30,7 +30,8 @@ import java.util.Set;
  * @since 2.3.0
  */
 class MybatisDependsOnDatabaseInitializationDetector
-        extends AbstractBeansOfTypeDependsOnDatabaseInitializationDetector {
+        extends
+            AbstractBeansOfTypeDependsOnDatabaseInitializationDetector {
 
     @Override
     protected Set<Class<?>> getDependsOnDatabaseInitializationBeanTypes() {

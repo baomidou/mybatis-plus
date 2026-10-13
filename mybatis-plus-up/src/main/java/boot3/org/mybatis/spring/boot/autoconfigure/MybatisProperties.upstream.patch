@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
-index 0e15651d7d8095088487e14fcd84b4577dd1c162..9aa94f38683dea9277bff090a26104157b16b012 100644
+index c4c4426fc9ae4e40d1acef8d1406c6d60131719d..cc17ecf4405491de61e8f45234b04f204123403b 100644
 --- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
 +++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
 @@ -1,5 +1,5 @@
@@ -63,7 +63,7 @@ index 0e15651d7d8095088487e14fcd84b4577dd1c162..9aa94f38683dea9277bff090a2610415
          this.configuration = configuration;
      }
  
-@@ -212,4 +221,496 @@ public class MybatisProperties {
+@@ -211,4 +220,493 @@ public class MybatisProperties {
              return new Resource[0];
          }
      }
@@ -294,10 +294,7 @@ index 0e15651d7d8095088487e14fcd84b4577dd1c162..9aa94f38683dea9277bff090a2610415
 +            this.aggressiveLazyLoading = aggressiveLazyLoading;
 +        }
 +
-+        @DeprecatedConfigurationProperty(
-+                since = "3.0.4",
-+                reason =
-+                        "The option is not used at MyBatis core module. It will be removed in the future. See https://github.com/mybatis/mybatis-3/pull/3238")
++        @DeprecatedConfigurationProperty(since = "3.0.4", reason = "The option is not used at MyBatis core module. It will be removed in the future. See https://github.com/mybatis/mybatis-3/pull/3238")
 +        public Boolean getMultipleResultSetsEnabled() {
 +            return multipleResultSetsEnabled;
 +        }

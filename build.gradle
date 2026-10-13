@@ -148,7 +148,7 @@ spotless {
         target formattedFiles
         targetExclude formattingExcludes
         removeUnusedImports()
-        palantirJavaFormat()
+        eclipse().configFile(rootProject.file('MPCodeStyle.xml'))
         importOrder(*javaImportOrder)
     }
 }

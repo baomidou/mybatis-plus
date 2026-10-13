@@ -1,8 +1,8 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
-index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e52bc447b 100644
+index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d28f79cc18 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
-@@ -1,55 +1,58 @@
+@@ -1,55 +1,59 @@
  /*
 - *    Copyright 2009-2024 the original author or authors.
 + * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
@@ -80,8 +80,8 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
 + * @since 2018-06-09
   */
 -public class MapperMethod {
--
 +public class MybatisMapperMethod {
+ 
      private final SqlCommand command;
      private final MethodSignature method;
 +    private final Map<Integer, String> wrapperParamsAliasNameMap;
@@ -92,28 +92,28 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
          this.command = new SqlCommand(config, mapperInterface, method);
          this.method = new MethodSignature(config, mapperInterface, method);
      }
-@@ -58,17 +61,17 @@ public class MapperMethod {
+@@ -58,17 +62,17 @@ public class MapperMethod {
          Object result;
          switch (command.getType()) {
-             case INSERT: {
+             case INSERT : {
 -                Object param = method.convertArgsToSqlCommandParam(args);
 +                Object param = this.convertArgsToSqlCommandParam(args);
                  result = rowCountResult(sqlSession.insert(command.getName(), param));
                  break;
              }
-             case UPDATE: {
+             case UPDATE : {
 -                Object param = method.convertArgsToSqlCommandParam(args);
 +                Object param = this.convertArgsToSqlCommandParam(args);
                  result = rowCountResult(sqlSession.update(command.getName(), param));
                  break;
              }
-             case DELETE: {
+             case DELETE : {
 -                Object param = method.convertArgsToSqlCommandParam(args);
 +                Object param = this.convertArgsToSqlCommandParam(args);
                  result = rowCountResult(sqlSession.delete(command.getName(), param));
                  break;
              }
-@@ -83,11 +86,15 @@ public class MapperMethod {
+@@ -83,11 +87,15 @@ public class MapperMethod {
                  } else if (method.returnsCursor()) {
                      result = executeForCursor(sqlSession, args);
                  } else {
@@ -134,7 +134,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
                      }
                  }
                  break;
-@@ -122,6 +129,59 @@ public class MapperMethod {
+@@ -122,6 +130,59 @@ public class MapperMethod {
          return result;
      }
  
@@ -194,7 +194,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
      private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
          MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
          if (!StatementType.CALLABLE.equals(ms.getStatementType())
-@@ -130,7 +190,7 @@ public class MapperMethod {
+@@ -130,7 +191,7 @@ public class MapperMethod {
                      "method " + command.getName() + " needs either a @ResultMap annotation, a @ResultType annotation,"
                              + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
          }
@@ -203,7 +203,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
          if (method.hasRowBounds()) {
              RowBounds rowBounds = method.extractRowBounds(args);
              sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
-@@ -141,7 +201,7 @@ public class MapperMethod {
+@@ -141,7 +202,7 @@ public class MapperMethod {
  
      private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
          List<E> result;
@@ -212,7 +212,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
          if (method.hasRowBounds()) {
              RowBounds rowBounds = method.extractRowBounds(args);
              result = sqlSession.selectList(command.getName(), param, rowBounds);
-@@ -160,7 +220,7 @@ public class MapperMethod {
+@@ -160,7 +221,7 @@ public class MapperMethod {
  
      private <T> Cursor<T> executeForCursor(SqlSession sqlSession, Object[] args) {
          Cursor<T> result;
@@ -221,7 +221,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
          if (method.hasRowBounds()) {
              RowBounds rowBounds = method.extractRowBounds(args);
              result = sqlSession.selectCursor(command.getName(), param, rowBounds);
-@@ -192,7 +252,7 @@ public class MapperMethod {
+@@ -192,7 +253,7 @@ public class MapperMethod {
  
      private <K, V> Map<K, V> executeForMap(SqlSession sqlSession, Object[] args) {
          Map<K, V> result;
@@ -230,7 +230,7 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
          if (method.hasRowBounds()) {
              RowBounds rowBounds = method.extractRowBounds(args);
              result = sqlSession.selectMap(command.getName(), param, method.getMapKey(), rowBounds);
-@@ -201,188 +261,4 @@ public class MapperMethod {
+@@ -201,188 +262,4 @@ public class MapperMethod {
          }
          return result;
      }
@@ -281,8 +281,8 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
 -            return type;
 -        }
 -
--        private MappedStatement resolveMappedStatement(
--                Class<?> mapperInterface, String methodName, Class<?> declaringClass, Configuration configuration) {
+-        private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
+-                Class<?> declaringClass, Configuration configuration) {
 -            String statementId = mapperInterface.getName() + "." + methodName;
 -            if (configuration.hasStatement(statementId)) {
 -                return configuration.getMappedStatement(statementId);
@@ -292,8 +292,8 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
 -            }
 -            for (Class<?> superInterface : mapperInterface.getInterfaces()) {
 -                if (declaringClass.isAssignableFrom(superInterface)) {
--                    MappedStatement ms =
--                            resolveMappedStatement(superInterface, methodName, declaringClass, configuration);
+-                    MappedStatement ms = resolveMappedStatement(
+-                            superInterface, methodName, declaringClass, configuration);
 -                    if (ms != null) {
 -                        return ms;
 -                    }
@@ -326,8 +326,8 @@ index e9e241308ad97e922cdf1b0fd6a57cbb855d92db..7149d784989084da0ef904eee4e27b5e
 -                this.returnType = method.getReturnType();
 -            }
 -            this.returnsVoid = void.class.equals(this.returnType);
--            this.returnsMany =
--                    configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray();
+-            this.returnsMany = configuration.getObjectFactory().isCollection(this.returnType)
+-                    || this.returnType.isArray();
 -            this.returnsCursor = Cursor.class.equals(this.returnType);
 -            this.returnsOptional = Optional.class.equals(this.returnType);
 -            this.mapKey = getMapKey(method);

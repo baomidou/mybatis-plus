@@ -47,8 +47,8 @@ import java.util.List;
 public class MybatisXMLLanguageDriver implements LanguageDriver {
 
     @Override
-    public ParameterHandler createParameterHandler(
-            MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+            BoundSql boundSql) {
         return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
     }
 
@@ -73,8 +73,8 @@ public class MybatisXMLLanguageDriver implements LanguageDriver {
         }
         // issue #3
         if (script.startsWith("<script>")) {
-            XPathParser parser =
-                    new XPathParser(script, false, configuration.getVariables(), new XMLMapperEntityResolver());
+            XPathParser parser = new XPathParser(script, false, configuration.getVariables(),
+                    new XMLMapperEntityResolver());
             return createSqlSource(configuration, parser.evalNode("/script"), parameterType);
         }
         // issue #127

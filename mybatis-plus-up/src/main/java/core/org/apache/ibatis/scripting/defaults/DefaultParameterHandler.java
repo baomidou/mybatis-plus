@@ -60,9 +60,7 @@ public class DefaultParameterHandler implements ParameterHandler {
 
     @Override
     public void setParameters(PreparedStatement ps) {
-        ErrorContext.instance()
-                .activity("setting parameters")
-                .object(mappedStatement.getParameterMap().getId());
+        ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
             MetaObject metaObject = null;

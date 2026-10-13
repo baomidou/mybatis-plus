@@ -93,11 +93,11 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         if (null == globalConfig.getIdentifierGenerator()) {
             GlobalConfig.Sequence sequence = globalConfig.getSequence();
             if (sequence.getWorkerId() != null && sequence.getDatacenterId() != null) {
-                identifierGenerator =
-                        new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
+                identifierGenerator = new DefaultIdentifierGenerator(sequence.getWorkerId(),
+                        sequence.getDatacenterId());
             } else {
-                NetUtils.NetProperties netProperties =
-                        new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
+                NetUtils.NetProperties netProperties = new NetUtils.NetProperties(sequence.getPreferredNetworks(),
+                        sequence.getIgnoredInterfaces());
                 try {
                     InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
                     identifierGenerator = new DefaultIdentifierGenerator(inetAddress);

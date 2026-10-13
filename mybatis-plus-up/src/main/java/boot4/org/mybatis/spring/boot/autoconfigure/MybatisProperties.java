@@ -210,8 +210,7 @@ public class MybatisProperties {
 
     public Resource[] resolveMapperLocations() {
         return Stream.of(Optional.ofNullable(this.mapperLocations).orElse(new String[0]))
-                .flatMap(location -> Stream.of(getResources(location)))
-                .toArray(Resource[]::new);
+                .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
     }
 
     private Resource[] getResources(String location) {
@@ -448,10 +447,7 @@ public class MybatisProperties {
             this.aggressiveLazyLoading = aggressiveLazyLoading;
         }
 
-        @DeprecatedConfigurationProperty(
-                since = "3.0.4",
-                reason =
-                        "The option is not used at MyBatis core module. It will be removed in the future. See https://github.com/mybatis/mybatis-3/pull/3238")
+        @DeprecatedConfigurationProperty(since = "3.0.4", reason = "The option is not used at MyBatis core module. It will be removed in the future. See https://github.com/mybatis/mybatis-3/pull/3238")
         public Boolean getMultipleResultSetsEnabled() {
             return multipleResultSetsEnabled;
         }

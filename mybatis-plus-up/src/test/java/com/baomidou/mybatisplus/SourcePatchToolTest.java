@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SourcePatchToolTest {
+
     private static final String SOURCE = "package example;\nclass Original {}\n";
     private static final String TARGET = "package enhanced;\nclass Enhanced { int value = 1; }\n";
     private static final String MAPPING = "example.Original=enhanced.Enhanced\n";
@@ -49,8 +50,8 @@ class SourcePatchToolTest {
         String records = Files.readString(records());
         String changed = TARGET.replace("value = 1", "value = 2");
         Files.writeString(enhanced(), changed);
-        IllegalStateException error =
-                assertThrows(IllegalStateException.class, () -> tool.check(Map.of("sample", "1.0")));
+        IllegalStateException error = assertThrows(
+                IllegalStateException.class, () -> tool.check(Map.of("sample", "1.0")));
         assertTrue(error.getMessage().contains("Patch is out of date"));
         assertEquals(patch, Files.readString(patch()));
         assertEquals(records, Files.readString(records()));
@@ -61,8 +62,8 @@ class SourcePatchToolTest {
     @Test
     void checksResolvedVersionBeforeCheckingMissingPatch() throws Exception {
         SourcePatchTool tool = fixture(SOURCE, TARGET);
-        IllegalStateException error =
-                assertThrows(IllegalStateException.class, () -> tool.check(Map.of("sample", "2.0")));
+        IllegalStateException error = assertThrows(
+                IllegalStateException.class, () -> tool.check(Map.of("sample", "2.0")));
         assertTrue(error.getMessage().contains("recorded 1.0, dependency 2.0"));
         assertFalse(Files.exists(patch()));
         error = assertThrows(IllegalStateException.class, () -> tool.check(Map.of("sample", "1.0")));
@@ -163,13 +164,10 @@ class SourcePatchToolTest {
         SourcePatchTool tool = new SourcePatchTool(repository, module());
         String boot2 = SOURCE.replace("Original {}", "Original { int version = 2; }");
         String boot3 = SOURCE.replace("Original {}", "Original { int version = 3; }");
-        tool.extract(Map.of(
-                "sample",
-                sourceJar("sample.jar", SOURCE),
-                "boot2",
-                sourceJar("boot2.jar", boot2),
-                "boot3",
-                sourceJar("boot3.jar", boot3)));
+        tool.extract(
+                Map.of(
+                        "sample", sourceJar("sample.jar", SOURCE), "boot2", sourceJar("boot2.jar", boot2), "boot3",
+                        sourceJar("boot3.jar", boot3)));
         assertEquals(boot2, Files.readString(module().resolve("src/main/java/boot2/example/Original.java")));
         assertEquals(boot3, Files.readString(module().resolve("src/main/java/boot3/example/Original.java")));
         assertEquals(TARGET, Files.readString(enhanced()));
@@ -186,8 +184,9 @@ class SourcePatchToolTest {
         String boot2Records = Files.readString(records().resolveSibling("boot2.properties"));
         assertTrue(boot2Records.startsWith("version=2.1\nmoudle=core2\n"));
         assertEquals(3, boot2Records.lines().count());
-        assertTrue(Files.readString(records().resolveSibling("boot3.properties"))
-                .startsWith("version=3.1\nmoudle=core3\n"));
+        assertTrue(
+                Files.readString(records().resolveSibling("boot3.properties"))
+                        .startsWith("version=3.1\nmoudle=core3\n"));
     }
 
     @Test
@@ -198,12 +197,14 @@ class SourcePatchToolTest {
         Files.writeString(records().resolveSibling("spring3.properties"), HEADER + MAPPING);
         Files.writeString(records().resolveSibling("spring4.properties"), HEADER + MAPPING);
         SourcePatchTool tool = new SourcePatchTool(repository, module());
-        tool.extract(Map.of(
-                "spring2", sourceJar("spring2.jar", SOURCE),
-                "spring3", sourceJar("spring3.jar", SOURCE.replace("Original {}", "Original { int version = 3; }")),
-                "spring4", sourceJar("spring4.jar", SOURCE.replace("Original {}", "Original { int version = 4; }"))));
+        tool.extract(
+                Map.of(
+                        "spring2", sourceJar("spring2.jar", SOURCE), "spring3",
+                        sourceJar("spring3.jar", SOURCE.replace("Original {}", "Original { int version = 3; }")),
+                        "spring4",
+                        sourceJar("spring4.jar", SOURCE.replace("Original {}", "Original { int version = 4; }"))));
         tool.generatePatches();
-        for (String group : new String[] {"spring2", "spring3", "spring4"}) {
+        for (String group : new String[]{"spring2", "spring3", "spring4"}) {
             Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
             assertTrue(Files.isRegularFile(source));
             assertTrue(Files.isRegularFile(source.resolveSibling("Original.patch")));
@@ -214,8 +215,9 @@ class SourcePatchToolTest {
         Map<String, String> versions = Map.of("spring2", "2.1", "spring3", "3.1", "spring4", "4.1");
         tool.recordVersions(versions);
         for (var version : versions.entrySet()) {
-            assertTrue(Files.readString(records().resolveSibling(version.getKey() + ".properties"))
-                    .startsWith("version=" + version.getValue() + "\n"));
+            assertTrue(
+                    Files.readString(records().resolveSibling(version.getKey() + ".properties"))
+                            .startsWith("version=" + version.getValue() + "\n"));
         }
         new SourcePatchTool(repository, module()).check(versions);
     }
@@ -224,7 +226,7 @@ class SourcePatchToolTest {
     void comparesAdjacentUpstreamVersionsInBothFamiliesIncludingCopyOnlyClasses() throws Exception {
         fixture(SOURCE, TARGET);
         Map<String, String> versions = new LinkedHashMap<>(Map.of("sample", "1.0"));
-        for (String family : new String[] {"spring", "boot"}) {
+        for (String family : new String[]{"spring", "boot"}) {
             for (int version = 2; version <= 4; version++) {
                 String group = family + version;
                 Files.writeString(records().resolveSibling(group + ".properties"), HEADER + "example.Original=?\n");
@@ -236,7 +238,7 @@ class SourcePatchToolTest {
         }
         SourcePatchTool tool = new SourcePatchTool(repository, module());
         tool.generatePatches();
-        for (String family : new String[] {"spring", "boot"}) {
+        for (String family : new String[]{"spring", "boot"}) {
             assertFalse(
                     Files.exists(module().resolve("src/main/java/" + family + "2/example/Original.upstream.patch")));
             for (int version = 3; version <= 4; version++) {
@@ -261,7 +263,7 @@ class SourcePatchToolTest {
     @Test
     void validatesEmptyAndMissingUpstreamVersionPatches() throws Exception {
         fixture(SOURCE, TARGET);
-        for (String group : new String[] {"boot2", "boot3"}) {
+        for (String group : new String[]{"boot2", "boot3"}) {
             Files.writeString(records().resolveSibling(group + ".properties"), HEADER + "example.Original=?\n");
             Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
             Files.createDirectories(source.getParent());
@@ -313,8 +315,8 @@ class SourcePatchToolTest {
         assertFalse(Files.exists(patch()));
         Files.delete(upstream());
         SourcePatchTool missing = tool;
-        IllegalStateException error =
-                assertThrows(IllegalStateException.class, () -> missing.check(Map.of("sample", "1.1")));
+        IllegalStateException error = assertThrows(
+                IllegalStateException.class, () -> missing.check(Map.of("sample", "1.1")));
         assertTrue(error.getMessage().contains("Missing file"));
     }
 
@@ -368,8 +370,8 @@ class SourcePatchToolTest {
     void rejectsDuplicatePhysicalSourcesAcrossGroups() throws Exception {
         fixture(SOURCE, TARGET);
         Files.writeString(records().resolveSibling("duplicate.properties"), HEADER + MAPPING);
-        IllegalArgumentException error =
-                assertThrows(IllegalArgumentException.class, () -> new SourcePatchTool(repository, module()));
+        IllegalArgumentException error = assertThrows(
+                IllegalArgumentException.class, () -> new SourcePatchTool(repository, module()));
         assertTrue(error.getMessage().contains("Duplicate upstream source mapping"));
         assertTrue(Files.readString(records()).startsWith("version=1.0\n"));
     }

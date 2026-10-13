@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
-index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..5bcfb33456688cd81c914ce39f67f5aa02b7d0e6 100644
+index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db24bca9683 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
 @@ -1,52 +1,55 @@
@@ -125,11 +125,11 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..5bcfb33456688cd81c914ce39f67f5aa
 +        if (null == globalConfig.getIdentifierGenerator()) {
 +            GlobalConfig.Sequence sequence = globalConfig.getSequence();
 +            if (sequence.getWorkerId() != null && sequence.getDatacenterId() != null) {
-+                identifierGenerator =
-+                        new DefaultIdentifierGenerator(sequence.getWorkerId(), sequence.getDatacenterId());
++                identifierGenerator = new DefaultIdentifierGenerator(sequence.getWorkerId(),
++                        sequence.getDatacenterId());
 +            } else {
-+                NetUtils.NetProperties netProperties =
-+                        new NetUtils.NetProperties(sequence.getPreferredNetworks(), sequence.getIgnoredInterfaces());
++                NetUtils.NetProperties netProperties = new NetUtils.NetProperties(sequence.getPreferredNetworks(),
++                        sequence.getIgnoredInterfaces());
 +                try {
 +                    InetAddress inetAddress = new NetUtils(netProperties).findFirstNonLoopbackAddress();
 +                    identifierGenerator = new DefaultIdentifierGenerator(inetAddress);

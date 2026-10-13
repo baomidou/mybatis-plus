@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
-index 500b594815196f884627147b0aa0c8e194ee920b..bfb18c43d317144ccd63056800095bc702654277 100644
+index 43ec5504252d432f8a383170ad1ab214e8312155..36caba5cf5d3a0a68d4d737ec41305e19b0c0e2b 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
 @@ -1,19 +1,19 @@
@@ -59,49 +59,42 @@ index 500b594815196f884627147b0aa0c8e194ee920b..bfb18c43d317144ccd63056800095bc7
  
      private final XPathParser parser;
      private final MapperBuilderAssistant builderAssistant;
-@@ -59,7 +64,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+@@ -59,35 +64,35 @@ public class XMLMapperBuilder extends BaseBuilder {
      private final String resource;
  
      @Deprecated
--    public XMLMapperBuilder(
-+    public MybatisXMLMapperBuilder(
-             Reader reader,
-             Configuration configuration,
-             String resource,
-@@ -70,7 +75,7 @@ public class XMLMapperBuilder extends BaseBuilder {
-     }
- 
-     @Deprecated
--    public XMLMapperBuilder(
-+    public MybatisXMLMapperBuilder(
-             Reader reader, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-         this(
-                 new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-@@ -79,7 +84,7 @@ public class XMLMapperBuilder extends BaseBuilder {
-                 sqlFragments);
-     }
- 
--    public XMLMapperBuilder(
-+    public MybatisXMLMapperBuilder(
-             InputStream inputStream,
-             Configuration configuration,
-             String resource,
-@@ -89,7 +94,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+-    public XMLMapperBuilder(Reader reader, Configuration configuration, String resource,
++    public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
+             Map<String, XNode> sqlFragments, String namespace) {
+         this(reader, configuration, resource, sqlFragments);
          this.builderAssistant.setCurrentNamespace(namespace);
      }
  
--    public XMLMapperBuilder(
-+    public MybatisXMLMapperBuilder(
-             InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-         this(
-                 new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-@@ -98,10 +103,10 @@ public class XMLMapperBuilder extends BaseBuilder {
-                 sqlFragments);
+     @Deprecated
+-    public XMLMapperBuilder(Reader reader, Configuration configuration, String resource,
++    public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
+             Map<String, XNode> sqlFragments) {
+         this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration,
+                 resource, sqlFragments);
      }
  
--    private XMLMapperBuilder(
-+    private MybatisXMLMapperBuilder(
-             XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
+-    public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
++    public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
+             Map<String, XNode> sqlFragments, String namespace) {
+         this(inputStream, configuration, resource, sqlFragments);
+         this.builderAssistant.setCurrentNamespace(namespace);
+     }
+ 
+-    public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
++    public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
+             Map<String, XNode> sqlFragments) {
+         this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
+                 configuration, resource, sqlFragments);
+     }
+ 
+-    private XMLMapperBuilder(XPathParser parser, Configuration configuration, String resource,
++    private MybatisXMLMapperBuilder(XPathParser parser, Configuration configuration, String resource,
+             Map<String, XNode> sqlFragments) {
          super(configuration);
 -        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
 +        this.builderAssistant = new MybatisMapperBuilderAssistant(configuration, resource);

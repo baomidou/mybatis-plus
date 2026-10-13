@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
-index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..8db8874ea2cf7b082e12515957f2e2a5bba295d7 100644
+index 12c463bea6c090684acdf9d076487fb6da9b91b3..a50ac11d05c65c9b822b47a3bced773bc16ea58b 100644
 --- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 +++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 @@ -1,5 +1,5 @@
@@ -18,19 +18,18 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..8db8874ea2cf7b082e12515957f2e2a5
  @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
  @ConditionalOnSingleCandidate(DataSource.class)
  @EnableConfigurationProperties(MybatisProperties.class)
-@@ -143,7 +143,10 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -139,7 +139,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
      public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
          SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
          factory.setDataSource(dataSource);
 -        factory.setVfs(SpringBootVFS.class);
-+        if (properties.getConfiguration() == null
-+                || properties.getConfiguration().getVfsImpl() == null) {
++        if (properties.getConfiguration() == null || properties.getConfiguration().getVfsImpl() == null) {
 +            factory.setVfs(SpringBootVFS.class);
 +        }
          if (StringUtils.hasText(this.properties.getConfigLocation())) {
              factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
          }
-@@ -194,10 +197,14 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -189,10 +191,14 @@ public class MybatisAutoConfiguration implements InitializingBean {
      }
  
      private void applyConfiguration(SqlSessionFactoryBean factory) {
@@ -47,7 +46,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..8db8874ea2cf7b082e12515957f2e2a5
          if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
              for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
                  customizer.customize(configuration);
-@@ -282,7 +289,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -279,7 +285,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
                      builder.addPropertyValue(
                              "sqlSessionTemplateBeanName", sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));
                  } else {
@@ -56,7 +55,7 @@ index 9023af2bcf7c2e2b9e3dbffc500795a79ab81705..8db8874ea2cf7b082e12515957f2e2a5
                  }
              }
              builder.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-@@ -310,7 +317,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
+@@ -307,7 +313,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
       * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to scan
       * mappers based on the same component-scanning path as Spring Boot itself.
       */

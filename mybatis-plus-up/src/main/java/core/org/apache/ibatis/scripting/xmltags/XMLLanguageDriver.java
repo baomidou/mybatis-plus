@@ -34,8 +34,8 @@ import org.apache.ibatis.session.Configuration;
 public class XMLLanguageDriver implements LanguageDriver {
 
     @Override
-    public ParameterHandler createParameterHandler(
-            MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+            BoundSql boundSql) {
         return new DefaultParameterHandler(mappedStatement, parameterObject, boundSql);
     }
 
@@ -49,8 +49,8 @@ public class XMLLanguageDriver implements LanguageDriver {
     public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
         // issue #3
         if (script.startsWith("<script>")) {
-            XPathParser parser =
-                    new XPathParser(script, false, configuration.getVariables(), new XMLMapperEntityResolver());
+            XPathParser parser = new XPathParser(script, false, configuration.getVariables(),
+                    new XMLMapperEntityResolver());
             return createSqlSource(configuration, parser.evalNode("/script"), parameterType);
         }
         // issue #127

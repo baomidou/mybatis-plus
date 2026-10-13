@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
-index 77cf910c979989a4ffde009cc201d050a0450bcd..0d3d362255176de9f696aa74f3d869f218914f1b 100644
+index 1b028f4ef4ae1f63e598674e68ef19ce344c2a08..36d34dbbe3859072a2887b55df0c7df3d3b750ed 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
 @@ -1,22 +1,25 @@
@@ -87,9 +87,9 @@ index 77cf910c979989a4ffde009cc201d050a0450bcd..0d3d362255176de9f696aa74f3d869f2
 +        this(MybatisConfiguration.class, reader, environment, props);
      }
  
--    public XMLConfigBuilder(
-+    public MybatisXMLConfigBuilder(
-             Class<? extends Configuration> configClass, Reader reader, String environment, Properties props) {
+-    public XMLConfigBuilder(Class<? extends Configuration> configClass, Reader reader, String environment,
++    public MybatisXMLConfigBuilder(Class<? extends Configuration> configClass, Reader reader, String environment,
+             Properties props) {
          this(configClass, new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
      }
  
@@ -109,23 +109,24 @@ index 77cf910c979989a4ffde009cc201d050a0450bcd..0d3d362255176de9f696aa74f3d869f2
 +        this(MybatisConfiguration.class, inputStream, environment, props);
      }
  
--    public XMLConfigBuilder(
-+    public MybatisXMLConfigBuilder(
-             Class<? extends Configuration> configClass, InputStream inputStream, String environment, Properties props) {
+-    public XMLConfigBuilder(Class<? extends Configuration> configClass, InputStream inputStream, String environment,
+-            Properties props) {
++    public MybatisXMLConfigBuilder(Class<? extends Configuration> configClass, InputStream inputStream,
++            String environment, Properties props) {
          this(configClass, new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
      }
  
--    private XMLConfigBuilder(
-+    private MybatisXMLConfigBuilder(
-             Class<? extends Configuration> configClass, XPathParser parser, String environment, Properties props) {
+-    private XMLConfigBuilder(Class<? extends Configuration> configClass, XPathParser parser, String environment,
++    private MybatisXMLConfigBuilder(Class<? extends Configuration> configClass, XPathParser parser, String environment,
+             Properties props) {
          super(newConfig(configClass));
          ErrorContext.instance().resource("SQL Mapper Configuration");
-@@ -269,13 +270,14 @@ public class XMLConfigBuilder extends BaseBuilder {
+@@ -268,13 +269,14 @@ public class XMLConfigBuilder extends BaseBuilder {
          configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
          configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
          configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
-+        configuration.setMultipleResultSetsEnabled(
-+                booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
++        configuration
++                .setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
          configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
          configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
          configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
@@ -136,7 +137,7 @@ index 77cf910c979989a4ffde009cc201d050a0450bcd..0d3d362255176de9f696aa74f3d869f2
          configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
          configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
          configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
-@@ -295,6 +297,10 @@ public class XMLConfigBuilder extends BaseBuilder {
+@@ -294,6 +296,10 @@ public class XMLConfigBuilder extends BaseBuilder {
                  booleanValueOf(props.getProperty("argNameBasedConstructorAutoMapping"), false));
          configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
          configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));

@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
-index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15b0435683 100644
+index d9fc6f2b913464e0557906fae9c1c832c8c580e7..a8c1715d6aac633bc6bfc1cf761fa2fdb51cc54b 100644
 --- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
 +++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
 @@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15
      @ConditionalOnClass(FreeMarkerLanguageDriver.class)
      @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
      public static class LegacyFreeMarkerConfiguration {
-@@ -60,7 +60,7 @@ public class MybatisLanguageDriverAutoConfiguration {
+@@ -61,7 +61,7 @@ public class MybatisLanguageDriverAutoConfiguration {
      /**
       * Configuration class for mybatis-freemarker 1.2.x or above.
       */
@@ -28,8 +28,8 @@ index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15
 +    @Configuration(proxyBeanMethods = false)
      @ConditionalOnClass({FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class})
      public static class FreeMarkerConfiguration {
-         @Bean
-@@ -80,7 +80,7 @@ public class MybatisLanguageDriverAutoConfiguration {
+ 
+@@ -82,7 +82,7 @@ public class MybatisLanguageDriverAutoConfiguration {
      /**
       * Configuration class for mybatis-velocity 2.0 or under.
       */
@@ -38,7 +38,7 @@ index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15
      @ConditionalOnClass(org.mybatis.scripting.velocity.Driver.class)
      @ConditionalOnMissingClass("org.mybatis.scripting.velocity.VelocityLanguageDriverConfig")
      @SuppressWarnings("deprecation")
-@@ -95,7 +95,7 @@ public class MybatisLanguageDriverAutoConfiguration {
+@@ -98,7 +98,7 @@ public class MybatisLanguageDriverAutoConfiguration {
      /**
       * Configuration class for mybatis-velocity 2.1.x or above.
       */
@@ -46,8 +46,8 @@ index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15
 +    @Configuration(proxyBeanMethods = false)
      @ConditionalOnClass({VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class})
      public static class VelocityConfiguration {
-         @Bean
-@@ -112,7 +112,7 @@ public class MybatisLanguageDriverAutoConfiguration {
+ 
+@@ -116,7 +116,7 @@ public class MybatisLanguageDriverAutoConfiguration {
          }
      }
  
@@ -55,4 +55,4 @@ index e88dfc4ed3db09d4e634cdfc42f077810ec1f4b0..313ff4827121da2997da3ad754ad6b15
 +    @Configuration(proxyBeanMethods = false)
      @ConditionalOnClass(ThymeleafLanguageDriver.class)
      public static class ThymeleafConfiguration {
-         @Bean
+ 

@@ -89,7 +89,10 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
  * @see #setDataSource
  */
 public class SqlSessionFactoryBean
-        implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ContextRefreshedEvent> {
+        implements
+            FactoryBean<SqlSessionFactory>,
+            InitializingBean,
+            ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean.class);
 
@@ -602,12 +605,12 @@ public class SqlSessionFactoryBean
                 targetConfiguration.getVariables().putAll(this.configurationProperties);
             }
         } else if (this.configLocation != null) {
-            xmlConfigBuilder =
-                    new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
+            xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null,
+                    this.configurationProperties);
             targetConfiguration = xmlConfigBuilder.getConfiguration();
         } else {
-            LOGGER.debug(() ->
-                    "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+            LOGGER.debug(
+                    () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             targetConfiguration = new Configuration();
             Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
         }
@@ -618,8 +621,7 @@ public class SqlSessionFactoryBean
 
         if (hasLength(this.typeAliasesPackage)) {
             scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType).stream()
-                    .filter(clazz -> !clazz.isAnonymousClass())
-                    .filter(clazz -> !clazz.isInterface())
+                    .filter(clazz -> !clazz.isAnonymousClass()).filter(clazz -> !clazz.isInterface())
                     .filter(clazz -> !clazz.isMemberClass())
                     .forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
         }
@@ -639,10 +641,8 @@ public class SqlSessionFactoryBean
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream()
-                    .filter(clazz -> !clazz.isAnonymousClass())
-                    .filter(clazz -> !clazz.isInterface())
-                    .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
+                    .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
                     .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
         }
 
@@ -685,10 +685,12 @@ public class SqlSessionFactoryBean
             }
         }
 
-        targetConfiguration.setEnvironment(new Environment(
-                this.environment,
-                this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
-                this.dataSource));
+        targetConfiguration.setEnvironment(
+                new Environment(this.environment,
+                        this.transactionFactory == null
+                                ? new SpringManagedTransactionFactory()
+                                : this.transactionFactory,
+                        this.dataSource));
 
         if (this.mapperLocations != null) {
             if (this.mapperLocations.length == 0) {
@@ -699,11 +701,8 @@ public class SqlSessionFactoryBean
                         continue;
                     }
                     try {
-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
-                                mapperLocation.getInputStream(),
-                                targetConfiguration,
-                                mapperLocation.toString(),
-                                targetConfiguration.getSqlFragments());
+                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+                                targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
                         xmlMapperBuilder.parse();
                     } catch (Exception e) {
                         throw new IOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
@@ -761,16 +760,16 @@ public class SqlSessionFactoryBean
 
     private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {
         Set<Class<?>> classes = new HashSet<>();
-        String[] packagePatternArray =
-                tokenizeToStringArray(packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+        String[] packagePatternArray = tokenizeToStringArray(
+                packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
         for (String packagePattern : packagePatternArray) {
-            Resource[] resources =
-                    RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+            Resource[] resources = RESOURCE_PATTERN_RESOLVER.getResources(
+                    ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
                             + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
             for (Resource resource : resources) {
                 try {
-                    ClassMetadata classMetadata =
-                            METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
+                    ClassMetadata classMetadata = METADATA_READER_FACTORY.getMetadataReader(resource)
+                            .getClassMetadata();
                     Class<?> clazz = Resources.classForName(classMetadata.getClassName());
                     if (assignableType == null || assignableType.isAssignableFrom(clazz)) {
                         classes.add(clazz);

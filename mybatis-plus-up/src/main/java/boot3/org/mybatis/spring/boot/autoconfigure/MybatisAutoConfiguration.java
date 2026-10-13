@@ -104,12 +104,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     private final List<SqlSessionFactoryBeanCustomizer> sqlSessionFactoryBeanCustomizers;
 
-    public MybatisAutoConfiguration(
-            MybatisProperties properties,
-            ObjectProvider<Interceptor[]> interceptorsProvider,
+    public MybatisAutoConfiguration(MybatisProperties properties, ObjectProvider<Interceptor[]> interceptorsProvider,
             ObjectProvider<TypeHandler[]> typeHandlersProvider,
-            ObjectProvider<LanguageDriver[]> languageDriversProvider,
-            ResourceLoader resourceLoader,
+            ObjectProvider<LanguageDriver[]> languageDriversProvider, ResourceLoader resourceLoader,
             ObjectProvider<DatabaseIdProvider> databaseIdProvider,
             ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
             ObjectProvider<List<SqlSessionFactoryBeanCustomizer>> sqlSessionFactoryBeanCustomizers) {
@@ -132,8 +129,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
         if (this.properties.isCheckConfigLocation() && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader.getResource(this.properties.getConfigLocation());
             Assert.state(
-                    resource.exists(),
-                    "Cannot find config location: " + resource
+                    resource.exists(), "Cannot find config location: " + resource
                             + " (please add config file or check your Mybatis configuration)");
         }
     }
@@ -143,8 +139,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
-        if (properties.getConfiguration() == null
-                || properties.getConfiguration().getVfsImpl() == null) {
+        if (properties.getConfiguration() == null || properties.getConfiguration().getVfsImpl() == null) {
             factory.setVfs(SpringBootVFS.class);
         }
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
@@ -176,10 +171,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(mapperLocations)) {
             factory.setMapperLocations(mapperLocations);
         }
-        Set<String> factoryPropertyNames = Stream.of(
-                        new BeanWrapperImpl(SqlSessionFactoryBean.class).getPropertyDescriptors())
-                .map(PropertyDescriptor::getName)
-                .collect(Collectors.toSet());
+        Set<String> factoryPropertyNames = Stream
+                .of(new BeanWrapperImpl(SqlSessionFactoryBean.class).getPropertyDescriptors())
+                .map(PropertyDescriptor::getName).collect(Collectors.toSet());
         Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();
         if (factoryPropertyNames.contains("scriptingLanguageDrivers") && !ObjectUtils.isEmpty(this.languageDrivers)) {
             // Need to mybatis-spring 2.0.2+
@@ -238,14 +232,17 @@ public class MybatisAutoConfiguration implements InitializingBean {
      * similar to using Spring Data JPA repositories.
      */
     public static class AutoConfiguredMapperScannerRegistrar
-            implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
+            implements
+                BeanFactoryAware,
+                EnvironmentAware,
+                ImportBeanDefinitionRegistrar {
 
         private BeanFactory beanFactory;
         private Environment environment;
 
         @Override
-        public void registerBeanDefinitions(
-                AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
+                BeanDefinitionRegistry registry) {
 
             if (!AutoConfigurationPackages.has(this.beanFactory)) {
                 logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.");
@@ -264,8 +261,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
             builder.addPropertyValue("annotationClass", Mapper.class);
             builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
             BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
-            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors())
-                    .map(PropertyDescriptor::getName)
+            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)
                     .collect(Collectors.toSet());
             if (propertyNames.contains("lazyInitialization")) {
                 // Need to mybatis-spring 2.0.2+
@@ -277,14 +273,14 @@ public class MybatisAutoConfiguration implements InitializingBean {
             }
 
             // for spring-native
-            boolean injectSqlSession =
-                    environment.getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
+            boolean injectSqlSession = environment
+                    .getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
             if (injectSqlSession && this.beanFactory instanceof ListableBeanFactory) {
                 ListableBeanFactory listableBeanFactory = (ListableBeanFactory) this.beanFactory;
-                Optional<String> sqlSessionTemplateBeanName =
-                        Optional.ofNullable(getBeanNameForType(SqlSessionTemplate.class, listableBeanFactory));
-                Optional<String> sqlSessionFactoryBeanName =
-                        Optional.ofNullable(getBeanNameForType(SqlSessionFactory.class, listableBeanFactory));
+                Optional<String> sqlSessionTemplateBeanName = Optional
+                        .ofNullable(getBeanNameForType(SqlSessionTemplate.class, listableBeanFactory));
+                Optional<String> sqlSessionFactoryBeanName = Optional
+                        .ofNullable(getBeanNameForType(SqlSessionFactory.class, listableBeanFactory));
                 if (sqlSessionTemplateBeanName.isPresent() || !sqlSessionFactoryBeanName.isPresent()) {
                     builder.addPropertyValue(
                             "sqlSessionTemplateBeanName", sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));

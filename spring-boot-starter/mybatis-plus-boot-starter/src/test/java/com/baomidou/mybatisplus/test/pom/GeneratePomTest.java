@@ -25,6 +25,7 @@ class GeneratePomTest {
     @Data
     @AllArgsConstructor
     private static class Dependency {
+
         private String artifactId;
         private String scope;
         private String version;
@@ -41,11 +42,7 @@ class GeneratePomTest {
             dependencies.forEach($this -> {
                 String artifactId = $this.s("artifactId").text();
                 dependenciesMap.put(
-                        artifactId,
-                        new Dependency(
-                                artifactId,
-                                $this.s("scope").text(),
-                                $this.s("version").text(),
+                        artifactId, new Dependency(artifactId, $this.s("scope").text(), $this.s("version").text(),
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency mp = dependenciesMap.get("mybatis-plus");
@@ -66,12 +63,9 @@ class GeneratePomTest {
             Dependency bom = dependenciesMap.get("spring-boot-dependencies");
             Assertions.assertEquals("import", bom.getScope());
             Assertions.assertFalse(bom.isOptional());
-            Assertions.assertEquals(
-                    "3.1.8", dependenciesMap.get("spring-cloud-commons").getVersion());
-            Assertions.assertEquals(
-                    "2.1.2", dependenciesMap.get("mybatis-spring").getVersion());
-            Assertions.assertEquals(
-                    "2.7.18", dependenciesMap.get("spring-boot-dependencies").getVersion());
+            Assertions.assertEquals("3.1.8", dependenciesMap.get("spring-cloud-commons").getVersion());
+            Assertions.assertEquals("2.1.2", dependenciesMap.get("mybatis-spring").getVersion());
+            Assertions.assertEquals("2.7.18", dependenciesMap.get("spring-boot-dependencies").getVersion());
         }
     }
 }

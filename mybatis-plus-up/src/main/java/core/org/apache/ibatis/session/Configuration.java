@@ -124,8 +124,8 @@ public class Configuration {
     protected Class<?> defaultSqlProviderType;
     protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
-    protected Set<String> lazyLoadTriggerMethods =
-            new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+    protected Set<String> lazyLoadTriggerMethods = new HashSet<>(
+            Arrays.asList("equals", "clone", "hashCode", "toString"));
     protected Integer defaultStatementTimeout;
     protected Integer defaultFetchSize;
     protected ResultSetType defaultResultSetType;
@@ -156,9 +156,9 @@ public class Configuration {
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
     protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>(
-                    "Mapped Statements collection")
-            .conflictMessageProducer((savedValue, targetValue) ->
-                    ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+            "Mapped Statements collection").conflictMessageProducer(
+                    (savedValue, targetValue) -> ". please check " + savedValue.getResource() + " and "
+                            + targetValue.getResource());
     protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
     protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
@@ -707,34 +707,24 @@ public class Configuration {
         return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 
-    public ParameterHandler newParameterHandler(
-            MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        ParameterHandler parameterHandler =
-                mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
+    public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+            BoundSql boundSql) {
+        ParameterHandler parameterHandler = mappedStatement.getLang()
+                .createParameterHandler(mappedStatement, parameterObject, boundSql);
         return (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
     }
 
-    public ResultSetHandler newResultSetHandler(
-            Executor executor,
-            MappedStatement mappedStatement,
-            RowBounds rowBounds,
-            ParameterHandler parameterHandler,
-            ResultHandler resultHandler,
-            BoundSql boundSql) {
-        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(
-                executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
+    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds,
+            ParameterHandler parameterHandler, ResultHandler resultHandler, BoundSql boundSql) {
+        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler,
+                resultHandler, boundSql, rowBounds);
         return (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     }
 
-    public StatementHandler newStatementHandler(
-            Executor executor,
-            MappedStatement mappedStatement,
-            Object parameterObject,
-            RowBounds rowBounds,
-            ResultHandler resultHandler,
-            BoundSql boundSql) {
-        StatementHandler statementHandler = new RoutingStatementHandler(
-                executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement,
+            Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject,
+                rowBounds, resultHandler, boundSql);
         return (StatementHandler) interceptorChain.pluginAll(statementHandler);
     }
 
@@ -1092,10 +1082,8 @@ public class Configuration {
                 if (resultMapObject instanceof ResultMap) {
                     ResultMap entryResultMap = (ResultMap) resultMapObject;
                     if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
-                        Collection<String> discriminatedResultMapNames = entryResultMap
-                                .getDiscriminator()
-                                .getDiscriminatorMap()
-                                .values();
+                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator()
+                                .getDiscriminatorMap().values();
                         if (discriminatedResultMapNames.contains(resultMapId)) {
                             entryResultMap.forceNestedResultMaps();
                         }
@@ -1108,8 +1096,7 @@ public class Configuration {
     // Slow but a one time cost. A better solution is welcome.
     protected void checkLocallyForDiscriminatedNestedResultMaps(ResultMap rm) {
         if (!rm.hasNestedResultMaps() && rm.getDiscriminator() != null) {
-            for (String discriminatedResultMapName :
-                    rm.getDiscriminator().getDiscriminatorMap().values()) {
+            for (String discriminatedResultMapName : rm.getDiscriminator().getDiscriminatorMap().values()) {
                 if (hasResultMap(discriminatedResultMapName)) {
                     ResultMap discriminatedResultMap = resultMaps.get(discriminatedResultMapName);
                     if (discriminatedResultMap.hasNestedResultMaps()) {
@@ -1206,6 +1193,7 @@ public class Configuration {
         }
 
         protected static class Ambiguity {
+
             private final String subject;
 
             public Ambiguity(String subject) {

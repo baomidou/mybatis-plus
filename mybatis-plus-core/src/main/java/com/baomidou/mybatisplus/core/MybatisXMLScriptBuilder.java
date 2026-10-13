@@ -152,8 +152,8 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
                     || child.getNode().getNodeType() == Node.TEXT_NODE) {
                 String text = cacheStr(child.getStringBody(""));
                 if (text.trim().isEmpty()) {
-                    StaticTextSqlNode staticTextSqlNode =
-                            CACHE_EMPTY_SQL_NODE.computeIfAbsent(text, StaticTextSqlNode::new);
+                    StaticTextSqlNode staticTextSqlNode = CACHE_EMPTY_SQL_NODE
+                            .computeIfAbsent(text, StaticTextSqlNode::new);
                     contents.add(staticTextSqlNode);
                     continue;
                 }
@@ -178,10 +178,12 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private interface NodeHandler {
+
         void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);
     }
 
     private static class BindHandler implements NodeHandler {
+
         public BindHandler() {
             // Prevent Synthetic Access
         }
@@ -196,6 +198,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private class TrimHandler implements NodeHandler {
+
         public TrimHandler() {
             // Prevent Synthetic Access
         }
@@ -207,13 +210,14 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             String prefixOverrides = cacheStr(nodeToHandle.getStringAttribute("prefixOverrides"));
             String suffix = cacheStr(nodeToHandle.getStringAttribute("suffix"));
             String suffixOverrides = cacheStr(nodeToHandle.getStringAttribute("suffixOverrides"));
-            TrimSqlNode trim =
-                    new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
+            TrimSqlNode trim = new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix,
+                    suffixOverrides);
             targetContents.add(trim);
         }
     }
 
     private class WhereHandler implements NodeHandler {
+
         public WhereHandler() {
             // Prevent Synthetic Access
         }
@@ -227,6 +231,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private class SetHandler implements NodeHandler {
+
         public SetHandler() {
             // Prevent Synthetic Access
         }
@@ -240,6 +245,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private class ForEachHandler implements NodeHandler {
+
         public ForEachHandler() {
             // Prevent Synthetic Access
         }
@@ -254,13 +260,14 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             String open = cacheStr(nodeToHandle.getStringAttribute("open"));
             String close = cacheStr(nodeToHandle.getStringAttribute("close"));
             String separator = cacheStr(nodeToHandle.getStringAttribute("separator"));
-            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(
-                    configuration, mixedSqlNode, collection, nullable, index, item, open, close, separator);
+            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(configuration, mixedSqlNode, collection, nullable, index,
+                    item, open, close, separator);
             targetContents.add(forEachSqlNode);
         }
     }
 
     private class IfHandler implements NodeHandler {
+
         public IfHandler() {
             // Prevent Synthetic Access
         }
@@ -275,6 +282,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private class OtherwiseHandler implements NodeHandler {
+
         public OtherwiseHandler() {
             // Prevent Synthetic Access
         }
@@ -287,6 +295,7 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
     }
 
     private class ChooseHandler implements NodeHandler {
+
         public ChooseHandler() {
             // Prevent Synthetic Access
         }
@@ -301,8 +310,8 @@ public class MybatisXMLScriptBuilder extends BaseBuilder {
             targetContents.add(chooseSqlNode);
         }
 
-        private void handleWhenOtherwiseNodes(
-                XNode chooseSqlNode, List<SqlNode> ifSqlNodes, List<SqlNode> defaultSqlNodes) {
+        private void handleWhenOtherwiseNodes(XNode chooseSqlNode, List<SqlNode> ifSqlNodes,
+                List<SqlNode> defaultSqlNodes) {
             List<XNode> children = chooseSqlNode.getChildren();
             for (XNode child : children) {
                 String nodeName = child.getNode().getNodeName();

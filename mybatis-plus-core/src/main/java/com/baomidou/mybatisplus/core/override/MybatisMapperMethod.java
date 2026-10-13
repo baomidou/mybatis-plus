@@ -47,6 +47,7 @@ import java.util.*;
  * @since 2018-06-09
  */
 public class MybatisMapperMethod {
+
     private final SqlCommand command;
     private final MethodSignature method;
     private final Map<Integer, String> wrapperParamsAliasNameMap;
@@ -60,22 +61,22 @@ public class MybatisMapperMethod {
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {
-            case INSERT: {
+            case INSERT : {
                 Object param = this.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.insert(command.getName(), param));
                 break;
             }
-            case UPDATE: {
+            case UPDATE : {
                 Object param = this.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.update(command.getName(), param));
                 break;
             }
-            case DELETE: {
+            case DELETE : {
                 Object param = this.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.delete(command.getName(), param));
                 break;
             }
-            case SELECT:
+            case SELECT :
                 if (method.returnsVoid() && method.hasResultHandler()) {
                     executeWithResultHandler(sqlSession, args);
                     result = null;
@@ -98,10 +99,10 @@ public class MybatisMapperMethod {
                     }
                 }
                 break;
-            case FLUSH:
+            case FLUSH :
                 result = sqlSession.flushStatements();
                 break;
-            default:
+            default :
                 throw new BindingException("Unknown execution method for: " + command.getName());
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
