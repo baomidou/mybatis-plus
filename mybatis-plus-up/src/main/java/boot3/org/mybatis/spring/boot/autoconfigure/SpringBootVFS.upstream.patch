@@ -1,0 +1,42 @@
+diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
+index 46d3cb9341b10417a91fc8fd00eac3f7f0cb2b70..82fa76900f3b8ccf0c2bfbd0886354ca2a3e38ff 100644
+--- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
++++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
+@@ -26,6 +26,7 @@ import java.io.UncheckedIOException;
+ import java.net.URL;
+ import java.net.URLDecoder;
+ import java.nio.charset.Charset;
++import java.text.Normalizer;
+ import java.util.List;
+ import java.util.function.Supplier;
+ import java.util.stream.Collectors;
+@@ -58,7 +59,7 @@ public class SpringBootVFS extends VFS {
+ 
+     @Override
+     protected List<String> list(URL url, String path) throws IOException {
+-        String urlString = URLDecoder.decode(url.toString(), urlDecodingCharset.name());
++        String urlString = URLDecoder.decode(url.toString(), urlDecodingCharset);
+         String baseUrlString = urlString.endsWith("/") ? urlString : urlString.concat("/");
+         Resource[] resources = resourceResolver.getResources(baseUrlString + "**/*.class");
+         return Stream.of(resources)
+@@ -90,7 +91,7 @@ public class SpringBootVFS extends VFS {
+      * @param supplier
+      *          the supplier for providing {@link ClassLoader} to used
+      *
+-     * @since 2.3.1
++     * @since 3.0.2
+      */
+     public static void setClassLoaderSupplier(Supplier<ClassLoader> supplier) {
+         classLoaderSupplier = supplier;
+@@ -101,7 +102,10 @@ public class SpringBootVFS extends VFS {
+         try {
+             return rootPath
+                     + (rootPath.endsWith("/") ? "" : "/")
+-                    + resource.getURL().toString().substring(baseUrlString.length());
++                    + Normalizer.normalize(
++                                    URLDecoder.decode(resource.getURL().toString(), urlDecodingCharset),
++                                    Normalizer.Form.NFC)
++                            .substring(baseUrlString.length());
+         } catch (IOException e) {
+             throw new UncheckedIOException(e);
+         }

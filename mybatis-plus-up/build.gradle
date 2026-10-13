@@ -166,11 +166,14 @@ autoConfigurationGroups.each { id, upstream ->
     sourceSets.main.java.exclude("${upstream.directory}/**")
     configurations.getByName(upstreamSourceSet.compileClasspathConfigurationName)
         .shouldResolveConsistentlyWith(ownerClasspath)
-    // The binary starter supplies peer classes and dependencies; only this one Java file is copied.
+    // Binary dependencies supply peer classes and optional language drivers for recorded sources.
     dependencies.addProvider(upstreamSourceSet.compileOnlyConfigurationName, providers.provider {
         def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-starter')
         "org.mybatis.spring.boot:mybatis-spring-boot-starter:${version}".toString()
     })
+    ['mybatis-thymeleaf', 'mybatis-velocity', 'mybatis-freemarker'].each { library ->
+        dependencies.add(upstreamSourceSet.compileOnlyConfigurationName, lib[library])
+    }
 
     upstreamSourceSets.add(upstreamSourceSet)
     tasks.named(upstreamSourceSet.compileJavaTaskName, JavaCompile) {

@@ -43,7 +43,7 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 
 Spring 2/3/4 均复制 `org.mybatis.spring.SqlSessionFactoryBean`，并映射到 `mybatis-plus-spring` 中同一个 `MybatisSqlSessionFactoryBean`。不同分组允许共享增强类，同一分组仍禁止重复增强目标。
 
-只需复制的类写成 `上游全限定类名=?`；它们参与 `up`、版本与副本检查及对应源集编译，不参与增强补丁生成与校验，更新版本记录时保留 `?`。配置沿用 `Properties.load` 读取，没有 `=` 的条目按空值处理。其他条目表示需要维护补丁，复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`check` 要求除值为 `?` 以外的对应关系完整，遇到空值应提示补全而不是跳过。当前 Boot 分组只复制 `MybatisAutoConfiguration`，对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则。
+只需复制的类写成 `上游全限定类名=?`；它们参与 `up`、版本与副本检查及对应源集编译，不参与增强补丁生成与校验，更新版本记录时保留 `?`。配置沿用 `Properties.load` 读取，没有 `=` 的条目按空值处理。其他条目表示需要维护补丁，复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`check` 要求除值为 `?` 以外的对应关系完整，遇到空值应提示补全而不是跳过。Boot 分组按 properties 复制上游类，`MybatisAutoConfiguration` 对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则；`MybatisLanguageDriverAutoConfiguration` 的可选模板驱动由根项目既有依赖提供给各 Boot 源集的 compileOnly，不额外复制驱动源码。
 
 ## 三个操作入口
 

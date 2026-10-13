@@ -118,8 +118,8 @@ Spring、Boot 的 2→3、3→4 源码差异保存为较新分组目录中的 `.
 
 ### Boot 2/3/4
 
-每组只复制 `org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration`，
-`patch` 格式化后将其与对应 starter 中已有的 `MybatisPlusAutoConfiguration` 比较，不修改增强逻辑。
+每组复制 properties 登记的上游类。`MybatisAutoConfiguration` 的增强补丁
+对比对应 starter 中已有的 `MybatisPlusAutoConfiguration`。
 
 各组使用独立的源集、源码 JAR configuration、编译 classpath 和输出目录，避免同包同名类及依赖版本冲突。
 版本从各组独立的 `*Upstream` 配置解析，该配置也为编译依赖提供版本约束。
