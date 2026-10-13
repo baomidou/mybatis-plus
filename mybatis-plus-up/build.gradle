@@ -15,18 +15,12 @@ configurations {
         canBeResolved = true
         transitive = false
     }
-    mybatisSpringSources {
-        canBeConsumed = false
-        canBeResolved = true
-        transitive = false
-    }
 }
 
 dependencies {
     implementation "${lib.mybatis}"
     implementation "cn.hutool:hutool-core:5.8.40"
     mybatisSources "${lib.mybatis}:sources@jar"
-    mybatisSpringSources "${lib.'mybatis-spring'}:sources@jar"
 }
 
 def sourceRecords = fileTree('upstream') { include '*.properties' }
@@ -63,10 +57,6 @@ def upstreamArtifacts = [
     core: [
         group: 'org.mybatis', name: 'mybatis', sources: configurations.mybatisSources,
         owner: localProject(sourceMappings.core.getProperty('moudle'))
-    ],
-    'mybatis-spring': [
-        group: 'org.mybatis', name: 'mybatis-spring', sources: configurations.mybatisSpringSources,
-        owner: localProject(sourceMappings['mybatis-spring'].getProperty('moudle'))
     ]
 ]
 upstreamArtifacts.values().each { artifact ->
@@ -86,6 +76,48 @@ tasks.named(coreSourceSet.compileJavaTaskName, JavaCompile) {
     options.release = 8
 }
 upstreamSourceSets.add(coreSourceSet)
+
+def springGroups = [
+    spring2: [release: 8, version: mybatisSpringVersion, platform: springBootVersion],
+    spring3: [release: 17, version: mybatisSpring3Version, platform: springBoot3Version],
+    spring4: [release: 17, version: mybatisSpring4Version, platform: springBoot4Version]
+]
+
+springGroups.each { id, upstream ->
+    def upstreamClasspath = configurations.create("${id}Upstream") {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    dependencies.add(upstreamClasspath.name,
+        dependencies.platform("org.springframework.boot:spring-boot-dependencies:${upstream.platform}"))
+    dependencies.add(upstreamClasspath.name, "org.mybatis:mybatis-spring:${upstream.version}")
+    dependencies.add(upstreamClasspath.name, "${lib.mybatis}")
+    dependencies.add(upstreamClasspath.name, 'org.springframework:spring-context')
+    dependencies.add(upstreamClasspath.name, 'org.springframework:spring-jdbc')
+
+    def upstreamSources = configurations.create("${id}Sources") {
+        canBeResolved = true
+        canBeConsumed = false
+        transitive = false
+        shouldResolveConsistentlyWith(upstreamClasspath)
+    }
+    dependencies.add(upstreamSources.name, "org.mybatis:mybatis-spring:${upstream.version}:sources@jar")
+    upstreamArtifacts[id] = [group: 'org.mybatis', name: 'mybatis-spring', sources: upstreamSources,
+                             owner: project, configuration: upstreamClasspath.name]
+
+    def upstreamSourceSet = sourceSets.create(id)
+    upstreamSourceSet.java.setSrcDirs(["src/main/java/${id}"])
+    upstreamSourceSet.java.include(sourceMappings[id].stringPropertyNames()
+        .findAll { it !in ['version', 'moudle'] }.collect { it.replace('.', '/') + '.java' })
+    sourceSets.main.java.exclude("${id}/**")
+    configurations.getByName(upstreamSourceSet.compileOnlyConfigurationName).extendsFrom(upstreamClasspath)
+    configurations.getByName(upstreamSourceSet.compileClasspathConfigurationName)
+        .shouldResolveConsistentlyWith(upstreamClasspath)
+    upstreamSourceSets.add(upstreamSourceSet)
+    tasks.named(upstreamSourceSet.compileJavaTaskName, JavaCompile) {
+        options.release = upstream.release
+    }
+}
 
 def autoConfigurationGroups = [
     boot2: [directory: 'boot2', release: 8, version: mybatisSpringBootStarterVersion,
@@ -235,10 +267,10 @@ tasks.named('check') {
                 throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
             }
         }
-        autoConfigurationGroups.each { id, upstream ->
+        (springGroups + autoConfigurationGroups).each { id, upstream ->
             sourceMappings[id].stringPropertyNames().findAll { it !in ['version', 'moudle'] }.each { sourceClass ->
                 def sourcePath = sourceClass.replace('.', '/') + '.java'
-                def source = file("src/main/java/${upstream.directory}/${sourcePath}")
+                def source = file("src/main/java/${id}/${sourcePath}")
                 if (!source.isFile()) {
                     throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
                 }

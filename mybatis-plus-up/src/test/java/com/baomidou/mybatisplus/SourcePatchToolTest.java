@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarEntry;
@@ -187,6 +188,95 @@ class SourcePatchToolTest {
         assertEquals(3, boot2Records.lines().count());
         assertTrue(Files.readString(records().resolveSibling("boot3.properties"))
                 .startsWith("version=3.1\nmoudle=core3\n"));
+    }
+
+    @Test
+    void maintainsSpringVersionsWithOneSharedEnhancedClass() throws Exception {
+        fixture(SOURCE, TARGET);
+        Files.move(records(), records().resolveSibling("spring2.properties"));
+        Files.delete(upstream());
+        Files.writeString(records().resolveSibling("spring3.properties"), HEADER + MAPPING);
+        Files.writeString(records().resolveSibling("spring4.properties"), HEADER + MAPPING);
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.extract(Map.of(
+                "spring2", sourceJar("spring2.jar", SOURCE),
+                "spring3", sourceJar("spring3.jar", SOURCE.replace("Original {}", "Original { int version = 3; }")),
+                "spring4", sourceJar("spring4.jar", SOURCE.replace("Original {}", "Original { int version = 4; }"))));
+        tool.generatePatches();
+        for (String group : new String[] {"spring2", "spring3", "spring4"}) {
+            Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
+            assertTrue(Files.isRegularFile(source));
+            assertTrue(Files.isRegularFile(source.resolveSibling("Original.patch")));
+        }
+        assertFalse(Files.exists(upstream()));
+        assertEquals(TARGET, Files.readString(enhanced()));
+        tool.check(Map.of("spring2", "1.0", "spring3", "1.0", "spring4", "1.0"));
+        Map<String, String> versions = Map.of("spring2", "2.1", "spring3", "3.1", "spring4", "4.1");
+        tool.recordVersions(versions);
+        for (var version : versions.entrySet()) {
+            assertTrue(Files.readString(records().resolveSibling(version.getKey() + ".properties"))
+                    .startsWith("version=" + version.getValue() + "\n"));
+        }
+        new SourcePatchTool(repository, module()).check(versions);
+    }
+
+    @Test
+    void comparesAdjacentUpstreamVersionsInBothFamiliesIncludingCopyOnlyClasses() throws Exception {
+        fixture(SOURCE, TARGET);
+        Map<String, String> versions = new LinkedHashMap<>(Map.of("sample", "1.0"));
+        for (String family : new String[] {"spring", "boot"}) {
+            for (int version = 2; version <= 4; version++) {
+                String group = family + version;
+                Files.writeString(records().resolveSibling(group + ".properties"), HEADER + "example.Original=?\n");
+                Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
+                Files.createDirectories(source.getParent());
+                Files.writeString(source, SOURCE.replace("Original {}", "Original { int version = " + version + "; }"));
+                versions.put(group, "1.0");
+            }
+        }
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.generatePatches();
+        for (String family : new String[] {"spring", "boot"}) {
+            assertFalse(
+                    Files.exists(module().resolve("src/main/java/" + family + "2/example/Original.upstream.patch")));
+            for (int version = 3; version <= 4; version++) {
+                Path directory = module().resolve("src/main/java/" + family + version + "/example");
+                String patch = Files.readString(directory.resolve("Original.upstream.patch"));
+                assertTrue(patch.contains("-class Original { int version = " + (version - 1) + "; }\n"));
+                assertTrue(patch.contains("+class Original { int version = " + version + "; }\n"));
+                assertFalse(Files.exists(directory.resolve("Original.patch")));
+            }
+        }
+        tool.check(versions);
+        Path patch = module().resolve("src/main/java/boot3/example/Original.upstream.patch");
+        String saved = Files.readString(patch);
+        Path changed = module().resolve("src/main/java/boot2/example/Original.java");
+        Files.writeString(changed, SOURCE);
+        IllegalStateException error = assertThrows(IllegalStateException.class, () -> tool.check(versions));
+        assertTrue(error.getMessage().contains("Patch is out of date: " + patch.toRealPath()));
+        assertEquals(saved, Files.readString(patch));
+        assertEquals(SOURCE, Files.readString(changed));
+    }
+
+    @Test
+    void validatesEmptyAndMissingUpstreamVersionPatches() throws Exception {
+        fixture(SOURCE, TARGET);
+        for (String group : new String[] {"boot2", "boot3"}) {
+            Files.writeString(records().resolveSibling(group + ".properties"), HEADER + "example.Original=?\n");
+            Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
+            Files.createDirectories(source.getParent());
+            Files.writeString(source, SOURCE);
+        }
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.generatePatches();
+        Path patch = module().resolve("src/main/java/boot3/example/Original.upstream.patch");
+        assertEquals("", Files.readString(patch));
+        Map<String, String> versions = Map.of("sample", "1.0", "boot2", "1.0", "boot3", "1.0");
+        tool.check(versions);
+        Files.delete(patch);
+        IllegalStateException error = assertThrows(IllegalStateException.class, () -> tool.check(versions));
+        assertTrue(error.getMessage().contains("generate the missing patch"));
+        assertFalse(Files.exists(patch));
     }
 
     @Test

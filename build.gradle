@@ -130,7 +130,8 @@ def formattedFiles = [
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/**/*.java',
     'spring-boot-starter/mybatis-plus-boot-starter/src/**/*.java',
     'spring-boot-starter/mybatis-plus-spring-boot3-starter/src/**/*.java',
-    'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java'
+    'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java',
+    'mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java'
 ]
 def formattingExcludes = ['**/build/**', '**/target/**', '**/.gradle/**', '**/out/**']
 def javaImportOrder = ['', 'java|javax|jakarta', '\\#']

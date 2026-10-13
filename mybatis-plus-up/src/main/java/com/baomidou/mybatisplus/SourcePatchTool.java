@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarFile;
 
-/** Maintains formatted upstream copies and the patches to their enhanced implementations. */
+/** Maintains formatted upstream copies, enhancement patches and upstream version patches. */
 public final class SourcePatchTool {
     private final Path repository;
     private final Path module;
@@ -52,7 +52,7 @@ public final class SourcePatchTool {
                 recordFiles.put(recordFile, fragment);
                 Path localModule = resolveModule(fragment.getProperty("moudle").strip());
                 Path sourceRoot = this.module.resolve("src/main/java");
-                if (artifact.equals("core") || artifact.matches("boot[0-9]+")) {
+                if (artifact.equals("core") || artifact.matches("(?:boot|spring)[0-9]+")) {
                     sourceRoot = sourceRoot.resolve(artifact);
                 }
                 for (String sourceClass :
@@ -73,7 +73,9 @@ public final class SourcePatchTool {
                     Path enhanced = localClass.isEmpty()
                             ? null
                             : resolve(localModule.resolve("src/main/java"), classPath(localClass));
-                    if (enhanced != null && mappings.stream().anyMatch(m -> enhanced.equals(m.enhanced()))) {
+                    if (enhanced != null
+                            && mappings.stream()
+                                    .anyMatch(m -> artifact.equals(m.artifact()) && enhanced.equals(m.enhanced()))) {
                         throw new IllegalArgumentException("Duplicate enhanced source mapping: " + localClass);
                     }
                     String target = enhanced == null
@@ -176,8 +178,8 @@ public final class SourcePatchTool {
     public void generatePatches() throws IOException, InterruptedException {
         requireLocalMappings();
         Map<Path, String> patches = new LinkedHashMap<>();
-        for (Mapping mapping : mappings) {
-            patches.put(mapping.patch(), diff(mapping));
+        for (Comparison comparison : comparisons()) {
+            patches.put(comparison.patch(), diff(comparison));
         }
         for (var patch : patches.entrySet()) {
             write(patch.getKey(), patch.getValue());
@@ -197,25 +199,63 @@ public final class SourcePatchTool {
             requireFile(source.upstream(), "Run :mybatis-plus-up:up to extract upstream sources");
         }
         requireLocalMappings();
-        for (Mapping mapping : mappings) {
-            requireFile(mapping.patch(), "Run :mybatis-plus-up:patch to generate the missing patch");
-            String patch = read(mapping.patch());
-            if (!patch.equals(diff(mapping))) {
-                throw new IllegalStateException("Patch is out of date: " + mapping.patch()
+        List<Comparison> comparisons = comparisons();
+        for (Comparison comparison : comparisons) {
+            requireFile(comparison.patch(), "Run :mybatis-plus-up:patch to generate the missing patch");
+            String patch = read(comparison.patch());
+            if (!patch.equals(diff(comparison))) {
+                throw new IllegalStateException("Patch is out of date: " + comparison.patch()
                         + ". Review the two Java sources, then run :mybatis-plus-up:patch.");
             }
-            verifyPatch(mapping, patch);
+            verifyPatch(comparison, patch);
         }
-        System.out.println("Checked dependency versions and " + mappings.size() + " source/patch mappings");
+        System.out.println("Checked dependency versions and " + comparisons.size() + " source/patch comparisons");
     }
 
-    private String diff(Mapping mapping) throws IOException, InterruptedException {
-        requireFile(mapping.upstream(), "Run :mybatis-plus-up:up to extract upstream sources");
-        requireFile(mapping.enhanced(), "Check the enhanced source path in upstream/*.properties");
+    private List<Comparison> comparisons() {
+        List<Comparison> comparisons = new ArrayList<>();
+        for (Mapping mapping : mappings) {
+            comparisons.add(new Comparison(mapping.target(), mapping.upstream(), mapping.enhanced(), mapping.patch()));
+        }
+        for (String family : List.of("spring", "boot")) {
+            for (int version = 3; version <= 4; version++) {
+                String previous = family + (version - 1);
+                String current = family + version;
+                for (Source source : sources) {
+                    if (!source.artifact().equals(current)) {
+                        continue;
+                    }
+                    Source before = sources.stream()
+                            .filter(s ->
+                                    s.artifact().equals(previous) && s.entry().equals(source.entry()))
+                            .findFirst()
+                            .orElse(null);
+                    if (before != null) {
+                        String target = repository
+                                .relativize(source.upstream())
+                                .toString()
+                                .replace('\\', '/');
+                        Path patch = source.upstream()
+                                .resolveSibling(source.upstream()
+                                        .getFileName()
+                                        .toString()
+                                        .replaceFirst("\\.java$", ".upstream.patch"));
+                        comparisons.add(new Comparison(target, before.upstream(), source.upstream(), patch));
+                    }
+                }
+            }
+        }
+        return comparisons;
+    }
+
+    private String diff(Comparison comparison) throws IOException, InterruptedException {
+        requireFile(comparison.before(), "Run :mybatis-plus-up:up to extract upstream sources");
+        requireFile(
+                comparison.after(), "Check the target source path in upstream/*.properties or run :mybatis-plus-up:up");
         Path work = workspace("diff-");
         try {
-            write(work.resolve("before.java"), read(mapping.upstream()));
-            write(work.resolve("after.java"), read(mapping.enhanced()));
+            write(work.resolve("before.java"), read(comparison.before()));
+            write(work.resolve("after.java"), read(comparison.after()));
             String output = git(
                     work,
                     List.of(
@@ -246,11 +286,11 @@ public final class SourcePatchTool {
                     header = false;
                 }
                 if (header && line.startsWith("diff --git ")) {
-                    line = "diff --git a/" + mapping.target() + " b/" + mapping.target();
+                    line = "diff --git a/" + comparison.target() + " b/" + comparison.target();
                 } else if (header && line.startsWith("--- ")) {
-                    line = "--- a/" + mapping.target();
+                    line = "--- a/" + comparison.target();
                 } else if (header && line.startsWith("+++ ")) {
-                    line = "+++ b/" + mapping.target();
+                    line = "+++ b/" + comparison.target();
                 }
                 patch.append(line).append('\n');
             }
@@ -260,17 +300,17 @@ public final class SourcePatchTool {
         }
     }
 
-    private void verifyPatch(Mapping mapping, String patch) throws IOException, InterruptedException {
+    private void verifyPatch(Comparison comparison, String patch) throws IOException, InterruptedException {
         Path work = workspace("apply-");
         try {
-            Path target = resolve(work, mapping.target());
-            write(target, read(mapping.upstream()));
+            Path target = resolve(work, comparison.target());
+            write(target, read(comparison.before()));
             if (!patch.isEmpty()) {
                 write(work.resolve("source.patch"), patch);
                 git(work, List.of("apply", "--whitespace=nowarn", "source.patch"), false);
             }
-            if (!read(target).equals(read(mapping.enhanced()))) {
-                throw new IllegalStateException("Patch does not reproduce enhanced source: " + mapping.enhanced());
+            if (!read(target).equals(read(comparison.after()))) {
+                throw new IllegalStateException("Patch does not reproduce target source: " + comparison.after());
             }
         } finally {
             clean(work);
@@ -410,4 +450,6 @@ public final class SourcePatchTool {
     private record Mapping(String artifact, String source, String target, Path upstream, Path enhanced, Path patch) {}
 
     private record Source(String artifact, String entry, Path upstream) {}
+
+    private record Comparison(String target, Path before, Path after, Path patch) {}
 }

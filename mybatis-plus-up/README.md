@@ -24,7 +24,7 @@ skill 位于仓库的 `.agents/skills/mybatis-upstream-maintenance/SKILL.md`。
 `upstream/*.properties` 按分组记录上游依赖版本和源码对应关系，目前包括：
 
 - `core.properties`
-- `mybatis-spring.properties`
+- `spring2.properties`、`spring3.properties`、`spring4.properties`
 - `boot2.properties`
 - `boot3.properties`
 - `boot4.properties`
@@ -44,7 +44,7 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 目前登记的类包括 `MapperMethod`、`MapperProxy`、`SqlSessionFactoryBean`，以及三个 Boot 版本的
 `MybatisAutoConfiguration`。新增对应关系时，编辑所属分组的 properties 文件，并确认编译源集的包含规则。
 
-只复制上游源码时写成 `上游全限定类名=?`：跳过补丁生成与校验，仍检查版本、副本并参与对应源集编译。
+只复制上游源码时写成 `上游全限定类名=?`：跳过增强补丁生成与校验，仍检查版本、副本并参与对应源集编译。
 本地类值留空时只能执行 `up`；执行 `patch`、`check` 前必须补全对应关系。
 
 ## 源码与格式化
@@ -54,14 +54,17 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 ```text
 src/main/java/core/org/apache/ibatis/binding/MapperMethod.java
 src/main/java/core/org/apache/ibatis/binding/MapperProxy.java
-src/main/java/org/mybatis/spring/SqlSessionFactoryBean.java
+src/main/java/spring2/org/mybatis/spring/SqlSessionFactoryBean.java
+src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
+src/main/java/spring4/org/mybatis/spring/SqlSessionFactoryBean.java
 src/main/java/boot2/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 ```
 
 标准 `.patch` 与对应上游 Java 文件同目录、同文件名主体。
-上游副本不参与 `main` 源集的编译和打包，避免覆盖工具依赖中的同名类；core 和 Boot 副本通过独立源集编译。
+Spring、Boot 的 2→3、3→4 源码差异保存为较新分组目录中的 `.upstream.patch`，由 `patch` 生成、`check` 校验。
+上游副本不参与 `main` 源集的编译和打包，避免覆盖工具依赖中的同名类；各分组通过独立源集编译。
 
 格式化直接复用根项目已有的 Spotless 任务，其范围已覆盖 `mybatis-plus-up/src/**/*.java`。
 本模块不重复应用 Spotless 插件，也不另设格式化配置。
@@ -83,7 +86,7 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
   不重新提取上游副本，也不更新版本记录；格式化失败时不生成补丁。
   补丁头两侧均使用增强源码的仓库相对路径，包名、类名变更仍保留在差异中。
 - `check`：核对记录版本与实际依赖版本，检查补丁是否与两份源码一致，再在临时目录应用补丁，确认能够还原增强源码。
-  同时运行模块测试，并编译 core、boot2、boot3、boot4 源集。不会刷新副本、补丁或版本记录。
+  同时运行模块测试，并编译 core、Spring、Boot 各源集。不会刷新副本、补丁或版本记录。
 
 需要安装 Git 并加入 `PATH`。补丁生成使用 Git 的 diff 引擎，还原校验在隔离的临时目录中使用 Git 的补丁引擎。
 比较源码和生成补丁时，换行符统一为 LF。
@@ -104,7 +107,14 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 其他类由上游 MyBatis 二进制依赖提供，编译依赖版本与目标 core 模块的 `compileClasspath` 保持一致。
 
 编译使用 `release = 8`，输出到 `build/classes/java/core`。`coreClasses` 已纳入 `check`，
-输出不进入主工具 JAR 或其运行时 classpath。Spring 上游副本目前仍不参与编译。
+输出不进入主工具 JAR 或其运行时 classpath。
+
+### Spring 2/3/4
+
+`spring2`、`spring3`、`spring4` 分别维护 `mybatis-spring` 2/3/4 的 `SqlSessionFactoryBean`，
+均与 `mybatis-plus-spring` 中的 `MybatisSqlSessionFactoryBean` 生成补丁。
+各组独立解析源码和编译依赖，版本使用根项目对应的 `mybatisSpringVersion`、`mybatisSpring3Version`、`mybatisSpring4Version`。
+编译依赖由对应 Boot 版本的 BOM 管理；Spring 2 使用 `release = 8`，Spring 3/4 使用 `release = 17`。
 
 ### Boot 2/3/4
 
@@ -112,7 +122,7 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 `patch` 格式化后将其与对应 starter 中已有的 `MybatisPlusAutoConfiguration` 比较，不修改增强逻辑。
 
 各组使用独立的源集、源码 JAR configuration、编译 classpath 和输出目录，避免同包同名类及依赖版本冲突。
-版本从对应 starter 的 `testRuntimeClasspath` 解析，该配置也为各组二进制编译依赖提供版本约束。
+版本从各组独立的 `*Upstream` 配置解析，该配置也为编译依赖提供版本约束。
 同包的其他类和框架依赖由对应版本的上游二进制 starter 提供，无需额外复制源码。
 
 编译输出分别位于 `build/classes/java/boot2`、`boot3`、`boot4`，不进入主工具 JAR 或其运行时 classpath。
