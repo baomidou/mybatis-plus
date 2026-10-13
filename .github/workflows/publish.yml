@@ -33,6 +33,24 @@ jobs:
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
 
+            - name: Verify upstream sources and patches
+              run: ./gradlew :mybatis-plus-up:verify
+
+            - name: Refresh upstream sources
+              run: ./gradlew :mybatis-plus-up:up
+
+            - name: Require clean working tree after upstream refresh
+              shell: bash
+              run: |
+                  changes=$(git status --porcelain --untracked-files=all)
+                  if [[ -n "$changes" ]]; then
+                    echo "::error::Upstream refresh changed repository files. Review and commit the changes before publishing."
+                    printf '%s\n' "$changes"
+                    git diff --stat
+                    git diff
+                    exit 1
+                  fi
+
             - name: Build without tests
               run: ./gradlew build -x test
 
