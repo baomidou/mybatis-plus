@@ -441,4 +441,5 @@ public class XMLConfigBuilder extends BaseBuilder {
             throw new BuilderException("Failed to create a new Configuration instance.", ex);
         }
     }
+
 }

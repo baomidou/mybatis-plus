@@ -38,9 +38,10 @@ import org.apache.ibatis.session.Configuration;
 import java.util.List;
 
 /**
- * 重写来自于 {@link org.apache.ibatis.scripting.xmltags.XMLLanguageDriver}
- * 使用 MybatisParameterHandler 替换 DefaultParameterHandler
+ * 重写来自于 {@link org.apache.ibatis.scripting.xmltags.XMLLanguageDriver} <br>
+ * 使用 MybatisParameterHandler 替换 DefaultParameterHandler <br>
  * 使用 MybatisXMLScriptBuilder 替换 XMLScriptBuilder
+ *
  * @author hubin
  * @since 2016-03-11
  */

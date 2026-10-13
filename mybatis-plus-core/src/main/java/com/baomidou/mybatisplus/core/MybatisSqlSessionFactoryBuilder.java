@@ -37,9 +37,8 @@ import java.net.InetAddress;
 import java.util.Properties;
 
 /**
- * 重写自 {@link SqlSessionFactoryBuilder}
- * 使用 MybatisXMLConfigBuilder 替换 XMLConfigBuilder
- * build 函数加入一些mp必要初始化
+ * 重写自 {@link SqlSessionFactoryBuilder} <br>
+ * 使用 MybatisXMLConfigBuilder 替换 XMLConfigBuilder build 函数加入一些mp必要初始化
  *
  * @author nieqiurong 2019/2/23.
  */

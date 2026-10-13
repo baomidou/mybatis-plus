@@ -56,7 +56,7 @@ import java.util.stream.Stream;
 /**
  * 继承
  * <p>
- * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType
+ * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType<br>
  * 没有XML配置文件注入基础CRUD方法
  * </p>
  *

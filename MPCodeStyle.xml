@@ -10,7 +10,14 @@
         <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="2"/>
         <setting id="org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer" value="2"/>
 
+        <!-- 49 = WRAP_ONE_PER_LINE, INDENT_DEFAULT, forceSplit=true. -->
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_enum_constants" value="49"/>
+
         <!-- 16 = WRAP_COMPACT, INDENT_DEFAULT, forceSplit=false. -->
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_superclass_in_type_declaration" value="16"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_type_declaration" value="16"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_enum_declaration" value="16"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_superinterfaces_in_record_declaration" value="16"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration" value="16"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_constructor_declaration" value="16"/>
         <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_allocation_expression" value="16"/>
@@ -24,10 +31,16 @@
         <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_declaration" value="common_lines"/>
         <setting id="org.eclipse.jdt.core.formatter.parentheses_positions_in_method_invocation" value="common_lines"/>
 
-        <!-- Match the existing blank-line style and preserve comment layout. -->
+        <!-- Separate Javadoc descriptions from tags and keep short parameter descriptions inline. -->
         <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration" value="1"/>
         <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
-        <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="true"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_before_root_tags" value="insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_between_different_tags" value="do not insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter" value="do not insert"/>
+        <setting id="org.eclipse.jdt.core.formatter.join_lines_in_comments" value="true"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="120"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_source_code" value="false"/>
         <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="false"/>
         <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
         <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="false"/>

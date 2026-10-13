@@ -239,14 +239,14 @@ public class MybatisProperties {
         private Boolean safeResultHandlerEnabled;
 
         /**
-         * Enables automatic mapping from classic database column names A_COLUMN to camel case classic Java property names
-         * aColumn. Default is false.
+         * Enables automatic mapping from classic database column names A_COLUMN to camel case classic Java property
+         * names aColumn. Default is false.
          */
         private Boolean mapUnderscoreToCamelCase;
 
         /**
-         * When enabled, any method call will load all the lazy properties of the object. Otherwise, each property is loaded
-         * on demand (see also lazyLoadTriggerMethods). Default is false.
+         * When enabled, any method call will load all the lazy properties of the object. Otherwise, each property is
+         * loaded on demand (see also lazyLoadTriggerMethods). Default is false.
          */
         private Boolean aggressiveLazyLoading;
 
@@ -257,14 +257,14 @@ public class MybatisProperties {
         private Boolean multipleResultSetsEnabled;
 
         /**
-         * Allows JDBC support for generated keys. A compatible driver is required. This setting forces generated keys to be
-         * used if set to true, as some drivers deny compatibility but still work (e.g. Derby). Default is false.
+         * Allows JDBC support for generated keys. A compatible driver is required. This setting forces generated keys
+         * to be used if set to true, as some drivers deny compatibility but still work (e.g. Derby). Default is false.
          */
         private Boolean useGeneratedKeys;
 
         /**
-         * Uses the column label instead of the column name. Different drivers behave differently in this respect. Refer to
-         * the driver documentation, or test out both modes to determine how your driver behaves. Default is true.
+         * Uses the column label instead of the column name. Different drivers behave differently in this respect. Refer
+         * to the driver documentation, or test out both modes to determine how your driver behaves. Default is true.
          */
         private Boolean useColumnLabel;
 
@@ -275,8 +275,8 @@ public class MybatisProperties {
 
         /**
          * Specifies if setters or map's put method will be called when a retrieved value is null. It is useful when you
-         * rely on Map.keySet() or null value initialization. Note primitives such as (int,boolean,etc.) will not be set to
-         * null. Default is false.
+         * rely on Map.keySet() or null value initialization. Note primitives such as (int,boolean,etc.) will not be set
+         * to null. Default is false.
          */
         private Boolean callSettersOnNulls;
 
@@ -287,15 +287,15 @@ public class MybatisProperties {
         private Boolean useActualParamName;
 
         /**
-         * MyBatis, by default, returns null when all the columns of a returned row are NULL. When this setting is enabled,
-         * MyBatis returns an empty instance instead. Note that it is also applied to nested results (i.e. collection and
-         * association). Default is false.
+         * MyBatis, by default, returns null when all the columns of a returned row are NULL. When this setting is
+         * enabled, MyBatis returns an empty instance instead. Note that it is also applied to nested results (i.e.
+         * collection and association). Default is false.
          */
         private Boolean returnInstanceForEmptyRow;
 
         /**
-         * Removes extra whitespace characters from the SQL. Note that this also affects literal strings in SQL. Default is
-         * false.
+         * Removes extra whitespace characters from the SQL. Note that this also affects literal strings in SQL. Default
+         * is false.
          */
         private Boolean shrinkWhitespacesInSql;
 
@@ -305,14 +305,14 @@ public class MybatisProperties {
         private Boolean nullableOnForEach;
 
         /**
-         * When applying constructor auto-mapping, argument name is used to search the column to map instead of relying on
-         * the column order. Default is false.
+         * When applying constructor auto-mapping, argument name is used to search the column to map instead of relying
+         * on the column order. Default is false.
          */
         private Boolean argNameBasedConstructorAutoMapping;
 
         /**
-         * Globally enables or disables lazy loading. When enabled, all relations will be lazily loaded. This value can be
-         * superseded for a specific relation by using the fetchType attribute on it. Default is False.
+         * Globally enables or disables lazy loading. When enabled, all relations will be lazily loaded. This value can
+         * be superseded for a specific relation by using the fetchType attribute on it. Default is False.
          */
         private Boolean lazyLoadingEnabled;
 
@@ -322,23 +322,23 @@ public class MybatisProperties {
         private Integer defaultStatementTimeout;
 
         /**
-         * Sets the driver a hint as to control fetching size for return results. This parameter value can be override by a
-         * query setting.
+         * Sets the driver a hint as to control fetching size for return results. This parameter value can be override
+         * by a query setting.
          */
         private Integer defaultFetchSize;
 
         /**
          * MyBatis uses local cache to prevent circular references and speed up repeated nested queries. By default
-         * (SESSION) all queries executed during a session are cached. If localCacheScope=STATEMENT local session will be
-         * used just for statement execution, no data will be shared between two different calls to the same SqlSession.
-         * Default is SESSION.
+         * (SESSION) all queries executed during a session are cached. If localCacheScope=STATEMENT local session will
+         * be used just for statement execution, no data will be shared between two different calls to the same
+         * SqlSession. Default is SESSION.
          */
         private LocalCacheScope localCacheScope;
 
         /**
-         * Specifies the JDBC type for null values when no specific JDBC type was provided for the parameter. Some drivers
-         * require specifying the column JDBC type but others work with generic values like NULL, VARCHAR or OTHER. Default
-         * is OTHER.
+         * Specifies the JDBC type for null values when no specific JDBC type was provided for the parameter. Some
+         * drivers require specifying the column JDBC type but others work with generic values like NULL, VARCHAR or
+         * OTHER. Default is OTHER.
          */
         private JdbcType jdbcTypeForNull;
 
@@ -348,15 +348,15 @@ public class MybatisProperties {
         private ResultSetType defaultResultSetType;
 
         /**
-         * Configures the default executor. SIMPLE executor does nothing special. REUSE executor reuses prepared statements.
-         * BATCH executor reuses statements and batches updates. Default is SIMPLE.
+         * Configures the default executor. SIMPLE executor does nothing special. REUSE executor reuses prepared
+         * statements. BATCH executor reuses statements and batches updates. Default is SIMPLE.
          */
         private ExecutorType defaultExecutorType;
 
         /**
-         * Specifies if and how MyBatis should automatically map columns to fields/properties. NONE disables auto-mapping.
-         * PARTIAL will only auto-map results with no nested result mappings defined inside. FULL will auto-map result
-         * mappings of any complexity (containing nested or otherwise). Default is PARTIAL.
+         * Specifies if and how MyBatis should automatically map columns to fields/properties. NONE disables
+         * auto-mapping. PARTIAL will only auto-map results with no nested result mappings defined inside. FULL will
+         * auto-map result mappings of any complexity (containing nested or otherwise). Default is PARTIAL.
          */
         private AutoMappingBehavior autoMappingBehavior;
 
@@ -377,8 +377,8 @@ public class MybatisProperties {
         private Set<String> lazyLoadTriggerMethods;
 
         /**
-         * Specifies which logging implementation MyBatis should use. If this setting is not present logging implementation
-         * will be autodiscovered.
+         * Specifies which logging implementation MyBatis should use. If this setting is not present logging
+         * implementation will be autodiscovered.
          */
         private Class<? extends Log> logImpl;
 
@@ -388,8 +388,8 @@ public class MybatisProperties {
         private Class<? extends VFS> vfsImpl;
 
         /**
-         * Specifies an sql provider class that holds provider method. This class apply to the type(or value) attribute on
-         * sql provider annotation(e.g. @SelectProvider), when these attribute was omitted.
+         * Specifies an sql provider class that holds provider method. This class apply to the type(or value) attribute
+         * on sql provider annotation(e.g. @SelectProvider), when these attribute was omitted.
          */
         private Class<?> defaultSqlProviderType;
 
@@ -399,9 +399,9 @@ public class MybatisProperties {
         Class<? extends TypeHandler> defaultEnumTypeHandler;
 
         /**
-         * Specifies the class that provides an instance of Configuration. The returned Configuration instance is used to
-         * load lazy properties of deserialized objects. This class must have a method with a signature static Configuration
-         * getConfiguration().
+         * Specifies the class that provides an instance of Configuration. The returned Configuration instance is used
+         * to load lazy properties of deserialized objects. This class must have a method with a signature static
+         * Configuration getConfiguration().
          */
         private Class<?> configurationFactory;
 
@@ -708,5 +708,7 @@ public class MybatisProperties {
             mapper.from(getDefaultEnumTypeHandler()).to(target::setDefaultEnumTypeHandler);
             mapper.from(getDatabaseId()).to(target::setDatabaseId);
         }
+
     }
+
 }

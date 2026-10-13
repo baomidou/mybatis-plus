@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
-index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..f1c30ee957ffb24b5523a8e0af7dad003dcc64a8 100644
+index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..9d114f5f9d01be971533980d6ee00670567b0878 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxy.java
 @@ -1,20 +1,26 @@
@@ -41,14 +41,16 @@ index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..f1c30ee957ffb24b5523a8e0af7dad00
  import org.apache.ibatis.reflection.ExceptionUtil;
  import org.apache.ibatis.session.SqlSession;
  import org.apache.ibatis.util.MapUtil;
-@@ -31,21 +37,30 @@ import java.lang.reflect.Method;
+@@ -31,21 +37,32 @@ import java.lang.reflect.Method;
  import java.util.Map;
  
  /**
 - * @author Clinton Begin
 - * @author Eduardo Macarron
-+ * <p> 从 {@link MapperProxy}  copy 过来 </p>
-+ * <li> 使用 MybatisMapperMethod </li>
++ * <p>
++ * 从 {@link MapperProxy} copy 过来
++ * </p>
++ * <li>使用 MybatisMapperMethod</li>
 + *
 + * @author miemie
 + * @since 2018-06-09
@@ -76,7 +78,7 @@ index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..f1c30ee957ffb24b5523a8e0af7dad00
          this.sqlSession = sqlSession;
          this.mapperInterface = mapperInterface;
          this.methodCache = methodCache;
-@@ -94,7 +109,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+@@ -94,7 +111,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
              return MapUtil.computeIfAbsent(methodCache, method, m -> {
                  if (!m.isDefault()) {
                      return new PlainMethodInvoker(
@@ -85,7 +87,7 @@ index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..f1c30ee957ffb24b5523a8e0af7dad00
                  }
                  try {
                      if (privateLookupInMethod == null) {
-@@ -133,9 +148,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+@@ -133,9 +150,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
  
      private static class PlainMethodInvoker implements MapperMethodInvoker {
  
@@ -97,7 +99,7 @@ index d37dfb05c8335b202149d58c6f7b9a9bb1a917df..f1c30ee957ffb24b5523a8e0af7dad00
              this.mapperMethod = mapperMethod;
          }
  
-@@ -155,7 +170,23 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
+@@ -155,7 +172,23 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
  
          @Override
          public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {

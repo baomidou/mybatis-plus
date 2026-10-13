@@ -72,8 +72,7 @@ public class SpringBootVFS extends VFS {
      * Default is system default charset.
      * </p>
      *
-     * @param charset
-     *          the charset for decoding an encoded URL string
+     * @param charset the charset for decoding an encoded URL string
      *
      * @since 2.3.0
      */
@@ -87,8 +86,7 @@ public class SpringBootVFS extends VFS {
      * Default is a returned instance from {@link ClassUtils#getDefaultClassLoader()}.
      * </p>
      *
-     * @param supplier
-     *          the supplier for providing {@link ClassLoader} to used
+     * @param supplier the supplier for providing {@link ClassLoader} to used
      *
      * @since 3.0.2
      */
@@ -107,4 +105,5 @@ public class SpringBootVFS extends VFS {
             throw new UncheckedIOException(e);
         }
     }
+
 }

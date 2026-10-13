@@ -52,4 +52,5 @@ public class MapperProxyFactory<T> {
         final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
         return newInstance(mapperProxy);
     }
+
 }

@@ -37,8 +37,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * <p> 从 {@link MapperProxy}  copy 过来 </p>
- * <li> 使用 MybatisMapperMethod </li>
+ * <p>
+ * 从 {@link MapperProxy} copy 过来
+ * </p>
+ * <li>使用 MybatisMapperMethod</li>
  *
  * @author miemie
  * @since 2018-06-09

@@ -184,8 +184,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     /**
      * 处理正常批量插入逻辑
      * <p>
-     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
-     * wrapCollection 实现 StrictMap 封装逻辑
+     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法 wrapCollection 实现 StrictMap 封装逻辑
      * </p>
      *
      * @return 集合参数
@@ -218,8 +217,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 提取特殊key值 (只支持外层参数,嵌套参数不考虑)
-     * List<Map>虽然这种写法目前可以进去提取et,但不考虑再提取list等其他类型,只做简单参数提取
+     * 提取特殊key值 (只支持外层参数,嵌套参数不考虑) List<Map>虽然这种写法目前可以进去提取et,但不考虑再提取list等其他类型,只做简单参数提取
      *
      * @param parameterObject 参数
      * @return 预期可能为填充参数值

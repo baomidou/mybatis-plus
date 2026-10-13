@@ -148,6 +148,9 @@ public class MybatisLanguageDriverAutoConfiguration {
             public TemplateFileConfig getTemplateFile() {
                 return super.getTemplateFile();
             }
+
         }
+
     }
+
 }

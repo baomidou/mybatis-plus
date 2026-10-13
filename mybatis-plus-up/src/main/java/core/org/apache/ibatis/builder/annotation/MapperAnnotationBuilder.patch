@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
-index 5bab13db2339b55b324a17629ed6b1460b7d696f..99ffe6c60fe290ac4f39fa07f3d378c87375a5d2 100644
+index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9ab190d1f 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
 @@ -1,64 +1,40 @@
@@ -115,7 +115,7 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..99ffe6c60fe290ac4f39fa07f3d378c8
 - * @author Kazuki Shimizu
 + * 继承
 + * <p>
-+ * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType
++ * 只重写了 {@link MapperAnnotationBuilder#parse} 和 #getReturnType<br>
 + * 没有XML配置文件注入基础CRUD方法
 + * </p>
 + *

@@ -228,14 +228,11 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     /**
      * This will just scan the same base package as Spring Boot does. If you want more power, you can explicitly use
-     * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed mappers working correctly, out-of-the-box,
-     * similar to using Spring Data JPA repositories.
+     * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed mappers working correctly,
+     * out-of-the-box, similar to using Spring Data JPA repositories.
      */
     public static class AutoConfiguredMapperScannerRegistrar
-            implements
-                BeanFactoryAware,
-                EnvironmentAware,
-                ImportBeanDefinitionRegistrar {
+            implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
 
         private BeanFactory beanFactory;
         private Environment environment;
@@ -307,11 +304,12 @@ public class MybatisAutoConfiguration implements InitializingBean {
             String[] beanNames = factory.getBeanNamesForType(type);
             return beanNames.length > 0 ? beanNames[0] : null;
         }
+
     }
 
     /**
-     * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to scan
-     * mappers based on the same component-scanning path as Spring Boot itself.
+     * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to
+     * scan mappers based on the same component-scanning path as Spring Boot itself.
      */
     @org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
     @Import(AutoConfiguredMapperScannerRegistrar.class)
@@ -323,5 +321,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
             logger.debug(
                     "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
         }
+
     }
+
 }

@@ -73,19 +73,21 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * 拷贝类 {@link SqlSessionFactoryBean} 修改方法 buildSqlSessionFactory() 加载自定义
- * <p> MybatisXmlConfigBuilder </p>
- * <p> 移除 sqlSessionFactoryBuilder 属性,强制使用 `new MybatisSqlSessionFactoryBuilder()` </p>
- * <p> 移除 environment 属性,强制使用 `MybatisSqlSessionFactoryBean.class.getSimpleName()` </p>
+ * <p>
+ * MybatisXmlConfigBuilder
+ * </p>
+ * <p>
+ * 移除 sqlSessionFactoryBuilder 属性,强制使用 `new MybatisSqlSessionFactoryBuilder()`
+ * </p>
+ * <p>
+ * 移除 environment 属性,强制使用 `MybatisSqlSessionFactoryBean.class.getSimpleName()`
+ * </p>
  *
  * @author hubin
  * @since 2017-01-04
  */
-public class MybatisSqlSessionFactoryBean
-        implements
-            FactoryBean<SqlSessionFactory>,
-            InitializingBean,
-            ApplicationListener<ContextRefreshedEvent>,
-            ApplicationContextAware {
+public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean,
+        ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MybatisSqlSessionFactoryBean.class);
 
@@ -304,8 +306,8 @@ public class MybatisSqlSessionFactoryBean
     }
 
     /**
-     * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there is
-     * no one still pending to resolve includes. Defaults to false.
+     * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there
+     * is no one still pending to resolve includes. Defaults to false.
      *
      * @param failFast enable failFast
      * @since 1.0.1
@@ -339,8 +341,8 @@ public class MybatisSqlSessionFactoryBean
     }
 
     /**
-     * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
-     * at runtime.
+     * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory}
+     * configuration at runtime.
      * <p>
      * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file. This property being
      * based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
@@ -368,8 +370,8 @@ public class MybatisSqlSessionFactoryBean
      * match the one used by the {@code SqlSessionFactory}: for example, you could specify the same JNDI DataSource for
      * both.
      * <p>
-     * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code accessing
-     * this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
+     * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code
+     * accessing this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
      * <p>
      * The {@code DataSource} specified here should be the target {@code DataSource} to manage transactions for, not a
      * {@code TransactionAwareDataSourceProxy}. Only data access code may work with
@@ -397,8 +399,7 @@ public class MybatisSqlSessionFactoryBean
      * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By default,
      * {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
      *
-     * @param sqlSessionFactoryBuilder
-     *          a SqlSessionFactoryBuilder
+     * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
      */
     public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
         this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
@@ -416,19 +417,17 @@ public class MybatisSqlSessionFactoryBean
      *
      * @see SpringManagedTransactionFactory
      *
-     * @param transactionFactory
-     *          the MyBatis TransactionFactory
+     * @param transactionFactory the MyBatis TransactionFactory
      */
     public void setTransactionFactory(TransactionFactory transactionFactory) {
         this.transactionFactory = transactionFactory;
     }
 
     /**
-     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file. This is
-     * used only as a placeholder name. The default value is {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file. This
+     * is used only as a placeholder name. The default value is {@code SqlSessionFactoryBean.class.getSimpleName()}.
      *
-     * @param environment
-     *          the environment name
+     * @param environment the environment name
      */
     public void setEnvironment(String environment) {
         this.environment = environment;
@@ -454,15 +453,14 @@ public class MybatisSqlSessionFactoryBean
     }
 
     /**
-     * Add locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
-     * at runtime.
+     * Add locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory}
+     * configuration at runtime.
      * <p>
      * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file. This property being
      * based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
      * "classpath*:sqlmap/*-mapper.xml".
      *
-     * @param mapperLocations
-     *          location of MyBatis mapper files
+     * @param mapperLocations location of MyBatis mapper files
      *
      * @see #setMapperLocations(Resource...)
      *
@@ -475,8 +473,7 @@ public class MybatisSqlSessionFactoryBean
     /**
      * Add type handlers.
      *
-     * @param typeHandlers
-     *          Type handler list
+     * @param typeHandlers Type handler list
      *
      * @since 3.0.2
      */
@@ -487,8 +484,7 @@ public class MybatisSqlSessionFactoryBean
     /**
      * Add scripting language drivers.
      *
-     * @param scriptingLanguageDrivers
-     *          scripting language drivers
+     * @param scriptingLanguageDrivers scripting language drivers
      *
      * @since 3.0.2
      */
@@ -500,8 +496,7 @@ public class MybatisSqlSessionFactoryBean
     /**
      * Add Mybatis plugins.
      *
-     * @param plugins
-     *          list of plugins
+     * @param plugins list of plugins
      *
      * @since 3.0.2
      */
@@ -512,8 +507,7 @@ public class MybatisSqlSessionFactoryBean
     /**
      * Add type aliases.
      *
-     * @param typeAliases
-     *          Type aliases list
+     * @param typeAliases Type aliases list
      *
      * @since 3.0.2
      */
@@ -537,7 +531,10 @@ public class MybatisSqlSessionFactoryBean
 
     /**
      * 设置上下文对象
-     * <p>注意: 手动构建的bean对象需要手动赋值,通过xml属性初始化的会自动赋值</p>
+     * <p>
+     * 注意: 手动构建的bean对象需要手动赋值,通过xml属性初始化的会自动赋值
+     * </p>
+     * 
      * @since 3.5.13
      * @param applicationContext ApplicationContext
      */
@@ -565,8 +562,8 @@ public class MybatisSqlSessionFactoryBean
      * Build a {@code SqlSessionFactory} instance.
      * <p>
      * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
-     * {@code SqlSessionFactory} instance based on an Reader. Since 1.3.0, it can be specified a
-     * {@link Configuration} instance directly(without config file).
+     * {@code SqlSessionFactory} instance based on an Reader. Since 1.3.0, it can be specified a {@link Configuration}
+     * instance directly(without config file).
      * </p>
      *
      * @return SqlSessionFactory

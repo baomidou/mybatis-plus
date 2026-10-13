@@ -38,10 +38,10 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * 从  {@link MapperMethod} copy 过来 </br>
- * <p> 不要内部类 ParamMap </p>
- * <p> 不要内部类 SqlCommand </p>
- * <p> 不要内部类 MethodSignature </p>
+ * 从 {@link MapperMethod} copy 过来 <br>
+ * <li>不要内部类 ParamMap</li>
+ * <li>不要内部类 SqlCommand</li>
+ * <li>不要内部类 MethodSignature</li>
  *
  * @author miemie
  * @since 2018-06-09

@@ -50,20 +50,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <p>试验性功能,解决mybatis堆内存过大的问题(看后期mybatis官方会不会解决堆内存占用问题)</p>
- * <p>由于大量重复sql节点,导致堆内存过大(本质上属于string导致的堆内存增大问题)</p>
- * <p>例如: {@code <if test="createTime!=null">create_time=#{createTime}</if>}等公共字段</p>
  * <p>
- * 解决方案:  将生成的xml节点值写入字符串常量池,减少后面重复字符串导致的问题
- * <li>
- * 方案一: 缓存一些特定的mybatis-plus生成的占位符与表达式和项目公共字段(改动有点多,需要增加一些特定xml属性来标记是mybatis-plus生成的节点,减少堆内存较少)
- * </li>
- * <li>
- * 方案二: 直接将节点内容intern写入至字符串常量池(改动少,减少堆内存多,弊端可能会将一些无重复的字符串写入至常量池)
- * </li>
- * <li>
- * 方案三: 模拟字符串常量池,减少重复字符串写入至堆内存(代码相对来说不好看点)
- * </li>
+ * 试验性功能,解决mybatis堆内存过大的问题(看后期mybatis官方会不会解决堆内存占用问题) <br>
+ * 由于大量重复sql节点,导致堆内存过大(本质上属于string导致的堆内存增大问题) 例如:
+ * {@code <if test="createTime!=null">create_time=#{createTime}</if>}等公共字段
+ * </p>
+ * <p>
+ * 解决方案: 将生成的xml节点值写入字符串常量池,减少后面重复字符串导致的问题
+ * <li>方案一: 缓存一些特定的mybatis-plus生成的占位符与表达式和项目公共字段(改动有点多,需要增加一些特定xml属性来标记是mybatis-plus生成的节点,减少堆内存较少)</li>
+ * <li>方案二: 直接将节点内容intern写入至字符串常量池(改动少,减少堆内存多,弊端可能会将一些无重复的字符串写入至常量池)</li>
+ * <li>方案三: 模拟字符串常量池,减少重复字符串写入至堆内存(代码相对来说不好看点)</li>
  * </p>
  *
  * @author nieqiurong

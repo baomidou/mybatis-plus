@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisDependsOnDatabaseInitializationDetector.java b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisDependsOnDatabaseInitializationDetector.java
-index b9686d7dfd27f298db2cfa826d2cf206498b3daa..53b334fa8d9b9f0f64933ea81ac132748c382f59 100644
+index 02f03f4f72a357e6c8262227ff27a7fb939dc772..765ec36eb8d1f6a9f93c5f6a7c09b3062b69f88c 100644
 --- a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisDependsOnDatabaseInitializationDetector.java
 +++ b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisDependsOnDatabaseInitializationDetector.java
 @@ -1,5 +1,5 @@
@@ -17,11 +17,12 @@ index b9686d7dfd27f298db2cfa826d2cf206498b3daa..53b334fa8d9b9f0f64933ea81ac13274
  import java.util.Set;
  
  /**
-@@ -35,6 +34,6 @@ class MybatisDependsOnDatabaseInitializationDetector
+@@ -34,7 +33,7 @@ class MybatisDependsOnDatabaseInitializationDetector
  
      @Override
      protected Set<Class<?>> getDependsOnDatabaseInitializationBeanTypes() {
 -        return Collections.singleton(SqlSessionTemplate.class);
 +        return Set.of(SqlSessionTemplate.class);
      }
+ 
  }

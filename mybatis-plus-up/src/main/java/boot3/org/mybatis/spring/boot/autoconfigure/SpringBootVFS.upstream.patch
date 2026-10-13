@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
-index b4987f83a12cfe9baa776ee9c962bdd4ebe7e1dc..de1761b9259ce015d1d6f49bc122dcbac2bccd2e 100644
+index 64bda3fd6ee95fc8d10ccd10e2535220d774a18d..a4cf2a7a4bf1331bd7bdc6a53c3771e1cf46c722 100644
 --- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
 +++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/SpringBootVFS.java
 @@ -26,6 +26,7 @@ import java.io.UncheckedIOException;
@@ -19,16 +19,16 @@ index b4987f83a12cfe9baa776ee9c962bdd4ebe7e1dc..de1761b9259ce015d1d6f49bc122dcba
          String baseUrlString = urlString.endsWith("/") ? urlString : urlString.concat("/");
          Resource[] resources = resourceResolver.getResources(baseUrlString + "**/*.class");
          return Stream.of(resources).map(resource -> preserveSubpackageName(baseUrlString, resource, path))
-@@ -89,7 +90,7 @@ public class SpringBootVFS extends VFS {
-      * @param supplier
-      *          the supplier for providing {@link ClassLoader} to used
+@@ -87,7 +88,7 @@ public class SpringBootVFS extends VFS {
+      *
+      * @param supplier the supplier for providing {@link ClassLoader} to used
       *
 -     * @since 2.3.1
 +     * @since 3.0.2
       */
      public static void setClassLoaderSupplier(Supplier<ClassLoader> supplier) {
          classLoaderSupplier = supplier;
-@@ -99,7 +100,9 @@ public class SpringBootVFS extends VFS {
+@@ -97,7 +98,9 @@ public class SpringBootVFS extends VFS {
              final String rootPath) {
          try {
              return rootPath + (rootPath.endsWith("/") ? "" : "/")

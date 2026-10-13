@@ -30,8 +30,8 @@ public interface SqlSessionFactoryBeanCustomizer {
     /**
      * Customize the given a {@link SqlSessionFactoryBean} object.
      *
-     * @param factoryBean
-     *          the factory bean object to customize
+     * @param factoryBean the factory bean object to customize
      */
     void customize(SqlSessionFactoryBean factoryBean);
+
 }

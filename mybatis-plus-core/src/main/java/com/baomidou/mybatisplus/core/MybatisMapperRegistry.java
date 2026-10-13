@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 替换 knownMappers
+ * 替换 knownMappers <br>
  * MybatisMapperProxyFactory 替换 MapperProxyFactory
  *
  * @author Caratacus hubin

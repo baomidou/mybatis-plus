@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
-index 1b028f4ef4ae1f63e598674e68ef19ce344c2a08..36d34dbbe3859072a2887b55df0c7df3d3b750ed 100644
+index 0478b7daa02571a39c0c7bbbc3aa833337cf82ba..36d34dbbe3859072a2887b55df0c7df3d3b750ed 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
 @@ -1,22 +1,25 @@
@@ -148,3 +148,9 @@ index 1b028f4ef4ae1f63e598674e68ef19ce344c2a08..36d34dbbe3859072a2887b55df0c7df3
      }
  
      private void environmentsElement(XNode context) throws Exception {
+@@ -441,5 +447,4 @@ public class XMLConfigBuilder extends BaseBuilder {
+             throw new BuilderException("Failed to create a new Configuration instance.", ex);
+         }
+     }
+-
+ }

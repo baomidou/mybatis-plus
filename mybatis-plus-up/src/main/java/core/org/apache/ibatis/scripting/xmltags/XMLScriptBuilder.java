@@ -258,4 +258,5 @@ public class XMLScriptBuilder extends BaseBuilder {
             return defaultSqlNode;
         }
     }
+
 }

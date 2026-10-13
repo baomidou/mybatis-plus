@@ -93,10 +93,8 @@ public class MapperRegistry {
     /**
      * Adds the mappers.
      *
-     * @param packageName
-     *          the package name
-     * @param superType
-     *          the super type
+     * @param packageName the package name
+     * @param superType the super type
      *
      * @since 3.2.2
      */
@@ -112,12 +110,12 @@ public class MapperRegistry {
     /**
      * Adds the mappers.
      *
-     * @param packageName
-     *          the package name
+     * @param packageName the package name
      *
      * @since 3.2.2
      */
     public void addMappers(String packageName) {
         addMappers(packageName, Object.class);
     }
+
 }

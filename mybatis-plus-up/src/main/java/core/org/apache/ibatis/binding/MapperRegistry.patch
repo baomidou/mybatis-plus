@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
-index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c297be2c690 100644
+index 5c996363e54463cb2d285e677d9c22fc261fdafb..2cd82f2fce2c5ccd7af46507bb0afb618a69088d 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java
 @@ -1,50 +1,59 @@
@@ -49,7 +49,7 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c29
 - * @author Clinton Begin
 - * @author Eduardo Macarron
 - * @author Lasse Voss
-+ * 替换 knownMappers
++ * 替换 knownMappers <br>
 + * MybatisMapperProxyFactory 替换 MapperProxyFactory
 + *
 + * @author Caratacus hubin
@@ -120,7 +120,7 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c29
                  parser.parse();
                  loadCompleted = true;
              } finally {
-@@ -80,44 +99,10 @@ public class MapperRegistry {
+@@ -80,42 +99,10 @@ public class MapperRegistry {
      }
  
      /**
@@ -139,10 +139,8 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c29
 -    /**
 -     * Adds the mappers.
 -     *
--     * @param packageName
--     *          the package name
--     * @param superType
--     *          the super type
+-     * @param packageName the package name
+-     * @param superType the super type
 -     *
 -     * @since 3.2.2
 -     */
@@ -158,12 +156,12 @@ index a8bff490ea7ad243d3d952c0e2a07e22dd7612a2..6c49d5e7bdf171ac8007fb50ae422c29
 -    /**
 -     * Adds the mappers.
 -     *
--     * @param packageName
--     *          the package name
+-     * @param packageName the package name
 -     *
 -     * @since 3.2.2
 -     */
 -    public void addMappers(String packageName) {
 -        addMappers(packageName, Object.class);
 -    }
+-
  }

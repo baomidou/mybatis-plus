@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
-index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c431187fb376d4 100644
+index 64c49ba6019ae952abbdc4abb9dfffdd8d68d916..bfc266013663d088cedd8fa5a54cb804d6224884 100644
 --- a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
 +++ b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
 @@ -1,5 +1,5 @@
@@ -17,7 +17,7 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
  import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
  import org.springframework.core.type.classreading.MetadataReaderFactory;
  import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
-@@ -497,7 +496,7 @@ public class SqlSessionFactoryBean
+@@ -470,7 +469,7 @@ public class SqlSessionFactoryBean
       *
       * @see #setMapperLocations(Resource...)
       *
@@ -26,43 +26,43 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
       */
      public void addMapperLocations(Resource... mapperLocations) {
          setMapperLocations(appendArrays(this.mapperLocations, mapperLocations, Resource[]::new));
-@@ -509,7 +508,7 @@ public class SqlSessionFactoryBean
-      * @param typeHandlers
-      *          Type handler list
+@@ -481,7 +480,7 @@ public class SqlSessionFactoryBean
+      *
+      * @param typeHandlers Type handler list
       *
 -     * @since 2.1.1
 +     * @since 3.0.2
       */
      public void addTypeHandlers(TypeHandler<?>... typeHandlers) {
          setTypeHandlers(appendArrays(this.typeHandlers, typeHandlers, TypeHandler[]::new));
-@@ -521,7 +520,7 @@ public class SqlSessionFactoryBean
-      * @param scriptingLanguageDrivers
-      *          scripting language drivers
+@@ -492,7 +491,7 @@ public class SqlSessionFactoryBean
+      *
+      * @param scriptingLanguageDrivers scripting language drivers
       *
 -     * @since 2.1.1
 +     * @since 3.0.2
       */
      public void addScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
          setScriptingLanguageDrivers(
-@@ -534,7 +533,7 @@ public class SqlSessionFactoryBean
-      * @param plugins
-      *          list of plugins
+@@ -504,7 +503,7 @@ public class SqlSessionFactoryBean
+      *
+      * @param plugins list of plugins
       *
 -     * @since 2.1.1
 +     * @since 3.0.2
       */
      public void addPlugins(Interceptor... plugins) {
          setPlugins(appendArrays(this.plugins, plugins, Interceptor[]::new));
-@@ -546,7 +545,7 @@ public class SqlSessionFactoryBean
-      * @param typeAliases
-      *          Type aliases list
+@@ -515,7 +514,7 @@ public class SqlSessionFactoryBean
+      *
+      * @param typeAliases Type aliases list
       *
 -     * @since 2.1.1
 +     * @since 3.0.2
       */
      public void addTypeAliases(Class<?>... typeAliases) {
          setTypeAliases(appendArrays(this.typeAliases, typeAliases, Class[]::new));
-@@ -555,27 +554,22 @@ public class SqlSessionFactoryBean
+@@ -524,27 +523,22 @@ public class SqlSessionFactoryBean
      private <T> T[] appendArrays(T[] oldArrays, T[] newArrays, IntFunction<T[]> generator) {
          if (oldArrays == null) {
              return newArrays;
@@ -98,7 +98,7 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
  
          this.sqlSessionFactory = buildSqlSessionFactory();
      }
-@@ -701,7 +695,7 @@ public class SqlSessionFactoryBean
+@@ -669,7 +663,7 @@ public class SqlSessionFactoryBean
                          continue;
                      }
                      try {
@@ -107,7 +107,7 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
                                  targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
                          xmlMapperBuilder.parse();
                      } catch (Exception e) {
-@@ -719,9 +713,6 @@ public class SqlSessionFactoryBean
+@@ -687,9 +681,6 @@ public class SqlSessionFactoryBean
          return this.sqlSessionFactoryBuilder.build(targetConfiguration);
      }
  
@@ -117,7 +117,7 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
      @Override
      public SqlSessionFactory getObject() throws Exception {
          if (this.sqlSessionFactory == null) {
-@@ -731,25 +722,16 @@ public class SqlSessionFactoryBean
+@@ -699,25 +690,16 @@ public class SqlSessionFactoryBean
          return this.sqlSessionFactory;
      }
  
@@ -143,7 +143,7 @@ index 96591e6383fe51bf6515c1a3474682dba67d2f01..0c58296cbab07f97b26e0e7b95c43118
      @Override
      public void onApplicationEvent(ContextRefreshedEvent event) {
          if (failFast) {
-@@ -760,16 +742,15 @@ public class SqlSessionFactoryBean
+@@ -728,16 +710,15 @@ public class SqlSessionFactoryBean
  
      private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {
          Set<Class<?>> classes = new HashSet<>();

@@ -50,7 +50,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * 重写自 {@link org.apache.ibatis.builder.xml.XMLMapperBuilder}
+ * 重写自 {@link org.apache.ibatis.builder.xml.XMLMapperBuilder} <br>
  * 使用 MybatisMapperBuilderAssistant 替换 MapperBuilderAssistant
  *
  * @author nieqiurong

@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
-index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d28f79cc18 100644
+index b36efbeea4268370b31c8258b05a1dedb3974b1c..085b789f48a69d55993146685da1efe3b99d867a 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperMethod.java
 @@ -1,55 +1,59 @@
@@ -71,10 +71,10 @@ index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d2
 - * @author Eduardo Macarron
 - * @author Lasse Voss
 - * @author Kazuki Shimizu
-+ * 从  {@link MapperMethod} copy 过来 </br>
-+ * <p> 不要内部类 ParamMap </p>
-+ * <p> 不要内部类 SqlCommand </p>
-+ * <p> 不要内部类 MethodSignature </p>
++ * 从 {@link MapperMethod} copy 过来 <br>
++ * <li>不要内部类 ParamMap</li>
++ * <li>不要内部类 SqlCommand</li>
++ * <li>不要内部类 MethodSignature</li>
 + *
 + * @author miemie
 + * @since 2018-06-09
@@ -230,7 +230,7 @@ index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d2
          if (method.hasRowBounds()) {
              RowBounds rowBounds = method.extractRowBounds(args);
              result = sqlSession.selectMap(command.getName(), param, method.getMapKey(), rowBounds);
-@@ -201,188 +262,4 @@ public class MapperMethod {
+@@ -201,190 +262,4 @@ public class MapperMethod {
          }
          return result;
      }
@@ -246,6 +246,7 @@ index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d2
 -            }
 -            return super.get(key);
 -        }
+-
 -    }
 -
 -    public static class SqlCommand {
@@ -418,4 +419,5 @@ index dc42bbdda53bab5c3c14a405c9d962dee58832a9..536a2e7ad3fc0a8de0b8b42cc02a98d2
 -            return mapKey;
 -        }
 -    }
+-
  }

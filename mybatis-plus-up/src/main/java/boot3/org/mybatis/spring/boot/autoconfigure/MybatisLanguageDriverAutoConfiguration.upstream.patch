@@ -1,5 +1,5 @@
 diff --git a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
-index d9fc6f2b913464e0557906fae9c1c832c8c580e7..a8c1715d6aac633bc6bfc1cf761fa2fdb51cc54b 100644
+index e7f43f9ededcabcdc5d89a3f351efd75a55b9b9c..0160c59fc02f966d1a8419e8f23d2e45fef2a4c1 100644
 --- a/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
 +++ b/mybatis-plus-up/src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisLanguageDriverAutoConfiguration.java
 @@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;

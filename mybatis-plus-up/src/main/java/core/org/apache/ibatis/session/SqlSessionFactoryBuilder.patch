@@ -1,8 +1,8 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
-index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db24bca9683 100644
+index 9e6cbdb137502e5f51f10c582e9ab4fbbd2c3791..fb4eaa345014c2b60dee20b58e4e611e8c8d91d9 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java
-@@ -1,52 +1,55 @@
+@@ -1,52 +1,54 @@
  /*
 - *    Copyright 2009-2023 the original author or authors.
 + * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
@@ -56,9 +56,8 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db2
  
  /**
 - * Builds {@link SqlSession} instances.
-+ * 重写自 {@link SqlSessionFactoryBuilder}
-+ * 使用 MybatisXMLConfigBuilder 替换 XMLConfigBuilder
-+ * build 函数加入一些mp必要初始化
++ * 重写自 {@link SqlSessionFactoryBuilder} <br>
++ * 使用 MybatisXMLConfigBuilder 替换 XMLConfigBuilder build 函数加入一些mp必要初始化
   *
 - * @author Clinton Begin
 + * @author nieqiurong 2019/2/23.
@@ -87,7 +86,7 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db2
              return build(parser.parse());
          } catch (Exception e) {
              throw ExceptionFactory.wrapException("Error building SqlSession.", e);
-@@ -62,21 +65,11 @@ public class SqlSessionFactoryBuilder {
+@@ -62,21 +64,11 @@ public class SqlSessionFactoryBuilder {
          }
      }
  
@@ -112,13 +111,14 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db2
              return build(parser.parse());
          } catch (Exception e) {
              throw ExceptionFactory.wrapException("Error building SqlSession.", e);
-@@ -92,7 +85,42 @@ public class SqlSessionFactoryBuilder {
+@@ -92,8 +84,42 @@ public class SqlSessionFactoryBuilder {
          }
      }
  
 +    @Override
      public SqlSessionFactory build(Configuration config) {
 -        return new DefaultSqlSessionFactory(config);
+-    }
 +        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(config);
 +
 +        IdentifierGenerator identifierGenerator;
@@ -143,7 +143,7 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db2
 +            identifierGenerator = globalConfig.getIdentifierGenerator();
 +        }
 +        IdWorker.setIdentifierGenerator(identifierGenerator);
-+
+ 
 +        if (globalConfig.isEnableSqlRunner()) {
 +            new SqlRunnerInjector().inject(config);
 +        }
@@ -154,5 +154,5 @@ index 2aacd0aaa9f1699db53437bc8f52f36066fe4340..9d5ba6a3524e1ac4a70bdf9ad0370db2
 +        globalConfig.setSqlSessionFactory(sqlSessionFactory);
 +
 +        return sqlSessionFactory;
-     }
++    }
  }

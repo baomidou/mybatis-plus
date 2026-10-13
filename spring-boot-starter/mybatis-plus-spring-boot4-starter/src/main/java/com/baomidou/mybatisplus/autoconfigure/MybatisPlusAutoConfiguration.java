@@ -84,15 +84,16 @@ import java.util.stream.Stream;
 import javax.sql.DataSource;
 
 /**
- * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a
- * {@link SqlSessionFactory} and a {@link SqlSessionTemplate}.
+ * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a {@link SqlSessionFactory} and a
+ * {@link SqlSessionTemplate}.
  * <p>
- * If {@link org.mybatis.spring.annotation.MapperScan} is used, or a
- * configuration file is specified as a property, those will be considered,
- * otherwise this auto-configuration will attempt to register mappers based on
- * the interface definitions in or under the root auto-configuration package.
+ * If {@link org.mybatis.spring.annotation.MapperScan} is used, or a configuration file is specified as a property,
+ * those will be considered, otherwise this auto-configuration will attempt to register mappers based on the interface
+ * definitions in or under the root auto-configuration package.
  * </p>
- * <p> copy from {@link org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration}</p>
+ * <p>
+ * copy from {@link org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration}
+ * </p>
  *
  * @author Eddú Meléndez
  * @author Josh Long
@@ -224,9 +225,9 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     /**
      * 检查spring容器里是否有对应的bean,有则进行消费
      *
-     * @param clazz    class
+     * @param clazz class
      * @param consumer 消费
-     * @param <T>      泛型
+     * @param <T> 泛型
      */
     private <T> void getBeanThen(Class<T> clazz, Consumer<T> consumer) {
         if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
@@ -237,9 +238,9 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     /**
      * 检查spring容器里是否有对应的bean,有则进行消费
      *
-     * @param clazz    class
+     * @param clazz class
      * @param consumer 消费
-     * @param <T>      泛型
+     * @param <T> 泛型
      */
     private <T> void getBeansThen(Class<T> clazz, Consumer<List<T>> consumer) {
         if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
@@ -288,14 +289,11 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     /**
      * This will just scan the same base package as Spring Boot does. If you want more power, you can explicitly use
-     * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed mappers working correctly, out-of-the-box,
-     * similar to using Spring Data JPA repositories.
+     * {@link org.mybatis.spring.annotation.MapperScan} but this will get typed mappers working correctly,
+     * out-of-the-box, similar to using Spring Data JPA repositories.
      */
     public static class AutoConfiguredMapperScannerRegistrar
-            implements
-                BeanFactoryAware,
-                EnvironmentAware,
-                ImportBeanDefinitionRegistrar {
+            implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
 
         private BeanFactory beanFactory;
         private Environment environment;
@@ -376,8 +374,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     }
 
     /**
-     * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to scan
-     * mappers based on the same component-scanning path as Spring Boot itself.
+     * If mapper registering configuration or mapper scanning configuration not present, this configuration allow to
+     * scan mappers based on the same component-scanning path as Spring Boot itself.
      */
     @Configuration(proxyBeanMethods = false)
     @Import(AutoConfiguredMapperScannerRegistrar.class)

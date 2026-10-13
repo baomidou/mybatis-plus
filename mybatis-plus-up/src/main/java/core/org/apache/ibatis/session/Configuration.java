@@ -267,8 +267,7 @@ public class Configuration {
      * Sets an applying type when omit a type on sql provider annotation(e.g.
      * {@link org.apache.ibatis.annotations.SelectProvider}).
      *
-     * @param defaultSqlProviderType
-     *          the default type for sql provider annotation
+     * @param defaultSqlProviderType the default type for sql provider annotation
      *
      * @since 3.5.6
      */
@@ -311,8 +310,7 @@ public class Configuration {
     /**
      * Sets the default value of 'nullable' attribute on 'foreach' tag.
      *
-     * @param nullableOnForEach
-     *          If nullable, set to {@code true}
+     * @param nullableOnForEach If nullable, set to {@code true}
      *
      * @since 3.5.9
      */
@@ -419,8 +417,7 @@ public class Configuration {
     /**
      * Sets the auto mapping unknown column behavior.
      *
-     * @param autoMappingUnknownColumnBehavior
-     *          the new auto mapping unknown column behavior
+     * @param autoMappingUnknownColumnBehavior the new auto mapping unknown column behavior
      *
      * @since 3.4.0
      */
@@ -525,8 +522,7 @@ public class Configuration {
     /**
      * Sets the default fetch size.
      *
-     * @param defaultFetchSize
-     *          the new default fetch size
+     * @param defaultFetchSize the new default fetch size
      *
      * @since 3.3.0
      */
@@ -548,8 +544,7 @@ public class Configuration {
     /**
      * Sets the default result set type.
      *
-     * @param defaultResultSetType
-     *          the new default result set type
+     * @param defaultResultSetType the new default result set type
      *
      * @since 3.5.2
      */
@@ -597,8 +592,7 @@ public class Configuration {
      * Set a default {@link TypeHandler} class for {@link Enum}. A default {@link TypeHandler} is
      * {@link org.apache.ibatis.type.EnumTypeHandler}.
      *
-     * @param typeHandler
-     *          a type handler class for {@link Enum}
+     * @param typeHandler a type handler class for {@link Enum}
      *
      * @since 3.4.5
      */
@@ -676,8 +670,7 @@ public class Configuration {
     /**
      * Gets the language driver.
      *
-     * @param langClass
-     *          the lang class
+     * @param langClass the lang class
      *
      * @return the language driver
      *
@@ -1064,8 +1057,7 @@ public class Configuration {
     /**
      * Extracts namespace from fully qualified statement id.
      *
-     * @param statementId
-     *          the statement id
+     * @param statementId the statement id
      *
      * @return namespace or null when id does not contain period.
      */
@@ -1138,8 +1130,7 @@ public class Configuration {
          * <p>
          * function arguments are 1st is saved value and 2nd is target value.
          *
-         * @param conflictMessageProducer
-         *          A function for producing a conflict error message
+         * @param conflictMessageProducer A function for producing a conflict error message
          *
          * @return a conflict error message
          *
@@ -1210,4 +1201,5 @@ public class Configuration {
             return keyParts[keyParts.length - 1];
         }
     }
+
 }
