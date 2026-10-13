@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.base;
+package com.baomidou.mybatisplus;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -203,6 +203,55 @@ class SourcePatchToolTest {
         assertTrue(Files.readString(records()).startsWith("version=1.1\nmoudle=core\n"));
         Files.writeString(records(), HEADER + "example.Original=../../Outside.java\n");
         assertThrows(IllegalArgumentException.class, () -> new SourcePatchTool(repository, module()));
+    }
+
+    @Test
+    void copiesClassesMarkedWithQuestionMarkAndPreservesThemAcrossVersionUpdates() throws Exception {
+        fixture("old", TARGET);
+        Files.writeString(records(), HEADER + "# example.Original=enhanced.Enhanced\n  example.Original = ?  \n");
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.extract(Map.of("sample", sourceJar(SOURCE)));
+        assertEquals(SOURCE, Files.readString(upstream()));
+        tool.generatePatches();
+        assertFalse(Files.exists(patch()));
+        tool.check(Map.of("sample", "1.0"));
+        tool.recordVersions(Map.of("sample", "1.1"));
+        assertEquals("version=1.1\nmoudle=core\nexample.Original=?  \n", Files.readString(records()));
+        tool = new SourcePatchTool(repository, module());
+        tool.generatePatches();
+        tool.check(Map.of("sample", "1.1"));
+        assertFalse(Files.exists(patch()));
+        Files.delete(upstream());
+        SourcePatchTool missing = tool;
+        IllegalStateException error =
+                assertThrows(IllegalStateException.class, () -> missing.check(Map.of("sample", "1.1")));
+        assertTrue(error.getMessage().contains("Missing file"));
+    }
+
+    @Test
+    void generatesPatchesOnlyForMappedClassesInMixedRecords() throws Exception {
+        fixture(SOURCE, TARGET);
+        Files.writeString(records(), HEADER + MAPPING + "example.Reference=?\n");
+        Path reference = upstream().resolveSibling("Reference.java");
+        Files.writeString(reference, "package example;\nclass Reference {}\n");
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.generatePatches();
+        assertTrue(Files.isRegularFile(patch()));
+        assertFalse(Files.exists(reference.resolveSibling("Reference.patch")));
+        tool.check(Map.of("sample", "1.0"));
+        tool.recordVersions(Map.of("sample", "1.1"));
+        assertEquals("version=1.1\nmoudle=core\n" + MAPPING + "example.Reference=?\n", Files.readString(records()));
+    }
+
+    @Test
+    void requiresLocalClassForEntriesWithoutEquals() throws Exception {
+        fixture(SOURCE, TARGET);
+        Files.writeString(records(), HEADER + "example.Original\n");
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        IllegalStateException error = assertThrows(IllegalStateException.class, tool::generatePatches);
+        assertTrue(error.getMessage().contains("Missing local class for example.Original"));
+        assertThrows(IllegalStateException.class, () -> tool.check(Map.of("sample", "1.0")));
+        assertFalse(Files.exists(patch()));
     }
 
     @Test

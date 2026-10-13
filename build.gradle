@@ -117,6 +117,7 @@ repositories {
 
 // Paths are relative to the repository root; add files here for full formatting.
 def formattedFiles = [
+    'mybatis-plus-up/src/**/*.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java',
@@ -124,10 +125,9 @@ def formattedFiles = [
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java',
-    // override 目录及其子目录的所有 Java 文件
+    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperBuilderAssistant.java',
+    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisParameterHandler.java',
     'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/**/*.java',
-    // 新模块的全部 Java 文件
-    'mybatis-plus-up/src/**/*.java',
     'spring-boot-starter/mybatis-plus-boot-starter/src/**/*.java',
     'spring-boot-starter/mybatis-plus-spring-boot3-starter/src/**/*.java',
     'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java'

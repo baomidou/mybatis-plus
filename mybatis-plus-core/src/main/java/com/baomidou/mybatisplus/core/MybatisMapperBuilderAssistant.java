@@ -45,28 +45,49 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
     }
 
     @Override
-    public ResultMapping buildResultMapping(Class<?> resultType, String property, String column, Class<?> javaType,
-                                            JdbcType jdbcType, String nestedSelect, String nestedResultMap, String notNullColumn, String columnPrefix,
-                                            Class<? extends TypeHandler<?>> typeHandler, List<ResultFlag> flags, String resultSet, String foreignColumn,
-                                            boolean lazy) {
+    public ResultMapping buildResultMapping(
+            Class<?> resultType,
+            String property,
+            String column,
+            Class<?> javaType,
+            JdbcType jdbcType,
+            String nestedSelect,
+            String nestedResultMap,
+            String notNullColumn,
+            String columnPrefix,
+            Class<? extends TypeHandler<?>> typeHandler,
+            List<ResultFlag> flags,
+            String resultSet,
+            String foreignColumn,
+            boolean lazy) {
         Class<?> javaTypeClass = resolveResultJavaType(resultType, property, javaType);
         // 新增自定义 IJsonTypeHandler 处理能力
-        TypeHandler<?> typeHandlerInstance = MybatisUtils.resolveTypeHandler(resultType, property, typeHandler, javaTypeClass,
-            () -> this.resolveTypeHandler(javaTypeClass, typeHandler));
+        TypeHandler<?> typeHandlerInstance = MybatisUtils.resolveTypeHandler(
+                resultType,
+                property,
+                typeHandler,
+                javaTypeClass,
+                () -> this.resolveTypeHandler(javaTypeClass, typeHandler));
         List<ResultMapping> composites;
         if ((nestedSelect == null || nestedSelect.isEmpty()) && (foreignColumn == null || foreignColumn.isEmpty())) {
             composites = Collections.emptyList();
         } else {
             composites = parseCompositeColumnName(column);
         }
-        return new ResultMapping.Builder(configuration, property, column, javaTypeClass).jdbcType(jdbcType)
-            .nestedQueryId(applyCurrentNamespace(nestedSelect, true))
-            .nestedResultMapId(applyCurrentNamespace(nestedResultMap, true)).resultSet(resultSet)
-            .typeHandler(typeHandlerInstance).flags(flags == null ? new ArrayList<>() : flags).composites(composites)
-            .notNullColumns(parseMultipleColumnNames(notNullColumn)).columnPrefix(columnPrefix).foreignColumn(foreignColumn)
-            .lazy(lazy).build();
+        return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
+                .jdbcType(jdbcType)
+                .nestedQueryId(applyCurrentNamespace(nestedSelect, true))
+                .nestedResultMapId(applyCurrentNamespace(nestedResultMap, true))
+                .resultSet(resultSet)
+                .typeHandler(typeHandlerInstance)
+                .flags(flags == null ? new ArrayList<>() : flags)
+                .composites(composites)
+                .notNullColumns(parseMultipleColumnNames(notNullColumn))
+                .columnPrefix(columnPrefix)
+                .foreignColumn(foreignColumn)
+                .lazy(lazy)
+                .build();
     }
-
 
     private Set<String> parseMultipleColumnNames(String columnName) {
         Set<String> columns = new HashSet<>();
@@ -84,7 +105,6 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
         return columns;
     }
 
-
     private List<ResultMapping> parseCompositeColumnName(String columnName) {
         List<ResultMapping> composites = new ArrayList<>();
         if (columnName != null && (columnName.indexOf('=') > -1 || columnName.indexOf(',') > -1)) {
@@ -92,8 +112,12 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
             while (parser.hasMoreTokens()) {
                 String property = parser.nextToken();
                 String column = parser.nextToken();
-                ResultMapping complexResultMapping = new ResultMapping.Builder(configuration, property, column,
-                    configuration.getTypeHandlerRegistry().getUnknownTypeHandler()).build();
+                ResultMapping complexResultMapping = new ResultMapping.Builder(
+                                configuration,
+                                property,
+                                column,
+                                configuration.getTypeHandlerRegistry().getUnknownTypeHandler())
+                        .build();
                 composites.add(complexResultMapping);
             }
         }
@@ -114,5 +138,4 @@ public class MybatisMapperBuilderAssistant extends MapperBuilderAssistant {
         }
         return javaType;
     }
-
 }

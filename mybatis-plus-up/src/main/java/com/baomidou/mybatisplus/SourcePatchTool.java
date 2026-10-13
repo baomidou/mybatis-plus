@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.base;
+package com.baomidou.mybatisplus;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -67,6 +67,9 @@ public final class SourcePatchTool {
                         throw new IllegalArgumentException("Duplicate upstream source mapping: " + sourceClass);
                     }
                     sources.add(new Source(artifact, source, upstream));
+                    if (localClass.equals("?")) {
+                        continue;
+                    }
                     Path enhanced = localClass.isEmpty()
                             ? null
                             : resolve(localModule.resolve("src/main/java"), classPath(localClass));

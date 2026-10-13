@@ -181,7 +181,7 @@ def toolClasspath = sourceSets.main.runtimeClasspath
 def runSourcePatch = { String action ->
     sourcePatchExecution.execOperations.javaexec {
         classpath toolClasspath
-        mainClass.set('com.baomidou.mybatisplus.base.SourcePatchTool')
+        mainClass.set('com.baomidou.mybatisplus.SourcePatchTool')
         workingDir rootProject.projectDir
         args sourcePatchArguments(action)
     }.assertNormalExitValue()

@@ -44,7 +44,8 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 目前登记的类包括 `MapperMethod`、`MapperProxy`、`SqlSessionFactoryBean`，以及三个 Boot 版本的
 `MybatisAutoConfiguration`。新增对应关系时，编辑所属分组的 properties 文件，并确认编译源集的包含规则。
 
-只复制上游源码时，本地类值可以暂时留空，此时只执行 `up`；执行 `patch`、`check` 前必须补全对应关系。
+只复制上游源码时写成 `上游全限定类名=?`：跳过补丁生成与校验，仍检查版本、副本并参与对应源集编译。
+本地类值留空时只能执行 `up`；执行 `patch`、`check` 前必须补全对应关系。
 
 ## 源码与格式化
 
@@ -82,7 +83,7 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
   不重新提取上游副本，也不更新版本记录；格式化失败时不生成补丁。
   补丁头两侧均使用增强源码的仓库相对路径，包名、类名变更仍保留在差异中。
 - `check`：核对记录版本与实际依赖版本，检查补丁是否与两份源码一致，再在临时目录应用补丁，确认能够还原增强源码。
-  同时运行模块测试，并编译 core、boot2、boot3、boot4 源集。对应关系必须完整；不会刷新副本、补丁或版本记录。
+  同时运行模块测试，并编译 core、boot2、boot3、boot4 源集。不会刷新副本、补丁或版本记录。
 
 需要安装 Git 并加入 `PATH`。补丁生成使用 Git 的 diff 引擎，还原校验在隔离的临时目录中使用 Git 的补丁引擎。
 比较源码和生成补丁时，换行符统一为 LF。

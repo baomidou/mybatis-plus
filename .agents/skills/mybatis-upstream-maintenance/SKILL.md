@@ -13,7 +13,7 @@ description: 维护 MyBatis-Plus 仓库 mybatis-plus-up 模块的上游源码副
 
 - `mybatis-plus-up/build.gradle`：依赖来源、分组、sourceSet 和任务编排。
 - `mybatis-plus-up/upstream/*.properties`：按上游分组拆分的版本、本地模块名和类对应关系。
-- `mybatis-plus-up/src/main/java/com/baomidou/mybatisplus/base/SourcePatchTool.java`：记录解析、提取、diff 与补丁还原校验。
+- `mybatis-plus-up/src/main/java/com/baomidou/mybatisplus/SourcePatchTool.java`：记录解析、提取、diff 与补丁还原校验。
 - 根项目 `build.gradle`：实际依赖版本变量及现有 Spotless 配置。
 - 对应 core、spring 或 starter 项目的 `build.gradle`：实际依赖配置。
 
@@ -41,7 +41,7 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 
 示例版本不作为固定要求；以当前目标项目实际解析出的版本为准。`moudle` 使用本地模块的唯一项目名，必要时使用限定的 Gradle 项目路径。工具根据模块和全限定类名定位 `src/main/java` 中的增强实现，标准 `.patch` 与上游副本同目录、同文件名主体。
 
-复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`check` 要求对应关系完整，遇到空值应提示补全而不是跳过。当前 Boot 分组只复制 `MybatisAutoConfiguration`，对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则。
+只需复制的类写成 `上游全限定类名=?`；它们参与 `up`、版本与副本检查及对应源集编译，不参与补丁生成与校验，更新版本记录时保留 `?`。配置沿用 `Properties.load` 读取，没有 `=` 的条目按空值处理。其他条目表示需要维护补丁，复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`check` 要求除值为 `?` 以外的对应关系完整，遇到空值应提示补全而不是跳过。当前 Boot 分组只复制 `MybatisAutoConfiguration`，对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则。
 
 ## 三个操作入口
 
@@ -58,13 +58,13 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 
 ### patch：生成差异
 
-先执行根项目现有 `spotlessApply`，格式化成功后读取每条类对应关系的上游副本和增强源码，生成可还原目标源码的标准 unified diff。`patch` 必须依赖格式化任务，而不只是声明执行顺序；格式化失败时不能生成补丁。所有关系必须完整，本地类未填或文件缺失时应失败并提示，不自动略过。
+先执行根项目现有 `spotlessApply`，格式化成功后读取每条本地类值不为 `?` 的类对应关系的上游副本和增强源码，生成可还原目标源码的标准 unified diff。值为 `?` 的类不参与补丁生成。`patch` 必须依赖格式化任务，而不只是声明执行顺序；格式化失败时不能生成补丁。所有参与补丁的关系必须完整，本地类未填或文件缺失时应失败并提示，不自动略过。
 
 维护增强实现时，直接编辑目标 Java，再运行 `patch` 和 `check`。格式化使用根项目已有范围，可能调整其中的 Java 文件，但单独 `patch` 不重新提取上游副本或更新版本记录。补丁可以包含包名、类名、导入和业务代码的实际差异。相同源码对应空补丁，属于合法结果。
 
 ### check：只读验证
 
-核对记录版本与对应项目解析出的依赖版本；检查副本存在；验证增强映射的补丁与两份源码一致，并在临时目录应用补丁，确认能还原增强源码。同时运行现有测试和 core、Boot 分组编译。
+核对记录版本与对应项目解析出的依赖版本；检查所有登记的副本存在；仅对本地类值不为 `?` 的增强映射验证补丁与两份源码一致，并在临时目录应用补丁，确认能还原增强源码。值为 `?` 的类不要求本地映射或补丁。同时运行现有测试和 core、Boot 分组编译。
 
 `check` 不调用 `up`，不刷新副本、patch 或版本记录。检查失败时指出具体分组、文件及原因，按用户授权修复；不要通过自动重写补丁、修改记录版本或忽略失败使检查通过。
 
