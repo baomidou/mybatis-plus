@@ -1,6 +1,6 @@
 # 上游源码与补丁维护
 
-本模块保存格式化后的上游源码副本，通过普通 Java 源码和标准 diff 展示增强实现的改动。
+本模块保存格式化后的上游源码副本，通过标准 diff 展示增强改动和上游版本变化。
 统一使用 `up`、`patch`、`check` 三个操作入口。
 
 ## 快速开始
@@ -25,9 +25,7 @@ skill 位于仓库的 `.agents/skills/mybatis-upstream-maintenance/SKILL.md`。
 
 - `core.properties`
 - `spring2.properties`、`spring3.properties`、`spring4.properties`
-- `boot2.properties`
-- `boot3.properties`
-- `boot4.properties`
+- `boot2.properties`、`boot3.properties`、`boot4.properties`
 
 文件名标识上游分组，每个文件只包含 `version`、`moudle` 和“上游全限定类名=本地全限定类名”。
 各组独立维护，因此同一个上游类可以登记在不同分组中。
@@ -36,13 +34,25 @@ skill 位于仓库的 `.agents/skills/mybatis-upstream-maintenance/SKILL.md`。
 version=2.3.2
 moudle=mybatis-plus-boot-starter
 org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
+org.mybatis.spring.boot.autoconfigure.MybatisProperties=?
 ```
 
 `moudle` 保留当前约定的拼写，值为本地 Gradle 模块的唯一项目名，也支持限定的 Gradle 项目路径。
-工具根据模块名和全限定类名定位增强源码，不使用 `.copy` 或 `.mapping` 前缀。
+工具根据模块名和全限定类名定位增强源码。
 
-目前登记的类包括 `MapperMethod`、`MapperProxy`、`SqlSessionFactoryBean`，以及三个 Boot 版本的
-`MybatisAutoConfiguration`。新增对应关系时，编辑所属分组的 properties 文件，并确认编译源集的包含规则。
+Boot 三组均登记以下类，其中 `MybatisAutoConfiguration` 映射增强类，其余使用 `?`：
+
+```text
+ConfigurationCustomizer
+MybatisAutoConfiguration
+MybatisDependsOnDatabaseInitializationDetector
+MybatisLanguageDriverAutoConfiguration
+MybatisProperties
+SpringBootVFS
+SqlSessionFactoryBeanCustomizer
+```
+
+新增类时编辑所属分组的 properties，并确认编译依赖和源集包含规则。
 
 只复制上游源码时写成 `上游全限定类名=?`：跳过增强补丁生成与校验，仍检查版本、副本并参与对应源集编译。
 本地类值留空时只能执行 `up`；执行 `patch`、`check` 前必须补全对应关系。
@@ -62,8 +72,15 @@ src/main/java/boot3/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
 ```
 
-标准 `.patch` 与对应上游 Java 文件同目录、同文件名主体。
-Spring、Boot 的 2→3、3→4 源码差异保存为较新分组目录中的 `.upstream.patch`，由 `patch` 生成、`check` 校验。
+补丁与上游 Java 文件同目录：
+
+| 文件 | 对比方向 | 范围 |
+| --- | --- | --- |
+| `类名.patch` | 上游源码 → 本地增强源码 | 填写本地类名的条目 |
+| `类名.upstream.patch` | 上游 2→3、3→4 | Spring/Boot 相邻两组都登记的同名类，包括值为 `?` 的条目 |
+
+版本差异补丁保存在较新分组，例如 `boot3/.../MybatisProperties.upstream.patch` 表示 Boot 2→3。
+只在一侧登记的类不生成版本差异补丁，core 不参与跨版本对比。
 上游副本不参与 `main` 源集的编译和打包，避免覆盖工具依赖中的同名类；各分组通过独立源集编译。
 
 格式化直接复用根项目已有的 Spotless 任务，其范围已覆盖 `mybatis-plus-up/src/**/*.java`。
@@ -81,11 +98,9 @@ Spring、Boot 的 2→3、3→4 源码差异保存为较新分组目录中的 `.
 
 - `up`：从实际依赖的源码 JAR 中提取已登记的上游类，调用根项目 `spotlessApply`，格式化成功后更新版本记录。
   源码 JAR 的版本必须与对应 core、spring 或 starter 模块实际解析出的依赖版本一致。此任务不生成补丁。
-- `patch`：先执行根项目 `spotlessApply`，格式化成功后读取每组对应关系中的两份 Java 源码，
-  生成标准 unified diff，并保存到上游副本同级目录。格式化沿用根项目既有范围，可能调整其中的 Java 文件。
-  不重新提取上游副本，也不更新版本记录；格式化失败时不生成补丁。
-  补丁头两侧均使用增强源码的仓库相对路径，包名、类名变更仍保留在差异中。
-- `check`：核对记录版本与实际依赖版本，检查补丁是否与两份源码一致，再在临时目录应用补丁，确认能够还原增强源码。
+- `patch`：先执行根项目 `spotlessApply`，成功后生成增强补丁和上游版本差异补丁。
+  不重新提取副本或更新版本；格式化失败时不生成补丁。补丁头使用目标源码的仓库相对路径。
+- `check`：核对版本和副本，校验两种补丁，并在临时目录应用补丁，确认能够还原目标源码。
   同时运行模块测试，并编译 core、Spring、Boot 各源集。不会刷新副本、补丁或版本记录。
 
 需要安装 Git 并加入 `PATH`。补丁生成使用 Git 的 diff 引擎，还原校验在隔离的临时目录中使用 Git 的补丁引擎。
@@ -124,6 +139,7 @@ Spring、Boot 的 2→3、3→4 源码差异保存为较新分组目录中的 `.
 各组使用独立的源集、源码 JAR configuration、编译 classpath 和输出目录，避免同包同名类及依赖版本冲突。
 版本从各组独立的 `*Upstream` 配置解析，该配置也为编译依赖提供版本约束。
 同包的其他类和框架依赖由对应版本的上游二进制 starter 提供，无需额外复制源码。
+`MybatisLanguageDriverAutoConfiguration` 所需的 Thymeleaf、Velocity、FreeMarker 驱动使用根项目既有版本，加入各组 `compileOnly`。
 
 编译输出分别位于 `build/classes/java/boot2`、`boot3`、`boot4`，不进入主工具 JAR 或其运行时 classpath。
 Boot 2 使用 `release = 8`，Boot 3、Boot 4 使用 `release = 17`。
