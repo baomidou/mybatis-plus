@@ -1,7 +1,7 @@
 # 上游源码与补丁维护
 
 本模块保存格式化后的上游源码副本，通过标准 diff 展示增强改动和上游版本变化。
-统一使用 `up`、`patch`、`check` 三个操作入口。
+统一使用 `up`、`patch`、`verify` 三个操作入口。
 
 ## 快速开始
 
@@ -10,7 +10,7 @@
 ```text
 $mybatis-upstream-maintenance
 
-继续维护 mybatis-plus-up 模块，先读取项目内 skill、README 和现有配置，沿用当前的 up / patch / check 流程。
+继续维护 mybatis-plus-up 模块，先读取项目内 skill、README 和现有配置，沿用当前的 up / patch / verify 流程。
 
 本次需求：……
 ```
@@ -55,7 +55,7 @@ SqlSessionFactoryBeanCustomizer
 新增类时编辑所属分组的 properties，并确认编译依赖和源集包含规则。
 
 只复制上游源码时写成 `上游全限定类名=?`：跳过增强补丁生成与校验，仍检查版本、副本并参与对应源集编译。
-本地类值留空时只能执行 `up`；执行 `patch`、`check` 前必须补全对应关系。
+本地类值留空时只能执行 `up`；执行 `patch`、`verify` 前必须补全对应关系。
 
 ## 源码与格式化
 
@@ -93,22 +93,24 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 ```shell
 ./gradlew :mybatis-plus-up:up
 ./gradlew :mybatis-plus-up:patch
-./gradlew :mybatis-plus-up:check
+./gradlew :mybatis-plus-up:verify
 ```
 
 - `up`：从实际依赖的源码 JAR 中提取已登记的上游类，调用根项目 `spotlessApply`，格式化成功后更新版本记录。
   源码 JAR 的版本必须与对应 core、spring 或 starter 模块实际解析出的依赖版本一致。此任务不生成补丁。
 - `patch`：先执行根项目 `spotlessApply`，成功后生成增强补丁和上游版本差异补丁。
   不重新提取副本或更新版本；格式化失败时不生成补丁。补丁头使用目标源码的仓库相对路径。
-- `check`：核对版本和副本，校验两种补丁，并在临时目录应用补丁，确认能够还原目标源码。
+- `verify`：核对版本和副本，校验两种补丁，并在临时目录应用补丁，确认能够还原目标源码。
   同时运行模块测试，并编译 core、Spring、Boot 各源集。不会刷新副本、补丁或版本记录。
+
+`verify` 是独立维护任务；标准 `check`、`build` 不依赖它，仍按插件默认行为执行检查。
 
 需要安装 Git 并加入 `PATH`。补丁生成使用 Git 的 diff 引擎，还原校验在隔离的临时目录中使用 Git 的补丁引擎。
 比较源码和生成补丁时，换行符统一为 LF。
 
 ## 修改与升级
 
-直接编辑目标模块中的增强 Java 实现，然后执行 `patch`、`check`；`patch` 会先调用现有格式化任务。
+直接编辑目标模块中的增强 Java 实现，然后执行 `patch`、`verify`；`patch` 会先调用现有格式化任务。
 当两份源码完全一致时，空补丁是合法结果。
 
 修改上游依赖版本后，先执行 `up` 并审阅基线变化，再将相关上游改动迁移到增强实现，最后生成和检查补丁。
@@ -121,7 +123,7 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 `core` 源集以 `src/main/java/core` 为源码根目录，只编译 `core.properties` 登记的上游类。
 其他类由上游 MyBatis 二进制依赖提供，编译依赖版本与目标 core 模块的 `compileClasspath` 保持一致。
 
-编译使用 `release = 8`，输出到 `build/classes/java/core`。`coreClasses` 已纳入 `check`，
+编译使用 `release = 8`，输出到 `build/classes/java/core`。`coreClasses` 已纳入 `verify`，
 输出不进入主工具 JAR 或其运行时 classpath。
 
 ### Spring 2/3/4
@@ -144,5 +146,5 @@ src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfigurati
 编译输出分别位于 `build/classes/java/boot2`、`boot3`、`boot4`，不进入主工具 JAR 或其运行时 classpath。
 Boot 2 使用 `release = 8`，Boot 3、Boot 4 使用 `release = 17`。
 
-`check` 包含这些源集的编译，但不会自动刷新副本；副本缺失时检查失败，需要执行 `up`。
+`verify` 包含这些源集的编译，但不会自动刷新副本；副本缺失时检查失败，需要执行 `up`。
 没有额外的自定义复制、提取或校验任务，源集编译任务由 Gradle 自动生成。

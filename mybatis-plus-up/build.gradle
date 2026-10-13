@@ -260,8 +260,10 @@ upstreamSourceSets.each { upstreamSourceSet ->
     }
 }
 
-tasks.named('check') {
-    dependsOn tasks.named('classes'), upstreamSourceSets.collect { tasks.named(it.classesTaskName) }
+tasks.register('verify') {
+    group = 'mybatis upgrade'
+    description = 'Verify upstream versions, source compilation, and patch restoration'
+    dependsOn tasks.named('classes'), tasks.named('test'), upstreamSourceSets.collect { tasks.named(it.classesTaskName) }
     mustRunAfter up, spotlessApply, patch
     doFirst {
         coreSourcePaths.each { sourcePath ->

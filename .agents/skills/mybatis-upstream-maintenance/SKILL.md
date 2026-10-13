@@ -1,6 +1,6 @@
 ---
 name: mybatis-upstream-maintenance
-description: 维护 MyBatis-Plus 仓库 mybatis-plus-up 模块的上游源码副本、版本记录、增强源码映射和补丁。当用户要求执行或调整 up、patch、check，复制上游类，维护 Boot 2/3/4 多版本源码或验证独立编译时使用；普通业务 Mapper、SQL 或数据库功能开发不适用。
+description: 维护 MyBatis-Plus 仓库 mybatis-plus-up 模块的上游源码副本、版本记录、增强源码映射和补丁。当用户要求执行或调整 up、patch、verify，复制上游类，维护 Boot 2/3/4 多版本源码或验证独立编译时使用；普通业务 Mapper、SQL 或数据库功能开发不适用。
 ---
 
 # MyBatis-Plus 上游源码维护
@@ -43,11 +43,11 @@ org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration=com.baomidou.myba
 
 Spring 2/3/4 均复制 `org.mybatis.spring.SqlSessionFactoryBean`，并映射到 `mybatis-plus-spring` 中同一个 `MybatisSqlSessionFactoryBean`。不同分组允许共享增强类，同一分组仍禁止重复增强目标。
 
-只需复制的类写成 `上游全限定类名=?`；它们参与 `up`、版本与副本检查及对应源集编译，不参与增强补丁生成与校验，更新版本记录时保留 `?`。配置沿用 `Properties.load` 读取，没有 `=` 的条目按空值处理。其他条目表示需要维护补丁，复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`check` 要求除值为 `?` 以外的对应关系完整，遇到空值应提示补全而不是跳过。Boot 分组按 properties 复制上游类，`MybatisAutoConfiguration` 对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则；`MybatisLanguageDriverAutoConfiguration` 的可选模板驱动由根项目既有依赖提供给各 Boot 源集的 compileOnly，不额外复制驱动源码。
+只需复制的类写成 `上游全限定类名=?`；它们参与 `up`、版本与副本检查及对应源集编译，不参与增强补丁生成与校验，更新版本记录时保留 `?`。配置沿用 `Properties.load` 读取，没有 `=` 的条目按空值处理。其他条目表示需要维护补丁，复制阶段可以把本地类值暂时留空，此时只执行 `up`；不要为此引入额外模式。`patch`、`verify` 要求除值为 `?` 以外的对应关系完整，遇到空值应提示补全而不是跳过。Boot 分组按 properties 复制上游类，`MybatisAutoConfiguration` 对应各 starter 已有的 `MybatisPlusAutoConfiguration`。新增类时按用户范围调整记录与 sourceSet 包含规则；`MybatisLanguageDriverAutoConfiguration` 的可选模板驱动由根项目既有依赖提供给各 Boot 源集的 compileOnly，不额外复制驱动源码。
 
 ## 三个操作入口
 
-统一使用现有 `up`、`patch`、`check`。不要新增单独的复制、提取、版本更新或校验操作任务。sourceSet 自动生成的编译任务作为内部依赖挂到 `check`。
+统一使用现有 `up`、`patch`、`verify`。不要新增单独的复制、提取、版本更新或校验操作任务。sourceSet 自动生成的编译任务作为内部依赖挂到 `verify`。
 
 ### up：刷新基线
 
@@ -62,15 +62,15 @@ Spring 2/3/4 均复制 `org.mybatis.spring.SqlSessionFactoryBean`，并映射到
 
 先执行根项目现有 `spotlessApply`，格式化成功后读取每条本地类值不为 `?` 的类对应关系的上游副本和增强源码，生成可还原目标源码的标准 unified diff。值为 `?` 的类不参与增强补丁生成。`patch` 必须依赖格式化任务，而不只是声明执行顺序；格式化失败时不能生成补丁。所有参与增强补丁的关系必须完整，本地类未填或文件缺失时应失败并提示，不自动略过。
 
-维护增强实现时，直接编辑目标 Java，再运行 `patch` 和 `check`。格式化使用根项目已有范围，可能调整其中的 Java 文件，但单独 `patch` 不重新提取上游副本或更新版本记录。补丁可以包含包名、类名、导入和业务代码的实际差异。相同源码对应空补丁，属于合法结果。
+维护增强实现时，直接编辑目标 Java，再运行 `patch` 和 `verify`。格式化使用根项目已有范围，可能调整其中的 Java 文件，但单独 `patch` 不重新提取上游副本或更新版本记录。补丁可以包含包名、类名、导入和业务代码的实际差异。相同源码对应空补丁，属于合法结果。
 
-### check：只读验证
+### verify：只读验证
 
-核对记录版本与对应项目解析出的依赖版本；检查所有登记的副本存在；仅对本地类值不为 `?` 的增强映射验证补丁与两份源码一致，并在临时目录应用补丁，确认能还原增强源码。值为 `?` 的类不要求本地映射或增强补丁。同时运行现有测试和 core、Spring、Boot 分组编译。
+核对记录版本与对应项目解析出的依赖版本；检查所有登记的副本存在；仅对本地类值不为 `?` 的增强映射验证补丁与两份源码一致，并在临时目录应用补丁，确认能还原增强源码。值为 `?` 的类不要求本地映射或增强补丁。同时运行现有测试和 core、Spring、Boot 分组编译。`verify` 是独立维护任务，标准 `check`、`build` 不依赖它，仍按插件默认行为执行检查。
 
-Spring、Boot 对相邻两组都登记的同名上游类生成 2→3、3→4 的源码差异，保存在较新分组的 `类名.upstream.patch`，不依赖增强映射是否为 `?`。由 `patch` 生成，`check` 校验差异并验证补丁能还原较新源码，不新增任务入口。
+Spring、Boot 对相邻两组都登记的同名上游类生成 2→3、3→4 的源码差异，保存在较新分组的 `类名.upstream.patch`，不依赖增强映射是否为 `?`。由 `patch` 生成，`verify` 校验差异并验证补丁能还原较新源码，不新增任务入口。
 
-`check` 不调用 `up`，不刷新副本、patch 或版本记录。检查失败时指出具体分组、文件及原因，按用户授权修复；不要通过自动重写补丁、修改记录版本或忽略失败使检查通过。
+`verify` 不调用 `up`，不刷新副本、patch 或版本记录。检查失败时指出具体分组、文件及原因，按用户授权修复；不要通过自动重写补丁、修改记录版本或忽略失败使检查通过。
 
 ## 多版本编译隔离
 
@@ -98,15 +98,15 @@ Spring、Boot 对相邻两组都登记的同名上游类生成 2→3、3→4 的
 ```powershell
 .\gradlew.bat :mybatis-plus-up:up
 .\gradlew.bat :mybatis-plus-up:patch
-.\gradlew.bat :mybatis-plus-up:check
+.\gradlew.bat :mybatis-plus-up:verify
 ```
 
-只执行用户当前需要的操作：只读检查只运行 `check`；修改增强实现后运行 `patch`、`check`；升级上游时先运行 `up`，审阅新基线并迁移增强实现，然后再生成和检查补丁。
+只执行用户当前需要的操作：只读检查只运行 `verify`；修改增强实现后运行 `patch`、`verify`；升级上游时先运行 `up`，审阅新基线并迁移增强实现，然后再生成和检查补丁。
 
 升级时不要直接用“新版基线 + 旧增强实现”覆盖旧补丁，否则会把上游新增代码记成删除。文本能合并或补丁能应用，不代表业务行为已正确迁移；涉及分页、Wrapper 参数别名或自动配置行为的变化，应验证对应行为。
 
 ## 验收与反馈
 
-根据本次改动验证任务编排、版本匹配、补丁还原或相关分组编译。必要时比较单独 `check` 前后的源码、patch 和版本记录哈希；调整编译隔离时检查主 JAR 不包含分组类。
+根据本次改动验证任务编排、版本匹配、补丁还原或相关分组编译。必要时比较单独 `verify` 前后的源码、patch 和版本记录哈希；调整编译隔离时检查主 JAR 不包含分组类。
 
 用中文简要说明处理的分组、类、版本、文件位置、执行过的检查及结果。复制或编译任务未完成时明确说明，不能把任务注册成功当作操作成功。
