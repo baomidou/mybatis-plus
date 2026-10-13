@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
-import lombok.Getter;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxy.MapperMethodInvoker;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.session.SqlSession;
 
@@ -33,18 +33,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MybatisMapperProxyFactory<T> {
 
-    @Getter
     private final Class<T> mapperInterface;
-    @Getter
-    private final Map<Method, MybatisMapperProxy.MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
+    private final Map<Method, MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
 
     public MybatisMapperProxyFactory(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
     }
 
+    public Class<T> getMapperInterface() {
+        return mapperInterface;
+    }
+
+    public Map<Method, MapperMethodInvoker> getMethodCache() {
+        return methodCache;
+    }
+
     @SuppressWarnings("unchecked")
     protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
-        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);
+        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] {mapperInterface}, mapperProxy);
     }
 
     public T newInstance(SqlSession sqlSession) {

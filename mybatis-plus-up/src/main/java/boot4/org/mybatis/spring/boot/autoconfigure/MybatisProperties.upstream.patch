@@ -1,0 +1,13 @@
+diff --git a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
+index 9aa94f38683dea9277bff090a26104157b16b012..ab6b0b5c96330b766947dbb8303f6b80c3f7301e 100644
+--- a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
++++ b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisProperties.java
+@@ -678,7 +678,7 @@ public class MybatisProperties {
+         }
+ 
+         public void applyTo(Configuration target) {
+-            PropertyMapper mapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
++            PropertyMapper mapper = PropertyMapper.get();
+             mapper.from(getSafeRowBoundsEnabled()).to(target::setSafeRowBoundsEnabled);
+             mapper.from(getSafeResultHandlerEnabled()).to(target::setSafeResultHandlerEnabled);
+             mapper.from(getMapUnderscoreToCamelCase()).to(target::setMapUnderscoreToCamelCase);

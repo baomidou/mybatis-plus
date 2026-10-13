@@ -58,7 +58,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
      * @deprecated 3.5.4
      */
     @Deprecated
-    public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
+    public static final String[] COLLECTION_KEYS = new String[] {"collection", "coll", "list", "array"};
 
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
@@ -91,10 +91,10 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
                 // 处理单参数使用注解标记的时候，尝试提取et来获取实体参数
                 Map<?, ?> map = (Map<?, ?>) parameter;
                 Object et = null;
-                if(map.containsKey(Constants.ENTITY)){
+                if (map.containsKey(Constants.ENTITY)) {
                     et = map.get(Constants.ENTITY);
 
-                } else if(map.containsKey(Constants.MP_FILL_ET)){
+                } else if (map.containsKey(Constants.MP_FILL_ET)) {
                     et = map.get(Constants.MP_FILL_ET);
                 }
                 if (et != null) {
@@ -105,7 +105,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
                 tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
             }
             if (tableInfo != null) {
-                //到这里就应该转换到实体参数对象了,因为填充和ID处理都是针对实体对象处理的,不用传递原参数对象下去.
+                // 到这里就应该转换到实体参数对象了,因为填充和ID处理都是针对实体对象处理的,不用传递原参数对象下去.
                 MetaObject metaObject = this.configuration.newMetaObject(entity);
                 if (SqlCommandType.INSERT == this.sqlCommandType) {
                     populateKeys(tableInfo, metaObject, entity);
@@ -126,14 +126,20 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         if (logicDeleteFieldInfo == null || !logicDeleteFieldInfo.isWithUpdateFill()) {
             return;
         }
-        String methodName = mappedStatement.getId().substring(mappedStatement.getId().lastIndexOf('.') + 1);
-        if (!SqlMethod.DELETE_BY_ID.getMethod().equals(methodName) && !SqlMethod.DELETE_BY_IDS.getMethod().equals(methodName)) {
+        String methodName =
+                mappedStatement.getId().substring(mappedStatement.getId().lastIndexOf('.') + 1);
+        if (!SqlMethod.DELETE_BY_ID.getMethod().equals(methodName)
+                && !SqlMethod.DELETE_BY_IDS.getMethod().equals(methodName)) {
             return;
         }
         String property = logicDeleteFieldInfo.getProperty();
         Object currentValue = metaObject.getValue(property);
-        if (currentValue == null || String.valueOf(currentValue).equals(logicDeleteFieldInfo.getLogicNotDeleteValue())) {
-            metaObject.setValue(property, OgnlOps.convertValue(logicDeleteFieldInfo.getLogicDeleteValue(), logicDeleteFieldInfo.getPropertyType()));
+        if (currentValue == null
+                || String.valueOf(currentValue).equals(logicDeleteFieldInfo.getLogicNotDeleteValue())) {
+            metaObject.setValue(
+                    property,
+                    OgnlOps.convertValue(
+                            logicDeleteFieldInfo.getLogicDeleteValue(), logicDeleteFieldInfo.getPropertyType()));
         }
     }
 
@@ -141,14 +147,15 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
+            final IdentifierGenerator identifierGenerator =
+                    GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (identifierGenerator.assignId(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
                     Number id = identifierGenerator.nextId(entity);
                     metaObject.setValue(keyProperty, OgnlOps.convertValue(id, tableInfo.getKeyType()));
                 } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
-                    if(String.class.equals(tableInfo.getKeyType())) {
+                    if (String.class.equals(tableInfo.getKeyType())) {
                         metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
                     } else {
                         log.warn("The current ID generation strategy does not support: " + tableInfo.getKeyType());
@@ -160,7 +167,9 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement) && tableInfo.isWithInsertFill()) {
+            if (metaObjectHandler.openInsertFill()
+                    && metaObjectHandler.openInsertFill(mappedStatement)
+                    && tableInfo.isWithInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
         });
@@ -168,7 +177,9 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement) && tableInfo.isWithUpdateFill()) {
+            if (metaObjectHandler.openUpdateFill()
+                    && metaObjectHandler.openUpdateFill(mappedStatement)
+                    && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
         });
@@ -252,5 +263,4 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
             return Collections.singletonList(value);
         }
     }
-
 }

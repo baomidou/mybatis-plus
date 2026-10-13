@@ -1,0 +1,4 @@
+interface:
+  display_name: "MyBatis-Plus 上游源码维护"
+  short_description: "维护上游副本、版本记录、补丁与 Boot 多版本独立编译流程"
+  default_prompt: "请使用 $mybatis-upstream-maintenance 按当前仓库配置维护上游源码，并执行本次需要的 up、patch 或 check 验证。"

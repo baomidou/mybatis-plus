@@ -3,7 +3,10 @@ compileJava {
 }
 
 dependencies {
-    compileOnly "org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1"
+    compileOnly "${lib.mybatis}"
+    compileOnly "org.mybatis:mybatis-spring:${mybatisSpring4Version}"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure:${springBoot4Version}"
+    compileOnly "org.springframework.boot:spring-boot-starter-jdbc:${springBoot4Version}"
     compileOnly "org.graalvm.sdk:nativeimage:25.0.1"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBoot4Version}"
 }

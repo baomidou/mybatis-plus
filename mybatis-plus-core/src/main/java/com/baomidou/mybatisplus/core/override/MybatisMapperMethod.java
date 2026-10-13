@@ -22,6 +22,8 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.binding.MapperMethod.MethodSignature;
+import org.apache.ibatis.binding.MapperMethod.SqlCommand;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.StatementType;
@@ -45,32 +47,14 @@ import java.util.*;
  * @since 2018-06-09
  */
 public class MybatisMapperMethod {
-    private final MapperMethod.SqlCommand command;
-    private final MapperMethod.MethodSignature method;
+    private final SqlCommand command;
+    private final MethodSignature method;
     private final Map<Integer, String> wrapperParamsAliasNameMap;
 
     public MybatisMapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
         wrapperParamsAliasNameMap = this.getWrapperParamsAliasNameMap(method);
-        this.command = new MapperMethod.SqlCommand(config, mapperInterface, method);
-        this.method = new MapperMethod.MethodSignature(config, mapperInterface, method);
-    }
-
-    public Map<Integer, String> getWrapperParamsAliasNameMap(Method method) {
-        Annotation[][] paramAnnotations = method.getParameterAnnotations();
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        int paramCount = method.getParameterCount();
-        final Map<Integer, String> map = new HashMap<>();
-        // get names from @Param annotations
-        for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
-            for (Annotation annotation : paramAnnotations[paramIndex]) {
-                Class<?> parameterType = parameterTypes[paramIndex];
-                if (annotation instanceof Param && Wrapper.class.isAssignableFrom(parameterType)) {
-                    map.put(paramIndex, ((Param) annotation).value());
-                    break;
-                }
-            }
-        }
-        return map.isEmpty() ? null : Collections.unmodifiableMap(map);
+        this.command = new SqlCommand(config, mapperInterface, method);
+        this.method = new MethodSignature(config, mapperInterface, method);
     }
 
     public Object execute(SqlSession sqlSession, Object[] args) {
@@ -122,25 +106,9 @@ public class MybatisMapperMethod {
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
             throw new BindingException("Mapper method '" + command.getName()
-                    + " attempted to return null from a method with a primitive return type (" + method.getReturnType()
+                    + "' attempted to return null from a method with a primitive return type (" + method.getReturnType()
                     + ").");
         }
-        return result;
-    }
-
-    @SuppressWarnings("all")
-    private <E> Object executeForIPage(SqlSession sqlSession, Object[] args) {
-        IPage<E> result = null;
-        for (Object arg : args) {
-            if (arg instanceof IPage) {
-                result = (IPage<E>) arg;
-                break;
-            }
-        }
-        Assert.notNull(result, "can't found IPage for args!");
-        Object param = this.convertArgsToSqlCommandParam(args);
-        List<E> list = sqlSession.selectList(command.getName(), param);
-        result.setRecords(list);
         return result;
     }
 
@@ -161,13 +129,66 @@ public class MybatisMapperMethod {
         return result;
     }
 
+    @SuppressWarnings("all")
+    private <E> Object executeForIPage(SqlSession sqlSession, Object[] args) {
+        IPage<E> result = null;
+        for (Object arg : args) {
+            if (arg instanceof IPage) {
+                result = (IPage<E>) arg;
+                break;
+            }
+        }
+        Assert.notNull(result, "can't found IPage for args!");
+        Object param = this.convertArgsToSqlCommandParam(args);
+        List<E> list = sqlSession.selectList(command.getName(), param);
+        result.setRecords(list);
+        return result;
+    }
+
+    private Map<Integer, String> getWrapperParamsAliasNameMap(Method method) {
+        Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        int paramCount = method.getParameterCount();
+        final Map<Integer, String> map = new HashMap<>();
+        // get names from @Param annotations
+        for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+            for (Annotation annotation : paramAnnotations[paramIndex]) {
+                Class<?> parameterType = parameterTypes[paramIndex];
+                if (annotation instanceof Param && Wrapper.class.isAssignableFrom(parameterType)) {
+                    map.put(paramIndex, ((Param) annotation).value());
+                    break;
+                }
+            }
+        }
+        return map.isEmpty() ? null : Collections.unmodifiableMap(map);
+    }
+
+    private Object convertArgsToSqlCommandParam(Object[] args) {
+        if (args == null) {
+            return null;
+        }
+        if (null != wrapperParamsAliasNameMap) {
+            for (Map.Entry<Integer, String> entry : wrapperParamsAliasNameMap.entrySet()) {
+                Object arg = args[entry.getKey()];
+                if (arg instanceof AbstractWrapper) {
+                    AbstractWrapper<?, ?, ?> wrapper = (AbstractWrapper<?, ?, ?>) arg;
+                    String paramAlias = entry.getValue();
+                    if (!paramAlias.equals(wrapper.getParamAlias())) {
+                        wrapper.setParamAlias(paramAlias);
+                    }
+                }
+            }
+        }
+        return method.convertArgsToSqlCommandParam(args);
+    }
+
     private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
         MappedStatement ms = sqlSession.getConfiguration().getMappedStatement(command.getName());
         if (!StatementType.CALLABLE.equals(ms.getStatementType())
                 && void.class.equals(ms.getResultMaps().get(0).getType())) {
-            throw new BindingException("method " + command.getName()
-                    + " needs either a @ResultMap annotation, a @ResultType annotation,"
-                    + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
+            throw new BindingException(
+                    "method " + command.getName() + " needs either a @ResultMap annotation, a @ResultType annotation,"
+                            + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
         }
         Object param = this.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {
@@ -191,9 +212,8 @@ public class MybatisMapperMethod {
         if (!method.getReturnType().isAssignableFrom(result.getClass())) {
             if (method.getReturnType().isArray()) {
                 return convertToArray(result);
-            } else {
-                return convertToDeclaredCollection(sqlSession.getConfiguration(), result);
             }
+            return convertToDeclaredCollection(sqlSession.getConfiguration(), result);
         }
         return result;
     }
@@ -240,24 +260,5 @@ public class MybatisMapperMethod {
             result = sqlSession.selectMap(command.getName(), param, method.getMapKey());
         }
         return result;
-    }
-
-    private Object convertArgsToSqlCommandParam(Object[] args) {
-        if (args == null) {
-            return null;
-        }
-        if (null != wrapperParamsAliasNameMap) {
-            for (Map.Entry<Integer, String> entry : wrapperParamsAliasNameMap.entrySet()) {
-                Object arg = args[entry.getKey()];
-                if (arg instanceof AbstractWrapper) {
-                    AbstractWrapper<?, ?, ?> wrapper = (AbstractWrapper<?, ?, ?>) arg;
-                    String paramAlias = entry.getValue();
-                    if (!paramAlias.equals(wrapper.getParamAlias())) {
-                        wrapper.setParamAlias(paramAlias);
-                    }
-                }
-            }
-        }
-        return method.convertArgsToSqlCommandParam(args);
     }
 }

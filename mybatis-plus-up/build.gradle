@@ -1,0 +1,286 @@
+description = 'MyBatis source upgrade tools'
+
+abstract class SourcePatchExecution {
+    @javax.inject.Inject
+    abstract org.gradle.process.ExecOperations getExecOperations()
+}
+
+compileJava {
+    options.release = 21
+}
+
+configurations {
+    mybatisSources {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
+}
+
+dependencies {
+    implementation "${lib.mybatis}"
+    implementation "cn.hutool:hutool-core:5.8.40"
+    mybatisSources "${lib.mybatis}:sources@jar"
+}
+
+def sourceRecords = fileTree('upstream') { include '*.properties' }
+def readSourceRecords = {
+    def records = [:]
+    sourceRecords.files.sort { it.name }.each { recordFile ->
+        def fragment = new Properties()
+        recordFile.withReader('UTF-8') { fragment.load(it) }
+        records[recordFile.name - '.properties'] = fragment
+    }
+    if (records.isEmpty()) {
+        throw new GradleException('No upstream records in mybatis-plus-up/upstream/*.properties')
+    }
+    records
+}
+def sourceMappings = readSourceRecords()
+def localProject = { String name ->
+    def path = ':' + name.replace('/', ':').replaceFirst('^:', '')
+    def matches = rootProject.allprojects.findAll { it.name == name || it.path == path }
+    if (matches.size() != 1) {
+        throw new GradleException("Cannot uniquely resolve local moudle '${name}'")
+    }
+    matches.first()
+}
+def upstreamSourcePaths = sourceMappings.values().collectMany { record ->
+    record.stringPropertyNames().findAll { it !in ['version', 'moudle'] }
+        .collect { it.replace('.', '/') + '.java' }
+}
+
+// Upstream copies share the source tree for browsing, but must not shadow dependency classes.
+sourceSets.main.java.exclude(upstreamSourcePaths)
+
+def upstreamArtifacts = [
+    core: [
+        group: 'org.mybatis', name: 'mybatis', sources: configurations.mybatisSources,
+        owner: localProject(sourceMappings.core.getProperty('moudle'))
+    ]
+]
+upstreamArtifacts.values().each { artifact ->
+    artifact.sources.shouldResolveConsistentlyWith(artifact.owner.configurations.compileClasspath)
+}
+def upstreamSourceSets = []
+def coreSourcePaths = sourceMappings.core.stringPropertyNames().findAll { it !in ['version', 'moudle'] }
+    .collect { it.replace('.', '/') + '.java' }
+def coreSourceSet = sourceSets.create('core')
+coreSourceSet.java.setSrcDirs(['src/main/java/core'])
+coreSourceSet.java.include(coreSourcePaths)
+sourceSets.main.java.exclude('core/**')
+configurations.getByName(coreSourceSet.compileClasspathConfigurationName)
+    .shouldResolveConsistentlyWith(upstreamArtifacts.core.owner.configurations.compileClasspath)
+dependencies.add(coreSourceSet.compileOnlyConfigurationName, "${lib.mybatis}")
+tasks.named(coreSourceSet.compileJavaTaskName, JavaCompile) {
+    options.release = 8
+}
+upstreamSourceSets.add(coreSourceSet)
+
+def springGroups = [
+    spring2: [release: 8, version: mybatisSpringVersion, platform: springBootVersion],
+    spring3: [release: 17, version: mybatisSpring3Version, platform: springBoot3Version],
+    spring4: [release: 17, version: mybatisSpring4Version, platform: springBoot4Version]
+]
+
+springGroups.each { id, upstream ->
+    def upstreamClasspath = configurations.create("${id}Upstream") {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    dependencies.add(upstreamClasspath.name,
+        dependencies.platform("org.springframework.boot:spring-boot-dependencies:${upstream.platform}"))
+    dependencies.add(upstreamClasspath.name, "org.mybatis:mybatis-spring:${upstream.version}")
+    dependencies.add(upstreamClasspath.name, "${lib.mybatis}")
+    dependencies.add(upstreamClasspath.name, 'org.springframework:spring-context')
+    dependencies.add(upstreamClasspath.name, 'org.springframework:spring-jdbc')
+
+    def upstreamSources = configurations.create("${id}Sources") {
+        canBeResolved = true
+        canBeConsumed = false
+        transitive = false
+        shouldResolveConsistentlyWith(upstreamClasspath)
+    }
+    dependencies.add(upstreamSources.name, "org.mybatis:mybatis-spring:${upstream.version}:sources@jar")
+    upstreamArtifacts[id] = [group: 'org.mybatis', name: 'mybatis-spring', sources: upstreamSources,
+                             owner: project, configuration: upstreamClasspath.name]
+
+    def upstreamSourceSet = sourceSets.create(id)
+    upstreamSourceSet.java.setSrcDirs(["src/main/java/${id}"])
+    upstreamSourceSet.java.include(sourceMappings[id].stringPropertyNames()
+        .findAll { it !in ['version', 'moudle'] }.collect { it.replace('.', '/') + '.java' })
+    sourceSets.main.java.exclude("${id}/**")
+    configurations.getByName(upstreamSourceSet.compileOnlyConfigurationName).extendsFrom(upstreamClasspath)
+    configurations.getByName(upstreamSourceSet.compileClasspathConfigurationName)
+        .shouldResolveConsistentlyWith(upstreamClasspath)
+    upstreamSourceSets.add(upstreamSourceSet)
+    tasks.named(upstreamSourceSet.compileJavaTaskName, JavaCompile) {
+        options.release = upstream.release
+    }
+}
+
+def autoConfigurationGroups = [
+    boot2: [directory: 'boot2', release: 8, version: mybatisSpringBootStarterVersion,
+            owner: localProject(sourceMappings.boot2.getProperty('moudle'))],
+    boot3: [directory: 'boot3', release: 17, version: mybatisSpringBoot3StarterVersion,
+            owner: localProject(sourceMappings.boot3.getProperty('moudle'))],
+    boot4: [directory: 'boot4', release: 17, version: mybatisSpringBoot4StarterVersion,
+            owner: localProject(sourceMappings.boot4.getProperty('moudle'))]
+]
+
+def resolvedBootModuleVersion = { group, String module ->
+    def component = group.classpath.incoming.resolutionResult
+        .allComponents.find {
+            it.moduleVersion?.group == 'org.mybatis.spring.boot' && it.moduleVersion?.name == module
+        }
+    if (component == null) {
+        throw new GradleException("Cannot resolve org.mybatis.spring.boot:${module} in ${group.owner.path}")
+    }
+    component.moduleVersion.version
+}
+
+autoConfigurationGroups.each { id, upstream ->
+    def ownerClasspath = configurations.create("${id}Upstream") {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    upstream.classpath = ownerClasspath
+    dependencies.add(ownerClasspath.name,
+        "org.mybatis.spring.boot:mybatis-spring-boot-starter:${upstream.version}")
+    def upstreamSources = configurations.create("${id}Sources") {
+        canBeResolved = true
+        canBeConsumed = false
+        transitive = false
+        shouldResolveConsistentlyWith(ownerClasspath)
+    }
+    dependencies.addProvider(upstreamSources.name, providers.provider {
+        def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-autoconfigure')
+        "org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:${version}:sources@jar".toString()
+    })
+    upstreamArtifacts[id] = [group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure',
+                             sources: upstreamSources, owner: project,
+                             configuration: ownerClasspath.name]
+
+    def upstreamSourceSet = sourceSets.create(id)
+    upstreamSourceSet.java.setSrcDirs(["src/main/java/${upstream.directory}"])
+    sourceSets.main.java.exclude("${upstream.directory}/**")
+    configurations.getByName(upstreamSourceSet.compileClasspathConfigurationName)
+        .shouldResolveConsistentlyWith(ownerClasspath)
+    // Binary dependencies supply peer classes and optional language drivers for recorded sources.
+    dependencies.addProvider(upstreamSourceSet.compileOnlyConfigurationName, providers.provider {
+        def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-starter')
+        "org.mybatis.spring.boot:mybatis-spring-boot-starter:${version}".toString()
+    })
+    ['mybatis-thymeleaf', 'mybatis-velocity', 'mybatis-freemarker'].each { library ->
+        dependencies.add(upstreamSourceSet.compileOnlyConfigurationName, lib[library])
+    }
+
+    upstreamSourceSets.add(upstreamSourceSet)
+    tasks.named(upstreamSourceSet.compileJavaTaskName, JavaCompile) {
+        options.release = upstream.release
+    }
+}
+
+def sourcePatchArguments = { String action ->
+    def arguments = [action, rootProject.projectDir.absolutePath, projectDir.absolutePath]
+    if (action != 'patch') {
+        def records = readSourceRecords()
+        upstreamArtifacts.each { id, artifact ->
+            if (records.containsKey(id)) {
+                def dependency = artifact.owner.configurations
+                    .getByName(artifact.configuration ?: 'compileClasspath').incoming.resolutionResult
+                    .allComponents.find {
+                        it.moduleVersion?.group == artifact.group && it.moduleVersion?.name == artifact.name
+                    }?.moduleVersion
+                if (dependency == null) {
+                    throw new GradleException("Cannot resolve ${artifact.group}:${artifact.name} in ${artifact.owner.path}")
+                }
+                arguments.addAll([id, dependency.version])
+                if (action == 'extract') {
+                    def source = artifact.sources.resolvedConfiguration.resolvedArtifacts.find {
+                        it.moduleVersion.id.group == artifact.group && it.moduleVersion.id.name == artifact.name
+                    }
+                    if (source == null || source.moduleVersion.id.version != dependency.version) {
+                        throw new GradleException("Sources for ${id} do not match dependency ${dependency.version}")
+                    }
+                    arguments.add(source.file.absolutePath)
+                }
+            }
+        }
+    }
+    arguments
+}
+
+def sourcePatchExecution = objects.newInstance(SourcePatchExecution)
+def toolClasspath = sourceSets.main.runtimeClasspath
+def runSourcePatch = { String action ->
+    sourcePatchExecution.execOperations.javaexec {
+        classpath toolClasspath
+        mainClass.set('com.baomidou.mybatisplus.SourcePatchTool')
+        workingDir rootProject.projectDir
+        args sourcePatchArguments(action)
+    }.assertNormalExitValue()
+}
+
+def spotlessApply = rootProject.tasks.named('spotlessApply')
+def up = tasks.register('up') {
+    group = 'mybatis upgrade'
+    description = 'Refresh all recorded upstream sources, format them, and record their versions'
+    dependsOn tasks.named('classes')
+    doLast { runSourcePatch('extract') }
+    finalizedBy spotlessApply
+}
+
+rootProject.tasks.matching { it.name.startsWith('spotless') }.configureEach {
+    mustRunAfter up
+}
+spotlessApply.configure {
+    doLast {
+        def refresh = up.get()
+        if (refresh.state.executed && !refresh.state.skipped && refresh.state.failure == null) {
+            runSourcePatch('record')
+        }
+    }
+}
+
+def patch = tasks.register('patch') {
+    group = 'mybatis upgrade'
+    description = 'Format sources, then generate unified patches for recorded upstream/enhanced source mappings'
+    dependsOn tasks.named('classes'), spotlessApply
+    mustRunAfter up, spotlessApply
+    doLast { runSourcePatch('patch') }
+}
+
+upstreamSourceSets.each { upstreamSourceSet ->
+    tasks.named(upstreamSourceSet.compileJavaTaskName) {
+        mustRunAfter up, spotlessApply
+    }
+    tasks.matching { it.name == "generate${upstreamSourceSet.name.capitalize()}EffectiveLombokConfig" }.configureEach {
+        mustRunAfter up, spotlessApply
+    }
+}
+
+tasks.register('verify') {
+    group = 'mybatis upgrade'
+    description = 'Verify upstream versions, source compilation, and patch restoration'
+    dependsOn tasks.named('classes'), tasks.named('test'), upstreamSourceSets.collect { tasks.named(it.classesTaskName) }
+    mustRunAfter up, spotlessApply, patch
+    doFirst {
+        coreSourcePaths.each { sourcePath ->
+            def source = file("src/main/java/core/${sourcePath}")
+            if (!source.isFile()) {
+                throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
+            }
+        }
+        (springGroups + autoConfigurationGroups).each { id, upstream ->
+            sourceMappings[id].stringPropertyNames().findAll { it !in ['version', 'moudle'] }.each { sourceClass ->
+                def sourcePath = sourceClass.replace('.', '/') + '.java'
+                def source = file("src/main/java/${id}/${sourcePath}")
+                if (!source.isFile()) {
+                    throw new GradleException("Missing ${source}; run :mybatis-plus-up:up")
+                }
+            }
+        }
+    }
+    doLast { runSourcePatch('check') }
+}

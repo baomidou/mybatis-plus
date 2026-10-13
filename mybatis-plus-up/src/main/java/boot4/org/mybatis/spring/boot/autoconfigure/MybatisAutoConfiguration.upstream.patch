@@ -1,0 +1,14 @@
+diff --git a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
+index 8db8874ea2cf7b082e12515957f2e2a5bba295d7..5a019af787755dde13b94b3fe8afc32474f65263 100644
+--- a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
++++ b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/autoconfigure/MybatisAutoConfiguration.java
+@@ -45,8 +45,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+ import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
+-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+ import org.springframework.boot.context.properties.EnableConfigurationProperties;
++import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
+ import org.springframework.context.EnvironmentAware;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Import;

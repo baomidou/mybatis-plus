@@ -1,0 +1,149 @@
+diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
+index 77cf910c979989a4ffde009cc201d050a0450bcd..0d3d362255176de9f696aa74f3d869f218914f1b 100644
+--- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
++++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java
+@@ -1,22 +1,25 @@
+ /*
+- *    Copyright 2009-2024 the original author or authors.
++ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+  *
+- *    Licensed under the Apache License, Version 2.0 (the "License");
+- *    you may not use this file except in compliance with the License.
+- *    You may obtain a copy of the License at
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
+  *
+- *       https://www.apache.org/licenses/LICENSE-2.0
++ *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+- *    Unless required by applicable law or agreed to in writing, software
+- *    distributed under the License is distributed on an "AS IS" BASIS,
+- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- *    See the License for the specific language governing permissions and
+- *    limitations under the License.
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
+  */
+-package org.apache.ibatis.builder.xml;
++package com.baomidou.mybatisplus.core;
+ 
+ import org.apache.ibatis.builder.BaseBuilder;
+ import org.apache.ibatis.builder.BuilderException;
++import org.apache.ibatis.builder.xml.XMLConfigBuilder;
++import org.apache.ibatis.builder.xml.XMLMapperBuilder;
++import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
+ import org.apache.ibatis.datasource.DataSourceFactory;
+ import org.apache.ibatis.executor.ErrorContext;
+ import org.apache.ibatis.executor.loader.ProxyFactory;
+@@ -33,11 +36,7 @@ import org.apache.ibatis.reflection.MetaClass;
+ import org.apache.ibatis.reflection.ReflectorFactory;
+ import org.apache.ibatis.reflection.factory.ObjectFactory;
+ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
+-import org.apache.ibatis.session.AutoMappingBehavior;
+-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
+-import org.apache.ibatis.session.Configuration;
+-import org.apache.ibatis.session.ExecutorType;
+-import org.apache.ibatis.session.LocalCacheScope;
++import org.apache.ibatis.session.*;
+ import org.apache.ibatis.transaction.TransactionFactory;
+ import org.apache.ibatis.type.JdbcType;
+ 
+@@ -47,51 +46,53 @@ import java.util.Properties;
+ import javax.sql.DataSource;
+ 
+ /**
+- * @author Clinton Begin
+- * @author Kazuki Shimizu
++ * 从 {@link XMLConfigBuilder} copy 过来, 使用自己的 MybatisConfiguration 而不是 Configuration
++ *
++ * @author hubin
++ * @since 2017-01-04
+  */
+-public class XMLConfigBuilder extends BaseBuilder {
++public class MybatisXMLConfigBuilder extends BaseBuilder {
+ 
+     private boolean parsed;
+     private final XPathParser parser;
+     private String environment;
+     private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
+ 
+-    public XMLConfigBuilder(Reader reader) {
++    public MybatisXMLConfigBuilder(Reader reader) {
+         this(reader, null, null);
+     }
+ 
+-    public XMLConfigBuilder(Reader reader, String environment) {
++    public MybatisXMLConfigBuilder(Reader reader, String environment) {
+         this(reader, environment, null);
+     }
+ 
+-    public XMLConfigBuilder(Reader reader, String environment, Properties props) {
+-        this(Configuration.class, reader, environment, props);
++    public MybatisXMLConfigBuilder(Reader reader, String environment, Properties props) {
++        this(MybatisConfiguration.class, reader, environment, props);
+     }
+ 
+-    public XMLConfigBuilder(
++    public MybatisXMLConfigBuilder(
+             Class<? extends Configuration> configClass, Reader reader, String environment, Properties props) {
+         this(configClass, new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
+     }
+ 
+-    public XMLConfigBuilder(InputStream inputStream) {
++    public MybatisXMLConfigBuilder(InputStream inputStream) {
+         this(inputStream, null, null);
+     }
+ 
+-    public XMLConfigBuilder(InputStream inputStream, String environment) {
++    public MybatisXMLConfigBuilder(InputStream inputStream, String environment) {
+         this(inputStream, environment, null);
+     }
+ 
+-    public XMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
+-        this(Configuration.class, inputStream, environment, props);
++    public MybatisXMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
++        this(MybatisConfiguration.class, inputStream, environment, props);
+     }
+ 
+-    public XMLConfigBuilder(
++    public MybatisXMLConfigBuilder(
+             Class<? extends Configuration> configClass, InputStream inputStream, String environment, Properties props) {
+         this(configClass, new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
+     }
+ 
+-    private XMLConfigBuilder(
++    private MybatisXMLConfigBuilder(
+             Class<? extends Configuration> configClass, XPathParser parser, String environment, Properties props) {
+         super(newConfig(configClass));
+         ErrorContext.instance().resource("SQL Mapper Configuration");
+@@ -269,13 +270,14 @@ public class XMLConfigBuilder extends BaseBuilder {
+         configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
+         configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
+         configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
++        configuration.setMultipleResultSetsEnabled(
++                booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
+         configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
+         configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
+         configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
+         configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
+         configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
+         configuration.setDefaultResultSetType(resolveResultSetType(props.getProperty("defaultResultSetType")));
+-        configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), false));
+         configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
+         configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
+         configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
+@@ -295,6 +297,10 @@ public class XMLConfigBuilder extends BaseBuilder {
+                 booleanValueOf(props.getProperty("argNameBasedConstructorAutoMapping"), false));
+         configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
+         configuration.setNullableOnForEach(booleanValueOf(props.getProperty("nullableOnForEach"), false));
++        // TODO 这里改变了原生行为
++        configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
++        ((MybatisConfiguration) configuration)
++                .setUseGeneratedShortKey(booleanValueOf(props.getProperty("useGeneratedShortKey"), true));
+     }
+ 
+     private void environmentsElement(XNode context) throws Exception {

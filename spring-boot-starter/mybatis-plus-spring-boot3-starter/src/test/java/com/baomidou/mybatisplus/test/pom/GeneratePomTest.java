@@ -40,7 +40,13 @@ class GeneratePomTest {
             Map<String, Dependency> dependenciesMap = new HashMap<>();
             dependencies.forEach($this -> {
                 String artifactId = $this.s("artifactId").text();
-                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.s("scope").text(), $this.s("version").text(), Boolean.parseBoolean($this.s("optional").text())));
+                dependenciesMap.put(
+                        artifactId,
+                        new Dependency(
+                                artifactId,
+                                $this.s("scope").text(),
+                                $this.s("version").text(),
+                                Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency mp = dependenciesMap.get("mybatis-plus");
             Assertions.assertEquals("compile", mp.getScope());
@@ -60,10 +66,12 @@ class GeneratePomTest {
             Dependency bom = dependenciesMap.get("spring-boot-dependencies");
             Assertions.assertEquals("import", bom.getScope());
             Assertions.assertFalse(bom.isOptional());
-            Assertions.assertEquals("4.1.6", dependenciesMap.get("spring-cloud-commons").getVersion());
-            Assertions.assertEquals("3.0.5", dependenciesMap.get("mybatis-spring").getVersion());
-            Assertions.assertEquals("3.5.9", dependenciesMap.get("spring-boot-dependencies").getVersion());
+            Assertions.assertEquals(
+                    "4.1.6", dependenciesMap.get("spring-cloud-commons").getVersion());
+            Assertions.assertEquals(
+                    "3.0.6", dependenciesMap.get("mybatis-spring").getVersion());
+            Assertions.assertEquals(
+                    "3.5.9", dependenciesMap.get("spring-boot-dependencies").getVersion());
         }
     }
-
 }

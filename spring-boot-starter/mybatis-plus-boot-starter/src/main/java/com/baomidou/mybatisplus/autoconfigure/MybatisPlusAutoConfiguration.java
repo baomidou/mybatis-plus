@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
@@ -121,16 +120,17 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     private final ApplicationContext applicationContext;
 
-    public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
-                                        ObjectProvider<Interceptor[]> interceptorsProvider,
-                                        ObjectProvider<TypeHandler[]> typeHandlersProvider,
-                                        ObjectProvider<LanguageDriver[]> languageDriversProvider,
-                                        ResourceLoader resourceLoader,
-                                        ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
-                                        ObjectProvider<List<SqlSessionFactoryBeanCustomizer>> sqlSessionFactoryBeanCustomizers,
-                                        ObjectProvider<List<MybatisPlusPropertiesCustomizer>> mybatisPlusPropertiesCustomizerProvider,
-                                        ApplicationContext applicationContext) {
+    public MybatisPlusAutoConfiguration(
+            MybatisPlusProperties properties,
+            ObjectProvider<Interceptor[]> interceptorsProvider,
+            ObjectProvider<TypeHandler[]> typeHandlersProvider,
+            ObjectProvider<LanguageDriver[]> languageDriversProvider,
+            ResourceLoader resourceLoader,
+            ObjectProvider<DatabaseIdProvider> databaseIdProvider,
+            ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
+            ObjectProvider<List<SqlSessionFactoryBeanCustomizer>> sqlSessionFactoryBeanCustomizers,
+            ObjectProvider<List<MybatisPlusPropertiesCustomizer>> mybatisPlusPropertiesCustomizerProvider,
+            ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
         this.typeHandlers = typeHandlersProvider.getIfAvailable();
@@ -154,8 +154,10 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     private void checkConfigFileExists() {
         if (this.properties.isCheckConfigLocation() && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader.getResource(this.properties.getConfigLocation());
-            Assert.state(resource.exists(),
-                "Cannot find config location: " + resource + " (please add config file or check your Mybatis configuration)");
+            Assert.state(
+                    resource.exists(),
+                    "Cannot find config location: " + resource
+                            + " (please add config file or check your Mybatis configuration)");
         }
     }
 
@@ -286,13 +288,14 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
      * similar to using Spring Data JPA repositories.
      */
     public static class AutoConfiguredMapperScannerRegistrar
-        implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
+            implements BeanFactoryAware, EnvironmentAware, ImportBeanDefinitionRegistrar {
 
         private BeanFactory beanFactory;
         private Environment environment;
 
         @Override
-        public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+        public void registerBeanDefinitions(
+                AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
             if (!AutoConfigurationPackages.has(this.beanFactory)) {
                 logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.");
@@ -311,11 +314,14 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             builder.addPropertyValue("annotationClass", Mapper.class);
             builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
             BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
-            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)
-                .collect(Collectors.toSet());
+            Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors())
+                    .map(PropertyDescriptor::getName)
+                    .collect(Collectors.toSet());
             if (propertyNames.contains("lazyInitialization")) {
                 // Need to mybatis-spring 2.0.2+
-                builder.addPropertyValue("lazyInitialization", "${mybatis-plus.lazy-initialization:${mybatis.lazy-initialization:false}}");
+                builder.addPropertyValue(
+                        "lazyInitialization",
+                        "${mybatis-plus.lazy-initialization:${mybatis.lazy-initialization:false}}");
             }
             if (propertyNames.contains("defaultScope")) {
                 // Need to mybatis-spring 2.0.6+
@@ -323,19 +329,21 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             }
 
             // for spring-native
-            Boolean injectSqlSession = environment.getProperty("mybatis-plus.inject-sql-session-on-mapper-scan", Boolean.class);
+            Boolean injectSqlSession =
+                    environment.getProperty("mybatis-plus.inject-sql-session-on-mapper-scan", Boolean.class);
             if (injectSqlSession == null) {
-                injectSqlSession = environment.getProperty("mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
+                injectSqlSession = environment.getProperty(
+                        "mybatis.inject-sql-session-on-mapper-scan", Boolean.class, Boolean.TRUE);
             }
             if (injectSqlSession && this.beanFactory instanceof ListableBeanFactory) {
                 ListableBeanFactory listableBeanFactory = (ListableBeanFactory) this.beanFactory;
-                Optional<String> sqlSessionTemplateBeanName = Optional
-                    .ofNullable(getBeanNameForType(SqlSessionTemplate.class, listableBeanFactory));
-                Optional<String> sqlSessionFactoryBeanName = Optional
-                    .ofNullable(getBeanNameForType(SqlSessionFactory.class, listableBeanFactory));
+                Optional<String> sqlSessionTemplateBeanName =
+                        Optional.ofNullable(getBeanNameForType(SqlSessionTemplate.class, listableBeanFactory));
+                Optional<String> sqlSessionFactoryBeanName =
+                        Optional.ofNullable(getBeanNameForType(SqlSessionFactory.class, listableBeanFactory));
                 if (sqlSessionTemplateBeanName.isPresent() || !sqlSessionFactoryBeanName.isPresent()) {
-                    builder.addPropertyValue("sqlSessionTemplateBeanName",
-                        sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));
+                    builder.addPropertyValue(
+                            "sqlSessionTemplateBeanName", sqlSessionTemplateBeanName.orElse("sqlSessionTemplate"));
                 } else {
                     builder.addPropertyValue("sqlSessionFactoryBeanName", sqlSessionFactoryBeanName.get());
                 }
@@ -373,7 +381,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         @Override
         public void afterPropertiesSet() {
             logger.debug(
-                "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
+                    "Not found configuration for registering mapper bean using @MapperScan, MapperFactoryBean and MapperScannerConfigurer.");
         }
     }
 
@@ -388,5 +396,4 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     public MybatisPlusApplicationContextAware mybatisPlusSpringApplicationContextAware() {
         return new MybatisPlusApplicationContextAware();
     }
-
 }

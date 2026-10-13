@@ -1,0 +1,165 @@
+diff --git a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
+index 0742524e6531777d900a6c6dbbfb11007b2c4def..8b64e8e28d167f0ca6437c4dba953da7b8b30ba6 100644
+--- a/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
++++ b/mybatis-plus-up/src/main/java/spring3/org/mybatis/spring/SqlSessionFactoryBean.java
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright 2010-2023 the original author or authors.
++ * Copyright 2010-2026 the original author or authors.
+  *
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+@@ -43,7 +43,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
+ import org.springframework.core.io.Resource;
+ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+ import org.springframework.core.io.support.ResourcePatternResolver;
+-import org.springframework.core.type.ClassMetadata;
+ import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+ import org.springframework.core.type.classreading.MetadataReaderFactory;
+ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+@@ -494,7 +493,7 @@ public class SqlSessionFactoryBean
+      *
+      * @see #setMapperLocations(Resource...)
+      *
+-     * @since 2.1.1
++     * @since 3.0.2
+      */
+     public void addMapperLocations(Resource... mapperLocations) {
+         setMapperLocations(appendArrays(this.mapperLocations, mapperLocations, Resource[]::new));
+@@ -506,7 +505,7 @@ public class SqlSessionFactoryBean
+      * @param typeHandlers
+      *          Type handler list
+      *
+-     * @since 2.1.1
++     * @since 3.0.2
+      */
+     public void addTypeHandlers(TypeHandler<?>... typeHandlers) {
+         setTypeHandlers(appendArrays(this.typeHandlers, typeHandlers, TypeHandler[]::new));
+@@ -518,7 +517,7 @@ public class SqlSessionFactoryBean
+      * @param scriptingLanguageDrivers
+      *          scripting language drivers
+      *
+-     * @since 2.1.1
++     * @since 3.0.2
+      */
+     public void addScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
+         setScriptingLanguageDrivers(
+@@ -531,7 +530,7 @@ public class SqlSessionFactoryBean
+      * @param plugins
+      *          list of plugins
+      *
+-     * @since 2.1.1
++     * @since 3.0.2
+      */
+     public void addPlugins(Interceptor... plugins) {
+         setPlugins(appendArrays(this.plugins, plugins, Interceptor[]::new));
+@@ -543,7 +542,7 @@ public class SqlSessionFactoryBean
+      * @param typeAliases
+      *          Type aliases list
+      *
+-     * @since 2.1.1
++     * @since 3.0.2
+      */
+     public void addTypeAliases(Class<?>... typeAliases) {
+         setTypeAliases(appendArrays(this.typeAliases, typeAliases, Class[]::new));
+@@ -552,27 +551,22 @@ public class SqlSessionFactoryBean
+     private <T> T[] appendArrays(T[] oldArrays, T[] newArrays, IntFunction<T[]> generator) {
+         if (oldArrays == null) {
+             return newArrays;
+-        } else {
+-            if (newArrays == null) {
+-                return oldArrays;
+-            } else {
+-                List<T> newList = new ArrayList<>(Arrays.asList(oldArrays));
+-                newList.addAll(Arrays.asList(newArrays));
+-                return newList.toArray(generator.apply(0));
+-            }
+         }
++        if (newArrays == null) {
++            return oldArrays;
++        }
++        List<T> newList = new ArrayList<>(Arrays.asList(oldArrays));
++        newList.addAll(Arrays.asList(newArrays));
++        return newList.toArray(generator.apply(0));
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
+     @Override
+     public void afterPropertiesSet() throws Exception {
+         notNull(dataSource, "Property 'dataSource' is required");
+         notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
+         state(
+-                (configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
+-                "Property 'configuration' and 'configLocation' can not specified with together");
++                configuration == null || configLocation == null,
++                "Only one of 'configuration' or 'configLocation' may be specified");
+ 
+         this.sqlSessionFactory = buildSqlSessionFactory();
+     }
+@@ -699,7 +693,7 @@ public class SqlSessionFactoryBean
+                         continue;
+                     }
+                     try {
+-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(
++                        var xmlMapperBuilder = new XMLMapperBuilder(
+                                 mapperLocation.getInputStream(),
+                                 targetConfiguration,
+                                 mapperLocation.toString(),
+@@ -720,9 +714,6 @@ public class SqlSessionFactoryBean
+         return this.sqlSessionFactoryBuilder.build(targetConfiguration);
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
+     @Override
+     public SqlSessionFactory getObject() throws Exception {
+         if (this.sqlSessionFactory == null) {
+@@ -732,25 +723,16 @@ public class SqlSessionFactoryBean
+         return this.sqlSessionFactory;
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
+     @Override
+     public Class<? extends SqlSessionFactory> getObjectType() {
+         return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
+     @Override
+     public boolean isSingleton() {
+         return true;
+     }
+ 
+-    /**
+-     * {@inheritDoc}
+-     */
+     @Override
+     public void onApplicationEvent(ContextRefreshedEvent event) {
+         if (failFast) {
+@@ -761,15 +743,14 @@ public class SqlSessionFactoryBean
+ 
+     private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {
+         Set<Class<?>> classes = new HashSet<>();
+-        String[] packagePatternArray =
++        var packagePatternArray =
+                 tokenizeToStringArray(packagePatterns, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+         for (String packagePattern : packagePatternArray) {
+-            Resource[] resources =
+-                    RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+-                            + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
++            var resources = RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
++                    + ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
+             for (Resource resource : resources) {
+                 try {
+-                    ClassMetadata classMetadata =
++                    var classMetadata =
+                             METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
+                     Class<?> clazz = Resources.classForName(classMetadata.getClassName());
+                     if (assignableType == null || assignableType.isAssignableFrom(clazz)) {

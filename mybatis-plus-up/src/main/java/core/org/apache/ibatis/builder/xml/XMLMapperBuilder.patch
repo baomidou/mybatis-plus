@@ -1,0 +1,110 @@
+diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
+index 500b594815196f884627147b0aa0c8e194ee920b..bfb18c43d317144ccd63056800095bc702654277 100644
+--- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
++++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
+@@ -1,19 +1,19 @@
+ /*
+- *    Copyright 2009-2024 the original author or authors.
++ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+  *
+- *    Licensed under the Apache License, Version 2.0 (the "License");
+- *    you may not use this file except in compliance with the License.
+- *    You may obtain a copy of the License at
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
+  *
+- *       https://www.apache.org/licenses/LICENSE-2.0
++ *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+- *    Unless required by applicable law or agreed to in writing, software
+- *    distributed under the License is distributed on an "AS IS" BASIS,
+- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- *    See the License for the specific language governing permissions and
+- *    limitations under the License.
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
+  */
+-package org.apache.ibatis.builder.xml;
++package com.baomidou.mybatisplus.core;
+ 
+ import org.apache.ibatis.builder.BaseBuilder;
+ import org.apache.ibatis.builder.BuilderException;
+@@ -21,6 +21,8 @@ import org.apache.ibatis.builder.CacheRefResolver;
+ import org.apache.ibatis.builder.IncompleteElementException;
+ import org.apache.ibatis.builder.MapperBuilderAssistant;
+ import org.apache.ibatis.builder.ResultMapResolver;
++import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
++import org.apache.ibatis.builder.xml.XMLStatementBuilder;
+ import org.apache.ibatis.cache.Cache;
+ import org.apache.ibatis.executor.ErrorContext;
+ import org.apache.ibatis.io.Resources;
+@@ -48,10 +50,13 @@ import java.util.Map;
+ import java.util.Properties;
+ 
+ /**
+- * @author Clinton Begin
+- * @author Kazuki Shimizu
++ * 重写自 {@link org.apache.ibatis.builder.xml.XMLMapperBuilder}
++ * 使用 MybatisMapperBuilderAssistant 替换 MapperBuilderAssistant
++ *
++ * @author nieqiurong
++ * @since 3.5.6
+  */
+-public class XMLMapperBuilder extends BaseBuilder {
++public class MybatisXMLMapperBuilder extends BaseBuilder {
+ 
+     private final XPathParser parser;
+     private final MapperBuilderAssistant builderAssistant;
+@@ -59,7 +64,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+     private final String resource;
+ 
+     @Deprecated
+-    public XMLMapperBuilder(
++    public MybatisXMLMapperBuilder(
+             Reader reader,
+             Configuration configuration,
+             String resource,
+@@ -70,7 +75,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+     }
+ 
+     @Deprecated
+-    public XMLMapperBuilder(
++    public MybatisXMLMapperBuilder(
+             Reader reader, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
+         this(
+                 new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()),
+@@ -79,7 +84,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+                 sqlFragments);
+     }
+ 
+-    public XMLMapperBuilder(
++    public MybatisXMLMapperBuilder(
+             InputStream inputStream,
+             Configuration configuration,
+             String resource,
+@@ -89,7 +94,7 @@ public class XMLMapperBuilder extends BaseBuilder {
+         this.builderAssistant.setCurrentNamespace(namespace);
+     }
+ 
+-    public XMLMapperBuilder(
++    public MybatisXMLMapperBuilder(
+             InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
+         this(
+                 new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
+@@ -98,10 +103,10 @@ public class XMLMapperBuilder extends BaseBuilder {
+                 sqlFragments);
+     }
+ 
+-    private XMLMapperBuilder(
++    private MybatisXMLMapperBuilder(
+             XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
+         super(configuration);
+-        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
++        this.builderAssistant = new MybatisMapperBuilderAssistant(configuration, resource);
+         this.parser = parser;
+         this.sqlFragments = sqlFragments;
+         this.resource = resource;

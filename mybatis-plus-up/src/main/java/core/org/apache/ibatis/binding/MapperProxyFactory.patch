@@ -1,0 +1,76 @@
+diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
+index aa71254c503bada99d76a6f037bbd3ac91aaf29d..b65839e97c4888586ab387623c0b50e38fdf43b8 100644
+--- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
++++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/MybatisMapperProxyFactory.java
+@@ -1,21 +1,22 @@
+ /*
+- *    Copyright 2009-2022 the original author or authors.
++ * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
+  *
+- *    Licensed under the Apache License, Version 2.0 (the "License");
+- *    you may not use this file except in compliance with the License.
+- *    You may obtain a copy of the License at
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
+  *
+- *       https://www.apache.org/licenses/LICENSE-2.0
++ *     http://www.apache.org/licenses/LICENSE-2.0
+  *
+- *    Unless required by applicable law or agreed to in writing, software
+- *    distributed under the License is distributed on an "AS IS" BASIS,
+- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+- *    See the License for the specific language governing permissions and
+- *    limitations under the License.
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
+  */
+-package org.apache.ibatis.binding;
++package com.baomidou.mybatisplus.core.override;
+ 
+-import org.apache.ibatis.binding.MapperProxy.MapperMethodInvoker;
++import com.baomidou.mybatisplus.core.override.MybatisMapperProxy.MapperMethodInvoker;
++import org.apache.ibatis.binding.MapperProxyFactory;
+ import org.apache.ibatis.session.SqlSession;
+ 
+ import java.lang.reflect.Method;
+@@ -24,14 +25,18 @@ import java.util.Map;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+ /**
+- * @author Lasse Voss
++ * <p>从 {@link MapperProxyFactory} copy 过来 </p>
++ * <li> 使用 MybatisMapperMethod </li>
++ *
++ * @author miemie
++ * @since 2018-06-09
+  */
+-public class MapperProxyFactory<T> {
++public class MybatisMapperProxyFactory<T> {
+ 
+     private final Class<T> mapperInterface;
+     private final Map<Method, MapperMethodInvoker> methodCache = new ConcurrentHashMap<>();
+ 
+-    public MapperProxyFactory(Class<T> mapperInterface) {
++    public MybatisMapperProxyFactory(Class<T> mapperInterface) {
+         this.mapperInterface = mapperInterface;
+     }
+ 
+@@ -44,12 +49,12 @@ public class MapperProxyFactory<T> {
+     }
+ 
+     @SuppressWarnings("unchecked")
+-    protected T newInstance(MapperProxy<T> mapperProxy) {
++    protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
+         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] {mapperInterface}, mapperProxy);
+     }
+ 
+     public T newInstance(SqlSession sqlSession) {
+-        final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);
++        final MybatisMapperProxy<T> mapperProxy = new MybatisMapperProxy<>(sqlSession, mapperInterface, methodCache);
+         return newInstance(mapperProxy);
+     }
+ }
