@@ -31,7 +31,10 @@ import kotlin.reflect.KProperty1
  * @since 2018-11-07
  */
 @Suppress("serial")
-abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty1<in T, *>, Children>() {
+abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
+    AbstractWrapper<T, KProperty1<in T, *>, Children>(),
+    CompareDsl<Children, T>,
+    FuncDsl<Children, T> {
 
     /**
      * 列 Map
