@@ -30,6 +30,7 @@ import java.util.Set;
  * @since 2020-05-27
  */
 class MybatisPlusTypeExcludeFilter extends AnnotationCustomizableTypeExcludeFilter {
+
     private final MybatisPlusTest annotation;
 
     MybatisPlusTypeExcludeFilter(Class<?> testClass) {
@@ -44,11 +45,11 @@ class MybatisPlusTypeExcludeFilter extends AnnotationCustomizableTypeExcludeFilt
     @Override
     protected ComponentScan.Filter[] getFilters(FilterType type) {
         switch (type) {
-            case INCLUDE:
+            case INCLUDE :
                 return this.annotation.includeFilters();
-            case EXCLUDE:
+            case EXCLUDE :
                 return this.annotation.excludeFilters();
-            default:
+            default :
                 throw new IllegalStateException("Unsupported type " + type);
         }
     }

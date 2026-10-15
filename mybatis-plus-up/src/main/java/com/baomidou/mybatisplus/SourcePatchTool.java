@@ -66,9 +66,15 @@ public final class SourcePatchTool {
                     if (localClass.equals("?")) {
                         continue;
                     }
+                    Path targetModule = localModule;
+                    int separator = localClass.lastIndexOf(':');
+                    if (separator >= 0) {
+                        targetModule = resolveModule(localClass.substring(0, separator));
+                        localClass = localClass.substring(separator + 1);
+                    }
                     Path enhanced = localClass.isEmpty()
                             ? null
-                            : resolve(localModule.resolve("src/main/java"), classPath(localClass));
+                            : resolve(targetModule.resolve("src/main/java"), classPath(localClass));
                     if (enhanced != null && mappings.stream()
                             .anyMatch(m -> artifact.equals(m.artifact()) && enhanced.equals(m.enhanced()))) {
                         throw new IllegalArgumentException("Duplicate enhanced source mapping: " + localClass);
@@ -93,15 +99,18 @@ public final class SourcePatchTool {
         }
         SourcePatchTool tool = new SourcePatchTool(Path.of(args[1]), Path.of(args[2]));
         Map<String, String> versions = new LinkedHashMap<>();
-        Map<String, Path> jars = new LinkedHashMap<>();
+        Map<String, List<Path>> jars = new LinkedHashMap<>();
         int width = args[0].equals("extract") ? 3 : 2;
         if ((args.length - 3) % width != 0) {
             throw new IllegalArgumentException("Invalid upstream artifact arguments");
         }
         for (int i = 3; i < args.length; i += width) {
-            versions.put(args[i], args[i + 1]);
+            String previous = versions.putIfAbsent(args[i], args[i + 1]);
+            if (previous != null && !previous.equals(args[i + 1])) {
+                throw new IllegalArgumentException("Conflicting upstream versions for " + args[i]);
+            }
             if (width == 3) {
-                jars.put(args[i], Path.of(args[i + 2]));
+                jars.computeIfAbsent(args[i], key -> new ArrayList<>()).add(Path.of(args[i + 2]));
             }
         }
         switch (args[0]) {
@@ -113,22 +122,32 @@ public final class SourcePatchTool {
         }
     }
 
-    public void extract(Map<String, Path> jars) throws IOException {
+    public void extract(Map<String, List<Path>> jars) throws IOException {
         Map<Path, String> sources = new LinkedHashMap<>();
         // Read every entry before replacing any tracked baseline.
         for (Source source : this.sources) {
-            Path jar = jars.get(source.artifact());
-            if (jar == null) {
+            List<Path> archives = jars.get(source.artifact());
+            if (archives == null || archives.isEmpty()) {
                 throw new IllegalArgumentException("Missing sources jar for " + source.artifact());
             }
-            try (JarFile archive = new JarFile(jar.toFile())) {
-                var entry = archive.getJarEntry(source.entry());
-                if (entry == null) {
-                    throw new IllegalArgumentException("Missing upstream source " + source.entry() + " in " + jar);
+            for (Path jar : archives) {
+                try (JarFile archive = new JarFile(jar.toFile())) {
+                    var entry = archive.getJarEntry(source.entry());
+                    if (entry == null) {
+                        continue;
+                    }
+                    if (sources.containsKey(source.upstream())) {
+                        throw new IllegalArgumentException(
+                                "Duplicate upstream source " + source.entry() + " in " + archives);
+                    }
+                    try (var input = archive.getInputStream(entry)) {
+                        sources.put(
+                                source.upstream(), normalize(new String(input.readAllBytes(), StandardCharsets.UTF_8)));
+                    }
                 }
-                try (var input = archive.getInputStream(entry)) {
-                    sources.put(source.upstream(), normalize(new String(input.readAllBytes(), StandardCharsets.UTF_8)));
-                }
+            }
+            if (!sources.containsKey(source.upstream())) {
+                throw new IllegalArgumentException("Missing upstream source " + source.entry() + " in " + archives);
             }
         }
         for (var source : sources.entrySet()) {

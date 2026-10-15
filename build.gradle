@@ -34,12 +34,11 @@ buildscript {
             "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.0",
             "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
             "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
-            "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.1.1",
+            "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.2.0",
             "mybatis-freemarker"         : "org.mybatis.scripting:mybatis-freemarker:1.3.2",
-            "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.3.1",
+            "mybatis-velocity"           : "org.mybatis.scripting:mybatis-velocity:2.3.2",
             "spring-context-support"     : "org.springframework:spring-context-support:${springVersion}",
             "spring-jdbc"                : "org.springframework:spring-jdbc:${springVersion}",
-            "spring-tx"                  : "org.springframework:spring-tx:${springVersion}",
             "spring-web"                 : "org.springframework:spring-web:${springVersion}",
             "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
             "cglib"                      : "cglib:cglib:3.3.0",
@@ -70,8 +69,6 @@ buildscript {
             "sqlite"                     : "org.xerial:sqlite-jdbc:3.53.2.0",
             "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.10.java8",
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
-            //cache
-            "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.2.0",
             //code generator
             "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
             "freemarker"          : "org.freemarker:freemarker:2.3.34",
@@ -131,6 +128,9 @@ def formattedFiles = [
     'spring-boot-starter/mybatis-plus-boot-starter/src/**/*.java',
     'spring-boot-starter/mybatis-plus-spring-boot3-starter/src/**/*.java',
     'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java',
+    'spring-boot-starter/mybatis-plus-boot-starter-test/src/main/**/*.java',
+    'spring-boot-starter/mybatis-plus-spring-boot3-starter-test/src/main/**/*.java',
+    'spring-boot-starter/mybatis-plus-spring-boot4-starter-test/src/main/**/*.java',
     'mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java'
 ]
 def formattingExcludes = ['**/build/**', '**/target/**', '**/.gradle/**', '**/out/**']
@@ -269,7 +269,6 @@ subprojects {
     }
 
     test {
-        useJUnitPlatform()
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
         exclude("**/gaussdb/**")

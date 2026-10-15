@@ -44,7 +44,6 @@ dependencies {
     testImplementation "${lib.'slf4j-api'}"
     testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.cglib}"
-    testImplementation "${lib.postgresql}"
     testImplementation "${lib.gaussdb}"
     testImplementation project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser")
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')

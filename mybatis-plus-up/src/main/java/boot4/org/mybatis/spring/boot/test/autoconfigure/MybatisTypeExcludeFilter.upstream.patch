@@ -1,0 +1,39 @@
+diff --git a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTypeExcludeFilter.java b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTypeExcludeFilter.java
+index 2662692792c6ec077d080c9e3f7e3a8d41351b43..9e0c10de07f65b25a9505e1bfc16f877aa0db747 100644
+--- a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTypeExcludeFilter.java
++++ b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTypeExcludeFilter.java
+@@ -1,5 +1,5 @@
+ /*
+- *    Copyright 2015-2022 the original author or authors.
++ *    Copyright 2015-2026 the original author or authors.
+  *
+  *    Licensed under the Apache License, Version 2.0 (the "License");
+  *    you may not use this file except in compliance with the License.
+@@ -16,11 +16,10 @@
+ package org.mybatis.spring.boot.test.autoconfigure;
+ 
+ import org.springframework.boot.context.TypeExcludeFilter;
+-import org.springframework.boot.test.autoconfigure.filter.AnnotationCustomizableTypeExcludeFilter;
++import org.springframework.boot.test.context.filter.annotation.AnnotationCustomizableTypeExcludeFilter;
+ import org.springframework.context.annotation.ComponentScan;
+ import org.springframework.core.annotation.AnnotatedElementUtils;
+ 
+-import java.util.Collections;
+ import java.util.Set;
+ 
+ /**
+@@ -62,12 +61,12 @@ class MybatisTypeExcludeFilter extends AnnotationCustomizableTypeExcludeFilter {
+ 
+     @Override
+     protected Set<Class<?>> getDefaultIncludes() {
+-        return Collections.emptySet();
++        return Set.of();
+     }
+ 
+     @Override
+     protected Set<Class<?>> getComponentIncludes() {
+-        return Collections.emptySet();
++        return Set.of();
+     }
+ 
+ }

@@ -1,0 +1,26 @@
+diff --git a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTest.java b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTest.java
+index c4f3f5fc6ad514811055bed77459e7fce76c8eca..d726749610d67c887cf9872dce5ba6b58fb0bf55 100644
+--- a/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTest.java
++++ b/mybatis-plus-up/src/main/java/boot4/org/mybatis/spring/boot/test/autoconfigure/MybatisTest.java
+@@ -1,5 +1,5 @@
+ /*
+- *    Copyright 2015-2022 the original author or authors.
++ *    Copyright 2015-2025 the original author or authors.
+  *
+  *    Licensed under the Apache License, Version 2.0 (the "License");
+  *    you may not use this file except in compliance with the License.
+@@ -18,11 +18,11 @@ package org.mybatis.spring.boot.test.autoconfigure;
+ import org.junit.jupiter.api.extension.ExtendWith;
+ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+ import org.springframework.boot.autoconfigure.SpringBootApplication;
++import org.springframework.boot.cache.test.autoconfigure.AutoConfigureCache;
++import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+ import org.springframework.boot.test.autoconfigure.OverrideAutoConfiguration;
+-import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+-import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
+-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+ import org.springframework.boot.test.context.SpringBootTest;
++import org.springframework.boot.test.context.filter.annotation.TypeExcludeFilters;
+ import org.springframework.context.annotation.ComponentScan.Filter;
+ import org.springframework.core.annotation.AliasFor;
+ import org.springframework.core.env.Environment;

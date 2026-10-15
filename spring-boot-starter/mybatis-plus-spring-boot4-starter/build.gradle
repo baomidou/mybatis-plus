@@ -15,7 +15,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-configuration-processor"
     implementation "org.springframework.boot:spring-boot-autoconfigure-processor"
     implementation "${lib['mybatis-thymeleaf']}"
-    implementation "org.mybatis.scripting:mybatis-velocity:2.3.1"
+    implementation "${lib.'mybatis-velocity'}"
     implementation "${lib.'mybatis-freemarker'}"
     implementation "org.springframework.cloud:spring-cloud-commons:5.0.0"
     testImplementation "org.springframework.boot:spring-boot-starter-test"

@@ -18,8 +18,6 @@ configurations {
 }
 
 dependencies {
-    implementation "${lib.mybatis}"
-    implementation "cn.hutool:hutool-core:5.8.40"
     mybatisSources "${lib.mybatis}:sources@jar"
 }
 
@@ -45,14 +43,6 @@ def localProject = { String name ->
     }
     matches.first()
 }
-def upstreamSourcePaths = sourceMappings.values().collectMany { record ->
-    record.stringPropertyNames().findAll { it !in ['version', 'moudle'] }
-        .collect { it.replace('.', '/') + '.java' }
-}
-
-// Upstream copies share the source tree for browsing, but must not shadow dependency classes.
-sourceSets.main.java.exclude(upstreamSourcePaths)
-
 def upstreamArtifacts = [
     core: [
         group: 'org.mybatis', name: 'mybatis', sources: configurations.mybatisSources,
@@ -147,16 +137,20 @@ autoConfigurationGroups.each { id, upstream ->
     upstream.classpath = ownerClasspath
     dependencies.add(ownerClasspath.name,
         "org.mybatis.spring.boot:mybatis-spring-boot-starter:${upstream.version}")
+    dependencies.add(ownerClasspath.name,
+        "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${upstream.version}")
     def upstreamSources = configurations.create("${id}Sources") {
         canBeResolved = true
         canBeConsumed = false
         transitive = false
         shouldResolveConsistentlyWith(ownerClasspath)
     }
-    dependencies.addProvider(upstreamSources.name, providers.provider {
-        def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-autoconfigure')
-        "org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:${version}:sources@jar".toString()
-    })
+    ['mybatis-spring-boot-autoconfigure', 'mybatis-spring-boot-test-autoconfigure'].each { module ->
+        dependencies.addProvider(upstreamSources.name, providers.provider {
+            def version = resolvedBootModuleVersion(upstream, module)
+            "org.mybatis.spring.boot:${module}:${version}:sources@jar".toString()
+        })
+    }
     upstreamArtifacts[id] = [group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-autoconfigure',
                              sources: upstreamSources, owner: project,
                              configuration: ownerClasspath.name]
@@ -170,6 +164,10 @@ autoConfigurationGroups.each { id, upstream ->
     dependencies.addProvider(upstreamSourceSet.compileOnlyConfigurationName, providers.provider {
         def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-starter')
         "org.mybatis.spring.boot:mybatis-spring-boot-starter:${version}".toString()
+    })
+    dependencies.addProvider(upstreamSourceSet.compileOnlyConfigurationName, providers.provider {
+        def version = resolvedBootModuleVersion(upstream, 'mybatis-spring-boot-starter-test')
+        "org.mybatis.spring.boot:mybatis-spring-boot-starter-test:${version}".toString()
     })
     ['mybatis-thymeleaf', 'mybatis-velocity', 'mybatis-freemarker'].each { library ->
         dependencies.add(upstreamSourceSet.compileOnlyConfigurationName, lib[library])
@@ -195,15 +193,18 @@ def sourcePatchArguments = { String action ->
                 if (dependency == null) {
                     throw new GradleException("Cannot resolve ${artifact.group}:${artifact.name} in ${artifact.owner.path}")
                 }
-                arguments.addAll([id, dependency.version])
                 if (action == 'extract') {
-                    def source = artifact.sources.resolvedConfiguration.resolvedArtifacts.find {
-                        it.moduleVersion.id.group == artifact.group && it.moduleVersion.id.name == artifact.name
+                    def sources = artifact.sources.resolvedConfiguration.resolvedArtifacts.findAll {
+                        it.moduleVersion.id.group == artifact.group
                     }
-                    if (source == null || source.moduleVersion.id.version != dependency.version) {
+                    if (sources.isEmpty() || sources.any { it.moduleVersion.id.version != dependency.version }) {
                         throw new GradleException("Sources for ${id} do not match dependency ${dependency.version}")
                     }
-                    arguments.add(source.file.absolutePath)
+                    sources.sort { it.name }.each { source ->
+                        arguments.addAll([id, dependency.version, source.file.absolutePath])
+                    }
+                } else {
+                    arguments.addAll([id, dependency.version])
                 }
             }
         }

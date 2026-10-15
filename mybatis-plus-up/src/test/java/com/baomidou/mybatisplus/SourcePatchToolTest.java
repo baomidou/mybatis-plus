@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.JarEntry;
@@ -94,7 +95,7 @@ class SourcePatchToolTest {
     void extractionPreservesPackageAndDefersVersionUpdate() throws Exception {
         SourcePatchTool tool = fixture("old", TARGET);
         String records = Files.readString(records());
-        tool.extract(Map.of("sample", sourceJar(SOURCE.replace("\n", "\r\n"))));
+        tool.extract(Map.of("sample", List.of(sourceJar(SOURCE.replace("\n", "\r\n")))));
         assertEquals(SOURCE, Files.readString(upstream()));
         assertEquals(TARGET, Files.readString(enhanced()));
         assertEquals(records, Files.readString(records()));
@@ -112,11 +113,56 @@ class SourcePatchToolTest {
     }
 
     @Test
+    void extractsOneGroupFromMultipleArchivesThroughTheCommandLine() throws Exception {
+        fixture("old", TARGET);
+        Files.writeString(records(), HEADER + MAPPING + "example.TestSupport=?\n");
+        Path main = sourceJar("main.jar", SOURCE);
+        String support = "package example;\nclass TestSupport {}\n";
+        Path test = sourceJar("test.jar", "example/TestSupport.java", support);
+        SourcePatchTool.main(
+                new String[]{"extract", repository.toString(), module().toString(), "sample", "1.0", main.toString(),
+                        "sample", "1.0", test.toString()});
+        assertEquals(SOURCE, Files.readString(upstream()));
+        assertEquals(support, Files.readString(upstream().resolveSibling("TestSupport.java")));
+        assertEquals(HEADER + MAPPING + "example.TestSupport=?\n", Files.readString(records()));
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.generatePatches();
+        tool.check(Map.of("sample", "1.0"));
+    }
+
+    @Test
+    void rejectsConflictingArchiveVersionsBeforeReplacingSources() throws Exception {
+        fixture("old", TARGET);
+        Path main = sourceJar("main.jar", SOURCE);
+        Path test = sourceJar("test.jar", SOURCE);
+        IllegalArgumentException error = assertThrows(
+                IllegalArgumentException.class,
+                () -> SourcePatchTool.main(
+                        new String[]{"extract", repository.toString(), module().toString(), "sample", "1.0",
+                                main.toString(), "sample", "2.0", test.toString()}));
+        assertTrue(error.getMessage().contains("Conflicting upstream versions"));
+        assertEquals("old", Files.readString(upstream()));
+    }
+
+    @Test
+    void rejectsDuplicateArchiveEntriesBeforeReplacingSources() throws Exception {
+        SourcePatchTool tool = fixture("old", TARGET);
+        Path main = sourceJar("main.jar", SOURCE);
+        Path test = sourceJar("test.jar", SOURCE);
+        IllegalArgumentException error = assertThrows(
+                IllegalArgumentException.class, () -> tool.extract(Map.of("sample", List.of(main, test))));
+        assertTrue(error.getMessage().contains("Duplicate upstream source"));
+        assertEquals("old", Files.readString(upstream()));
+    }
+
+    @Test
     void missingArchiveEntryDoesNotOverwriteAnyBaseline() throws Exception {
         fixture("old", TARGET);
         Files.writeString(records(), HEADER + MAPPING + "example.ZMissing=enhanced.Missing\n");
         SourcePatchTool tool = new SourcePatchTool(repository, module());
-        assertThrows(IllegalArgumentException.class, () -> tool.extract(Map.of("sample", sourceJar(SOURCE))));
+        Path main = sourceJar("main.jar", SOURCE);
+        Path test = sourceJar("test.jar", "example/Other.java", "package example;\nclass Other {}\n");
+        assertThrows(IllegalArgumentException.class, () -> tool.extract(Map.of("sample", List.of(main, test))));
         assertEquals("old", Files.readString(upstream()));
         assertFalse(Files.exists(module().resolve("src/main/java/example/ZMissing.java")));
     }
@@ -166,8 +212,8 @@ class SourcePatchToolTest {
         String boot3 = SOURCE.replace("Original {}", "Original { int version = 3; }");
         tool.extract(
                 Map.of(
-                        "sample", sourceJar("sample.jar", SOURCE), "boot2", sourceJar("boot2.jar", boot2), "boot3",
-                        sourceJar("boot3.jar", boot3)));
+                        "sample", List.of(sourceJar("sample.jar", SOURCE)), "boot2",
+                        List.of(sourceJar("boot2.jar", boot2)), "boot3", List.of(sourceJar("boot3.jar", boot3))));
         assertEquals(boot2, Files.readString(module().resolve("src/main/java/boot2/example/Original.java")));
         assertEquals(boot3, Files.readString(module().resolve("src/main/java/boot3/example/Original.java")));
         assertEquals(TARGET, Files.readString(enhanced()));
@@ -199,10 +245,15 @@ class SourcePatchToolTest {
         SourcePatchTool tool = new SourcePatchTool(repository, module());
         tool.extract(
                 Map.of(
-                        "spring2", sourceJar("spring2.jar", SOURCE), "spring3",
-                        sourceJar("spring3.jar", SOURCE.replace("Original {}", "Original { int version = 3; }")),
+                        "spring2", List.of(sourceJar("spring2.jar", SOURCE)), "spring3",
+                        List.of(
+                                sourceJar(
+                                        "spring3.jar", SOURCE.replace("Original {}", "Original { int version = 3; }"))),
                         "spring4",
-                        sourceJar("spring4.jar", SOURCE.replace("Original {}", "Original { int version = 4; }"))));
+                        List.of(
+                                sourceJar(
+                                        "spring4.jar",
+                                        SOURCE.replace("Original {}", "Original { int version = 4; }")))));
         tool.generatePatches();
         for (String group : new String[]{"spring2", "spring3", "spring4"}) {
             Path source = module().resolve("src/main/java/" + group + "/example/Original.java");
@@ -286,7 +337,7 @@ class SourcePatchToolTest {
         fixture(SOURCE, TARGET);
         Files.writeString(records(), HEADER + "example.Original=\n");
         SourcePatchTool tool = new SourcePatchTool(repository, module());
-        tool.extract(Map.of("sample", sourceJar(SOURCE)));
+        tool.extract(Map.of("sample", List.of(sourceJar(SOURCE))));
         IllegalStateException error = assertThrows(IllegalStateException.class, tool::generatePatches);
         assertTrue(error.getMessage().contains("Missing local class for example.Original"));
         assertThrows(IllegalStateException.class, () -> tool.check(Map.of("sample", "1.0")));
@@ -302,7 +353,7 @@ class SourcePatchToolTest {
         fixture("old", TARGET);
         Files.writeString(records(), HEADER + "# example.Original=enhanced.Enhanced\n  example.Original = ?  \n");
         SourcePatchTool tool = new SourcePatchTool(repository, module());
-        tool.extract(Map.of("sample", sourceJar(SOURCE)));
+        tool.extract(Map.of("sample", List.of(sourceJar(SOURCE))));
         assertEquals(SOURCE, Files.readString(upstream()));
         tool.generatePatches();
         assertFalse(Files.exists(patch()));
@@ -352,7 +403,7 @@ class SourcePatchToolTest {
         Files.move(records(), records().resolveSibling("core.properties"));
         Files.delete(upstream());
         SourcePatchTool tool = new SourcePatchTool(repository, module());
-        tool.extract(Map.of("core", sourceJar(SOURCE)));
+        tool.extract(Map.of("core", List.of(sourceJar(SOURCE))));
         Path coreSource = module().resolve("src/main/java/core/example/Original.java");
         Path corePatch = coreSource.resolveSibling("Original.patch");
         assertEquals(SOURCE, Files.readString(coreSource));
@@ -364,6 +415,50 @@ class SourcePatchToolTest {
         tool.recordVersions(Map.of("core", "1.1"));
         assertTrue(
                 Files.readString(records().resolveSibling("core.properties")).startsWith("version=1.1\nmoudle=core\n"));
+    }
+
+    @Test
+    void mapsBootClassesToMultipleModulesWithOneSharedRecord() throws Exception {
+        fixture(SOURCE, TARGET);
+        Map<String, List<Path>> jars = new LinkedHashMap<>();
+        jars.put("sample", List.of(sourceJar(SOURCE)));
+        Map<String, String> versions = new LinkedHashMap<>();
+        versions.put("sample", "1.0");
+        for (int version = 2; version <= 4; version++) {
+            String group = "boot" + version;
+            String module = "test" + version;
+            Path enhanced = repository.resolve(module + "/src/main/java/enhanced/Enhanced.java");
+            Files.createDirectories(enhanced.getParent());
+            Files.writeString(enhanced, TARGET);
+            Files.writeString(
+                    records().resolveSibling(group + ".properties"), HEADER + "example.Original=" + module
+                            + ":enhanced.Enhanced\nexample.Reference=enhanced.Enhanced\n");
+            jars.put(
+                    group,
+                    List.of(
+                            sourceJar(
+                                    group + "-main.jar", "example/Reference.java",
+                                    SOURCE.replace("Original", "Reference")),
+                            sourceJar(
+                                    group + ".jar",
+                                    SOURCE.replace("Original {}", "Original { int version = " + version + "; }"))));
+            versions.put(group, "1.0");
+        }
+        SourcePatchTool tool = new SourcePatchTool(repository, module());
+        tool.extract(jars);
+        tool.generatePatches();
+        tool.check(versions);
+        for (int version = 2; version <= 4; version++) {
+            Path directory = module().resolve("src/main/java/boot" + version + "/example");
+            assertTrue(Files.isRegularFile(directory.resolve("Original.java")));
+            assertTrue(
+                    Files.readString(directory.resolve("Original.patch"))
+                            .contains("+++ b/test" + version + "/src/main/java/enhanced/Enhanced.java"));
+            assertEquals(version > 2, Files.exists(directory.resolve("Original.upstream.patch")));
+            assertTrue(
+                    Files.readString(directory.resolve("Reference.patch"))
+                            .contains("+++ b/core/src/main/java/enhanced/Enhanced.java"));
+        }
     }
 
     @Test
@@ -391,9 +486,13 @@ class SourcePatchToolTest {
     }
 
     private Path sourceJar(String name, String source) throws Exception {
+        return sourceJar(name, "example/Original.java", source);
+    }
+
+    private Path sourceJar(String name, String entry, String source) throws Exception {
         Path jar = repository.resolve(name);
         try (JarOutputStream output = new JarOutputStream(Files.newOutputStream(jar))) {
-            output.putNextEntry(new JarEntry("example/Original.java"));
+            output.putNextEntry(new JarEntry(entry));
             output.write(source.getBytes(StandardCharsets.UTF_8));
             output.closeEntry();
         }
