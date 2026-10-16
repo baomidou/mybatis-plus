@@ -71,6 +71,8 @@ public class JdbcUtils {
             return DbType.MARIADB;
         } else if (url.contains(":oracle:")) {
             return DbType.ORACLE;
+        } else if (url.contains(":polardb:") || url.contains(":polardb2:")) {
+            return DbType.POLARDB;
         } else if (url.contains(":sqlserver:") || url.contains(":microsoft:")) {
             if (url.contains(":jtds")) {
                 return DbType.SQL_SERVER2005;
