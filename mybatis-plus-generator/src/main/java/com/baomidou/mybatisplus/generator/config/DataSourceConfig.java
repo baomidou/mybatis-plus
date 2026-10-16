@@ -144,7 +144,8 @@ public class DataSourceConfig {
             DbType dbType = getDbType();
             DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
             // 默认 MYSQL
-            dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType)).orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
+            dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
+                    .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
         return dbQuery;
     }
@@ -171,7 +172,7 @@ public class DataSourceConfig {
             return DbType.MYSQL;
         } else if (str.contains(":oracle:")) {
             return DbType.ORACLE;
-        } else if (str.contains(":polardb:") || str.contains(":polardb2:")) {
+        } else if (str.contains(":polardb:")) {
             return DbType.POLARDB;
         } else if (str.contains(":postgresql:")) {
             return DbType.POSTGRE_SQL;
@@ -293,16 +294,16 @@ public class DataSourceConfig {
         DbType dbType = getDbType();
         String schema = null;
         if (DbType.POSTGRE_SQL == dbType) {
-            //pg 默认 schema=public
+            // pg 默认 schema=public
             schema = "public";
         } else if (DbType.KINGBASE_ES == dbType) {
-            //kingbase 默认 schema=PUBLIC
+            // kingbase 默认 schema=PUBLIC
             schema = "PUBLIC";
         } else if (DbType.DB2 == dbType) {
-            //db2 默认 schema=current schema
+            // db2 默认 schema=current schema
             schema = "current schema";
         } else if (DbType.ORACLE == dbType || DbType.POLARDB == dbType) {
-            //oracle 默认 schema=username
+            // oracle 默认 schema=username
             schema = this.username.toUpperCase();
         }
         return schema;
@@ -393,7 +394,7 @@ public class DataSourceConfig {
                 try {
                     this.dataSourceConfig.schemaName = conn.getSchema();
                 } catch (Throwable exception) {
-                    //ignore  如果使用低版本的驱动，这里由于是1.7新增的方法，所以会报错，如果驱动太低，需要自行指定了。
+                    // ignore 如果使用低版本的驱动，这里由于是1.7新增的方法，所以会报错，如果驱动太低，需要自行指定了。
                 }
                 this.dataSourceConfig.connection = conn;
                 this.dataSourceConfig.username = conn.getMetaData().getUserName();

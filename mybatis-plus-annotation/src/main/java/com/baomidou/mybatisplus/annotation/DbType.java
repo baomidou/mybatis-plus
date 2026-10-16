@@ -41,7 +41,8 @@ public enum DbType {
      */
     ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_NEW)"),
     /**
-     * PolarDB Oracle compatible database
+     * 云原生数据库PolarDB PostgreSQL版（兼容Oracle）<br>
+     * 由于只有该版本提供了jdbc的url,则默认该枚举识别为oracle
      */
     POLARDB("polardb", "PolarDB Oracle兼容数据库"),
     /**
@@ -122,14 +123,14 @@ public enum DbType {
      */
     GBASE_8S("gbase-8s", "南大通用数据库 GBase 8s"),
     /**
-     * use {@link  #GBASE_8S}
+     * use {@link #GBASE_8S}
      *
      * @deprecated 2022-05-30
      */
     @Deprecated
     GBASEDBT("gbasedbt", "南大通用数据库"),
     /**
-     * use {@link  #GBASE_8S}
+     * use {@link #GBASE_8S}
      *
      * @deprecated 2022-05-30
      */
@@ -277,44 +278,44 @@ public enum DbType {
 
     public boolean mysqlSameType() {
         return this == DbType.MYSQL
-            || this == DbType.MARIADB
-            || this == DbType.GBASE
-            || this == DbType.OSCAR
-            || this == DbType.XU_GU
-            || this == DbType.CLICK_HOUSE
-            || this == DbType.OCEAN_BASE
-            || this == DbType.CUBRID
-            || this == DbType.SUNDB
-            || this == DbType.GOLDENDB
-            || this == DbType.YASDB;
+                || this == DbType.MARIADB
+                || this == DbType.GBASE
+                || this == DbType.OSCAR
+                || this == DbType.XU_GU
+                || this == DbType.CLICK_HOUSE
+                || this == DbType.OCEAN_BASE
+                || this == DbType.CUBRID
+                || this == DbType.SUNDB
+                || this == DbType.GOLDENDB
+                || this == DbType.YASDB;
     }
 
     public boolean oracleSameType() {
         return this == DbType.ORACLE
-            || this == DbType.POLARDB
-            || this == DbType.DM
-            || this == DbType.GAUSS;
+                || this == DbType.POLARDB
+                || this == DbType.DM
+                || this == DbType.GAUSS;
     }
 
     public boolean postgresqlSameType() {
         return this == DbType.POSTGRE_SQL
-            || this == DbType.H2
-            || this == DbType.LEALONE
-            || this == DbType.SQLITE
-            || this == DbType.HSQL
-            || this == DbType.KINGBASE_ES
-            || this == DbType.PHOENIX
-            || this == DbType.SAP_HANA
-            || this == DbType.IMPALA
-            || this == DbType.HIGH_GO
-            || this == DbType.VERTICA
-            || this == DbType.REDSHIFT
-            || this == DbType.OPENGAUSS
-            || this == DbType.TDENGINE
-            || this == DbType.UXDB
-            || this == DbType.GBASE8S_PG
-            || this == DbType.GBASE_8C
-            || this == DbType.VASTBASE
-            || this == DbType.DUCKDB;
+                || this == DbType.H2
+                || this == DbType.LEALONE
+                || this == DbType.SQLITE
+                || this == DbType.HSQL
+                || this == DbType.KINGBASE_ES
+                || this == DbType.PHOENIX
+                || this == DbType.SAP_HANA
+                || this == DbType.IMPALA
+                || this == DbType.HIGH_GO
+                || this == DbType.VERTICA
+                || this == DbType.REDSHIFT
+                || this == DbType.OPENGAUSS
+                || this == DbType.TDENGINE
+                || this == DbType.UXDB
+                || this == DbType.GBASE8S_PG
+                || this == DbType.GBASE_8C
+                || this == DbType.VASTBASE
+                || this == DbType.DUCKDB;
     }
 }
