@@ -6,6 +6,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +28,19 @@ class BatchTest extends BaseDbTest<EntityMapper> {
 
         doTest(i -> {
             assertThat(i.selectCount(null)).isEqualTo(2);
+        });
+    }
+
+    @Test
+    void baseMapperBatchClearsCallingSessionCache() {
+        Entity entity = new Entity("batch");
+        entity.setId(100L);
+        doTest(mapper -> {
+            assertThat(mapper.selectById(entity.getId())).isNull();
+
+            mapper.insert(Collections.singletonList(entity));
+
+            assertThat(mapper.selectById(entity.getId())).extracting(Entity::getName).isEqualTo("batch");
         });
     }
 

@@ -34,6 +34,18 @@ public interface CompatibleSet {
     boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc);
 
     /**
+     * 批量操作后清理 Mapper 调用会话缓存。
+     * <p>默认清理一级缓存，平台实现可根据实际事务会话清理指定语句关联的事务性二级缓存。</p>
+     *
+     * @param sqlSession  Mapper 调用会话
+     * @param statementId {@link org.apache.ibatis.mapping.MappedStatement} ID
+     * @since 3.5.18
+     */
+    default void clearMapperCache(SqlSession sqlSession, String statementId) {
+        sqlSession.clearCache();
+    }
+
+    /**
      * @deprecated 3.5.12 无需实现
      */
     @Deprecated
