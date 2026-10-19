@@ -36,13 +36,14 @@ class CollectUtilsTest {
     void findResourcesReturnsFullClasspathPathForFileResources() throws Exception {
         Path root = Files.createTempDirectory("aot-resources");
         Files.createDirectories(root.resolve("org/apache/ibatis/builder/xml"));
-        Files.writeString(root.resolve("org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd"), "", StandardCharsets.UTF_8);
+        Files.writeString(
+                root.resolve("org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd"), "", StandardCharsets.UTF_8);
 
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{root.toUri().toURL()}, null)) {
             CollectUtils collectUtils = new CollectUtils(classLoader);
 
-            Set<String> resources = collectUtils.findResources("org/apache/ibatis/builder/xml",
-                name -> name.endsWith(".dtd"));
+            Set<String> resources = collectUtils
+                    .findResources("org/apache/ibatis/builder/xml", name -> name.endsWith(".dtd"));
 
             assertTrue(resources.contains("org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd"));
         }
@@ -51,17 +52,9 @@ class CollectUtilsTest {
     @Test
     void findClassNamesFiltersJarEntriesByRequestedPackage() throws Exception {
         Path jar = Files.createTempFile("aot-classes", ".jar");
-        writeJar(jar,
-            "com/",
-            "com/example/",
-            "com/example/Target.class",
-            "org/",
-            "org/other/",
-            "org/other/Other.class",
-            "mapper/",
-            "mapper/UserMapper.xml",
-            "logback.xml"
-        );
+        writeJar(
+                jar, "com/", "com/example/", "com/example/Target.class", "org/", "org/other/", "org/other/Other.class",
+                "mapper/", "mapper/UserMapper.xml", "logback.xml");
 
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jar.toUri().toURL()}, null)) {
             CollectUtils collectUtils = new CollectUtils(classLoader);
@@ -79,11 +72,7 @@ class CollectUtilsTest {
     @Test
     void findResourcesScansJarEntriesWithoutDirectoryEntries() throws Exception {
         Path jar = Files.createTempFile("aot-resources-no-directories", ".jar");
-        writeJar(jar,
-            "com/example/mapper/UserMapper.xml",
-            "mapper/OrderMapper.xml",
-            "logback.xml"
-        );
+        writeJar(jar, "com/example/mapper/UserMapper.xml", "mapper/OrderMapper.xml", "logback.xml");
 
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jar.toUri().toURL()}, null)) {
             CollectUtils collectUtils = new CollectUtils(classLoader);
@@ -131,7 +120,7 @@ class CollectUtilsTest {
         Files.writeString(properties, "Args = -H:Class=" + CollectUtilsTest.class.getName(), StandardCharsets.UTF_8);
 
         try (URLClassLoader classLoader = new URLClassLoader(new URL[]{root.toUri().toURL()},
-            CollectUtilsTest.class.getClassLoader())) {
+                CollectUtilsTest.class.getClassLoader())) {
             CollectUtils collectUtils = new CollectUtils(classLoader);
 
             Set<Class<?>> mainClasses = collectUtils.findMainClassesFromNativeImageProperties();

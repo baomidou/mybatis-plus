@@ -91,7 +91,8 @@ class DbTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void testUpdate() {
-        boolean isSuccess = Db.update(Wrappers.lambdaUpdate(Entity.class).eq(Entity::getId, 1L).set(Entity::getName, "be better"));
+        boolean isSuccess = Db
+                .update(Wrappers.lambdaUpdate(Entity.class).eq(Entity::getId, 1L).set(Entity::getName, "be better"));
         Assertions.assertTrue(isSuccess);
         assertEquals("be better", Db.getById(1L, Entity.class).getName());
 
@@ -249,7 +250,9 @@ class DbTest extends BaseDbTest<EntityMapper> {
         page = Db.pageMaps(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
         assertEquals(1, page.getRecords().size());
 
-        assertEquals(Db.listMaps(new Page<>(1, 1, false), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
+        assertEquals(
+                Db.listMaps(new Page<>(1, 1, false), Wrappers.lambdaQuery(Entity.class)).size(),
+                page.getRecords().size());
     }
 
     @Test
@@ -261,7 +264,8 @@ class DbTest extends BaseDbTest<EntityMapper> {
         page = Db.page(new Page<>(1, 1), Wrappers.lambdaQuery(Entity.class));
         assertEquals(1, page.getRecords().size());
 
-        assertEquals(Db.list(new Page<Entity>(1, 1), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
+        assertEquals(
+                Db.list(new Page<Entity>(1, 1), Wrappers.lambdaQuery(Entity.class)).size(), page.getRecords().size());
     }
 
     @Test
@@ -319,9 +323,8 @@ class DbTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 }

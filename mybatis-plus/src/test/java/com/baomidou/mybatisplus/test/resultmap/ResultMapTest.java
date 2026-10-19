@@ -17,12 +17,13 @@ public class ResultMapTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void test() {
-        doTestAutoCommit(m -> m.insert(new Entity().setGg1(new Entity.Gg("老王"))
-            .setStr(new String[]{"hello"})
-            .setGg2(new Entity.Gg("老李"))
-            .setGg3(List.of(new Entity.Gg("老张")))
-            .setGg4(List.of(new Entity.Gg4("秋秋", new Entity.Gg("小红"), List.of(new Entity.Gg("小猫")), Map.of("test", new Entity.Gg("小明")))))
-        ));
+        doTestAutoCommit(
+                m -> m.insert(
+                        new Entity().setGg1(new Entity.Gg("老王")).setStr(new String[]{"hello"})
+                                .setGg2(new Entity.Gg("老李")).setGg3(List.of(new Entity.Gg("老张"))).setGg4(
+                                        List.of(
+                                                new Entity.Gg4("秋秋", new Entity.Gg("小红"), List.of(new Entity.Gg("小猫")),
+                                                        Map.of("test", new Entity.Gg("小明")))))));
 
         doTest(m -> {
             Entity entity = m.selectOne(null);
@@ -49,16 +50,12 @@ public class ResultMapTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "gg1 VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "gg2 VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "gg3 VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "gg4 VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "str VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
+                        + "gg1 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg2 VARCHAR(255) NULL DEFAULT NULL,\n"
+                        + "gg3 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg4 VARCHAR(255) NULL DEFAULT NULL,\n"
+                        + "str VARCHAR(255) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
     }
 
     @Override

@@ -32,8 +32,9 @@ import java.util.function.Predicate;
  * @since 2018-12-19
  */
 @SuppressWarnings({"serial"})
-public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
-    implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
+public class LambdaQueryChainWrapper<T>
+        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
+        implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 
     private final BaseMapper<T> baseMapper;
 

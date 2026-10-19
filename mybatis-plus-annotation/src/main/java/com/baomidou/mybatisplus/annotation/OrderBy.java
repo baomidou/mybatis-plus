@@ -18,8 +18,9 @@ package com.baomidou.mybatisplus.annotation;
 import java.lang.annotation.*;
 
 /**
- * 自动排序，用法与SpringDtaJpa的OrderBy类似
+ * 自动排序，用法与SpringDtaJpa的OrderBy类似 <br>
  * 在执行MybatisPlus的方法selectList(),Page()等非手写查询时自动带上.
+ * 
  * @author Dervish
  * @date 2021-04-13
  */

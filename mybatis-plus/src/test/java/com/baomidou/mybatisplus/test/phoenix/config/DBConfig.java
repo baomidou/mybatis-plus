@@ -52,9 +52,8 @@ public class DBConfig {
     private DatabasePopulator databasePopulator() throws IOException {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.setContinueOnError(false);
-        resourceDatabasePopulator.addScripts(
-            new PathMatchingResourcePatternResolver().getResources("classpath:/phoenix/*.sql")
-        );
+        resourceDatabasePopulator
+                .addScripts(new PathMatchingResourcePatternResolver().getResources("classpath:/phoenix/*.sql"));
         return resourceDatabasePopulator;
     }
 }

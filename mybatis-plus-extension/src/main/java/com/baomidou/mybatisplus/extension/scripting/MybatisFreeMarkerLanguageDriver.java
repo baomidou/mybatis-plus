@@ -35,7 +35,8 @@ public class MybatisFreeMarkerLanguageDriver extends FreeMarkerLanguageDriver {
     }
 
     @Override
-    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+            BoundSql boundSql) {
         return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
     }
 }

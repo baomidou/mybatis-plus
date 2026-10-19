@@ -13,10 +13,9 @@ public class DMGeneratorTest extends BaseGeneratorTest {
     /**
      * 数据源配置
      */
-    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig
-        .Builder("jdbc:dm://xxxx:5236/DMSERVER?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8", "SYSDBA", "SYSDBA")
-        .schema("SYSDBA")
-        .build();
+    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
+            "jdbc:dm://xxxx:5236/DMSERVER?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=utf-8",
+            "SYSDBA", "SYSDBA").schema("SYSDBA").build();
 
     public static void main(String[] args) {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);

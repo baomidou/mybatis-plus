@@ -33,8 +33,11 @@ class H2UserStrategyTest extends BaseTest {
         Assertions.assertEquals(1, row);
         Assertions.assertEquals(3, userStrategyMapper.selectById(id).getTestType(), "autofilled with 3");
 
-        QueryWrapper<H2UserStrategy> wrapper = new QueryWrapper<>(new H2UserStrategy().setDesc("updateStrategy=IGNORE").setTestType(3));
-        Assertions.assertEquals(0, userStrategyMapper.selectCount(wrapper), "name is whereStrategy=IGNORE, so should have where name=null which cause count=0");
+        QueryWrapper<H2UserStrategy> wrapper = new QueryWrapper<>(
+                new H2UserStrategy().setDesc("updateStrategy=IGNORE").setTestType(3));
+        Assertions.assertEquals(
+                0, userStrategyMapper.selectCount(wrapper),
+                "name is whereStrategy=IGNORE, so should have where name=null which cause count=0");
 
         H2UserStrategy updateUser = new H2UserStrategy().setName("update");
         updateUser.setTestId(id);
@@ -42,10 +45,11 @@ class H2UserStrategyTest extends BaseTest {
 
         H2UserStrategy selectUser = userStrategyMapper.selectById(id);
         Assertions.assertEquals("update", selectUser.getName());
-        Assertions.assertNull(selectUser.getDesc(), "desc is updateStrategy=IGNORE, so should have set desc=null when updateById");
-        Assertions.assertNull(selectUser.getTestType(), "handle: strategy=IGNORED, should be set test_type=null when updateById ");
+        Assertions.assertNull(
+                selectUser.getDesc(), "desc is updateStrategy=IGNORE, so should have set desc=null when updateById");
+        Assertions.assertNull(
+                selectUser.getTestType(), "handle: strategy=IGNORED, should be set test_type=null when updateById ");
 
     }
-
 
 }

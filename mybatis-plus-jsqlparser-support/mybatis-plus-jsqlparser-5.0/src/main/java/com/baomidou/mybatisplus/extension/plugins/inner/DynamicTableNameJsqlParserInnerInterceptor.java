@@ -25,7 +25,9 @@ import net.sf.jsqlparser.statement.UnsupportedStatement;
 
 /**
  * 动态表处理器 (基于JsqlParser解析器)
- * <p>默认情况下,如果JsqlParser解析不了,则调用父类的解析进行处理</p>
+ * <p>
+ * 默认情况下,如果JsqlParser解析不了,则调用父类的解析进行处理
+ * </p>
  *
  * @author nieqiurong
  * @see DynamicTableNameHandler
@@ -45,7 +47,6 @@ public class DynamicTableNameJsqlParserInnerInterceptor extends DynamicTableName
      * @see com.baomidou.mybatisplus.core.toolkit.TableNameParser
      */
     private boolean shouldFallback = true;
-
 
     @Deprecated
     public DynamicTableNameJsqlParserInnerInterceptor() {

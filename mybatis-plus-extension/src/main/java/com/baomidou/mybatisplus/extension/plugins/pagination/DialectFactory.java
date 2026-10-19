@@ -51,10 +51,8 @@ public class DialectFactory {
                 dialect = new PostgreDialect();
             }
             // other types
-            else if (dbType == DbType.ORACLE_12C
-                || dbType == DbType.FIREBIRD
-                || dbType == DbType.SQL_SERVER
-                || dbType == DbType.DERBY) {
+            else if (dbType == DbType.ORACLE_12C || dbType == DbType.FIREBIRD || dbType == DbType.SQL_SERVER
+                    || dbType == DbType.DERBY) {
                 dialect = new Oracle12cDialect();
             } else if (dbType == DbType.DB2) {
                 dialect = new DB2Dialect();
@@ -64,15 +62,12 @@ public class DialectFactory {
                 dialect = new SybaseDialect();
             } else if (dbType == DbType.XCloud) {
                 dialect = new XCloudDialect();
-            } else if (dbType == DbType.GBASE_8S
-                || dbType == DbType.GBASEDBT
-                || dbType == DbType.GBASE_INFORMIX
-                || dbType == DbType.SINODB) {
+            } else if (dbType == DbType.GBASE_8S || dbType == DbType.GBASEDBT || dbType == DbType.GBASE_INFORMIX
+                    || dbType == DbType.SINODB) {
                 dialect = new GBase8sDialect();
             } else if (dbType == DbType.INFORMIX) {
                 dialect = new InformixDialect();
-            } else if (dbType == DbType.TRINO
-                || dbType == DbType.PRESTO) {
+            } else if (dbType == DbType.TRINO || dbType == DbType.PRESTO) {
                 dialect = new TrinoDialect();
             } else if (dbType == DbType.HIVE2) {
                 dialect = new Hive2Dialect();

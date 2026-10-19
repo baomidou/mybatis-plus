@@ -17,7 +17,8 @@ import java.sql.SQLException;
 public class H2User2NameTypeHandler extends BaseTypeHandler<String> {
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType)
+            throws SQLException {
         ps.setString(i, JSON.parseObject(parameter, H2User.class).getName());
     }
 

@@ -34,7 +34,7 @@ import java.util.Objects;
 /**
  * ActiveRecord 模式 CRUD
  * <p>
- * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下
+ * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下 <br>
  * 才能使用此 AR 模式 !!!
  * </p>
  *
@@ -204,7 +204,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     /**
      * 翻页查询
      *
-     * @param page         翻页查询条件
+     * @param page 翻页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
@@ -276,6 +276,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      * @param sqlSession session
      */
     protected void closeSqlSession(SqlSession sqlSession) {
-        CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
+        CompatibleHelper.getCompatibleSet()
+                .closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
     }
 }

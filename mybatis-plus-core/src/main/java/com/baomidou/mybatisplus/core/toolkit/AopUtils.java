@@ -24,10 +24,9 @@ import java.lang.reflect.Field;
  * AopUtils Aop工具类
  *
  * @author Caratacus
- * @since  2018-08-02
+ * @since 2018-08-02
  */
-public class
-AopUtils {
+public class AopUtils {
 
     /**
      * 是否加载Spring-Aop模块
@@ -56,7 +55,6 @@ AopUtils {
     public static boolean isLoadSpringAop() {
         return loadAop;
     }
-
 
     /**
      * 获取源目标对象
@@ -91,13 +89,14 @@ AopUtils {
      * @return ignore
      */
     @SuppressWarnings("unchecked")
-	private static <T> T getCglibProxyTargetObject(T proxy) throws Exception {
+    private static <T> T getCglibProxyTargetObject(T proxy) throws Exception {
         Field cglibField = proxy.getClass().getDeclaredField("CGLIB$CALLBACK_0");
         cglibField.setAccessible(true);
         Object dynamicAdvisedInterceptor = cglibField.get(proxy);
         Field advised = dynamicAdvisedInterceptor.getClass().getDeclaredField("advised");
         advised.setAccessible(true);
-        Object target = ((org.springframework.aop.framework.AdvisedSupport) advised.get(dynamicAdvisedInterceptor)).getTargetSource().getTarget();
+        Object target = ((org.springframework.aop.framework.AdvisedSupport) advised.get(dynamicAdvisedInterceptor))
+                .getTargetSource().getTarget();
         return (T) target;
     }
 
@@ -109,13 +108,15 @@ AopUtils {
      * @return ignore
      */
     @SuppressWarnings("unchecked")
-	private static <T> T getJdkDynamicProxyTargetObject(T proxy) throws Exception {
+    private static <T> T getJdkDynamicProxyTargetObject(T proxy) throws Exception {
         Field jdkDynamicField = proxy.getClass().getSuperclass().getDeclaredField("jdkDynamicField");
         jdkDynamicField.setAccessible(true);
-        org.springframework.aop.framework.AopProxy aopProxy = (org.springframework.aop.framework.AopProxy) jdkDynamicField.get(proxy);
+        org.springframework.aop.framework.AopProxy aopProxy = (org.springframework.aop.framework.AopProxy) jdkDynamicField
+                .get(proxy);
         Field advised = aopProxy.getClass().getDeclaredField("advised");
         advised.setAccessible(true);
-        Object target = ((org.springframework.aop.framework.AdvisedSupport) advised.get(aopProxy)).getTargetSource().getTarget();
+        Object target = ((org.springframework.aop.framework.AdvisedSupport) advised.get(aopProxy)).getTargetSource()
+                .getTarget();
         return (T) target;
     }
 

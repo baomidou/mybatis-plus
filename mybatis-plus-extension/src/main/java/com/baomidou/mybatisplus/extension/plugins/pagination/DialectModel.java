@@ -34,6 +34,7 @@ import java.util.function.Function;
  * @since 2018-10-31
  */
 public class DialectModel {
+
     private static final String FIRST_PARAM_NAME = "mybatis_plus_first";
     private static final String SECOND_PARAM_NAME = "mybatis_plus_second";
 
@@ -91,19 +92,25 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>带下标的</p>
-     * <p>mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法</p>
+     * <p>
+     * 带下标的
+     * </p>
+     * <p>
+     * mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法
+     * </p>
      *
      * @return this
      */
     @SuppressWarnings("unused")
     public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
         if (isFirstParam) {
-            this.firstParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
-                .Builder(configuration, FIRST_PARAM_NAME, long.class).build());
+            this.firstParamConsumer = i -> i.add(
+                    function.apply(i),
+                    new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
-            this.secondParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
-                .Builder(configuration, SECOND_PARAM_NAME, long.class).build());
+            this.secondParamConsumer = i -> i.add(
+                    function.apply(i),
+                    new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
         this.setParamMapConsumer(isFirstParam);
         return this;
@@ -111,15 +118,19 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>不带下标的</p>
+     * <p>
+     * 不带下标的
+     * </p>
      *
      * @return this
      */
     public DialectModel setConsumer(boolean isFirstParam) {
         if (isFirstParam) {
-            this.firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
+            this.firstParamConsumer = i -> i
+                    .add(new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
-            this.secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
+            this.secondParamConsumer = i -> i
+                    .add(new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
         this.setParamMapConsumer(isFirstParam);
         return this;
@@ -127,7 +138,9 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>不带下标的,两个值都有</p>
+     * <p>
+     * 不带下标的,两个值都有
+     * </p>
      *
      * @return this
      */
@@ -138,12 +151,12 @@ public class DialectModel {
     /**
      * 把内部所有需要消费的都消费掉
      *
-     * @param parameterMappings    ParameterMapping 集合
-     * @param configuration        Configuration
+     * @param parameterMappings ParameterMapping 集合
+     * @param configuration Configuration
      * @param additionalParameters additionalParameters map
      */
     public void consumers(List<ParameterMapping> parameterMappings, Configuration configuration,
-                          Map<String, Object> additionalParameters) {
+            Map<String, Object> additionalParameters) {
         Assert.notNull(configuration, "configuration must notNull !");
         Assert.notNull(parameterMappings, "parameterMappings must notNull !");
         Assert.notNull(additionalParameters, "additionalParameters must notNull !");

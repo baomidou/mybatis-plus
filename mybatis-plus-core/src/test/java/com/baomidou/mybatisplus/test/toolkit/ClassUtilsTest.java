@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * 测试
  *
- * @author HCL
- * 2018/7/26 9:53
+ * @author HCL <br>
+ *         2018/7/26 9:53
  */
 class ClassUtilsTest {
 
@@ -24,12 +24,13 @@ class ClassUtilsTest {
         Demo demo = ClassUtils.newInstance(Demo.class);
         Assertions.assertNotNull(demo);
 
-        Map<?,?> map = ClassUtils.newInstance(HashMap.class);
+        Map<?, ?> map = ClassUtils.newInstance(HashMap.class);
         Assertions.assertNotNull(map);
     }
 
     /**
      * 实例化的 demo class
      */
-    private static class Demo {}
+    private static class Demo {
+    }
 }

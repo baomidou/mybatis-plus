@@ -31,11 +31,10 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
     private static final String H2URL = "jdbc:h2:mem:test-h2-meta-customizer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";
 
     private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(H2URL, "sa", "")
-        .databaseQueryClass(DefaultQuery.class).build();
+            .databaseQueryClass(DefaultQuery.class).build();
 
     private static final DataSourceConfig SQL_QUERY_DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(H2URL, "sa", "")
-        .dbQuery(new H2SqlQueryForTest())
-        .databaseQueryClass(SQLQuery.class).build();
+            .dbQuery(new H2SqlQueryForTest()).databaseQueryClass(SQLQuery.class).build();
 
     @BeforeAll
     static void before() throws SQLException {
@@ -44,19 +43,17 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
 
     @Test
     void shouldCustomizeFieldMetaInfoAfterTypeConversion() {
-        StrategyConfig strategyConfig = new StrategyConfig.Builder()
-            .addInclude("t_simple")
-            .entityBuilder()
-            .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
-                if ("name".equals(tableField.getColumnName())) {
-                    tableField.getMetaInfo().setJdbcType(JdbcType.OTHER);
-                    tableField.getMetaInfo().setTypeName("POINT");
-                    tableField.setColumnType(DbColumnType.OBJECT);
-                }
-            })
-            .build();
+        StrategyConfig strategyConfig = new StrategyConfig.Builder().addInclude("t_simple").entityBuilder()
+                .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
+                    if ("name".equals(tableField.getColumnName())) {
+                        tableField.getMetaInfo().setJdbcType(JdbcType.OTHER);
+                        tableField.getMetaInfo().setTypeName("POINT");
+                        tableField.setColumnType(DbColumnType.OBJECT);
+                    }
+                }).build();
         GlobalConfig globalConfig = globalConfig().build();
-        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null, globalConfig, null);
+        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null, globalConfig,
+                null);
 
         TableField field = findField(configBuilder.getTableInfoList(), "t_simple", "name");
 
@@ -68,19 +65,17 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
     @Test
     void shouldCustomizeFieldMetaInfoWithSqlQuery() {
         AtomicBoolean customized = new AtomicBoolean();
-        StrategyConfig strategyConfig = new StrategyConfig.Builder()
-            .addInclude("t_simple")
-            .entityBuilder()
-            .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
-                if ("name".equals(tableField.getColumnName())) {
-                    customized.set(true);
-                    tableField.getMetaInfo().setJdbcType(JdbcType.OTHER);
-                    tableField.getMetaInfo().setTypeName("POINT");
-                    tableField.setColumnType(DbColumnType.OBJECT);
-                }
-            })
-            .build();
-        ConfigBuilder configBuilder = new ConfigBuilder(null, SQL_QUERY_DATA_SOURCE_CONFIG, strategyConfig, null, globalConfig().build(), null);
+        StrategyConfig strategyConfig = new StrategyConfig.Builder().addInclude("t_simple").entityBuilder()
+                .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
+                    if ("name".equals(tableField.getColumnName())) {
+                        customized.set(true);
+                        tableField.getMetaInfo().setJdbcType(JdbcType.OTHER);
+                        tableField.getMetaInfo().setTypeName("POINT");
+                        tableField.setColumnType(DbColumnType.OBJECT);
+                    }
+                }).build();
+        ConfigBuilder configBuilder = new ConfigBuilder(null, SQL_QUERY_DATA_SOURCE_CONFIG, strategyConfig, null,
+                globalConfig().build(), null);
 
         TableField field = findField(configBuilder.getTableInfoList(), "t_simple", "name");
 
@@ -92,17 +87,14 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
 
     @Test
     void shouldCustomizeFieldMetaInfoBeforePropertyNameConversion() {
-        StrategyConfig strategyConfig = new StrategyConfig.Builder()
-            .addInclude("t_simple")
-            .entityBuilder()
-            .enableRemoveIsPrefix()
-            .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
-                if ("is_ok".equals(tableField.getColumnName())) {
-                    tableField.setColumnType(DbColumnType.BOOLEAN);
-                }
-            })
-            .build();
-        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null, globalConfig().build(), null);
+        StrategyConfig strategyConfig = new StrategyConfig.Builder().addInclude("t_simple").entityBuilder()
+                .enableRemoveIsPrefix().tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
+                    if ("is_ok".equals(tableField.getColumnName())) {
+                        tableField.setColumnType(DbColumnType.BOOLEAN);
+                    }
+                }).build();
+        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null,
+                globalConfig().build(), null);
 
         TableField field = findField(configBuilder.getTableInfoList(), "t_simple", "is_ok");
 
@@ -112,41 +104,33 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
 
     @Test
     void shouldProvideTableInfoToCustomizer() {
-        StrategyConfig strategyConfig = new StrategyConfig.Builder()
-            .addInclude("t_simple", "t_test")
-            .entityBuilder()
-            .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
-                if ("name".equals(tableField.getColumnName()) && "t_simple".equals(tableInfo.getName())) {
-                    tableField.setColumnType(DbColumnType.OBJECT);
-                }
-                if ("name".equals(tableField.getColumnName()) && "t_test".equals(tableInfo.getName())) {
-                    tableField.setColumnType(DbColumnType.BYTE_ARRAY);
-                }
-            })
-            .build();
-        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null, globalConfig().build(), null);
+        StrategyConfig strategyConfig = new StrategyConfig.Builder().addInclude("t_simple", "t_test").entityBuilder()
+                .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
+                    if ("name".equals(tableField.getColumnName()) && "t_simple".equals(tableInfo.getName())) {
+                        tableField.setColumnType(DbColumnType.OBJECT);
+                    }
+                    if ("name".equals(tableField.getColumnName()) && "t_test".equals(tableInfo.getName())) {
+                        tableField.setColumnType(DbColumnType.BYTE_ARRAY);
+                    }
+                }).build();
+        ConfigBuilder configBuilder = new ConfigBuilder(null, DATA_SOURCE_CONFIG, strategyConfig, null,
+                globalConfig().build(), null);
 
         assertThat(findField(configBuilder.getTableInfoList(), "t_simple", "name").getColumnType())
-            .isEqualTo(DbColumnType.OBJECT);
+                .isEqualTo(DbColumnType.OBJECT);
         assertThat(findField(configBuilder.getTableInfoList(), "t_test", "name").getColumnType())
-            .isEqualTo(DbColumnType.BYTE_ARRAY);
+                .isEqualTo(DbColumnType.BYTE_ARRAY);
     }
 
     private TableField findField(List<TableInfo> tableInfoList, String tableName, String columnName) {
-        return tableInfoList.stream()
-            .filter(tableInfo -> tableName.equals(tableInfo.getName()))
-            .findFirst()
-            .orElseThrow()
-            .getFields()
-            .stream()
-            .filter(tableField -> columnName.equals(tableField.getColumnName()))
-            .findFirst()
-            .orElseThrow();
+        return tableInfoList.stream().filter(tableInfo -> tableName.equals(tableInfo.getName())).findFirst()
+                .orElseThrow().getFields().stream().filter(tableField -> columnName.equals(tableField.getColumnName()))
+                .findFirst().orElseThrow();
     }
 
     /**
-     * Test-local SQLQuery compatibility shim for current H2 metadata.
-     * This test does not assert primary-key behavior; it aliases current H2 metadata
+     * Test-local SQLQuery compatibility shim for current H2 metadata. <br>
+     * This test does not assert primary-key behavior; it aliases current H2 metadata <br>
      * columns so the SQLQuery path continues to exercise ITableFieldMetaInfoCustomizer semantics.
      */
     private static class H2SqlQueryForTest extends H2Query {
@@ -169,20 +153,13 @@ class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
 
     @Test
     void shouldGenerateImportForCustomizedFieldAnnotation(@TempDir Path outputDir) throws IOException {
-        StrategyConfig strategyConfig = new StrategyConfig.Builder()
-            .addInclude("t_simple")
-            .addTablePrefix("t_")
-            .entityBuilder()
-            .tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
-                if ("name".equals(tableField.getColumnName())) {
-                    tableField.addAnnotationAttributesList(new AnnotationAttributes("@Sensitive",
-                        "com.example.security.Sensitive"));
-                }
-            })
-            .mapperBuilder().disable()
-            .serviceBuilder().disable()
-            .controllerBuilder().disable()
-            .build();
+        StrategyConfig strategyConfig = new StrategyConfig.Builder().addInclude("t_simple").addTablePrefix("t_")
+                .entityBuilder().tableFieldMetaInfoCustomizer((tableInfo, tableField) -> {
+                    if ("name".equals(tableField.getColumnName())) {
+                        tableField.addAnnotationAttributesList(
+                                new AnnotationAttributes("@Sensitive", "com.example.security.Sensitive"));
+                    }
+                }).mapperBuilder().disable().serviceBuilder().disable().controllerBuilder().disable().build();
         GlobalConfig globalConfig = globalConfig().disableOpenDir().outputDir(outputDir.toString()).build();
 
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);

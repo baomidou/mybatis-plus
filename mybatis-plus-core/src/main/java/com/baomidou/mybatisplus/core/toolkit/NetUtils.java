@@ -49,17 +49,16 @@ public class NetUtils {
     public InetAddress findFirstNonLoopbackAddress() {
         InetAddress result = null;
         try {
-            for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-                 networkInterfaces.hasMoreElements(); ) {
+            for (Enumeration<NetworkInterface> networkInterfaces = NetworkInterface
+                    .getNetworkInterfaces(); networkInterfaces.hasMoreElements();) {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
                 if (networkInterface.isUp()) {
                     if (!ignoreInterface(networkInterface.getDisplayName())) {
-                        for (Enumeration<InetAddress> addresses = networkInterface
-                            .getInetAddresses(); addresses.hasMoreElements(); ) {
+                        for (Enumeration<InetAddress> addresses = networkInterface.getInetAddresses(); addresses
+                                .hasMoreElements();) {
                             InetAddress address = addresses.nextElement();
-                            if (address instanceof Inet4Address
-                                && !address.isLoopbackAddress()
-                                && isPreferredAddress(address)) {
+                            if (address instanceof Inet4Address && !address.isLoopbackAddress()
+                                    && isPreferredAddress(address)) {
                                 result = address;
                             }
                         }

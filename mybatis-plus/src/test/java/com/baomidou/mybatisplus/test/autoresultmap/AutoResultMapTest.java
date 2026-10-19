@@ -33,12 +33,9 @@ public class AutoResultMapTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "x_name VARCHAR(20) NOT NULL,\n" +
-                "gg VARCHAR(255) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n" + "x_name VARCHAR(20) NOT NULL,\n"
+                        + "gg VARCHAR(255) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
     }
 }

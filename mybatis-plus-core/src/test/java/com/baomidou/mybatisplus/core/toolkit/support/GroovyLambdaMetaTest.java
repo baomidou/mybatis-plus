@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Groovy 脚本中 lambda 代理解析测试。
  * <p>
- * 通过模拟 Groovy MethodClosure 代理结构（无需引入 Groovy 运行时依赖），
+ * 通过模拟 Groovy MethodClosure 代理结构（无需引入 Groovy 运行时依赖）， <br>
  * 验证 {@link GroovyLambdaMeta} 及 {@link LambdaUtils#extract} 的正确性。
  */
 class GroovyLambdaMetaTest {
@@ -36,6 +36,7 @@ class GroovyLambdaMetaTest {
     // ----- mock Groovy delegate (MethodClosure-like) -----
 
     static class MockMethodClosure {
+
         private final String method;
         private final Object owner;
 
@@ -56,6 +57,7 @@ class GroovyLambdaMetaTest {
     // ----- mock Groovy ConvertedClosure-like handler -----
 
     static class MockGroovyHandler implements InvocationHandler {
+
         private final MockMethodClosure delegate;
 
         MockGroovyHandler(String methodName, Class<?> ownerClass) {
@@ -79,16 +81,14 @@ class GroovyLambdaMetaTest {
     @SuppressWarnings("unchecked")
     private static <T> SFunction<T, ?> createGroovyProxy(String methodName, Class<?> ownerClass) {
         MockGroovyHandler handler = new MockGroovyHandler(methodName, ownerClass);
-        return (SFunction<T, ?>) Proxy.newProxyInstance(
-            ownerClass.getClassLoader(),
-            new Class[]{SFunction.class},
-            handler
-        );
+        return (SFunction<T, ?>) Proxy
+                .newProxyInstance(ownerClass.getClassLoader(), new Class[]{SFunction.class}, handler);
     }
 
     // ----- entity for testing -----
 
     static class TestEntity {
+
         private String name;
 
         public String getName() {
@@ -138,11 +138,9 @@ class GroovyLambdaMetaTest {
     void testGroovyLambdaMetaUnsupportedProxyThrows() {
         // A proxy whose handler has no getDelegate() should throw MybatisPlusException
         @SuppressWarnings("unchecked")
-        SFunction<TestEntity, ?> proxy = (SFunction<TestEntity, ?>) Proxy.newProxyInstance(
-            TestEntity.class.getClassLoader(),
-            new Class[]{SFunction.class},
-            (p, m, args) -> null  // plain handler, no getDelegate()
-        );
+        SFunction<TestEntity, ?> proxy = (SFunction<TestEntity, ?>) Proxy
+                .newProxyInstance(TestEntity.class.getClassLoader(), new Class[]{SFunction.class}, (p, m, args) -> null // plain handler, no getDelegate()
+                );
 
         assertThrows(MybatisPlusException.class, () -> new GroovyLambdaMeta((Proxy) proxy));
     }

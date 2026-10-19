@@ -36,7 +36,8 @@ public class MapperProxyMetadata {
 
     public MapperProxyMetadata(MetaObject metaObject) {
         if (!metaObject.hasGetter("mapperInterface") || !metaObject.hasGetter("sqlSession")) {
-            throw new MybatisPlusException("Unable to retrieve the mapperInterface and sqlSession properties from " + metaObject.getOriginalObject());
+            throw new MybatisPlusException("Unable to retrieve the mapperInterface and sqlSession properties from "
+                    + metaObject.getOriginalObject());
         }
         this.mapperInterface = (Class<?>) metaObject.getValue("mapperInterface");
         this.sqlSession = (SqlSession) metaObject.getValue("sqlSession");
@@ -52,11 +53,7 @@ public class MapperProxyMetadata {
 
     @Override
     public String toString() {
-        return "MapperProxy{" +
-            "mapperInterface=" + mapperInterface +
-            ", sqlSession=" + sqlSession +
-            '}';
+        return "MapperProxy{" + "mapperInterface=" + mapperInterface + ", sqlSession=" + sqlSession + '}';
     }
-
 
 }

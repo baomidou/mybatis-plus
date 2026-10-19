@@ -60,6 +60,7 @@ public class AutoGenerator {
     private PackageConfig packageInfo;
     /**
      * 模板 相关配置
+     * 
      * @deprecated 3.5.6 {@link #strategy}
      */
     @Deprecated
@@ -139,7 +140,7 @@ public class AutoGenerator {
      *
      * @param globalConfig 全局配置
      * @return this
-     * @since  3.5.0
+     * @since 3.5.0
      */
     public AutoGenerator global(@NotNull GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;

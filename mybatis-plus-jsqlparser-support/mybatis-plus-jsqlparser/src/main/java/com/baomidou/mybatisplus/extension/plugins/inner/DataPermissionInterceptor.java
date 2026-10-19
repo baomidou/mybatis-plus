@@ -63,7 +63,8 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
 
     @SuppressWarnings("RedundantThrows")
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreDataPermission(ms.getId())) {
             return;
         }
@@ -113,7 +114,7 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
     /**
      * 设置 where 条件
      *
-     * @param plainSelect  查询对象
+     * @param plainSelect 查询对象
      * @param whereSegment 查询条件片段
      */
     protected void setWhere(PlainSelect plainSelect, String whereSegment) {
@@ -149,7 +150,8 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
         }
     }
 
-    protected Expression getUpdateOrDeleteExpression(final Table table, final Expression where, final String whereSegment) {
+    protected Expression getUpdateOrDeleteExpression(final Table table, final Expression where,
+            final String whereSegment) {
         if (dataPermissionHandler == null) {
             return null;
         }

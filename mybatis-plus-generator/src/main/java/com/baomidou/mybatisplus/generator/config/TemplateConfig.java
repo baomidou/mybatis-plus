@@ -102,7 +102,7 @@ public class TemplateConfig {
     /**
      * 当模板赋值为空时进行日志提示打印
      *
-     * @param value        模板值
+     * @param value 模板值
      * @param templateType 模板类型
      */
     private void logger(String value, TemplateType templateType) {
@@ -148,28 +148,28 @@ public class TemplateConfig {
         if (templateTypes != null) {
             for (TemplateType templateType : templateTypes) {
                 switch (templateType) {
-                    case ENTITY:
+                    case ENTITY :
                         this.entity = null;
                         this.entityKt = null;
                         //暂时没其他多的需求,使用一个单独的boolean变量进行支持一下.
                         this.disableEntity = true;
                         break;
-                    case CONTROLLER:
+                    case CONTROLLER :
                         this.controller = null;
                         break;
-                    case MAPPER:
+                    case MAPPER :
                         this.mapper = null;
                         break;
-                    case XML:
+                    case XML :
                         this.xml = null;
                         break;
-                    case SERVICE:
+                    case SERVICE :
                         this.service = null;
                         break;
-                    case SERVICE_IMPL:
+                    case SERVICE_IMPL :
                         this.serviceImpl = null;
                         break;
-                    default:
+                    default :
                 }
             }
         }

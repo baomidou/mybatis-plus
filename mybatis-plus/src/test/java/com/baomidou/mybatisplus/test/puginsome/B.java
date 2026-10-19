@@ -8,6 +8,7 @@ import lombok.Data;
  */
 @Data
 public class B {
+
     private int id;
     private int aId;
     private String name;

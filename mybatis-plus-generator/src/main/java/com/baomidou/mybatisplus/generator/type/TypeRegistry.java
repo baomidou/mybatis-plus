@@ -83,18 +83,18 @@ public class TypeRegistry {
         int typeCode = metaInfo.getJdbcType().TYPE_CODE;
         switch (typeCode) {
             // TODO 需要增加类型处理，尚未补充完整
-            case Types.BIT:
+            case Types.BIT :
                 return getBitType(metaInfo);
-            case Types.DATE:
+            case Types.DATE :
                 return getDateType(metaInfo);
-            case Types.TIME:
+            case Types.TIME :
                 return getTimeType(metaInfo);
-            case Types.DECIMAL:
-            case Types.NUMERIC:
+            case Types.DECIMAL :
+            case Types.NUMERIC :
                 return getNumber(metaInfo);
-            case Types.TIMESTAMP:
+            case Types.TIMESTAMP :
                 return getTimestampType(metaInfo);
-            default:
+            default :
                 return typeMap.getOrDefault(typeCode, defaultType);
         }
     }
@@ -126,13 +126,13 @@ public class TypeRegistry {
         DbColumnType dbColumnType;
         DateType dateType = globalConfig.getDateType();
         switch (dateType) {
-            case SQL_PACK:
+            case SQL_PACK :
                 dbColumnType = DbColumnType.DATE_SQL;
                 break;
-            case TIME_PACK:
+            case TIME_PACK :
                 dbColumnType = DbColumnType.LOCAL_DATE;
                 break;
-            default:
+            default :
                 dbColumnType = DbColumnType.DATE;
         }
         return dbColumnType;

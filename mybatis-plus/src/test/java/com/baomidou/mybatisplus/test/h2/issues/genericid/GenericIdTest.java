@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * 泛型主键问题
+ * 泛型主键问题 <br>
  * https://gitee.com/baomidou/mybatis-plus/issues/I171CQ
  *
  * @author nieqiuqiu

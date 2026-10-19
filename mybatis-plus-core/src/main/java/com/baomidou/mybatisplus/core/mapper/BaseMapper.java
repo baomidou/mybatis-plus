@@ -89,7 +89,9 @@ import java.util.function.BiPredicate;
 
 /**
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
- * <p>这个 Mapper 支持 id 泛型</p>
+ * <p>
+ * 这个 Mapper 支持 id 泛型
+ * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -116,7 +118,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 根据 ID 删除
      *
      * @param useFill 是否填充
-     * @param obj      主键ID或实体
+     * @param obj 主键ID或实体
      * @since 3.5.7
      */
     default int deleteById(Object obj, boolean useFill) {
@@ -128,7 +130,7 @@ public interface BaseMapper<T> extends Mapper<T> {
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "The current table has no primary key.");
             if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()
-                && !tableInfo.getLogicDeleteFieldInfo().isWithUpdateFill()) {
+                    && !tableInfo.getLogicDeleteFieldInfo().isWithUpdateFill()) {
                 T instance = tableInfo.newInstance();
                 tableInfo.setPropertyValue(instance, keyProperty, OgnlOps.convertValue(obj, tableInfo.getKeyType()));
                 return this.deleteById(instance);
@@ -136,7 +138,9 @@ public interface BaseMapper<T> extends Mapper<T> {
         }
         MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(this);
         SqlSession sqlSession = mapperProxyMetadata.getSqlSession();
-        return sqlSession.delete(mapperProxyMetadata.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(), obj);
+        return sqlSession.delete(
+                mapperProxyMetadata.getMapperInterface().getName() + Constants.DOT + SqlMethod.DELETE_BY_ID.getMethod(),
+                obj);
     }
 
     /**
@@ -163,7 +167,6 @@ public interface BaseMapper<T> extends Mapper<T> {
      */
     int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
-
     /**
      * 删除（根据ID或实体 批量删除）
      *
@@ -174,7 +177,6 @@ public interface BaseMapper<T> extends Mapper<T> {
     default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
         return deleteByIds(idList);
     }
-
 
     /**
      * 删除（根据ID或实体 批量删除）
@@ -196,11 +198,13 @@ public interface BaseMapper<T> extends Mapper<T> {
      * </p>
      * <p>
      * 逻辑删除(填充): UPDATE h2user SET delete_user = 'xxx', deleted=1 WHERE id IN ( ? , ? ) AND deleted=0
-     *     <ul>注意:无论参数为id还是实体,填充参数只会以方法追加的et参数为准.<ul/>
+     * <ul>
+     * 注意:无论参数为id还是实体,填充参数只会以方法追加的et参数为准.
+     * <ul/>
      * </p>
      *
      * @param collections 主键ID列表或实体列表(不能为 null 以及 empty)
-     * @param useFill     逻辑删除下是否填充
+     * @param useFill 逻辑删除下是否填充
      * @since 3.5.7
      */
     default int deleteByIds(@Param(Constants.COLL) Collection<?> collections, boolean useFill) {
@@ -219,7 +223,8 @@ public interface BaseMapper<T> extends Mapper<T> {
             params.put(Constants.MP_FILL_ET, tableInfo.newInstance());
         }
         params.put(Constants.COLL, collections);
-        return sqlSession.delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BY_IDS.getMethod(), params);
+        return sqlSession
+                .delete(mapperInterface.getName() + StringPool.DOT + SqlMethod.DELETE_BY_IDS.getMethod(), params);
     }
 
     /**
@@ -232,14 +237,16 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 whereEntity 条件，更新记录
      *
-     * @param entity        实体对象 (set 条件值,可以为 null,当entity为null时,无法进行自动填充)
+     * @param entity 实体对象 (set 条件值,可以为 null,当entity为null时,无法进行自动填充)
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
 
     /**
      * 根据 Wrapper 更新记录
-     * <p>此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}</p>
+     * <p>
+     * 此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}
+     * </p>
      *
      * @param updateWrapper {@link UpdateWrapper} or {@link LambdaUpdateWrapper}
      * @since 3.5.4
@@ -277,20 +284,21 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 查询（根据ID 批量查询）
      *
-     * @param idList        idList 主键ID列表(不能为 null 以及 empty)
+     * @param idList idList 主键ID列表(不能为 null 以及 empty)
      * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.8
      */
     void selectByIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler);
 
     /**
-     * @param idList        idList 主键ID列表(不能为 null 以及 empty)
+     * @param idList idList 主键ID列表(不能为 null 以及 empty)
      * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      * @deprecated 3.5.8
      */
     @Deprecated
-    default void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler) {
+    default void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList,
+            ResultHandler<T> resultHandler) {
         selectByIds(idList, resultHandler);
     }
 
@@ -306,7 +314,7 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 查询（根据 columnMap 条件）
      *
-     * @param columnMap     表字段 map 对象
+     * @param columnMap 表字段 map 对象
      * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
@@ -316,7 +324,9 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录
-     * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
+     * <p>
+     * 查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
@@ -326,10 +336,12 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询一条记录，现在会根据{@code throwEx}参数判断是否抛出异常，如果为false就直接返回一条数据
-     * <p>查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常</p>
+     * <p>
+     * 查询一条记录，例如 qw.last("limit 1") 限制取一条记录, 注意：多条数据会报异常
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @param throwEx      boolean 参数，为true如果存在多个结果直接抛出异常
+     * @param throwEx boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
         List<T> list = this.selectList(queryWrapper);
@@ -338,7 +350,8 @@ public interface BaseMapper<T> extends Mapper<T> {
             return list.get(0);
         } else if (size > 1) {
             if (throwEx) {
-                throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + size);
+                throw new TooManyResultsException(
+                        "Expected one result (or null) to be returned by selectOne(), but found: " + size);
             }
             return list.get(0);
         }
@@ -347,7 +360,9 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 Wrapper 条件，游标方式查询全部记录
-     * <p>注意！需要在事务中 @Transactional 注解方法，或者手动管理 sqlSession 避免会话中断</p>
+     * <p>
+     * 注意！需要在事务中 @Transactional 注解方法，或者手动管理 sqlSession 避免会话中断
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
@@ -381,7 +396,7 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，查询全部记录
      *
-     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
@@ -390,7 +405,7 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件
+     * @param page 分页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @since 3.5.3.2
      */
@@ -398,13 +413,13 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
-     * @param page          分页查询条件
-     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * 
+     * @param page 分页查询条件
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
     void selectList(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
-
 
     /**
      * 根据 Wrapper 条件，查询全部记录
@@ -416,34 +431,39 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 Wrapper 条件，查询全部记录
      *
-     * @param queryWrapper  实体对象封装操作类
+     * @param queryWrapper 实体对象封装操作类
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
-    void selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Map<String, Object>> resultHandler);
+    void selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper,
+            ResultHandler<Map<String, Object>> resultHandler);
 
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件
+     * @param page 分页查询条件
      * @param queryWrapper 实体对象封装操作类
      * @since 3.5.3.2
      */
-    List<Map<String, Object>> selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    List<Map<String, Object>> selectMaps(IPage<? extends Map<String, Object>> page,
+            @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      *
-     * @param page          分页查询条件
-     * @param queryWrapper  实体对象封装操作类
+     * @param page 分页查询条件
+     * @param queryWrapper 实体对象封装操作类
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
-    void selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper, ResultHandler<Map<String, Object>> resultHandler);
+    void selectMaps(IPage<? extends Map<String, Object>> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper,
+            ResultHandler<Map<String, Object>> resultHandler);
 
     /**
      * 根据 Wrapper 条件，查询全部记录
-     * <p>注意： 只返回第一个字段的值</p>
+     * <p>
+     * 注意： 只返回第一个字段的值
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
@@ -451,9 +471,11 @@ public interface BaseMapper<T> extends Mapper<T> {
 
     /**
      * 根据 Wrapper 条件，查询全部记录
-     * <p>注意： 只返回第一个字段的值</p>
+     * <p>
+     * 注意： 只返回第一个字段的值
+     * </p>
      *
-     * @param queryWrapper  实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @param resultHandler 结果处理器 {@link ResultHandler}
      * @since 3.5.4
      */
@@ -462,7 +484,7 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 entity 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件
+     * @param page 分页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     default <P extends IPage<T>> P selectPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
@@ -473,10 +495,11 @@ public interface BaseMapper<T> extends Mapper<T> {
     /**
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      *
-     * @param page         分页查询条件
+     * @param page 分页查询条件
      * @param queryWrapper 实体对象封装操作类
      */
-    default <P extends IPage<Map<String, Object>>> P selectMapsPage(P page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
+    default <P extends IPage<Map<String, Object>>> P selectMapsPage(P page,
+            @Param(Constants.WRAPPER) Wrapper<T> queryWrapper) {
         page.setRecords(selectMaps(page, queryWrapper));
         return page;
     }
@@ -495,9 +518,10 @@ public interface BaseMapper<T> extends Mapper<T> {
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "The current table has no primary key.");
         Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-        return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal)) ? insert(entity) > 0 : updateById(entity) > 0;
+        return StringUtils.checkValNull(idVal) || Objects.isNull(selectById((Serializable) idVal))
+                ? insert(entity) > 0
+                : updateById(entity) > 0;
     }
-
 
     /**
      * 插入（批量）
@@ -513,7 +537,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 插入（批量）
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      * @since 3.5.7
      */
     default List<BatchResult> insert(Collection<T> entityList, int batchSize) {
@@ -537,7 +561,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 根据ID 批量更新
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      * @since 3.5.7
      */
     default List<BatchResult> updateById(Collection<T> entityList, int batchSize) {
@@ -561,7 +585,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 批量修改或插入
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      * @since 3.5.7
      */
     default List<BatchResult> insertOrUpdate(Collection<T> entityList, int batchSize) {
@@ -572,7 +596,8 @@ public interface BaseMapper<T> extends Mapper<T> {
         Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "The current table has no primary key.");
-        String statement = mapperProxyMetadata.getMapperInterface().getName() + StringPool.DOT + SqlMethod.SELECT_BY_ID.getMethod();
+        String statement = mapperProxyMetadata.getMapperInterface().getName() + StringPool.DOT
+                + SqlMethod.SELECT_BY_ID.getMethod();
         return insertOrUpdate(entityList, (sqlSession, entity) -> {
             Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
             return StringUtils.checkValNull(idVal) || CollectionUtils.isEmpty(sqlSession.selectList(statement, entity));
@@ -585,7 +610,8 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param entityList 实体对象集合
      * @since 3.5.7
      */
-    default List<BatchResult> insertOrUpdate(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate) {
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList,
+            BiPredicate<BatchSqlSession, T> insertPredicate) {
         return insertOrUpdate(entityList, insertPredicate, Constants.DEFAULT_BATCH_SIZE);
     }
 
@@ -593,14 +619,16 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 批量修改或插入
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      * @since 3.5.7
      */
-    default List<BatchResult> insertOrUpdate(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate, int batchSize) {
+    default List<BatchResult> insertOrUpdate(Collection<T> entityList, BiPredicate<BatchSqlSession, T> insertPredicate,
+            int batchSize) {
         MapperProxyMetadata mapperProxyMetadata = MybatisUtils.getMapperProxy(this);
         MybatisBatch.Method<T> method = new MybatisBatch.Method<>(mapperProxyMetadata.getMapperInterface());
         SqlSessionFactory sqlSessionFactory = MybatisUtils.getSqlSessionFactory(mapperProxyMetadata.getSqlSession());
-        return MybatisBatchUtils.saveOrUpdate(sqlSessionFactory, entityList, method.insert(), insertPredicate, method.updateById(), batchSize);
+        return MybatisBatchUtils.saveOrUpdate(
+                sqlSessionFactory, entityList, method.insert(), insertPredicate, method.updateById(), batchSize);
     }
 
 }

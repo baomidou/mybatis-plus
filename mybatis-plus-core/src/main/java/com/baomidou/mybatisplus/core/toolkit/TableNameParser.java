@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  * <p>
  * <a href="https://github.com/mnadeem/sql-table-name-parser">sql-table-name-parser</a>
  * <p>
- * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well.
+ * Ultra light, Ultra fast parser to extract table name out SQLs, supports oracle dialect SQLs as well. <br>
  * USE: new TableNameParser(sql).tables()
  *
  * @author Nadeem Mohammad, hcl
@@ -57,7 +57,8 @@ public final class TableNameParser {
     private static final String KEYWORD_STRAIGHT_JOIN = "straight_join";
     private static final String KEYWORD_DUPLICATE = "duplicate";
 
-    private static final List<String> concerned = Arrays.asList(KEYWORD_TABLE, KEYWORD_INTO, KEYWORD_JOIN, KEYWORD_USING, KEYWORD_UPDATE, KEYWORD_STRAIGHT_JOIN);
+    private static final List<String> concerned = Arrays
+            .asList(KEYWORD_TABLE, KEYWORD_INTO, KEYWORD_JOIN, KEYWORD_USING, KEYWORD_UPDATE, KEYWORD_STRAIGHT_JOIN);
     private static final List<String> ignored = Arrays.asList(StringPool.LEFT_BRACKET, TOKEN_SET, TOKEN_OF, TOKEN_DUAL);
 
     /**
@@ -65,21 +66,21 @@ public final class TableNameParser {
      *
      * @since 3.5.11
      */
-    private static final Set<String> INDEX_TYPES = new HashSet<>(Arrays.asList("UNIQUE", "FULLTEXT", "SPATIAL", "CLUSTERED", "NONCLUSTERED"));
+    private static final Set<String> INDEX_TYPES = new HashSet<>(
+            Arrays.asList("UNIQUE", "FULLTEXT", "SPATIAL", "CLUSTERED", "NONCLUSTERED"));
 
     /**
      * 该表达式会匹配 SQL 中不是 SQL TOKEN 的部分，比如换行符，注释信息，结尾的 {@code ;} 等。
      * <p>
-     * 排除的项目包括：
-     * 1、以 -- 开头的注释信息
-     * 2、;
-     * 3、空白字符
-     * 4、使用 /* * / 注释的信息
+     * 排除的项目包括： <br>
+     * 1、以 -- 开头的注释信息 <br>
+     * 2、; <br>
+     * 3、空白字符 <br>
+     * 4、使用 /* * / 注释的信息 <br>
      * 5、把 ,() 也要分出来
      */
-    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern.compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)"
-        + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))"
-    );
+    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern
+            .compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)" + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))");
 
     private final List<SqlToken> tokens;
 
@@ -95,7 +96,7 @@ public final class TableNameParser {
     /**
      * 接受一个新的访问者，并访问当前 SQL 的表名称
      * <p>
-     * 现在我们改成了访问者模式，不在对以前的 SQL 做改动
+     * 现在我们改成了访问者模式，不在对以前的 SQL 做改动 <br>
      * 同时，你可以方便的获得表名位置的索引
      *
      * @param visitor 访问者
@@ -107,7 +108,7 @@ public final class TableNameParser {
             visitNameToken(safeGetToken(index + 1), visitor);
         } else if (isCreateIndex(first, tokens, index)) {
             String value = tokens.get(index + 4).getValue();
-            if("ON".equalsIgnoreCase(value)) {
+            if ("ON".equalsIgnoreCase(value)) {
                 visitNameToken(safeGetToken(index + 5), visitor);
             } else {
                 visitNameToken(safeGetToken(index + 4), visitor);
@@ -124,8 +125,7 @@ public final class TableNameParser {
                 } else if (concerned.contains(current.toLowerCase())) {
                     if (hasMoreTokens(tokens, index)) {
                         SqlToken next = tokens.get(index++);
-                        if (TOKEN_UPDATE.equalsIgnoreCase(current)
-                            && IGNORE.equalsIgnoreCase(next.getValue())) {
+                        if (TOKEN_UPDATE.equalsIgnoreCase(current) && IGNORE.equalsIgnoreCase(next.getValue())) {
                             next = tokens.get(index++);
                         }
                         visitNameToken(next, visitor);
@@ -150,6 +150,7 @@ public final class TableNameParser {
      * 表名访问器
      */
     public interface TableNameVisitor {
+
         /**
          * @param name 表示表名称的 token
          */
@@ -183,8 +184,8 @@ public final class TableNameParser {
      * 如果是 DELETE 后面紧跟的不是 FROM 或者 * ,则 返回 true
      *
      * @param current 当前的 token
-     * @param tokens  token 列表
-     * @param index   索引
+     * @param tokens token 列表
+     * @param index 索引
      * @return 判断是不是 Oracle 特殊的删除手法
      */
     private static boolean isOracleSpecialDelete(String current, List<SqlToken> tokens, int index) {
@@ -224,7 +225,7 @@ public final class TableNameParser {
 
     /**
      * @param current 当前token
-     * @param index   索引
+     * @param index 索引
      * @return 判断是否是mysql的特殊语法 on duplicate key update
      */
     private boolean isOnDuplicateKeyUpdate(String current, int index) {
@@ -269,7 +270,8 @@ public final class TableNameParser {
         }
     }
 
-    private static void processNonAliasedMultiTables(List<SqlToken> tokens, int index, String nextToken, TableNameVisitor visitor) {
+    private static void processNonAliasedMultiTables(List<SqlToken> tokens, int index, String nextToken,
+            TableNameVisitor visitor) {
         while (nextToken.equals(StringPool.COMMA)) {
             visitNameToken(tokens.get(index++), visitor);
             if (hasMoreTokens(tokens, index)) {
@@ -280,7 +282,8 @@ public final class TableNameParser {
         }
     }
 
-    private static void processAliasedMultiTables(List<SqlToken> tokens, int index, SqlToken current, TableNameVisitor visitor) {
+    private static void processAliasedMultiTables(List<SqlToken> tokens, int index, SqlToken current,
+            TableNameVisitor visitor) {
         String nextNextToken = null;
         if (hasMoreTokens(tokens, index)) {
             nextNextToken = tokens.get(index++).getValue();
@@ -338,6 +341,7 @@ public final class TableNameParser {
      * SQL 词
      */
     public static class SqlToken implements Comparable<SqlToken> {
+
         private final int start;
         private final int end;
         private final String value;

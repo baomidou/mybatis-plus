@@ -72,7 +72,7 @@ public class GlobalConfigUtils {
      * <p/>
      *
      * @param configuration Mybatis 容器配置对象
-     * @param globalConfig  全局配置
+     * @param globalConfig 全局配置
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfig globalConfig) {
         Assert.isTrue(configuration != null && globalConfig != null, "Error: Could not setGlobalConfig");

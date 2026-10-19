@@ -37,9 +37,9 @@ class H2StudentMapperTest extends BaseTest {
     @Test
     @Order(1)
     void crudTest() {
-//        H2Student stu = new H2Student();
-//        stu.setGrade(GradeEnum.HIGH);
-//        studentMapper.update(stu, null);
+        //        H2Student stu = new H2Student();
+        //        stu.setGrade(GradeEnum.HIGH);
+        //        studentMapper.update(stu, null);
         H2Student student = new H2Student();
         Long id = 10086L;
         student.setId(id);
@@ -97,7 +97,8 @@ class H2StudentMapperTest extends BaseTest {
 
     @Test
     void testIn() {
-        LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery().in(H2Student::getName, Arrays.asList("a", "b"));
+        LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery()
+                .in(H2Student::getName, Arrays.asList("a", "b"));
         studentMapper.selectList(wrapper);
     }
 

@@ -21,7 +21,8 @@ class EnumTest extends BaseDbTest<EntityMapper> {
     void test() {
         Long id = 1L;
         doTestAutoCommit(m -> {
-            Entity entity = new Entity().setId(id).setEnumInt(EnumInt.ONE).setEnumStr(EnumStr.TWO).setEnumOrdinal(EnumOrdinal.TWO);
+            Entity entity = new Entity().setId(id).setEnumInt(EnumInt.ONE).setEnumStr(EnumStr.TWO)
+                    .setEnumOrdinal(EnumOrdinal.TWO);
             int insert = m.insert(entity);
             assertThat(insert).as("插入成功").isEqualTo(1);
         });
@@ -52,13 +53,10 @@ class EnumTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "enum_int integer NULL DEFAULT NULL,\n" +
-                "enum_str VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "enum_ordinal integer NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
+                        + "enum_int integer NULL DEFAULT NULL,\n" + "enum_str VARCHAR(30) NULL DEFAULT NULL,\n"
+                        + "enum_ordinal integer NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
     }
 }

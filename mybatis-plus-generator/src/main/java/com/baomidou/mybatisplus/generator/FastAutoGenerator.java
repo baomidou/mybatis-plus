@@ -60,6 +60,7 @@ public final class FastAutoGenerator {
 
     /**
      * 模板配置 Builder
+     * 
      * @deprecated 3.5.6 {@link #strategyConfigBuilder}
      */
     @Deprecated
@@ -119,7 +120,8 @@ public final class FastAutoGenerator {
         return this;
     }
 
-    public FastAutoGenerator dataSourceConfig(BiConsumer<Function<String, String>, DataSourceConfig.Builder> biConsumer) {
+    public FastAutoGenerator dataSourceConfig(
+            BiConsumer<Function<String, String>, DataSourceConfig.Builder> biConsumer) {
         biConsumer.accept(this::scannerNext, this.dataSourceConfigBuilder);
         return this;
     }
@@ -225,17 +227,17 @@ public final class FastAutoGenerator {
 
     public void execute() {
         new AutoGenerator(this.dataSourceConfigBuilder.build())
-            // 全局配置
-            .global(this.globalConfigBuilder.build())
-            // 包配置
-            .packageInfo(this.packageConfigBuilder.build())
-            // 策略配置
-            .strategy(this.strategyConfigBuilder.build())
-            // 注入配置
-            .injection(this.injectionConfigBuilder.build())
-            // 模板配置
-            .template(this.templateConfigBuilder.build())
-            // 执行
-            .execute(this.templateEngine);
+                // 全局配置
+                .global(this.globalConfigBuilder.build())
+                // 包配置
+                .packageInfo(this.packageConfigBuilder.build())
+                // 策略配置
+                .strategy(this.strategyConfigBuilder.build())
+                // 注入配置
+                .injection(this.injectionConfigBuilder.build())
+                // 模板配置
+                .template(this.templateConfigBuilder.build())
+                // 执行
+                .execute(this.templateEngine);
     }
 }

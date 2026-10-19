@@ -9,10 +9,13 @@ public class NamingStrategyTest {
 
     @Test
     void removePrefixTest() {
-        Assertions.assertEquals("_ab", NamingStrategy.removePrefix("test_ab", new HashSet<>() {{
-            add("t_");
-            add("test");
-        }}));
+        Assertions.assertEquals("_ab", NamingStrategy.removePrefix("test_ab", new HashSet<>() {
+
+            {
+                add("t_");
+                add("test");
+            }
+        }));
     }
 
     @Test

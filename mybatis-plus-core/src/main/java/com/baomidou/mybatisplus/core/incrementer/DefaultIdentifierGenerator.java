@@ -53,10 +53,14 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
 
     /**
      * 使用指定的工作机器 ID 和数据中心 ID 初始化雪花 ID 生成器
-     * <p>同一 JVM 内 workerId 与 dataCenterId 相同的生成器共享同一个序列, 避免生成重复 ID。</p>
-     * <p>生产多实例部署时，请确保 workerId 与 dataCenterId 的组合全局唯一。</p>
+     * <p>
+     * 同一 JVM 内 workerId 与 dataCenterId 相同的生成器共享同一个序列, 避免生成重复 ID。
+     * </p>
+     * <p>
+     * 生产多实例部署时，请确保 workerId 与 dataCenterId 的组合全局唯一。
+     * </p>
      *
-     * @param workerId     工作机器 ID，取值范围 0-31
+     * @param workerId 工作机器 ID，取值范围 0-31
      * @param dataCenterId 数据中心 ID，取值范围 0-31
      */
     public DefaultIdentifierGenerator(long workerId, long dataCenterId) {
@@ -69,14 +73,17 @@ public class DefaultIdentifierGenerator implements IdentifierGenerator {
 
     /**
      * 获取固定的生成器实例
-     * <p>当无法通过网卡信息获取时，使用固定的一个主键生成器实例.</p>
+     * <p>
+     * 当无法通过网卡信息获取时，使用固定的一个主键生成器实例.
+     * </p>
      *
      * @param log 日志对象
      * @return 主键生成器
      * @since 3.5.13
      */
     public static IdentifierGenerator getFixedIdentifierGenerator(Log log) {
-        log.warn("Unable to obtain correct IP address information, the machine ID and serial number of the fixed machine will be used to generate the primary key.");
+        log.warn(
+                "Unable to obtain correct IP address information, the machine ID and serial number of the fixed machine will be used to generate the primary key.");
         return new DefaultIdentifierGenerator(1, 1);
     }
 

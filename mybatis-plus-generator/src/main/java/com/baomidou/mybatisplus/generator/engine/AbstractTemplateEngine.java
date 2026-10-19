@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-
 /**
  * 模板引擎抽象类
  *
@@ -61,20 +60,24 @@ public abstract class AbstractTemplateEngine {
      * 输出自定义模板文件
      *
      * @param customFiles 自定义模板文件列表
-     * @param tableInfo   表信息
-     * @param objectMap   渲染数据
+     * @param tableInfo 表信息
+     * @param objectMap 渲染数据
      * @since 3.5.3
      */
-    protected void outputCustomFile(@NotNull List<CustomFile> customFiles, @NotNull TableInfo tableInfo, @NotNull Map<String, Object> objectMap) {
+    protected void outputCustomFile(@NotNull List<CustomFile> customFiles, @NotNull TableInfo tableInfo,
+            @NotNull Map<String, Object> objectMap) {
         String entityName = tableInfo.getEntityName();
         String parentPath = getPathInfo(OutputFile.parent);
         customFiles.forEach(file -> {
             String filePath = StringUtils.isNotBlank(file.getFilePath()) ? file.getFilePath() : parentPath;
             if (StringUtils.isNotBlank(file.getPackageName())) {
-                filePath = filePath + File.separator + file.getPackageName().replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
+                filePath = filePath + File.separator
+                        + file.getPackageName().replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
             }
             Function<TableInfo, String> formatNameFunction = file.getFormatNameFunction();
-            String fileName = filePath + File.separator + (null != formatNameFunction ? formatNameFunction.apply(tableInfo) : entityName) + file.getFileName();
+            String fileName = filePath + File.separator
+                    + (null != formatNameFunction ? formatNameFunction.apply(tableInfo) : entityName)
+                    + file.getFileName();
             outputFile(new File(fileName), objectMap, file.getTemplatePath(), file.isFileOverride());
         });
     }
@@ -93,7 +96,10 @@ public abstract class AbstractTemplateEngine {
         GlobalConfig globalConfig = configBuilder.getGlobalConfig();
         if (entity.isGenerate()) {
             String entityFile = String.format((entityPath + File.separator + "%s" + suffixJavaOrKt()), entityName);
-            outputFile(getOutputFile(entityFile, OutputFile.entity), objectMap, templateFilePath(globalConfig.isKotlin() ? entity.getKotlinTemplate() : entity.getJavaTemplate()), getConfigBuilder().getStrategyConfig().entity().isFileOverride());
+            outputFile(
+                    getOutputFile(entityFile, OutputFile.entity), objectMap,
+                    templateFilePath(globalConfig.isKotlin() ? entity.getKotlinTemplate() : entity.getJavaTemplate()),
+                    getConfigBuilder().getStrategyConfig().entity().isFileOverride());
         }
     }
 
@@ -114,14 +120,22 @@ public abstract class AbstractTemplateEngine {
         String mapperPath = getPathInfo(OutputFile.mapper);
         Mapper mapper = this.getConfigBuilder().getStrategyConfig().mapper();
         if (mapper.isGenerateMapper()) {
-            String mapperFile = String.format((mapperPath + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
-            outputFile(getOutputFile(mapperFile, OutputFile.mapper), objectMap, templateFilePath(mapper.getMapperTemplatePath()), getConfigBuilder().getStrategyConfig().mapper().isFileOverride());
+            String mapperFile = String
+                    .format((mapperPath + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
+            outputFile(
+                    getOutputFile(mapperFile, OutputFile.mapper), objectMap,
+                    templateFilePath(mapper.getMapperTemplatePath()),
+                    getConfigBuilder().getStrategyConfig().mapper().isFileOverride());
         }
         // MpMapper.xml
         String xmlPath = getPathInfo(OutputFile.xml);
         if (mapper.isGenerateMapperXml()) {
-            String xmlFile = String.format((xmlPath + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-            outputFile(getOutputFile(xmlFile, OutputFile.xml), objectMap, templateFilePath(mapper.getMapperXmlTemplatePath()), getConfigBuilder().getStrategyConfig().mapper().isFileOverride());
+            String xmlFile = String
+                    .format((xmlPath + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
+            outputFile(
+                    getOutputFile(xmlFile, OutputFile.xml), objectMap,
+                    templateFilePath(mapper.getMapperXmlTemplatePath()),
+                    getConfigBuilder().getStrategyConfig().mapper().isFileOverride());
         }
     }
 
@@ -139,14 +153,22 @@ public abstract class AbstractTemplateEngine {
         Service service = this.getConfigBuilder().getStrategyConfig().service();
         if (service.isGenerateService()) {
             String servicePath = getPathInfo(OutputFile.service);
-            String serviceFile = String.format((servicePath + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
-            outputFile(getOutputFile(serviceFile, OutputFile.service), objectMap, templateFilePath(service.getServiceTemplate()), getConfigBuilder().getStrategyConfig().service().isFileOverride());
+            String serviceFile = String
+                    .format((servicePath + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
+            outputFile(
+                    getOutputFile(serviceFile, OutputFile.service), objectMap,
+                    templateFilePath(service.getServiceTemplate()),
+                    getConfigBuilder().getStrategyConfig().service().isFileOverride());
         }
         // MpServiceImpl.java
         String serviceImplPath = getPathInfo(OutputFile.serviceImpl);
         if (service.isGenerateServiceImpl()) {
-            String implFile = String.format((serviceImplPath + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
-            outputFile(getOutputFile(implFile, OutputFile.serviceImpl), objectMap, templateFilePath(service.getServiceImplTemplate()), getConfigBuilder().getStrategyConfig().service().isFileOverride());
+            String implFile = String.format(
+                    (serviceImplPath + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
+            outputFile(
+                    getOutputFile(implFile, OutputFile.serviceImpl), objectMap,
+                    templateFilePath(service.getServiceImplTemplate()),
+                    getConfigBuilder().getStrategyConfig().service().isFileOverride());
         }
     }
 
@@ -163,21 +185,26 @@ public abstract class AbstractTemplateEngine {
         String controllerPath = getPathInfo(OutputFile.controller);
         if (controller.isGenerate()) {
             String entityName = tableInfo.getEntityName();
-            String controllerFile = String.format((controllerPath + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
-            outputFile(getOutputFile(controllerFile, OutputFile.controller), objectMap, templateFilePath(controller.getTemplatePath()), getConfigBuilder().getStrategyConfig().controller().isFileOverride());
+            String controllerFile = String.format(
+                    (controllerPath + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
+            outputFile(
+                    getOutputFile(controllerFile, OutputFile.controller), objectMap,
+                    templateFilePath(controller.getTemplatePath()),
+                    getConfigBuilder().getStrategyConfig().controller().isFileOverride());
         }
     }
 
     /**
      * 输出文件
      *
-     * @param file         文件
-     * @param objectMap    渲染信息
+     * @param file 文件
+     * @param objectMap 渲染信息
      * @param templatePath 模板路径
      * @param fileOverride 是否覆盖已有文件
      * @since 3.5.2
      */
-    protected void outputFile(@NotNull File file, @NotNull Map<String, Object> objectMap, @NotNull String templatePath, boolean fileOverride) {
+    protected void outputFile(@NotNull File file, @NotNull Map<String, Object> objectMap, @NotNull String templatePath,
+            boolean fileOverride) {
         if (isCreate(file, fileOverride)) {
             try {
                 // 全局判断【默认】
@@ -258,34 +285,36 @@ public abstract class AbstractTemplateEngine {
     /**
      * 将模板转化成为字符串
      *
-     * @param objectMap      渲染对象 MAP 信息
-     * @param templateName   模板名称
+     * @param objectMap 渲染对象 MAP 信息
+     * @param templateName 模板名称
      * @param templateString 模板字符串
      * @since 3.5.0
      */
-    public abstract String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception;
+    public abstract String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName,
+            @NotNull String templateString) throws Exception;
 
     /**
      * 将模板转化成为文件
      *
-     * @param objectMap    渲染对象 MAP 信息
+     * @param objectMap 渲染对象 MAP 信息
      * @param templatePath 模板文件
-     * @param outputFile   文件生成的目录
+     * @param outputFile 文件生成的目录
      * @throws Exception 异常
      * @since 3.5.0
      */
-    public abstract void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception;
+    public abstract void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath,
+            @NotNull File outputFile) throws Exception;
 
     /**
      * 打开输出目录
      */
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
-        if(StringUtils.isBlank(outDir)){
+        if (StringUtils.isBlank(outDir)) {
             LOGGER.warn("The output directory is not configured");
             return;
         }
-        if(!new File(outDir).exists()){
+        if (!new File(outDir).exists()) {
             LOGGER.warn("The output directory [{}] does not exist", outDir);
             return;
         }
@@ -301,7 +330,7 @@ public abstract class AbstractTemplateEngine {
     /**
      * 渲染对象 MAP 信息
      *
-     * @param config    配置信息
+     * @param config 配置信息
      * @param tableInfo 表信息对象
      * @return ignore
      */
@@ -354,14 +383,16 @@ public abstract class AbstractTemplateEngine {
     /**
      * 检查文件是否创建文件
      *
-     * @param file         文件
+     * @param file 文件
      * @param fileOverride 是否覆盖已有文件
      * @return 是否创建文件
      * @since 3.5.2
      */
     protected boolean isCreate(@NotNull File file, boolean fileOverride) {
         if (file.exists() && !fileOverride) {
-            LOGGER.warn("File [{}] already exists. Overwrite mode is disabled. Enable this feature in the policy settings", file.getName());
+            LOGGER.warn(
+                    "File [{}] already exists. Overwrite mode is disabled. Enable this feature in the policy settings",
+                    file.getName());
         }
         return !file.exists() || fileOverride;
     }

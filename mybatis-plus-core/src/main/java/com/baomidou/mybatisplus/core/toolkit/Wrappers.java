@@ -54,7 +54,7 @@ public final class Wrappers {
      * 获取 QueryWrapper&lt;T&gt;
      *
      * @param entity 实体类
-     * @param <T>    实体类泛型
+     * @param <T> 实体类泛型
      * @return QueryWrapper&lt;T&gt;
      */
     public static <T> QueryWrapper<T> query(T entity) {
@@ -65,7 +65,7 @@ public final class Wrappers {
      * 获取 QueryWrapper&lt;T&gt;
      *
      * @param entityClass 实体类class
-     * @param <T>    实体类泛型
+     * @param <T> 实体类泛型
      * @return QueryWrapper&lt;T&gt;
      */
     public static <T> QueryWrapper<T> query(Class<T> entityClass) {
@@ -86,7 +86,7 @@ public final class Wrappers {
      * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param entity 实体类
-     * @param <T>    实体类泛型
+     * @param <T> 实体类泛型
      * @return LambdaQueryWrapper&lt;T&gt;
      */
     public static <T> LambdaQueryWrapper<T> lambdaQuery(T entity) {
@@ -97,7 +97,7 @@ public final class Wrappers {
      * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param entityClass 实体类class
-     * @param <T>         实体类泛型
+     * @param <T> 实体类泛型
      * @return LambdaQueryWrapper&lt;T&gt;
      * @since 3.3.1
      */
@@ -119,7 +119,7 @@ public final class Wrappers {
      * 获取 UpdateWrapper&lt;T&gt;
      *
      * @param entity 实体类
-     * @param <T>    实体类泛型
+     * @param <T> 实体类泛型
      * @return UpdateWrapper&lt;T&gt;
      */
     public static <T> UpdateWrapper<T> update(T entity) {
@@ -140,7 +140,7 @@ public final class Wrappers {
      * 获取 LambdaUpdateWrapper&lt;T&gt;
      *
      * @param entity 实体类
-     * @param <T>    实体类泛型
+     * @param <T> 实体类泛型
      * @return LambdaUpdateWrapper&lt;T&gt;
      */
     public static <T> LambdaUpdateWrapper<T> lambdaUpdate(T entity) {
@@ -151,7 +151,7 @@ public final class Wrappers {
      * 获取 LambdaUpdateWrapper&lt;T&gt;
      *
      * @param entityClass 实体类class
-     * @param <T>         实体类泛型
+     * @param <T> 实体类泛型
      * @return LambdaUpdateWrapper&lt;T&gt;
      * @since 3.3.1
      */

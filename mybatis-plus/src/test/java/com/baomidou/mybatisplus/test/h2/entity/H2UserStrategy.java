@@ -61,7 +61,6 @@ public class H2UserStrategy extends SuperEntity {
     @TableLogic
     private Integer deleted;
 
-
     public H2UserStrategy() {
 
     }
@@ -109,12 +108,7 @@ public class H2UserStrategy extends SuperEntity {
 
     @Override
     public String toString() {
-        return "h2user:{name=" + name + "," +
-            "age=" + age + "," +
-            "price=" + price + "," +
-            "testType=" + testType + "," +
-            "desc=" + desc + "," +
-            "testDate=" + testDate + "," +
-            "version=" + version;
+        return "h2user:{name=" + name + "," + "age=" + age + "," + "price=" + price + "," + "testType=" + testType + ","
+                + "desc=" + desc + "," + "testDate=" + testDate + "," + "version=" + version;
     }
 }

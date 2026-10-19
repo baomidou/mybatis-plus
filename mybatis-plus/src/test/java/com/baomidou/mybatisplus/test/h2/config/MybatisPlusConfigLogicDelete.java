@@ -37,21 +37,22 @@ import javax.sql.DataSource;
 public class MybatisPlusConfigLogicDelete {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfig globalConfig) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader,
+            GlobalConfig globalConfig) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
-//        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config-object-factory.xml"));
+        //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config-object-factory.xml"));
         sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.h2.entity.persistent");
         MybatisConfiguration configuration = new MybatisConfiguration();
-//        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-//        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        //        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /*
          * 下划线转驼峰开启
          */
         configuration.setMapUnderscoreToCamelCase(true);
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
-        configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
+        configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class); //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
 
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
@@ -65,12 +66,14 @@ public class MybatisPlusConfigLogicDelete {
              * 测试注入自定义方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration,
+                    Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
-                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
-                    || t.isLogicDelete() || t.getProperty().equals("version"))));
+                methodList.add(
+                        new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE || t.isLogicDelete()
+                                || t.getProperty().equals("version"))));
                 return methodList;
             }
         });
@@ -81,11 +84,9 @@ public class MybatisPlusConfigLogicDelete {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setEnableSqlRunner(true)
-            .setDbConfig(new GlobalConfig.DbConfig()
-                .setLogicDeleteValue("NOW()")
-                .setLogicNotDeleteValue("NULL")
-                .setIdType(IdType.ASSIGN_ID));
+        conf.setEnableSqlRunner(true).setDbConfig(
+                new GlobalConfig.DbConfig().setLogicDeleteValue("NOW()").setLogicNotDeleteValue("NULL")
+                        .setIdType(IdType.ASSIGN_ID));
         return conf;
     }
 }

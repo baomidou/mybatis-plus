@@ -30,13 +30,14 @@ public abstract class AbstractRepository<M extends BaseMapper<T>, T> implements 
     @Override
     public Class<T> getEntityClass() {
         if (this.entityClass == null) {
-            this.entityClass = (Class<T>) GenericTypeUtils.resolveTypeArguments(this.getMapperClass(), BaseMapper.class)[0];
+            this.entityClass = (Class<T>) GenericTypeUtils
+                    .resolveTypeArguments(this.getMapperClass(), BaseMapper.class)[0];
         }
         return this.entityClass;
     }
 
     /**
-     *  @see #getMapperClass()
+     * @see #getMapperClass()
      */
     private Class<M> mapperClass;
 
@@ -96,23 +97,24 @@ public abstract class AbstractRepository<M extends BaseMapper<T>, T> implements 
     /**
      * 执行批量操作
      *
-     * @param list      数据集合
+     * @param list 数据集合
      * @param batchSize 批量大小
      * @param execBiFunc 执行函数
-     * @param <E>       泛型
+     * @param <E> 泛型
      * @return 操作结果
      * @since 3.3.1
      */
-    protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiFunction<SqlSession, E, Integer> execBiFunc) {
+    protected <E> boolean executeBatch(Collection<E> list, int batchSize,
+            BiFunction<SqlSession, E, Integer> execBiFunc) {
         return SqlHelper.executeBatch(getSqlSessionFactory(), this.log, list, batchSize, execBiFunc);
     }
 
     /**
      * 执行批量操作（默认批次提交数量{@link IRepository#DEFAULT_BATCH_SIZE}）
      *
-     * @param list     数据集合
+     * @param list 数据集合
      * @param execBiFunc 执行函数
-     * @param <E>      泛型
+     * @param <E> 泛型
      * @return 操作结果
      * @since 3.3.1
      */

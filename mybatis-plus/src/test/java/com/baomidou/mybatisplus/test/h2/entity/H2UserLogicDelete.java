@@ -20,14 +20,14 @@ import java.util.Date;
 public class H2UserLogicDelete {
 
     /**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 2043176352335589747L;
+     * serialVersionUID
+     */
+    private static final long serialVersionUID = 2043176352335589747L;
 
     @TableId
     private Long testId;
 
-	/* 测试忽略验证 */
+    /* 测试忽略验证 */
     private String name;
 
     private AgeEnum age;
@@ -58,7 +58,6 @@ public class H2UserLogicDelete {
 
     @TableLogic
     private Date lastUpdatedDt;
-
 
     public H2UserLogicDelete() {
 
@@ -107,12 +106,7 @@ public class H2UserLogicDelete {
 
     @Override
     public String toString() {
-        return "h2user:{name=" + name + "," +
-            "age=" + age + "," +
-            "price=" + price + "," +
-            "testType=" + testType + "," +
-            "desc=" + desc + "," +
-            "testDate=" + testDate + "," +
-            "version=" + version;
+        return "h2user:{name=" + name + "," + "age=" + age + "," + "price=" + price + "," + "testType=" + testType + ","
+                + "desc=" + desc + "," + "testDate=" + testDate + "," + "version=" + version;
     }
 }

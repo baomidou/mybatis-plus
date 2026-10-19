@@ -90,6 +90,7 @@ public class FillTest extends BaseDbTest<FillMapper> {
     protected GlobalConfig globalConfig() {
         GlobalConfig globalConfig = super.globalConfig();
         globalConfig.setMetaObjectHandler(new MetaObjectHandler() {
+
             @Override
             public void insertFill(MetaObject metaObject) {
                 var entity = (FillEntity) metaObject.getOriginalObject();
@@ -110,10 +111,9 @@ public class FillTest extends BaseDbTest<FillMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists t_fill", "CREATE TABLE IF NOT EXISTS t_fill (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists t_fill", "CREATE TABLE IF NOT EXISTS t_fill (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
 }

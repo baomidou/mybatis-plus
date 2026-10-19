@@ -43,8 +43,8 @@ public class SelectCount extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        String sql = SqlMethod.SELECT_COUNT.format(sqlFirst(), sqlCount(), tableInfo.getTableName(),
-            sqlWhereEntityWrapper(true, tableInfo), sqlComment());
+        String sql = SqlMethod.SELECT_COUNT.format(
+                sqlFirst(), sqlCount(), tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Long.class);
     }

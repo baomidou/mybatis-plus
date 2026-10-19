@@ -15,6 +15,7 @@ class OgnlTest {
 
     @Data
     private static class Bean {
+
         private String name;
         private Map<String, Object> properties;
     }

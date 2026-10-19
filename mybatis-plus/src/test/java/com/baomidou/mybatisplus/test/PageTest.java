@@ -73,7 +73,6 @@ class PageTest {
         assertPage(page);
     }
 
-
     @Test
     void testPageDtoToJson() throws JsonProcessingException {
         var page = new PageDTO<>(1, 10, 100);
@@ -110,16 +109,16 @@ class PageTest {
         assertPageDto(page);
 
         page = new PageDTO<>(1, 10, 100);
-        page.setOrders(OrderItem.descs("a","b"));
+        page.setOrders(OrderItem.descs("a", "b"));
         assertPageDto(page);
 
         page = new PageDTO<>(1, 10, 100);
-        page.setOrders(OrderItem.ascs("a","b"));
+        page.setOrders(OrderItem.ascs("a", "b"));
         assertPageDto(page);
 
         page = new PageDTO<>(1, 10, 100);
         page.setRecords(List.of("1", "2", "3"));
-        page.setOrders(OrderItem.ascs("a","b"));
+        page.setOrders(OrderItem.ascs("a", "b"));
         assertPageDto(page);
 
     }
@@ -137,15 +136,11 @@ class PageTest {
 
     private <T extends IPage<?>> List<T> toConvert(T source, Class<T> tClass) throws JsonProcessingException {
         return List.of(
-            objectMapper.readValue(objectMapper.writeValueAsString(source), tClass),
-            gson.fromJson(gson.toJson(source), tClass),
-            JSON.parseObject(JSON.toJSONString(source), tClass),
-            // dubbo 反序列化下出现问题  https://github.com/alibaba/fastjson2/issues/2734
-            JSONB.parseObject(JSONB.toBytes(source), tClass,
-                JSONReader.Feature.FieldBased
-            ),
-            com.alibaba.fastjson.JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(source), tClass)
-        );
+                objectMapper.readValue(objectMapper.writeValueAsString(source), tClass),
+                gson.fromJson(gson.toJson(source), tClass), JSON.parseObject(JSON.toJSONString(source), tClass),
+                // dubbo 反序列化下出现问题  https://github.com/alibaba/fastjson2/issues/2734
+                JSONB.parseObject(JSONB.toBytes(source), tClass, JSONReader.Feature.FieldBased),
+                com.alibaba.fastjson.JSON.parseObject(com.alibaba.fastjson.JSON.toJSONString(source), tClass));
     }
 
     private void assertPageDto(PageDTO<?> source) throws JsonProcessingException {

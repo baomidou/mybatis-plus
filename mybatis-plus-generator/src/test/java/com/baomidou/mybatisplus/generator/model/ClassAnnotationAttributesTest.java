@@ -17,13 +17,14 @@ public class ClassAnnotationAttributesTest {
         Assertions.assertEquals("@TableName", classAnnotationAttributes.getDisplayName());
         Assertions.assertTrue(classAnnotationAttributes.getImportPackages().contains(TableName.class.getName()));
 
-        classAnnotationAttributes = new ClassAnnotationAttributes(TableName.class,(tableInfo -> "@Test"));
+        classAnnotationAttributes = new ClassAnnotationAttributes(TableName.class, (tableInfo -> "@Test"));
         classAnnotationAttributes.handleDisplayName(Mockito.mock(TableInfo.class));
         Assertions.assertNotNull(classAnnotationAttributes.getDisplayNameFunction());
         Assertions.assertEquals("@Test", classAnnotationAttributes.getDisplayName());
         Assertions.assertTrue(classAnnotationAttributes.getImportPackages().contains(TableName.class.getName()));
 
-        classAnnotationAttributes = new ClassAnnotationAttributes(TableName.class,(tableInfo -> "@Test"), "com.baomidou.test");
+        classAnnotationAttributes = new ClassAnnotationAttributes(TableName.class, (tableInfo -> "@Test"),
+                "com.baomidou.test");
         classAnnotationAttributes.handleDisplayName(Mockito.mock(TableInfo.class));
         Assertions.assertNotNull(classAnnotationAttributes.getDisplayNameFunction());
         Assertions.assertEquals("@Test", classAnnotationAttributes.getDisplayName());
@@ -52,7 +53,8 @@ public class ClassAnnotationAttributesTest {
         Assertions.assertEquals("@Test", classAnnotationAttributes.getDisplayName());
         Assertions.assertTrue(classAnnotationAttributes.getImportPackages().contains("com.baomidou.test"));
 
-        classAnnotationAttributes = new ClassAnnotationAttributes(Set.of("com.baomidou.test1","com.baomidou.test2"), (tableInfo -> "@Test"));
+        classAnnotationAttributes = new ClassAnnotationAttributes(Set.of("com.baomidou.test1", "com.baomidou.test2"),
+                (tableInfo -> "@Test"));
         classAnnotationAttributes.handleDisplayName(Mockito.mock(TableInfo.class));
         Assertions.assertNotNull(classAnnotationAttributes.getDisplayNameFunction());
         Assertions.assertEquals("@Test", classAnnotationAttributes.getDisplayName());

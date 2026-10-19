@@ -85,12 +85,14 @@ public class ConfigBuilder {
 
     /**
      * 数据查询实例
+     * 
      * @since 3.5.3
      */
     private final IDatabaseQuery databaseQuery;
 
     /**
      * 资源加载器
+     * 
      * @since 3.5.9
      */
     @Getter
@@ -100,25 +102,28 @@ public class ConfigBuilder {
     /**
      * 在构造器中处理配置
      *
-     * @param packageConfig    包配置
+     * @param packageConfig 包配置
      * @param dataSourceConfig 数据源配置
-     * @param strategyConfig   表配置
-     * @param templateConfig   模板配置
-     * @param globalConfig     全局配置
+     * @param strategyConfig 表配置
+     * @param templateConfig 模板配置
+     * @param globalConfig 全局配置
      */
     public ConfigBuilder(@Nullable PackageConfig packageConfig, @NotNull DataSourceConfig dataSourceConfig,
-                         @Nullable StrategyConfig strategyConfig, @Nullable TemplateConfig templateConfig,
-                         @Nullable GlobalConfig globalConfig, @Nullable InjectionConfig injectionConfig) {
+            @Nullable StrategyConfig strategyConfig, @Nullable TemplateConfig templateConfig,
+            @Nullable GlobalConfig globalConfig, @Nullable InjectionConfig injectionConfig) {
         this.dataSourceConfig = dataSourceConfig;
         this.strategyConfig = Optional.ofNullable(strategyConfig).orElseGet(GeneratorBuilder::strategyConfig);
         this.globalConfig = Optional.ofNullable(globalConfig).orElseGet(GeneratorBuilder::globalConfig);
         this.templateConfig = Optional.ofNullable(templateConfig).orElseGet(GeneratorBuilder::templateConfig);
         this.packageConfig = Optional.ofNullable(packageConfig).orElseGet(GeneratorBuilder::packageConfig);
         this.injectionConfig = Optional.ofNullable(injectionConfig).orElseGet(GeneratorBuilder::injectionConfig);
-        this.pathInfo.putAll(new PathInfoHandler(this.injectionConfig, this.globalConfig, this.strategyConfig, this.packageConfig).getPathInfo());
+        this.pathInfo.putAll(
+                new PathInfoHandler(this.injectionConfig, this.globalConfig, this.strategyConfig, this.packageConfig)
+                        .getPathInfo());
         Class<? extends IDatabaseQuery> databaseQueryClass = dataSourceConfig.getDatabaseQueryClass();
         try {
-            Constructor<? extends IDatabaseQuery> declaredConstructor = databaseQueryClass.getDeclaredConstructor(this.getClass());
+            Constructor<? extends IDatabaseQuery> declaredConstructor = databaseQueryClass
+                    .getDeclaredConstructor(this.getClass());
             this.databaseQuery = declaredConstructor.newInstance(this);
         } catch (ReflectiveOperationException exception) {
             throw new RuntimeException(exception);

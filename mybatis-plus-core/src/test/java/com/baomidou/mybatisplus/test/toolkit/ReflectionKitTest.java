@@ -68,7 +68,6 @@ class ReflectionKitTest {
 
         private String parentId;
 
-
         public Long getId() {
             return id;
         }

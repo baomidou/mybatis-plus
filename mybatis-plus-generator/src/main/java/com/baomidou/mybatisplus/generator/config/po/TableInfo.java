@@ -33,7 +33,6 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
  * 表信息，关联到当前字段信息
  *
@@ -173,7 +172,7 @@ public class TableInfo {
      * 构造方法
      *
      * @param configBuilder 配置构建
-     * @param name          表名
+     * @param name 表名
      * @since 3.5.0
      */
     public TableInfo(@NotNull ConfigBuilder configBuilder, @NotNull String name) {
@@ -336,7 +335,7 @@ public class TableInfo {
     public TableInfo setComment(String comment) {
         //TODO 待重构此处
         this.comment = (this.globalConfig.isSwagger() || this.globalConfig.isSpringdoc())
-            && StringUtils.isNotBlank(comment) ? comment.replace("\"", "\\\"") : comment;
+                && StringUtils.isNotBlank(comment) ? comment.replace("\"", "\\\"") : comment;
         return this;
     }
 
@@ -367,6 +366,7 @@ public class TableInfo {
 
     /**
      * 获取是否生成service接口
+     * 
      * @deprecated {@link Service.Builder#disableService()}
      */
     @Deprecated

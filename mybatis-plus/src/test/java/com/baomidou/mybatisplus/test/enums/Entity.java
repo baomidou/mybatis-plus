@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @TableName(autoResultMap = true)
 public class Entity implements Serializable {
+
     private static final long serialVersionUID = 5094767605376915138L;
 
     private Long id;

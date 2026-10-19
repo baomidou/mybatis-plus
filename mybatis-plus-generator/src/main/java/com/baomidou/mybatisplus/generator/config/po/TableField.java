@@ -134,9 +134,9 @@ public class TableField {
     private MetaInfo metaInfo;
 
     /**
-     * 实体属性配置
-     * -- GETTER --
-     *  获取实体配置信息
+     * 实体属性配置 <br>
+     * -- GETTER -- <br>
+     * 获取实体配置信息
      */
     @Getter
     private final Entity entity;
@@ -169,7 +169,7 @@ public class TableField {
      * 构造方法
      *
      * @param configBuilder 配置构建
-     * @param name          数据库字段名称
+     * @param name 数据库字段名称
      * @since 3.5.0
      */
     public TableField(@NotNull ConfigBuilder configBuilder, @NotNull String name) {
@@ -184,7 +184,7 @@ public class TableField {
      * 设置属性名称
      *
      * @param propertyName 属性名
-     * @param columnType   字段类型
+     * @param columnType 字段类型
      * @return this
      * @see #setColumnType(IColumnType)
      * @see #setPropertyName(String)
@@ -204,8 +204,8 @@ public class TableField {
      * @since 3.5.15
      */
     public TableField setPropertyName(@NotNull String propertyName) {
-        if (entity.isBooleanColumnRemoveIsPrefix()
-            && "boolean".equalsIgnoreCase(this.getPropertyType()) && propertyName.startsWith("is")) {
+        if (entity.isBooleanColumnRemoveIsPrefix() && "boolean".equalsIgnoreCase(this.getPropertyType())
+                && propertyName.startsWith("is")) {
             this.convert = true;
             this.propertyName = StringUtils.removePrefixAfterPrefixToLower(propertyName, 2);
             return this;
@@ -229,7 +229,6 @@ public class TableField {
         return this;
     }
 
-
     /**
      * 指定字段类型
      *
@@ -250,10 +249,10 @@ public class TableField {
     }
 
     /**
-     * 按 JavaBean 规则来生成 get 和 set 方法后面的属性名称
+     * 按 JavaBean 规则来生成 get 和 set 方法后面的属性名称 <br>
      * 需要处理一下特殊情况：
      * <p>
-     * 1、如果只有一位，转换为大写形式
+     * 1、如果只有一位，转换为大写形式 <br>
      * 2、如果多于 1 位，只有在第二位是小写的情况下，才会把第一位转为小写
      * <p>
      * 我们并不建议在数据库对应的对象中使用基本类型，因此这里不会考虑基本类型的情况
@@ -293,7 +292,7 @@ public class TableField {
         String propertyName = entity.getVersionPropertyName();
         String columnName = entity.getVersionColumnName();
         return StringUtils.isNotBlank(propertyName) && this.propertyName.equals(propertyName)
-            || StringUtils.isNotBlank(columnName) && this.name.equalsIgnoreCase(columnName);
+                || StringUtils.isNotBlank(columnName) && this.name.equalsIgnoreCase(columnName);
     }
 
     /**
@@ -306,7 +305,7 @@ public class TableField {
         String propertyName = entity.getLogicDeletePropertyName();
         String columnName = entity.getLogicDeleteColumnName();
         return StringUtils.isNotBlank(propertyName) && this.propertyName.equals(propertyName)
-            || StringUtils.isNotBlank(columnName) && this.name.equalsIgnoreCase(columnName);
+                || StringUtils.isNotBlank(columnName) && this.name.equalsIgnoreCase(columnName);
     }
 
     /**
@@ -334,7 +333,7 @@ public class TableField {
     public TableField setComment(String comment) {
         //TODO 待重构此处
         this.comment = (this.globalConfig.isSwagger() || this.globalConfig.isSpringdoc())
-            && StringUtils.isNotBlank(comment) ? comment.replace("\"", "\\\"") : comment;
+                && StringUtils.isNotBlank(comment) ? comment.replace("\"", "\\\"") : comment;
         return this;
     }
 
@@ -356,10 +355,11 @@ public class TableField {
     public String getFill() {
         if (StringUtils.isBlank(fill)) {
             entity.getTableFillList().stream()
-                //忽略大写字段问题
-                .filter(tf -> tf instanceof Column && tf.getName().equalsIgnoreCase(name)
-                    || tf instanceof Property && tf.getName().equals(propertyName))
-                .findFirst().ifPresent(tf -> this.fill = tf.getFieldFill().name());
+                    //忽略大写字段问题
+                    .filter(
+                            tf -> tf instanceof Column && tf.getName().equalsIgnoreCase(name)
+                                    || tf instanceof Property && tf.getName().equals(propertyName))
+                    .findFirst().ifPresent(tf -> this.fill = tf.getFieldFill().name());
         }
         return fill;
     }
@@ -378,7 +378,8 @@ public class TableField {
      * @param annotationAttributesList 注解属性集合
      * @since 3.5.11
      */
-    public void addAnnotationAttributesList(@NotNull List<AnnotationAttributes> annotationAttributesList, Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
+    public void addAnnotationAttributesList(@NotNull List<AnnotationAttributes> annotationAttributesList,
+            Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
         this.annotationAttributesList.addAll(annotationAttributesList);
         this.annotationAttributesFunction = annotationAttributesFunction;
     }
@@ -400,9 +401,10 @@ public class TableField {
      * @since 3.5.10
      */
     public List<AnnotationAttributes> getAnnotationAttributesList() {
-        return annotationAttributesFunction != null ? annotationAttributesFunction.apply(this.annotationAttributesList) : this.annotationAttributesList.stream()
-            .sorted(Comparator.comparingInt(s -> s.getDisplayName().length()))
-            .collect(Collectors.toList());
+        return annotationAttributesFunction != null
+                ? annotationAttributesFunction.apply(this.annotationAttributesList)
+                : this.annotationAttributesList.stream()
+                        .sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList());
     }
 
     /**
@@ -486,18 +488,10 @@ public class TableField {
 
         @Override
         public String toString() {
-            return "MetaInfo{" +
-                "tableName='" + tableName + '\'' +
-                ", columnName='" + columnName + '\'' +
-                ", length=" + length +
-                ", nullable=" + nullable +
-                ", remarks='" + remarks + '\'' +
-                ", defaultValue='" + defaultValue + '\'' +
-                ", scale=" + scale +
-                ", jdbcType=" + jdbcType +
-                ", typeName='" + typeName + '\'' +
-                ", generatedColumn=" + generatedColumn +
-                '}';
+            return "MetaInfo{" + "tableName='" + tableName + '\'' + ", columnName='" + columnName + '\'' + ", length="
+                    + length + ", nullable=" + nullable + ", remarks='" + remarks + '\'' + ", defaultValue='"
+                    + defaultValue + '\'' + ", scale=" + scale + ", jdbcType=" + jdbcType + ", typeName='" + typeName
+                    + '\'' + ", generatedColumn=" + generatedColumn + '}';
         }
     }
 }

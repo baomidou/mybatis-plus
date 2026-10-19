@@ -25,7 +25,9 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * Bean 转换工具类
- * <p>使用请依赖 cglib 包</p>
+ * <p>
+ * 使用请依赖 cglib 包
+ * </p>
  *
  * @author hubin HCL
  * @since 2018-06-12
@@ -49,7 +51,7 @@ public final class BeanUtils {
     /**
      * map 转换为 java bean 对象
      *
-     * @param map   转换 MAP
+     * @param map 转换 MAP
      * @param clazz 对象 Class
      * @return 返回 bean 对象
      */
@@ -75,7 +77,7 @@ public final class BeanUtils {
     /**
      * List&lt;Map&lt;String, Object&gt;&gt; 转换为 List&lt;T&gt;
      *
-     * @param maps  转换 MAP 集合
+     * @param maps 转换 MAP 集合
      * @param clazz 对象 Class
      * @return 返回转换后的 bean 集合
      */

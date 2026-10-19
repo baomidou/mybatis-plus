@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018-05-30
  */
 public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdateWrapper<T>>
-    implements Update<LambdaUpdateWrapper<T>, SFunction<T, ?>> {
+        implements Update<LambdaUpdateWrapper<T>, SFunction<T, ?>> {
 
     /**
      * SQL 更新字段内容，例如：name='1', age=2
@@ -61,8 +61,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     LambdaUpdateWrapper(T entity, Class<T> entityClass, List<String> sqlSet, AtomicInteger paramNameSeq,
-                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
-                        SharedString lastSql, SharedString sqlComment, SharedString sqlFirst, boolean autoMapping) {
+            Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
+            SharedString lastSql, SharedString sqlComment, SharedString sqlFirst, boolean autoMapping) {
         super.setEntity(entity);
         super.setEntityClass(entityClass);
         this.sqlSet = sqlSet;
@@ -112,7 +112,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     @Override
     protected LambdaUpdateWrapper<T> instance() {
         return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), null, paramNameSeq, paramNameValuePairs,
-            new MergeSegments(), paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString(), autoMapping);
+                new MergeSegments(), paramAlias, SharedString.emptyString(), SharedString.emptyString(),
+                SharedString.emptyString(), autoMapping);
     }
 
     @Override

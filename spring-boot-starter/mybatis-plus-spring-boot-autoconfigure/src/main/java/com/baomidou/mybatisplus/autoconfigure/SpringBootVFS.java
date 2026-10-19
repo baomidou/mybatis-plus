@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-
 import org.apache.ibatis.io.VFS;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -64,7 +63,7 @@ public class SpringBootVFS extends VFS {
         String baseUrlString = urlString.endsWith("/") ? urlString : urlString.concat("/");
         Resource[] resources = resourceResolver.getResources(baseUrlString + "**/*.class");
         return Stream.of(resources).map(resource -> preserveSubpackageName(baseUrlString, resource, path))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     /**
@@ -94,11 +93,12 @@ public class SpringBootVFS extends VFS {
     }
 
     private static String preserveSubpackageName(final String baseUrlString, final Resource resource,
-                                                 final String rootPath) {
+            final String rootPath) {
         try {
-            return rootPath + (rootPath.endsWith("/") ? "" : "/") + Normalizer
-                .normalize(URLDecoder.decode(resource.getURL().toString(), urlDecodingCharset.name()), Normalizer.Form.NFC)
-                .substring(baseUrlString.length());
+            return rootPath + (rootPath.endsWith("/") ? "" : "/")
+                    + Normalizer.normalize(
+                            URLDecoder.decode(resource.getURL().toString(), urlDecodingCharset.name()),
+                            Normalizer.Form.NFC).substring(baseUrlString.length());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

@@ -43,18 +43,19 @@ public class FillPerformanceConfig {
     @Bean
     public MetaObjectHandler metaObjectHandler() {
         return new MetaObjectHandler() {
+
             @Override
             public void insertFill(MetaObject metaObject) {
-//                strictInsertFill(metaObject,"c",String.class,"1234567890");
-//                strictInsertFill(metaObject,"d",String.class,"1234567890");
-//                strictInsertFill(metaObject,"e",String.class,"1234567890");
-//                strictInsertFill(metaObject,"f",String.class,"1234567890");
-//                strictInsertFill(metaObject,"g",String.class,"1234567890");
-//                strictInsertFill(metaObject,"h",String.class,"1234567890");
-//                strictInsertFill(metaObject,"i",String.class,"1234567890");
-//                strictInsertFill(metaObject,"j",String.class,"1234567890");
-//                strictInsertFill(metaObject,"l",String.class,"1234567890");
-//                strictInsertFill(metaObject,"m",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"c",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"d",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"e",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"f",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"g",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"h",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"i",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"j",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"l",String.class,"1234567890");
+                //                strictInsertFill(metaObject,"m",String.class,"1234567890");
                 setFieldValByName("c", "1234567890", metaObject);
                 setFieldValByName("d", "1234567890", metaObject);
                 setFieldValByName("e", "1234567890", metaObject);
@@ -65,29 +66,29 @@ public class FillPerformanceConfig {
                 setFieldValByName("j", "1234567890", metaObject);
                 setFieldValByName("l", "1234567890", metaObject);
                 setFieldValByName("m", "1234567890", metaObject);
-//                setInsertFieldValByName("c","1234567890",metaObject);
-//                setInsertFieldValByName("d","1234567890",metaObject);
-//                setInsertFieldValByName("e","1234567890",metaObject);
-//                setInsertFieldValByName("f","1234567890",metaObject);
-//                setInsertFieldValByName("g","1234567890",metaObject);
-//                setInsertFieldValByName("h","1234567890",metaObject);
-//                setInsertFieldValByName("i","1234567890",metaObject);
-//                setInsertFieldValByName("j","1234567890",metaObject);
-//                setInsertFieldValByName("l","1234567890",metaObject);
-//                setInsertFieldValByName("m","1234567890",metaObject);
+                //                setInsertFieldValByName("c","1234567890",metaObject);
+                //                setInsertFieldValByName("d","1234567890",metaObject);
+                //                setInsertFieldValByName("e","1234567890",metaObject);
+                //                setInsertFieldValByName("f","1234567890",metaObject);
+                //                setInsertFieldValByName("g","1234567890",metaObject);
+                //                setInsertFieldValByName("h","1234567890",metaObject);
+                //                setInsertFieldValByName("i","1234567890",metaObject);
+                //                setInsertFieldValByName("j","1234567890",metaObject);
+                //                setInsertFieldValByName("l","1234567890",metaObject);
+                //                setInsertFieldValByName("m","1234567890",metaObject);
 
-//                strictInsertFill(findTableInfo(metaObject),metaObject, Arrays.asList(
-//                    StrictFill.of("c",String.class,"1234567890"),
-//                    StrictFill.of("d",String.class,"1234567890"),
-//                    StrictFill.of("e",String.class,"1234567890"),
-//                    StrictFill.of("f",String.class,"1234567890"),
-//                    StrictFill.of("g",String.class,"1234567890"),
-//                    StrictFill.of("h",String.class,"1234567890"),
-//                    StrictFill.of("i",String.class,"1234567890"),
-//                    StrictFill.of("j",String.class,"1234567890"),
-//                    StrictFill.of("l",String.class,"1234567890"),
-//                    StrictFill.of("m",String.class,"1234567890")
-//                ));
+                //                strictInsertFill(findTableInfo(metaObject),metaObject, Arrays.asList(
+                //                    StrictFill.of("c",String.class,"1234567890"),
+                //                    StrictFill.of("d",String.class,"1234567890"),
+                //                    StrictFill.of("e",String.class,"1234567890"),
+                //                    StrictFill.of("f",String.class,"1234567890"),
+                //                    StrictFill.of("g",String.class,"1234567890"),
+                //                    StrictFill.of("h",String.class,"1234567890"),
+                //                    StrictFill.of("i",String.class,"1234567890"),
+                //                    StrictFill.of("j",String.class,"1234567890"),
+                //                    StrictFill.of("l",String.class,"1234567890"),
+                //                    StrictFill.of("m",String.class,"1234567890")
+                //                ));
             }
 
             @Override

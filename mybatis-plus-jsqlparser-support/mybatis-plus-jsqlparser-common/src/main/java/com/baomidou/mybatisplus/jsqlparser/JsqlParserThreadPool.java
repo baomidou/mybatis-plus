@@ -22,7 +22,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * JsqlParser解析线程池
- * <p>当没指定解析线程池时,默认使用一个固定长度的线程作为解析线程池.</p>
+ * <p>
+ * 当没指定解析线程池时,默认使用一个固定长度的线程作为解析线程池.
+ * </p>
  *
  * @author nieqiurong
  * @since 3.5.11
@@ -62,12 +64,13 @@ public class JsqlParserThreadPool {
 
         private static final DefaultJsqlParserFixedThreadPool INSTANCE = new DefaultJsqlParserFixedThreadPool();
 
-        public static ExecutorService executorService = new ThreadPoolExecutor(DEFAULT_THREAD_SIZE, DEFAULT_THREAD_SIZE, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
-            Thread thread = new Thread(r);
-            thread.setName("mybatis-plus-jsqlParser-" + thread.getId());
-            thread.setDaemon(true);
-            return thread;
-        });
+        public static ExecutorService executorService = new ThreadPoolExecutor(DEFAULT_THREAD_SIZE, DEFAULT_THREAD_SIZE,
+                0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(), r -> {
+                    Thread thread = new Thread(r);
+                    thread.setName("mybatis-plus-jsqlParser-" + thread.getId());
+                    thread.setDaemon(true);
+                    return thread;
+                });
 
         /**
          * 默认解析线程池(固定大小,默认大小{@link #DEFAULT_THREAD_SIZE})

@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.generator.config.ConstVal;
 public abstract class AbstractMapperMethodHandler implements IGenerateMapperMethodHandler {
 
     /**
-     * 生成Java方法(default)
+     * 生成Java方法(default) <br>
      * <pre>
      * default ${returnValue} ${methodName}(${args}) {
      *    return ${returnBody};
@@ -39,36 +39,33 @@ public abstract class AbstractMapperMethodHandler implements IGenerateMapperMeth
      * </pre>
      */
     public String buildMethod(String methodName, String args, String returnValue, String returnBody) {
-        return "default" + " " +
-            returnValue + " " + methodName + "(" + args + ")" + " " + "{" + "\n" +
-            "        return " + returnBody + ";" + "\n" +
-            "    }\n";
+        return "default" + " " + returnValue + " " + methodName + "(" + args + ")" + " " + "{" + "\n"
+                + "        return " + returnBody + ";" + "\n" + "    }\n";
     }
 
     /**
-     * 构建Kotlin方法
+     * 构建Kotlin方法 <br>
      * <pre>
      * fun ${methodName}(${args}) :${returnValue} {
      *    return ${returnBody};
      * }
-     * </pre>
-     * Example:
+     * </pre> <br>
+     * Example: <br>
      * <pre>
      * fun selectByCardNo(cardNo: String) :UserInfo? {
      *    return selectOne(Wrappers.query<UserInfo>().eq(UserInfo.CARD_NO, cardNo));
      * }
      * </pre>
      *
-     * @param methodName  方法名
-     * @param args        参数列表
+     * @param methodName 方法名
+     * @param args 参数列表
      * @param returnValue 返回值
-     * @param returnBody  返回体
+     * @param returnBody 返回体
      * @return 方法
      */
     public String buildKotlinMethod(String methodName, String args, String returnValue, String returnBody) {
-        return "fun " + methodName + "(" + args + ")" + " :" + returnValue + " {" + "\n" +
-            "        return " + returnBody + ";" + "\n" +
-            "    }\n";
+        return "fun " + methodName + "(" + args + ")" + " :" + returnValue + " {" + "\n" + "        return "
+                + returnBody + ";" + "\n" + "    }\n";
     }
 
     /**

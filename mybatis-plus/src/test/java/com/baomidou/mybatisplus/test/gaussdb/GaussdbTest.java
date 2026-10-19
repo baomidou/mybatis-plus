@@ -36,28 +36,28 @@ public class GaussdbTest {
 
     private static final String CREATE_TABLE = """
 
-        DROP TABLE IF EXISTS "demo";
+            DROP TABLE IF EXISTS "demo";
 
-        CREATE TABLE "demo" (
-          "id" bigserial,
-          "name" varchar(255),
-          "age" int4,
-          "birthday" date,
-          "create_time" timestamp,
-          PRIMARY KEY ("id")
-        )
-        ;
+            CREATE TABLE "demo" (
+              "id" bigserial,
+              "name" varchar(255),
+              "age" int4,
+              "birthday" date,
+              "create_time" timestamp,
+              PRIMARY KEY ("id")
+            )
+            ;
 
-        COMMENT ON COLUMN "demo"."id" IS '主键';
+            COMMENT ON COLUMN "demo"."id" IS '主键';
 
-        COMMENT ON COLUMN "demo"."name" IS '姓名';
+            COMMENT ON COLUMN "demo"."name" IS '姓名';
 
-        COMMENT ON COLUMN "demo"."age" IS '年龄';
+            COMMENT ON COLUMN "demo"."age" IS '年龄';
 
-        COMMENT ON COLUMN "demo"."birthday" IS '生日';
+            COMMENT ON COLUMN "demo"."birthday" IS '生日';
 
-        COMMENT ON COLUMN "demo"."create_time" IS '创建时间';
-        """;
+            COMMENT ON COLUMN "demo"."create_time" IS '创建时间';
+            """;
 
     private static SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
@@ -77,9 +77,11 @@ public class GaussdbTest {
         String user = "root";
         String dbPassword = "123456";
         return Stream.of(
-            new DbConfig("mysql", new PooledDataSource(Driver.class.getName(), "jdbc:gaussdb://" + host + ":" + port + "/test_mysql", user, dbPassword)),
-            new DbConfig("oracle", new PooledDataSource(Driver.class.getName(), "jdbc:gaussdb://" + host + ":" + port + "/test_oracle", user, dbPassword))
-        );
+                new DbConfig("mysql",
+                        new PooledDataSource(Driver.class.getName(),
+                                "jdbc:gaussdb://" + host + ":" + port + "/test_mysql", user, dbPassword)),
+                new DbConfig("oracle", new PooledDataSource(Driver.class.getName(),
+                        "jdbc:gaussdb://" + host + ":" + port + "/test_oracle", user, dbPassword)));
     }
 
     @Data
@@ -96,7 +98,6 @@ public class GaussdbTest {
         }
 
     }
-
 
     @ParameterizedTest
     @MethodSource("dataSource")

@@ -46,7 +46,7 @@ public class ImadcnIdentifierGenerator implements IdentifierGenerator, Closeable
     }
 
     public ImadcnIdentifierGenerator(ZookeeperConfiguration zookeeperConfiguration,
-                                     ApplicationConfiguration applicationConfiguration) {
+            ApplicationConfiguration applicationConfiguration) {
         ZookeeperRegistryCenter center = new ZookeeperRegistryCenter(zookeeperConfiguration);
         ZookeeperWorkerRegister register = new ZookeeperWorkerRegister(center, applicationConfiguration);
         idGenerator = new SnowflakeGenerator(register);

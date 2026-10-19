@@ -32,5 +32,4 @@ public class TableInfoTest {
         assertThat(tableInfo.getReflector()).isNotNull();
     }
 
-
 }

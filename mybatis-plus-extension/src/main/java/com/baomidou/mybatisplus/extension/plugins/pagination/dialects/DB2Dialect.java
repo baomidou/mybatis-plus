@@ -29,8 +29,8 @@ public class DB2Dialect implements IDialect {
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         long firstParam = offset + 1;
         long secondParam = offset + limit;
-        String sql = "SELECT * FROM (SELECT TMP_PAGE.*,ROWNUMBER() OVER() AS ROW_ID FROM ( " + originalSql +
-            " ) AS TMP_PAGE) TMP_PAGE WHERE ROW_ID BETWEEN " + FIRST_MARK + " AND " + SECOND_MARK;
+        String sql = "SELECT * FROM (SELECT TMP_PAGE.*,ROWNUMBER() OVER() AS ROW_ID FROM ( " + originalSql
+                + " ) AS TMP_PAGE) TMP_PAGE WHERE ROW_ID BETWEEN " + FIRST_MARK + " AND " + SECOND_MARK;
         return new DialectModel(sql, firstParam, secondParam).setConsumerChain();
     }
 }

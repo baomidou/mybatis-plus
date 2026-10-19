@@ -32,7 +32,7 @@ public interface IDdlGenerator {
     /**
      * 表是否存在
      *
-     * @param databaseName    数据库名称
+     * @param databaseName 数据库名称
      * @param executeFunction 执行判断函数
      * @return exist or no
      * @deprecated 3.5.13 {@link #existTable(Connection)}
@@ -45,6 +45,7 @@ public interface IDdlGenerator {
     /**
      *
      * 检查{@link #getDdlHistory()}表是否存在
+     * 
      * @since 3.5.13
      * @param connection 数据库连接
      * @return 是否存在
@@ -52,7 +53,8 @@ public interface IDdlGenerator {
      */
     default boolean existTable(Connection connection) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
-        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(), connection.getSchema(), getDdlHistory(), new String[]{"TABLE"})) {
+        try (ResultSet resultSet = metaData
+                .getTables(connection.getCatalog(), connection.getSchema(), getDdlHistory(), new String[]{"TABLE"})) {
             return resultSet.next();
         }
     }
@@ -77,7 +79,7 @@ public interface IDdlGenerator {
      * select ddl_history sql
      *
      * @param script Sql Script
-     * @param type   Execute Type
+     * @param type Execute Type
      * @return SQL
      */
     default String selectDdlHistory(String script, String type) {
@@ -90,8 +92,8 @@ public interface IDdlGenerator {
     /**
      * insert ddl_history sql
      *
-     * @param script  Sql Script
-     * @param type    Execute Type
+     * @param script Sql Script
+     * @param type Execute Type
      * @param version Execute Version
      * @return SQL
      */

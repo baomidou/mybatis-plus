@@ -34,6 +34,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SharedString implements Serializable {
+
     private static final long serialVersionUID = -1536422416594422874L;
 
     /**

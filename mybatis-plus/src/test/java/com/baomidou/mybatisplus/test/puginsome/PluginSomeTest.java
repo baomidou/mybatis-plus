@@ -36,14 +36,17 @@ public class PluginSomeTest extends BaseDbTest<AMapper> {
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new InnerInterceptor() {
+
             @Override
-            public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+            public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                    ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
                 System.out.println("willDoQuery");
                 return true;
             }
 
             @Override
-            public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+            public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                    ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
                 System.out.println("beforeQuery");
             }
 
@@ -78,23 +81,18 @@ public class PluginSomeTest extends BaseDbTest<AMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into a (id,name) values (1,'1'),(2,'2');" +
-            "insert into b (id,a_id,name) values (1,'1','1-1'),(2,'2','2-2')";
+        return "insert into a (id,name) values (1,'1'),(2,'2');"
+                + "insert into b (id,a_id,name) values (1,'1','1-1'),(2,'2','2-2')";
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists a",
-            "CREATE TABLE IF NOT EXISTS a (\n" +
-                "id integer NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")", "drop table if exists b",
-            "CREATE TABLE IF NOT EXISTS b (\n" +
-                "id integer NOT NULL,\n" +
-                "a_id integer NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists a",
+                "CREATE TABLE IF NOT EXISTS a (\n" + "id integer NOT NULL,\n" + "name VARCHAR(30) NULL DEFAULT NULL,\n"
+                        + "PRIMARY KEY (id)" + ")",
+                "drop table if exists b",
+                "CREATE TABLE IF NOT EXISTS b (\n" + "id integer NOT NULL,\n" + "a_id integer NOT NULL,\n"
+                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
     }
 }

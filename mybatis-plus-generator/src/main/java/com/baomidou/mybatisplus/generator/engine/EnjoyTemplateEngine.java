@@ -39,23 +39,24 @@ public class EnjoyTemplateEngine extends AbstractTemplateEngine {
 
     @Override
     public @NotNull AbstractTemplateEngine init(@NotNull ConfigBuilder configBuilder) {
-        engine = Engine.createIfAbsent("mybatis-plus-generator",
-            Engine::setToClassPathSourceFactory);
+        engine = Engine.createIfAbsent("mybatis-plus-generator", Engine::setToClassPathSourceFactory);
         return this;
     }
 
     @Override
-    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
+    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName,
+            @NotNull String templateString) throws Exception {
         Template template = engine.getTemplateByString(templateString);
         return template.renderToString(objectMap);
     }
 
     @Override
-    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {
+    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile)
+            throws Exception {
         String str = engine.getTemplate(templatePath).renderToString(objectMap);
         try (FileOutputStream fos = new FileOutputStream(outputFile);
-             OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
-             BufferedWriter writer = new BufferedWriter(ow)) {
+                OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
+                BufferedWriter writer = new BufferedWriter(ow)) {
             writer.append(str);
         }
     }

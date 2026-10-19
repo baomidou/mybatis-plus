@@ -27,7 +27,7 @@ public interface Update<Children, R> extends Serializable {
      * 设置 更新 SQL 的 SET 片段
      *
      * @param column 字段
-     * @param val    值
+     * @param val 值
      * @return children
      */
     default Children set(R column, Object val) {
@@ -38,8 +38,8 @@ public interface Update<Children, R> extends Serializable {
      * 设置 更新 SQL 的 SET 片段
      *
      * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       值
+     * @param column 字段
+     * @param val 值
      * @return children
      */
     default Children set(boolean condition, R column, Object val) {
@@ -49,8 +49,8 @@ public interface Update<Children, R> extends Serializable {
     /**
      * 设置 更新 SQL 的 SET 片段
      *
-     * @param column  字段
-     * @param val     值
+     * @param column 字段
+     * @param val 值
      * @param mapping 例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
      * @return children
      */
@@ -62,9 +62,9 @@ public interface Update<Children, R> extends Serializable {
      * 设置 更新 SQL 的 SET 片段
      *
      * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       值
-     * @param mapping   例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
+     * @param column 字段
+     * @param val 值
+     * @param mapping 例: javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler
      * @return children
      */
     Children set(boolean condition, R column, Object val, String mapping);
@@ -72,10 +72,10 @@ public interface Update<Children, R> extends Serializable {
     /**
      * 设置 更新 SQL 的 SET 片段
      *
-     * @param setSql set sql
-     *               例1: setSql("id=1")
-     *               例2: setSql("dateColumn={0}", LocalDate.now())
-     *               例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
+     * @param setSql set sql <br>
+     *            例1: setSql("id=1") <br>
+     *            例2: setSql("dateColumn={0}", LocalDate.now()) <br>
+     *            例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
     default Children setSql(String setSql, Object... params) {
@@ -86,10 +86,10 @@ public interface Update<Children, R> extends Serializable {
      * 设置 更新 SQL 的 SET 片段
      *
      * @param condition 执行条件
-     * @param setSql    set sql
-     *                  例1: setSql("id=1")
-     *                  例2: setSql("dateColumn={0}", LocalDate.now())
-     *                  例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
+     * @param setSql set sql <br>
+     *            例1: setSql("id=1") <br>
+     *            例2: setSql("dateColumn={0}", LocalDate.now()) <br>
+     *            例4: setSql("type={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler}", "待处理字符串")
      * @return children
      */
     Children setSql(boolean condition, String setSql, Object... params);
@@ -98,7 +98,7 @@ public interface Update<Children, R> extends Serializable {
      * 字段自增变量 val 值
      *
      * @param column 字段
-     * @param val    变量值 1 字段自增 + 1
+     * @param val 变量值 1 字段自增 + 1
      */
     default Children setIncrBy(R column, Number val) {
         return setIncrBy(true, column, val);
@@ -108,8 +108,8 @@ public interface Update<Children, R> extends Serializable {
      * 字段自增变量 val 值
      *
      * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       变量值 1 字段自增 + 1
+     * @param column 字段
+     * @param val 变量值 1 字段自增 + 1
      */
     Children setIncrBy(boolean condition, R column, Number val);
 
@@ -117,7 +117,7 @@ public interface Update<Children, R> extends Serializable {
      * 字段自减变量 val 值
      *
      * @param column 字段
-     * @param val    变量值 1 字段自减 - 1
+     * @param val 变量值 1 字段自减 - 1
      */
     default Children setDecrBy(R column, Number val) {
         return setDecrBy(true, column, val);
@@ -127,8 +127,8 @@ public interface Update<Children, R> extends Serializable {
      * 字段自减变量 val 值
      *
      * @param condition 是否加入 set
-     * @param column    字段
-     * @param val       变量值 1 字段自减 - 1
+     * @param column 字段
+     * @param val 变量值 1 字段自减 - 1
      */
     Children setDecrBy(boolean condition, R column, Number val);
 

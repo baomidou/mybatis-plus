@@ -61,20 +61,23 @@ public class AotUtils extends CollectUtils {
         } catch (IllegalArgumentException e) {
             accessDeclaredFields = MemberCategory.valueOf("DECLARED_FIELDS"); // 兼容Spring6
         }
-        defaultMemberCategory = new MemberCategory[]{accessDeclaredFields, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.UNSAFE_ALLOCATED};
+        defaultMemberCategory = new MemberCategory[]{accessDeclaredFields, MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS, MemberCategory.UNSAFE_ALLOCATED};
     }
 
     public void registerPattern(String... resources) {
         for (String resource : resources) {
             hints.resources().registerPattern(resource);
-            if (debug) System.out.println("include resource " + resource);
+            if (debug)
+                System.out.println("include resource " + resource);
         }
     }
 
     public void registerPattern(TypeReference typeReference, String... resources) {
         for (String resource : resources) {
             hints.resources().registerPattern(builder -> builder.includes(typeReference, resource));
-            if (debug) System.out.println("include reachableType " + typeReference.getName() + " resource " + resource);
+            if (debug)
+                System.out.println("include reachableType " + typeReference.getName() + " resource " + resource);
         }
     }
 
@@ -83,7 +86,8 @@ public class AotUtils extends CollectUtils {
             try {
                 if (isPresent(clazz)) {
                     hints.reflection().registerType(classLoader.loadClass(clazz), memberCategories);
-                    if (debug) System.out.println("registering reflect " + clazz);
+                    if (debug)
+                        System.out.println("registering reflect " + clazz);
                 }
             } catch (LinkageError | ClassNotFoundException ignored) {
             }
@@ -98,7 +102,8 @@ public class AotUtils extends CollectUtils {
         for (Class<?> clazz : classes) {
             try {
                 hints.reflection().registerType(clazz, memberCategories);
-                if (debug) System.out.println("registering reflect " + clazz.getName());
+                if (debug)
+                    System.out.println("registering reflect " + clazz.getName());
             } catch (LinkageError e) {
                 if (debug)
                     System.err.println("Unable to load class: " + clazz.getName() + ", error: " + e.getMessage());
@@ -110,7 +115,8 @@ public class AotUtils extends CollectUtils {
         for (Class<?> clazz : classes) {
             try {
                 hints.reflection().registerType(clazz, memberCategories);
-                if (debug) System.out.println("registering reflect " + clazz.getName());
+                if (debug)
+                    System.out.println("registering reflect " + clazz.getName());
             } catch (LinkageError e) {
                 if (debug)
                     System.err.println("Unable to load class: " + clazz.getName() + ", error: " + e.getMessage());
@@ -133,14 +139,16 @@ public class AotUtils extends CollectUtils {
     public void registerJni(MemberCategory[] memberCategories, Collection<Class<?>> classes) {
         for (Class<?> c : classes) {
             hints.jni().registerType(c, memberCategories);
-            if (debug) System.out.println("registering jni " + c.getName());
+            if (debug)
+                System.out.println("registering jni " + c.getName());
         }
     }
 
     public void registerJni(MemberCategory[] memberCategories, Class<?>... classes) {
         for (Class<?> c : classes) {
             hints.jni().registerType(c, memberCategories);
-            if (debug) System.out.println("registering jni " + c.getName());
+            if (debug)
+                System.out.println("registering jni " + c.getName());
         }
     }
 
@@ -159,25 +167,30 @@ public class AotUtils extends CollectUtils {
     public void registerJniIfPresent(MemberCategory[] memberCategory, String... classes) {
         for (String c : classes) {
             hints.jni().registerTypeIfPresent(classLoader, c, memberCategory);
-            if (debug) System.out.println("registering jni " + c);
+            if (debug)
+                System.out.println("registering jni " + c);
         }
     }
 
     @SafeVarargs
     public final void registerSerializable(Class<? extends Serializable>... classes) {
         for (Class<? extends Serializable> c : classes) {
-            if (c.getCanonicalName() == null) continue;
+            if (c.getCanonicalName() == null)
+                continue;
             hints.serialization().registerType(c);
-            if (debug) System.out.println("registering serializable " + c.getName());
+            if (debug)
+                System.out.println("registering serializable " + c.getName());
         }
     }
 
     @SuppressWarnings("unchecked")
     public void registerSerializable(Collection<Class<?>> classes) {
         for (Class<?> c : classes) {
-            if (!Serializable.class.isAssignableFrom(c) || c.getCanonicalName() == null) continue;
+            if (!Serializable.class.isAssignableFrom(c) || c.getCanonicalName() == null)
+                continue;
             hints.serialization().registerType((Class<? extends Serializable>) c);
-            if (debug) System.out.println("registering serializable " + c.getName());
+            if (debug)
+                System.out.println("registering serializable " + c.getName());
         }
     }
 
@@ -186,9 +199,11 @@ public class AotUtils extends CollectUtils {
         for (String cs : classes) {
             try {
                 Class<?> c = classLoader.loadClass(cs);
-                if (!Serializable.class.isAssignableFrom(c) || c.getCanonicalName() == null) continue;
+                if (!Serializable.class.isAssignableFrom(c) || c.getCanonicalName() == null)
+                    continue;
                 hints.serialization().registerType((Class<? extends Serializable>) c);
-                if (debug) System.out.println("registering serializable " + c);
+                if (debug)
+                    System.out.println("registering serializable " + c);
             } catch (ClassNotFoundException ignored) {
             }
         }

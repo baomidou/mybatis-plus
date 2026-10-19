@@ -13,14 +13,16 @@ public class DdlScriptTest {
     @Test
     void test() throws Exception {
         var ddlScript = new DdlScript(Driver.class.getName(),
-            "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-            "sa", "", true).scriptRunner(scriptRunner -> {
-                scriptRunner.setLogWriter(null);
+                "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "", true)
+                .scriptRunner(scriptRunner -> {
+                    scriptRunner.setLogWriter(null);
+                });
+        LOGGER.info("--------------execute----------------");
+        ddlScript.run("select 1 from dual;", msg -> {
         });
         LOGGER.info("--------------execute----------------");
-        ddlScript.run( "select 1 from dual;", msg ->{});
-        LOGGER.info("--------------execute----------------");
-        ddlScript.run( "select 2 from dual;", msg ->{});
+        ddlScript.run("select 2 from dual;", msg -> {
+        });
         LOGGER.info("--------------run----------------");
         ddlScript.run("select 1 from dual;");
         LOGGER.info("--------------run----------------");

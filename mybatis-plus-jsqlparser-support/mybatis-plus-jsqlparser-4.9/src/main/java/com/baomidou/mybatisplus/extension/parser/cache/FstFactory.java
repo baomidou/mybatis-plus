@@ -24,6 +24,7 @@ import org.nustaq.serialization.FSTConfiguration;
  * @since 2023-08-06
  */
 public class FstFactory {
+
     private static final FstFactory FACTORY = new FstFactory();
     private final FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
 

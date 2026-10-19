@@ -33,15 +33,11 @@ public class SybaseQuery extends AbstractDbQuery {
 
     @Override
     public String tableFieldsSql() {
-        return "select o.name TABLE_NAME, c.name FIELD_NAME, upper(t.name) as FIELD_TYPE, " +
-            "(CONVERT(varchar(10),c.id)+ '_' + CONVERT(varchar(10), c.colid)) FIELD_KEY, " +
-            "c.length as COL_LENGTH, c.status FIELD_STATUS, '' FIELD_COMMENT, c.colid SORT_INDEX " +
-            "FROM syscolumns c left join systypes t " +
-            "on c.usertype=t.usertype " +
-            "inner join sysobjects o " +
-            "on c.id=o.id and o.type='U' " +
-            "WHERE o.name = '%s' " +
-            "ORDER BY c.colid";
+        return "select o.name TABLE_NAME, c.name FIELD_NAME, upper(t.name) as FIELD_TYPE, "
+                + "(CONVERT(varchar(10),c.id)+ '_' + CONVERT(varchar(10), c.colid)) FIELD_KEY, "
+                + "c.length as COL_LENGTH, c.status FIELD_STATUS, '' FIELD_COMMENT, c.colid SORT_INDEX "
+                + "FROM syscolumns c left join systypes t " + "on c.usertype=t.usertype " + "inner join sysobjects o "
+                + "on c.id=o.id and o.type='U' " + "WHERE o.name = '%s' " + "ORDER BY c.colid";
     }
 
     @Override

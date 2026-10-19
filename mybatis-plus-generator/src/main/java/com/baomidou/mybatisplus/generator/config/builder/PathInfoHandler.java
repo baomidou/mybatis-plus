@@ -50,7 +50,8 @@ class PathInfoHandler {
      */
     private final PackageConfig packageConfig;
 
-    PathInfoHandler(InjectionConfig injectionConfig, GlobalConfig globalConfig, StrategyConfig strategyConfig, PackageConfig packageConfig) {
+    PathInfoHandler(InjectionConfig injectionConfig, GlobalConfig globalConfig, StrategyConfig strategyConfig,
+            PackageConfig packageConfig) {
         this.outputDir = globalConfig.getOutputDir();
         this.packageConfig = packageConfig;
         // 设置默认输出路径
@@ -65,13 +66,16 @@ class PathInfoHandler {
     /**
      * 设置默认输出路径
      *
-     * @param globalConfig   全局配置
+     * @param globalConfig 全局配置
      * @param strategyConfig 模板配置
      */
-    private void setDefaultPathInfo(InjectionConfig injectionConfig, GlobalConfig globalConfig, StrategyConfig strategyConfig) {
+    private void setDefaultPathInfo(InjectionConfig injectionConfig, GlobalConfig globalConfig,
+            StrategyConfig strategyConfig) {
         Entity entity = strategyConfig.entity();
         if (entity.isGenerate()) {
-            putPathInfo(injectionConfig, globalConfig.isKotlin() ? entity.getKotlinTemplate() : entity.getJavaTemplate(), OutputFile.entity, ConstVal.ENTITY);
+            putPathInfo(
+                    injectionConfig, globalConfig.isKotlin() ? entity.getKotlinTemplate() : entity.getJavaTemplate(),
+                    OutputFile.entity, ConstVal.ENTITY);
         }
         Mapper mapper = strategyConfig.mapper();
         if (mapper.isGenerateMapper()) {
@@ -85,7 +89,8 @@ class PathInfoHandler {
             putPathInfo(injectionConfig, service.getServiceTemplate(), OutputFile.service, ConstVal.SERVICE);
         }
         if (service.isGenerateServiceImpl()) {
-            putPathInfo(injectionConfig, service.getServiceImplTemplate(), OutputFile.serviceImpl, ConstVal.SERVICE_IMPL);
+            putPathInfo(
+                    injectionConfig, service.getServiceImplTemplate(), OutputFile.serviceImpl, ConstVal.SERVICE_IMPL);
         }
         Controller controller = strategyConfig.controller();
         if (controller.isGenerate()) {
@@ -107,7 +112,7 @@ class PathInfoHandler {
     /**
      * 连接路径字符串
      *
-     * @param parentDir   路径常量字符串
+     * @param parentDir 路径常量字符串
      * @param packageName 包名
      * @return 连接后的路径
      */

@@ -46,7 +46,8 @@ public class DefaultTableAnnotationHandler implements ITableAnnotationHandler {
         if (!kotlin) {
             // 原先kt模板没有处理这些,作为兼容项
             if (entity.isChain() && entity.isLombok()) {
-                annotationAttributesList.add(new ClassAnnotationAttributes("@Accessors(chain = true)", "lombok.experimental.Accessors"));
+                annotationAttributesList.add(
+                        new ClassAnnotationAttributes("@Accessors(chain = true)", "lombok.experimental.Accessors"));
             }
             if (entity.isLombok()) {
                 if (entity.isDefaultLombok()) {
@@ -72,14 +73,18 @@ public class DefaultTableAnnotationHandler implements ITableAnnotationHandler {
         }
         if (globalConfig.isSwagger()) {
             //@ApiModel(value = "${entity}对象", description = "${table.comment!}")
-            String displayName = String.format("@ApiModel(value = \"%s对象\", description = \"%s\")", tableInfo.getEntityName(), comment);
-            annotationAttributesList.add(new ClassAnnotationAttributes(
-                displayName, "io.swagger.annotations.ApiModel", "io.swagger.annotations.ApiModelProperty"));
+            String displayName = String
+                    .format("@ApiModel(value = \"%s对象\", description = \"%s\")", tableInfo.getEntityName(), comment);
+            annotationAttributesList.add(
+                    new ClassAnnotationAttributes(displayName, "io.swagger.annotations.ApiModel",
+                            "io.swagger.annotations.ApiModelProperty"));
         }
         if (globalConfig.isSpringdoc()) {
             //@Schema(name = "${entity}", description = "${table.comment!}")
-            String displayName = String.format("@Schema(name = \"%s\", description = \"%s\")", tableInfo.getEntityName(), comment);
-            annotationAttributesList.add(new ClassAnnotationAttributes(displayName, "io.swagger.v3.oas.annotations.media.Schema"));
+            String displayName = String
+                    .format("@Schema(name = \"%s\", description = \"%s\")", tableInfo.getEntityName(), comment);
+            annotationAttributesList
+                    .add(new ClassAnnotationAttributes(displayName, "io.swagger.v3.oas.annotations.media.Schema"));
         }
         return annotationAttributesList;
     }

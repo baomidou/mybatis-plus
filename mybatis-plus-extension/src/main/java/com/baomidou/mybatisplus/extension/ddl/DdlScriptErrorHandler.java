@@ -20,7 +20,6 @@ import org.apache.ibatis.logging.LogFactory;
 
 import java.sql.SQLException;
 
-
 /**
  * 错误处理器
  *
@@ -33,7 +32,7 @@ public interface DdlScriptErrorHandler {
     /**
      * 错误处理
      *
-     * @param sqlFile   执行的sql文件
+     * @param sqlFile 执行的sql文件
      * @param exception 异常信息 {@link org.apache.ibatis.jdbc.RuntimeSqlException}
      * @throws SQLException SQLException
      */

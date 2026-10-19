@@ -25,6 +25,7 @@ class GeneratePomTest {
     @Data
     @AllArgsConstructor
     private static class Dependency {
+
         private String artifactId;
         private String scope;
         private boolean optional;
@@ -39,7 +40,9 @@ class GeneratePomTest {
             Map<String, Dependency> dependenciesMap = new HashMap<>();
             dependencies.forEach($this -> {
                 String artifactId = $this.s("artifactId").text();
-                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.s("scope").text(), Boolean.parseBoolean($this.s("optional").text())));
+                dependenciesMap.put(
+                        artifactId, new Dependency(artifactId, $this.s("scope").text(),
+                                Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency annotation = dependenciesMap.get("mybatis-plus-annotation");
             Assertions.assertEquals("compile", annotation.getScope());

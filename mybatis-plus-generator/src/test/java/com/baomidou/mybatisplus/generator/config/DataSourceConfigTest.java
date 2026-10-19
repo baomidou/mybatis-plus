@@ -29,8 +29,7 @@ public class DataSourceConfigTest {
         dataSourceConfig = new DataSourceConfig.Builder(
                 "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "")
                 .dbQuery(new MySqlQuery()).schema("mp").keyWordsHandler(new MySqlKeyWordsHandler())
-                .typeConvert(new PostgreSqlTypeConvert())
-                .build();
+                .typeConvert(new PostgreSqlTypeConvert()).build();
         Assertions.assertEquals("mp", dataSourceConfig.getSchemaName());
         Assertions.assertEquals(DbType.H2, dataSourceConfig.getDbType());
         Assertions.assertEquals(MySqlQuery.class, dataSourceConfig.getDbQuery().getClass());
@@ -41,9 +40,7 @@ public class DataSourceConfigTest {
         dataSourceConfig = new DataSourceConfig.Builder(
                 "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "")
                 .dbQuery(new MySqlQuery()).schema("mp").keyWordsHandler(new MySqlKeyWordsHandler())
-                .typeConvert(new PostgreSqlTypeConvert())
-                .driverClassName("org.h2.Driver")
-                .build();
+                .typeConvert(new PostgreSqlTypeConvert()).driverClassName("org.h2.Driver").build();
         Assertions.assertEquals("mp", dataSourceConfig.getSchemaName());
         Assertions.assertEquals(DbType.H2, dataSourceConfig.getDbType());
         Assertions.assertEquals(MySqlQuery.class, dataSourceConfig.getDbQuery().getClass());

@@ -35,8 +35,7 @@ class BaseMapperSelectOneCompatibilityTest {
         BaseMapper<Object> mapper = Mockito.mock(BaseMapper.class, Mockito.CALLS_REAL_METHODS);
         when(mapper.selectList(any(Wrapper.class))).thenReturn(List.of(new Object(), new Object()));
 
-        assertThatThrownBy(() -> mapper.selectOne(new QueryWrapper<>()))
-            .isInstanceOf(TooManyResultsException.class);
+        assertThatThrownBy(() -> mapper.selectOne(new QueryWrapper<>())).isInstanceOf(TooManyResultsException.class);
     }
 
     @Test

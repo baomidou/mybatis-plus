@@ -20,6 +20,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @TableName(resultMap = "resultMap")
 public class Entity implements Serializable {
+
     private static final long serialVersionUID = 6962439201546719734L;
 
     private Long id;
@@ -39,11 +40,11 @@ public class Entity implements Serializable {
     @TableField(typeHandler = GsonTypeHandler.class)
     private String[] str;
 
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Gg {
+
         private String name;
     }
 
@@ -51,9 +52,10 @@ public class Entity implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Gg4 {
+
         private String name;
         private Gg gg;
         private List<Gg> ggList;
-        private Map<String,Gg> ggMap;
+        private Map<String, Gg> ggMap;
     }
 }

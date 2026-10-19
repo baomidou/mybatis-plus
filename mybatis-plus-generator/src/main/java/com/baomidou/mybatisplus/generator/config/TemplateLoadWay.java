@@ -25,6 +25,7 @@ import lombok.Getter;
  */
 @Getter
 public enum TemplateLoadWay {
+
     STRING("string"),
     FILE("file");
 

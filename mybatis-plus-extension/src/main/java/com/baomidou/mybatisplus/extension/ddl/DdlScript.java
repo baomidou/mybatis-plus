@@ -47,7 +47,6 @@ public class DdlScript {
      */
     private final DataSource dataSource;
 
-
     /**
      * DDL生成器
      *
@@ -99,7 +98,7 @@ public class DdlScript {
     /**
      * 创建脚本执行器
      *
-     * @param dataSource   数据源
+     * @param dataSource 数据源
      * @param ddlGenerator DDL生成器
      * @deprecated 3.5.11
      */
@@ -111,9 +110,9 @@ public class DdlScript {
     /**
      * 创建脚本执行器
      *
-     * @param dataSource   数据源
+     * @param dataSource 数据源
      * @param ddlGenerator DDL生成器
-     * @param autoCommit   是否自动提交
+     * @param autoCommit 是否自动提交
      * @deprecated 3.5.11
      */
     @Deprecated
@@ -138,7 +137,7 @@ public class DdlScript {
     /**
      * 执行 SQL 脚本文件
      *
-     * @param sqlFiles   SQL 脚本文件列表
+     * @param sqlFiles SQL 脚本文件列表
      * @param autoCommit 自动提交事务
      * @see DdlHelper#runScript(IDdlGenerator, DataSource, List, boolean)
      * @deprecated 3.5.11
@@ -146,7 +145,9 @@ public class DdlScript {
     @Deprecated
     public void run(List<String> sqlFiles, boolean autoCommit) {
         try (Connection connection = this.dataSource.getConnection()) {
-            DdlHelper.runScript(this.ddlGenerator, connection, sqlFiles, this.scriptRunnerConsumer, autoCommit, DdlScriptErrorHandler.PrintlnLogErrorHandler.INSTANCE);
+            DdlHelper.runScript(
+                    this.ddlGenerator, connection, sqlFiles, this.scriptRunnerConsumer, autoCommit,
+                    DdlScriptErrorHandler.PrintlnLogErrorHandler.INSTANCE);
         } catch (Exception e) {
             // TODO 保持兼容,吞掉所有异常
             LOG.error("Run script error: ", e);
@@ -204,9 +205,9 @@ public class DdlScript {
      * 执行 SQL 脚本
      *
      * @param connection {@link Connection} 调用方需要自行控制关闭
-     * @param reader     SQL 脚本内容
+     * @param reader SQL 脚本内容
      * @param autoCommit 自动提交事务
-     * @param delimiter  执行 SQL 分隔符，默认 ; 符号结束执行
+     * @param delimiter 执行 SQL 分隔符，默认 ; 符号结束执行
      */
     public void run(Connection connection, Reader reader, boolean autoCommit, String delimiter) {
         ScriptRunner scriptRunner = DdlHelper.getScriptRunner(connection, autoCommit);
@@ -222,11 +223,11 @@ public class DdlScript {
     /**
      * 以默认分隔符(;) 执行 SQL 脚本
      *
-     * @param driverClassName   连接驱动名
-     * @param url               连接地址
-     * @param user              数据库用户名
-     * @param password          数据库密码
-     * @param sqlScript         执行 SQL 脚本
+     * @param driverClassName 连接驱动名
+     * @param url 连接地址
+     * @param user 数据库用户名
+     * @param password 数据库密码
+     * @param sqlScript 执行 SQL 脚本
      * @param exceptionConsumer 异常处理
      * @see DdlScript(String, String, String, String)
      * @see #run(String, Consumer)
@@ -234,14 +235,14 @@ public class DdlScript {
      */
     @Deprecated
     public boolean execute(final String driverClassName, final String url, final String user, final String password,
-                           final String sqlScript, Consumer<String> exceptionConsumer) {
+            final String sqlScript, Consumer<String> exceptionConsumer) {
         return this.execute(driverClassName, url, user, password, sqlScript, StringPool.SEMICOLON, exceptionConsumer);
     }
 
     /**
      * 以默认分隔符(;) 执行 SQL 脚本
      *
-     * @param sqlScript         执行 SQL脚本
+     * @param sqlScript 执行 SQL脚本
      * @param exceptionConsumer 异常处理
      * @since 3.5.11
      */
@@ -252,19 +253,19 @@ public class DdlScript {
     /**
      * 以指定分隔符 执行 SQL 脚本
      *
-     * @param driverClassName   连接驱动名
-     * @param url               连接地址
-     * @param user              数据库用户名
-     * @param password          数据库密码
-     * @param sqlScript         执行 SQL 脚本
-     * @param delimiter         执行 SQL 分隔符，默认 ; 符号结束执行
+     * @param driverClassName 连接驱动名
+     * @param url 连接地址
+     * @param user 数据库用户名
+     * @param password 数据库密码
+     * @param sqlScript 执行 SQL 脚本
+     * @param delimiter 执行 SQL 分隔符，默认 ; 符号结束执行
      * @param exceptionConsumer 异常处理
      * @return 操作结果
-     * @deprecated 3.5.11  {@link #run(String, String, Consumer)}
+     * @deprecated 3.5.11 {@link #run(String, String, Consumer)}
      */
     @Deprecated
     public boolean execute(final String driverClassName, final String url, final String user, final String password,
-                           final String sqlScript, String delimiter, Consumer<String> exceptionConsumer) {
+            final String sqlScript, String delimiter, Consumer<String> exceptionConsumer) {
         //一般不需要显示加载,只有很旧很旧的驱动才需要
         if (StringUtils.isNotBlank(driverClassName)) {
             Class<?> driverClass = ClassUtils.toClassConfident(driverClassName);
@@ -285,9 +286,9 @@ public class DdlScript {
     /**
      * 以指定分隔符 执行 SQL 脚本
      *
-     * @param sqlScript         执行 SQL 脚本
+     * @param sqlScript 执行 SQL 脚本
      * @param exceptionConsumer 异常处理
-     * @param delimiter         执行 SQL 分隔符，默认 ; 符号结束执行
+     * @param delimiter 执行 SQL 分隔符，默认 ; 符号结束执行
      * @return 操作结果
      * @since 3.5.11
      */

@@ -35,9 +35,8 @@ class XmlCacheTest extends BaseDbTest<XmlCacheMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists xml_cache", "CREATE TABLE IF NOT EXISTS xml_cache (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists xml_cache", "CREATE TABLE IF NOT EXISTS xml_cache (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 }

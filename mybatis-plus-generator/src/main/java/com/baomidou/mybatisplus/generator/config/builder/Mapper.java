@@ -181,7 +181,6 @@ public class Mapper implements ITemplate {
      */
     private Function<Set<String>, List<String>> importPackageFunction;
 
-
     @Override
     @NotNull
     public Map<String, Object> renderData(@NotNull TableInfo tableInfo) {
@@ -207,20 +206,35 @@ public class Mapper implements ITemplate {
             methodList = generateMapperMethodHandler.getMethodList(tableInfo);
             importPackages.addAll(generateMapperMethodHandler.getImportPackages(tableInfo));
         }
-        if(StringUtils.isNotBlank(superClass)){
+        if (StringUtils.isNotBlank(superClass)) {
             importPackages.add(superClass);
         }
         if (mapperAnnotationClass != null) {
             importPackages.add(mapperAnnotationClass.getName());
         }
         PackageConfig packageConfig = tableInfo.getPackageConfig();
-        String entityPackage = packageConfig.getPackageInfo(null, ConstVal.ENTITY) + StringPool.DOT + tableInfo.getEntityName();
+        String entityPackage = packageConfig.getPackageInfo(null, ConstVal.ENTITY) + StringPool.DOT
+                + tableInfo.getEntityName();
         importPackages.add(entityPackage);
-        Set<String> javaPackages = importPackages.stream().filter(pkg -> pkg.startsWith("java")).collect(Collectors.toSet());
-        Set<String> frameworkPackages = importPackages.stream().filter(pkg -> !pkg.startsWith("java")).collect(Collectors.toSet());
-        data.put("importPackages", importPackageFunction != null ? importPackageFunction.apply(importPackages) : importPackages.stream().sorted().collect(Collectors.toList()));
-        data.put("importMapperFrameworkPackages", importPackageFunction != null ? importPackageFunction.apply(frameworkPackages) : frameworkPackages.stream().sorted().collect(Collectors.toList()));
-        data.put("importMapperJavaPackages", importPackageFunction != null ? importPackageFunction.apply(javaPackages) : javaPackages.stream().sorted().collect(Collectors.toList()));
+        Set<String> javaPackages = importPackages.stream().filter(pkg -> pkg.startsWith("java"))
+                .collect(Collectors.toSet());
+        Set<String> frameworkPackages = importPackages.stream().filter(pkg -> !pkg.startsWith("java"))
+                .collect(Collectors.toSet());
+        data.put(
+                "importPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(importPackages)
+                        : importPackages.stream().sorted().collect(Collectors.toList()));
+        data.put(
+                "importMapperFrameworkPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(frameworkPackages)
+                        : frameworkPackages.stream().sorted().collect(Collectors.toList()));
+        data.put(
+                "importMapperJavaPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(javaPackages)
+                        : javaPackages.stream().sorted().collect(Collectors.toList()));
         data.put("mapperMethodList", methodList == null ? Collections.emptyList() : methodList);
         return data;
     }
@@ -320,7 +334,7 @@ public class Mapper implements ITemplate {
         /**
          * 输出Mapper文件名称转换
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -332,7 +346,7 @@ public class Mapper implements ITemplate {
         /**
          * 转换Xml文件名称处理
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -344,7 +358,7 @@ public class Mapper implements ITemplate {
         /**
          * 格式化Mapper文件名称
          *
-         * @param format 　格式
+         * @param format 格式
          * @return this
          * @since 3.5.0
          */
@@ -450,7 +464,6 @@ public class Mapper implements ITemplate {
             return this;
         }
 
-
         /**
          * 导包处理方法
          *
@@ -462,7 +475,6 @@ public class Mapper implements ITemplate {
             this.mapper.importPackageFunction = importPackageFunction;
             return this;
         }
-
 
         @NotNull
         public Mapper get() {

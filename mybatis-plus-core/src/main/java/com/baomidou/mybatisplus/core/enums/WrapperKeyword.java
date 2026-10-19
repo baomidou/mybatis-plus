@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum WrapperKeyword implements ISqlSegment {
+
     /**
      * 只用作于辨识,不用于其他
      */

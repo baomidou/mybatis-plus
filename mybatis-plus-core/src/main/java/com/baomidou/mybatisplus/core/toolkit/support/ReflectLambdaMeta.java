@@ -22,11 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.invoke.SerializedLambda;
 
 /**
- * @author HCL
- * Created at 2021/5/14
+ * @author HCL <br>
+ *         Created at 2021/5/14
  */
 @Slf4j
 public class ReflectLambdaMeta implements LambdaMeta {
+
     private final SerializedLambda lambda;
 
     private final ClassLoader classLoader;
@@ -44,7 +45,9 @@ public class ReflectLambdaMeta implements LambdaMeta {
     @Override
     public Class<?> getInstantiatedClass() {
         String instantiatedMethodType = lambda.getInstantiatedMethodType();
-        String instantiatedType = instantiatedMethodType.substring(2, instantiatedMethodType.indexOf(StringPool.SEMICOLON)).replace(StringPool.SLASH, StringPool.DOT);
+        String instantiatedType = instantiatedMethodType
+                .substring(2, instantiatedMethodType.indexOf(StringPool.SEMICOLON))
+                .replace(StringPool.SLASH, StringPool.DOT);
         return ClassUtils.toClassConfident(instantiatedType, this.classLoader);
     }
 

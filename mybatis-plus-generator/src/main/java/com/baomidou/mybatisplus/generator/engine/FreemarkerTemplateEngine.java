@@ -35,6 +35,7 @@ import java.util.Map;
  * @since 2018-01-11
  */
 public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
+
     private Configuration configuration;
 
     @Override
@@ -46,7 +47,8 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
+    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName,
+            @NotNull String templateString) throws Exception {
         Template template = new Template(templateName, templateString, configuration);
         StringWriter writer = new StringWriter();
         template.process(objectMap, writer);
@@ -54,13 +56,13 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {
+    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile)
+            throws Exception {
         Template template = configuration.getTemplate(templatePath);
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
             template.process(objectMap, new OutputStreamWriter(fileOutputStream, ConstVal.UTF8));
         }
     }
-
 
     @Override
     public @NotNull String templateFilePath(@NotNull String filePath) {

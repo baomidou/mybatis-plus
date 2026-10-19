@@ -76,7 +76,7 @@ public enum NamingStrategy {
     /**
      * 去掉指定的前缀
      *
-     * @param name   表名
+     * @param name 表名
      * @param prefix 前缀
      * @return 转换后的字符串
      */
@@ -85,14 +85,14 @@ public enum NamingStrategy {
             return StringPool.EMPTY;
         }
         // 判断是否有匹配的前缀，然后截取前缀
-        return prefix.stream().filter(pf -> name.toLowerCase().startsWith(pf.toLowerCase()))
-            .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
+        return prefix.stream().filter(pf -> name.toLowerCase().startsWith(pf.toLowerCase())).findFirst()
+                .map(pf -> name.substring(pf.length())).orElse(name);
     }
 
     /**
      * 去掉下划线前缀并转成驼峰格式
      *
-     * @param name   表名
+     * @param name 表名
      * @param prefix 前缀
      * @return 转换后的字符串
      */
@@ -103,7 +103,7 @@ public enum NamingStrategy {
     /**
      * 去掉指定的后缀
      *
-     * @param name   表名
+     * @param name 表名
      * @param suffix 后缀
      * @return 转换后的字符串
      */
@@ -112,14 +112,14 @@ public enum NamingStrategy {
             return StringPool.EMPTY;
         }
         // 判断是否有匹配的后缀，然后截取后缀
-        return suffix.stream().filter(sf -> name.toLowerCase().endsWith(sf.toLowerCase()))
-            .findFirst().map(sf -> name.substring(0, name.length() - sf.length())).orElse(name);
+        return suffix.stream().filter(sf -> name.toLowerCase().endsWith(sf.toLowerCase())).findFirst()
+                .map(sf -> name.substring(0, name.length() - sf.length())).orElse(name);
     }
 
     /**
      * 去掉下划线后缀并转成驼峰格式
      *
-     * @param name   表名
+     * @param name 表名
      * @param suffix 后缀
      * @return 转换后的字符串
      */

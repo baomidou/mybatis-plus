@@ -36,6 +36,7 @@ import java.util.Properties;
  * @since 2018-01-10
  */
 public class VelocityTemplateEngine extends AbstractTemplateEngine {
+
     private VelocityEngine velocityEngine;
 
     {
@@ -68,22 +69,23 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
     }
 
     @Override
-    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName, @NotNull String templateString) throws Exception {
+    public String writer(@NotNull Map<String, Object> objectMap, @NotNull String templateName,
+            @NotNull String templateString) throws Exception {
         StringWriter writer = new StringWriter();
         velocityEngine.evaluate(new VelocityContext(objectMap), writer, templateName, templateString);
         return writer.toString();
     }
 
     @Override
-    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile) throws Exception {
+    public void writer(@NotNull Map<String, Object> objectMap, @NotNull String templatePath, @NotNull File outputFile)
+            throws Exception {
         Template template = velocityEngine.getTemplate(templatePath, ConstVal.UTF8);
         try (FileOutputStream fos = new FileOutputStream(outputFile);
-             OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
-             BufferedWriter writer = new BufferedWriter(ow)) {
+                OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
+                BufferedWriter writer = new BufferedWriter(ow)) {
             template.merge(new VelocityContext(objectMap), writer);
         }
     }
-
 
     @Override
     public @NotNull String templateFilePath(@NotNull String filePath) {

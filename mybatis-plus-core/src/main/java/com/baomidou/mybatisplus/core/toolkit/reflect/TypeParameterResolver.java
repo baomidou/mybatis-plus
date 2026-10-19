@@ -30,6 +30,7 @@ import java.util.Set;
  * Create by hcl at 2023/9/25
  */
 public class TypeParameterResolver {
+
     private final Map<TypeVariable<?>, Type> map;
     private final Set<Type> distinct;
 
@@ -42,8 +43,8 @@ public class TypeParameterResolver {
      * 获取类型上指定索引位置参数的实现信息
      *
      * @param source 类型
-     * @param index  索引
-     * @param type   实现类型
+     * @param index 索引
+     * @param type 实现类型
      * @return 返回类型实现或者 null
      */
     public static Type resolveClassIndexedParameter(Type type, Class<?> source, int index) {
@@ -53,7 +54,7 @@ public class TypeParameterResolver {
     /**
      * 计算参数值
      *
-     * @param map       变量 Map
+     * @param map 变量 Map
      * @param parameter 参数
      * @return 返回参数值
      */

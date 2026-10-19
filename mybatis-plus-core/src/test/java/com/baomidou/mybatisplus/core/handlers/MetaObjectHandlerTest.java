@@ -142,6 +142,7 @@ class MetaObjectHandlerTest {
 
     @Data
     static class Xt {
+
         private Long id;
 
         @TableField(fill = FieldFill.INSERT_UPDATE)
@@ -158,6 +159,7 @@ class MetaObjectHandlerTest {
 
     @Data
     static class Ojbk {
+
         private String xx = "木大木大木大木大,欧拉欧拉欧拉欧拉";
     }
 

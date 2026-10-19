@@ -47,11 +47,13 @@ class LambdaUtilsTest {
      */
     @Getter
     public static class TestModel extends Parent implements Named {
+
         private String name;
     }
 
     @Getter
     private static abstract class Parent {
+
         private int id;
     }
 
@@ -68,6 +70,7 @@ class LambdaUtilsTest {
     }
 
     private interface Named {
+
         String getName();
     }
 

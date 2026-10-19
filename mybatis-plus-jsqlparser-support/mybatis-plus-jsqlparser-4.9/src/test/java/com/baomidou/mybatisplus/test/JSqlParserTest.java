@@ -19,7 +19,8 @@ class JSqlParserTest {
 
     @Test
     void parser() throws Exception {
-        Select select = (Select) CCJSqlParserUtil.parse("SELECT a,b,c FROM tableName t WHERE t.col = 9 and b=c LIMIT 3, ?");
+        Select select = (Select) CCJSqlParserUtil
+                .parse("SELECT a,b,c FROM tableName t WHERE t.col = 9 and b=c LIMIT 3, ?");
 
         PlainSelect ps = (PlainSelect) select;
 
@@ -56,7 +57,8 @@ class JSqlParserTest {
 
     @Test
     void updateWhereParser() throws Exception {
-        Update update = (Update) CCJSqlParserUtil.parse("Update tableName t SET t.a=(select c from tn where tn.id=t.id),b=2,c=3 ");
+        Update update = (Update) CCJSqlParserUtil
+                .parse("Update tableName t SET t.a=(select c from tn where tn.id=t.id),b=2,c=3 ");
         Assertions.assertNull(update.getWhere());
     }
 
@@ -66,12 +68,12 @@ class JSqlParserTest {
         Assertions.assertNull(delete.getWhere());
     }
 
-//    @Test
-//    void testSelectForUpdate() throws Exception {
-//        Assertions.assertEquals("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE",
-//            CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString());
-//        Assertions.assertEquals("SELECT * FROM sys_sms_send_record WHERE check_status = 0 ORDER BY submit_time ASC LIMIT 10 FOR UPDATE",
-//            CCJSqlParserUtil.parse("select * from sys_sms_send_record where check_status = 0 for update order by submit_time asc limit 10").toString());
-//    }
+    //    @Test
+    //    void testSelectForUpdate() throws Exception {
+    //        Assertions.assertEquals("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE",
+    //            CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString());
+    //        Assertions.assertEquals("SELECT * FROM sys_sms_send_record WHERE check_status = 0 ORDER BY submit_time ASC LIMIT 10 FOR UPDATE",
+    //            CCJSqlParserUtil.parse("select * from sys_sms_send_record where check_status = 0 for update order by submit_time asc limit 10").toString());
+    //    }
 
 }

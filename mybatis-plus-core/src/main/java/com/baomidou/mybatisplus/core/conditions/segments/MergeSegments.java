@@ -69,7 +69,8 @@ public class MergeSegments implements ISqlSegment {
                 sqlSegment = groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
             }
         } else {
-            sqlSegment = normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+            sqlSegment = normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment()
+                    + orderBy.getSqlSegment();
         }
         return sqlSegment;
     }
@@ -85,8 +86,9 @@ public class MergeSegments implements ISqlSegment {
 
     public void changeParamAlias(String oldParamAlias, String paramAlias) {
         if (cacheSqlSegment) {
-            sqlSegment = sqlSegment.replace("#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
-                "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
+            sqlSegment = sqlSegment.replace(
+                    "#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
+                    "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
         }
         normal.changeParamAlias(oldParamAlias, paramAlias);
         groupBy.changeParamAlias(oldParamAlias, paramAlias);

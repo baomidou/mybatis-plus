@@ -20,7 +20,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
  * GaussDB 数据库分页实现
- * <p>分页语法格式: SELECT query_list FROM table_name [ LIMIT { [offset,] count | ALL } ]
+ * <p>
+ * 分页语法格式: SELECT query_list FROM table_name [ LIMIT { [offset,] count | ALL } ]
  *
  * @author nieqiurong
  * @since 3.5.13

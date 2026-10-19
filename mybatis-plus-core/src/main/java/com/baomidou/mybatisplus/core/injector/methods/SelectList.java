@@ -48,7 +48,8 @@ public class SelectList extends AbstractMethod {
     }
 
     protected String getSql(TableInfo tableInfo) {
-        return SqlMethod.SELECT_LIST.format(sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
-            sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
+        return SqlMethod.SELECT_LIST.format(
+                sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
+                sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
     }
 }

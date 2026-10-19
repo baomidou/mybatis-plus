@@ -9,7 +9,7 @@ import java.util.UUID;
 @TableName("entity")
 public class UUIDEntity {
 
-    @TableId(value = "id",type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.INPUT)
     private UUID id;
 
     private String name;

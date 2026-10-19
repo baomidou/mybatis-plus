@@ -126,9 +126,10 @@ public class InjectionConfig {
          * @return this
          */
         public Builder customFile(@NotNull Map<String, String> customFile) {
-            return customFile(customFile.entrySet().stream()
-                .map(e -> new CustomFile.Builder().fileName(e.getKey()).templatePath(e.getValue()).build())
-                .collect(Collectors.toList()));
+            return customFile(
+                    customFile.entrySet().stream()
+                            .map(e -> new CustomFile.Builder().fileName(e.getKey()).templatePath(e.getValue()).build())
+                            .collect(Collectors.toList()));
         }
 
         public Builder customFile(@NotNull CustomFile customFile) {

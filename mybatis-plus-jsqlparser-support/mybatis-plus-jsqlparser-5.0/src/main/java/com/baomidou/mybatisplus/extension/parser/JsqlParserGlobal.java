@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
  */
 public class JsqlParserGlobal {
 
-
     /**
      * 默认线程数大小
      *
@@ -43,7 +42,9 @@ public class JsqlParserGlobal {
 
     /**
      * 默认解析处理线程池
-     * <p>注意: 由于项目情况,机器配置等不一样因素,请自行根据情况创建指定线程池.</p>
+     * <p>
+     * 注意: 由于项目情况,机器配置等不一样因素,请自行根据情况创建指定线程池.
+     * </p>
      *
      * @see java.util.concurrent.ThreadPoolExecutor
      * @see #setExecutorService(ExecutorService)
@@ -55,10 +56,12 @@ public class JsqlParserGlobal {
     public static ExecutorService executorService;
 
     @Setter
-    private static JsqlParserFunction<String, Statement> parserSingleFunc = sql -> CCJSqlParserUtil.parse(sql, getExecutorService(), null);
+    private static JsqlParserFunction<String, Statement> parserSingleFunc = sql -> CCJSqlParserUtil
+            .parse(sql, getExecutorService(), null);
 
     @Setter
-    private static JsqlParserFunction<String, Statements> parserMultiFunc = sql -> CCJSqlParserUtil.parseStatements(sql, getExecutorService(), null);
+    private static JsqlParserFunction<String, Statements> parserMultiFunc = sql -> CCJSqlParserUtil
+            .parseStatements(sql, getExecutorService(), null);
 
     @Setter
     private static JsqlParseCache jsqlParseCache;
@@ -91,6 +94,7 @@ public class JsqlParserGlobal {
 
     /**
      * 设置解析线程池
+     * 
      * @param executorService 线程池 (自行控制线程池关闭)
      * @param shutdownHook 关闭钩子
      * @since 3.5.12
@@ -108,7 +112,9 @@ public class JsqlParserGlobal {
      * @since 3.5.11
      */
     public static ExecutorService getExecutorService() {
-        return JsqlParserGlobal.executorService == null ? JsqlParserThreadPool.getDefaultThreadPoolExecutor() : JsqlParserGlobal.executorService;
+        return JsqlParserGlobal.executorService == null
+                ? JsqlParserThreadPool.getDefaultThreadPoolExecutor()
+                : JsqlParserGlobal.executorService;
     }
 
     public static Statement parse(String sql) throws JSQLParserException {

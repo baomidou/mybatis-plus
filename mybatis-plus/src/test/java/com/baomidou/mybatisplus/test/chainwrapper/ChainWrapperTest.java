@@ -21,14 +21,11 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     void test() {
         final String id = "id";
         Entity entity = new Entity();
-        doTest(i -> i.queryChain()
-            .func(j -> j.isNotNull(id))
-            .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
-            .and(j -> j.isNotNull(id))
-            .or(j -> j.isNotNull(id))
-            .nested(j -> j.isNotNull(id))
-            .not(j -> j.isNull(id))
-            .list());
+        doTest(
+                i -> i.queryChain().func(j -> j.isNotNull(id))
+                        .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
+                        .and(j -> j.isNotNull(id)).or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id))
+                        .not(j -> j.isNull(id)).list());
         doTest(i -> i.queryChain().groupBy("id").list());
         doTest(i -> i.queryChain().groupBy(List.of("id")).list());
         doTest(i -> i.queryChain().groupBy(List.of("id", "name")).list());
@@ -48,8 +45,8 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     void oneWithSingleResult(boolean throwEx) {
         doTest(mapper -> {
             Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().eq("id", 2).one(throwEx).getId());
-            Assertions.assertEquals(Long.valueOf(2),
-                ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one(throwEx).getId());
+            Assertions.assertEquals(
+                    Long.valueOf(2), ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one(throwEx).getId());
         });
     }
 
@@ -57,8 +54,8 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     void oneWithMultipleResultsThrowsWhenRequested() {
         doTest(mapper -> {
             Assertions.assertThrows(TooManyResultsException.class, () -> mapper.queryChain().one(true));
-            Assertions.assertThrows(TooManyResultsException.class,
-                () -> ChainWrappers.lambdaQueryChain(mapper).one(true));
+            Assertions.assertThrows(
+                    TooManyResultsException.class, () -> ChainWrappers.lambdaQueryChain(mapper).one(true));
         });
     }
 
@@ -66,8 +63,9 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     void oneWithMultipleResultsReturnsFirstWhenAllowed() {
         doTest(mapper -> {
             Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().orderByDesc("id").one(false).getId());
-            Assertions.assertEquals(Long.valueOf(2),
-                ChainWrappers.lambdaQueryChain(mapper).orderByDesc(Entity::getId).one(false).getId());
+            Assertions.assertEquals(
+                    Long.valueOf(2),
+                    ChainWrappers.lambdaQueryChain(mapper).orderByDesc(Entity::getId).one(false).getId());
         });
     }
 
@@ -78,10 +76,9 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
             Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().eq("id", 2).one().getId());
             Assertions.assertThrows(TooManyResultsException.class, () -> mapper.queryChain().one());
             Assertions.assertNull(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 0).one());
-            Assertions.assertEquals(Long.valueOf(2),
-                ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one().getId());
-            Assertions.assertThrows(TooManyResultsException.class,
-                () -> ChainWrappers.lambdaQueryChain(mapper).one());
+            Assertions.assertEquals(
+                    Long.valueOf(2), ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one().getId());
+            Assertions.assertThrows(TooManyResultsException.class, () -> ChainWrappers.lambdaQueryChain(mapper).one());
         });
     }
 
@@ -92,9 +89,8 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 }

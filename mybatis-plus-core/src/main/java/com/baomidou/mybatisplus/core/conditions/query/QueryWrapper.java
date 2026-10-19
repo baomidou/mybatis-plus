@@ -37,7 +37,7 @@ import java.util.function.Predicate;
  * @since 2018-05-25
  */
 public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
-    implements Query<QueryWrapper<T>, T, String> {
+        implements Query<QueryWrapper<T>, T, String> {
 
     /**
      * 查询字段
@@ -70,8 +70,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * @param entityClass 本不应该需要的
      */
     private QueryWrapper(T entity, Class<T> entityClass, AtomicInteger paramNameSeq,
-                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
-                         SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
+            Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments, SharedString paramAlias,
+            SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
         super.setEntityClass(entityClass);
         this.paramNameSeq = paramNameSeq;
@@ -82,7 +82,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.sqlComment = sqlComment;
         this.sqlFirst = sqlFirst;
     }
-
 
     /**
      * 检查 SQL 注入过滤
@@ -130,7 +129,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), sqlSelect, paramNameSeq, paramNameValuePairs,
-            expression, paramAlias, lastSql, sqlComment, sqlFirst, false);
+                expression, paramAlias, lastSql, sqlComment, sqlFirst, false);
     }
 
     /**
@@ -142,7 +141,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     protected QueryWrapper<T> instance() {
         return new QueryWrapper<>(getEntity(), getEntityClass(), paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+                paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 
     @Override

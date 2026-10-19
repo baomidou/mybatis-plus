@@ -3,8 +3,8 @@ package com.baomidou.mybatisplus.test.phoenix;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @author: fly
- * Created date: 2019/12/21 16:35
+ * @author: fly <br>
+ *          Created date: 2019/12/21 16:35
  */
 public interface PhoenixBaseMapper<T> extends BaseMapper<T> {
 

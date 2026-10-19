@@ -31,13 +31,15 @@ import java.util.function.Predicate;
  * 根据 ID 更新固定的那几个字段(但是不包含逻辑删除)
  *
  * <p>
- * 自己的通用 mapper 如下使用:
+ * 自己的通用 mapper 如下使用: <br>
  * <pre>
  * int alwaysUpdateSomeColumnById(@Param(Constants.ENTITY) T entity);
  * </pre>
  * </p>
  *
- * <p> 如何筛选字段参考请 {@link InsertBatchSomeColumn} 里面的注释 </p>
+ * <p>
+ * 如何筛选字段参考请 {@link InsertBatchSomeColumn} 里面的注释
+ * </p>
  *
  * @author hubin
  * @since 2019-04-12
@@ -52,7 +54,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     private Predicate<TableFieldInfo> predicate;
 
     /**
-     * @param name      方法名
+     * @param name 方法名
      * @param predicate 筛选条件
      * @since 3.5.0
      */
@@ -77,10 +79,12 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
         final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
-        String sqlSet = this.filterTableFieldInfo(tableInfo.getFieldList(), getPredicate(),
-            i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
+        String sqlSet = this.filterTableFieldInfo(
+                tableInfo.getFieldList(), getPredicate(), i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
         sqlSet = SqlScriptUtils.convertSet(sqlSet);
-        String sql = sqlMethod.format(tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
+        String sql = sqlMethod.format(
+                tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
+                additional);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }

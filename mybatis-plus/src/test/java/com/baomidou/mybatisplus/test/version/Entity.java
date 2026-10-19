@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Data
 @Accessors(chain = true)
 public class Entity implements Serializable {
+
     private static final long serialVersionUID = 6962439201546719734L;
 
     private Long id;

@@ -41,29 +41,25 @@ public class OracleTypeConvert implements ITypeConvert {
     /**
      * 处理类型转换
      *
-     * @param config    全局配置
+     * @param config 全局配置
      * @param fieldType 字段类型
      * @return 返回的对应的列类型
      */
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
-        return TypeConverts.use(fieldType)
-            .test(containsAny("char", "clob").then(STRING))
-            .test(containsAny("date", "timestamp").then(p -> toDateType(config)))
-            .test(contains("number").then(OracleTypeConvert::toNumberType))
-            .test(contains("float").then(FLOAT))
-            .test(contains("blob").then(BLOB))
-            .test(containsAny("binary", "raw").then(BYTE_ARRAY))
-            .or(STRING);
+        return TypeConverts.use(fieldType).test(containsAny("char", "clob").then(STRING))
+                .test(containsAny("date", "timestamp").then(p -> toDateType(config)))
+                .test(contains("number").then(OracleTypeConvert::toNumberType)).test(contains("float").then(FLOAT))
+                .test(contains("blob").then(BLOB)).test(containsAny("binary", "raw").then(BYTE_ARRAY)).or(STRING);
     }
 
     /**
      * 将对应的类型名称转换为对应的 java 类类型
      * <p>
-     * String.valueOf(Integer.MAX_VALUE).length() == 10
+     * String.valueOf(Integer.MAX_VALUE).length() == 10 <br>
      * Integer 不一定能装下 10 位的数字
      * <p>
-     * String.valueOf(Long.MAX_VALUE).length() == 19
+     * String.valueOf(Long.MAX_VALUE).length() == 19 <br>
      * Long 不一定能装下 19 位的数字
      *
      * @param typeName 类型名称
@@ -87,13 +83,13 @@ public class OracleTypeConvert implements ITypeConvert {
      */
     protected static IColumnType toDateType(GlobalConfig config) {
         switch (config.getDateType()) {
-            case ONLY_DATE:
+            case ONLY_DATE :
                 return DbColumnType.DATE;
-            case SQL_PACK:
+            case SQL_PACK :
                 return DbColumnType.TIMESTAMP;
-            case TIME_PACK:
+            case TIME_PACK :
                 return DbColumnType.LOCAL_DATE_TIME;
-            default:
+            default :
                 return STRING;
         }
     }

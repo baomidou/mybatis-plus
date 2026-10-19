@@ -91,7 +91,7 @@ public class Page<T> implements IPage<T> {
      * 分页构造函数
      *
      * @param current 当前页
-     * @param size    每页显示条数
+     * @param size 每页显示条数
      */
     public Page(long current, long size) {
         this(current, size, 0);
@@ -295,18 +295,10 @@ public class Page<T> implements IPage<T> {
 
     @Override
     public String toString() {
-        return "Page{" +
-            "records=" + records +
-            ", total=" + total +
-            ", size=" + size +
-            ", current=" + current +
-            ", orders=" + orders +
-            ", optimizeCountSql=" + optimizeCountSql +
-            ", searchCount=" + searchCount +
-            ", optimizeJoinOfCountSql=" + optimizeJoinOfCountSql +
-            ", maxLimit=" + maxLimit +
-            ", countId='" + countId + '\'' +
-            '}';
+        return "Page{" + "records=" + records + ", total=" + total + ", size=" + size + ", current=" + current
+                + ", orders=" + orders + ", optimizeCountSql=" + optimizeCountSql + ", searchCount=" + searchCount
+                + ", optimizeJoinOfCountSql=" + optimizeJoinOfCountSql + ", maxLimit=" + maxLimit + ", countId='"
+                + countId + '\'' + '}';
     }
 
 }

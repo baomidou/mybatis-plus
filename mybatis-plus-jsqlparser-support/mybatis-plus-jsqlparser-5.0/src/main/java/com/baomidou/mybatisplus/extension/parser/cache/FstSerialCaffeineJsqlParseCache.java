@@ -28,7 +28,6 @@ import java.util.function.Consumer;
  */
 public class FstSerialCaffeineJsqlParseCache extends AbstractCaffeineJsqlParseCache {
 
-
     public FstSerialCaffeineJsqlParseCache(Cache<String, byte[]> cache) {
         super(cache);
     }

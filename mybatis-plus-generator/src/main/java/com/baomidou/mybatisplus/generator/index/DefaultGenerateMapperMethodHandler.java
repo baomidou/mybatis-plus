@@ -35,8 +35,12 @@ import java.util.stream.Collectors;
 
 /**
  * 按字符串或者字符串常量方法生成查询条件
- * <p>复合索引下,第一个字段不会判空,后续字段会进行判空处理,也就是只能保证第一个字段不传递空,无法解决掉索引中间项传递为空的情况</p>
- * <p>由于需求不一样,默认只处理单字段索引,如果默认复合索引的方案符合你的要求,你可以考虑{@link #singleIndex}设置成false</p>
+ * <p>
+ * 复合索引下,第一个字段不会判空,后续字段会进行判空处理,也就是只能保证第一个字段不传递空,无法解决掉索引中间项传递为空的情况
+ * </p>
+ * <p>
+ * 由于需求不一样,默认只处理单字段索引,如果默认复合索引的方案符合你的要求,你可以考虑{@link #singleIndex}设置成false
+ * </p>
  *
  * @author nieqiurong
  * @see Entity.Builder#enableColumnConstant()
@@ -46,7 +50,9 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
 
     /**
      * 只生成单索引字段方法(默认true)
-     * <p>当设置为true时,代表会过滤掉复合索引</p>
+     * <p>
+     * 当设置为true时,代表会过滤掉复合索引
+     * </p>
      */
     private final boolean singleIndex;
 
@@ -61,7 +67,7 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
     @Override
     public List<MapperMethod> getMethodList(TableInfo tableInfo) {
         Map<String, List<DatabaseMetaDataWrapper.Index>> indexlistMap = tableInfo.getIndexList().stream()
-            .collect(Collectors.groupingBy(DatabaseMetaDataWrapper.Index::getName));
+                .collect(Collectors.groupingBy(DatabaseMetaDataWrapper.Index::getName));
         String entityName = tableInfo.getEntityName();
         GlobalConfig globalConfig = tableInfo.getGlobalConfig();
         Entity entity = tableInfo.getStrategyConfig().entity();
@@ -92,20 +98,24 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
                 }
                 TableField tableField = tableFieldMap.get(index.getColumnName());
                 if (index.getColumnName().equals(entity.getLogicDeleteColumnName())
-                    || tableField.getPropertyName().equals(entity.getLogicDeletePropertyName())) {
+                        || tableField.getPropertyName().equals(entity.getLogicDeletePropertyName())) {
                     continue;
                 }
                 tableFieldList.add(tableField);
                 baseMethodNameBuilder.append(tableField.getCapitalName());
                 if (indexSize > 1) {
                     if (columnConstant) {
-                        baseWrapperBuilder.append("eq(ObjectUtils.isNotNull(").append(tableField.getPropertyName()).append(")").append(", ").append(entityName).append(".").append(tableField.getName().toUpperCase());
+                        baseWrapperBuilder.append("eq(ObjectUtils.isNotNull(").append(tableField.getPropertyName())
+                                .append(")").append(", ").append(entityName).append(".")
+                                .append(tableField.getName().toUpperCase());
                     } else {
-                        baseWrapperBuilder.append("eq(ObjectUtils.isNotNull(").append(tableField.getPropertyName()).append(")").append(", ").append("\"").append(tableField.getColumnName()).append("\"");
+                        baseWrapperBuilder.append("eq(ObjectUtils.isNotNull(").append(tableField.getPropertyName())
+                                .append(")").append(", ").append("\"").append(tableField.getColumnName()).append("\"");
                     }
                 } else {
                     if (columnConstant) {
-                        baseWrapperBuilder.append("eq(").append(entityName).append(".").append(tableField.getName().toUpperCase());
+                        baseWrapperBuilder.append("eq(").append(entityName).append(".")
+                                .append(tableField.getName().toUpperCase());
                     } else {
                         baseWrapperBuilder.append("eq(").append("\"").append(tableField.getColumnName()).append("\"");
                     }
@@ -113,12 +123,13 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
                 baseWrapperBuilder.append(",").append(" ").append(tableField.getPropertyName()).append(")");
                 if (globalConfig.isKotlin()) {
                     argsBuilder.append(tableField.getPropertyName()).append(":").append(" ")
-                        .append(KotlinTypeUtils.getStringType(tableField.getColumnType()));
+                            .append(KotlinTypeUtils.getStringType(tableField.getColumnType()));
                     if (i > 0) {
                         argsBuilder.append("?");
                     }
                 } else {
-                    argsBuilder.append(tableField.getColumnType().getType()).append(" ").append(tableField.getPropertyName());
+                    argsBuilder.append(tableField.getColumnType().getType()).append(" ")
+                            .append(tableField.getPropertyName());
                 }
                 if (i < indexSize - 1) {
                     baseWrapperBuilder.append(".");
@@ -136,34 +147,41 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
             if (globalConfig.isKotlin()) {
                 String selectByMethod;
                 if (returnList) {
-                    selectByMethod = buildKotlinMethod("selectBy" + baseMethodName, args,
-                        "List<" + tableInfo.getEntityName() + ">?", "selectList(Wrappers.query<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
+                    selectByMethod = buildKotlinMethod(
+                            "selectBy" + baseMethodName, args, "List<" + tableInfo.getEntityName() + ">?",
+                            "selectList(Wrappers.query<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
                 } else {
-                    selectByMethod = buildKotlinMethod("selectBy" + baseMethodName, args,
-                        tableInfo.getEntityName() + "?", "selectOne(Wrappers.query<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
+                    selectByMethod = buildKotlinMethod(
+                            "selectBy" + baseMethodName, args, tableInfo.getEntityName() + "?",
+                            "selectOne(Wrappers.query<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
                 }
-                String updateByMethod = buildKotlinMethod("updateBy" + baseMethodName, "entity:" + " " + tableInfo.getEntityName() + ", " + args,
-                    "Int", "update(entity, Wrappers.update<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
-                String deleteByMethod = buildKotlinMethod("deleteBy" + baseMethodName, args,
-                    "Int", "delete(Wrappers.update<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
+                String updateByMethod = buildKotlinMethod(
+                        "updateBy" + baseMethodName, "entity:" + " " + tableInfo.getEntityName() + ", " + args, "Int",
+                        "update(entity, Wrappers.update<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
+                String deleteByMethod = buildKotlinMethod(
+                        "deleteBy" + baseMethodName, args, "Int",
+                        "delete(Wrappers.update<" + tableInfo.getEntityName() + ">()." + baseWrapper + ")");
                 methodList.add(new MapperMethod(indexName, selectByMethod, tableFieldList));
                 methodList.add(new MapperMethod(indexName, updateByMethod, tableFieldList));
                 methodList.add(new MapperMethod(indexName, deleteByMethod, tableFieldList));
             } else {
                 String selectByMethod;
                 if (returnList) {
-                    selectByMethod = buildMethod("selectBy" + baseMethodName, args, "List<" + tableInfo.getEntityName() + ">",
-                        "selectList(Wrappers.<" + tableInfo.getEntityName() + ">query()." + baseWrapper + ")");
+                    selectByMethod = buildMethod(
+                            "selectBy" + baseMethodName, args, "List<" + tableInfo.getEntityName() + ">",
+                            "selectList(Wrappers.<" + tableInfo.getEntityName() + ">query()." + baseWrapper + ")");
                 } else {
-                    selectByMethod = buildMethod("selectBy" + baseMethodName, args, tableInfo.getEntityName(),
-                        "selectOne(Wrappers.<" + tableInfo.getEntityName() + ">query()." + baseWrapper + ")");
+                    selectByMethod = buildMethod(
+                            "selectBy" + baseMethodName, args, tableInfo.getEntityName(),
+                            "selectOne(Wrappers.<" + tableInfo.getEntityName() + ">query()." + baseWrapper + ")");
                 }
 
                 String updateByMethod = buildMethod(
-                    "updateBy" + baseMethodName, tableInfo.getEntityName() + " entity" + ", " + args, "int",
-                    "update(entity, Wrappers.<" + tableInfo.getEntityName() + ">update()." + baseWrapper + ")");
-                String deleteByMethod = buildMethod("deleteBy" + baseMethodName, args, "int",
-                    "delete(Wrappers.<" + tableInfo.getEntityName() + ">update()." + baseWrapper + ")");
+                        "updateBy" + baseMethodName, tableInfo.getEntityName() + " entity" + ", " + args, "int",
+                        "update(entity, Wrappers.<" + tableInfo.getEntityName() + ">update()." + baseWrapper + ")");
+                String deleteByMethod = buildMethod(
+                        "deleteBy" + baseMethodName, args, "int",
+                        "delete(Wrappers.<" + tableInfo.getEntityName() + ">update()." + baseWrapper + ")");
                 methodList.add(new MapperMethod(indexName, selectByMethod, tableFieldList));
                 methodList.add(new MapperMethod(indexName, updateByMethod, tableFieldList));
                 methodList.add(new MapperMethod(indexName, deleteByMethod, tableFieldList));

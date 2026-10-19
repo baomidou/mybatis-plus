@@ -13,10 +13,8 @@ public class OracleGeneratorTest extends BaseGeneratorTest {
     /**
      * 数据源配置
      */
-    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig
-        .Builder("jdbc:oracle:thin:@xxxx:1521:helowin", "system", "system")
-        .schema("ANONYMOUS")
-        .build();
+    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
+            "jdbc:oracle:thin:@xxxx:1521:helowin", "system", "system").schema("ANONYMOUS").build();
 
     public static void main(String[] args) {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);

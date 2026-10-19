@@ -41,7 +41,9 @@ import org.springframework.context.annotation.Lazy;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for MyBatis's scripting language drivers.
- * <p> copy from {@link org.mybatis.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration}</p>
+ * <p>
+ * copy from {@link org.mybatis.spring.boot.autoconfigure.MybatisLanguageDriverAutoConfiguration}
+ * </p>
  *
  * @author miemie
  * @since 2019-10-22
@@ -60,6 +62,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     @ConditionalOnClass(FreeMarkerLanguageDriver.class)
     @ConditionalOnMissingClass("org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig")
     public static class LegacyFreeMarkerConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver() {
@@ -73,6 +76,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({FreeMarkerLanguageDriver.class, FreeMarkerLanguageDriverConfig.class})
     public static class FreeMarkerConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver(FreeMarkerLanguageDriverConfig config) {
@@ -100,8 +104,10 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @ConditionalOnMissingBean
         org.mybatis.scripting.velocity.Driver velocityLanguageDriver() {
             return new org.mybatis.scripting.velocity.Driver() {
+
                 @Override
-                public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+                public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+                        BoundSql boundSql) {
                     return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
                 }
             };
@@ -115,6 +121,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass({VelocityLanguageDriver.class, VelocityLanguageDriverConfig.class})
     public static class VelocityConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         VelocityLanguageDriver velocityLanguageDriver(VelocityLanguageDriverConfig config) {
@@ -132,6 +139,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @ConditionalOnClass(ThymeleafLanguageDriver.class)
     public static class ThymeleafConfiguration {
+
         @Bean
         @ConditionalOnMissingBean
         ThymeleafLanguageDriver thymeleafLanguageDriver(ThymeleafLanguageDriverConfig config) {

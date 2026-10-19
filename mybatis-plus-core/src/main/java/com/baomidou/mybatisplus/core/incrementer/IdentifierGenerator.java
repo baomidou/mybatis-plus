@@ -15,10 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.incrementer;
 
-
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 
 /**
  * Id生成器接口

@@ -24,7 +24,7 @@ class MySqlKeyWordsHandlerTest {
         Assertions.assertFalse(keyWordsHandler.isKeyWords("FILE"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("file"));
 
-        keyWordsHandler = new MySqlKeyWordsHandler(new ArrayList<>(Arrays.asList("TEST","AAA")));
+        keyWordsHandler = new MySqlKeyWordsHandler(new ArrayList<>(Arrays.asList("TEST", "AAA")));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("TEST"));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("test"));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("AAA"));

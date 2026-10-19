@@ -29,11 +29,12 @@ import java.io.Serializable;
  * 当前类是 {@link java.lang.invoke.SerializedLambda } 的一个镜像
  * <p>
  *
- * @author HCL
- * Create at 2020/7/17
+ * @author HCL <br>
+ *         Create at 2020/7/17
  */
 @SuppressWarnings("ALL")
 public class SerializedLambda implements Serializable {
+
     private static final long serialVersionUID = 8025925345765570181L;
 
     private Class<?> capturingClass;
@@ -49,10 +50,11 @@ public class SerializedLambda implements Serializable {
 
     public static SerializedLambda extract(Serializable serializable) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+                ObjectOutputStream oos = new ObjectOutputStream(baos)) {
             oos.writeObject(serializable);
             oos.flush();
             try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray())) {
+
                 @Override
                 protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
                     Class<?> clazz = super.resolveClass(desc);

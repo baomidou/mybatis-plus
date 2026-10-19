@@ -31,18 +31,17 @@ class SimpleQueryTest extends BaseDbTest<EntityMapper> {
         assertThat(entityIds).containsExactly(1L, 2L);
 
         // 可叠加后续操作
-        List<String> names = SimpleQuery.list(lambdaQuery(), Entity::getName,
-            e -> Optional.ofNullable(e.getName())
-                .map(String::toUpperCase)
-                .ifPresent(e::setName));
+        List<String> names = SimpleQuery.list(
+                lambdaQuery(), Entity::getName,
+                e -> Optional.ofNullable(e.getName()).map(String::toUpperCase).ifPresent(e::setName));
         assertThat(names).containsExactly("RUBEN", null);
     }
 
     @Test
     void testMap() {
         // 我要这个表里对应条件的用户，用id作为key给我一个map
-        Map<Long, Entity> idEntityMap = SimpleQuery.keyMap(
-            Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1L), Entity::getId);
+        Map<Long, Entity> idEntityMap = SimpleQuery
+                .keyMap(Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1L), Entity::getId);
         // 校验结果
         Entity entity = new Entity();
         entity.setId(1L);
@@ -89,8 +88,8 @@ class SimpleQueryTest extends BaseDbTest<EntityMapper> {
 
         // 解锁高级玩法：
         // 获取Map<name,List<id>>
-        Map<String, List<Long>> nameIdMap = SimpleQuery.group(lambdaQuery(), Entity::getName,
-            mapping(Entity::getId, toList()));
+        Map<String, List<Long>> nameIdMap = SimpleQuery
+                .group(lambdaQuery(), Entity::getName, mapping(Entity::getId, toList()));
         assertThat(nameIdMap).containsExactly(entry(null, Arrays.asList(2L)), entry("ruben", Arrays.asList(1L, 3L)));
 
         // 获取Map<name,个数>
@@ -106,10 +105,9 @@ class SimpleQueryTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
 }

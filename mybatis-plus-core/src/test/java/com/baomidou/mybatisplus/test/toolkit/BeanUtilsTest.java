@@ -13,8 +13,8 @@ import java.util.Map;
 /**
  * 测试 bean utils
  *
- * @author HCL
- * 2018/7/24 17:44
+ * @author HCL <br>
+ *         2018/7/24 17:44
  */
 class BeanUtilsTest {
 
@@ -24,10 +24,13 @@ class BeanUtilsTest {
     @Test
     @EnabledOnJre(JRE.JAVA_8)
     void beanMapConvertTest() {
-        Map<String, Object> map = BeanUtils.beanToMap(new User() {{
-            setId(123);
-            setName("baomidou");
-        }});
+        Map<String, Object> map = BeanUtils.beanToMap(new User() {
+
+            {
+                setId(123);
+                setName("baomidou");
+            }
+        });
         Assertions.assertEquals(2, map.size());
         Assertions.assertEquals(123, map.get("id"));
         Assertions.assertEquals("baomidou", map.get("name"));
@@ -44,6 +47,7 @@ class BeanUtilsTest {
     @Getter
     @Setter
     public static class User {
+
         private String name;
         private int id;
     }

@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -25,7 +24,9 @@ import java.lang.annotation.Target;
 
 /**
  * 序列主键策略
- * <p>oracle</p>
+ * <p>
+ * oracle
+ * </p>
  *
  * @author zashitou
  * @since 2017.4.20

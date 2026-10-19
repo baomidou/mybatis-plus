@@ -49,25 +49,23 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
             Assertions.assertNull(m.selectById(uuidEntity.getId()));
         });
 
+        doTest(
+                m -> Assertions.assertDoesNotThrow(
+                        () -> m.deleteByIds(
+                                List.of(
+                                        UUID.randomUUID().toString(), UUID.randomUUID(), 123, 321L,
+                                        Map.of("id", UUID.randomUUID()), Map.of("id", UUID.randomUUID().toString()),
+                                        new DeleteByIdDto<>(UUID.randomUUID()),
+                                        new DeleteByIdDto<>(UUID.randomUUID().toString())))));
 
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteByIds(
-            List.of(
-                UUID.randomUUID().toString(),
-                UUID.randomUUID(), 123, 321L,
-                Map.of("id", UUID.randomUUID()),
-                Map.of("id", UUID.randomUUID().toString()),
-                new DeleteByIdDto<>(UUID.randomUUID()),
-                new DeleteByIdDto<>(UUID.randomUUID().toString())
-            ))));
-
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID())));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new UUIDLogicEntity(){})));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(UUID.randomUUID())));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(new UUIDLogicEntity() {
+        })));
         // TODO 下面三种类型无法转为UUID，看是否增加一个类型转换器让用户能注册处理自己的类型转换
-//        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID().toString())));
-//        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID()))));
-//        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID().toString()))));
+        //        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID().toString())));
+        //        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID()))));
+        //        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID().toString()))));
     }
-
 
     @Override
     protected Consumer<Configuration> consumer() {
@@ -77,6 +75,7 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
     @Override
     protected GlobalConfig globalConfig() {
         return super.globalConfig().setMetaObjectHandler(new MetaObjectHandler() {
+
             @Override
             public void insertFill(MetaObject metaObject) {
 
@@ -96,13 +95,10 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id VARCHAR(50) NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "delete_by VARCHAR(30) NULL DEFAULT NULL," +
-                "deleted BOOLEAN NOT NULL DEFAULT false," +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id VARCHAR(50) NOT NULL,\n"
+                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "delete_by VARCHAR(30) NULL DEFAULT NULL,"
+                        + "deleted BOOLEAN NOT NULL DEFAULT false," + "PRIMARY KEY (id)" + ")");
     }
 }

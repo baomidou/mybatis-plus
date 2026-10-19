@@ -41,7 +41,6 @@ public class OrderFieldInfo {
      */
     private short sort;
 
-
     public OrderFieldInfo(String column, boolean asc, short orderBySort) {
         this.column = column;
         this.type = asc ? Constants.ASC : Constants.DESC;

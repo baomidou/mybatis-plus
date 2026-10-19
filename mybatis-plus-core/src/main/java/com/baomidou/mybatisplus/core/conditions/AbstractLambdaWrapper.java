@@ -31,13 +31,15 @@ import static java.util.stream.Collectors.joining;
 
 /**
  * Lambda 语法使用 Wrapper
- * <p>统一处理解析 lambda 获取 column</p>
+ * <p>
+ * 统一处理解析 lambda 获取 column
+ * </p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
-    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
+        extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
@@ -105,7 +107,8 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     @Override
     @SafeVarargs
-    public final Children orderBy(boolean condition, boolean isAsc, SFunction<T, ?> column, SFunction<T, ?>... columns) {
+    public final Children orderBy(boolean condition, boolean isAsc, SFunction<T, ?> column,
+            SFunction<T, ?>... columns) {
         return orderBy(condition, isAsc, column, CollectionUtils.toList(columns));
     }
 
@@ -115,10 +118,9 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         return doGroupBy(true, column, CollectionUtils.toList(columns));
     }
 
-
     @Override
     public Children groupBy(boolean condition, SFunction<T, ?> column, List<SFunction<T, ?>> columns) {
-        return doGroupBy(condition,column,columns);
+        return doGroupBy(condition, column, columns);
     }
 
     @Override
@@ -144,7 +146,6 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     public final Children orderByDesc(boolean condition, SFunction<T, ?> column, SFunction<T, ?>... columns) {
         return super.orderByDesc(condition, column, columns);
     }
-
 
     /**
      * 获取 SerializedLambda 对应的列信息，从 lambda 表达式中推测实体类
@@ -176,8 +177,9 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
 
     private ColumnCache getColumnCache(String fieldName, Class<?> lambdaClass) {
         ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
-        Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
-            fieldName, lambdaClass.getName());
+        Assert.notNull(
+                columnCache, "can not find lambda cache for this property [%s] of entity [%s]", fieldName,
+                lambdaClass.getName());
         return columnCache;
     }
 }

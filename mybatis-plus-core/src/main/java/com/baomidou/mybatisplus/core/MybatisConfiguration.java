@@ -50,12 +50,15 @@ import java.util.stream.Collectors;
 
 /**
  * replace default Configuration class
- * <p>Caratacus 2016/9/25 replace mapperRegistry</p>
+ * <p>
+ * Caratacus 2016/9/25 replace mapperRegistry
+ * </p>
  *
  * @author hubin
  * @since 2016-01-23
  */
 public class MybatisConfiguration extends Configuration {
+
     private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
     /**
      * Mapper 注册
@@ -67,9 +70,10 @@ public class MybatisConfiguration extends Configuration {
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
     protected final Map<String, KeyGenerator> keyGenerators = new StrictMap<>("Key Generators collection");
     protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
-    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
-        .conflictMessageProducer((savedValue, targetValue) ->
-            ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>(
+            "Mapped Statements collection").conflictMessageProducer(
+                    (savedValue, targetValue) -> ". please check " + savedValue.getResource() + " and "
+                            + targetValue.getResource());
     /**
      * 是否生成短key缓存
      *
@@ -96,10 +100,18 @@ public class MybatisConfiguration extends Configuration {
 
     /**
      * MybatisPlus 加载 SQL 顺序：
-     * <p> 1、加载 XML中的 SQL </p>
-     * <p> 2、加载 SqlProvider 中的 SQL </p>
-     * <p> 3、XmlSql 与 SqlProvider不能包含相同的 SQL </p>
-     * <p>调整后的 SQL优先级：XmlSql > sqlProvider > CurdSql </p>
+     * <p>
+     * 1、加载 XML中的 SQL
+     * </p>
+     * <p>
+     * 2、加载 SqlProvider 中的 SQL
+     * </p>
+     * <p>
+     * 3、XmlSql 与 SqlProvider不能包含相同的 SQL
+     * </p>
+     * <p>
+     * 调整后的 SQL优先级：XmlSql > sqlProvider > CurdSql
+     * </p>
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
@@ -164,12 +176,18 @@ public class MybatisConfiguration extends Configuration {
             // 清空 Mapper 方法 mappedStatement 缓存信息
             String typeKey = type.getName() + StringPool.DOT;
             String simpleName = type.getSimpleName();
-            mappedStatements.keySet().stream().filter(ms -> ms.startsWith(typeKey) || ms.equals(simpleName)).collect(Collectors.toSet()).forEach(mappedStatements::remove);
-            resultMaps.keySet().stream().filter(r -> r.startsWith(typeKey)).collect(Collectors.toSet()).forEach(resultMaps::remove);
-            parameterMaps.keySet().stream().filter(p -> p.startsWith(typeKey)).collect(Collectors.toSet()).forEach(parameterMaps::remove);
-            keyGenerators.keySet().stream().filter(k -> k.startsWith(typeKey)).collect(Collectors.toSet()).forEach(keyGenerators::remove);
-            sqlFragments.keySet().stream().filter(s -> s.startsWith(typeKey)).collect(Collectors.toSet()).forEach(sqlFragments::remove);
-            caches.keySet().stream().filter(p -> p.equals(type.getName()) || p.equals(simpleName)).collect(Collectors.toSet()).forEach(caches::remove);
+            mappedStatements.keySet().stream().filter(ms -> ms.startsWith(typeKey) || ms.equals(simpleName))
+                    .collect(Collectors.toSet()).forEach(mappedStatements::remove);
+            resultMaps.keySet().stream().filter(r -> r.startsWith(typeKey)).collect(Collectors.toSet())
+                    .forEach(resultMaps::remove);
+            parameterMaps.keySet().stream().filter(p -> p.startsWith(typeKey)).collect(Collectors.toSet())
+                    .forEach(parameterMaps::remove);
+            keyGenerators.keySet().stream().filter(k -> k.startsWith(typeKey)).collect(Collectors.toSet())
+                    .forEach(keyGenerators::remove);
+            sqlFragments.keySet().stream().filter(s -> s.startsWith(typeKey)).collect(Collectors.toSet())
+                    .forEach(sqlFragments::remove);
+            caches.keySet().stream().filter(p -> p.equals(type.getName()) || p.equals(simpleName))
+                    .collect(Collectors.toSet()).forEach(caches::remove);
         }
     }
 
@@ -379,8 +397,8 @@ public class MybatisConfiguration extends Configuration {
                 if (resultMapObject instanceof ResultMap) {
                     ResultMap entryResultMap = (ResultMap) resultMapObject;
                     if (!entryResultMap.hasNestedResultMaps() && entryResultMap.getDiscriminator() != null) {
-                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator().getDiscriminatorMap()
-                            .values();
+                        Collection<String> discriminatedResultMapNames = entryResultMap.getDiscriminator()
+                                .getDiscriminatorMap().values();
                         if (discriminatedResultMapNames.contains(resultMapId)) {
                             entryResultMap.forceNestedResultMaps();
                         }
@@ -452,7 +470,9 @@ public class MybatisConfiguration extends Configuration {
         public V put(String key, V value) {
             if (containsKey(key)) {
                 throw new IllegalArgumentException(name + " already contains value for " + key
-                    + (conflictMessageProducer == null ? StringPool.EMPTY : conflictMessageProducer.apply(super.get(key), value)));
+                        + (conflictMessageProducer == null
+                                ? StringPool.EMPTY
+                                : conflictMessageProducer.apply(super.get(key), value)));
             }
             if (useGeneratedShortKey) {
                 if (key.contains(StringPool.DOT)) {
@@ -483,7 +503,7 @@ public class MybatisConfiguration extends Configuration {
             }
             if (useGeneratedShortKey && AMBIGUITY_INSTANCE == value) {
                 throw new IllegalArgumentException(key + " is ambiguous in " + name
-                    + " (try using the full name including the namespace, or rename one of the entries)");
+                        + " (try using the full name including the namespace, or rename one of the entries)");
             }
             return value;
         }

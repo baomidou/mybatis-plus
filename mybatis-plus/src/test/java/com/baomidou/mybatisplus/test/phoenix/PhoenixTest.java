@@ -20,8 +20,8 @@ import static com.baomidou.mybatisplus.core.enums.SqlMethod.UPSERT_ONE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * @author: fly
- * Created date: 2019/12/21 16:35
+ * @author: fly <br>
+ *          Created date: 2019/12/21 16:35
  */
 @DirtiesContext
 @TestMethodOrder(MethodOrderer.MethodName.class)
@@ -36,15 +36,12 @@ public class PhoenixTest {
     void a00_upsertForeach() {
         int size = 10;
         for (int i = 0; i < 10; i++) {
-            PhoenixTestInfo testInfo = new PhoenixTestInfo()
-                .setId(i)
-                .setName("test");
-            assertEquals (1, mapper.upsert(testInfo));
+            PhoenixTestInfo testInfo = new PhoenixTestInfo().setId(i).setName("test");
+            assertEquals(1, mapper.upsert(testInfo));
         }
 
         assertEquals(size, mapper.selectList(Wrappers.emptyWrapper()).size());
     }
-
 
     @Test
     void a01_upsertBatch() {
@@ -52,13 +49,11 @@ public class PhoenixTest {
         try (SqlSession sqlSession = SqlHelper.sqlSessionBatch(PhoenixTestInfo.class)) {
             String sqlStatement = SqlHelper.table(PhoenixTestInfo.class).getSqlStatement(UPSERT_ONE.getMethod());
             for (int i = 0; i < size; i++) {
-                PhoenixTestInfo testInfo = new PhoenixTestInfo()
-                    .setId(i)
-                    .setName("upsertBatch");
+                PhoenixTestInfo testInfo = new PhoenixTestInfo().setId(i).setName("upsertBatch");
                 sqlSession.insert(sqlStatement, testInfo);
             }
             sqlSession.commit();
-//            sqlSession.flushStatements();
+            //            sqlSession.flushStatements();
         }
         assertEquals(size, mapper.selectList(Wrappers.emptyWrapper()).size());
     }

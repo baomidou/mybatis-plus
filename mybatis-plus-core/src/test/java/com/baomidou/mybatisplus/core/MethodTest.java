@@ -10,12 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.stream.Stream;
 
-
 public class MethodTest {
 
     static class TestMethod extends AbstractMethod {
 
-        public TestMethod(){
+        public TestMethod() {
             this("TestMethod");
         }
         public TestMethod(String methodName) {
@@ -30,13 +29,9 @@ public class MethodTest {
     }
 
     @Test
-    void test(){
-        Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
-            .add(new Insert())
-            .add(new Delete())
-            .add(new Update())
-            .add(new SelectPage())
-            .add(new TestMethod());
+    void test() {
+        Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder().add(new Insert()).add(new Delete())
+                .add(new Update()).add(new SelectPage()).add(new TestMethod());
         List<AbstractMethod> collect = builder.build().toList();
         Assert.isTrue(collect.size() == 5, "创建失败！");
     }

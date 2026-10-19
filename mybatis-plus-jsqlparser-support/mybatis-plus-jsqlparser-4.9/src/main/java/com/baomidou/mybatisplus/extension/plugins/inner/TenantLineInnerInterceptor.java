@@ -56,11 +56,13 @@ import java.util.Properties;
 @EqualsAndHashCode(callSuper = true)
 @SuppressWarnings({"rawtypes"})
 public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor implements InnerInterceptor {
+
     private static final String TENANT_LINE_ALREADY_PARSED = "_MP_TENANT_LINE_ALREADY_PARSED";
     private TenantLineHandler tenantLineHandler;
 
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
             return;
         }
@@ -132,8 +134,8 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                     for (int i = 0; i < len; i++) {
                         Expression expression = expressions.get(i);
                         if (expression instanceof Parenthesis) {
-                            ExpressionList rowConstructor = new RowConstructor<>()
-                                .withExpressions(new ExpressionList<>(((Parenthesis) expression).getExpression(), tenantId));
+                            ExpressionList rowConstructor = new RowConstructor<>().withExpressions(
+                                    new ExpressionList<>(((Parenthesis) expression).getExpression(), tenantId));
                             expressions.set(i, rowConstructor);
                         } else if (expression instanceof ParenthesedExpressionList) {
                             ((ParenthesedExpressionList) expression).addExpression(tenantId);
@@ -146,7 +148,8 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                 }
             }
         } else {
-            throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
+            throw ExceptionUtils
+                    .mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
         }
     }
 
@@ -191,7 +194,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
      * @param selectBody SelectBody
      */
     protected void processInsertSelect(Select selectBody, final String whereSegment) {
-        if(selectBody instanceof PlainSelect){
+        if (selectBody instanceof PlainSelect) {
             PlainSelect plainSelect = (PlainSelect) selectBody;
             FromItem fromItem = plainSelect.getFromItem();
             if (fromItem instanceof Table) {
@@ -203,7 +206,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                 appendSelectItem(plainSelect.getSelectItems());
                 processInsertSelect(subSelect, whereSegment);
             }
-        } else if(selectBody instanceof ParenthesedSelect){
+        } else if (selectBody instanceof ParenthesedSelect) {
             ParenthesedSelect parenthesedSelect = (ParenthesedSelect) selectBody;
             processInsertSelect(parenthesedSelect.getSelect(), whereSegment);
 
@@ -231,7 +234,9 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
     /**
      * 租户字段别名设置
-     * <p>tenantId 或 tableAlias.tenantId</p>
+     * <p>
+     * tenantId 或 tableAlias.tenantId
+     * </p>
      *
      * @param table 表对象
      * @return 字段
@@ -248,15 +253,15 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
     @Override
     public void setProperties(Properties properties) {
-        PropertyMapper.newInstance(properties).whenNotBlank("tenantLineHandler",
-            ClassUtils::newInstance, this::setTenantLineHandler);
+        PropertyMapper.newInstance(properties)
+                .whenNotBlank("tenantLineHandler", ClassUtils::newInstance, this::setTenantLineHandler);
     }
 
     /**
      * 构建租户条件表达式
      *
-     * @param table        表对象
-     * @param where        当前where条件
+     * @param table 表对象
+     * @param where 当前where条件
      * @param whereSegment 所属Mapper对象全路径（在原租户拦截器功能中，这个参数并不需要参与相关判断）
      * @return 租户条件表达式
      * @see BaseMultiTableInnerInterceptor#buildTableExpression(Table, Expression, String)

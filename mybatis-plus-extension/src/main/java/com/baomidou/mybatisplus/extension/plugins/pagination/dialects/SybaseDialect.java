@@ -44,7 +44,7 @@ public class SybaseDialect implements IDialect {
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         int index = findMainFROM(originalSql);
-        if(index == -1){
+        if (index == -1) {
             index = originalSql.toUpperCase().indexOf(" FROM ");
         }
         String sql = "select";
@@ -59,25 +59,26 @@ public class SybaseDialect implements IDialect {
 
     /**
      * 查找主查询的FROM位置
-     * @param sql   需要查找的SQL
-     * @return  FROM位置的起始下标
+     * 
+     * @param sql 需要查找的SQL
+     * @return FROM位置的起始下标
      * @author lroyia
-     * @since  2022年6月15日 17:57:28
+     * @since 2022年6月15日 17:57:28
      */
-    private int findMainFROM(String sql){
+    private int findMainFROM(String sql) {
         String tempSql = sql.toUpperCase();
         tempSql = tempSql.replace("\n", " ").replace("\t", " ").replace("\r", " ");
         Matcher select_ = Pattern.compile("SELECT ").matcher(tempSql);
         Matcher from_ = Pattern.compile(" FROM ").matcher(tempSql);
         List<Integer> selectIndex = new ArrayList<>(10);
         List<Integer> fromIndex = new ArrayList<>(10);
-        while (select_.find()){
+        while (select_.find()) {
             int start = select_.start();
-            if(start == 0 || tempSql.charAt(start - 1) == ' '|| tempSql.charAt(start - 1) == '('){
+            if (start == 0 || tempSql.charAt(start - 1) == ' ' || tempSql.charAt(start - 1) == '(') {
                 selectIndex.add(start);
             }
         }
-        while (from_.find()){
+        while (from_.find()) {
             fromIndex.add(from_.start());
         }
 
@@ -87,22 +88,22 @@ public class SybaseDialect implements IDialect {
         indexList.addAll(fromIndex);
         indexList.sort(Comparator.naturalOrder());
         // 无法匹配有效下标
-        if(indexList.size() < 2){
+        if (indexList.size() < 2) {
             return -1;
         }
         // 利用栈逻辑匹配select与from
         int selectCount = 1;
-        for(int i = 1; i < indexList.size(); i++){
+        for (int i = 1; i < indexList.size(); i++) {
             int each = indexList.get(i);
-            if(fromIndex.contains(each)){
+            if (fromIndex.contains(each)) {
                 // pointer弹栈
                 selectCount--;
-            }else{
+            } else {
                 // pointer压栈
                 selectCount++;
             }
             // from将全部select弹出，代表当前这个from为主要from
-            if(selectCount == 0){
+            if (selectCount == 0) {
                 return each;
             }
         }

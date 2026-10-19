@@ -30,7 +30,9 @@ public class SqlHelperTest extends BaseDbTest<EntityMapper> {
         Entity aChao = new Entity();
         aChao.setId(2L);
         aChao.setName("a chao");
-        Assert.isTrue(entityList.equals(Arrays.asList(ruben, aChao)), "There is something wrong,please check your environment!");
+        Assert.isTrue(
+                entityList.equals(Arrays.asList(ruben, aChao)),
+                "There is something wrong,please check your environment!");
     }
 
     @Override
@@ -40,10 +42,9 @@ public class SqlHelperTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
 }

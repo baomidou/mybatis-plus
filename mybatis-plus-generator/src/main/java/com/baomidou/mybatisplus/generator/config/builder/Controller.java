@@ -41,19 +41,18 @@ public class Controller implements ITemplate {
     }
 
     /**
-     * 生成 <code>@RestController</code> 控制器（默认 false）
+     * 生成 <code>@RestController</code> 控制器（默认 false） <br>
      * <pre>
-     *      <code>@Controller</code> -> <code>@RestController</code>
-     * </pre>
+     *      <code>@Controller</code> -> <code>@RestController</code> </pre>
      */
     @Getter
     private boolean restStyle;
 
     /**
-     * 驼峰转连字符（默认 false）
+     * 驼峰转连字符（默认 false） <br>
      * <pre>
-     *      <code>@RequestMapping("/managerUserActionHistory")</code> -> <code>@RequestMapping("/manager-user-action-history")</code>
-     * </pre>
+     *      <code>@RequestMapping("/managerUserActionHistory")</code> ->
+     * <code>@RequestMapping("/manager-user-action-history")</code> </pre>
      */
     @Getter
     private boolean hyphenStyle;
@@ -88,6 +87,7 @@ public class Controller implements ITemplate {
 
     /**
      * 模板路径
+     * 
      * @since 3.5.6
      */
     @Getter
@@ -169,7 +169,7 @@ public class Controller implements ITemplate {
         /**
          * 转换输出文件名称
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -181,7 +181,7 @@ public class Controller implements ITemplate {
         /**
          * 格式化文件名称
          *
-         * @param format 　格式
+         * @param format 格式
          * @return this
          * @since 3.5.0
          */

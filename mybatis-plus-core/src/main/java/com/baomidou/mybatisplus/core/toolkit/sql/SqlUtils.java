@@ -34,15 +34,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * SqlUtils工具类
+ * SqlUtils工具类 <br>
  * !!! 本工具不适用于本框架外的类使用 !!!
  *
  * @author Caratacus
  * @since 2016-11-13
  */
 public abstract class SqlUtils implements Constants {
+
     private static final String tp = "[\\w-,]+?";
-    private static final Pattern pattern = Pattern.compile(String.format("\\{@((%s)|(%s:\\w+?)|(%s:\\w+?:\\w+?))}", tp, tp, tp));
+    private static final Pattern pattern = Pattern
+            .compile(String.format("\\{@((%s)|(%s:\\w+?)|(%s:\\w+?:\\w+?))}", tp, tp, tp));
     private static final Map<String, String> PLACEHOLDER_CACHE = new ConcurrentHashMap<>();
 
     /**
@@ -53,11 +55,11 @@ public abstract class SqlUtils implements Constants {
      */
     public static String concatLike(Object str, SqlLike type) {
         switch (type) {
-            case LEFT:
+            case LEFT :
                 return PERCENT + str;
-            case RIGHT:
+            case RIGHT :
                 return str + PERCENT;
-            default:
+            default :
                 return PERCENT + str + PERCENT;
         }
     }
@@ -92,7 +94,8 @@ public abstract class SqlUtils implements Constants {
 
     public static String replaceSqlPlaceholder(String sql, List<String> placeHolder, String escapeSymbol) {
         for (String s : placeHolder) {
-            String body = CollectionUtils.computeIfAbsent(PLACEHOLDER_CACHE, s + escapeSymbol, s1 -> getSelectBody(s, escapeSymbol));
+            String body = CollectionUtils
+                    .computeIfAbsent(PLACEHOLDER_CACHE, s + escapeSymbol, s1 -> getSelectBody(s, escapeSymbol));
             sql = sql.replace(s, body);
         }
         return sql;
@@ -155,7 +158,8 @@ public abstract class SqlUtils implements Constants {
                     property = body.substring(as + 4);
                     property = StringUtils.getTargetColumn(property);
                 }
-                sb.append(sa).append(column).append(AS).append(escapeColumn(asAlisa.concat(DOT).concat(property), escapeSymbol));
+                sb.append(sa).append(column).append(AS)
+                        .append(escapeColumn(asAlisa.concat(DOT).concat(property), escapeSymbol));
             } else {
                 sb.append(sa).append(body);
             }

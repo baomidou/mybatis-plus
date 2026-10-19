@@ -52,7 +52,7 @@ public abstract class CrudRepository<M extends BaseMapper<T>, T> extends Abstrac
      * 批量插入
      *
      * @param entityList ignore
-     * @param batchSize  ignore
+     * @param batchSize ignore
      * @return ignore
      */
     @Transactional(rollbackFor = Exception.class)
@@ -80,15 +80,17 @@ public abstract class CrudRepository<M extends BaseMapper<T>, T> extends Abstrac
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), this.getMapperClass(), this.log, entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
-            return StringUtils.checkValNull(idVal)
-                || CollectionUtils.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), idVal));
-        }, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            return sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
-        });
+        return SqlHelper.saveOrUpdateBatch(
+                getSqlSessionFactory(), this.getMapperClass(), this.log, entityList, batchSize,
+                (sqlSession, entity) -> {
+                    Object idVal = tableInfo.getPropertyValue(entity, keyProperty);
+                    return StringUtils.checkValNull(idVal) || CollectionUtils
+                            .isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), idVal));
+                }, (sqlSession, entity) -> {
+                    MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                    param.put(Constants.ENTITY, entity);
+                    return sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                });
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.enums;
 
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.AllArgsConstructor;
@@ -28,6 +27,7 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum SqlKeyword implements ISqlSegment {
+
     AND("AND"),
     OR("OR"),
     NOT("NOT"),

@@ -63,15 +63,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @SuppressWarnings({"rawtypes"})
 public class PaginationInnerInterceptor implements InnerInterceptor {
+
     /**
      * 获取jsqlparser中count的SelectItem
      */
-    protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections.singletonList(
-        new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total"))
-    );
+    protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections
+            .singletonList(new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total")));
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
-
 
     /**
      * 溢出总页数后是否进行处理
@@ -94,7 +93,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     private IDialect dialect;
     /**
-     * 生成 countSql 优化掉 join
+     * 生成 countSql 优化掉 join <br>
      * 现在只支持 left join
      *
      * @since 3.4.2
@@ -113,7 +112,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 这里进行count,如果count为0这返回false(就是不再执行sql了)
      */
     @Override
-    public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         if (page == null || page.getSize() < 0 || !page.searchCount() || resultHandler != Executor.NO_RESULT_HANDLER) {
             return true;
@@ -146,7 +146,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     }
 
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) {
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         if (null == page) {
             return;
@@ -204,7 +205,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     /**
      * 获取指定的 id 的 MappedStatement
      *
-     * @param ms      MappedStatement
+     * @param ms MappedStatement
      * @param countId id
      * @return MappedStatement
      */
@@ -216,7 +217,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             final Configuration configuration = ms.getConfiguration();
             try {
-                return CollectionUtils.computeIfAbsent(countMsCache, countId, key -> configuration.getMappedStatement(key, false));
+                return CollectionUtils
+                        .computeIfAbsent(countMsCache, countId, key -> configuration.getMappedStatement(key, false));
             } catch (Exception e) {
                 logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
             }
@@ -234,13 +236,17 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         final String countId = ms.getId() + "_mpCount";
         final Configuration configuration = ms.getConfiguration();
         return CollectionUtils.computeIfAbsent(countMsCache, countId, key -> {
-            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(), ms.getSqlCommandType());
+            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(),
+                    ms.getSqlCommandType());
             builder.resource(ms.getResource());
             builder.fetchSize(ms.getFetchSize());
             builder.statementType(ms.getStatementType());
             builder.timeout(ms.getTimeout());
             builder.parameterMap(ms.getParameterMap());
-            builder.resultMaps(Collections.singletonList(new ResultMap.Builder(configuration, Constants.MYBATIS_PLUS, Long.class, Collections.emptyList()).build()));
+            builder.resultMaps(
+                    Collections.singletonList(
+                            new ResultMap.Builder(configuration, Constants.MYBATIS_PLUS, Long.class,
+                                    Collections.emptyList()).build()));
             builder.resultSetType(ms.getResultSetType());
             builder.cache(ms.getCache());
             builder.flushCacheRequired(ms.isFlushCacheRequired());
@@ -253,7 +259,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 获取自动优化的 countSql
      *
      * @param page 参数
-     * @param sql  sql
+     * @param sql sql
      * @return countSql
      */
     public String autoCountSql(IPage<?> page, String sql) {
@@ -302,7 +308,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 List<Join> joins = plainSelect.getJoins();
                 if (CollectionUtils.isNotEmpty(joins)) {
                     boolean canRemoveJoin = true;
-                    String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
+                    String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString)
+                            .orElse(StringPool.EMPTY);
                     // 不区分大小写
                     whereS = whereS.toLowerCase();
                     for (Join join : joins) {
@@ -314,7 +321,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                         String str = "";
                         if (rightItem instanceof Table) {
                             Table table = (Table) rightItem;
-                            str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName()) + StringPool.DOT;
+                            str = Optional.ofNullable(table.getAlias()).map(Alias::getName).orElse(table.getName())
+                                    + StringPool.DOT;
                         } else if (rightItem instanceof ParenthesedSelect) {
                             ParenthesedSelect subSelect = (ParenthesedSelect) rightItem;
                             /* 如果 left join 是子查询，并且子查询里包含 ?(代表有入参) 或者 where 条件里包含使用 join 的表的字段作条件,就不移除 join */
@@ -353,7 +361,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             return select.toString();
         } catch (JSQLParserException e) {
             // 无法优化使用原 SQL
-            logger.warn("optimize this sql to a count sql has exception, sql:\"" + sql + "\", exception:\n" + e.getCause());
+            logger.warn(
+                    "optimize this sql to a count sql has exception, sql:\"" + sql + "\", exception:\n" + e.getCause());
         } catch (Exception e) {
             logger.warn("optimize this sql to a count sql has error, sql:\"" + sql + "\", exception:\n" + e);
         }
@@ -407,14 +416,13 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
 
     protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
         List<OrderByElement> additionalOrderBy = orderList.stream()
-            .filter(item -> StringUtils.isNotBlank(item.getColumn()))
-            .map(item -> {
-                OrderByElement element = new OrderByElement();
-                element.setExpression(new Column(item.getColumn()));
-                element.setAsc(item.isAsc());
-                element.setAscDescPresent(true);
-                return element;
-            }).collect(Collectors.toList());
+                .filter(item -> StringUtils.isNotBlank(item.getColumn())).map(item -> {
+                    OrderByElement element = new OrderByElement();
+                    element.setExpression(new Column(item.getColumn()));
+                    element.setAsc(item.isAsc());
+                    element.setAscDescPresent(true);
+                    return element;
+                }).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(orderByElements)) {
             return additionalOrderBy;
         }
@@ -468,11 +476,10 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
 
     @Override
     public void setProperties(Properties properties) {
-        PropertyMapper.newInstance(properties)
-            .whenNotBlank("overflow", Boolean::parseBoolean, this::setOverflow)
-            .whenNotBlank("dbType", DbType::getDbType, this::setDbType)
-            .whenNotBlank("dialect", ClassUtils::newInstance, this::setDialect)
-            .whenNotBlank("maxLimit", Long::parseLong, this::setMaxLimit)
-            .whenNotBlank("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
+        PropertyMapper.newInstance(properties).whenNotBlank("overflow", Boolean::parseBoolean, this::setOverflow)
+                .whenNotBlank("dbType", DbType::getDbType, this::setDbType)
+                .whenNotBlank("dialect", ClassUtils::newInstance, this::setDialect)
+                .whenNotBlank("maxLimit", Long::parseLong, this::setMaxLimit)
+                .whenNotBlank("optimizeJoin", Boolean::parseBoolean, this::setOptimizeJoin);
     }
 }

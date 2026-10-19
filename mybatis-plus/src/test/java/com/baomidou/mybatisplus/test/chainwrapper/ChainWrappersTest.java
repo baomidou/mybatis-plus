@@ -18,14 +18,11 @@ public class ChainWrappersTest extends BaseDbTest<EntityMapper> {
     void test() {
         final String id = "id";
         Entity entity = new Entity();
-        Assertions.assertAll(() -> ChainWrappers.queryChain(entity.getClass())
-            .func(j -> j.isNotNull(id))
-            .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
-            .and(j -> j.isNotNull(id))
-            .or(j -> j.isNotNull(id))
-            .nested(j -> j.isNotNull(id))
-            .not(j -> j.isNull(id))
-            .list());
+        Assertions.assertAll(
+                () -> ChainWrappers.queryChain(entity.getClass()).func(j -> j.isNotNull(id))
+                        .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
+                        .and(j -> j.isNotNull(id)).or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id))
+                        .not(j -> j.isNull(id)).list());
 
     }
 
@@ -36,9 +33,8 @@ public class ChainWrappersTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 }

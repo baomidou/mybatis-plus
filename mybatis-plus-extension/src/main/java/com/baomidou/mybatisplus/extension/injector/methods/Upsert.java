@@ -49,10 +49,10 @@ public class Upsert extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
         SqlMethod sqlMethod = SqlMethod.UPSERT_ONE;
-        String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null),
-            LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        String valuesScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null),
-            LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
+        String columnScript = SqlScriptUtils
+                .convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null), LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
+        String valuesScript = SqlScriptUtils
+                .convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null), LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         String keyProperty = null;
         String keyColumn = null;
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
@@ -66,6 +66,7 @@ public class Upsert extends AbstractMethod {
         }
         String sql = sqlMethod.format(tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(
+                mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 }

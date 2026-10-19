@@ -19,11 +19,11 @@ import java.io.Serializable;
 public class SuperEntity extends SuSuperEntity implements Serializable {
 
     /**
-	 *  serialVersionUID
-	 */
-	private static final long serialVersionUID = -3111558058262086115L;
+     * serialVersionUID
+     */
+    private static final long serialVersionUID = -3111558058262086115L;
 
-	/* 主键ID 注解，value 字段名，type 用户输入ID */
+    /* 主键ID 注解，value 字段名，type 用户输入ID */
     @TableId
     private Long testId;
 

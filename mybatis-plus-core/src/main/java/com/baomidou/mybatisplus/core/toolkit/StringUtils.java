@@ -59,7 +59,13 @@ public final class StringUtils {
     /**
      * 字符串去除空白内容
      *
-     * <ul> <li>'"<>&*+=#-; sql注入黑名单</li> <li>\n 回车</li> <li>\t 水平制表符</li> <li>\s 空格</li> <li>\r 换行</li> </ul>
+     * <ul>
+     * <li>'"<>&*+=#-; sql注入黑名单</li>
+     * <li>\n 回车</li>
+     * <li>\t 水平制表符</li>
+     * <li>\s 空格</li>
+     * <li>\r 换行</li>
+     * </ul>
      */
     private static final Pattern REPLACE_BLANK = Pattern.compile("'|\"|\\<|\\>|&|\\*|\\+|=|#|-|;|\\s*|\t|\r|\n");
 
@@ -109,8 +115,8 @@ public final class StringUtils {
     /**
      * 判断字符串是不是驼峰命名
      *
-     * <li> 包含 '_' 不算 </li>
-     * <li> 首字母大写的不算 </li>
+     * <li>包含 '_' 不算</li>
+     * <li>首字母大写的不算</li>
      *
      * @param str 字符串
      * @return 结果
@@ -218,14 +224,14 @@ public final class StringUtils {
     }
 
     /**
-     * 替换 SQL 语句中的占位符，例如输入 SELECT * FROM test WHERE id = {0} AND name = {1} 会被替换为
+     * 替换 SQL 语句中的占位符，例如输入 SELECT * FROM test WHERE id = {0} AND name = {1} 会被替换为 <br>
      * SELECT * FROM test WHERE id = 1 AND name = 'MP'
      * <p>
      * 当数组中参数不足时，该方法会抛出错误：数组下标越界{@link ArrayIndexOutOfBoundsException}
      * </p>
      *
      * @param content 填充内容
-     * @param args    填充参数
+     * @param args 填充参数
      * @deprecated 3.5.12
      */
     @Deprecated
@@ -244,8 +250,8 @@ public final class StringUtils {
      * BiIntFunction 中的 第二个 参数将传递 参数在字符串中的索引
      * </p>
      *
-     * @param src      源字符串
-     * @param ptn      需要替换部分的正则表达式
+     * @param src 源字符串
+     * @param ptn 需要替换部分的正则表达式
      * @param replacer 替换处理器
      * @return 返回字符串构建起
      * @deprecated 3.5.12
@@ -312,7 +318,7 @@ public final class StringUtils {
     @Deprecated
     public static String quotaMarkList(Collection<?> coll) {
         return coll.stream().map(StringUtils::quotaMark)
-            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+                .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -395,10 +401,10 @@ public final class StringUtils {
     }
 
     /**
-     * 判断是否以某个字符串结尾（区分大小写）
+     * 判断是否以某个字符串结尾（区分大小写） <br>
      * Check if a String ends with a specified suffix.
      * <p>
-     * <code>null</code>s are handled without exceptions. Two <code>null</code>
+     * <code>null</code>s are handled without exceptions. Two <code>null</code> <br>
      * references are considered to be equal. The comparison is case sensitive.
      * </p>
      * <p>
@@ -411,10 +417,10 @@ public final class StringUtils {
      * </pre>
      * </p>
      *
-     * @param str    the String to check, may be null
+     * @param str the String to check, may be null
      * @param suffix the suffix to find, may be null
-     * @return <code>true</code> if the String ends with the suffix, case
-     * sensitive, or both <code>null</code>
+     * @return <code>true</code> if the String ends with the suffix, case <br>
+     *         sensitive, or both <code>null</code>
      * @see String#endsWith(String)
      * @since 2.4
      */
@@ -423,15 +429,15 @@ public final class StringUtils {
     }
 
     /**
-     * Check if a String ends with a specified suffix (optionally case
+     * Check if a String ends with a specified suffix (optionally case <br>
      * insensitive).
      *
-     * @param str        the String to check, may be null
-     * @param suffix     the suffix to find, may be null
-     * @param ignoreCase inidicates whether the compare should ignore case (case
-     *                   insensitive) or not.
-     * @return <code>true</code> if the String starts with the prefix or both
-     * <code>null</code>
+     * @param str the String to check, may be null
+     * @param suffix the suffix to find, may be null
+     * @param ignoreCase inidicates whether the compare should ignore case (case <br>
+     *            insensitive) or not.
+     * @return <code>true</code> if the String starts with the prefix or both <br>
+     *         <code>null</code>
      * @see String#endsWith(String)
      */
     private static boolean endsWith(String str, String suffix, boolean ignoreCase) {
@@ -459,7 +465,7 @@ public final class StringUtils {
      * 前n个首字母小写,之后字符大小写的不变
      *
      * @param rawString 需要处理的字符串
-     * @param index     多少个字符(从左至右)
+     * @param index 多少个字符(从左至右)
      * @return ignore
      */
     public static String prefixToLower(String rawString, int index) {
@@ -471,11 +477,15 @@ public final class StringUtils {
 
     /**
      * 删除字符前缀之后,首字母小写,之后字符大小写的不变
-     * <p>StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user</p>
-     * <p>StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo</p>
+     * <p>
+     * StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 ) = user
+     * </p>
+     * <p>
+     * StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo
+     * </p>
      *
      * @param rawString 需要处理的字符串
-     * @param index     删除多少个字符(从左至右)
+     * @param index 删除多少个字符(从左至右)
      * @return ignore
      */
     public static String removePrefixAfterPrefixToLower(String rawString, int index) {
@@ -484,7 +494,9 @@ public final class StringUtils {
 
     /**
      * 驼峰转连字符
-     * <p>StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service</p>
+     * <p>
+     * StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service
+     * </p>
      *
      * @param input ignore
      * @return 以'-'分隔
@@ -499,7 +511,8 @@ public final class StringUtils {
         char previousChar = ' ';
         char[] chars = input.toCharArray();
         for (char c : chars) {
-            boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
+            boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar))
+                    && (Character.isUpperCase(c));
 
             boolean previousIsWhitespace = Character.isWhitespace(previousChar);
             boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
@@ -530,9 +543,8 @@ public final class StringUtils {
         StringBuilder buf = new StringBuilder();
         char lastChar = 'a';
         for (char c : s.toCharArray()) {
-            if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                && ('-' != c) && (buf.length() > 0)
-                && (buf.charAt(buf.length() - 1) != '-')) {
+            if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c)) && ('-' != c) && (buf.length() > 0)
+                    && (buf.charAt(buf.length() - 1) != '-')) {
                 buf.append(StringPool.DASH);
             }
             if ('_' == c) {
@@ -551,9 +563,13 @@ public final class StringUtils {
     }
 
     /**
-     * <p>比较两个字符串，相同则返回true。字符串可为null</p>
+     * <p>
+     * 比较两个字符串，相同则返回true。字符串可为null
+     * </p>
      *
-     * <p>对字符串大小写敏感</p>
+     * <p>
+     * 对字符串大小写敏感
+     * </p>
      *
      * <pre>
      * StringUtils.equals(null, null)   = true
@@ -594,10 +610,10 @@ public final class StringUtils {
     /**
      * SQL 注入字符串去除空白内容：
      * <ul>
-     *     <li>\n 回车</li>
-     *     <li>\t 水平制表符</li>
-     *     <li>\s 空格</li>
-     *     <li>\r 换行</li>
+     * <li>\n 回车</li>
+     * <li>\t 水平制表符</li>
+     * <li>\s 空格</li>
+     * <li>\r 换行</li>
      * </ul>
      *
      * @param str 字符串
@@ -616,10 +632,10 @@ public final class StringUtils {
     /**
      * 字符串去除空白内容：
      * <ul>
-     *     <li>\n 回车</li>
-     *     <li>\t 水平制表符</li>
-     *     <li>\s 空格</li>
-     *     <li>\r 换行</li>
+     * <li>\n 回车</li>
+     * <li>\t 水平制表符</li>
+     * <li>\s 空格</li>
+     * <li>\r 换行</li>
      * </ul>
      *
      * @param str 字符串

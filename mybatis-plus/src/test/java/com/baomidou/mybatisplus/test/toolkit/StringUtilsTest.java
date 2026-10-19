@@ -22,15 +22,17 @@ class StringUtilsTest {
     }
 
     @Test
-    void sqlInjectionBlackTest(){
-        String originalStr = "(select*from(select sleep(if(length(database())=13,3,0))union/**/select+1)a)" ;
-        Assert.isTrue("(selectfrom(selectsleep(if(length(database())13,3,0))union//select1)a)"
-            .equals(StringUtils.sqlInjectionReplaceBlank(originalStr)),"error");
+    void sqlInjectionBlackTest() {
+        String originalStr = "(select*from(select sleep(if(length(database())=13,3,0))union/**/select+1)a)";
+        Assert.isTrue(
+                "(selectfrom(selectsleep(if(length(database())13,3,0))union//select1)a)"
+                        .equals(StringUtils.sqlInjectionReplaceBlank(originalStr)),
+                "error");
     }
 
     @Test
-    void sqlInjectionBlackCharTest(){
-        Assert.isTrue("".equals(StringUtils.sqlInjectionReplaceBlank("'\"<>&*+=#-;    \n\t")),"error");
+    void sqlInjectionBlackCharTest() {
+        Assert.isTrue("".equals(StringUtils.sqlInjectionReplaceBlank("'\"<>&*+=#-;    \n\t")), "error");
     }
 
 }

@@ -79,14 +79,15 @@ public class Db {
      * 插入（批量）
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      */
     public static <T> boolean saveBatch(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insert(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper
+                .execute(entityClass, baseMapper -> baseMapper.insert(entityList, batchSize));
         return SqlHelper.retBool(batchResults);
     }
 
@@ -103,21 +104,22 @@ public class Db {
      * 批量修改插入
      *
      * @param entityList 实体对象集合
-     * @param batchSize  每次的数量
+     * @param batchSize 每次的数量
      */
     public static <T> boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             return false;
         }
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.insertOrUpdate(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper
+                .execute(entityClass, baseMapper -> baseMapper.insertOrUpdate(entityList, batchSize));
         return SqlHelper.retBool(batchResults);
     }
 
     /**
      * 根据 ID 删除
      *
-     * @param id          主键ID
+     * @param id 主键ID
      * @param entityClass 实体类
      */
     public static <T> boolean removeById(Serializable id, Class<T> entityClass) {
@@ -133,7 +135,8 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        return SqlHelper.execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
+        return SqlHelper
+                .execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.deleteById(entity)));
     }
 
     /**
@@ -142,7 +145,8 @@ public class Db {
      * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> boolean remove(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retBool(baseMapper.delete(queryWrapper)));
+        return SqlHelper.execute(
+                getEntityClass(queryWrapper), baseMapper -> SqlHelper.retBool(baseMapper.delete(queryWrapper)));
     }
 
     /**
@@ -154,7 +158,8 @@ public class Db {
         if (Objects.isNull(entity)) {
             return false;
         }
-        return SqlHelper.execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
+        return SqlHelper
+                .execute(getEntityClass(entity), baseMapper -> SqlHelper.retBool(baseMapper.updateById(entity)));
     }
 
     /**
@@ -169,11 +174,13 @@ public class Db {
     /**
      * 根据 whereEntity 条件，更新记录
      *
-     * @param entity        实体对象
+     * @param entity 实体对象
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     public static <T> boolean update(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
-        return SqlHelper.execute(getEntityClass(updateWrapper), baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
+        return SqlHelper.execute(
+                getEntityClass(updateWrapper),
+                baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
     }
 
     /**
@@ -189,18 +196,19 @@ public class Db {
      * 根据ID 批量更新
      *
      * @param entityList 实体对象集合
-     * @param batchSize  更新批次数量
+     * @param batchSize 更新批次数量
      */
     public static <T> boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Class<T> entityClass = getEntityClass(entityList);
-        List<BatchResult> batchResults = SqlHelper.execute(entityClass, baseMapper -> baseMapper.updateById(entityList, batchSize));
+        List<BatchResult> batchResults = SqlHelper
+                .execute(entityClass, baseMapper -> baseMapper.updateById(entityList, batchSize));
         return SqlHelper.retBool(batchResults);
     }
 
     /**
      * 删除（根据ID 批量删除）
      *
-     * @param list        主键ID或实体列表
+     * @param list 主键ID或实体列表
      * @param entityClass 实体类
      */
     public static <T> boolean removeByIds(Collection<? extends Serializable> list, Class<T> entityClass) {
@@ -210,7 +218,7 @@ public class Db {
     /**
      * 根据 columnMap 条件，删除记录
      *
-     * @param columnMap   表字段 map 对象
+     * @param columnMap 表字段 map 对象
      * @param entityClass 实体类
      */
     public static <T> boolean removeByMap(Map<String, Object> columnMap, Class<T> entityClass) {
@@ -232,7 +240,7 @@ public class Db {
     /**
      * 根据 ID 查询
      *
-     * @param id          主键ID
+     * @param id 主键ID
      * @param entityClass 实体类
      */
     public static <T> T getById(Serializable id, Class<T> entityClass) {
@@ -241,7 +249,9 @@ public class Db {
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
-     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     * <p>
+     * 结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
@@ -251,7 +261,9 @@ public class Db {
 
     /**
      * 根据 entity里不为空的字段，查询一条记录 <br/>
-     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     * <p>
+     * 结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")
+     * </p>
      *
      * @param entity 实体对象
      */
@@ -262,7 +274,7 @@ public class Db {
     /**
      * 根据 entity里不为空的字段，查询一条记录
      *
-     * @param entity  实体对象
+     * @param entity 实体对象
      * @param throwEx 有多个 result 是否抛出异常
      */
     public static <T> T getOne(T entity, boolean throwEx) {
@@ -273,20 +285,21 @@ public class Db {
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param throwEx      有多个 result 是否抛出异常
+     * @param throwEx 有多个 result 是否抛出异常
      */
     public static <T> T getOne(AbstractWrapper<T, ?, ?> queryWrapper, boolean throwEx) {
         Class<T> entityClass = getEntityClass(queryWrapper);
         if (throwEx) {
             return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
         }
-        return SqlHelper.execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
+        return SqlHelper
+                .execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
     }
 
     /**
      * 查询（根据 columnMap 条件）
      *
-     * @param columnMap   表字段 map 对象
+     * @param columnMap 表字段 map 对象
      * @param entityClass 实体类
      */
     public static <T> List<T> listByMap(Map<String, Object> columnMap, Class<T> entityClass) {
@@ -296,7 +309,7 @@ public class Db {
     /**
      * 查询（根据ID 批量查询）
      *
-     * @param idList      主键ID列表
+     * @param idList 主键ID列表
      * @param entityClass 实体类
      */
     public static <T> List<T> listByIds(Collection<? extends Serializable> idList, Class<T> entityClass) {
@@ -309,7 +322,9 @@ public class Db {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> Map<String, Object> getMap(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper)));
+        return SqlHelper.execute(
+                getEntityClass(queryWrapper),
+                baseMapper -> SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper)));
     }
 
     /**
@@ -346,7 +361,8 @@ public class Db {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> long count(AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> SqlHelper.retCount(baseMapper.selectCount(queryWrapper)));
+        return SqlHelper.execute(
+                getEntityClass(queryWrapper), baseMapper -> SqlHelper.retCount(baseMapper.selectCount(queryWrapper)));
     }
 
     /**
@@ -359,15 +375,14 @@ public class Db {
     }
 
     /**
-     * @param page         分页条件
+     * @param page 分页条件
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param <T>          entity
+     * @param <T> entity
      * @return 列表数据
      */
     public static <T> List<T> list(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
         return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(page, queryWrapper));
     }
-
 
     /**
      * 查询所有
@@ -380,16 +395,15 @@ public class Db {
     }
 
     /**
-     * @param page        分页条件
+     * @param page 分页条件
      * @param entityClass 实体类
-     * @param <T>         entity
+     * @param <T> entity
      * @return 列表数据
      * @since 3.5.3.2
      */
     public static <T> List<T> list(IPage<T> page, Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(page, null));
     }
-
 
     /**
      * 根据entity中不为空的字段进行查询
@@ -404,9 +418,9 @@ public class Db {
     /**
      * 根据entity中不为空的字段进行查询
      *
-     * @param page   分页条件
+     * @param page 分页条件
      * @param entity 实体类
-     * @param <T>    entity
+     * @param <T> entity
      * @return 列表数据
      * @since 3.5.3.2
      */
@@ -430,7 +444,8 @@ public class Db {
      * @return 列表数据
      * @param <T> entity
      */
-    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, AbstractWrapper<T, ?, ?> queryWrapper) {
+    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page,
+            AbstractWrapper<T, ?, ?> queryWrapper) {
         return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMaps(page, queryWrapper));
     }
 
@@ -447,16 +462,16 @@ public class Db {
     /**
      * 分页查询列表
      *
-     * @param page        分页条件
+     * @param page 分页条件
      * @param entityClass 实体类
-     * @param <T>         entity
+     * @param <T> entity
      * @return 列表数据
      * @since 3.5.3.2
      */
-    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, Class<T> entityClass) {
+    public static <T> List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page,
+            Class<T> entityClass) {
         return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectMaps(page, null));
     }
-
 
     /**
      * 根据entity不为空的条件查询列表
@@ -470,9 +485,9 @@ public class Db {
     /**
      * 根据entity不为空的条件查询列表
      *
-     * @param page   分页条件
+     * @param page 分页条件
      * @param entity entity
-     * @param <T>    entity
+     * @param <T> entity
      * @return 列表数据
      * @since 3.5.3.2
      */
@@ -502,26 +517,30 @@ public class Db {
      * 根据 Wrapper 条件，查询全部记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param mapper       转换函数
+     * @param mapper 转换函数
      */
     public static <T, V> List<V> listObjs(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collectors.toList()));
+        return SqlHelper.execute(
+                getEntityClass(queryWrapper),
+                baseMapper -> baseMapper.selectList(queryWrapper).stream().map(mapper).collect(Collectors.toList()));
     }
 
     /**
      * 查询全部记录
      *
      * @param entityClass 实体类
-     * @param mapper      转换函数
+     * @param mapper 转换函数
      */
     public static <T, V> List<V> listObjs(Class<T> entityClass, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collectors.toList()));
+        return SqlHelper.execute(
+                entityClass,
+                baseMapper -> baseMapper.selectList(null).stream().map(mapper).collect(Collectors.toList()));
     }
 
     /**
      * 无条件翻页查询
      *
-     * @param page        翻页对象
+     * @param page 翻页对象
      * @param entityClass 实体类
      * @see Wrappers#emptyWrapper()
      */
@@ -532,17 +551,18 @@ public class Db {
     /**
      * 翻页查询
      *
-     * @param page         翻页对象
+     * @param page 翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T, E extends IPage<Map<String, Object>>> E pageMaps(E page, AbstractWrapper<T, ?, ?> queryWrapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMapsPage(page, queryWrapper));
+        return SqlHelper
+                .execute(getEntityClass(queryWrapper), baseMapper -> baseMapper.selectMapsPage(page, queryWrapper));
     }
 
     /**
      * 无条件翻页查询
      *
-     * @param page        翻页对象
+     * @param page 翻页对象
      * @param entityClass 实体类
      * @see Wrappers#emptyWrapper()
      */
@@ -553,7 +573,7 @@ public class Db {
     /**
      * 翻页查询
      *
-     * @param page         翻页对象
+     * @param page 翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     public static <T> IPage<T> page(IPage<T> page, AbstractWrapper<T, ?, ?> queryWrapper) {
@@ -578,10 +598,11 @@ public class Db {
         return ChainWrappers.ktQueryChain(entityClass);
     }
 
-
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -609,7 +630,9 @@ public class Db {
 
     /**
      * 链式更改 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */
@@ -619,7 +642,7 @@ public class Db {
 
     /**
      * <p>
-     * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法
+     * 根据updateWrapper尝试更新，否继续执行saveOrUpdate(T)方法 <br>
      * 此次修改主要是减少了此项业务代码的代码量（存在性验证之后的saveOrUpdate操作）
      * </p>
      *
@@ -633,17 +656,18 @@ public class Db {
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param mapper       转换函数
+     * @param mapper 转换函数
      */
     public static <T, V> V getObj(AbstractWrapper<T, ?, ?> queryWrapper, SFunction<? super T, V> mapper) {
-        return SqlHelper.execute(getEntityClass(queryWrapper), baseMapper -> mapper.apply(baseMapper.selectOne(queryWrapper)));
+        return SqlHelper
+                .execute(getEntityClass(queryWrapper), baseMapper -> mapper.apply(baseMapper.selectOne(queryWrapper)));
     }
 
     /**
      * 从集合中获取实体类型
      *
      * @param entityList 实体集合
-     * @param <T>        实体类型
+     * @param <T> 实体类型
      * @return 实体类型
      */
     protected static <T> Class<T> getEntityClass(Collection<T> entityList) {
@@ -662,7 +686,7 @@ public class Db {
      * 从wrapper中尝试获取实体类型
      *
      * @param queryWrapper 条件构造器
-     * @param <T>          实体类型
+     * @param <T> 实体类型
      * @return 实体类型
      */
     protected static <T> Class<T> getEntityClass(AbstractWrapper<T, ?, ?> queryWrapper) {
@@ -681,7 +705,7 @@ public class Db {
      * 从entity中尝试获取实体类型
      *
      * @param entity 实体
-     * @param <T>    实体类型
+     * @param <T> 实体类型
      * @return 实体类型
      */
     @SuppressWarnings("unchecked")
@@ -689,15 +713,15 @@ public class Db {
         return (Class<T>) entity.getClass();
     }
 
-
     /**
      * 获取表信息，获取不到报错提示
      *
      * @param entityClass 实体类
-     * @param <T>         实体类型
+     * @param <T> 实体类型
      * @return 对应表信息
      */
     protected static <T> TableInfo getTableInfo(Class<T> entityClass) {
-        return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
+        return Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(
+                () -> ExceptionUtils.mpe("error: can not find TableInfo from Class: \"%s\".", entityClass.getName()));
     }
 }

@@ -94,6 +94,7 @@ public interface ConstVal {
 
     /**
      * 主键
+     * 
      * @since 3.5.12
      */
     String PRIMARY = "PRIMARY";

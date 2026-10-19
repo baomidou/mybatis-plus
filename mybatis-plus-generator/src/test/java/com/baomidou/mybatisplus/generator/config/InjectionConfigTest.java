@@ -19,10 +19,11 @@ public class InjectionConfigTest {
         customMap.put("test", "baomidou");
         Map<String, String> customFile = new HashMap<>();
         customFile.put("test.txt", "/templates/test.vm");
-        InjectionConfig injectionConfig = GeneratorBuilder.injectionConfigBuilder().customMap(customMap).customFile(customFile).build();
+        InjectionConfig injectionConfig = GeneratorBuilder.injectionConfigBuilder().customMap(customMap)
+                .customFile(customFile).build();
         Assertions.assertEquals(1, injectionConfig.getCustomMap().size());
-        Assertions.assertEquals("baomidou",injectionConfig.getCustomMap().get("test"));
+        Assertions.assertEquals("baomidou", injectionConfig.getCustomMap().get("test"));
         Assertions.assertEquals(1, injectionConfig.getCustomFiles().size());
-        Assertions.assertEquals("/templates/test.vm",injectionConfig.getCustomFiles().getFirst().getTemplatePath());
+        Assertions.assertEquals("/templates/test.vm", injectionConfig.getCustomFiles().getFirst().getTemplatePath());
     }
 }

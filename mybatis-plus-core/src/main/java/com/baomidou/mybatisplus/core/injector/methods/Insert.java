@@ -57,7 +57,6 @@ public class Insert extends AbstractMethod {
         this.ignoreAutoIncrementColumn = ignoreAutoIncrementColumn;
     }
 
-
     /**
      * @param name 方法名
      * @since 3.5.0
@@ -67,7 +66,7 @@ public class Insert extends AbstractMethod {
     }
 
     /**
-     * @param name                      方法名
+     * @param name 方法名
      * @param ignoreAutoIncrementColumn 是否忽略自增长主键字段
      * @since 3.5.4
      */
@@ -79,10 +78,14 @@ public class Insert extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = NoKeyGenerator.INSTANCE;
-        String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(null, ignoreAutoIncrementColumn),
-            LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
-        String valuesScript = LEFT_BRACKET + NEWLINE + SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null, ignoreAutoIncrementColumn),
-            null, null, null, COMMA) + NEWLINE + RIGHT_BRACKET;
+        String columnScript = SqlScriptUtils.convertTrim(
+                tableInfo.getAllInsertSqlColumnMaybeIf(null, ignoreAutoIncrementColumn), LEFT_BRACKET, RIGHT_BRACKET,
+                null, COMMA);
+        String valuesScript = LEFT_BRACKET + NEWLINE
+                + SqlScriptUtils.convertTrim(
+                        tableInfo.getAllInsertSqlPropertyMaybeIf(null, ignoreAutoIncrementColumn), null, null, null,
+                        COMMA)
+                + NEWLINE + RIGHT_BRACKET;
         String keyProperty = null;
         String keyColumn = null;
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
@@ -101,6 +104,7 @@ public class Insert extends AbstractMethod {
         }
         String sql = SqlMethod.INSERT_ONE.format(tableInfo.getTableName(), columnScript, valuesScript);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
-        return this.addInsertMappedStatement(mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
+        return this.addInsertMappedStatement(
+                mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
     }
 }

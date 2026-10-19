@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-
 /**
  * @author nieqiuqiu
  */
@@ -19,7 +18,7 @@ class DbTypeTest {
     }
 
     @Test
-    void testGaussDb(){
+    void testGaussDb() {
         Assertions.assertEquals(DbType.GAUSS, DbType.getDbType("gauss"));
         Assertions.assertEquals(DbType.GAUSS, DbType.getDbType("Gauss"));
         Assertions.assertEquals(DbType.GAUSS_DB, DbType.getDbType("gaussdb"));

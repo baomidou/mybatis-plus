@@ -37,8 +37,8 @@ import java.util.Optional;
  * 自3.5.12开始,(当传入的参数是单参数时,支持使用Map,Array,List,JavaBean)
  * <li>当参数为 Map 时可通过{key}进行属性访问
  * <li>当参数为 JavaBean 时可通过{property}进行属性访问
- * <li>当参数为 List 时直接访问索引 {0} </li>
- * <li>当参数为 Array 时直接访问索引 {0} </li>
+ * <li>当参数为 List 时直接访问索引 {0}</li>
+ * <li>当参数为 Array 时直接访问索引 {0}</li>
  * </p>
  *
  * @author Caratacus, nieqiurong
@@ -100,7 +100,7 @@ public class SqlRunner extends AbstractSqlRunner {
     /**
      * 执行插入语句
      *
-     * @param sql  指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql 指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 插入结果
      */
@@ -118,7 +118,7 @@ public class SqlRunner extends AbstractSqlRunner {
     /**
      * 执行删除语句
      *
-     * @param sql  指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql 指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 删除结果
      */
@@ -136,7 +136,7 @@ public class SqlRunner extends AbstractSqlRunner {
     /**
      * 执行更新语句
      *
-     * @param sql  指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql 指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 更新结果
      */
@@ -153,9 +153,11 @@ public class SqlRunner extends AbstractSqlRunner {
 
     /**
      * 根据sql查询Map结果集
-     * <p>SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")</p>
+     * <p>
+     * SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")
+     * </p>
      *
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数列表
      * @return 结果集
      */
@@ -171,9 +173,11 @@ public class SqlRunner extends AbstractSqlRunner {
 
     /**
      * 根据sql查询一个字段值的结果集
-     * <p>注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@link #selectList(String, Object...)}</p>
+     * <p>
+     * 注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@link #selectList(String, Object...)}
+     * </p>
      *
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 结果集
      */
@@ -189,9 +193,11 @@ public class SqlRunner extends AbstractSqlRunner {
 
     /**
      * 根据sql查询一个字段值的一条结果
-     * <p>注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@link #selectOne(String, Object...)}</p>
+     * <p>
+     * 注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@link #selectOne(String, Object...)}
+     * </p>
      *
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 结果
      */
@@ -203,7 +209,7 @@ public class SqlRunner extends AbstractSqlRunner {
     /**
      * 查询总数
      *
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 总记录数
      */
@@ -220,7 +226,7 @@ public class SqlRunner extends AbstractSqlRunner {
     /**
      * 获取单条记录
      *
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 单行结果集 (当执行语句返回多条记录时,只会选取第一条记录)
      */
@@ -233,9 +239,9 @@ public class SqlRunner extends AbstractSqlRunner {
      * 分页查询
      *
      * @param page 分页对象
-     * @param sql  sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql sql语句，可添加参数，指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
-     * @param <E>  E
+     * @param <E> E
      * @return 分页数据
      */
     @Override

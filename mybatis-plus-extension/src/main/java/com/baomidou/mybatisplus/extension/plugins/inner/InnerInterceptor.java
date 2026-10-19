@@ -42,15 +42,16 @@ public interface InnerInterceptor {
      * <p>
      * 如果不执行query操作,则返回 {@link Collections#emptyList()}
      *
-     * @param executor      Executor(可能是代理对象)
-     * @param ms            MappedStatement
-     * @param parameter     parameter
-     * @param rowBounds     rowBounds
+     * @param executor Executor(可能是代理对象)
+     * @param ms MappedStatement
+     * @param parameter parameter
+     * @param rowBounds rowBounds
      * @param resultHandler resultHandler
-     * @param boundSql      boundSql
+     * @param boundSql boundSql
      * @return 新的 boundSql
      */
-    default boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    default boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         return true;
     }
 
@@ -59,14 +60,15 @@ public interface InnerInterceptor {
      * <p>
      * 改改sql啥的
      *
-     * @param executor      Executor(可能是代理对象)
-     * @param ms            MappedStatement
-     * @param parameter     parameter
-     * @param rowBounds     rowBounds
+     * @param executor Executor(可能是代理对象)
+     * @param ms MappedStatement
+     * @param parameter parameter
+     * @param rowBounds rowBounds
      * @param resultHandler resultHandler
-     * @param boundSql      boundSql
+     * @param boundSql boundSql
      */
-    default void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    default void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // do nothing
     }
 
@@ -75,8 +77,8 @@ public interface InnerInterceptor {
      * <p>
      * 如果不执行update操作,则影响行数的值为 -1
      *
-     * @param executor  Executor(可能是代理对象)
-     * @param ms        MappedStatement
+     * @param executor Executor(可能是代理对象)
+     * @param ms MappedStatement
      * @param parameter parameter
      */
     default boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
@@ -88,8 +90,8 @@ public interface InnerInterceptor {
      * <p>
      * 改改sql啥的
      *
-     * @param executor  Executor(可能是代理对象)
-     * @param ms        MappedStatement
+     * @param executor Executor(可能是代理对象)
+     * @param ms MappedStatement
      * @param parameter parameter
      */
     default void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
@@ -101,8 +103,8 @@ public interface InnerInterceptor {
      * <p>
      * 改改sql啥的
      *
-     * @param sh                 StatementHandler(可能是代理对象)
-     * @param connection         Connection
+     * @param sh StatementHandler(可能是代理对象)
+     * @param connection Connection
      * @param transactionTimeout transactionTimeout
      */
     default void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {

@@ -24,7 +24,7 @@ public class CustomFillTest {
     private TestModelMapper testModelMapper;
 
     @BeforeAll
-    public static void before(){
+    public static void before() {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), TestModel.class);
     }
 

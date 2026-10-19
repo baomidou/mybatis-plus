@@ -46,7 +46,7 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
-     * {@link com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor#isOptimizeJoin()}
+     * {@link com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor#isOptimizeJoin()} <br>
      * 两个参数都为 true 才会进行sql处理
      *
      * @return true 是 / false 否
@@ -101,7 +101,10 @@ public interface IPage<T> extends Serializable {
 
     /**
      * 内部什么也不干
-     * <p>只是为了 json 反序列化时不报错</p>
+     * <p>
+     * 只是为了 json 反序列化时不报错
+     * </p>
+     * 
      * @deprecated 3.5.8
      */
     @Deprecated
@@ -162,7 +165,7 @@ public interface IPage<T> extends Serializable {
      * IPage 的泛型转换
      *
      * @param mapper 转换函数
-     * @param <R>    转换后的泛型
+     * @param <R> 转换后的泛型
      * @return 转换泛型后的 IPage
      */
     @SuppressWarnings("unchecked")

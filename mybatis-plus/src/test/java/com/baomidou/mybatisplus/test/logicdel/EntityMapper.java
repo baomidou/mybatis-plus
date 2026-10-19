@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-
 /**
  * @author miemie
  * @since 2020-06-23
@@ -18,6 +17,5 @@ public interface EntityMapper extends BaseMapper<Entity> {
     Entity byId(Long id);
 
     int testDeleteBatch(@Param(Constants.COLL) List<Entity> entityList);
-
 
 }

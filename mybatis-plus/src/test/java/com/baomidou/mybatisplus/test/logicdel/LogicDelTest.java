@@ -75,7 +75,7 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             assertThat(mapper.deleteByIds(entityList)).isEqualTo(2);
             entityList.forEach(entity -> {
                 //TODO 3.5.7 修改为使用IN的方式删除而不是使用行记录删除.
-//                Assertions.assertEquals("聂秋秋", entity.getDeleteBy());
+                //                Assertions.assertEquals("聂秋秋", entity.getDeleteBy());
             });
         });
 
@@ -104,12 +104,11 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "delete_by VARCHAR(30) NULL DEFAULT NULL," +
-            "deleted BOOLEAN NOT NULL DEFAULT false," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
+                        + "delete_by VARCHAR(30) NULL DEFAULT NULL," + "deleted BOOLEAN NOT NULL DEFAULT false,"
+                        + "PRIMARY KEY (id))");
     }
 
     @Override
@@ -128,8 +127,10 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             }
         });
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
+
             @Override
-            public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+            public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass,
+                    TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new LogicDeleteBatchByIds("testDeleteBatch"));
                 return methodList;

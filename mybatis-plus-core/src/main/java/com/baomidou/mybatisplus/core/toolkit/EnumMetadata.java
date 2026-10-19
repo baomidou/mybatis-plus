@@ -27,6 +27,7 @@ import java.util.Objects;
  * @since 2026-07-01
  */
 public final class EnumMetadata {
+
     @Getter
     private final Class<?> propertyType;
     private final Enum<?>[] enumConstants;
@@ -36,7 +37,7 @@ public final class EnumMetadata {
     private final String getterName;
 
     EnumMetadata(Class<?> propertyType, Enum<?>[] enumConstants, Map<Object, Enum<?>> valueToEnum,
-                 Map<Enum<?>, Object> enumToValue, String getterName) {
+            Map<Enum<?>, Object> enumToValue, String getterName) {
         this.propertyType = propertyType;
         this.enumConstants = enumConstants.clone();
         this.valueToEnum = valueToEnum;

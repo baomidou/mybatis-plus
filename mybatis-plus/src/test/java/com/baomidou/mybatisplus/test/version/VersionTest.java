@@ -22,34 +22,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class VersionTest extends BaseDbTest<EntityMapper> {
 
-
     @Test
     void testWrapperMode() {
         log.info("[wrapper mode] test");
 
         doTestAutoCommit(i -> {
-            int result = i.update(null, Wrappers.<Entity>update()
-                .eq("id", 3)
-                .set("version", 1)
-            );
+            int result = i.update(null, Wrappers.<Entity>update().eq("id", 3).set("version", 1));
             assertThat(result).as("[wrapper mode] 设置version值成功").isEqualTo(1);
         });
 
         doTestAutoCommit(i -> {
-            int result = i.update(null, Wrappers.<Entity>update()
-                .eq("id", 3)
-                .eq("version", 1)
-            );
+            int result = i.update(null, Wrappers.<Entity>update().eq("id", 3).eq("version", 1));
             assertThat(result).as("[wrapper mode] 设置version值匹配更新成功").isEqualTo(1);
             final Entity entity = i.selectById(3);
             assertThat(entity.getVersion()).isEqualTo(2);
         });
 
         doTestAutoCommit(i -> {
-            int result = i.update(null, Wrappers.<Entity>update()
-                .eq("id", 3)
-                .eq("version", 1)
-            );
+            int result = i.update(null, Wrappers.<Entity>update().eq("id", 3).eq("version", 1));
             assertThat(result).as("[wrapper mode] 设置version值匹配更新失败").isEqualTo(0);
             final Entity entity = i.selectById(3);
             assertThat(entity.getVersion()).isEqualTo(2);
@@ -107,12 +97,10 @@ public class VersionTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "version integer NOT NULL DEFAULT 0,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
+                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer NOT NULL DEFAULT 0,\n"
+                        + "PRIMARY KEY (id)" + ")");
     }
 }

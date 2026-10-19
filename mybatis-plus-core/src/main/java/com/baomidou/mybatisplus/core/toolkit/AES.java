@@ -38,7 +38,7 @@ public class AES {
      * 加密
      *
      * @param data 需要加密的内容
-     * @param key  加密密码
+     * @param key 加密密码
      * @return 加密内容
      */
     public static byte[] encrypt(byte[] data, byte[] key) {
@@ -58,7 +58,7 @@ public class AES {
      * 解密
      *
      * @param data 待解密内容
-     * @param key  解密密钥
+     * @param key 解密密钥
      * @return 解密内容
      */
     public static byte[] decrypt(byte[] data, byte[] key) {
@@ -78,7 +78,7 @@ public class AES {
      * 加密
      *
      * @param data 需要加密的内容
-     * @param key  加密密码
+     * @param key 加密密码
      * @return 加密内容
      */
     public static String encrypt(String data, String key) {
@@ -90,7 +90,7 @@ public class AES {
      * 解密
      *
      * @param data 待解密内容 base64 字符串
-     * @param key  解密密钥
+     * @param key 解密密钥
      * @return 解密内容
      */
     public static String decrypt(String data, String key) {

@@ -30,10 +30,10 @@ class IdentifierGeneratorTest {
 
     @Autowired
     private IntegerStringIdGeneratorMapper integerStringIdGeneratorMapper;
-    
+
     @Autowired
     private BigDecimalIdGeneratorMapper bigDecimalIdGeneratorMapper;
-    
+
     @Autowired
     private BigIntegerIdGeneratorMapper bigIntegerIdGeneratorMapper;
 
@@ -67,18 +67,17 @@ class IdentifierGeneratorTest {
         longStringIdGeneratorMapper.insert(longStringIdGeneratorModel2);
         Assertions.assertEquals("777", longStringIdGeneratorModel2.getId());
 
-
         IntegerStringIdGeneratorModel integerStringIdGeneratorModel1 = new IntegerStringIdGeneratorModel("旺仔");
         integerStringIdGeneratorMapper.insert(integerStringIdGeneratorModel1);
         Assertions.assertEquals("666", integerStringIdGeneratorModel1.getId());
         IntegerStringIdGeneratorModel integerStringIdGeneratorModel2 = new IntegerStringIdGeneratorModel("靓仔");
         integerStringIdGeneratorMapper.insert(integerStringIdGeneratorModel2);
         Assertions.assertEquals("777", integerStringIdGeneratorModel2.getId());
-        
+
         BigDecimalIdGeneratorModel bigDecimalIdGeneratorModel = new BigDecimalIdGeneratorModel("测试");
         bigDecimalIdGeneratorMapper.insert(bigDecimalIdGeneratorModel);
         bigDecimalIdGeneratorMapper.deleteById(bigDecimalIdGeneratorModel);
-        
+
         BigIntegerIdGeneratorModel bigIntegerIdGeneratorModel = new BigIntegerIdGeneratorModel("测试");
         bigIntegerIdGeneratorMapper.insert(bigIntegerIdGeneratorModel);
         bigIntegerIdGeneratorMapper.deleteById(bigIntegerIdGeneratorModel);

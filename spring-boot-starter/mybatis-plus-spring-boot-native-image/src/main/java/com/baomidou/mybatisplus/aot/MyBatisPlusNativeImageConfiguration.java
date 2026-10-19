@@ -92,8 +92,9 @@ public final class MyBatisPlusNativeImageConfiguration {
 
         private void registerXml(AotUtils aotUtils) {
             try {
-                aotUtils.registerPattern(aotUtils.findResources("",
-                    CollectUtils::isMapperXmlResource).toArray(AotUtils.EMPTY_STRING_ARRAY));
+                aotUtils.registerPattern(
+                        aotUtils.findResources("", CollectUtils::isMapperXmlResource)
+                                .toArray(AotUtils.EMPTY_STRING_ARRAY));
             } catch (IOException e) {
                 throw new RuntimeException("注册用户目录的xml文件失败", e);
             }
@@ -102,7 +103,7 @@ public final class MyBatisPlusNativeImageConfiguration {
     }
 
     static class MyBatisBeanFactoryInitializationAotProcessor
-        implements BeanFactoryInitializationAotProcessor, BeanRegistrationExcludeFilter {
+            implements BeanFactoryInitializationAotProcessor, BeanRegistrationExcludeFilter {
 
         private final Set<Class<?>> excludeClasses = new HashSet<>();
 
@@ -116,21 +117,25 @@ public final class MyBatisPlusNativeImageConfiguration {
         }
 
         @Override
-        public BeanFactoryInitializationAotContribution processAheadOfTime(ConfigurableListableBeanFactory beanFactory) {
+        public BeanFactoryInitializationAotContribution processAheadOfTime(
+                ConfigurableListableBeanFactory beanFactory) {
             String[] beanNames = beanFactory.getBeanNamesForType(MapperFactoryBean.class);
-            if (beanNames.length == 0) return null;
+            if (beanNames.length == 0)
+                return null;
             return (context, code) -> {
                 RuntimeHints hints = context.getRuntimeHints();
                 for (String beanName : beanNames) {
                     String beanDefinitionName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
                     BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
-                    PropertyValue mapperInterface = beanDefinition.getPropertyValues().getPropertyValue("mapperInterface");
+                    PropertyValue mapperInterface = beanDefinition.getPropertyValues()
+                            .getPropertyValue("mapperInterface");
                     if (mapperInterface != null && mapperInterface.getValue() != null) {
                         Class<?> mapperInterfaceType = (Class<?>) mapperInterface.getValue();
                         if (mapperInterfaceType != null) {
                             registerReflectionTypeIfNecessary(mapperInterfaceType, hints);
                             hints.proxies().registerJdkProxy(mapperInterfaceType);
-                            hints.proxies().registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(mapperInterfaceType));
+                            hints.proxies()
+                                    .registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(mapperInterfaceType));
                             registerMapperRelationships(mapperInterfaceType, hints);
                         }
                     }
@@ -143,21 +148,25 @@ public final class MyBatisPlusNativeImageConfiguration {
             for (Method method : methods) {
                 if (method.getDeclaringClass() != Object.class) {
                     ReflectionUtils.makeAccessible(method);
-                    registerSqlProviderTypes(method, hints, SelectProvider.class, SelectProvider::value, SelectProvider::type);
-                    registerSqlProviderTypes(method, hints, InsertProvider.class, InsertProvider::value, InsertProvider::type);
-                    registerSqlProviderTypes(method, hints, UpdateProvider.class, UpdateProvider::value, UpdateProvider::type);
-                    registerSqlProviderTypes(method, hints, DeleteProvider.class, DeleteProvider::value, DeleteProvider::type);
+                    registerSqlProviderTypes(
+                            method, hints, SelectProvider.class, SelectProvider::value, SelectProvider::type);
+                    registerSqlProviderTypes(
+                            method, hints, InsertProvider.class, InsertProvider::value, InsertProvider::type);
+                    registerSqlProviderTypes(
+                            method, hints, UpdateProvider.class, UpdateProvider::value, UpdateProvider::type);
+                    registerSqlProviderTypes(
+                            method, hints, DeleteProvider.class, DeleteProvider::value, DeleteProvider::type);
                     Class<?> returnType = MyBatisMapperTypeUtils.resolveReturnClass(mapperInterfaceType, method);
                     registerReflectionTypeIfNecessary(returnType, hints);
                     MyBatisMapperTypeUtils.resolveParameterClasses(mapperInterfaceType, method)
-                        .forEach(x -> registerReflectionTypeIfNecessary(x, hints));
+                            .forEach(x -> registerReflectionTypeIfNecessary(x, hints));
                 }
             }
         }
 
         @SafeVarargs
-        private <T extends Annotation> void registerSqlProviderTypes(
-            Method method, RuntimeHints hints, Class<T> annotationType, Function<T, Class<?>>... providerTypeResolvers) {
+        private <T extends Annotation> void registerSqlProviderTypes(Method method, RuntimeHints hints,
+                Class<T> annotationType, Function<T, Class<?>>... providerTypeResolvers) {
             for (T annotation : method.getAnnotationsByType(annotationType)) {
                 for (Function<T, Class<?>> providerTypeResolver : providerTypeResolvers) {
                     registerReflectionTypeIfNecessary(providerTypeResolver.apply(annotation), hints);
@@ -174,6 +183,7 @@ public final class MyBatisPlusNativeImageConfiguration {
     }
 
     static class MyBatisMapperTypeUtils {
+
         private MyBatisMapperTypeUtils() {
         }
 
@@ -201,8 +211,8 @@ public final class MyBatisPlusNativeImageConfiguration {
                 }
             } else if (src instanceof ParameterizedType parameterizedType) {
                 int index = (parameterizedType.getRawType() instanceof Class
-                    && Map.class.isAssignableFrom((Class<?>) parameterizedType.getRawType())
-                    && parameterizedType.getActualTypeArguments().length > 1) ? 1 : 0;
+                        && Map.class.isAssignableFrom((Class<?>) parameterizedType.getRawType())
+                        && parameterizedType.getActualTypeArguments().length > 1) ? 1 : 0;
                 Type actualType = parameterizedType.getActualTypeArguments()[index];
                 result = typeToClass(actualType, fallback);
             }
@@ -216,8 +226,8 @@ public final class MyBatisPlusNativeImageConfiguration {
 
     static class MyBatisMapperFactoryBeanPostProcessor implements MergedBeanDefinitionPostProcessor, BeanFactoryAware {
 
-        private static final org.apache.commons.logging.Log log = LogFactory.getLog(
-            MyBatisMapperFactoryBeanPostProcessor.class);
+        private static final org.apache.commons.logging.Log log = LogFactory
+                .getLog(MyBatisMapperFactoryBeanPostProcessor.class);
 
         private static final String MAPPER_FACTORY_BEAN = "org.mybatis.spring.mapper.MapperFactoryBean";
 
@@ -229,21 +239,24 @@ public final class MyBatisPlusNativeImageConfiguration {
         }
 
         @Override
-        public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+        public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType,
+                String beanName) {
             if (ClassUtils.isPresent(MAPPER_FACTORY_BEAN, this.beanFactory.getBeanClassLoader())) {
                 resolveMapperFactoryBeanTypeIfNecessary(beanDefinition);
             }
         }
 
         private void resolveMapperFactoryBeanTypeIfNecessary(RootBeanDefinition beanDefinition) {
-            if (!beanDefinition.hasBeanClass() || !MapperFactoryBean.class.isAssignableFrom(beanDefinition.getBeanClass())) {
+            if (!beanDefinition.hasBeanClass()
+                    || !MapperFactoryBean.class.isAssignableFrom(beanDefinition.getBeanClass())) {
                 return;
             }
             if (beanDefinition.getResolvableType().hasUnresolvableGenerics()) {
                 Class<?> mapperInterface = getMapperInterface(beanDefinition);
                 if (mapperInterface != null) {
                     // 将通用类型信息暴露给上下文，以防止早期初始化
-                    beanDefinition.setTargetType(ResolvableType.forClassWithGenerics(beanDefinition.getBeanClass(), mapperInterface));
+                    beanDefinition.setTargetType(
+                            ResolvableType.forClassWithGenerics(beanDefinition.getBeanClass(), mapperInterface));
                     ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
                     constructorArgumentValues.addGenericArgumentValue(mapperInterface);
                     beanDefinition.setConstructorArgumentValues(constructorArgumentValues);

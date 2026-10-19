@@ -33,9 +33,11 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IS NULL
-     * <p>例: isNull("name")</p>
+     * <p>
+     * 例: isNull("name")
+     * </p>
      *
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     default Children isNull(R column) {
@@ -44,19 +46,23 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IS NULL
-     * <p>例: isNull(true, "name")</p>
+     * <p>
+     * 例: isNull(true, "name")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     Children isNull(boolean condition, R column);
 
     /**
      * 字段 IS NOT NULL
-     * <p>例: isNotNull("name")</p>
+     * <p>
+     * 例: isNotNull("name")
+     * </p>
      *
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     default Children isNotNull(R column) {
@@ -65,23 +71,27 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IS NOT NULL
-     * <p>例: isNotNull(true, "name")</p>
+     * <p>
+     * 例: isNotNull(true, "name")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     Children isNotNull(boolean condition, R column);
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
+     * <p>
+     * 例: in("id", Arrays.asList(1, 2, 3, 4, 5))
+     * </p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
-     * @param column    字段
-     * @param coll      数据集合
+     * @param column 字段
+     * @param coll 数据集合
      * @return children
      */
     default Children in(R column, Collection<?> coll) {
@@ -90,27 +100,31 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in(true, "id", Arrays.asList(1, 2, 3, 4, 5))</p>
+     * <p>
+     * 例: in(true, "id", Arrays.asList(1, 2, 3, 4, 5))
+     * </p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param coll      数据集合
+     * @param column 字段
+     * @param coll 数据集合
      * @return children
      */
     Children in(boolean condition, R column, Collection<?> coll);
 
     /**
      * 字段 IN (v0, v1, ...)
-     * <p>例: in("id", 1, 2, 3, 4, 5)</p>
+     * <p>
+     * 例: in("id", 1, 2, 3, 4, 5)
+     * </p>
      *
-     * <li> 注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
-     * @param column    字段
-     * @param values    数据数组
+     * @param column 字段
+     * @param values 数据数组
      * @return children
      */
     default Children in(R column, Object... values) {
@@ -119,27 +133,31 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (v0, v1, ...)
-     * <p>例: in(true, "id", 1, 2, 3, 4, 5)</p>
+     * <p>
+     * 例: in(true, "id", 1, 2, 3, 4, 5)
+     * </p>
      *
-     * <li> 注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param values    数据数组
+     * @param column 字段
+     * @param values 数据数组
      * @return children
      */
     Children in(boolean condition, R column, Object... values);
 
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
-     * <p>例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))</p>
+     * <p>
+     * 例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))
+     * </p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
-     * @param column    字段
-     * @param coll      数据集合
+     * @param column 字段
+     * @param coll 数据集合
      * @return children
      */
     default Children notIn(R column, Collection<?> coll) {
@@ -148,27 +166,31 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
-     * <p>例: notIn(true, "id", Arrays.asList(1, 2, 3, 4, 5))</p>
+     * <p>
+     * 例: notIn(true, "id", Arrays.asList(1, 2, 3, 4, 5))
+     * </p>
      *
-     * <li> 注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当集合为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param coll      数据集合
+     * @param column 字段
+     * @param coll 数据集合
      * @return children
      */
     Children notIn(boolean condition, R column, Collection<?> coll);
 
     /**
      * 字段 NOT IN (v0, v1, ...)
-     * <p>例: notIn("id", 1, 2, 3, 4, 5)</p>
+     * <p>
+     * 例: notIn("id", 1, 2, 3, 4, 5)
+     * </p>
      *
-     * <li> 注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
-     * @param column    字段
-     * @param values    数据数组
+     * @param column 字段
+     * @param values 数据数组
      * @return children
      */
     default Children notIn(R column, Object... values) {
@@ -177,26 +199,34 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN (v0, v1, ...)
-     * <p>例: notIn(true, "id", 1, 2, 3, 4, 5)</p>
+     * <p>
+     * 例: notIn(true, "id", 1, 2, 3, 4, 5)
+     * </p>
      *
-     * <li> 注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
-     * <li> 若要在特定条件下不拼接, 可在 condition 条件中判断 </li>
+     * <li>注意！当数组为 空或null 时, sql会拼接为：WHERE (字段名 NOT IN ()), 执行时报错</li>
+     * <li>若要在特定条件下不拼接, 可在 condition 条件中判断</li>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param values    数据数组
+     * @param column 字段
+     * @param values 数据数组
      * @return children
      */
     Children notIn(boolean condition, R column, Object... values);
 
     /**
      * 字段 EQ ( sql语句 )
-     * <p>!! sql 注入方式的 eq 方法 !!</p>
-     * <p>例1: eqSql("id", "1")</p>
-     * <p>例2: eqSql("id", "select MAX(id) from table")</p>
+     * <p>
+     * !! sql 注入方式的 eq 方法 !!
+     * </p>
+     * <p>
+     * 例1: eqSql("id", "1")
+     * </p>
+     * <p>
+     * 例2: eqSql("id", "select MAX(id) from table")
+     * </p>
      *
      * @param column 字段
-     * @param sql    sql语句
+     * @param sql sql语句
      * @return children
      * @since 3.5.6
      */
@@ -206,13 +236,19 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 EQ ( sql语句 )
-     * <p>!! sql 注入方式的 eq 方法 !!</p>
-     * <p>例1: eqSql("id", "1")</p>
-     * <p>例2: eqSql("id", "select MAX(id) from table")</p>
+     * <p>
+     * !! sql 注入方式的 eq 方法 !!
+     * </p>
+     * <p>
+     * 例1: eqSql("id", "1")
+     * </p>
+     * <p>
+     * 例2: eqSql("id", "select MAX(id) from table")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param sql       sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      * @since 3.5.6
      */
@@ -220,12 +256,18 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN ( sql语句 )
-     * <p>!! sql 注入方式的 in 方法 !!</p>
-     * <p>例1: inSql("id", "1")</p>
-     * <p>例2: inSql("id", "select id from table where id &lt; 3")</p>
+     * <p>
+     * !! sql 注入方式的 in 方法 !!
+     * </p>
+     * <p>
+     * 例1: inSql("id", "1")
+     * </p>
+     * <p>
+     * 例2: inSql("id", "select id from table where id &lt; 3")
+     * </p>
      *
-     * @param column    字段
-     * @param sql   sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      */
     default Children inSql(R column, String sql) {
@@ -234,36 +276,50 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN ( sql语句 )
-     * <p>!! sql 注入方式的 in 方法 !!</p>
-     * <p>例1: inSql(true, "id", "1")</p>
-     * <p>例2: inSql(true, "id", "select id from table where id &lt; 3")</p>
+     * <p>
+     * !! sql 注入方式的 in 方法 !!
+     * </p>
+     * <p>
+     * 例1: inSql(true, "id", "1")
+     * </p>
+     * <p>
+     * 例2: inSql(true, "id", "select id from table where id &lt; 3")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param sql   sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      */
     Children inSql(boolean condition, R column, String sql);
 
     /**
      * 字段 &gt; ( sql语句 )
-     * <p>例1: gtSql(true, "id", "1")</p>
-     * <p>例1: gtSql(true, "id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: gtSql(true, "id", "1")
+     * </p>
+     * <p>
+     * 例1: gtSql(true, "id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param sql       sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      */
     Children gtSql(boolean condition, R column, String sql);
 
     /**
      * 字段 &gt; ( sql语句 )
-     * <p>例1: gtSql("id", "1")</p>
-     * <p>例1: gtSql("id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: gtSql("id", "1")
+     * </p>
+     * <p>
+     * 例1: gtSql("id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param column 字段
-     * @param sql    sql语句
+     * @param sql sql语句
      * @return children
      */
     default Children gtSql(R column, String sql) {
@@ -272,23 +328,31 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 >= ( sql语句 )
-     * <p>例1: geSql(true, "id", "1")</p>
-     * <p>例1: geSql(true, "id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: geSql(true, "id", "1")
+     * </p>
+     * <p>
+     * 例1: geSql(true, "id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param sql       sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      */
     Children geSql(boolean condition, R column, String sql);
 
     /**
      * 字段 >= ( sql语句 )
-     * <p>例1: geSql("id", "1")</p>
-     * <p>例1: geSql("id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: geSql("id", "1")
+     * </p>
+     * <p>
+     * 例1: geSql("id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param column 字段
-     * @param sql    sql语句
+     * @param sql sql语句
      * @return children
      */
     default Children geSql(R column, String sql) {
@@ -297,8 +361,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 &lt; ( sql语句 )
-     * <p>例1: ltSql(true, "id", "1")</p>
-     * <p>例1: ltSql(true , "id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: ltSql(true, "id", "1")
+     * </p>
+     * <p>
+     * 例1: ltSql(true , "id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param condition 执行条件
      * @param column 字段
@@ -309,11 +377,15 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 &lt; ( sql语句 )
-     * <p>例1: ltSql("id", "1")</p>
-     * <p>例1: ltSql("id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: ltSql("id", "1")
+     * </p>
+     * <p>
+     * 例1: ltSql("id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param column 字段
-     * @param sql    sql语句
+     * @param sql sql语句
      * @return children
      */
     default Children ltSql(R column, String sql) {
@@ -322,23 +394,31 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 <= ( sql语句 )
-     * <p>例1: leSql(true, "id", "1")</p>
-     * <p>例1: leSql(true ,"id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: leSql(true, "id", "1")
+     * </p>
+     * <p>
+     * 例1: leSql(true ,"id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param sql       sql语句
+     * @param column 字段
+     * @param sql sql语句
      * @return children
      */
     Children leSql(boolean condition, R column, String sql);
 
     /**
      * 字段 <= ( sql语句 )
-     * <p>例1: leSql("id", "1")</p>
-     * <p>例1: leSql("id", "select id from table where name = 'JunJun'")</p>
+     * <p>
+     * 例1: leSql("id", "1")
+     * </p>
+     * <p>
+     * 例1: leSql("id", "select id from table where name = 'JunJun'")
+     * </p>
      *
      * @param column 字段
-     * @param inValue  sql语句
+     * @param inValue sql语句
      * @return children
      */
     default Children leSql(R column, String inValue) {
@@ -347,11 +427,17 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN ( sql语句 )
-     * <p>!! sql 注入方式的 not in 方法 !!</p>
-     * <p>例1: notInSql("id", "1, 2, 3, 4, 5, 6")</p>
-     * <p>例2: notInSql("id", "select id from table where id &lt; 3")</p>
+     * <p>
+     * !! sql 注入方式的 not in 方法 !!
+     * </p>
+     * <p>
+     * 例1: notInSql("id", "1, 2, 3, 4, 5, 6")
+     * </p>
+     * <p>
+     * 例2: notInSql("id", "select id from table where id &lt; 3")
+     * </p>
      *
-     * @param column  字段
+     * @param column 字段
      * @param inValue sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
      * @return children
      */
@@ -361,30 +447,40 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN ( sql语句 )
-     * <p>!! sql 注入方式的 not in 方法 !!</p>
-     * <p>例1: notInSql(true, "id", "1, 2, 3, 4, 5, 6")</p>
-     * <p>例2: notInSql(true, "id", "select id from table where id &lt; 3")</p>
+     * <p>
+     * !! sql 注入方式的 not in 方法 !!
+     * </p>
+     * <p>
+     * 例1: notInSql(true, "id", "1, 2, 3, 4, 5, 6")
+     * </p>
+     * <p>
+     * 例2: notInSql(true, "id", "select id from table where id &lt; 3")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param inValue   sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
+     * @param column 字段
+     * @param inValue sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
      * @return children
      */
     Children notInSql(boolean condition, R column, String inValue);
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy(true, "id")</p>
+     * <p>
+     * 例: groupBy(true, "id")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    单个字段
+     * @param column 单个字段
      * @return children
      */
     Children groupBy(boolean condition, R column);
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy("id")</p>
+     * <p>
+     * 例: groupBy("id")
+     * </p>
      *
      * @param column 单个字段
      * @return children
@@ -395,17 +491,21 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy(true, Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: groupBy(true, Arrays.asList("id", "name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param columns   字段数组
+     * @param columns 字段数组
      * @return children
      */
     Children groupBy(boolean condition, List<R> columns);
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy(Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: groupBy(Arrays.asList("id", "name"))
+     * </p>
      *
      * @param columns 字段数组
      * @return children
@@ -416,9 +516,11 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy("id", "name")</p>
+     * <p>
+     * 例: groupBy("id", "name")
+     * </p>
      *
-     * @param column  单个字段
+     * @param column 单个字段
      * @param columns 字段数组
      * @return children
      */
@@ -428,22 +530,26 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy(true, "id", "name")</p>
+     * <p>
+     * 例: groupBy(true, "id", "name")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段数组
+     * @param column 单个字段
+     * @param columns 字段数组
      * @return children
      */
     Children groupBy(boolean condition, R column, R... columns);
 
     /**
      * 分组：GROUP BY 字段, ...
-     * <p>例: groupBy(true, "id", Arrays.asList("name"))</p>
+     * <p>
+     * 例: groupBy(true, "id", Arrays.asList("name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段数组
+     * @param column 单个字段
+     * @param columns 字段数组
      * @return children
      * @since 3.5.4
      */
@@ -451,10 +557,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc(true, "id")</p>
+     * <p>
+     * 例: orderByAsc(true, "id")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    单个字段
+     * @param column 单个字段
      * @return children
      */
     default Children orderByAsc(boolean condition, R column) {
@@ -463,7 +571,9 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc("id")</p>
+     * <p>
+     * 例: orderByAsc("id")
+     * </p>
      *
      * @param column 单个字段
      * @return children
@@ -474,10 +584,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc(true, Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: orderByAsc(true, Arrays.asList("id", "name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param columns   字段数组
+     * @param columns 字段数组
      * @return children
      */
     default Children orderByAsc(boolean condition, List<R> columns) {
@@ -486,7 +598,9 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc(Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: orderByAsc(Arrays.asList("id", "name"))
+     * </p>
      *
      * @param columns 字段数组
      * @return children
@@ -498,7 +612,7 @@ public interface Func<Children, R> extends Serializable {
     /**
      * 排序：ORDER BY 字段, ... ASC
      *
-     * @param column  字段
+     * @param column 字段
      * @param columns 字段数组
      * @return children
      */
@@ -510,8 +624,8 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ... ASC
      *
      * @param condition 执行条件
-     * @param column    字段
-     * @param columns   字段数组
+     * @param column 字段
+     * @param columns 字段数组
      */
     default Children orderByAsc(boolean condition, R column, R... columns) {
         return orderBy(condition, true, column, columns);
@@ -519,10 +633,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * <p>例: orderByAsc(true, Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: orderByAsc(true, Arrays.asList("id", "name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param columns   字段数组
+     * @param columns 字段数组
      * @return children
      * @since 3.5.4
      */
@@ -532,10 +648,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * <p>例: orderByDesc(true, "id")</p>
+     * <p>
+     * 例: orderByDesc(true, "id")
+     * </p>
      *
      * @param condition 执行条件
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     default Children orderByDesc(boolean condition, R column) {
@@ -544,9 +662,11 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * <p>例: orderByDesc("id")</p>
+     * <p>
+     * 例: orderByDesc("id")
+     * </p>
      *
-     * @param column    字段
+     * @param column 字段
      * @return children
      */
     default Children orderByDesc(R column) {
@@ -555,10 +675,12 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * <p>例: orderByDesc(true, Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: orderByDesc(true, Arrays.asList("id", "name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param columns   字段列表
+     * @param columns 字段列表
      * @return children
      */
     default Children orderByDesc(boolean condition, List<R> columns) {
@@ -577,7 +699,7 @@ public interface Func<Children, R> extends Serializable {
     /**
      * 排序：ORDER BY 字段, ... DESC
      *
-     * @param column  单个字段
+     * @param column 单个字段
      * @param columns 字段列表
      */
     default Children orderByDesc(R column, R... columns) {
@@ -588,8 +710,8 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ... DESC
      *
      * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段列表
+     * @param column 单个字段
+     * @param columns 字段列表
      */
     default Children orderByDesc(boolean condition, R column, R... columns) {
         return orderBy(condition, false, column, CollectionUtils.toList(columns));
@@ -599,33 +721,36 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ... DESC
      *
      * @param condition 执行条件
-     * @param column    单个字段
-     * @param columns   字段列表
+     * @param column 单个字段
+     * @param columns 字段列表
      * @since 3.5.4
      */
     default Children orderByDesc(boolean condition, R column, List<R> columns) {
         return orderBy(condition, false, column, columns);
     }
 
-
     /**
      * 排序：ORDER BY 字段, ...
-     * <p>例: orderBy(true, "id")</p>
+     * <p>
+     * 例: orderBy(true, "id")
+     * </p>
      *
      * @param condition 执行条件
-     * @param isAsc     是否是 ASC 排序
-     * @param column    单个字段
+     * @param isAsc 是否是 ASC 排序
+     * @param column 单个字段
      * @return children
      */
     Children orderBy(boolean condition, boolean isAsc, R column);
 
     /**
      * 排序：ORDER BY 字段, ...
-     * <p>例: orderBy(true, Arrays.asList("id", "name"))</p>
+     * <p>
+     * 例: orderBy(true, Arrays.asList("id", "name"))
+     * </p>
      *
      * @param condition 执行条件
-     * @param isAsc     是否是 ASC 排序
-     * @param columns   字段列表
+     * @param isAsc 是否是 ASC 排序
+     * @param columns 字段列表
      * @return children
      */
     Children orderBy(boolean condition, boolean isAsc, List<R> columns);
@@ -634,8 +759,8 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ...
      *
      * @param condition 执行条件
-     * @param isAsc     是否是 ASC 排序
-     * @param columns   字段列表
+     * @param isAsc 是否是 ASC 排序
+     * @param columns 字段列表
      * @return children
      */
     Children orderBy(boolean condition, boolean isAsc, R column, R... columns);
@@ -644,21 +769,24 @@ public interface Func<Children, R> extends Serializable {
      * 排序：ORDER BY 字段, ...
      *
      * @param condition 执行条件
-     * @param isAsc     是否是 ASC 排序
-     * @param columns   字段列表
+     * @param isAsc 是否是 ASC 排序
+     * @param columns 字段列表
      * @return children
      * @since 3.5.4
      */
     Children orderBy(boolean condition, boolean isAsc, R column, List<R> columns);
 
-
     /**
      * HAVING ( sql语句 )
-     * <p>例1: having("sum(age) &gt; 10")</p>
-     * <p>例2: having("sum(age) &gt; {0}", 10)</p>
+     * <p>
+     * 例1: having("sum(age) &gt; 10")
+     * </p>
+     * <p>
+     * 例2: having("sum(age) &gt; {0}", 10)
+     * </p>
      *
      * @param sqlHaving sql 语句
-     * @param params    参数数组
+     * @param params 参数数组
      * @return children
      */
     default Children having(String sqlHaving, Object... params) {
@@ -667,12 +795,16 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * HAVING ( sql语句 )
-     * <p>例1: having(true, "sum(age) &gt; 10")</p>
-     * <p>例2: having(true, "sum(age) &gt; {0}", 10)</p>
+     * <p>
+     * 例1: having(true, "sum(age) &gt; 10")
+     * </p>
+     * <p>
+     * 例2: having(true, "sum(age) &gt; {0}", 10)
+     * </p>
      *
      * @param condition 执行条件
      * @param sqlHaving sql 语句
-     * @param params    参数数组
+     * @param params 参数数组
      * @return children
      */
     Children having(boolean condition, String sqlHaving, Object... params);
@@ -691,7 +823,7 @@ public interface Func<Children, R> extends Serializable {
      * 消费函数
      *
      * @param condition 执行条件
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      * @since 3.3.1
      */

@@ -44,16 +44,17 @@ public class ServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     void genericTest() {
-        MybatisMapperProxyFactory<? extends BaseMapper<?>> mybatisMapperProxyFactory = new MybatisMapperProxyFactory<>(DemoMapper.class);
-        BaseMapper<Demo> baseMapper = (BaseMapper<Demo>) mybatisMapperProxyFactory.newInstance(Mockito.mock(SqlSession.class));
+        MybatisMapperProxyFactory<? extends BaseMapper<?>> mybatisMapperProxyFactory = new MybatisMapperProxyFactory<>(
+                DemoMapper.class);
+        BaseMapper<Demo> baseMapper = (BaseMapper<Demo>) mybatisMapperProxyFactory
+                .newInstance(Mockito.mock(SqlSession.class));
         IService<Demo>[] services = new IService[]{new DemoServiceImpl(baseMapper), new DemoServiceExtend(baseMapper)};
         for (IService<Demo> service : services) {
-            ServiceImpl<?,?> impl = (ServiceImpl<?,?>) service;
+            ServiceImpl<?, ?> impl = (ServiceImpl<?, ?>) service;
             Assertions.assertEquals(Demo.class, impl.getEntityClass());
             Assertions.assertEquals(DemoMapper.class, impl.getMapperClass());
         }
     }
-
 
     static class MyServiceImpl<M extends BaseMapper<T>, T> extends ServiceImpl<M, T> {
 
@@ -66,9 +67,13 @@ public class ServiceTest {
     @Test
     void testSuperClassGenericType() {
         // 多重继承测试
-        assertThat(Objects.equals(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
-            ServiceImpl.class, 0), DemoMapper.class));
-        assertThat(Objects.equals(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class,
-            ServiceImpl.class, 1), Demo.class));
+        assertThat(
+                Objects.equals(
+                        ReflectionKit.getSuperClassGenericType(MyServiceExtend.class, ServiceImpl.class, 0),
+                        DemoMapper.class));
+        assertThat(
+                Objects.equals(
+                        ReflectionKit.getSuperClassGenericType(MyServiceExtend.class, ServiceImpl.class, 1),
+                        Demo.class));
     }
 }

@@ -32,7 +32,7 @@ public interface ITableFieldAnnotationHandler {
     /**
      * 处理字段级注解
      *
-     * @param tableInfo  表信息
+     * @param tableInfo 表信息
      * @param tableField 字段信息
      * @return 注解信息
      */

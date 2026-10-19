@@ -127,7 +127,8 @@ public final class SqlHelper {
      * @since 3.5.8
      */
     public static boolean retBool(List<BatchResult> result) {
-        return result != null && result.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
+        return result != null && result.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts()))
+                .allMatch(i -> i > 0 || i == Statement.SUCCESS_NO_INFO);
     }
 
     /**
@@ -144,7 +145,7 @@ public final class SqlHelper {
      * 从list中取第一条数据返回对应List中泛型的单个结果
      *
      * @param list ignore
-     * @param <E>  ignore
+     * @param <E> ignore
      * @return ignore
      */
     public static <E> E getObject(Log log, List<E> list) {
@@ -170,8 +171,8 @@ public final class SqlHelper {
      * 执行批量操作
      *
      * @param entityClass 实体
-     * @param log         日志对象
-     * @param execFunc    执行函数
+     * @param log 日志对象
+     * @param execFunc 执行函数
      * @return 操作结果
      * @since 3.4.0
      */
@@ -180,7 +181,8 @@ public final class SqlHelper {
         return executeBatch(sqlSessionFactory(entityClass), log, execFunc);
     }
 
-    public static boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc) {
+    public static boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log,
+            Function<SqlSession, Integer> execFunc) {
         return CompatibleHelper.getCompatibleSet().executeBatch(sqlSessionFactory, log, execFunc);
     }
 
@@ -188,21 +190,23 @@ public final class SqlHelper {
      * 执行批量操作
      *
      * @param entityClass 实体类
-     * @param log         日志对象
-     * @param list        数据集合
-     * @param batchSize   批次大小
-     * @param execBiFunc    执行函数
-     * @param <E>         T
+     * @param log 日志对象
+     * @param list 数据集合
+     * @param batchSize 批次大小
+     * @param execBiFunc 执行函数
+     * @param <E> T
      * @return 操作结果
      * @since 3.4.0
      * @deprecated {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
      */
     @Deprecated
-    public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize, BiFunction<SqlSession, E, Integer> execBiFunc) {
+    public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize,
+            BiFunction<SqlSession, E, Integer> execBiFunc) {
         return executeBatch(sqlSessionFactory(entityClass), log, list, batchSize, execBiFunc);
     }
 
-    public static <E> boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Collection<E> list, int batchSize, BiFunction<SqlSession, E, Integer> execBiFunc) {
+    public static <E> boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Collection<E> list,
+            int batchSize, BiFunction<SqlSession, E, Integer> execBiFunc) {
         Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
         return !CollectionUtils.isEmpty(list) && executeBatch(sqlSessionFactory, log, sqlSession -> {
             int row = 0;
@@ -239,19 +243,20 @@ public final class SqlHelper {
      * 批量更新或保存
      *
      * @param entityClass 实体
-     * @param log         日志对象
-     * @param list        数据集合
-     * @param batchSize   批次大小
-     * @param predicate   predicate(新增条件) notNull
-     * @param execBiFunc  execBiFunc（更新处理）notNull
-     * @param <E>         E
+     * @param log 日志对象
+     * @param list 数据集合
+     * @param batchSize 批次大小
+     * @param predicate predicate(新增条件) notNull
+     * @param execBiFunc execBiFunc（更新处理）notNull
+     * @param <E> E
      * @return 操作结果
      * @since 3.4.0
-     * @deprecated 3.5.4 {@link #saveOrUpdateBatch(SqlSessionFactory, Class, Log, Collection, int, BiPredicate, BiFunction)}
+     * @deprecated 3.5.4
+     *             {@link #saveOrUpdateBatch(SqlSessionFactory, Class, Log, Collection, int, BiPredicate, BiFunction)}
      */
     @Deprecated
-    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list, int batchSize,
-                                                BiPredicate<SqlSession, E> predicate, BiFunction<SqlSession, E, Integer> execBiFunc) {
+    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list,
+            int batchSize, BiPredicate<SqlSession, E> predicate, BiFunction<SqlSession, E, Integer> execBiFunc) {
         return saveOrUpdateBatch(sqlSessionFactory(entityClass), mapper, log, list, batchSize, predicate, execBiFunc);
     }
 
@@ -259,17 +264,18 @@ public final class SqlHelper {
      * 批量更新或保存
      *
      * @param sqlSessionFactory SqlSessionFactory
-     * @param log               日志对象
-     * @param list              数据集合
-     * @param batchSize         批次大小
-     * @param predicate         predicate（新增条件）notNull
-     * @param execBiFunc        execBiFunc（更新处理）notNull
-     * @param <E>               E
+     * @param log 日志对象
+     * @param list 数据集合
+     * @param batchSize 批次大小
+     * @param predicate predicate（新增条件）notNull
+     * @param execBiFunc execBiFunc（更新处理）notNull
+     * @param <E> E
      * @return 操作结果
      * @since 3.5.4
      */
-    public static <E> boolean saveOrUpdateBatch(SqlSessionFactory sqlSessionFactory, Class<?> mapper, Log log, Collection<E> list, int batchSize,
-                                                BiPredicate<SqlSession, E> predicate, BiFunction<SqlSession, E, Integer> execBiFunc) {
+    public static <E> boolean saveOrUpdateBatch(SqlSessionFactory sqlSessionFactory, Class<?> mapper, Log log,
+            Collection<E> list, int batchSize, BiPredicate<SqlSession, E> predicate,
+            BiFunction<SqlSession, E, Integer> execBiFunc) {
         String sqlStatement = getSqlStatement(mapper, SqlMethod.INSERT_ONE);
         return executeBatch(sqlSessionFactory, log, list, batchSize, (sqlSession, entity) -> {
             if (predicate.test(sqlSession, entity)) {
@@ -291,7 +297,7 @@ public final class SqlHelper {
     }
 
     /**
-     * 通过entityClass获取Mapper，记得要释放连接
+     * 通过entityClass获取Mapper，记得要释放连接 <br>
      * 例： {@code
      * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
      * try {
@@ -302,15 +308,15 @@ public final class SqlHelper {
      * }
      *
      * @param entityClass 实体
-     * @param <T>         实体类型
-     * @param <M>         Mapper类型
+     * @param <T> 实体类型
+     * @param <M> Mapper类型
      * @return Mapper
      */
     @SuppressWarnings("unchecked")
     public static <T, M extends BaseMapper<T>> M getMapper(Class<T> entityClass, SqlSession sqlSession) {
         Assert.notNull(entityClass, "entityClass can't be null!");
-        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(() ->
-            ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
+        TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(
+                () -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
         if (CompatibleHelper.hasCompatibleSet()) {
             CompatibleSet compatibleSet = CompatibleHelper.getCompatibleSet();
@@ -326,10 +332,10 @@ public final class SqlHelper {
      * 通过entityClass获取BaseMapper，再传入lambda使用该mapper，本方法自动释放链接
      *
      * @param entityClass 实体类
-     * @param sFunction   lambda操作，例如 {@code m->m.selectList(wrapper)}
-     * @param <T>         实体类的类型
-     * @param <R>         返回值类型
-     * @param <M>         Mapper类型
+     * @param sFunction lambda操作，例如 {@code m->m.selectList(wrapper)}
+     * @param <T> 实体类的类型
+     * @param <R> 返回值类型
+     * @param <M> Mapper类型
      * @return 返回lambda执行结果
      */
     public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
@@ -337,7 +343,8 @@ public final class SqlHelper {
         try {
             return sFunction.apply(SqlHelper.getMapper(entityClass, sqlSession));
         } finally {
-            CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+            CompatibleHelper.getCompatibleSet()
+                    .closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
         }
     }
 }

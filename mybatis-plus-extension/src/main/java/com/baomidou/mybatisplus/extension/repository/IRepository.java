@@ -41,7 +41,7 @@ public interface IRepository<T> {
      * 插入（批量）
      *
      * @param entityList 实体对象集合
-     * @param batchSize  插入批次数量
+     * @param batchSize 插入批次数量
      */
     boolean saveBatch(Collection<T> entityList, int batchSize);
 
@@ -49,7 +49,7 @@ public interface IRepository<T> {
      * 批量修改插入
      *
      * @param entityList 实体对象集合
-     * @param batchSize  每次的数量
+     * @param batchSize 每次的数量
      */
     boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize);
 
@@ -65,7 +65,7 @@ public interface IRepository<T> {
     /**
      * 根据 ID 删除
      *
-     * @param id      主键(类型必须与实体类型字段保持一致)
+     * @param id 主键(类型必须与实体类型字段保持一致)
      * @param useFill 是否启用填充(为true的情况,会将入参转换实体进行delete删除)
      * @return 删除结果
      * @since 3.5.0
@@ -118,7 +118,7 @@ public interface IRepository<T> {
     /**
      * 批量删除
      *
-     * @param list    主键ID或实体列表
+     * @param list 主键ID或实体列表
      * @param useFill 是否填充(为true的情况,会将入参转换实体进行delete删除)
      * @return 删除结果
      * @since 3.5.0
@@ -141,7 +141,9 @@ public interface IRepository<T> {
 
     /**
      * 根据 UpdateWrapper 条件，更新记录 需要设置sqlset
-     * <p>此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}</p>
+     * <p>
+     * 此方法无法进行自动填充,如需自动填充请使用{@link #update(Object, Wrapper)}
+     * </p>
      *
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
@@ -152,7 +154,7 @@ public interface IRepository<T> {
     /**
      * 根据 whereEntity 条件，更新记录
      *
-     * @param entity        实体对象(当entity为空时无法进行自动填充)
+     * @param entity 实体对象(当entity为空时无法进行自动填充)
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     default boolean update(T entity, Wrapper<T> updateWrapper) {
@@ -163,7 +165,7 @@ public interface IRepository<T> {
      * 根据ID 批量更新
      *
      * @param entityList 实体对象集合
-     * @param batchSize  更新批次数量
+     * @param batchSize 更新批次数量
      */
     boolean updateBatchById(Collection<T> entityList, int batchSize);
 
@@ -213,7 +215,9 @@ public interface IRepository<T> {
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
-     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     * <p>
+     * 结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
@@ -223,7 +227,9 @@ public interface IRepository<T> {
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
-     * <p>结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")</p>
+     * <p>
+     * 结果集，如果是多个会抛出异常，随机取一条加上限制条件 wrapper.last("LIMIT 1")
+     * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @return {@link Optional} 返回一个Optional对象
@@ -236,7 +242,7 @@ public interface IRepository<T> {
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param throwEx      有多个 result 是否抛出异常
+     * @param throwEx 有多个 result 是否抛出异常
      */
     T getOne(Wrapper<T> queryWrapper, boolean throwEx);
 
@@ -244,7 +250,7 @@ public interface IRepository<T> {
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param throwEx      有多个 result 是否抛出异常
+     * @param throwEx 有多个 result 是否抛出异常
      * @return {@link Optional} 返回一个Optional对象
      */
     Optional<T> getOneOpt(Wrapper<T> queryWrapper, boolean throwEx);
@@ -260,7 +266,7 @@ public interface IRepository<T> {
      * 根据 Wrapper，查询一条记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param mapper       转换函数
+     * @param mapper 转换函数
      */
     <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
@@ -303,7 +309,7 @@ public interface IRepository<T> {
     /**
      * 查询列表
      *
-     * @param page         分页条件
+     * @param page 分页条件
      * @param queryWrapper queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @return 列表数据
      * @since 3.5.3.2
@@ -335,7 +341,7 @@ public interface IRepository<T> {
     /**
      * 翻页查询
      *
-     * @param page         翻页对象
+     * @param page 翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     default <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper) {
@@ -364,7 +370,7 @@ public interface IRepository<T> {
     /**
      * 查询列表
      *
-     * @param page         分页条件
+     * @param page 分页条件
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @return 列表数据
      * @since 3.5.3.2
@@ -372,7 +378,6 @@ public interface IRepository<T> {
     default List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page, Wrapper<T> queryWrapper) {
         return getBaseMapper().selectMaps(page, queryWrapper);
     }
-
 
     /**
      * 查询所有列表
@@ -392,7 +397,6 @@ public interface IRepository<T> {
     default List<Map<String, Object>> listMaps(IPage<? extends Map<String, Object>> page) {
         return listMaps(page, Wrappers.emptyWrapper());
     }
-
 
     /**
      * 查询全部记录
@@ -423,16 +427,17 @@ public interface IRepository<T> {
      * 根据 Wrapper 条件，查询全部记录
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
-     * @param mapper       转换函数
+     * @param mapper 转换函数
      */
     default <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
-        return getBaseMapper().selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper).collect(Collectors.toList());
+        return getBaseMapper().selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper)
+                .collect(Collectors.toList());
     }
 
     /**
      * 翻页查询
      *
-     * @param page         翻页对象
+     * @param page 翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     default <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper) {
@@ -495,7 +500,9 @@ public interface IRepository<T> {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -505,7 +512,9 @@ public interface IRepository<T> {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @param entity 实体对象
      * @return LambdaQueryWrapper 的包装类
@@ -515,7 +524,7 @@ public interface IRepository<T> {
     }
 
     /**
-     * 链式查询 lambda 式
+     * 链式查询 lambda 式 <br>
      * kotlin 使用
      *
      * @return KtQueryWrapper 的包装类
@@ -525,7 +534,7 @@ public interface IRepository<T> {
     }
 
     /**
-     * 链式查询 lambda 式
+     * 链式查询 lambda 式 <br>
      * kotlin 使用
      *
      * @return KtQueryWrapper 的包装类
@@ -545,7 +554,9 @@ public interface IRepository<T> {
 
     /**
      * 链式更改 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */

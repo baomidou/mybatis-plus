@@ -16,12 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2023-08-03
  */
 class JsqlParserSimpleSerialTest {
+
     private final static int len = 1000;
-    private final static String sql = "SELECT * FROM entity e " +
-            "LEFT JOIN entity1 e1 " +
-            "LEFT JOIN entity2 e2 ON e2.id = e1.id " +
-            "ON e1.id = e.id " +
-            "WHERE (e.id = ? OR e.NAME = ?)";
+    private final static String sql = "SELECT * FROM entity e " + "LEFT JOIN entity1 e1 "
+            + "LEFT JOIN entity2 e2 ON e2.id = e1.id " + "ON e1.id = e.id " + "WHERE (e.id = ? OR e.NAME = ?)";
 
     @Test
     void test() throws JSQLParserException {
@@ -59,7 +57,6 @@ class JsqlParserSimpleSerialTest {
         long et = endTime - startTime;
         System.out.printf("jdk serialize 执行耗时: %s 毫秒,byte大小: %s, 均耗时: %s%n", et, serial.length, (double) et / len);
 
-
         startTime = System.currentTimeMillis();
         for (int i = 0; i < len; i++) {
             statement = (Statement) SerializationUtils.deserialize(serial);
@@ -83,7 +80,6 @@ class JsqlParserSimpleSerialTest {
         long endTime = System.currentTimeMillis();
         long et = endTime - startTime;
         System.out.printf("fst serialize 执行耗时: %s 毫秒,byte大小: %s, 均耗时: %s%n", et, serial.length, (double) et / len);
-
 
         startTime = System.currentTimeMillis();
         for (int i = 0; i < len; i++) {
@@ -109,7 +105,6 @@ class JsqlParserSimpleSerialTest {
         long endTime = System.currentTimeMillis();
         long et = endTime - startTime;
         System.out.printf("fury serialize 执行耗时: %s 毫秒,byte大小: %s, 均耗时: %s%n", et, serial.length, (double) et / len);
-
 
         startTime = System.currentTimeMillis();
         for (int i = 0; i < len; i++) {

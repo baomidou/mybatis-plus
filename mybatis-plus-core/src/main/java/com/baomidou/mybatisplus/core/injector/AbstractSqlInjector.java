@@ -45,7 +45,8 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
         Class<?> modelClass = ReflectionKit.getSuperClassGenericType(mapperClass, Mapper.class, 0);
         if (modelClass != null) {
             String className = mapperClass.toString();
-            Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
+            Set<String> mapperRegistryCache = GlobalConfigUtils
+                    .getMapperRegistryCache(builderAssistant.getConfiguration());
             if (!mapperRegistryCache.contains(className)) {
                 TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                 List<AbstractMethod> methodList = this.getMethodList(mapperClass, tableInfo);
@@ -70,9 +71,9 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param mapperClass 当前mapper
-     * @param tableInfo   表信息
+     * @param tableInfo 表信息
      * @return 注入的方法集合
-     * @since 3.1.2 add  mapperClass
+     * @since 3.1.2 add mapperClass
      * @deprecated 3.5.6 {@link #getMethodList(Configuration, Class, TableInfo)}
      */
     @Deprecated
@@ -84,8 +85,8 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * 获取注入的方法
      *
      * @param configuration 配置对象
-     * @param mapperClass   当前mapper
-     * @param tableInfo     表信息
+     * @param mapperClass 当前mapper
+     * @param tableInfo 表信息
      * @return 注入方法集合
      * @since 3.5.6
      */

@@ -122,7 +122,8 @@ class MybatisMapperMethodTest {
                     if (index == null) {
                         index = i;
                     } else {
-                        throw new BindingException(method.getName() + " cannot have multiple " + paramType.getSimpleName() + " parameters");
+                        throw new BindingException(method.getName() + " cannot have multiple "
+                                + paramType.getSimpleName() + " parameters");
                     }
                 }
             }

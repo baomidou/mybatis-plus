@@ -53,41 +53,45 @@ public class DeleteById extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
         if (tableInfo.isWithLogicDelete()) {
-            List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
-                .filter(TableFieldInfo::isWithUpdateFill)
-                .filter(f -> !f.isLogicDelete())
-                .collect(toList());
+            List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream().filter(TableFieldInfo::isWithUpdateFill)
+                    .filter(f -> !f.isLogicDelete()).collect(toList());
             TableFieldInfo logicDeleteField = tableInfo.getLogicDeleteFieldInfo();
             boolean logicDeleteWithFill = logicDeleteField != null && logicDeleteField.isWithUpdateFill();
             if (CollectionUtils.isNotEmpty(fieldInfos) || logicDeleteWithFill) {
-                String entityCondition = "@org.apache.ibatis.reflection.SystemMetaObject@forObject(_parameter).findProperty('" + tableInfo.getKeyProperty() + "', false) != null";
+                String entityCondition = "@org.apache.ibatis.reflection.SystemMetaObject@forObject(_parameter).findProperty('"
+                        + tableInfo.getKeyProperty() + "', false) != null";
                 String fillSetSql = fieldInfos.stream().map(i -> i.getSqlSet(EMPTY)).collect(joining(EMPTY));
                 String sqlSet;
                 if (logicDeleteWithFill) {
                     String fillSql = logicDeleteField.getSqlSet(true, EMPTY);
                     fillSql = fillSql.substring(0, fillSql.length() - COMMA.length());
-                    String logicDeleteChoose = SqlScriptUtils.convertChoose(entityCondition, fillSql, tableInfo.getLogicDeleteSql(false, false));
+                    String logicDeleteChoose = SqlScriptUtils
+                            .convertChoose(entityCondition, fillSql, tableInfo.getLogicDeleteSql(false, false));
                     if (CollectionUtils.isNotEmpty(fieldInfos)) {
-                        sqlSet = "SET " + SqlScriptUtils.convertIf(fillSetSql, entityCondition, true) + logicDeleteChoose;
+                        sqlSet = "SET " + SqlScriptUtils.convertIf(fillSetSql, entityCondition, true)
+                                + logicDeleteChoose;
                     } else {
                         sqlSet = "SET " + logicDeleteChoose;
                     }
                 } else {
                     sqlSet = "SET " + SqlScriptUtils.convertIf(fillSetSql, entityCondition, true)
-                        + tableInfo.getLogicDeleteSql(false, false);
+                            + tableInfo.getLogicDeleteSql(false, false);
                 }
-                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
-                    tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
+                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(
+                        tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
+                        tableInfo.getLogicDeleteSql(true, true));
             } else {
-                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                    tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
-                    tableInfo.getLogicDeleteSql(true, true));
+                sql = SqlMethod.LOGIC_DELETE_BY_ID.format(
+                        tableInfo.getTableName(), sqlLogicSet(tableInfo), tableInfo.getKeyColumn(),
+                        tableInfo.getKeyProperty(), tableInfo.getLogicDeleteSql(true, true));
             }
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
         } else {
-            sql = SqlMethod.DELETE_BY_ID.format(tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
-            return this.addDeleteMappedStatement(mapperClass, methodName, super.createSqlSource(configuration, sql, Object.class));
+            sql = SqlMethod.DELETE_BY_ID
+                    .format(tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+            return this.addDeleteMappedStatement(
+                    mapperClass, methodName, super.createSqlSource(configuration, sql, Object.class));
         }
     }
 }

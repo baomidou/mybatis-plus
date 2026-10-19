@@ -61,27 +61,63 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 由于开发人员水平参差不齐，即使订了开发规范很多人也不遵守
- * <p>SQL是影响系统性能最重要的因素，所以拦截掉垃圾SQL语句</p>
+ * <p>
+ * SQL是影响系统性能最重要的因素，所以拦截掉垃圾SQL语句
+ * </p>
  * <br>
- * <p>拦截SQL类型的场景</p>
- * <p>1.必须使用到索引，包含left join连接字段，符合索引最左原则</p>
- * <p>必须使用索引好处，</p>
- * <p>1.1 如果因为动态SQL，bug导致update的where条件没有带上，全表更新上万条数据</p>
- * <p>1.2 如果检查到使用了索引，SQL性能基本不会太差</p>
+ * <p>
+ * 拦截SQL类型的场景
+ * </p>
+ * <p>
+ * 1.必须使用到索引，包含left join连接字段，符合索引最左原则
+ * </p>
+ * <p>
+ * 必须使用索引好处，
+ * </p>
+ * <p>
+ * 1.1 如果因为动态SQL，bug导致update的where条件没有带上，全表更新上万条数据
+ * </p>
+ * <p>
+ * 1.2 如果检查到使用了索引，SQL性能基本不会太差
+ * </p>
  * <br>
- * <p>2.SQL尽量单表执行，有查询left join的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left join的语句，如果不能拆成单表执行的SQL，请leader商量在做</p>
- * <p>https://gaoxianglong.github.io/shark</p>
- * <p>SQL尽量单表执行的好处</p>
- * <p>2.1 查询条件简单、易于开理解和维护；</p>
- * <p>2.2 扩展性极强；（可为分库分表做准备）</p>
- * <p>2.3 缓存利用率高；</p>
- * <p>2.在字段上使用函数</p>
+ * <p>
+ * 2.SQL尽量单表执行，有查询left join的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left join的语句，如果不能拆成单表执行的SQL，请leader商量在做
+ * </p>
+ * <p>
+ * https://gaoxianglong.github.io/shark
+ * </p>
+ * <p>
+ * SQL尽量单表执行的好处
+ * </p>
+ * <p>
+ * 2.1 查询条件简单、易于开理解和维护；
+ * </p>
+ * <p>
+ * 2.2 扩展性极强；（可为分库分表做准备）
+ * </p>
+ * <p>
+ * 2.3 缓存利用率高；
+ * </p>
+ * <p>
+ * 2.在字段上使用函数
+ * </p>
  * <br>
- * <p>3.where条件为空</p>
- * <p>4.where条件使用了 !=</p>
- * <p>5.where条件使用了 not 关键字</p>
- * <p>6.where条件使用了 or 关键字</p>
- * <p>7.where条件使用了 使用子查询</p>
+ * <p>
+ * 3.where条件为空
+ * </p>
+ * <p>
+ * 4.where条件使用了 !=
+ * </p>
+ * <p>
+ * 5.where条件使用了 not 关键字
+ * </p>
+ * <p>
+ * 6.where条件使用了 or 关键字
+ * </p>
+ * <p>
+ * 7.where条件使用了 使用子查询
+ * </p>
  *
  * @author willenfoo
  * @deprecated 3.5.10 实用性不高,语法分析太差,计划移除
@@ -179,9 +215,9 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         } else if (expression instanceof BinaryExpression) {
             BinaryExpression binaryExpression = (BinaryExpression) expression;
             // TODO 升级 jsqlparser 后待实现
-//            if (binaryExpression.isNot()) {
-//                throw new MybatisPlusException("非法SQL，where条件中不能使用【not】关键字，错误not信息：" + binaryExpression.toString());
-//            }
+            //            if (binaryExpression.isNot()) {
+            //                throw new MybatisPlusException("非法SQL，where条件中不能使用【not】关键字，错误not信息：" + binaryExpression.toString());
+            //            }
             if (binaryExpression.getLeftExpression() instanceof Function) {
                 Function function = (Function) binaryExpression.getLeftExpression();
                 throw new MybatisPlusException("非法SQL，where条件中不能使用数据库函数，错误函数信息：" + function.toString());
@@ -203,8 +239,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 如果SQL用了 left Join，验证是否有or、not等等，并且验证是否使用了索引
      *
-     * @param joins      ignore
-     * @param table      ignore
+     * @param joins ignore
+     * @param table ignore
      * @param connection ignore
      */
     private void validJoins(List<Join> joins, Table table, Connection connection) {
@@ -223,7 +259,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 检查是否使用索引
      *
-     * @param table      ignore
+     * @param table ignore
      * @param columnName ignore
      * @param connection ignore
      */
@@ -257,7 +293,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * 验证where条件的字段，是否有not、or等等，并且where的第一个字段，必须使用索引
      *
      * @param expression ignore
-     * @param table      ignore
+     * @param table ignore
      * @param connection ignore
      */
     private void validWhere(Expression expression, Table table, Connection connection) {
@@ -268,8 +304,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * 验证where条件的字段，是否有not、or等等，并且where的第一个字段，必须使用索引
      *
      * @param expression ignore
-     * @param table      ignore
-     * @param joinTable  ignore
+     * @param table ignore
+     * @param joinTable ignore
      * @param connection ignore
      */
     private void validWhere(Expression expression, Table table, Table joinTable, Connection connection) {
@@ -311,9 +347,9 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 得到表的索引信息
      *
-     * @param dbName    数据库名
+     * @param dbName 数据库名
      * @param tableName 表名
-     * @param conn      数据库连接
+     * @param conn 数据库连接
      * @return 索引信息
      * @see #getIndexInfos(String, String, String, String, Connection)
      * @deprecated 3.5.11
@@ -325,10 +361,10 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 得到表的索引信息
      *
-     * @param key       缓存key
-     * @param dbName    数据库名
+     * @param key 缓存key
+     * @param dbName 数据库名
      * @param tableName 表名
-     * @param conn      数据库连接
+     * @param conn 数据库连接
      * @return 索引信息
      * @see #getIndexInfos(String, String, String, String, Connection)
      * @deprecated 3.5.11
@@ -341,15 +377,16 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 得到表的索引信息
      *
-     * @param key         缓存key
+     * @param key 缓存key
      * @param catalogName catalogName
-     * @param dbName      数据库名
-     * @param tableName   表名
-     * @param conn        数据库连接
+     * @param dbName 数据库名
+     * @param tableName 表名
+     * @param conn 数据库连接
      * @return 索引信息
      * @since 3.5.11
      */
-    public List<IndexInfo> getIndexInfos(String key, String catalogName, String dbName, String tableName, Connection conn) {
+    public List<IndexInfo> getIndexInfos(String key, String catalogName, String dbName, String tableName,
+            Connection conn) {
         List<IndexInfo> indexInfos = null;
         if (StringUtils.isNotBlank(key)) {
             indexInfos = indexInfoMap.get(key);
@@ -376,7 +413,10 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
                     indexInfoMap.put(key, indexInfos);
                 }
             } catch (SQLException e) {
-                logger.error(String.format("getIndexInfo fault, with key:%s, dbName:%s, tableName:%s", key, dbName, tableName), e);
+                logger.error(
+                        String.format(
+                                "getIndexInfo fault, with key:%s, dbName:%s, tableName:%s", key, dbName, tableName),
+                        e);
             }
         }
         return indexInfos;

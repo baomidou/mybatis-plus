@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Data
 @Accessors(chain = true)
 public class GlobalConfig implements Serializable {
+
     /**
      * 是否开启 LOGO
      */
@@ -102,6 +103,7 @@ public class GlobalConfig implements Serializable {
 
     @Data
     public static class DbConfig {
+
         /**
          * 主键类型
          */
@@ -206,7 +208,9 @@ public class GlobalConfig implements Serializable {
         private FieldStrategy whereStrategy = FieldStrategy.NOT_NULL;
         /**
          * 生成INSERT语句时忽略自增主键字段(默认不忽略,主键有值时写入主键值,无值自增).
-         * <p>当设置为true时,执行生成SQL语句无论ID是否有值都会忽视 (此为3.4.3.1版本下策略,如果升级遇到问题可以考虑开启此配置来兼容升级)</p>
+         * <p>
+         * 当设置为true时,执行生成SQL语句无论ID是否有值都会忽视 (此为3.4.3.1版本下策略,如果升级遇到问题可以考虑开启此配置来兼容升级)
+         * </p>
          *
          * @since 3.5.6
          */
@@ -233,13 +237,17 @@ public class GlobalConfig implements Serializable {
 
         /**
          * 工作机器 ID
-         * <p>取值范围 0-31，多实例部署时需与 {@link #datacenterId} 组合保持唯一</p>
+         * <p>
+         * 取值范围 0-31，多实例部署时需与 {@link #datacenterId} 组合保持唯一
+         * </p>
          */
         private Long workerId;
 
         /**
          * 数据标识 ID 部分
-         * <p>取值范围 0-31，多实例部署时需与 {@link #workerId} 组合保持唯一</p>
+         * <p>
+         * 取值范围 0-31，多实例部署时需与 {@link #workerId} 组合保持唯一
+         * </p>
          */
         private Long datacenterId;
 

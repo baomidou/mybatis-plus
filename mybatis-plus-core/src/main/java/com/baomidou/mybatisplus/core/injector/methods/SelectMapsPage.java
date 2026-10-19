@@ -27,7 +27,8 @@ import java.util.Map;
  * 查询满足条件所有数据（并翻页）
  *
  * @author hubin
- * @deprecated 3.5.3.2 {@link  com.baomidou.mybatisplus.core.mapper.BaseMapper#selectMaps(com.baomidou.mybatisplus.core.metadata.IPage, com.baomidou.mybatisplus.core.conditions.Wrapper)}
+ * @deprecated 3.5.3.2
+ *             {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#selectMaps(com.baomidou.mybatisplus.core.metadata.IPage, com.baomidou.mybatisplus.core.conditions.Wrapper)}
  * @since 2018-04-06
  */
 @Deprecated
@@ -47,8 +48,9 @@ public class SelectMapsPage extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        String sql = SqlMethod.SELECT_MAPS_PAGE.format(sqlFirst(), sqlSelectColumns(tableInfo, true),
-            tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
+        String sql = SqlMethod.SELECT_MAPS_PAGE.format(
+                sqlFirst(), sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
+                sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Map.class);
     }

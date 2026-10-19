@@ -38,8 +38,12 @@ public enum FieldStrategy {
     NOT_EMPTY,
     /**
      * 默认的,一般只用于注解里
-     * <p>1. 在全局里代表 NOT_NULL</p>
-     * <p>2. 在注解里代表 跟随全局</p>
+     * <p>
+     * 1. 在全局里代表 NOT_NULL
+     * </p>
+     * <p>
+     * 2. 在注解里代表 跟随全局
+     * </p>
      */
     DEFAULT,
     /**

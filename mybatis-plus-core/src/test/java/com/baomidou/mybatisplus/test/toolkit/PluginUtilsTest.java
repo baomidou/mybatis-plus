@@ -30,8 +30,7 @@ import java.sql.Connection;
 public class PluginUtilsTest {
 
     @Intercepts({
-        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})}
-    )
+            @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
     static class TestInterceptor implements Interceptor {
 
         @Override
@@ -45,8 +44,10 @@ public class PluginUtilsTest {
     void testRealTargetByProxy() {
         Configuration configuration = new Configuration();
         Executor executor = new SimpleExecutor(configuration, new JdbcTransaction(Mockito.mock(Connection.class)));
-        MappedStatement mappedStatement = new MappedStatement.Builder(configuration, "test", new StaticSqlSource(configuration, "-------------"), SqlCommandType.SELECT).build();
-        RoutingStatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, new Object(), new RowBounds(), null, Mockito.mock(BoundSql.class));
+        MappedStatement mappedStatement = new MappedStatement.Builder(configuration, "test",
+                new StaticSqlSource(configuration, "-------------"), SqlCommandType.SELECT).build();
+        RoutingStatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, new Object(),
+                new RowBounds(), null, Mockito.mock(BoundSql.class));
         Object plugin = new TestInterceptor().plugin(statementHandler);
         Assertions.assertTrue(Proxy.isProxyClass(plugin.getClass()));
         Assertions.assertEquals(statementHandler, PluginUtils.realTarget(plugin));

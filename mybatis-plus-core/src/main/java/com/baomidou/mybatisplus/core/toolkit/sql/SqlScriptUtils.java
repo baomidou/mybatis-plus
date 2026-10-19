@@ -51,15 +51,15 @@ public abstract class SqlScriptUtils implements Constants {
      * 获取 带 trim 标签的脚本
      * </p>
      *
-     * @param sqlScript       sql 脚本片段
-     * @param prefix          以...开头
-     * @param suffix          以...结尾
+     * @param sqlScript sql 脚本片段
+     * @param prefix 以...开头
+     * @param suffix 以...结尾
      * @param prefixOverrides 干掉最前一个...
      * @param suffixOverrides 干掉最后一个...
      * @return trim 脚本
      */
     public static String convertTrim(final String sqlScript, final String prefix, final String suffix,
-                                     final String prefixOverrides, final String suffixOverrides) {
+            final String prefixOverrides, final String suffixOverrides) {
         StringBuilder sb = new StringBuilder("<trim");
         if (StringUtils.isNotBlank(prefix)) {
             sb.append(" prefix=\"").append(prefix).append(QUOTE);
@@ -81,16 +81,13 @@ public abstract class SqlScriptUtils implements Constants {
      * 生成 choose 标签的脚本
      * </p>
      *
-     * @param whenTest  when 内 test 的内容
+     * @param whenTest when 内 test 的内容
      * @param otherwise otherwise 内容
      * @return choose 脚本
      */
     public static String convertChoose(final String whenTest, final String whenSqlScript, final String otherwise) {
-        return "<choose>" + NEWLINE
-            + "<when test=\"" + whenTest + QUOTE + RIGHT_CHEV + NEWLINE
-            + whenSqlScript + NEWLINE + "</when>" + NEWLINE
-            + "<otherwise>" + otherwise + "</otherwise>" + NEWLINE
-            + "</choose>";
+        return "<choose>" + NEWLINE + "<when test=\"" + whenTest + QUOTE + RIGHT_CHEV + NEWLINE + whenSqlScript
+                + NEWLINE + "</when>" + NEWLINE + "<otherwise>" + otherwise + "</otherwise>" + NEWLINE + "</choose>";
     }
 
     /**
@@ -98,15 +95,15 @@ public abstract class SqlScriptUtils implements Constants {
      * 生成 foreach 标签的脚本
      * </p>
      *
-     * @param sqlScript  foreach 内部的 sql 脚本
+     * @param sqlScript foreach 内部的 sql 脚本
      * @param collection collection
-     * @param index      index
-     * @param item       item
-     * @param separator  separator
+     * @param index index
+     * @param item item
+     * @param separator separator
      * @return foreach 脚本
      */
     public static String convertForeach(final String sqlScript, final String collection, final String index,
-                                        final String item, final String separator) {
+            final String item, final String separator) {
         StringBuilder sb = new StringBuilder("<foreach");
         if (StringUtils.isNotBlank(collection)) {
             sb.append(" collection=\"").append(collection).append(QUOTE);
@@ -149,7 +146,7 @@ public abstract class SqlScriptUtils implements Constants {
 
     /**
      * <p>
-     * 安全入参:  #{入参}
+     * 安全入参: #{入参}
      * </p>
      *
      * @param param 入参
@@ -161,10 +158,10 @@ public abstract class SqlScriptUtils implements Constants {
 
     /**
      * <p>
-     * 安全入参:  #{入参,mapping}
+     * 安全入参: #{入参,mapping}
      * </p>
      *
-     * @param param   入参
+     * @param param 入参
      * @param mapping 映射
      * @return 脚本
      */
@@ -178,7 +175,7 @@ public abstract class SqlScriptUtils implements Constants {
 
     /**
      * <p>
-     * 非安全入参:  ${入参}
+     * 非安全入参: ${入参}
      * </p>
      *
      * @param param 入参
@@ -209,7 +206,8 @@ public abstract class SqlScriptUtils implements Constants {
         return null;
     }
 
-    public static String convertParamMapping(Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType, Integer numericScale) {
+    public static String convertParamMapping(Class<? extends TypeHandler<?>> typeHandler, JdbcType jdbcType,
+            Integer numericScale) {
         if (typeHandler == null && jdbcType == null && numericScale == null) {
             return null;
         }

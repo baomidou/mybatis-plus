@@ -109,8 +109,8 @@ public class CollectionUtils {
      * 根据预期大小创建HashMap.
      *
      * @param expectedSize 预期大小
-     * @param <K>          K
-     * @param <V>          V
+     * @param <K> K
+     * @param <V> V
      * @return HashMap
      * @see com.google.common.collect.Maps#newHashMapWithExpectedSize
      * @since 3.4.0
@@ -120,21 +120,24 @@ public class CollectionUtils {
     }
 
     /**
-     * 用来过渡下Jdk1.8下ConcurrentHashMap的性能bug
+     * 用来过渡下Jdk1.8下ConcurrentHashMap的性能bug <br>
      * <a href="https://bugs.openjdk.java.net/browse/JDK-8161372">JDK-8161372</a>
      * <p>
-     *  A temporary workaround for Java 8 ConcurrentHashMap#computeIfAbsent specific performance issue: JDK-8161372.</br>
-     *  @see <a href="https://bugs.openjdk.java.net/browse/JDK-8161372">https://bugs.openjdk.java.net/browse/JDK-8161372</a>
+     * A temporary workaround for Java 8 ConcurrentHashMap#computeIfAbsent specific performance issue: JDK-8161372.</br>
+     * 
+     * @see <a href=
+     *      "https://bugs.openjdk.java.net/browse/JDK-8161372">https://bugs.openjdk.java.net/browse/JDK-8161372</a>
      *
      * @param concurrentHashMap ConcurrentHashMap 没限制类型了，非ConcurrentHashMap就别调用这方法了
-     * @param key               key
-     * @param mappingFunction   function
-     * @param <K>               k
-     * @param <V>               v
+     * @param key key
+     * @param mappingFunction function
+     * @param <K> k
+     * @param <V> v
      * @return V
      * @since 3.4.0
      */
-    public static <K, V> V computeIfAbsent(Map<K, V> concurrentHashMap, K key, Function<? super K, ? extends V> mappingFunction) {
+    public static <K, V> V computeIfAbsent(Map<K, V> concurrentHashMap, K key,
+            Function<? super K, ? extends V> mappingFunction) {
         Objects.requireNonNull(mappingFunction);
         if (isJdk8) {
             V v = concurrentHashMap.get(key);
@@ -163,8 +166,8 @@ public class CollectionUtils {
     }
 
     /**
-     * Returns a capacity that is sufficient to keep the map from being resized as
-     * long as it grows no larger than expectedSize and the load factor is >= its
+     * Returns a capacity that is sufficient to keep the map from being resized as <br>
+     * long as it grows no larger than expectedSize and the load factor is >= its <br>
      * default (0.75).
      *
      * @see com.google.common.collect.Maps#capacity(int)
@@ -191,10 +194,10 @@ public class CollectionUtils {
     /**
      * 批量取出Map中的值
      *
-     * @param map  map
+     * @param map map
      * @param keys 键的集合
-     * @param <K>  key的泛型
-     * @param <V>  value的泛型
+     * @param <K> key的泛型
+     * @param <V> value的泛型
      * @return value的泛型的集合
      */
     public static <K, V> List<V> getCollection(Map<K, V> map, Iterable<K> keys) {
@@ -208,11 +211,11 @@ public class CollectionUtils {
     /**
      * 批量取出Map中的值
      *
-     * @param map        map
-     * @param keys       键的集合
+     * @param map map
+     * @param keys 键的集合
      * @param comparator 排序器
-     * @param <K>        key的泛型
-     * @param <V>        value的泛型
+     * @param <K> key的泛型
+     * @param <V> value的泛型
      * @return value的泛型的集合
      */
     public static <K, V> List<V> getCollection(Map<K, V> map, Iterable<K> keys, Comparator<V> comparator) {
@@ -237,6 +240,7 @@ public class CollectionUtils {
 
     /**
      * 切割集合为多个集合
+     * 
      * @param entityList 数据集合
      * @param batchSize 每批集合的大小
      * @return 切割后的多个集合
@@ -251,7 +255,7 @@ public class CollectionUtils {
         final List<List<T>> results = new ArrayList<>(entityList.size() / batchSize);
         while (iterator.hasNext()) {
             final List<T> list = IntStream.range(0, batchSize).filter(x -> iterator.hasNext())
-                .mapToObj(i -> iterator.next()).collect(Collectors.toList());
+                    .mapToObj(i -> iterator.next()).collect(Collectors.toList());
             if (!list.isEmpty()) {
                 results.add(list);
             }

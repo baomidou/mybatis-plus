@@ -21,7 +21,6 @@ public class TemplateConfigTest {
         Assertions.assertNull(templateConfig.getEntity(true));
         Assertions.assertNull(templateConfig.getEntity(false));
 
-
         templateConfig = GeneratorBuilder.templateConfig().disable(TemplateType.SERVICE);
         Assertions.assertNull(templateConfig.getService());
         Assertions.assertNotNull(templateConfig.getEntity(true));
@@ -49,12 +48,20 @@ public class TemplateConfigTest {
     void entityTest() {
         Assertions.assertEquals("/templates/entity.kt", GeneratorBuilder.templateConfig().getEntity(true));
         Assertions.assertEquals("/templates/entity.java", GeneratorBuilder.templateConfig().getEntity(false));
-        Assertions.assertEquals("/tm/entity.kt", GeneratorBuilder.templateConfigBuilder().entityKt("/tm/entity.kt").build().getEntity(true));
-        Assertions.assertEquals("/tm/entity.java", GeneratorBuilder.templateConfigBuilder().entity("/tm/entity.java").build().getEntity(false));
-        Assertions.assertEquals("/tm/entity.kt", new TemplateConfig.Builder().entityKt("/tm/entity.kt").build().getEntity(true));
-        Assertions.assertEquals("/tm/entity.java", new TemplateConfig.Builder().entity("/tm/entity.java").build().getEntity(false));
-        Assertions.assertEquals("myEntity.java.vm", new TemplateConfig.Builder().entity("myEntity.java.vm").build().getEntity(false));
-        Assertions.assertEquals("myEntity.kt.vm", new TemplateConfig.Builder().entityKt("myEntity.kt.vm").build().getEntity(true));
+        Assertions.assertEquals(
+                "/tm/entity.kt",
+                GeneratorBuilder.templateConfigBuilder().entityKt("/tm/entity.kt").build().getEntity(true));
+        Assertions.assertEquals(
+                "/tm/entity.java",
+                GeneratorBuilder.templateConfigBuilder().entity("/tm/entity.java").build().getEntity(false));
+        Assertions.assertEquals(
+                "/tm/entity.kt", new TemplateConfig.Builder().entityKt("/tm/entity.kt").build().getEntity(true));
+        Assertions.assertEquals(
+                "/tm/entity.java", new TemplateConfig.Builder().entity("/tm/entity.java").build().getEntity(false));
+        Assertions.assertEquals(
+                "myEntity.java.vm", new TemplateConfig.Builder().entity("myEntity.java.vm").build().getEntity(false));
+        Assertions.assertEquals(
+                "myEntity.kt.vm", new TemplateConfig.Builder().entityKt("myEntity.kt.vm").build().getEntity(true));
     }
 
     @Test
@@ -66,7 +73,8 @@ public class TemplateConfigTest {
         Assertions.assertNotNull(templateConfig.getService());
         Assertions.assertNotNull(templateConfig.getServiceImpl());
 
-        templateConfig = new TemplateConfig.Builder().entity("/tmp/entity.java").entityKt("/tmp/entity.kt").service("/tmp/service.java").serviceImpl("/tmp/serviceImpl.java").build();
+        templateConfig = new TemplateConfig.Builder().entity("/tmp/entity.java").entityKt("/tmp/entity.kt")
+                .service("/tmp/service.java").serviceImpl("/tmp/serviceImpl.java").build();
         Assertions.assertNotNull(templateConfig.getEntity(true));
         Assertions.assertNotNull(templateConfig.getEntity(false));
         Assertions.assertNotNull(templateConfig.getService());

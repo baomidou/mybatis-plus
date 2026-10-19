@@ -14,10 +14,9 @@ public class MySQLGeneratorTest extends BaseGeneratorTest {
     /**
      * 数据源配置
      */
-    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig
-        .Builder("jdbc:mysql://xxxx:3306/baomidou?serverTimezone=Asia/Shanghai", "root", "123456")
-        .schema("baomidou")
-        .build();
+    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
+            "jdbc:mysql://xxxx:3306/baomidou?serverTimezone=Asia/Shanghai", "root", "123456").schema("baomidou")
+            .build();
 
     public static void main(String[] args) {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);

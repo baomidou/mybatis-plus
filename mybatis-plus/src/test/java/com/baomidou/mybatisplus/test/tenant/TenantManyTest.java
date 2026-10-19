@@ -18,10 +18,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies that the multi-tenant plugin correctly injects tenant conditions into
- * nested SELECT statements that are triggered by {@code @Many} / {@code @One}
- * annotations.  Prior to the fix, nested selects executed via the
- * {@code DefaultResultSetHandler} bypassed the {@code Executor} interceptor
+ * Verifies that the multi-tenant plugin correctly injects tenant conditions into <br>
+ * nested SELECT statements that are triggered by {@code @Many} / {@code @One} <br>
+ * annotations. Prior to the fix, nested selects executed via the <br>
+ * {@code DefaultResultSetHandler} bypassed the {@code Executor} interceptor <br>
  * chain, so no tenant condition was added to those queries.
  *
  * @see <a href="https://github.com/baomidou/mybatis-plus/issues/6899">Issue #6899</a>
@@ -33,6 +33,7 @@ public class TenantManyTest extends BaseDbTest<TenantManyTest.OrderMapper> {
     @Getter
     @Setter
     public static class Order implements Serializable {
+
         private Long id;
         private String name;
         private Integer tenantId;
@@ -42,6 +43,7 @@ public class TenantManyTest extends BaseDbTest<TenantManyTest.OrderMapper> {
     @Getter
     @Setter
     public static class OrderItem implements Serializable {
+
         private Long id;
         private Long orderId;
         private String product;
@@ -51,21 +53,16 @@ public class TenantManyTest extends BaseDbTest<TenantManyTest.OrderMapper> {
     // ─── Mapper interfaces ─────────────────────────────────────────────────────
 
     public interface OrderItemMapper {
+
         @Select("SELECT id, order_id, product, tenant_id FROM order_item WHERE order_id = #{orderId}")
         List<OrderItem> findByOrderId(@Param("orderId") Long orderId);
     }
 
     public interface OrderMapper {
-        @Results(id = "orderWithItems", value = {
-            @Result(column = "id", property = "id"),
-            @Result(column = "name", property = "name"),
-            @Result(column = "tenant_id", property = "tenantId"),
-            @Result(
-                column = "id",
-                property = "items",
-                many = @Many(select = "com.baomidou.mybatisplus.test.tenant.TenantManyTest$OrderItemMapper.findByOrderId")
-            )
-        })
+
+        @Results(id = "orderWithItems", value = {@Result(column = "id", property = "id"),
+                @Result(column = "name", property = "name"), @Result(column = "tenant_id", property = "tenantId"),
+                @Result(column = "id", property = "items", many = @Many(select = "com.baomidou.mybatisplus.test.tenant.TenantManyTest$OrderItemMapper.findByOrderId"))})
         @Select("SELECT id, name, tenant_id FROM t_order WHERE id = #{id}")
         Order findWithItems(@Param("id") Long id);
 
@@ -118,21 +115,11 @@ public class TenantManyTest extends BaseDbTest<TenantManyTest.OrderMapper> {
     @Override
     protected List<String> tableSql() {
         return Arrays.asList(
-            "DROP TABLE IF EXISTS t_order",
-            "CREATE TABLE t_order (" +
-                "id BIGINT NOT NULL, " +
-                "name VARCHAR(50), " +
-                "tenant_id INTEGER NOT NULL, " +
-                "PRIMARY KEY (id)" +
-                ")",
-            "DROP TABLE IF EXISTS order_item",
-            "CREATE TABLE order_item (" +
-                "id BIGINT NOT NULL, " +
-                "order_id BIGINT NOT NULL, " +
-                "product VARCHAR(50), " +
-                "tenant_id INTEGER NOT NULL, " +
-                "PRIMARY KEY (id)" +
-                ")"
-        );
+                "DROP TABLE IF EXISTS t_order",
+                "CREATE TABLE t_order (" + "id BIGINT NOT NULL, " + "name VARCHAR(50), "
+                        + "tenant_id INTEGER NOT NULL, " + "PRIMARY KEY (id)" + ")",
+                "DROP TABLE IF EXISTS order_item",
+                "CREATE TABLE order_item (" + "id BIGINT NOT NULL, " + "order_id BIGINT NOT NULL, "
+                        + "product VARCHAR(50), " + "tenant_id INTEGER NOT NULL, " + "PRIMARY KEY (id)" + ")");
     }
 }

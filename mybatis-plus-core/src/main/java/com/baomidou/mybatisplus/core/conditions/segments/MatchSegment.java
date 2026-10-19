@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public enum MatchSegment {
+
     GROUP_BY(i -> i == SqlKeyword.GROUP_BY),
     ORDER_BY(i -> i == SqlKeyword.ORDER_BY),
     NOT(i -> i == SqlKeyword.NOT),

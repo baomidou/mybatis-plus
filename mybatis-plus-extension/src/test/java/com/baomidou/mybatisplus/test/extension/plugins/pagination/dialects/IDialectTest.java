@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-
 /**
  * @author miemie
  * @since 2022-05-30
@@ -26,8 +25,8 @@ class IDialectTest {
     @Test
     void singleRealize() {
         List<Class<?>> classList = ReflectionUtils.findAllClassesInPackage(
-            "com.baomidou.mybatisplus.extension.plugins.pagination.dialects",
-            i -> !i.isInterface() && IDialect.class.isAssignableFrom(i), i -> true);
+                "com.baomidou.mybatisplus.extension.plugins.pagination.dialects",
+                i -> !i.isInterface() && IDialect.class.isAssignableFrom(i), i -> true);
 
         Map<String, List<Class<?>>> map = new ConcurrentHashMap<>();
         classList.forEach(i -> {
@@ -37,14 +36,14 @@ class IDialectTest {
             if (!map.containsKey(sql)) {
                 ArrayList<Class<?>> list = new ArrayList<>();
                 list.add(i);
-                map.put(sql,list);
+                map.put(sql, list);
             } else {
                 map.get(sql).add(i);
             }
         });
         map.forEach((k, v) -> {
             List<Class<?>> list = v.stream().filter(i -> i.getAnnotation(Deprecated.class) == null).toList();
-            if(list.size() > 1){
+            if (list.size() > 1) {
                 log.warn("{}的sql重复", list.stream().map(Class::getSimpleName).collect(Collectors.joining("与")));
             }
         });

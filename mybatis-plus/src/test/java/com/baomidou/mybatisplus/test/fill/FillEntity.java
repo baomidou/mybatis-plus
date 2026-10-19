@@ -31,8 +31,8 @@ public class FillEntity {
         this.name = name;
     }
 
-    void addSeq(){
-        this.seq ++;
+    void addSeq() {
+        this.seq++;
     }
 
 }

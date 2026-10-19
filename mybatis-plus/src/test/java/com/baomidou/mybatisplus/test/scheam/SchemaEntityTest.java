@@ -40,9 +40,8 @@ public class SchemaEntityTest extends BaseDbTest<SchemaEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists SCHEMA_ENTITY", "CREATE TABLE IF NOT EXISTS SCHEMA_ENTITY (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists SCHEMA_ENTITY", "CREATE TABLE IF NOT EXISTS SCHEMA_ENTITY ("
+                        + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 }

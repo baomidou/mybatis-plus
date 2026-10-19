@@ -79,46 +79,37 @@ class MybatisPlusFeature implements Feature {
             return;
         }
         access.registerReachabilityHandler(duringAnalysisAccess -> {
-            Stream.of(RawLanguageDriver.class,
-                XMLLanguageDriver.class,
-                RuntimeSupport.class,
-                ProxyFactory.class,
-                Slf4jImpl.class,
-                Log.class,
-                JakartaCommonsLoggingImpl.class,
-                Log4j2Impl.class,
-                Jdk14LoggingImpl.class,
-                StdOutImpl.class,
-                NoLoggingImpl.class,
-                SqlSessionFactory.class,
-                PerpetualCache.class,
-                FifoCache.class,
-                LruCache.class,
-                SoftCache.class,
-                WeakCache.class,
-                SqlSessionFactoryBean.class,
-                ArrayList.class,
-                HashMap.class,
-                TreeSet.class,
-                HashSet.class,
-                BoundSql.class
-            ).forEach(featureUtils::registerReflection);
+            Stream.of(
+                    RawLanguageDriver.class, XMLLanguageDriver.class, RuntimeSupport.class, ProxyFactory.class,
+                    Slf4jImpl.class, Log.class, JakartaCommonsLoggingImpl.class, Log4j2Impl.class,
+                    Jdk14LoggingImpl.class, StdOutImpl.class, NoLoggingImpl.class, SqlSessionFactory.class,
+                    PerpetualCache.class, FifoCache.class, LruCache.class, SoftCache.class, WeakCache.class,
+                    SqlSessionFactoryBean.class, ArrayList.class, HashMap.class, TreeSet.class, HashSet.class,
+                    BoundSql.class).forEach(featureUtils::registerReflection);
             var statementHandler = featureUtils.loadClass("org.apache.ibatis.executor.statement.StatementHandler");
-            if (statementHandler != null) featureUtils.registerReflection(featureUtils.collectClass(statementHandler::isAssignableFrom, "org.apache.ibatis.executor.statement").toArray(EMPTY_CLASS_ARRAY));
+            if (statementHandler != null)
+                featureUtils.registerReflection(
+                        featureUtils
+                                .collectClass(
+                                        statementHandler::isAssignableFrom, "org.apache.ibatis.executor.statement")
+                                .toArray(EMPTY_CLASS_ARRAY));
             try {
-                featureUtils.registerResource(XMLStatementBuilder.class, featureUtils.findResources("org/apache/ibatis/builder/xml",
-                    name -> name.endsWith(".dtd") || name.endsWith(".xsd")).toArray(FeatureUtils.EMPTY_STRING_ARRAY));
+                featureUtils.registerResource(
+                        XMLStatementBuilder.class,
+                        featureUtils.findResources(
+                                "org/apache/ibatis/builder/xml", name -> name.endsWith(".dtd") || name.endsWith(".xsd"))
+                                .toArray(FeatureUtils.EMPTY_STRING_ARRAY));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            featureUtils.registerProxyIfPresent("org.apache.ibatis.executor.Executor", "org.apache.ibatis.executor.statement.StatementHandler");
+            featureUtils.registerProxyIfPresent(
+                    "org.apache.ibatis.executor.Executor", "org.apache.ibatis.executor.statement.StatementHandler");
             // spring项目不需要下面的代码
             try {
                 for (Class<?> mainClass : featureUtils.findMainClasses()) {
-                    featureUtils.registerResource(mainClass.getModule(),
-                        featureUtils.findResources("",
-                                CollectUtils::isMapperXmlResource)
-                            .toArray(FeatureUtils.EMPTY_STRING_ARRAY));
+                    featureUtils.registerResource(
+                            mainClass.getModule(), featureUtils.findResources("", CollectUtils::isMapperXmlResource)
+                                    .toArray(FeatureUtils.EMPTY_STRING_ARRAY));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -132,8 +123,9 @@ class MybatisPlusFeature implements Feature {
         if (wrapper != null && sqlSessionFactory != null) {
             access.registerReachabilityHandler(duringAnalysisAccess -> {
                 featureUtils.registerSerializationIfPresent("com.baomidou.mybatisplus.core.toolkit.support.SFunction");
-                featureUtils.registerReflectionIfPresent("com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
-                    "com.baomidou.mybatisplus.core.conditions.ISqlSegment");
+                featureUtils.registerReflectionIfPresent(
+                        "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
+                        "com.baomidou.mybatisplus.core.conditions.ISqlSegment");
                 for (Class<?> c : featureUtils.collectClass(wrapper::isAssignableFrom, "com.baomidou.mybatisplus")) {
                     featureUtils.registerReflection(c);
                 }

@@ -35,6 +35,6 @@ public class SelectWithCursor extends SelectList {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql = this.getSql(tableInfo);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
-        return addSelectMappedStatementForTable( mapperClass, methodName, sqlSource, tableInfo);
+        return addSelectMappedStatementForTable(mapperClass, methodName, sqlSource, tableInfo);
     }
 }

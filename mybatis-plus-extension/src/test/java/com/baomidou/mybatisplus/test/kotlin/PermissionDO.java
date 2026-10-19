@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.test.kotlin;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
- * 一个普通的 Java 实体（带 JavaBean getter），用于验证 Kotlin 代码中
+ * 一个普通的 Java 实体（带 JavaBean getter），用于验证 Kotlin 代码中 <br>
  * 形如 {@code PermissionDO::getBizType} 的 getter 方法引用（KFunction）能被正确解析。
  */
 @TableName("crm_permission")

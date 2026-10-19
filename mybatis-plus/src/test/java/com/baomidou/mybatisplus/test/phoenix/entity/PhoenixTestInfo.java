@@ -6,8 +6,8 @@ import lombok.experimental.Accessors;
 
 /**
  * @author fly
- * @date 2019/5/22 17:52
- * description: phoenix hbase TEST_INFO table
+ * @date 2019/5/22 17:52 <br>
+ *       description: phoenix hbase TEST_INFO table
  */
 @Data
 @Accessors(chain = true)

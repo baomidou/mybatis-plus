@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.incrementer;
 
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 

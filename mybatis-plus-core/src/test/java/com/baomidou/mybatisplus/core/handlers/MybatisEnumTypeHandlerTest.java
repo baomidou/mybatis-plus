@@ -105,7 +105,8 @@ class MybatisEnumTypeHandlerTest {
         assertEquals(LongEnum.ONE, longHandler.getResult(resultSet, "longColumn"));
 
         MybatisEnumTypeHandler<BigIntegerEnum> bigIntegerHandler = new MybatisEnumTypeHandler<>(BigIntegerEnum.class);
-        when(resultSet.getObject(eq("bigIntegerColumn"), eq(BigInteger.class))).thenAnswer(invocation -> Integer.valueOf(2));
+        when(resultSet.getObject(eq("bigIntegerColumn"), eq(BigInteger.class)))
+                .thenAnswer(invocation -> Integer.valueOf(2));
         assertEquals(BigIntegerEnum.TWO, bigIntegerHandler.getResult(resultSet, "bigIntegerColumn"));
 
         MybatisEnumTypeHandler<StringEnum> stringHandler = new MybatisEnumTypeHandler<>(StringEnum.class);
@@ -113,7 +114,8 @@ class MybatisEnumTypeHandlerTest {
         assertEquals(StringEnum.THREE, stringHandler.getResult(resultSet, "stringColumn"));
 
         MybatisEnumTypeHandler<CharacterEnum> characterHandler = new MybatisEnumTypeHandler<>(CharacterEnum.class);
-        when(resultSet.getObject(eq("characterColumn"), eq(Character.class))).thenAnswer(invocation -> Integer.valueOf(4));
+        when(resultSet.getObject(eq("characterColumn"), eq(Character.class)))
+                .thenAnswer(invocation -> Integer.valueOf(4));
         assertEquals(CharacterEnum.FOUR, characterHandler.getResult(resultSet, "characterColumn"));
     }
 

@@ -28,10 +28,18 @@ import java.util.Set;
 
 /**
  * 动态表名解析处理
- * <p>1.无法保留sql注释(例如 select * from test; --这是个查询 处理完会变成 select * from test)</p>
- * <p>2.无法保留语句分隔符;(例如 select * from test; 处理完会变成 select * from test )</p>
- * <p>3.如果使用转义符包裹了表名需要自行处理</p>
- * <p>4.select * from dual (不处理这个,自行忽略)</p>
+ * <p>
+ * 1.无法保留sql注释(例如 select * from test; --这是个查询 处理完会变成 select * from test)
+ * </p>
+ * <p>
+ * 2.无法保留语句分隔符;(例如 select * from test; 处理完会变成 select * from test )
+ * </p>
+ * <p>
+ * 3.如果使用转义符包裹了表名需要自行处理
+ * </p>
+ * <p>
+ * 4.select * from dual (不处理这个,自行忽略)
+ * </p>
  *
  * @author nieqiurong
  * @since 3.5.11
@@ -62,7 +70,7 @@ public class DynamicTableNameHandler extends TablesNamesFinder<Void> {
 
     @Override
     public <S> Void visit(Drop drop, S context) {
-        if(StringUtils.isNotBlank(drop.getType())){
+        if (StringUtils.isNotBlank(drop.getType())) {
             String type = drop.getType().toUpperCase();
             if ("TABLE".equals(type)) {
                 return super.visit(drop, context);

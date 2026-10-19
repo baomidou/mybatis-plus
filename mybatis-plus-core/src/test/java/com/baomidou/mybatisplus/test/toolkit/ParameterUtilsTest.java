@@ -13,10 +13,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-
 class ParameterUtilsTest {
 
     static class Page<T> implements IPage<T> {
+
         private long current = 1;
         private long total = 0;
         private long size = 10;

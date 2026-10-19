@@ -24,7 +24,8 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
 
     @BeforeAll
     static void initTableInfo() {
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Table.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Table.class);
         Assertions.assertEquals("xxx", tableInfo.getTableName());
     }
 
@@ -37,7 +38,6 @@ class LambdaQueryWrapperTest extends BaseWrapperTest {
         lqw = Wrappers.<Table>lambdaQuery().eq(Table::getId, 1).nested(false, x -> x.eq(Table::getName, "李白"));
         Assertions.assertEquals("(`id` = #{ew.paramNameValuePairs.MPGENVAL1})", lqw.getSqlSegment());
     }
-
 
     @Data
     @TableName("xxx")

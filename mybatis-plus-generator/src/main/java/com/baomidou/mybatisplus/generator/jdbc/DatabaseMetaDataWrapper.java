@@ -103,7 +103,8 @@ public class DatabaseMetaDataWrapper {
      *
      * @return 表字段信息 (小写字段名->字段信息)
      */
-    public Map<String, Column> getColumnsInfo(String catalog, String schema, String tableName, boolean queryPrimaryKey) {
+    public Map<String, Column> getColumnsInfo(String catalog, String schema, String tableName,
+            boolean queryPrimaryKey) {
         Set<String> primaryKeys = new HashSet<>();
         if (queryPrimaryKey) {
             try (ResultSet primaryKeysResultSet = databaseMetaData.getPrimaryKeys(catalog, schema, tableName)) {
@@ -189,7 +190,8 @@ public class DatabaseMetaDataWrapper {
     public Table getTableInfo(String catalog, String schema, String tableName) {
         Table table = new Table();
         //TODO 后面要根据表是否为视图来查询，后面重构表查询策略。
-        try (ResultSet resultSet = databaseMetaData.getTables(catalog, schema, tableName, new String[]{"TABLE", "VIEW"})) {
+        try (ResultSet resultSet = databaseMetaData
+                .getTables(catalog, schema, tableName, new String[]{"TABLE", "VIEW"})) {
             table.name = tableName;
             while (resultSet.next()) {
                 table.remarks = formatComment(resultSet.getString("REMARKS"));

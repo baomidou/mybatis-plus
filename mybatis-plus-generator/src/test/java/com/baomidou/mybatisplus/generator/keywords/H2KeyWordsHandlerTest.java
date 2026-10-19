@@ -24,7 +24,7 @@ class H2KeyWordsHandlerTest {
         Assertions.assertFalse(keyWordsHandler.isKeyWords("CHECK"));
         Assertions.assertFalse(keyWordsHandler.isKeyWords("check"));
 
-        keyWordsHandler = new H2KeyWordsHandler(new ArrayList<>(Arrays.asList("TEST","AAA")));
+        keyWordsHandler = new H2KeyWordsHandler(new ArrayList<>(Arrays.asList("TEST", "AAA")));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("TEST"));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("test"));
         Assertions.assertTrue(keyWordsHandler.isKeyWords("AAA"));

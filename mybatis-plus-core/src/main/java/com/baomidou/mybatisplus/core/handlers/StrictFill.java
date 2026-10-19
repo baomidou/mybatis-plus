@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 @Data
 @AllArgsConstructor
 public class StrictFill<T, E extends T> {
+
     /**
      * 字段名
      */

@@ -50,7 +50,8 @@ public class JdbcUtils {
     public static DbType getDbType(Executor executor) {
         try {
             Connection conn = executor.getTransaction().getConnection();
-            return CollectionUtils.computeIfAbsent(JDBC_DB_TYPE_CACHE, conn.getMetaData().getURL(), JdbcUtils::getDbType);
+            return CollectionUtils
+                    .computeIfAbsent(JDBC_DB_TYPE_CACHE, conn.getMetaData().getURL(), JdbcUtils::getDbType);
         } catch (SQLException e) {
             throw ExceptionUtils.mpe(e);
         }
@@ -163,7 +164,9 @@ public class JdbcUtils {
         } else if (url.contains(":hive2:") || url.contains(":inceptor2:")) {
             return DbType.HIVE2;
         } else {
-            logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
+            logger.warn(
+                    "The jdbcUrl is " + jdbcUrl
+                            + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
         }
     }

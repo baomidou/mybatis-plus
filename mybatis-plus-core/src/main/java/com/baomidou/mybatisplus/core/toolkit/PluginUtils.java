@@ -71,13 +71,15 @@ public abstract class PluginUtils {
      * @since 3.5.3
      */
     public static MetaObject getMetaObject(Object object) {
-        return MetaObject.forObject(object, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, DEFAULT_REFLECTOR_FACTORY);
+        return MetaObject.forObject(
+                object, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY,
+                DEFAULT_REFLECTOR_FACTORY);
     }
 
     /**
      * 给 BoundSql 设置 additionalParameters
      *
-     * @param boundSql             BoundSql
+     * @param boundSql BoundSql
      * @param additionalParameters additionalParameters
      */
     public static void setAdditionalParameter(BoundSql boundSql, Map<String, Object> additionalParameters) {
@@ -98,6 +100,7 @@ public abstract class PluginUtils {
      * {@link org.apache.ibatis.executor.statement.BaseStatementHandler}
      */
     public static class MPStatementHandler {
+
         private final MetaObject statementHandler;
 
         MPStatementHandler(MetaObject statementHandler) {

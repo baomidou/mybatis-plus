@@ -18,9 +18,11 @@ class DefaultIdentifierGeneratorTest {
 
     /**
      * 自动推导机器标识的生成器不允许生成重复 ID
-     * <p>对应 issues/7135: IdWorker 默认生成器与 SqlSessionFactory 构建时自动推导出的生成器
-     * 都按本机网卡计算 workerId 与 datacenterId, 机器标识完全相同却各自持有独立的序列计数器,
-     * 交错生成时必然出现重复 ID.</p>
+     * <p>
+     * 对应 issues/7135: IdWorker 默认生成器与 SqlSessionFactory 构建时自动推导出的生成器 <br>
+     * 都按本机网卡计算 workerId 与 datacenterId, 机器标识完全相同却各自持有独立的序列计数器, <br>
+     * 交错生成时必然出现重复 ID.
+     * </p>
      */
     @Test
     void autoDerivedGeneratorsMustNotGenerateDuplicateIds() throws Exception {

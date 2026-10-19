@@ -43,9 +43,9 @@ public class Update extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        String sql = SqlMethod.UPDATE.format(tableInfo.getTableName(),
-            sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT),
-            sqlWhereEntityWrapper(true, tableInfo), sqlComment());
+        String sql = SqlMethod.UPDATE.format(
+                tableInfo.getTableName(), sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT),
+                sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }

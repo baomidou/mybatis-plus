@@ -16,14 +16,16 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2User2Test extends BaseTest {
+
     @Autowired
     private H2User2Mapper h2User2Mapper;
 
     @Test
     @Order(1)
     void testLambdaTypeHandler() {
-        List<H2User2> h2User2List = h2User2Mapper.selectList(Wrappers.<H2User2>lambdaQuery().enableAutoMapping()
-            .eq(H2User2::getName, "{\"id\":101,\"name\":\"Tomcat\"}"));
+        List<H2User2> h2User2List = h2User2Mapper.selectList(
+                Wrappers.<H2User2>lambdaQuery().enableAutoMapping()
+                        .eq(H2User2::getName, "{\"id\":101,\"name\":\"Tomcat\"}"));
         Assertions.assertEquals(1, h2User2List.size());
         Assertions.assertEquals("Tomcat OK", h2User2List.get(0).getName());
     }

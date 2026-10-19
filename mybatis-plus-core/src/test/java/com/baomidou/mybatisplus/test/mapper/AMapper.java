@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.test.entity.AEntity;
 
 public interface AMapper extends BaseMapper<AEntity> {
 
-
     AEntity test();
 
 }

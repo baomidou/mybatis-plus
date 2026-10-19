@@ -32,7 +32,9 @@ public enum DateType {
     SQL_PACK,
     /**
      * 使用 java.time 包下的
-     * <p>java8 新的时间类型</p>
+     * <p>
+     * java8 新的时间类型
+     * </p>
      */
     TIME_PACK
 }

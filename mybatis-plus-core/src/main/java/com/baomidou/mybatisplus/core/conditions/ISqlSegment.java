@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-
 import java.io.Serializable;
 
 /**

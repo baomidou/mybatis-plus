@@ -54,7 +54,7 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
     }
 
     public static Gson getGson() {
-        return GSON == null ? Instance.GSON  : GSON;
+        return GSON == null ? Instance.GSON : GSON;
     }
 
     public static void setGson(Gson gson) {
@@ -67,7 +67,7 @@ public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
      */
     private static class Instance {
 
-         private static final Gson GSON = new Gson();
+        private static final Gson GSON = new Gson();
 
     }
 

@@ -46,8 +46,8 @@ public class SqlParserUtils {
         if (StringUtils.isBlank(tableOrColumn)) {
             return null;
         }
-        if (tableOrColumn.startsWith("`") || tableOrColumn.startsWith("\"")
-            || tableOrColumn.startsWith("[") || tableOrColumn.startsWith("<")) {
+        if (tableOrColumn.startsWith("`") || tableOrColumn.startsWith("\"") || tableOrColumn.startsWith("[")
+                || tableOrColumn.startsWith("<")) {
             return tableOrColumn.substring(1, tableOrColumn.length() - 1);
         }
         return tableOrColumn;

@@ -18,7 +18,8 @@ package com.baomidou.mybatisplus.autoconfigure;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
- * Callback interface that can be customized a {@link MybatisSqlSessionFactoryBean} object generated on auto-configuration.
+ * Callback interface that can be customized a {@link MybatisSqlSessionFactoryBean} object generated on
+ * auto-configuration.
  *
  * @author Kazuki Shimizu
  * @since 2.2.2

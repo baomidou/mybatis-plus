@@ -33,15 +33,15 @@ import java.util.function.Consumer;
 
 /**
  * 所有包装类都继承此抽象类,此抽象类代理了大部分生成 where 条件的方法
- * <li> 泛型: Children ,表示子类 </li>
- * <li> 泛型: Param ,表示子类所包装的具体 Wrapper 类型 </li>
+ * <li>泛型: Children ,表示子类</li>
+ * <li>泛型: Param ,表示子类所包装的具体 Wrapper 类型</li>
  *
  * @author miemie
  * @since 2018-12-19
  */
 @SuppressWarnings({"unchecked"})
 public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param extends AbstractWrapper<T, R, Param>>
-    extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
+        extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
 
     protected final Children typedThis = (Children) this;
     /**
@@ -329,7 +329,6 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         getWrapper().doGroupBy(condition, column, columns);
         return typedThis;
     }
-
 
     // --------------  新增重写方法结束----------------
 

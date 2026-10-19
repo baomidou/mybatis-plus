@@ -69,9 +69,15 @@ public class DdlApplicationRunner implements ApplicationRunner {
 
     /**
      * 是否抛出异常
-     * <p>注意这里是控制{@link #ddlList}循环处理时是否抛出异常</p>
-     * <p>当设置为false时,会遍历处理完所有处理器</p>
-     * <p>当设置为true时,在遍历处理时遇到异常会抛出异常中断下一个处理器处理</p>
+     * <p>
+     * 注意这里是控制{@link #ddlList}循环处理时是否抛出异常
+     * </p>
+     * <p>
+     * 当设置为false时,会遍历处理完所有处理器
+     * </p>
+     * <p>
+     * 当设置为true时,在遍历处理时遇到异常会抛出异常中断下一个处理器处理
+     * </p>
      *
      * @since 3.5.11 保持兼容性,默认不抛出
      */
@@ -94,8 +100,9 @@ public class DdlApplicationRunner implements ApplicationRunner {
                 }
                 log.info("{}, run sql files {}", ddlClassName, ddl.getSqlFiles());
                 try {
-                    DdlHelper.runScript(ddl.getDdlGenerator(),
-                        dataSource, ddl.getSqlFiles(), this.scriptRunnerConsumer, this.autoCommit, this.ddlScriptErrorHandler);
+                    DdlHelper.runScript(
+                            ddl.getDdlGenerator(), dataSource, ddl.getSqlFiles(), this.scriptRunnerConsumer,
+                            this.autoCommit, this.ddlScriptErrorHandler);
                 } catch (Exception e) {
                     log.error("{}, run sql file error: ", ddlClassName, e);
                     if (throwException) {

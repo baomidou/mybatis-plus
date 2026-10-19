@@ -43,8 +43,9 @@ public class SelectObjs extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        String sql = SqlMethod.SELECT_OBJS.format(sqlFirst(), sqlSelectObjsColumns(tableInfo),
-            tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo),sqlOrderBy(tableInfo), sqlComment());
+        String sql = SqlMethod.SELECT_OBJS.format(
+                sqlFirst(), sqlSelectObjsColumns(tableInfo), tableInfo.getTableName(),
+                sqlWhereEntityWrapper(true, tableInfo), sqlOrderBy(tableInfo), sqlComment());
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForOther(mapperClass, methodName, sqlSource, Object.class);
     }

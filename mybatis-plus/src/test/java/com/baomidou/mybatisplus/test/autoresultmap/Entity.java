@@ -18,6 +18,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @TableName(autoResultMap = true)
 public class Entity implements Serializable {
+
     private static final long serialVersionUID = 6962439201546719734L;
 
     private Long id;
@@ -32,6 +33,7 @@ public class Entity implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Gg {
+
         private String name;
     }
 }

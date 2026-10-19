@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
  */
 @SuppressWarnings({"serial"})
 public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, UpdateChainWrapper<T>, UpdateWrapper<T>>
-    implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
+        implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
 
     private final BaseMapper<T> baseMapper;
     private final Class<T> entityClass;
@@ -87,10 +87,7 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
         return entityClass;
     }
 
-    public LambdaUpdateChainWrapper<T> lambda(){
-        return new LambdaUpdateChainWrapper<>(
-            baseMapper,
-            wrapperChildren.lambda()
-        );
+    public LambdaUpdateChainWrapper<T> lambda() {
+        return new LambdaUpdateChainWrapper<>(baseMapper, wrapperChildren.lambda());
     }
 }

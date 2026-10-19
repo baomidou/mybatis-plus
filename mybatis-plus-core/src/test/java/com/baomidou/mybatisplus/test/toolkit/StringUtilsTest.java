@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @author HCL
- * Create at 2018/9/17
+ * @author HCL <br>
+ *         Create at 2018/9/17
  */
 
 class StringUtilsTest {
@@ -34,7 +34,7 @@ class StringUtilsTest {
      */
     @Test
     void canBeAColumnName() {
-//        assertTrue(StringUtils.canBeColumnName("a$"));
+        //        assertTrue(StringUtils.canBeColumnName("a$"));
     }
 
     /**
@@ -51,7 +51,7 @@ class StringUtilsTest {
      * 测试equals方法
      */
     @Test
-    void equal(){
+    void equal() {
         assertTrue(StringUtils.equals(null, null));
         Assertions.assertFalse(StringUtils.equals(null, "abc"));
         Assertions.assertFalse(StringUtils.equals("abc", null));

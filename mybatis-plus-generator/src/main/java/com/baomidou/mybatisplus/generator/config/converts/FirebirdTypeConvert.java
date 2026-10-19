@@ -45,48 +45,43 @@ public class FirebirdTypeConvert implements ITypeConvert {
      */
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
-        return TypeConverts.use(fieldType)
-            .test(containsAny("cstring", "text").then(STRING))
-            .test(contains("short").then(SHORT))
-            .test(contains("long").then(LONG))
-            .test(contains("float").then(FLOAT))
-            .test(contains("double").then(DOUBLE))
-            .test(contains("blob").then(BLOB))
-            .test(contains("int64").then(LONG))
-            .test(containsAny("date", "time", "year").then(t -> toDateType(config, t)))
-            .or(STRING);
+        return TypeConverts.use(fieldType).test(containsAny("cstring", "text").then(STRING))
+                .test(contains("short").then(SHORT)).test(contains("long").then(LONG))
+                .test(contains("float").then(FLOAT)).test(contains("double").then(DOUBLE))
+                .test(contains("blob").then(BLOB)).test(contains("int64").then(LONG))
+                .test(containsAny("date", "time", "year").then(t -> toDateType(config, t))).or(STRING);
     }
 
     /**
      * 转换为日期类型
      *
      * @param config 配置信息
-     * @param type   类型
+     * @param type 类型
      * @return 返回对应的列类型
      */
     public static IColumnType toDateType(GlobalConfig config, String type) {
         switch (config.getDateType()) {
-            case ONLY_DATE:
+            case ONLY_DATE :
                 return DbColumnType.DATE;
-            case SQL_PACK:
+            case SQL_PACK :
                 switch (type) {
-                    case "date":
-                    case "year":
+                    case "date" :
+                    case "year" :
                         return DbColumnType.DATE_SQL;
-                    case "time":
+                    case "time" :
                         return DbColumnType.TIME;
-                    default:
+                    default :
                         return DbColumnType.TIMESTAMP;
                 }
-            case TIME_PACK:
+            case TIME_PACK :
                 switch (type) {
-                    case "date":
+                    case "date" :
                         return DbColumnType.LOCAL_DATE;
-                    case "time":
+                    case "time" :
                         return DbColumnType.LOCAL_TIME;
-                    case "year":
+                    case "year" :
                         return DbColumnType.YEAR;
-                    default:
+                    default :
                         return DbColumnType.LOCAL_DATE_TIME;
                 }
         }

@@ -52,7 +52,6 @@ public class AnnotationUtilsTest {
 
     }
 
-
     @Data
     @MyTable
     public static class Demo {
@@ -87,58 +86,67 @@ public class AnnotationUtilsTest {
 
     @Test
     void test() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("id"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("id"));
         Assertions.assertNull(tableField);
     }
 
     @Test
     void test1() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name"));
         Assertions.assertNotNull(tableField);
         Assertions.assertTrue(tableField.exist());
     }
 
     @Test
     void test2() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name1"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name1"));
         Assertions.assertNotNull(tableField);
         Assertions.assertFalse(tableField.exist());
     }
 
     @Test
     void test3() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name2"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name2"));
         Assertions.assertNotNull(tableField);
         Assertions.assertTrue(tableField.exist());
     }
 
     @Test
     void test4() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name3"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name3"));
         Assertions.assertNotNull(tableField);
         Assertions.assertFalse(tableField.exist());
     }
 
     @Test
     void test5() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name4"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name4"));
         Assertions.assertNotNull(tableField);
         Assertions.assertFalse(tableField.exist());
     }
 
     @Test
     void test6() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name5"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name5"));
         Assertions.assertNotNull(tableField);
         Assertions.assertTrue(tableField.exist());
     }
 
     @Test
     void test7() throws Exception {
-        TableField tableField = AnnotationUtils.findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("deleted"));
+        TableField tableField = AnnotationUtils
+                .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("deleted"));
         Assertions.assertNotNull(tableField);
         Assertions.assertTrue(tableField.exist());
-        TableLogic tableLogic = AnnotationUtils.findFirstAnnotation(TableLogic.class, Demo.class.getDeclaredField("deleted"));
+        TableLogic tableLogic = AnnotationUtils
+                .findFirstAnnotation(TableLogic.class, Demo.class.getDeclaredField("deleted"));
         Assertions.assertNotNull(tableLogic);
     }
 

@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.Function;
 
-
 /**
  * PostgreSQL DDL 生成器
  *
@@ -36,7 +35,10 @@ public class PostgreDdlGenerator implements IDdlGenerator {
 
     /**
      * schema模式(默认:public)
-     * <p>为了兼容,默认使用public,但指定为null时,使用jdbc指定的schema</p>
+     * <p>
+     * 为了兼容,默认使用public,但指定为null时,使用jdbc指定的schema
+     * </p>
+     * 
      * @since 3.5.13
      */
     @Setter
@@ -51,6 +53,7 @@ public class PostgreDdlGenerator implements IDdlGenerator {
 
     /**
      * 创建PostgreDdlGenerator实例
+     * 
      * @since 3.5.13
      * @param schema schema (可为null,当为null时为自动识别数据库连接的schema)
      */
@@ -60,6 +63,7 @@ public class PostgreDdlGenerator implements IDdlGenerator {
 
     /**
      * 默认实例 (基于public模式)
+     * 
      * @return PostgreDdlGenerator
      */
     public static IDdlGenerator newInstance() {
@@ -68,9 +72,10 @@ public class PostgreDdlGenerator implements IDdlGenerator {
 
     /**
      * 手动指定schema
+     * 
      * @param schema schema
      * @since 3.5.13
-     *  @return PostgreDdlGenerator
+     * @return PostgreDdlGenerator
      */
     public static IDdlGenerator newInstanceWithSchema(String schema) {
         return new PostgreDdlGenerator(schema);
@@ -78,6 +83,7 @@ public class PostgreDdlGenerator implements IDdlGenerator {
 
     /**
      * 基于数据库连接自动识别schema
+     * 
      * @since 3.5.13
      * @return PostgreDdlGenerator
      */
@@ -85,11 +91,11 @@ public class PostgreDdlGenerator implements IDdlGenerator {
         return new PostgreDdlGenerator(StringPool.EMPTY);
     }
 
-
     @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
         StringBuffer sql = new StringBuffer();
-        sql.append("SELECT COUNT(1) AS NUM from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='ddl_history' AND TABLE_TYPE='BASE TABLE'");
+        sql.append(
+                "SELECT COUNT(1) AS NUM from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME='ddl_history' AND TABLE_TYPE='BASE TABLE'");
         if (StringUtils.isNotBlank(this.getSchema())) {
             sql.append(" AND TABLE_SCHEMA='").append(this.getSchema()).append("'");
         }
@@ -105,8 +111,9 @@ public class PostgreDdlGenerator implements IDdlGenerator {
             tableName = tableName.substring(index + 1);
         }
         tableName = tableName.replace(StringPool.QUOTE, StringPool.EMPTY);
-        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(),
-            StringUtils.isBlank(getSchema()) ? connection.getSchema() : getSchema(), tableName, new String[]{"TABLE"})) {
+        try (ResultSet resultSet = metaData.getTables(
+                connection.getCatalog(), StringUtils.isBlank(getSchema()) ? connection.getSchema() : getSchema(),
+                tableName, new String[]{"TABLE"})) {
             return resultSet.next();
         }
     }

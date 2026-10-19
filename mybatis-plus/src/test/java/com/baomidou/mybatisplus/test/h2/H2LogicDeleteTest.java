@@ -40,8 +40,9 @@ class H2LogicDeleteTest extends BaseTest {
         logicDeleteMapper.deleteById(user.getTestId());
 
         List<H2User> userList = queryByName(name);
-        Assertions.assertTrue(userList!=null && !userList.isEmpty());
-        Assertions.assertNotNull(userList.get(0).getLastUpdatedDt(),"lastUpdateDt should not be null after logic delete");
+        Assertions.assertTrue(userList != null && !userList.isEmpty());
+        Assertions.assertNotNull(
+                userList.get(0).getLastUpdatedDt(), "lastUpdateDt should not be null after logic delete");
 
     }
 

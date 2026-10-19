@@ -39,7 +39,6 @@ class PageCacheTest extends BaseDbTest<PageCacheMapper> {
         });
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
-
         doTestAutoCommit(m -> {
             Page<PageCache> page = new Page<>(1, size);
             IPage<PageCache> result = m.selectPage(page, null);
@@ -59,10 +58,8 @@ class PageCacheTest extends BaseDbTest<PageCacheMapper> {
         });
         assertThat(cache.getSize()).as("条件不一样了,缓存变为3条").isEqualTo(3);
 
-
         doTestAutoCommit(m -> m.insert(new PageCache()));
         assertThat(cache.getSize()).as("update 操作清除了所有缓存").isEqualTo(0);
-
 
         doTestAutoCommit(m -> {
             Page<PageCache> page = new Page<>(1, size);
@@ -103,14 +100,14 @@ class PageCacheTest extends BaseDbTest<PageCacheMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists page_cache", "CREATE TABLE IF NOT EXISTS page_cache (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists page_cache", "CREATE TABLE IF NOT EXISTS page_cache (" + "id BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
     @Data
     public static class Tj {
+
         private boolean name = true;
     }
 }

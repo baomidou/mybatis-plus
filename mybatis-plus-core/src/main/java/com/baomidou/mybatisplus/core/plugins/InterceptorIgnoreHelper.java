@@ -34,12 +34,12 @@ import java.util.function.Supplier;
 public abstract class InterceptorIgnoreHelper {
 
     /**
-     * SQL 解析缓存
+     * SQL 解析缓存 <br>
      * key 可能是 mappedStatement 的 ID,也可能是 class 的 name
      */
     private static final Map<String, IgnoreStrategy> IGNORE_STRATEGY_CACHE = new ConcurrentHashMap<>();
     /**
-     *  本地线程拦截器忽略策略缓存
+     * 本地线程拦截器忽略策略缓存
      */
     private static final ThreadLocal<IgnoreStrategy> IGNORE_STRATEGY_LOCAL = new ThreadLocal<>();
 
@@ -51,7 +51,9 @@ public abstract class InterceptorIgnoreHelper {
      * <p>
      * 注意，需要手动关闭调用方法 {@link #clearIgnoreStrategy()}
      * </p>
-     * <p>简化操作可请使用{@link #execute(IgnoreStrategy, Supplier)}</p>
+     * <p>
+     * 简化操作可请使用{@link #execute(IgnoreStrategy, Supplier)}
+     * </p>
      *
      * @param ignoreStrategy {@link IgnoreStrategy}
      */
@@ -106,18 +108,20 @@ public abstract class InterceptorIgnoreHelper {
     }
 
     /**
-     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高)
+     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高) <br>
      * 方法执行完成后后释放掉当前线程上的忽略策略.
      * <p>
      * 注意:
-     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误<li/>
-     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准<li/>
+     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误
+     * <li/>
+     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准
+     * <li/>
      * <li>3.记住,一旦调用了此方法,开始会覆盖你当前执行线程上的策略,结束必定会释放掉当前线程上的策略</>
      * </p>
      *
      * @param ignoreStrategy 忽略策略
-     * @param supplier       执行方法
-     * @param <T>            T
+     * @param supplier 执行方法
+     * @param <T> T
      * @return 返回值
      * @since 3.5.10
      */
@@ -131,17 +135,19 @@ public abstract class InterceptorIgnoreHelper {
     }
 
     /**
-     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高)
+     * 按指定策略执行指定方法 (忽略线程级别,参数执行级使用最高) <br>
      * 方法执行完成后后释放掉当前线程上的忽略策略.
      * <p>
      * 注意:
-     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误<li/>
-     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准<li/>
+     * <li>1.不要和{@link #handle(IgnoreStrategy)}一起混合使用,此方法只是简化操作,防止未释放掉资源造成的错误
+     * <li/>
+     * <li>2.不要和{@link InterceptorIgnore} 注解一起搭配使用,例如在mapper上的default方法里再调用此方法,最终优先级还是以此方法为准
+     * <li/>
      * <li>3.记住,一旦调用了此方法,开始会覆盖你当前执行线程上的策略,结束必定会释放掉当前线程上的策略</>
      * </p>
      *
      * @param ignoreStrategy 忽略策略
-     * @param runnable       执行方法
+     * @param runnable 执行方法
      * @since 3.5.10
      */
     public static void execute(IgnoreStrategy ignoreStrategy, Runnable runnable) {
@@ -164,7 +170,8 @@ public abstract class InterceptorIgnoreHelper {
      */
     public static IgnoreStrategy findIgnoreStrategy(Class<?> clz, Method method) {
         String className = clz.getName();
-        IgnoreStrategy ignoreStrategy = getIgnoreStrategy(method.getDeclaringClass().getName() + StringPool.DOT + method.getName());
+        IgnoreStrategy ignoreStrategy = getIgnoreStrategy(
+                method.getDeclaringClass().getName() + StringPool.DOT + method.getName());
         if (ignoreStrategy == null) {
             ignoreStrategy = getIgnoreStrategy(className);
         }
@@ -177,7 +184,7 @@ public abstract class InterceptorIgnoreHelper {
      * Mapper#method 上 InterceptorIgnore 注解信息
      *
      * @param mapperAnnotation Mapper Class Name
-     * @param method           Method
+     * @param method Method
      */
     public static void initSqlParserInfoCache(IgnoreStrategy mapperAnnotation, String mapperClassName, Method method) {
         InterceptorIgnore ignoreStrategy = method.getAnnotation(InterceptorIgnore.class);
@@ -226,7 +233,8 @@ public abstract class InterceptorIgnoreHelper {
         }
         if (ignoreStrategy == null && id.endsWith(SelectKeyGenerator.SELECT_KEY_SUFFIX)) {
             // 支持一下 selectKey
-            ignoreStrategy = IGNORE_STRATEGY_CACHE.get(id.substring(0, id.length() - SelectKeyGenerator.SELECT_KEY_SUFFIX.length()));
+            ignoreStrategy = IGNORE_STRATEGY_CACHE
+                    .get(id.substring(0, id.length() - SelectKeyGenerator.SELECT_KEY_SUFFIX.length()));
         }
         if (ignoreStrategy == null) {
             // fixed github issues/5342
@@ -241,25 +249,21 @@ public abstract class InterceptorIgnoreHelper {
     }
 
     private static IgnoreStrategy chooseCache(IgnoreStrategy mapper, IgnoreStrategy method) {
-        return IgnoreStrategy.builder()
-            .tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine()))
-            .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
-            .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
-            .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
-            .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
-            .others(chooseOthers(mapper.getOthers(), method.getOthers()))
-            .build();
+        return IgnoreStrategy.builder().tenantLine(chooseBoolean(mapper.getTenantLine(), method.getTenantLine()))
+                .dynamicTableName(chooseBoolean(mapper.getDynamicTableName(), method.getDynamicTableName()))
+                .blockAttack(chooseBoolean(mapper.getBlockAttack(), method.getBlockAttack()))
+                .illegalSql(chooseBoolean(mapper.getIllegalSql(), method.getIllegalSql()))
+                .dataPermission(chooseBoolean(mapper.getDataPermission(), method.getDataPermission()))
+                .others(chooseOthers(mapper.getOthers(), method.getOthers())).build();
     }
 
     private static IgnoreStrategy buildIgnoreStrategy(String name, InterceptorIgnore ignore) {
-        return IgnoreStrategy.builder()
-            .tenantLine(getBoolean("tenantLine", name, ignore.tenantLine()))
-            .dynamicTableName(getBoolean("dynamicTableName", name, ignore.dynamicTableName()))
-            .blockAttack(getBoolean("blockAttack", name, ignore.blockAttack()))
-            .illegalSql(getBoolean("illegalSql", name, ignore.illegalSql()))
-            .dataPermission(getBoolean("dataPermission", name, ignore.dataPermission()))
-            .others(getOthers(name, ignore.others()))
-            .build();
+        return IgnoreStrategy.builder().tenantLine(getBoolean("tenantLine", name, ignore.tenantLine()))
+                .dynamicTableName(getBoolean("dynamicTableName", name, ignore.dynamicTableName()))
+                .blockAttack(getBoolean("blockAttack", name, ignore.blockAttack()))
+                .illegalSql(getBoolean("illegalSql", name, ignore.illegalSql()))
+                .dataPermission(getBoolean("dataPermission", name, ignore.dataPermission()))
+                .others(getOthers(name, ignore.others())).build();
     }
 
     private static Boolean getBoolean(String node, String name, String value) {
@@ -272,7 +276,8 @@ public abstract class InterceptorIgnoreHelper {
         if (StringPool.ZERO.equals(value) || StringPool.FALSE.equals(value) || StringPool.OFF.equals(value)) {
             return false;
         }
-        throw ExceptionUtils.mpe("unsupported value \"%s\" by `@InterceptorIgnore#%s` on top of \"%s\"", value, node, name);
+        throw ExceptionUtils
+                .mpe("unsupported value \"%s\" by `@InterceptorIgnore#%s` on top of \"%s\"", value, node, name);
     }
 
     private static Map<String, Boolean> getOthers(String name, String[] values) {
@@ -282,7 +287,8 @@ public abstract class InterceptorIgnoreHelper {
         Map<String, Boolean> map = CollectionUtils.newHashMapWithExpectedSize(values.length);
         for (String s : values) {
             int index = s.indexOf(StringPool.AT);
-            Assert.isTrue(index > 0, "unsupported value \"%s\" by `@InterceptorIgnore#others` on top of \"%s\"", s, name);
+            Assert.isTrue(
+                    index > 0, "unsupported value \"%s\" by `@InterceptorIgnore#others` on top of \"%s\"", s, name);
             String key = s.substring(0, index);
             Boolean value = getBoolean("others", name, s.substring(index + 1));
             map.put(key, value);

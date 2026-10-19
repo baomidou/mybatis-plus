@@ -16,6 +16,7 @@ import java.util.List;
  * @author nieqiurong
  */
 public class OrderByMapperTest extends BaseDbTest<OrderByMapper> {
+
     @Test
     void test() {
         doTest(mapper -> {
@@ -45,12 +46,11 @@ public class OrderByMapperTest extends BaseDbTest<OrderByMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists t_order_test", "CREATE TABLE IF NOT EXISTS t_order_test (" +
-            "oid BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "tel VARCHAR(30) NULL DEFAULT NULL," +
-            "nl INT NULL DEFAULT NULL," +
-            "PRIMARY KEY (oid))");
+        return Arrays.asList(
+                "drop table if exists t_order_test",
+                "CREATE TABLE IF NOT EXISTS t_order_test (" + "oid BIGINT NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "tel VARCHAR(30) NULL DEFAULT NULL,"
+                        + "nl INT NULL DEFAULT NULL," + "PRIMARY KEY (oid))");
     }
 
 }

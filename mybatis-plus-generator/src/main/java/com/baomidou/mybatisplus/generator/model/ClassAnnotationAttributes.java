@@ -40,7 +40,9 @@ public class ClassAnnotationAttributes extends AnnotationAttributes {
 
     /**
      * 根据{@link TableInfo}信息加工处理显示注解
-     * <p>显示名称处理函数(最终需要转换成{@link #setDisplayName(String)})<p/>
+     * <p>
+     * 显示名称处理函数(最终需要转换成{@link #setDisplayName(String)})
+     * <p/>
      */
     private Function<TableInfo, String> displayNameFunction;
 
@@ -48,7 +50,8 @@ public class ClassAnnotationAttributes extends AnnotationAttributes {
         super(annotationClass);
     }
 
-    public ClassAnnotationAttributes(@NotNull Class<?> annotationClass, @NotNull Function<TableInfo, String> displayNameFunction, String... extraPkg) {
+    public ClassAnnotationAttributes(@NotNull Class<?> annotationClass,
+            @NotNull Function<TableInfo, String> displayNameFunction, String... extraPkg) {
         super(annotationClass);
         this.displayNameFunction = displayNameFunction;
         if (extraPkg != null && extraPkg.length > 0) {
@@ -56,7 +59,8 @@ public class ClassAnnotationAttributes extends AnnotationAttributes {
         }
     }
 
-    public ClassAnnotationAttributes(@NotNull Class<?> annotationClass, @NotNull String displayName, String... extraPkg) {
+    public ClassAnnotationAttributes(@NotNull Class<?> annotationClass, @NotNull String displayName,
+            String... extraPkg) {
         super(annotationClass, displayName, extraPkg);
     }
 
@@ -64,12 +68,14 @@ public class ClassAnnotationAttributes extends AnnotationAttributes {
         super(displayName, importPackages);
     }
 
-    public ClassAnnotationAttributes(@NotNull String importPackage, @NotNull Function<TableInfo, String> displayNameFunction) {
+    public ClassAnnotationAttributes(@NotNull String importPackage,
+            @NotNull Function<TableInfo, String> displayNameFunction) {
         super.getImportPackages().add(importPackage);
         this.displayNameFunction = displayNameFunction;
     }
 
-    public ClassAnnotationAttributes(@NotNull Set<String> importPackages, @NotNull Function<TableInfo, String> displayNameFunction) {
+    public ClassAnnotationAttributes(@NotNull Set<String> importPackages,
+            @NotNull Function<TableInfo, String> displayNameFunction) {
         super.getImportPackages().addAll(importPackages);
         this.displayNameFunction = displayNameFunction;
     }

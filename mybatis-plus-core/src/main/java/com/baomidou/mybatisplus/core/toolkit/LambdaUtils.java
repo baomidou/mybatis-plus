@@ -48,6 +48,7 @@ public final class LambdaUtils {
      * 使用 {@link ClassValue} 让缓存跟随 Class 卸载，避免长期持有 lambda 类及其 ClassLoader。
      */
     private static final ClassValue<WriteReplace> WRITE_REPLACE_CACHE = new ClassValue<WriteReplace>() {
+
         @Override
         protected WriteReplace computeValue(Class<?> type) {
             try {
@@ -66,7 +67,7 @@ public final class LambdaUtils {
      * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
-     * @param <T>  类型，被调用的 Function 对象的目标类型
+     * @param <T> 类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
      */
     public static <T> LambdaMeta extract(SFunction<T, ?> func) {
@@ -90,7 +91,8 @@ public final class LambdaUtils {
                         return KotlinLambdaMeta.ofCallableReference(callable);
                     }
                 }
-                return new ShadowLambdaMeta(com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
+                return new ShadowLambdaMeta(
+                        com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda.extract(func));
             }
             SerializedLambda lambda = (SerializedLambda) writeReplace.method.invoke(func);
             // 2.1 Kotlin (>=1.6) 的属性引用会被编译为捕获了 KProperty 的 lambda，
@@ -131,6 +133,7 @@ public final class LambdaUtils {
      * Kotlin 引用对象的接口层级需要递归扫描，缓存后可减少重复列解析时的接口遍历开销。
      */
     private static final ClassValue<KotlinReference> KOTLIN_REFERENCE_CACHE = new ClassValue<KotlinReference>() {
+
         @Override
         protected KotlinReference computeValue(Class<?> type) {
             boolean property = false;
@@ -157,7 +160,7 @@ public final class LambdaUtils {
     }
 
     /**
-     * 在对象自身或其字段中查找 Kotlin 的可调用引用（KProperty 或 KFunction）。
+     * 在对象自身或其字段中查找 Kotlin 的可调用引用（KProperty 或 KFunction）。 <br>
      * 用于 class-based 的 SAM 包装类：Kotlin 将被引用的 KProperty / KFunction 作为包装类的字段保存。
      */
     private static Object findKotlinCallableInFields(Object func) {
@@ -183,8 +186,8 @@ public final class LambdaUtils {
     /**
      * 从 invokedynamic 合成适配方法名中还原 getter 名。
      * <p>
-     * Kotlin 引用 Java getter（如 {@code UserDO::getName}）时会编译出形如 {@code enclosing$getName} 的合成方法，
-     * 其末段即真实的 getter 名。仅当方法名含 {@code $} 且末段形如 getXxx/isXxx/setXxx 时才识别，
+     * Kotlin 引用 Java getter（如 {@code UserDO::getName}）时会编译出形如 {@code enclosing$getName} 的合成方法， <br>
+     * 其末段即真实的 getter 名。仅当方法名含 {@code $} 且末段形如 getXxx/isXxx/setXxx 时才识别， <br>
      * 以免影响普通 Java 方法引用（其 implMethodName 直接就是 getName，无 {@code $}）。
      */
     private static String kotlinGetterAdapterName(String implMethodName) {
@@ -226,10 +229,11 @@ public final class LambdaUtils {
     /**
      * writeReplace 查找结果。
      * <p>
-     * method 为 null 且 error 为 null 表示该类确实没有 writeReplace，可继续尝试 Kotlin 旧版兼容路径；
+     * method 为 null 且 error 为 null 表示该类确实没有 writeReplace，可继续尝试 Kotlin 旧版兼容路径； <br>
      * error 非 null 表示查找阶段出现异常，应直接回退到序列化解析。
      */
     private static final class WriteReplace {
+
         private static final WriteReplace NONE = new WriteReplace(null, null);
 
         private final Method method;
@@ -247,6 +251,7 @@ public final class LambdaUtils {
      * property 只表示 KProperty；callable 表示 KProperty 或 KFunction，可覆盖属性引用和 getter 方法引用。
      */
     private static final class KotlinReference {
+
         private final boolean property;
         private final boolean callable;
 
@@ -257,7 +262,7 @@ public final class LambdaUtils {
     }
 
     /**
-     * 格式化 key 将传入的 key 变更为大写格式
+     * 格式化 key 将传入的 key 变更为大写格式 <br>
      * 为了支持首字母是大写的字段
      *
      * <pre>
@@ -296,9 +301,9 @@ public final class LambdaUtils {
             map = CollectionUtils.newHashMapWithExpectedSize(info.getFieldList().size());
         }
 
-        info.getFieldList().forEach(i ->
-                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping()))
-        );
+        info.getFieldList().forEach(
+                i -> map.put(
+                        formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(), i.getMapping())));
         return map;
     }
 

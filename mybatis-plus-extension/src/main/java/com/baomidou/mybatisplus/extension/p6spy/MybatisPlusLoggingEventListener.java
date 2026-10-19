@@ -27,6 +27,7 @@ import java.sql.SQLException;
  * @since 2019-11-10
  */
 public class MybatisPlusLoggingEventListener extends LoggingEventListener {
+
     private static MybatisPlusLoggingEventListener INSTANCE;
 
     public static MybatisPlusLoggingEventListener getInstance() {
@@ -37,7 +38,8 @@ public class MybatisPlusLoggingEventListener extends LoggingEventListener {
     }
 
     @Override
-    public void onAfterExecuteBatch(StatementInformation statementInformation, long timeElapsedNanos, int[] updateCounts, SQLException e) {
+    public void onAfterExecuteBatch(StatementInformation statementInformation, long timeElapsedNanos,
+            int[] updateCounts, SQLException e) {
         //忽略批量执行结果
     }
 

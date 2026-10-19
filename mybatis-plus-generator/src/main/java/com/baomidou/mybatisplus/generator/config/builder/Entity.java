@@ -104,7 +104,7 @@ public class Entity implements ITemplate {
     private final Set<String> superEntityColumns = new HashSet<>();
 
     /**
-     * 自定义忽略字段
+     * 自定义忽略字段 <br>
      * <a href="https://github.com/baomidou/generator/issues/46">...</a>
      */
     private final Set<String> ignoreColumns = new HashSet<>();
@@ -207,7 +207,9 @@ public class Entity implements ITemplate {
 
     /**
      * 数据库表字段映射到实体的命名策略
-     * <p>未指定按照 naming 执行</p>
+     * <p>
+     * 未指定按照 naming 执行
+     * </p>
      */
     private NamingStrategy columnNaming = null;
 
@@ -241,7 +243,6 @@ public class Entity implements ITemplate {
     @Getter
     private boolean fileOverride;
 
-
     /**
      * 是否生成
      *
@@ -252,7 +253,9 @@ public class Entity implements ITemplate {
 
     /**
      * 默认lombok(低版本属性默认只有Getter和Setter)
-     * <p>当升级至3.5.10后,默认启用@ToString,如果不需要,可通过{@link Builder#toString(boolean)}关闭</p>
+     * <p>
+     * 当升级至3.5.10后,默认启用@ToString,如果不需要,可通过{@link Builder#toString(boolean)}关闭
+     * </p>
      *
      * @since 3.5.10
      */
@@ -261,18 +264,23 @@ public class Entity implements ITemplate {
 
     /**
      * 是否生成ToString
-     * <p>低版本下,lombok没有处理ToString逻辑,现在处理生成@ToString</p>
-     * <p>支持控制toString方法是否生成</p>
+     * <p>
+     * 低版本下,lombok没有处理ToString逻辑,现在处理生成@ToString
+     * </p>
+     * <p>
+     * 支持控制toString方法是否生成
+     * </p>
      *
      * @since 3.5.10
      */
     @Getter
     private boolean toString = true;
 
-
     /**
      * 启用字段文档注释 (当注释字段注释不为空才生效)
-     * <p>低版本下,如果是启用swagger或者springdoc时,不会生成,现在统一修改为生成文档注释</p>
+     * <p>
+     * 低版本下,如果是启用swagger或者springdoc时,不会生成,现在统一修改为生成文档注释
+     * </p>
      *
      * @since 3.5.10
      */
@@ -314,7 +322,6 @@ public class Entity implements ITemplate {
      * @since 3.5.11
      */
     private Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction;
-
 
     /**
      * <p>
@@ -439,7 +446,8 @@ public class Entity implements ITemplate {
         Set<String> importPackages = new HashSet<>(tableInfo.getImportPackages());
         List<ClassAnnotationAttributes> classAnnotationAttributes = new ArrayList<>(this.getClassAnnotations());
         if (tableAnnotationHandler != null) {
-            List<ClassAnnotationAttributes> classAnnotationAttributesList = tableAnnotationHandler.handle(tableInfo, this);
+            List<ClassAnnotationAttributes> classAnnotationAttributesList = tableAnnotationHandler
+                    .handle(tableInfo, this);
             if (classAnnotationAttributesList != null && !classAnnotationAttributesList.isEmpty()) {
                 classAnnotationAttributes.addAll(classAnnotationAttributesList);
             }
@@ -450,26 +458,44 @@ public class Entity implements ITemplate {
         });
         if (tableFieldAnnotationHandler != null) {
             tableInfo.getFields().forEach(tableField -> {
-                List<AnnotationAttributes> annotationAttributes = tableFieldAnnotationHandler.handle(tableInfo, tableField);
+                List<AnnotationAttributes> annotationAttributes = tableFieldAnnotationHandler
+                        .handle(tableInfo, tableField);
                 if (annotationAttributes != null && !annotationAttributes.isEmpty()) {
                     tableField.addAnnotationAttributesList(annotationAttributes, annotationAttributesFunction);
                     annotationAttributes.forEach(attributes -> importPackages.addAll(attributes.getImportPackages()));
                 }
             });
         }
-        tableInfo.getFields().forEach(tableField -> tableField.getAnnotationAttributesList()
-            .forEach(attributes -> importPackages.addAll(attributes.getImportPackages())));
+        tableInfo.getFields().forEach(
+                tableField -> tableField.getAnnotationAttributesList()
+                        .forEach(attributes -> importPackages.addAll(attributes.getImportPackages())));
         data.put("entityFieldUseJavaDoc", fieldUseJavaDoc);
-        data.put("entityClassAnnotations", annotationAttributesFunction != null ? annotationAttributesFunction.apply(classAnnotationAttributes) :
-            classAnnotationAttributes.stream().sorted(Comparator.comparingInt(s -> s.getDisplayName().length())).collect(Collectors.toList()));
-        data.put("importEntityPackages", importPackageFunction != null ? importPackageFunction.apply(importPackages) :
-            importPackages.stream().sorted().collect(Collectors.toList()));
-        Set<String> javaPackages = importPackages.stream().filter(pkg -> pkg.startsWith("java")).collect(Collectors.toSet());
-        data.put("importEntityJavaPackages", importPackageFunction != null ? importPackageFunction.apply(javaPackages) :
-            javaPackages.stream().sorted().collect(Collectors.toList()));
-        Set<String> frameworkPackages = importPackages.stream().filter(pkg -> !pkg.startsWith("java")).collect(Collectors.toSet());
-        data.put("importEntityFrameworkPackages", importPackageFunction != null ? importPackageFunction.apply(frameworkPackages) :
-            frameworkPackages.stream().sorted().collect(Collectors.toList()));
+        data.put(
+                "entityClassAnnotations",
+                annotationAttributesFunction != null
+                        ? annotationAttributesFunction.apply(classAnnotationAttributes)
+                        : classAnnotationAttributes.stream()
+                                .sorted(Comparator.comparingInt(s -> s.getDisplayName().length()))
+                                .collect(Collectors.toList()));
+        data.put(
+                "importEntityPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(importPackages)
+                        : importPackages.stream().sorted().collect(Collectors.toList()));
+        Set<String> javaPackages = importPackages.stream().filter(pkg -> pkg.startsWith("java"))
+                .collect(Collectors.toSet());
+        data.put(
+                "importEntityJavaPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(javaPackages)
+                        : javaPackages.stream().sorted().collect(Collectors.toList()));
+        Set<String> frameworkPackages = importPackages.stream().filter(pkg -> !pkg.startsWith("java"))
+                .collect(Collectors.toSet());
+        data.put(
+                "importEntityFrameworkPackages",
+                importPackageFunction != null
+                        ? importPackageFunction.apply(frameworkPackages)
+                        : frameworkPackages.stream().sorted().collect(Collectors.toList()));
         data.put("entityToString", this.toString);
         return data;
     }
@@ -481,7 +507,8 @@ public class Entity implements ITemplate {
      * @param tableField current table field
      * @since 3.5.18
      */
-    public void handleTableFieldMetaInfo(@NotNull TableInfo tableInfo, @NotNull com.baomidou.mybatisplus.generator.config.po.TableField tableField) {
+    public void handleTableFieldMetaInfo(@NotNull TableInfo tableInfo,
+            @NotNull com.baomidou.mybatisplus.generator.config.po.TableField tableField) {
         if (null != tableFieldMetaInfoCustomizer) {
             tableFieldMetaInfoCustomizer.customize(tableInfo, tableField);
         }
@@ -541,7 +568,9 @@ public class Entity implements ITemplate {
 
         /**
          * 启用生成 {@link java.io.Serial} (需JAVA 14)
-         * <p>当开启了 {@link #serialVersionUID} 时,会增加 {@link java.io.Serial} 注解在此字段上</p>
+         * <p>
+         * 当开启了 {@link #serialVersionUID} 时,会增加 {@link java.io.Serial} 注解在此字段上
+         * </p>
          *
          * @return this
          * @since 3.5.11
@@ -575,7 +604,9 @@ public class Entity implements ITemplate {
 
         /**
          * 开启lombok模型 (默认添加Getter和Setter)
-         * <p>自3.5.10开始,默认添加ToString搭配,如果想关闭可通过{@link #toString(boolean)}关闭</p>
+         * <p>
+         * 自3.5.10开始,默认添加ToString搭配,如果想关闭可通过{@link #toString(boolean)}关闭
+         * </p>
          *
          * @return this
          * @since 3.5.0
@@ -587,8 +618,12 @@ public class Entity implements ITemplate {
 
         /**
          * 开启lombok模型 (会把注解属性都加入进去,无论是否启用{@link GlobalConfig#isKotlin()})
-         * <p>注意如果通过此方法开启lombok模型,默认的lombok注解(get,set,toString)都将不会生成,请自行控制添加</p>
-         * <p>由{@link #toString(boolean)}控制的也会失效</p>
+         * <p>
+         * 注意如果通过此方法开启lombok模型,默认的lombok注解(get,set,toString)都将不会生成,请自行控制添加
+         * </p>
+         * <p>
+         * 由{@link #toString(boolean)}控制的也会失效
+         * </p>
          * 使用@Data示例: enableLombok(new ClassAnnotationAttributes("@Data","lombok.Data"))
          *
          * @param attributes 注解属性集合
@@ -759,18 +794,19 @@ public class Entity implements ITemplate {
         }
 
         /**
-         * Customize table field metadata after type conversion and before property-name conversion,
+         * Customize table field metadata after type conversion and before property-name conversion, <br>
          * annotation handling, import collection, and template rendering.
          * <p>
          * This is useful for special database types or custom value objects that need to adjust
-         * {@link com.baomidou.mybatisplus.generator.config.po.TableField.MetaInfo} and the field column
+         * {@link com.baomidou.mybatisplus.generator.config.po.TableField.MetaInfo} and the field column <br>
          * type before generated entity templates consume the field.
          *
          * @param tableFieldMetaInfoCustomizer table field meta info customizer
          * @return this
          * @since 3.5.18
          */
-        public Builder tableFieldMetaInfoCustomizer(@NotNull ITableFieldMetaInfoCustomizer tableFieldMetaInfoCustomizer) {
+        public Builder tableFieldMetaInfoCustomizer(
+                @NotNull ITableFieldMetaInfoCustomizer tableFieldMetaInfoCustomizer) {
             this.entity.tableFieldMetaInfoCustomizer = tableFieldMetaInfoCustomizer;
             return this;
         }
@@ -790,7 +826,7 @@ public class Entity implements ITemplate {
         /**
          * 转换输出文件名称
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -802,7 +838,7 @@ public class Entity implements ITemplate {
         /**
          * 格式化文件名称
          *
-         * @param format 　格式
+         * @param format 格式
          * @return this
          * @since 3.5.0
          */
@@ -893,11 +929,12 @@ public class Entity implements ITemplate {
 
         /**
          * 指定表注解处理器
+         * 
          * @param tableAnnotationHandler 表注解处理器
          * @since 3.5.10
          * @return this
          */
-        public Builder tableAnnotationHandler(@NotNull ITableAnnotationHandler tableAnnotationHandler){
+        public Builder tableAnnotationHandler(@NotNull ITableAnnotationHandler tableAnnotationHandler) {
             this.entity.tableAnnotationHandler = tableAnnotationHandler;
             return this;
         }
@@ -945,7 +982,8 @@ public class Entity implements ITemplate {
          * @return this
          * @since 3.5.11
          */
-        public Builder annotationAttributesFunction(Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
+        public Builder annotationAttributesFunction(
+                Function<List<? extends AnnotationAttributes>, List<AnnotationAttributes>> annotationAttributesFunction) {
             this.entity.annotationAttributesFunction = annotationAttributesFunction;
             return this;
         }

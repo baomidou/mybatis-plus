@@ -43,6 +43,7 @@ import java.util.List;
 @Setter
 @SuppressWarnings({"rawtypes"})
 public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
+
     private static final String DYNAMIC_TABLE_NAME_ALREADY_PARSED = "_MP_DYNAMIC_TABLE_NAME_ALREADY_PARSED";
     /**
      * 回调处理
@@ -69,7 +70,8 @@ public class DynamicTableNameInnerInterceptor implements InnerInterceptor {
     }
 
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreDynamicTableName(ms.getId())) {
             return;
         }

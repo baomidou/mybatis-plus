@@ -33,20 +33,22 @@ class DataChangeRecorderInnerInterceptorTest {
         final Object ignoreAllColumns = getFieldValue(interceptor, "ignoreAllColumns");
         Assertions.assertEquals(Set.of("COLUMN1", "COLUMN2"), ignoreAllColumns);
         final Object ignoredTableColumns = getFieldValue(interceptor, "ignoredTableColumns");
-        Assertions.assertEquals(Map.of("H2USER", Set.of("*"), "TABLE_NAME1", Set.of("COLUMN1", "COLUMN2")), ignoredTableColumns);
+        Assertions.assertEquals(
+                Map.of("H2USER", Set.of("*"), "TABLE_NAME1", Set.of("COLUMN1", "COLUMN2")), ignoredTableColumns);
     }
 
     private Object getFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
         final Field field = DataChangeRecorderInnerInterceptor.class.getDeclaredField(fieldName);
         field.setAccessible(true);
-        return  field.get(obj);
+        return field.get(obj);
     }
 
     @Test
     void processInsert() {
         final Insert insert = new Insert();
         insert.setTable(new Table("H2USER"));
-        final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor.processInsert(insert, null);
+        final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor
+                .processInsert(insert, null);
         Assertions.assertEquals(operationResult.getTableName(), "H2USER:*");
         Assertions.assertFalse(operationResult.isRecordStatus());
         Assertions.assertNull(operationResult.getChangedData());
@@ -56,7 +58,8 @@ class DataChangeRecorderInnerInterceptorTest {
     void processUpdate() {
         final Update update = new Update();
         update.setTable(new Table("H2USER"));
-        final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor.processUpdate(update, null, null, null);
+        final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor
+                .processUpdate(update, null, null, null);
         Assertions.assertEquals(operationResult.getTableName(), "H2USER:*");
         Assertions.assertFalse(operationResult.isRecordStatus());
         Assertions.assertNull(operationResult.getChangedData());
@@ -86,8 +89,10 @@ class DataChangeRecorderInnerInterceptorTest {
         Assertions.assertTrue(columnChangeResult.isDataChanged("0"));
         Assertions.assertTrue(columnChangeResult.isDataChanged(0));
 
-        Assertions.assertFalse(columnChangeResult.isDataChanged(new BigDecimal("0") {}));
-        Assertions.assertTrue(columnChangeResult.isDataChanged(new BigDecimal("1") {}));
+        Assertions.assertFalse(columnChangeResult.isDataChanged(new BigDecimal("0") {
+        }));
+        Assertions.assertTrue(columnChangeResult.isDataChanged(new BigDecimal("1") {
+        }));
     }
 
 }

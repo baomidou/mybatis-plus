@@ -62,7 +62,7 @@ public interface TenantLineHandler {
     /**
      * 忽略插入租户字段逻辑
      *
-     * @param columns        插入字段
+     * @param columns 插入字段
      * @param tenantIdColumn 租户 ID 字段
      * @return
      */

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
-
 /**
  * @author nieqiurong 2023年9月14日
  */
@@ -54,11 +53,10 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists t_record", "CREATE TABLE IF NOT EXISTS t_record (" +
-            "id BIGINT NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "tel VARCHAR(30) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists t_record",
+                "CREATE TABLE IF NOT EXISTS t_record (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
+                        + "tel VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
 }

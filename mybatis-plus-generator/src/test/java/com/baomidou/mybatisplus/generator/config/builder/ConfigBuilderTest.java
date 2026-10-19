@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class ConfigBuilderTest {
 
-    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
-        "sa", "").build();
+    private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(
+            "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "").build();
 
     @Test
     void matcherRegTableTest() {
@@ -35,8 +35,8 @@ public class ConfigBuilderTest {
     void pathInfoTest() {
         ConfigBuilder configBuilder;
         Map<OutputFile, String> pathInfo;
-        configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), DATA_SOURCE_CONFIG, GeneratorBuilder.strategyConfig(),
-            null, null, null);
+        configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), DATA_SOURCE_CONFIG,
+                GeneratorBuilder.strategyConfig(), null, null, null);
         pathInfo = configBuilder.getPathInfo();
         Assertions.assertFalse(pathInfo.isEmpty());
         Assertions.assertEquals(7, pathInfo.size());
@@ -49,9 +49,9 @@ public class ConfigBuilderTest {
         Assertions.assertTrue(pathInfo.containsKey(OutputFile.parent));
 
         configBuilder = new ConfigBuilder(
-            GeneratorBuilder.packageConfigBuilder().pathInfo(Collections.singletonMap(OutputFile.entity,
-                "/tmp/code/entity")).build(), DATA_SOURCE_CONFIG, GeneratorBuilder.strategyConfig(),
-            null, null, null);
+                GeneratorBuilder.packageConfigBuilder()
+                        .pathInfo(Collections.singletonMap(OutputFile.entity, "/tmp/code/entity")).build(),
+                DATA_SOURCE_CONFIG, GeneratorBuilder.strategyConfig(), null, null, null);
         pathInfo = configBuilder.getPathInfo();
         Assertions.assertFalse(pathInfo.isEmpty());
         Assertions.assertEquals(7, pathInfo.size());

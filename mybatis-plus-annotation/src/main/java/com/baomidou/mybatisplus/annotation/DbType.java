@@ -277,45 +277,45 @@ public enum DbType {
     }
 
     public boolean mysqlSameType() {
-        return this == DbType.MYSQL
-                || this == DbType.MARIADB
-                || this == DbType.GBASE
-                || this == DbType.OSCAR
-                || this == DbType.XU_GU
-                || this == DbType.CLICK_HOUSE
-                || this == DbType.OCEAN_BASE
-                || this == DbType.CUBRID
-                || this == DbType.SUNDB
-                || this == DbType.GOLDENDB
+        return this == DbType.MYSQL //
+                || this == DbType.MARIADB //
+                || this == DbType.GBASE //
+                || this == DbType.OSCAR //
+                || this == DbType.XU_GU //
+                || this == DbType.CLICK_HOUSE //
+                || this == DbType.OCEAN_BASE //
+                || this == DbType.CUBRID //
+                || this == DbType.SUNDB //
+                || this == DbType.GOLDENDB //
                 || this == DbType.YASDB;
     }
 
     public boolean oracleSameType() {
-        return this == DbType.ORACLE
-                || this == DbType.POLARDB
-                || this == DbType.DM
+        return this == DbType.ORACLE //
+                || this == DbType.POLARDB //
+                || this == DbType.DM //
                 || this == DbType.GAUSS;
     }
 
     public boolean postgresqlSameType() {
-        return this == DbType.POSTGRE_SQL
-                || this == DbType.H2
-                || this == DbType.LEALONE
-                || this == DbType.SQLITE
-                || this == DbType.HSQL
-                || this == DbType.KINGBASE_ES
-                || this == DbType.PHOENIX
-                || this == DbType.SAP_HANA
-                || this == DbType.IMPALA
-                || this == DbType.HIGH_GO
-                || this == DbType.VERTICA
-                || this == DbType.REDSHIFT
-                || this == DbType.OPENGAUSS
-                || this == DbType.TDENGINE
-                || this == DbType.UXDB
-                || this == DbType.GBASE8S_PG
-                || this == DbType.GBASE_8C
-                || this == DbType.VASTBASE
+        return this == DbType.POSTGRE_SQL //
+                || this == DbType.H2 //
+                || this == DbType.LEALONE //
+                || this == DbType.SQLITE //
+                || this == DbType.HSQL //
+                || this == DbType.KINGBASE_ES //
+                || this == DbType.PHOENIX //
+                || this == DbType.SAP_HANA //
+                || this == DbType.IMPALA //
+                || this == DbType.HIGH_GO //
+                || this == DbType.VERTICA //
+                || this == DbType.REDSHIFT //
+                || this == DbType.OPENGAUSS //
+                || this == DbType.TDENGINE //
+                || this == DbType.UXDB //
+                || this == DbType.GBASE8S_PG //
+                || this == DbType.GBASE_8C //
+                || this == DbType.VASTBASE //
                 || this == DbType.DUCKDB;
     }
 }

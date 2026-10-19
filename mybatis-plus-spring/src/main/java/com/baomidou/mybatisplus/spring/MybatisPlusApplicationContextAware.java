@@ -29,7 +29,8 @@ import org.springframework.context.ApplicationContextAware;
  *
  * @author nieqiurong
  * @since 3.5.12
- * @deprecated 3.5.13 初始化顺序不太好兼容Bean初始化方法执行逻辑，使用{@link MybatisSqlSessionFactoryBean#setApplicationContext(ApplicationContext)}替代.
+ * @deprecated 3.5.13
+ *             初始化顺序不太好兼容Bean初始化方法执行逻辑，使用{@link MybatisSqlSessionFactoryBean#setApplicationContext(ApplicationContext)}替代.
  */
 @Deprecated
 public class MybatisPlusApplicationContextAware implements ApplicationContextAware {

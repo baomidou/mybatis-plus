@@ -27,7 +27,6 @@ public final class ClassUtils {
     private ClassUtils() {
     }
 
-
     /**
      * 获取类名
      *
@@ -37,7 +36,6 @@ public final class ClassUtils {
     public static String getSimpleName(String className) {
         return StringUtils.isBlank(className) ? null : className.substring(className.lastIndexOf(StringPool.DOT) + 1);
     }
-
 
     /**
      * <p>
@@ -52,17 +50,18 @@ public final class ClassUtils {
     }
 
     /**
-     * Return the default ClassLoader to use: typically the thread context
-     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
+     * Return the default ClassLoader to use: typically the thread context <br>
+     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils <br>
      * class will be used as fallback.
-     * <p>Call this method if you intend to use the thread context ClassLoader
-     * in a scenario where you clearly prefer a non-null ClassLoader reference:
-     * for example, for class path resource loading (but not necessarily for
-     * {@code Class.forName}, which accepts a {@code null} ClassLoader
+     * <p>
+     * Call this method if you intend to use the thread context ClassLoader <br>
+     * in a scenario where you clearly prefer a non-null ClassLoader reference: <br>
+     * for example, for class path resource loading (but not necessarily for <br>
+     * {@code Class.forName}, which accepts a {@code null} ClassLoader <br>
      * reference as well).
      *
-     * @return the default ClassLoader (only {@code null} if even the system
-     * ClassLoader isn't accessible)
+     * @return the default ClassLoader (only {@code null} if even the system <br>
+     *         ClassLoader isn't accessible)
      * @see Thread#getContextClassLoader()
      * @see ClassLoader#getSystemClassLoader()
      * @since 3.3.2

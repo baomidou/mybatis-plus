@@ -84,7 +84,8 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
 
             if (where instanceof BinaryExpression) {
                 BinaryExpression binaryExpression = (BinaryExpression) where;
-                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField) || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
+                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)
+                        || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
                     return true;
                 }
             }
@@ -100,19 +101,23 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         if (where instanceof EqualsTo) {
             // example: 1=1
             EqualsTo equalsTo = (EqualsTo) where;
-            return StringUtils.equals(equalsTo.getLeftExpression().toString(), equalsTo.getRightExpression().toString());
+            return StringUtils
+                    .equals(equalsTo.getLeftExpression().toString(), equalsTo.getRightExpression().toString());
         } else if (where instanceof NotEqualsTo) {
             // example: 1 != 2
             NotEqualsTo notEqualsTo = (NotEqualsTo) where;
-            return !StringUtils.equals(notEqualsTo.getLeftExpression().toString(), notEqualsTo.getRightExpression().toString());
+            return !StringUtils
+                    .equals(notEqualsTo.getLeftExpression().toString(), notEqualsTo.getRightExpression().toString());
         } else if (where instanceof OrExpression) {
 
             OrExpression orExpression = (OrExpression) where;
-            return fullMatch(orExpression.getLeftExpression(), logicField) || fullMatch(orExpression.getRightExpression(), logicField);
+            return fullMatch(orExpression.getLeftExpression(), logicField)
+                    || fullMatch(orExpression.getRightExpression(), logicField);
         } else if (where instanceof AndExpression) {
 
             AndExpression andExpression = (AndExpression) where;
-            return fullMatch(andExpression.getLeftExpression(), logicField) && fullMatch(andExpression.getRightExpression(), logicField);
+            return fullMatch(andExpression.getLeftExpression(), logicField)
+                    && fullMatch(andExpression.getRightExpression(), logicField);
         } else if (where instanceof Parenthesis) {
             // example: (1 = 1)
             Parenthesis parenthesis = (Parenthesis) where;

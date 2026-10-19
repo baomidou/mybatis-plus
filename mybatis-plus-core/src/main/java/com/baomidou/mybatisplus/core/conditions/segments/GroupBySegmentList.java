@@ -41,6 +41,7 @@ public class GroupBySegmentList extends AbstractISegmentList {
         if (isEmpty()) {
             return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(COMMA, SPACE + GROUP_BY.getSqlSegment() + SPACE, EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment)
+                .collect(joining(COMMA, SPACE + GROUP_BY.getSqlSegment() + SPACE, EMPTY));
     }
 }

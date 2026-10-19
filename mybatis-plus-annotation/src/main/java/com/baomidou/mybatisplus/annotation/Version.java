@@ -20,14 +20,14 @@ import java.lang.annotation.*;
 /**
  * 乐观锁注解
  * <p>
- * 支持的字段类型:
- * long,
- * Long,
- * int,
- * Integer,
- * java.util.Date,
- * java.sql.Timestamp,
- * java.time.LocalDateTime
+ * 支持的字段类型: <br>
+ * long, <br>
+ * Long, <br>
+ * int, <br>
+ * Integer, <br>
+ * java.util.Date, <br>
+ * java.sql.Timestamp, <br>
+ * java.time.LocalDateTime <br>
  * java.time.Instant
  *
  * @author TaoYu

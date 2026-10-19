@@ -47,21 +47,19 @@ public class KeyGeneratorConfig {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setDbConfig(new GlobalConfig.DbConfig().setKeyGenerators(Arrays.asList(
-            new H2KeyGenerator(),
-            new IKeyGenerator() {
+        conf.setDbConfig(
+                new GlobalConfig.DbConfig().setKeyGenerators(Arrays.asList(new H2KeyGenerator(), new IKeyGenerator() {
 
-                @Override
-                public String executeSql(String incrementerName) {
-                    return "select nextval('" + incrementerName + "')";
-                }
+                    @Override
+                    public String executeSql(String incrementerName) {
+                        return "select nextval('" + incrementerName + "')";
+                    }
 
-                @Override
-                public DbType dbType() {
-                    return DbType.POSTGRE_SQL;
-                }
-            }
-        )));
+                    @Override
+                    public DbType dbType() {
+                        return DbType.POSTGRE_SQL;
+                    }
+                })));
         return conf;
     }
 }

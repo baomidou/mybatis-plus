@@ -78,7 +78,9 @@ class SqlInjectionUtilsTest {
         assertSql(true, ",sleep(0.01)");
         assertSql(false, ",sleep");
         assertSql(true, "DBMS_LOCK.sleep(0.01)");
-        assertSql(true, "1=1&&(if(substr((select(table_name) from information_schema.TABLES WHERE table_schema=database() limit 0,1),1,1)!='a',sleep(0.01),2))");
+        assertSql(
+                true,
+                "1=1&&(if(substr((select(table_name) from information_schema.TABLES WHERE table_schema=database() limit 0,1),1,1)!='a',sleep(0.01),2))");
     }
 
     private void assertSql(boolean injection, String sql) {

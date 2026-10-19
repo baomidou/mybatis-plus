@@ -135,9 +135,7 @@ public abstract class JsqlParserSupport {
      * 获取 schemaName + "." + name 的组合表名称
      */
     protected String getSchemaNameDotName(Table table) {
-        return Optional.ofNullable(table.getSchemaName())
-            .filter(s -> !s.isEmpty())
-            .map(s -> s + "." + table.getName())
-            .orElse(table.getName());
+        return Optional.ofNullable(table.getSchemaName()).filter(s -> !s.isEmpty()).map(s -> s + "." + table.getName())
+                .orElse(table.getName());
     }
 }

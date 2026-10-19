@@ -69,7 +69,9 @@ public class TableInfo implements Constants {
     private boolean autoInitResultMap;
     /**
      * 主键是否有存在字段名与属性名关联
-     * <p>true: 表示要进行 as</p>
+     * <p>
+     * true: 表示要进行 as
+     * </p>
      */
     private boolean keyRelated;
     /**
@@ -186,7 +188,7 @@ public class TableInfo implements Constants {
 
     /**
      * @param configuration 配置对象
-     * @param entityType    实体类型
+     * @param entityType 实体类型
      * @since 3.4.4
      */
     public TableInfo(Configuration configuration, Class<?> entityType) {
@@ -258,8 +260,8 @@ public class TableInfo implements Constants {
      */
     public String chooseSelect(Predicate<TableFieldInfo> predicate) {
         String sqlSelect = getKeySqlSelect();
-        String fieldsSqlSelect = fieldList.stream().filter(predicate)
-            .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
+        String fieldsSqlSelect = fieldList.stream().filter(predicate).map(TableFieldInfo::getSqlSelect)
+                .collect(joining(COMMA));
         if (StringUtils.isNotBlank(sqlSelect) && StringUtils.isNotBlank(fieldsSqlSelect)) {
             return sqlSelect + COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotBlank(fieldsSqlSelect)) {
@@ -279,8 +281,8 @@ public class TableInfo implements Constants {
             return chooseSelect(predicate);
         }
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
-            .filter(i -> !noSelectProperty.contains(i.getProperty()))
-            .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
+                .filter(i -> !noSelectProperty.contains(i.getProperty())).map(TableFieldInfo::getSqlSelect)
+                .collect(joining(COMMA));
         if (!havePK() || noSelectProperty.contains(keyProperty)) {
             return fieldsSqlSelect;
         } else {
@@ -290,8 +292,12 @@ public class TableInfo implements Constants {
 
     /**
      * 获取 insert 时候主键 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "值" 部位</p>
+     * <p>
+     * insert into table (字段) values (值)
+     * </p>
+     * <p>
+     * 位于 "值" 部位
+     * </p>
      *
      * @return sql 脚本片段
      */
@@ -314,8 +320,12 @@ public class TableInfo implements Constants {
 
     /**
      * 获取 insert 时候主键 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "字段" 部位</p>
+     * <p>
+     * insert into table (字段) values (值)
+     * </p>
+     * <p>
+     * 位于 "字段" 部位
+     * </p>
      *
      * @return sql 脚本片段
      */
@@ -337,10 +347,14 @@ public class TableInfo implements Constants {
 
     /**
      * 获取所有 insert 时候插入值 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "值" 部位</p>
+     * <p>
+     * insert into table (字段) values (值)
+     * </p>
+     * <p>
+     * 位于 "值" 部位
+     * </p>
      *
-     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     * <li>自动选部位,根据规则会生成 if 标签</li>
      *
      * @return sql 脚本片段
      */
@@ -351,7 +365,7 @@ public class TableInfo implements Constants {
     /**
      * 获取所有 insert 时候插入值 sql 脚本片段
      *
-     * @param prefix                    前缀
+     * @param prefix 前缀
      * @param ignoreAutoIncrementColumn 是否忽略自增主键字段
      * @return sql 脚本片段
      * @since 3.5.4
@@ -359,19 +373,23 @@ public class TableInfo implements Constants {
     public String getAllInsertSqlPropertyMaybeIf(final String prefix, boolean ignoreAutoIncrementColumn) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (ignoreAutoIncrementColumn && idType == IdType.AUTO) {
-            return fieldList.stream()
-                .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+            return fieldList.stream().map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull)
+                    .collect(joining(NEWLINE));
         }
         return getKeyInsertSqlProperty(false, newPrefix, true) + fieldList.stream()
-            .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+                .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "字段" 部位</p>
+     * <p>
+     * insert into table (字段) values (值)
+     * </p>
+     * <p>
+     * 位于 "字段" 部位
+     * </p>
      *
-     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     * <li>自动选部位,根据规则会生成 if 标签</li>
      *
      * @return sql 脚本片段
      */
@@ -382,7 +400,7 @@ public class TableInfo implements Constants {
     /**
      * 获取 insert 时候字段 sql 脚本片段
      *
-     * @param prefix                    前缀
+     * @param prefix 前缀
      * @param ignoreAutoIncrementColumn 是否忽略自增主键字段
      * @return sql脚本内容
      * @since 3.5.4
@@ -390,64 +408,62 @@ public class TableInfo implements Constants {
     public String getAllInsertSqlColumnMaybeIf(final String prefix, boolean ignoreAutoIncrementColumn) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (ignoreAutoIncrementColumn && idType == IdType.AUTO) {
-            return fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
-                .filter(Objects::nonNull).collect(joining(NEWLINE));
+            return fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix)).filter(Objects::nonNull)
+                    .collect(joining(NEWLINE));
         }
-        return getKeyInsertSqlColumn(false, newPrefix, true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
-            .filter(Objects::nonNull).collect(joining(NEWLINE));
+        return getKeyInsertSqlColumn(false, newPrefix, true) + fieldList.stream()
+                .map(i -> i.getInsertSqlColumnMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**
      * 获取所有的查询的 sql 片段
      *
-     * @param fistAnd             首个条件是否添加 AND 关键字
+     * @param fistAnd 首个条件是否添加 AND 关键字
      * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
-     * @param withId              是否包含 id 项
-     * @param prefix              前缀
+     * @param withId 是否包含 id 项
+     * @param prefix 前缀
      * @return sql 脚本片段
      */
     public String getAllSqlWhere(boolean fistAnd, boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        String filedSqlScript = fieldList.stream()
-            .filter(i -> {
-                if (ignoreLogicDelFiled) {
-                    return !(isWithLogicDelete() && i.isLogicDelete());
-                }
-                return true;
-            })
-            .map(i -> i.getSqlWhere(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+        String filedSqlScript = fieldList.stream().filter(i -> {
+            if (ignoreLogicDelFiled) {
+                return !(isWithLogicDelete() && i.isLogicDelete());
+            }
+            return true;
+        }).map(i -> i.getSqlWhere(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
         if (!withId || StringUtils.isBlank(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
         String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils.convertIf(fistAnd ? " AND " + keySqlScript : keySqlScript, newKeyProperty + " != null", false)
-            + NEWLINE + filedSqlScript;
+        return SqlScriptUtils
+                .convertIf(fistAnd ? " AND " + keySqlScript : keySqlScript, newKeyProperty + " != null", false)
+                + NEWLINE + filedSqlScript;
     }
 
     /**
      * 获取所有的 sql set 片段
      *
      * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
-     * @param prefix              前缀
+     * @param prefix 前缀
      * @return sql 脚本片段
      */
     public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return fieldList.stream()
-            .filter(i -> {
-                if (ignoreLogicDelFiled) {
-                    return !(isWithLogicDelete() && i.isLogicDelete());
-                }
-                return true;
-            }).map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
+        return fieldList.stream().filter(i -> {
+            if (ignoreLogicDelFiled) {
+                return !(isWithLogicDelete() && i.isLogicDelete());
+            }
+            return true;
+        }).map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**
      * 获取逻辑删除字段的 sql 脚本
      *
      * @param startWithAnd 是否以 and 开头
-     * @param isWhere      是否需要的是逻辑删除值
+     * @param isWhere 是否需要的是逻辑删除值
      * @return sql 脚本
      */
     public String getLogicDeleteSql(boolean startWithAnd, boolean isWhere) {
@@ -462,14 +478,16 @@ public class TableInfo implements Constants {
     }
 
     /**
-     * format logic delete SQL, can be overrided by subclass
+     * format logic delete SQL, can be overrided by subclass <br>
      * github #1386
      *
      * @param isWhere true: logicNotDeleteValue, false: logicDeleteValue
      * @return sql
      */
     protected String formatLogicDeleteSql(boolean isWhere) {
-        final String value = isWhere ? logicDeleteFieldInfo.getLogicNotDeleteValue() : logicDeleteFieldInfo.getLogicDeleteValue();
+        final String value = isWhere
+                ? logicDeleteFieldInfo.getLogicNotDeleteValue()
+                : logicDeleteFieldInfo.getLogicDeleteValue();
         if (isWhere) {
             if (NULL.equalsIgnoreCase(value)) {
                 return logicDeleteFieldInfo.getColumn() + " IS NULL";
@@ -493,8 +511,9 @@ public class TableInfo implements Constants {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (havePK()) {
-                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, StringUtils.getTargetColumn(keyColumn), keyType)
-                    .flags(Collections.singletonList(ResultFlag.ID)).build();
+                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty,
+                        StringUtils.getTargetColumn(keyColumn), keyType).flags(Collections.singletonList(ResultFlag.ID))
+                        .build();
                 resultMappings.add(idMapping);
             }
             if (CollectionUtils.isNotEmpty(fieldList)) {
@@ -529,7 +548,9 @@ public class TableInfo implements Constants {
             }
         });
         /* 校验字段合法性 */
-        Assert.isTrue(logicDeleted.get() <= 1, "@TableLogic not support more than one in Class: \"%s\"", entityType.getName());
+        Assert.isTrue(
+                logicDeleted.get() <= 1, "@TableLogic not support more than one in Class: \"%s\"",
+                entityType.getName());
         Assert.isTrue(version.get() <= 1, "@Version not support more than one in Class: \"%s\"", entityType.getName());
     }
 
@@ -552,7 +573,7 @@ public class TableInfo implements Constants {
     /**
      * 获取对象属性值
      *
-     * @param entity   对象
+     * @param entity 对象
      * @param property 属性名
      * @return 属性值
      * @since 3.4.4
@@ -561,23 +582,25 @@ public class TableInfo implements Constants {
         try {
             return this.reflector.getGetInvoker(property).invoke(entity, null);
         } catch (ReflectiveOperationException e) {
-            throw ExceptionUtils.mpe("Error: Cannot read property in %s.  Cause:", e, entity.getClass().getSimpleName());
+            throw ExceptionUtils
+                    .mpe("Error: Cannot read property in %s.  Cause:", e, entity.getClass().getSimpleName());
         }
     }
 
     /**
      * 设置对象属性值
      *
-     * @param entity   实体对象
+     * @param entity 实体对象
      * @param property 属性名
-     * @param values   参数
+     * @param values 参数
      * @since 3.4.4
      */
     public void setPropertyValue(Object entity, String property, Object... values) {
         try {
             this.reflector.getSetInvoker(property).invoke(entity, values);
         } catch (ReflectiveOperationException e) {
-            throw ExceptionUtils.mpe("Error: Cannot write property in %s.  Cause:", e, entity.getClass().getSimpleName());
+            throw ExceptionUtils
+                    .mpe("Error: Cannot write property in %s.  Cause:", e, entity.getClass().getSimpleName());
         }
     }
 

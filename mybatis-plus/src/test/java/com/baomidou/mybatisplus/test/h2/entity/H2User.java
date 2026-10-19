@@ -26,7 +26,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 public class H2User extends SuperEntity {
 
-	/* 测试忽略验证 */
+    /* 测试忽略验证 */
     private String name;
 
     private AgeEnum age;
@@ -58,7 +58,6 @@ public class H2User extends SuperEntity {
 
     @TableField("created_dt")
     private LocalDateTime createdDt;
-
 
     public H2User() {
 
@@ -107,13 +106,8 @@ public class H2User extends SuperEntity {
 
     @Override
     public String toString() {
-        return "h2user:{name=" + name + "," +
-            "age=" + age + "," +
-            "price=" + price + "," +
-            "testType=" + testType + "," +
-            "desc=" + desc + "," +
-            "testDate=" + testDate + "," +
-            "version=" + version;
+        return "h2user:{name=" + name + "," + "age=" + age + "," + "price=" + price + "," + "testType=" + testType + ","
+                + "desc=" + desc + "," + "testDate=" + testDate + "," + "version=" + version;
     }
 
     public static H2User ofId(Long id) {

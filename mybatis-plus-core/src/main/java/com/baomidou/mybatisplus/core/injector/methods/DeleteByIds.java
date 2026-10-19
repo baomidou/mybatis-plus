@@ -31,7 +31,6 @@ import java.util.List;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-
 /**
  * 根据 ID 集合删除
  *
@@ -60,7 +59,8 @@ public class DeleteByIds extends AbstractMethod {
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
         } else {
-            sql = SqlMethod.DELETE_BY_IDS.format(tableInfo.getTableName(), tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo));
+            sql = SqlMethod.DELETE_BY_IDS
+                    .format(tableInfo.getTableName(), tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo));
             SqlSource sqlSource = super.createSqlSource(configuration, sql, Object.class);
             return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
         }
@@ -68,9 +68,11 @@ public class DeleteByIds extends AbstractMethod {
 
     protected String getConvertForeachScript(TableInfo tableInfo) {
         return SqlScriptUtils.convertForeach(
-            SqlScriptUtils.convertChoose("item!=null and @org.apache.ibatis.reflection.SystemMetaObject@forObject(item).findProperty('" + tableInfo.getKeyProperty() + "', false) != null",
-                "#{item." + tableInfo.getKeyProperty() + "}", "#{item}"),
-            COLL, null, "item", COMMA);
+                SqlScriptUtils.convertChoose(
+                        "item!=null and @org.apache.ibatis.reflection.SystemMetaObject@forObject(item).findProperty('"
+                                + tableInfo.getKeyProperty() + "', false) != null",
+                        "#{item." + tableInfo.getKeyProperty() + "}", "#{item}"),
+                COLL, null, "item", COMMA);
     }
 
     /**
@@ -79,16 +81,16 @@ public class DeleteByIds extends AbstractMethod {
      * @since 3.5.0
      */
     public String logicDeleteScript(TableInfo tableInfo, SqlMethod sqlMethod) {
-        List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream()
-            .filter(TableFieldInfo::isWithUpdateFill)
-            .filter(f -> !f.isLogicDelete())
-            .collect(toList());
+        List<TableFieldInfo> fieldInfos = tableInfo.getFieldList().stream().filter(TableFieldInfo::isWithUpdateFill)
+                .filter(f -> !f.isLogicDelete()).collect(toList());
         TableFieldInfo logicDeleteField = tableInfo.getLogicDeleteFieldInfo();
         boolean logicDeleteWithFill = logicDeleteField != null && logicDeleteField.isWithUpdateFill();
         String sqlSet = "SET ";
         if (CollectionUtils.isNotEmpty(fieldInfos)) {
-            sqlSet += SqlScriptUtils.convertIf(fieldInfos.stream()
-                .map(i -> i.getSqlSet(Constants.MP_FILL_ET + StringPool.DOT)).collect(joining(EMPTY)), String.format("%s != null", Constants.MP_FILL_ET), true);
+            sqlSet += SqlScriptUtils.convertIf(
+                    fieldInfos.stream().map(i -> i.getSqlSet(Constants.MP_FILL_ET + StringPool.DOT))
+                            .collect(joining(EMPTY)),
+                    String.format("%s != null", Constants.MP_FILL_ET), true);
         }
         if (logicDeleteWithFill) {
             String fillSql = logicDeleteField.getSqlSet(true, Constants.MP_FILL_ET + StringPool.DOT);
@@ -98,8 +100,9 @@ public class DeleteByIds extends AbstractMethod {
         } else {
             sqlSet += StringPool.EMPTY + tableInfo.getLogicDeleteSql(false, false);
         }
-        return sqlMethod.format(tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(),
-            getConvertForeachScript(tableInfo), tableInfo.getLogicDeleteSql(true, true));
+        return sqlMethod.format(
+                tableInfo.getTableName(), sqlSet, tableInfo.getKeyColumn(), getConvertForeachScript(tableInfo),
+                tableInfo.getLogicDeleteSql(true, true));
     }
 
 }

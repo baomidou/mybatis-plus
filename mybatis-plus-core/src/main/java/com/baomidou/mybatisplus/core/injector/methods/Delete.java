@@ -47,17 +47,16 @@ public class Delete extends AbstractMethod {
             /*
              * 逻辑删除
              */
-            String sql = SqlMethod.LOGIC_DELETE.format(tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                sqlWhereEntityWrapper(true, tableInfo),
-                sqlComment());
+            String sql = SqlMethod.LOGIC_DELETE.format(
+                    tableInfo.getTableName(), sqlLogicSet(tableInfo), sqlWhereEntityWrapper(true, tableInfo),
+                    sqlComment());
             SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
             return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
         }
 
         // 真实删除
-        String sql = SqlMethod.DELETE.format(tableInfo.getTableName(),
-            sqlWhereEntityWrapper(true, tableInfo),
-            sqlComment());
+        String sql = SqlMethod.DELETE
+                .format(tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo), sqlComment());
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addDeleteMappedStatement(mapperClass, methodName, sqlSource);
     }

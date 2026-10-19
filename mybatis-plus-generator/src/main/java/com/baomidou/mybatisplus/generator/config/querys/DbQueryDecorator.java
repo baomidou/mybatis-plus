@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
  * @since 3.5.0
  */
 public class DbQueryDecorator extends AbstractDbQuery {
+
     private final IDbQuery dbQuery;
     @Getter
     private final Connection connection;
@@ -67,9 +68,9 @@ public class DbQueryDecorator extends AbstractDbQuery {
     @Override
     public String tablesSql() {
         String tablesSql = dbQuery.tablesSql();
-        if (DbType.POSTGRE_SQL == dbType || DbType.KINGBASE_ES == dbType
-            || DbType.DB2 == dbType || DbType.ORACLE == dbType || DbType.POLARDB == dbType || DbType.DM == dbType
-            || DbType.GAUSS_DB == dbType) {
+        if (DbType.POSTGRE_SQL == dbType || DbType.KINGBASE_ES == dbType || DbType.DB2 == dbType
+                || DbType.ORACLE == dbType || DbType.POLARDB == dbType || DbType.DM == dbType
+                || DbType.GAUSS_DB == dbType) {
             tablesSql = String.format(tablesSql, this.schema);
         }
         if (strategyConfig.isEnableSqlFilter()) {
@@ -79,14 +80,15 @@ public class DbQueryDecorator extends AbstractDbQuery {
             if ((table = strategyConfig.getLikeTable()) != null) {
                 sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(table.getValue()).append("'");
             } else if ((table = strategyConfig.getNotLikeTable()) != null) {
-                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(table.getValue()).append("'");
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(table.getValue())
+                        .append("'");
             }
             if (!(tables = strategyConfig.getInclude()).isEmpty()) {
                 sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
-                    .append(tables.stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(tables.stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
             } else if (!(tables = strategyConfig.getExclude()).isEmpty()) {
                 sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
-                    .append(tables.stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                        .append(tables.stream().map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
             }
             return sql.toString();
         }
@@ -109,14 +111,15 @@ public class DbQueryDecorator extends AbstractDbQuery {
         if (DbType.KINGBASE_ES == dbType || DbType.DB2 == dbType) {
             tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.ORACLE == dbType || DbType.POLARDB == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql.replace("#schema", this.schema), tableName, tableName.toUpperCase());
+            tableFieldsSql = String
+                    .format(tableFieldsSql.replace("#schema", this.schema), tableName, tableName.toUpperCase());
         } else if (DbType.DM == dbType) {
             tableName = tableName.toUpperCase();
             tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else if (DbType.POSTGRE_SQL == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, tableName, tableName, tableName,this.schema);
+            tableFieldsSql = String.format(tableFieldsSql, tableName, tableName, tableName, this.schema);
         } else if (DbType.GAUSS_DB == dbType) {
-            tableFieldsSql = String.format(tableFieldsSql, this.schema , tableName);
+            tableFieldsSql = String.format(tableFieldsSql, this.schema, tableName);
         } else {
             tableFieldsSql = String.format(tableFieldsSql, tableName);
         }
@@ -193,7 +196,7 @@ public class DbQueryDecorator extends AbstractDbQuery {
     /**
      * 执行 SQL 查询，回调返回结果
      *
-     * @param sql      执行SQL
+     * @param sql 执行SQL
      * @param consumer 结果处理
      */
     public void execute(String sql, Consumer<ResultSetWrapper> consumer) throws SQLException {
@@ -201,7 +204,7 @@ public class DbQueryDecorator extends AbstractDbQuery {
         int count = 0;
         long start = System.nanoTime();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 consumer.accept(new ResultSetWrapper(resultSet, this, this.dbType));
                 count++;

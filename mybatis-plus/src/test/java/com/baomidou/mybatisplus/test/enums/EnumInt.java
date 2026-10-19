@@ -11,6 +11,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum EnumInt {
+
     ONE(1),
     TWO(2);
 

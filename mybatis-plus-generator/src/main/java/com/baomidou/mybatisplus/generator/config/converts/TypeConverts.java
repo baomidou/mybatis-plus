@@ -37,32 +37,32 @@ public class TypeConverts {
      */
     public static ITypeConvert getTypeConvert(DbType dbType) {
         switch (dbType) {
-            case ORACLE:
-            case POLARDB:
+            case ORACLE :
+            case POLARDB :
                 return OracleTypeConvert.INSTANCE;
-            case DB2:
+            case DB2 :
                 return DB2TypeConvert.INSTANCE;
-            case DM:
-            case GAUSS:
+            case DM :
+            case GAUSS :
                 return DmTypeConvert.INSTANCE;
-            case GAUSS_DB:
+            case GAUSS_DB :
                 return GaussDBSqlTypeConvert.INSTANCE;
-            case KINGBASE_ES:
+            case KINGBASE_ES :
                 return KingbaseESTypeConvert.INSTANCE;
-            case OSCAR:
+            case OSCAR :
                 return OscarTypeConvert.INSTANCE;
-            case MYSQL:
-            case MARIADB:
+            case MYSQL :
+            case MARIADB :
                 return MySqlTypeConvert.INSTANCE;
-            case POSTGRE_SQL:
+            case POSTGRE_SQL :
                 return PostgreSqlTypeConvert.INSTANCE;
-            case SQLITE:
+            case SQLITE :
                 return SqliteTypeConvert.INSTANCE;
-            case SQL_SERVER:
+            case SQL_SERVER :
                 return SqlServerTypeConvert.INSTANCE;
-            case FIREBIRD:
+            case FIREBIRD :
                 return FirebirdTypeConvert.INSTANCE;
-            case CLICK_HOUSE:
+            case CLICK_HOUSE :
                 return ClickHouseTypeConvert.INSTANCE;
         }
         return null;

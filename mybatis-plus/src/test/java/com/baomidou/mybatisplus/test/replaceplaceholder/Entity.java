@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 @Data
 public class Entity implements Serializable {
+
     private static final long serialVersionUID = 6962439201546719734L;
 
     private Long id;
@@ -25,6 +26,7 @@ public class Entity implements Serializable {
 
     @Data
     public static class EntitySub {
+
         private Long id;
         private String name;
     }

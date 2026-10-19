@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
 /**
  * ActiveRecord 模式 CRUD
  * <p>
- * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下
+ * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下 <br>
  * 才能使用此 AR 模式 !!!
  * </p>
  *

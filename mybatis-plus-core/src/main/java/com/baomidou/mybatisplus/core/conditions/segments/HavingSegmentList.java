@@ -45,6 +45,7 @@ public class HavingSegmentList extends AbstractISegmentList {
         if (isEmpty()) {
             return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(SPACE, SPACE + HAVING.getSqlSegment() + SPACE, EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment)
+                .collect(joining(SPACE, SPACE + HAVING.getSqlSegment() + SPACE, EMPTY));
     }
 }

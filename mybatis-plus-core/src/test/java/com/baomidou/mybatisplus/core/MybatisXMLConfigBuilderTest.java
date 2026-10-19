@@ -26,8 +26,10 @@ class MybatisXMLConfigBuilderTest {
         MybatisXMLConfigBuilder builder = new MybatisXMLConfigBuilder(resource.getInputStream(), null);
         Configuration configuration = builder.parse();
         assertThat(configuration).isInstanceOf(MybatisConfiguration.class);
-        assertThat(configuration.getMappedStatement("com.baomidou.mybatisplus.core.MybatisXMLConfigBuilderTest$EntityMapper.selectCount"))
-            .isNotNull();
+        assertThat(
+                configuration.getMappedStatement(
+                        "com.baomidou.mybatisplus.core.MybatisXMLConfigBuilderTest$EntityMapper.selectCount"))
+                .isNotNull();
     }
 
     interface EntityMapper extends BaseMapper<Entity> {
@@ -37,6 +39,7 @@ class MybatisXMLConfigBuilderTest {
     @Data
     @TableName(autoResultMap = true)
     static class Entity {
+
         private Long id;
         private String name;
     }

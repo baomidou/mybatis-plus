@@ -16,26 +16,22 @@ public class GsonTest extends BaseDbTest<GsonEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists t_gson_entity", "CREATE TABLE IF NOT EXISTS t_gson_entity (" +
-            "id VARCHAR(32) NOT NULL," +
-            "name VARCHAR(30) NULL DEFAULT NULL," +
-            "card VARCHAR(255) NULL DEFAULT NULL," +
-            "attr VARCHAR(255) NULL DEFAULT NULL," +
-            "attr2 VARCHAR(255) NULL DEFAULT NULL," +
-            "attr3 VARCHAR(255) NULL DEFAULT NULL," +
-            "attr4 VARCHAR(255) NULL DEFAULT NULL," +
-            "PRIMARY KEY (id))");
+        return Arrays.asList(
+                "drop table if exists t_gson_entity",
+                "CREATE TABLE IF NOT EXISTS t_gson_entity (" + "id VARCHAR(32) NOT NULL,"
+                        + "name VARCHAR(30) NULL DEFAULT NULL," + "card VARCHAR(255) NULL DEFAULT NULL,"
+                        + "attr VARCHAR(255) NULL DEFAULT NULL," + "attr2 VARCHAR(255) NULL DEFAULT NULL,"
+                        + "attr3 VARCHAR(255) NULL DEFAULT NULL," + "attr4 VARCHAR(255) NULL DEFAULT NULL,"
+                        + "PRIMARY KEY (id))");
     }
 
     @Test
     void test() {
         doTest(mapper -> {
             var entity = new GsonEntity("123", "秋秋", new GsonEntity.Card("1", "1111"),
-                Arrays.asList(new GsonEntity.Attr("age", "18"), new GsonEntity.Attr("sex", "女")),
-                new HashMap<>(Map.of("test", new GsonEntity.Attr("小红", "1"))),
-                new HashMap<>(Map.of("name", "1", "test2", "2")),
-                new HashMap<>(Map.of("test1", "1", "test2", 2))
-            );
+                    Arrays.asList(new GsonEntity.Attr("age", "18"), new GsonEntity.Attr("sex", "女")),
+                    new HashMap<>(Map.of("test", new GsonEntity.Attr("小红", "1"))),
+                    new HashMap<>(Map.of("name", "1", "test2", "2")), new HashMap<>(Map.of("test1", "1", "test2", 2)));
             mapper.insert(entity);
             GsonEntity jackJsonEntity = mapper.selectById(entity.getId());
             Assertions.assertEquals("秋秋", jackJsonEntity.getName());
@@ -52,6 +48,5 @@ public class GsonTest extends BaseDbTest<GsonEntityMapper> {
         });
 
     }
-
 
 }

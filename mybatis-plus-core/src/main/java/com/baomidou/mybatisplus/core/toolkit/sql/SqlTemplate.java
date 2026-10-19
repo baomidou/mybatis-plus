@@ -52,26 +52,31 @@ public interface SqlTemplate {
 
     @FunctionalInterface
     interface SqlTemplate2<A, B> {
+
         String format(A a, B b);
     }
 
     @FunctionalInterface
     interface SqlTemplate3<A, B, C> {
+
         String format(A a, B b, C c);
     }
 
     @FunctionalInterface
     interface SqlTemplate4<A, B, C, D> {
+
         String format(A a, B b, C c, D d);
     }
 
     @FunctionalInterface
     interface SqlTemplate5<A, B, C, D, E> {
+
         String format(A a, B b, C c, D d, E e);
     }
 
     @FunctionalInterface
     interface SqlTemplate6<A, B, C, D, E, F> {
+
         String format(A a, B b, C c, D d, E e, F f);
     }
 }

@@ -47,11 +47,10 @@ public final class ClassUtils {
      * 代理 class 的名称
      */
     private static final List<String> PROXY_CLASS_NAMES = Arrays.asList("net.sf.cglib.proxy.Factory"
-        // cglib
-        , "org.springframework.cglib.proxy.Factory"
-        , "javassist.util.proxy.ProxyObject"
-        // javassist
-        , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
+    // cglib
+            , "org.springframework.cglib.proxy.Factory", "javassist.util.proxy.ProxyObject"
+            // javassist
+            , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
 
     private ClassUtils() {
     }
@@ -118,7 +117,7 @@ public final class ClassUtils {
      * </p>
      *
      * @param clazz 需要实例化的对象
-     * @param <T>   类型，由输入类型决定
+     * @param <T> 类型，由输入类型决定
      * @return 返回新的实例
      */
     public static <T> T newInstance(Class<T> clazz) {
@@ -126,8 +125,8 @@ public final class ClassUtils {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                | NoSuchMethodException e) {
             throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 %s 添加无参的构造方法", e, clazz.getName());
         }
     }
@@ -136,7 +135,7 @@ public final class ClassUtils {
      * 实例化对象.
      *
      * @param clazzName 全类名
-     * @param <T>       类型
+     * @param <T> 类型
      * @return 实例
      * @since 3.3.2
      */
@@ -144,7 +143,6 @@ public final class ClassUtils {
     public static <T> T newInstance(String clazzName) {
         return (T) newInstance(toClassConfident(clazzName));
     }
-
 
     /**
      * <p>
@@ -159,7 +157,7 @@ public final class ClassUtils {
     }
 
     /**
-     * @param name        全类名
+     * @param name 全类名
      * @param classLoader 类加载器
      * @return Class信息
      * @since 3.4.3
@@ -185,14 +183,13 @@ public final class ClassUtils {
         throw new ClassNotFoundException("Cannot find class: " + className);
     }
 
-
     /**
-     * Determine the name of the package of the given class,
+     * Determine the name of the package of the given class, <br>
      * e.g. "java.lang" for the {@code java.lang.String} class.
      *
      * @param clazz the class
-     * @return the package name, or the empty String if the class
-     * is defined in the default package
+     * @return the package name, or the empty String if the class <br>
+     *         is defined in the default package
      */
     public static String getPackageName(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
@@ -200,12 +197,12 @@ public final class ClassUtils {
     }
 
     /**
-     * Determine the name of the package of the given fully-qualified class name,
+     * Determine the name of the package of the given fully-qualified class name, <br>
      * e.g. "java.lang" for the {@code java.lang.String} class name.
      *
      * @param fqClassName the fully-qualified class name
-     * @return the package name, or the empty String if the class
-     * is defined in the default package
+     * @return the package name, or the empty String if the class <br>
+     *         is defined in the default package
      */
     public static String getPackageName(String fqClassName) {
         Assert.notNull(fqClassName, "Class name must not be null");
@@ -214,17 +211,18 @@ public final class ClassUtils {
     }
 
     /**
-     * Return the default ClassLoader to use: typically the thread context
-     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
+     * Return the default ClassLoader to use: typically the thread context <br>
+     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils <br>
      * class will be used as fallback.
-     * <p>Call this method if you intend to use the thread context ClassLoader
-     * in a scenario where you clearly prefer a non-null ClassLoader reference:
-     * for example, for class path resource loading (but not necessarily for
-     * {@code Class.forName}, which accepts a {@code null} ClassLoader
+     * <p>
+     * Call this method if you intend to use the thread context ClassLoader <br>
+     * in a scenario where you clearly prefer a non-null ClassLoader reference: <br>
+     * for example, for class path resource loading (but not necessarily for <br>
+     * {@code Class.forName}, which accepts a {@code null} ClassLoader <br>
      * reference as well).
      *
-     * @return the default ClassLoader (only {@code null} if even the system
-     * ClassLoader isn't accessible)
+     * @return the default ClassLoader (only {@code null} if even the system <br>
+     *         ClassLoader isn't accessible)
      * @see Thread#getContextClassLoader()
      * @see ClassLoader#getSystemClassLoader()
      * @since 3.3.2
@@ -253,11 +251,7 @@ public final class ClassUtils {
     }
 
     private static ClassLoader[] getClassLoaders(ClassLoader classLoader) {
-        return new ClassLoader[]{
-            classLoader,
-            Resources.getDefaultClassLoader(),
-            Thread.currentThread().getContextClassLoader(),
-            ClassUtils.class.getClassLoader(),
-            systemClassLoader};
+        return new ClassLoader[]{classLoader, Resources.getDefaultClassLoader(),
+                Thread.currentThread().getContextClassLoader(), ClassUtils.class.getClassLoader(), systemClassLoader};
     }
 }

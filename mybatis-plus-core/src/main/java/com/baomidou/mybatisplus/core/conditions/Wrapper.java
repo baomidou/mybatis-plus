@@ -69,11 +69,12 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * <p>
      * 使用方法: `select xxx from table` + ${ew.customSqlSegment}
      * <p>
-     * 注意事项:
-     * 1. 逻辑删除需要自己拼接条件 (之前自定义也同样)
-     * 2. 不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)
-     * 3. 用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)
-     * 4. ew是wrapper定义的默认别名,可通过{@link org.apache.ibatis.annotations.Param}注解修改，也可以通过{@link AbstractWrapper#setParamAlias(String)}方式设置别名
+     * 注意事项: <br>
+     * 1. 逻辑删除需要自己拼接条件 (之前自定义也同样) <br>
+     * 2. 不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦) <br>
+     * 3. 用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!) <br>
+     * 4.
+     * ew是wrapper定义的默认别名,可通过{@link org.apache.ibatis.annotations.Param}注解修改，也可以通过{@link AbstractWrapper#setParamAlias(String)}方式设置别名
      */
     public String getCustomSqlSegment() {
         MergeSegments expression = getExpression();
@@ -146,7 +147,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(tableInfo, entity, e))) {
             return true;
         }
-        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty())) : false;
+        return StringUtils.isNotBlank(tableInfo.getKeyProperty())
+                ? Objects.nonNull(tableInfo.getPropertyValue(entity, tableInfo.getKeyProperty()))
+                : false;
     }
 
     @Deprecated
@@ -159,15 +162,15 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     private boolean fieldStrategyMatch(TableInfo tableInfo, T entity, TableFieldInfo e) {
         switch (e.getWhereStrategy()) {
-            case NOT_NULL:
+            case NOT_NULL :
                 return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
-            case ALWAYS:
+            case ALWAYS :
                 return true;
-            case NOT_EMPTY:
+            case NOT_EMPTY :
                 return StringUtils.checkValNotNull(tableInfo.getPropertyValue(entity, e.getProperty()));
-            case NEVER:
+            case NEVER :
                 return false;
-            default:
+            default :
                 return Objects.nonNull(tableInfo.getPropertyValue(entity, e.getProperty()));
         }
     }

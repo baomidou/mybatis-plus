@@ -32,7 +32,6 @@ public class PostgresqlConfig {
         return dataSource;
     }
 
-
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();

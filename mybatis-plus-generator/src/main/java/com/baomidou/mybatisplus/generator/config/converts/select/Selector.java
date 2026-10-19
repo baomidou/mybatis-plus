@@ -27,12 +27,13 @@ import java.util.function.Supplier;
  * <p>
  * 一旦结果被选择，其他的分支将不再被调用
  *
- * @author hanchunlin
- * Created at 2020/6/11 16:55
+ * @author hanchunlin <br>
+ *         Created at 2020/6/11 16:55
  */
 public class Selector<P, T> {
+
     /**
-     *  当前选择器是否已经选择分支，如果已经存在分支被击中，则返回 true；否则返回 false
+     * 当前选择器是否已经选择分支，如果已经存在分支被击中，则返回 true；否则返回 false
      */
     @Getter
     private boolean selected = false;
@@ -54,8 +55,8 @@ public class Selector<P, T> {
      * 使用指定的参数创建选择器
      *
      * @param param 参数
-     * @param <P>   参数类型
-     * @param <T>   返回值类型
+     * @param <P> 参数类型
+     * @param <T> 返回值类型
      * @return 返回新的选择器
      */
     public static <P, T> Selector<P, T> param(P param) {
@@ -80,7 +81,7 @@ public class Selector<P, T> {
     }
 
     /**
-     * 获取结果，如果当前选择器没有击中任何条件分支，则从给定的提供者中获取结果；
+     * 获取结果，如果当前选择器没有击中任何条件分支，则从给定的提供者中获取结果； <br>
      * 否则将使用当前选择器选中的分支
      *
      * @param supplier 默认值提供者

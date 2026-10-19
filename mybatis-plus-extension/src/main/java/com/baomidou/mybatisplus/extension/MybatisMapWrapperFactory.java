@@ -25,8 +25,12 @@ import java.util.Map;
 /**
  * 开启返回map结果集的下划线转驼峰
  *
- * <p> Map 的 key 下划线转驼峰 </p>
- * <p>configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());</p>
+ * <p>
+ * Map 的 key 下划线转驼峰
+ * </p>
+ * <p>
+ * configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
+ * </p>
  *
  * @author yuxiaobin
  * @since 2017-12-19

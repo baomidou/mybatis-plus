@@ -18,8 +18,8 @@ package com.baomidou.mybatisplus.core.toolkit.support;
 /**
  * 接受 Int 小类型的处理函数，使用小类型来避免 Java 自动装箱
  *
- * @author HCL
- * Create at 2018/11/19
+ * @author HCL <br>
+ *         Create at 2018/11/19
  */
 @FunctionalInterface
 public interface BiIntFunction<T, R> {

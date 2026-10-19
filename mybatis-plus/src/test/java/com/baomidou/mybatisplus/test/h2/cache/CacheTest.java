@@ -49,19 +49,23 @@ class CacheTest {
         IPage<CacheModel> cacheModelIPage5 = cacheService.page(new Page<>(2, 3, true), new QueryWrapper<>());
         Assertions.assertEquals(cacheModelIPage5.getTotal(), cacheModelIPage3.getTotal());
         Assertions.assertEquals(2, cacheModelIPage5.getRecords().size());
-        IPage<CacheModel> cacheModelIPage6 = cacheService.page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 2L));
+        IPage<CacheModel> cacheModelIPage6 = cacheService
+                .page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 2L));
         Assertions.assertEquals(4, cacheModelIPage6.getTotal());
         Assertions.assertEquals(3, cacheModelIPage6.getRecords().size());
-        IPage<CacheModel> cacheModelIPage7 = cacheService.page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 2L));
+        IPage<CacheModel> cacheModelIPage7 = cacheService
+                .page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 2L));
         Assertions.assertEquals(0L, cacheModelIPage7.getTotal());
         Assertions.assertEquals(3, cacheModelIPage7.getRecords().size());
-        IPage<CacheModel> cacheModelIPage8 = cacheService.page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
+        IPage<CacheModel> cacheModelIPage8 = cacheService
+                .page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
         Assertions.assertEquals(0L, cacheModelIPage8.getTotal());
         Assertions.assertEquals(3, cacheModelIPage8.getRecords().size());
         cacheModelIPage8 = cacheService.page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
         Assertions.assertEquals(0L, cacheModelIPage8.getTotal());
         Assertions.assertEquals(3, cacheModelIPage8.getRecords().size());
-        IPage<CacheModel> cacheModelIPage9 = cacheService.page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
+        IPage<CacheModel> cacheModelIPage9 = cacheService
+                .page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
         Assertions.assertEquals(3L, cacheModelIPage9.getTotal());
         Assertions.assertEquals(3, cacheModelIPage9.getRecords().size());
         cacheModelIPage9 = cacheService.page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
@@ -194,7 +198,7 @@ class CacheTest {
     }
 
     @Test
-    void testCustomOffset(){
+    void testCustomOffset() {
         Cache cache = getCache();
         cache.clear();
         CustomPage<CacheModel> page1 = new CustomPage<>(2, 10, false);
@@ -211,10 +215,10 @@ class CacheTest {
         Assertions.assertEquals(2, cache.getSize());
     }
 
-//    @Test
-//    void testCustomSaveOrUpdateBatch(){
-//        Assertions.assertTrue(cacheService.testCustomSaveOrUpdateBatch());
-//    }
+    //    @Test
+    //    void testCustomSaveOrUpdateBatch(){
+    //        Assertions.assertTrue(cacheService.testCustomSaveOrUpdateBatch());
+    //    }
 
     private Cache getCache() {
         return sqlSessionFactory.getConfiguration().getCache(CacheMapper.class.getName());

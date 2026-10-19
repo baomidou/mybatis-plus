@@ -36,31 +36,31 @@ public class StringEscape {
             char c = str.charAt(i);
             switch (c) {
                 /* Must be escaped for 'mysql' */
-                case 0:
+                case 0 :
                     needsHexEscape = true;
                     break;
                 /* Must be escaped for logs */
-                case '\n':
+                case '\n' :
                     needsHexEscape = true;
                     break;
-                case '\r':
+                case '\r' :
                     needsHexEscape = true;
                     break;
-                case '\\':
+                case '\\' :
                     needsHexEscape = true;
                     break;
-                case '\'':
+                case '\'' :
                     needsHexEscape = true;
                     break;
                 /* Better safe than sorry */
-                case '"':
+                case '"' :
                     needsHexEscape = true;
                     break;
                 /* This gives problems on Win32 */
-                case '\032':
+                case '\032' :
                     needsHexEscape = true;
                     break;
-                default:
+                default :
                     break;
             }
             if (needsHexEscape) {
@@ -90,47 +90,47 @@ public class StringEscape {
                 char c = escapeStr.charAt(i);
                 switch (c) {
                     /* Must be escaped for 'mysql' */
-                    case 0:
+                    case 0 :
                         buf.append('\\');
                         buf.append('0');
 
                         break;
                     /* Must be escaped for logs */
-                    case '\n':
+                    case '\n' :
                         buf.append('\\');
                         buf.append('n');
 
                         break;
 
-                    case '\r':
+                    case '\r' :
                         buf.append('\\');
                         buf.append('r');
 
                         break;
 
-                    case '\\':
+                    case '\\' :
                         buf.append('\\');
                         buf.append('\\');
 
                         break;
 
-                    case '\'':
+                    case '\'' :
                         buf.append('\\');
                         buf.append('\'');
 
                         break;
                     /* Better safe than sorry */
-                    case '"':
+                    case '"' :
                         buf.append('\\');
                         buf.append('"');
 
                         break;
                     /* This gives problems on Win32 */
-                    case '\032':
+                    case '\032' :
                         buf.append('\\');
                         buf.append('Z');
                         break;
-                    default:
+                    default :
                         buf.append(c);
                 }
             }

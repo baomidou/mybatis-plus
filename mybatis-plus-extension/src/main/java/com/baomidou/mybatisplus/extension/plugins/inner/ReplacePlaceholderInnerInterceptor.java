@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * 功能类似于 {@link GlobalConfig.DbConfig#isReplacePlaceholder()},
+ * 功能类似于 {@link GlobalConfig.DbConfig#isReplacePlaceholder()}, <br>
  * 只是这个是在运行时实时替换,适用范围更广
  *
  * @author miemie
@@ -51,7 +51,8 @@ public class ReplacePlaceholderInnerInterceptor implements InnerInterceptor {
     }
 
     @Override
-    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         String sql = boundSql.getSql();
         List<String> find = SqlUtils.findPlaceholder(sql);
         if (CollectionUtils.isNotEmpty(find)) {

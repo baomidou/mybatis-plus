@@ -38,7 +38,6 @@ public class OptimisticLockerTest extends BaseDbTest<EntityMapper> {
             assertThat(entity.getVersion()).as("因为version有值就走了插件").isEqualTo(1);
         });
 
-
         doTestAutoCommit(m -> {
             int update = m.update(new Entity().setName("老王"), Wrappers.<Entity>query().eq("id", 2));
             assertThat(update).as("更新成功").isEqualTo(1);
@@ -82,12 +81,10 @@ public class OptimisticLockerTest extends BaseDbTest<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id BIGINT(20) NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "version integer not NULL default 0,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity",
+                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
+                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer not NULL default 0,\n"
+                        + "PRIMARY KEY (id)" + ")");
     }
 }

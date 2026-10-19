@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * @author nieqiurong
  */
 @Service
-public class DemoRepositoryServiceImpl extends ServiceImpl<DemoRepositoryMapper, Demo> implements IDemoRepositoryService {
+public class DemoRepositoryServiceImpl extends ServiceImpl<DemoRepositoryMapper, Demo>
+        implements IDemoRepositoryService {
 
 }

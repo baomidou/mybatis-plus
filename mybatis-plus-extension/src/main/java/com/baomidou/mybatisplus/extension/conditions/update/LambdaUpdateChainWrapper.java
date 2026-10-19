@@ -27,8 +27,9 @@ import com.baomidou.mybatisplus.extension.conditions.AbstractChainWrapper;
  * @author miemie
  * @since 2018-12-19
  */
-public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
-    implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
+public class LambdaUpdateChainWrapper<T>
+        extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
+        implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
     private final BaseMapper<T> baseMapper;
 
@@ -62,13 +63,12 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
         return typedThis;
     }
 
-
     /**
      * 字段自增变量 val 值
      *
      * @param condition 条件
-     * @param column    字段
-     * @param val       值
+     * @param column 字段
+     * @param val 值
      * @return this
      * @since 3.5.6
      */
@@ -82,8 +82,8 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
      * 字段自减变量 val 值
      *
      * @param condition 条件
-     * @param column    字段
-     * @param val       值
+     * @param column 字段
+     * @param val 值
      * @return this
      * @since 3.5.6
      */

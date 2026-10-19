@@ -21,8 +21,8 @@ public class TemplateEngineTest {
     private void compatibleAssert(ConfigBuilder configBuilder) {
         VelocityTemplateEngine velocityTemplateEngine = new VelocityTemplateEngine();
         velocityTemplateEngine.setConfigBuilder(configBuilder);
-        TableInfo tableInfo = new TableInfo(new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig,
-            GeneratorBuilder.strategyConfig(), null, null, null), "user");
+        TableInfo tableInfo = new TableInfo(new ConfigBuilder(GeneratorBuilder.packageConfig(),
+                TableInfoTest.dataSourceConfig, GeneratorBuilder.strategyConfig(), null, null, null), "user");
         tableInfo.processTable();
         Map<String, Object> objectMap = velocityTemplateEngine.getObjectMap(configBuilder, tableInfo);
         Assertions.assertEquals(Boolean.FALSE, objectMap.get("enableCache"));
@@ -34,12 +34,13 @@ public class TemplateEngineTest {
 
     @Test
     void compatibleTest() {
-        DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "").build();
-        compatibleAssert(new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig,
-            new StrategyConfig.Builder().likeTable(new LikeTable("USER"))
-                .entityBuilder().enableActiveRecord().idType(IdType.INPUT)
-                .mapperBuilder().enableBaseResultMap().enableBaseColumnList()
-                .build(),
-            null, GeneratorBuilder.globalConfig(), null));
+        DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "").build();
+        compatibleAssert(
+                new ConfigBuilder(GeneratorBuilder.packageConfig(), dataSourceConfig,
+                        new StrategyConfig.Builder().likeTable(new LikeTable("USER")).entityBuilder()
+                                .enableActiveRecord().idType(IdType.INPUT).mapperBuilder().enableBaseResultMap()
+                                .enableBaseColumnList().build(),
+                        null, GeneratorBuilder.globalConfig(), null));
     }
 }

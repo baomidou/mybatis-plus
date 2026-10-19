@@ -7,15 +7,11 @@ import org.apache.ibatis.annotations.Param;
 
 /**
  * @author fly
- * @date 2019/5/22 17:55
- * description:
+ * @date 2019/5/22 17:55 <br>
+ *       description:
  */
 public interface PhoenixTestInfoMapper extends PhoenixBaseMapper<PhoenixTestInfo> {
 
-        @Insert(
-                "UPSERT INTO TEST_INFO " +
-                "(ID, NAME) " +
-                "VALUES(#{t.id},#{t.name})"
-        )
-        void addTestInfo(@Param("t") PhoenixTestInfo t);
+    @Insert("UPSERT INTO TEST_INFO " + "(ID, NAME) " + "VALUES(#{t.id},#{t.name})")
+    void addTestInfo(@Param("t") PhoenixTestInfo t);
 }

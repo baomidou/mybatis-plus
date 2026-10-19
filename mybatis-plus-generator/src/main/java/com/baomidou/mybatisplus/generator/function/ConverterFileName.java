@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.function;
 
-
 import org.jetbrains.annotations.NotNull;
 
 /**

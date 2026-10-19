@@ -71,9 +71,9 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     /**
      * 在其中对值进行判断以及更改 list 的内部元素
      *
-     * @param list         传入进来的 ISqlSegment 集合
+     * @param list 传入进来的 ISqlSegment 集合
      * @param firstSegment ISqlSegment 集合里第一个值
-     * @param lastSegment  ISqlSegment 集合里最后一个值
+     * @param lastSegment ISqlSegment 集合里最后一个值
      * @return true 是否继续向下执行; false 不再向下执行
      */
     protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment);
@@ -128,8 +128,9 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
 
     public void changeParamAlias(String oldParamAlias, String paramAlias) {
         if (cacheSqlSegment) {
-            sqlSegment = sqlSegment.replace("#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
-                "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
+            sqlSegment = sqlSegment.replace(
+                    "#{" + oldParamAlias + Constants.WRAPPER_PARAM_MIDDLE,
+                    "#{" + paramAlias + Constants.WRAPPER_PARAM_MIDDLE);
         }
     }
 }

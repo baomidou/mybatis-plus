@@ -38,15 +38,13 @@ import java.util.*;
  * @since 3.4.0
  */
 @SuppressWarnings({"rawtypes"})
-@Intercepts(
-    {
-        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class}),
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class}),
         @Signature(type = StatementHandler.class, method = "getBoundSql", args = {}),
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
-        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
-    }
-)
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,
+                RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class,
+                RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),})
 public class MybatisPlusInterceptor implements Interceptor {
 
     @Setter
@@ -125,11 +123,11 @@ public class MybatisPlusInterceptor implements Interceptor {
     /**
      * 使用内部规则,拿分页插件举个栗子:
      * <p>
-     * - key: "@page" ,value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor"
+     * - key: "@page" ,value: "com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor" <br>
      * - key: "page:limit" ,value: "100"
      * <p>
-     * 解读1: key 以 "@" 开头定义了这是一个需要组装的 `InnerInterceptor`, 以 "page" 结尾表示别名
-     * value 是 `InnerInterceptor` 的具体的 class 全名
+     * 解读1: key 以 "@" 开头定义了这是一个需要组装的 `InnerInterceptor`, 以 "page" 结尾表示别名 <br>
+     * value 是 `InnerInterceptor` 的具体的 class 全名 <br>
      * 解读2: key 以上面定义的 "别名 + ':'" 开头指这个 `value` 是定义的该 `InnerInterceptor` 属性需要设置的值
      * <p>
      * 如果这个 `InnerInterceptor` 不需要配置属性也要加别名
@@ -147,9 +145,7 @@ public class MybatisPlusInterceptor implements Interceptor {
 
     @Override
     public String toString() {
-        return "MybatisPlusInterceptor{" +
-            "interceptors=" + interceptors +
-            '}';
+        return "MybatisPlusInterceptor{" + "interceptors=" + interceptors + '}';
     }
 
 }

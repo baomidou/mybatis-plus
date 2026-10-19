@@ -51,18 +51,15 @@ public class ClickHouseQuery extends AbstractDbQuery {
         return "name";
     }
 
-
     @Override
     public String fieldType() {
         return "type";
     }
 
-
     @Override
     public String fieldComment() {
         return "comment";
     }
-
 
     @Override
     public String fieldKey() {

@@ -35,10 +35,10 @@ class FuryFactoryTest {
             expected = scanResult.getAllClasses().stream()
                     // Match the FST scan and include enums inheriting Serializable from
                     // java.lang.Enum.
-                    .filter(classInfo -> !classInfo.isInterface()
-                            && (classInfo.isEnum() || classInfo.implementsInterface(Serializable.class)))
-                    .map(ClassInfo::getName)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .filter(
+                            classInfo -> !classInfo.isInterface()
+                                    && (classInfo.isEnum() || classInfo.implementsInterface(Serializable.class)))
+                    .map(ClassInfo::getName).collect(Collectors.toCollection(LinkedHashSet::new));
         }
         assertFalse(expected.isEmpty(), "No serializable JSqlParser classes found");
 
@@ -47,33 +47,29 @@ class FuryFactoryTest {
         Field field = FuryFactory.class.getDeclaredField("FURY");
         field.setAccessible(true);
         ThreadSafeFury fury = (ThreadSafeFury) field.get(new FuryFactory());
-        Set<String> actual = fury.execute(instance -> instance.getClassResolver().getRegisteredClasses().stream()
-                .map(Class::getName)
-                // Fury also registers built-in classes; only compare JSqlParser classes.
-                .filter(name -> name.startsWith("net.sf.jsqlparser."))
-                .collect(Collectors.toSet()));
+        Set<String> actual = fury.execute(
+                instance -> instance.getClassResolver().getRegisteredClasses().stream().map(Class::getName)
+                        // Fury also registers built-in classes; only compare JSqlParser classes.
+                        .filter(name -> name.startsWith("net.sf.jsqlparser.")).collect(Collectors.toSet()));
 
         // Generate registrations in scan order; the assertion checks only class
         // membership.
         if (!expected.equals(actual)) {
-            String registrations = expected.stream()
-                    .map(name -> "FURY.register(" + name.replace('$', '.') + ".class);")
+            String registrations = expected.stream().map(name -> "FURY.register(" + name.replace('$', '.') + ".class);")
                     .collect(Collectors.joining("\n"));
             System.out.println("Complete constructor registrations:\n" + registrations);
         }
-        assertTrue(expected.equals(actual), () -> "FuryFactory registrations differ from the JSqlParser dependency"
-                + "\nMissing: " + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
-                + "\nUnexpected: "
-                + actual.stream().filter(name -> !expected.contains(name)).sorted().collect(Collectors.toList()));
+        assertTrue(
+                expected.equals(actual),
+                () -> "FuryFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
+                        + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
+                        + "\nUnexpected: " + actual.stream().filter(name -> !expected.contains(name)).sorted()
+                                .collect(Collectors.toList()));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "SELECT TRUE FROM t",
-            "SELECT sum(id) OVER (PARTITION BY name) FROM t",
-            "DELETE FROM t WHERE id = 1",
-            "FROM t |> SELECT id"
-    })
+    @ValueSource(strings = {"SELECT TRUE FROM t", "SELECT sum(id) OVER (PARTITION BY name) FROM t",
+            "DELETE FROM t WHERE id = 1", "FROM t |> SELECT id"})
     void shouldRoundTripStatements(String sql) throws JSQLParserException {
         Statement statement = CCJSqlParserUtil.parse(sql);
         FuryFactory factory = new FuryFactory();

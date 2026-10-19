@@ -22,7 +22,7 @@ class FillPerformanceTest {
     private IPerformanceModelService performanceModelService;
 
     @Test
-    void test(){
+    void test() {
         List<PerformanceModel> list = new ArrayList<>();
         for (int i = 0; i < 5000; i++) {
             list.add(new PerformanceModel());

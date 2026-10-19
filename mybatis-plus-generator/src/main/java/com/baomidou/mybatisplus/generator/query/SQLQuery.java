@@ -46,7 +46,8 @@ public class SQLQuery extends AbstractDatabaseQuery {
     public SQLQuery(@NotNull ConfigBuilder configBuilder) {
         super(configBuilder);
         this.dbQuery = new DbQueryDecorator(dataSourceConfig, strategyConfig);
-        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dbQuery.getConnection(), dataSourceConfig.getSchemaName());
+        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dbQuery.getConnection(),
+                dataSourceConfig.getSchemaName());
     }
 
     @NotNull
@@ -93,7 +94,8 @@ public class SQLQuery extends AbstractDatabaseQuery {
     protected void convertTableFields(@NotNull TableInfo tableInfo) {
         String tableName = tableInfo.getName();
         try {
-            Map<String, DatabaseMetaDataWrapper.Column> columnsInfoMap = databaseMetaDataWrapper.getColumnsInfo(tableName, false);
+            Map<String, DatabaseMetaDataWrapper.Column> columnsInfoMap = databaseMetaDataWrapper
+                    .getColumnsInfo(tableName, false);
             String tableFieldsSql = dbQuery.tableFieldsSql(tableName);
             Set<String> pkColumns = new HashSet<>();
             String primaryKeySql = dbQuery.primaryKeySql(dataSourceConfig, tableName);
@@ -120,14 +122,15 @@ public class SQLQuery extends AbstractDatabaseQuery {
                     field.primaryKey(dbQuery.isKeyIdentity(result.getResultSet()));
                     tableInfo.setHavePrimaryKey(true);
                     if (field.isKeyIdentityFlag() && entity.getIdType() != null) {
-                        LOGGER.warn("The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.", tableName);
+                        LOGGER.warn(
+                                "The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.",
+                                tableName);
                     }
                 }
                 // 处理ID
-                field.setColumnName(columnName)
-                    .setType(result.getStringResult(dbQuery.fieldType()))
-                    .setComment(result.getFiledComment())
-                    .setCustomMap(dbQuery.getCustomFields(result.getResultSet()));
+                field.setColumnName(columnName).setType(result.getStringResult(dbQuery.fieldType()))
+                        .setComment(result.getFiledComment())
+                        .setCustomMap(dbQuery.getCustomFields(result.getResultSet()));
                 IColumnType columnType = dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field);
                 field.setColumnType(columnType).setMetaInfo(metaInfo);
                 entity.handleTableFieldMetaInfo(tableInfo, field);

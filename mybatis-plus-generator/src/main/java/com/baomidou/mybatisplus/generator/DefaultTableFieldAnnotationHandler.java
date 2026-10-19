@@ -47,21 +47,25 @@ public class DefaultTableFieldAnnotationHandler implements ITableFieldAnnotation
             if (globalConfig.isSpringdoc()) {
                 //@Schema(description = "${field.comment}")
                 String displayName = String.format("@Schema(description = \"%s\")", comment);
-                annotationAttributesList.add(new AnnotationAttributes(displayName, "io.swagger.v3.oas.annotations.media.Schema"));
+                annotationAttributesList
+                        .add(new AnnotationAttributes(displayName, "io.swagger.v3.oas.annotations.media.Schema"));
             } else if (globalConfig.isSwagger()) {
                 String displayName = String.format("@ApiModelProperty(\"%s\")", comment);
-                annotationAttributesList.add(new AnnotationAttributes(displayName, "io.swagger.annotations.ApiModelProperty"));
+                annotationAttributesList
+                        .add(new AnnotationAttributes(displayName, "io.swagger.annotations.ApiModelProperty"));
             }
         }
         if (tableField.isKeyFlag()) {
             IdType idType = entity.getIdType();
             if (tableField.isKeyIdentityFlag()) {
                 //@TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
-                String displayName = String.format("@TableId(value = \"%s\", type = IdType.AUTO)", tableField.getAnnotationColumnName());
+                String displayName = String
+                        .format("@TableId(value = \"%s\", type = IdType.AUTO)", tableField.getAnnotationColumnName());
                 annotationAttributesList.add(new AnnotationAttributes(displayName, TableId.class.getName()));
             } else if (idType != null) {
                 //@TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
-                String displayName = String.format("@TableId(value = \"%s\", type = IdType.%s)", tableField.getAnnotationColumnName(), idType);
+                String displayName = String.format(
+                        "@TableId(value = \"%s\", type = IdType.%s)", tableField.getAnnotationColumnName(), idType);
                 annotationAttributesList.add(new AnnotationAttributes(displayName, TableId.class.getName()));
             } else if (tableField.isConvert()) {
                 //@TableId("${field.annotationColumnName}")
@@ -73,18 +77,26 @@ public class DefaultTableFieldAnnotationHandler implements ITableFieldAnnotation
             if (StringUtils.isNotBlank(fill)) {
                 if (tableField.isConvert()) {
                     //@TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
-                    String displayName = String.format("@TableField(value = \"%s\", fill = FieldFill.%s)", tableField.getAnnotationColumnName(), fill);
-                    annotationAttributesList.add(new AnnotationAttributes(displayName, com.baomidou.mybatisplus.annotation.TableField.class.getName()));
+                    String displayName = String.format(
+                            "@TableField(value = \"%s\", fill = FieldFill.%s)", tableField.getAnnotationColumnName(),
+                            fill);
+                    annotationAttributesList.add(
+                            new AnnotationAttributes(displayName,
+                                    com.baomidou.mybatisplus.annotation.TableField.class.getName()));
                 } else {
                     //@TableField(fill = FieldFill.${field.fill})
                     String displayName = String.format("@TableField(fill = FieldFill.%s)", fill);
-                    annotationAttributesList.add(new AnnotationAttributes(displayName, com.baomidou.mybatisplus.annotation.TableField.class.getName()));
+                    annotationAttributesList.add(
+                            new AnnotationAttributes(displayName,
+                                    com.baomidou.mybatisplus.annotation.TableField.class.getName()));
                 }
             } else {
                 if (tableField.isConvert()) {
                     //@TableField("${field.annotationColumnName}")
                     String displayName = String.format("@TableField(\"%s\")", tableField.getAnnotationColumnName());
-                    annotationAttributesList.add(new AnnotationAttributes(displayName, com.baomidou.mybatisplus.annotation.TableField.class.getName()));
+                    annotationAttributesList.add(
+                            new AnnotationAttributes(displayName,
+                                    com.baomidou.mybatisplus.annotation.TableField.class.getName()));
                 }
             }
             if (tableField.isVersionField()) {

@@ -117,7 +117,9 @@ public class PackageConfig {
     @NotNull
     public String joinPackage(String subPackage) {
         String parent = getParent();
-        return StringUtils.isBlank(parent) ? subPackage : (parent + (StringUtils.isBlank(subPackage) ? StringPool.EMPTY : StringPool.DOT + subPackage));
+        return StringUtils.isBlank(parent)
+                ? subPackage
+                : (parent + (StringUtils.isBlank(subPackage) ? StringPool.EMPTY : StringPool.DOT + subPackage));
     }
 
     /**
@@ -158,7 +160,7 @@ public class PackageConfig {
                     if (StringUtils.isNotBlank(customFile.getPackageName())) {
                         String name = customFile.getShortName();
                         if (StringUtils.isNotBlank(this.parent)
-                            && customFile.getPackageName().startsWith(this.parent)) {
+                                && customFile.getPackageName().startsWith(this.parent)) {
                             packageInfo.put(name, customFile.getPackageName());
                         } else {
                             packageInfo.put(name, this.joinPackage(customFile.getPackageName()));
@@ -325,11 +327,18 @@ public class PackageConfig {
 
         /**
          * 构建包配置对象
-         * <p>当指定{@link #parent(String)} 与 {@link #moduleName(String)}时,其他模块名字会加上这两个作为前缀</p>
+         * <p>
+         * 当指定{@link #parent(String)} 与 {@link #moduleName(String)}时,其他模块名字会加上这两个作为前缀
+         * </p>
          * <p>
          * 例如:
-         * <p>当设置 {@link #parent(String)},那么entity的配置为 {@link #getParent()}.{@link #getEntity()}</p>
-         * <p>当设置 {@link #parent(String)}与{@link #moduleName(String)},那么entity的配置为 {@link #getParent()}.{@link #getModuleName()}.{@link #getEntity()} </p>
+         * <p>
+         * 当设置 {@link #parent(String)},那么entity的配置为 {@link #getParent()}.{@link #getEntity()}
+         * </p>
+         * <p>
+         * 当设置 {@link #parent(String)}与{@link #moduleName(String)},那么entity的配置为
+         * {@link #getParent()}.{@link #getModuleName()}.{@link #getEntity()}
+         * </p>
          * </p>
          *
          * @return 包配置对象

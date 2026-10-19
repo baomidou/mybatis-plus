@@ -19,11 +19,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
 
-    private static final MybatisEnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(SexEnum.class);
+    private static final MybatisEnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(
+            SexEnum.class);
 
-    private static final MybatisEnumTypeHandler<GradeEnum> GRADE_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(GradeEnum.class);
+    private static final MybatisEnumTypeHandler<GradeEnum> GRADE_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(
+            GradeEnum.class);
 
-    private static final MybatisEnumTypeHandler<CharacterEnum> CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(CharacterEnum.class);
+    private static final MybatisEnumTypeHandler<CharacterEnum> CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(
+            CharacterEnum.class);
 
     @Test
     @Override
@@ -153,6 +156,7 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     @Getter
     @AllArgsConstructor
     enum CharacterEnum {
+
         MAN('1', "男"),
         WO_MAN('2', "女");
 

@@ -34,7 +34,6 @@ class TableInfoHelperTest {
         private String test;
     }
 
-
     @Data
     private static class ModelOne {
 
@@ -74,17 +73,20 @@ class TableInfoHelperTest {
 
     @Test
     void testExcludeProperty() {
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelThree.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelThree.class);
         assertThat(tableInfo.havePK()).isTrue();
         assertThat(tableInfo.getKeyProperty()).isEqualTo("id");
         assertThat(tableInfo.getFieldList().size()).isEqualTo(2);
         assertThat(tableInfo.getFieldList()).noneMatch(i -> i.getProperty().equals("test"));
 
-        tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour.class);
+        tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour.class);
         assertThat(tableInfo.getFieldList().size()).isEqualTo(2);
         assertThat(tableInfo.getFieldList()).noneMatch(i -> i.getProperty().equals("test"));
 
-        tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour2.class);
+        tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour2.class);
         assertThat(tableInfo.getFieldList().size()).isEqualTo(1);
         assertThat(tableInfo.getFieldList()).anyMatch(i -> i.getProperty().equals("name"));
         assertThat(tableInfo.havePK()).isTrue();
@@ -122,7 +124,6 @@ class TableInfoHelperTest {
 
     }
 
-
     @Data
     @MyTable
     private static class CustomAnnotation {
@@ -142,26 +143,38 @@ class TableInfoHelperTest {
     @Test
     void testCustomAnnotation() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
         List<Field> fieldList = TableInfoHelper.getAllFields(CustomAnnotation.class);
         Assertions.assertThat(fieldList.size()).isEqualTo(3);
-        Assertions.assertThat(TableInfoHelper.isExistTableId(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
-        Assertions.assertThat(TableInfoHelper.isExistTableLogic(CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields()))).isTrue();
-        TableFieldInfo logicDeleteFieldInfo = TableInfoHelper.getTableInfo(CustomAnnotation.class).getLogicDeleteFieldInfo();
+        Assertions
+                .assertThat(
+                        TableInfoHelper.isExistTableId(
+                                CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields())))
+                .isTrue();
+        Assertions
+                .assertThat(
+                        TableInfoHelper.isExistTableLogic(
+                                CustomAnnotation.class, Arrays.asList(CustomAnnotation.class.getDeclaredFields())))
+                .isTrue();
+        TableFieldInfo logicDeleteFieldInfo = TableInfoHelper.getTableInfo(CustomAnnotation.class)
+                .getLogicDeleteFieldInfo();
         Assertions.assertThat(logicDeleteFieldInfo).isNotNull();
         Assertions.assertThat(logicDeleteFieldInfo.getLogicDeleteValue()).isNotNull().isEqualTo("true");
         Assertions.assertThat(logicDeleteFieldInfo.getLogicNotDeleteValue()).isNotNull().isEqualTo("false");
         Assertions.assertThat(tableInfo.getTableName()).isEqualTo("test.custom_annotation");
     }
 
-
     @Test
     void testIsExistTableId() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), ModelOne.class);
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), ModelTwo.class);
-        Assertions.assertThat(TableInfoHelper.isExistTableId(ModelOne.class, Arrays.asList(ModelOne.class.getDeclaredFields()))).isTrue();
-        assertThat(TableInfoHelper.isExistTableId(ModelTwo.class, Arrays.asList(ModelTwo.class.getDeclaredFields()))).isFalse();
+        Assertions.assertThat(
+                TableInfoHelper.isExistTableId(ModelOne.class, Arrays.asList(ModelOne.class.getDeclaredFields())))
+                .isTrue();
+        assertThat(TableInfoHelper.isExistTableId(ModelTwo.class, Arrays.asList(ModelTwo.class.getDeclaredFields())))
+                .isFalse();
     }
 
     @Data
@@ -189,7 +202,8 @@ class TableInfoHelperTest {
 
     @Test
     void testPriorityTableId() {
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelSex.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelSex.class);
         assertThat(tableInfo.havePK()).isTrue();
         assertThat(tableInfo.getKeyProperty()).isEqualTo("realId");
     }
@@ -294,7 +308,8 @@ class TableInfoHelperTest {
         GlobalConfig config = GlobalConfigUtils.defaults();
         config.getDbConfig().setTablePrefix("ttt_");
         GlobalConfigUtils.setGlobalConfig(configuration, config);
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Table2.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(configuration, ""), Table2.class);
         assertThat(tableInfo.getTableName()).isEqualTo("ttt_xxx");
     }
 
@@ -309,17 +324,15 @@ class TableInfoHelperTest {
 
     }
 
-
     @Test
     void testTableAutoResultMap() {
         MybatisConfiguration configuration = new MybatisConfiguration();
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), AutoResultMapTable.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(configuration, ""), AutoResultMapTable.class);
         final ResultMap resultMap = tableInfo.getConfiguration().getResultMap(tableInfo.getResultMap());
 
-        assertThat(resultMap)
-            .isNotNull()
-            .extracting(ResultMap::getMappedColumns)
-            .matches((set) -> set.stream().noneMatch(StringUtils::isNotColumnName));
+        assertThat(resultMap).isNotNull().extracting(ResultMap::getMappedColumns)
+                .matches((set) -> set.stream().noneMatch(StringUtils::isNotColumnName));
     }
 
     @Data
@@ -335,7 +348,8 @@ class TableInfoHelperTest {
 
     @Test
     void testNewInstance() {
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelOne.class);
+        TableInfo tableInfo = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelOne.class);
         ModelOne entity = tableInfo.newInstance();
         tableInfo.setPropertyValue(entity, tableInfo.getKeyColumn(), 1L);
         assertThat(entity.id).isNotNull().isEqualTo(1L);

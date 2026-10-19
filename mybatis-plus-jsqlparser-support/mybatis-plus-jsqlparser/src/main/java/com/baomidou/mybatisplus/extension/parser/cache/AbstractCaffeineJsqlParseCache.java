@@ -34,6 +34,7 @@ import java.util.function.Consumer;
  * @since 2023-08-08
  */
 public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
+
     protected final Log logger = LogFactory.getLog(this.getClass());
     protected final Cache<String, byte[]> cache;
     @Setter
@@ -94,7 +95,7 @@ public abstract class AbstractCaffeineJsqlParseCache implements JsqlParseCache {
     /**
      * 存储解析对象
      *
-     * @param sql   执行 SQL
+     * @param sql 执行 SQL
      * @param value 解析对象
      */
     protected void put(String sql, Object value) {

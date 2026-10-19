@@ -34,6 +34,7 @@ public class OracleDdlGenerator implements IDdlGenerator {
 
     /**
      * 默认使用当前用户模式
+     * 
      * @since 3.5.13
      */
     private String schema;
@@ -47,6 +48,7 @@ public class OracleDdlGenerator implements IDdlGenerator {
 
     /**
      * 基于当前用户模式实例
+     * 
      * @return OracleDdlGenerator
      */
     public static IDdlGenerator newInstance() {
@@ -63,15 +65,16 @@ public class OracleDdlGenerator implements IDdlGenerator {
             tableName = tableName.substring(index + 1);
         }
         tableName = tableName.replace(StringPool.QUOTE, StringPool.EMPTY);
-        try (ResultSet resultSet = metaData.getTables(connection.getCatalog(), schema, tableName, new String[]{"TABLE"})) {
+        try (ResultSet resultSet = metaData
+                .getTables(connection.getCatalog(), schema, tableName, new String[]{"TABLE"})) {
             return resultSet.next();
         }
     }
 
     @Override
     public boolean existTable(String databaseName, Function<String, Boolean> executeFunction) {
-        return executeFunction.apply("SELECT COUNT(1) AS NUM FROM user_tables WHERE table_name='"
-            + getDdlHistory() + "'");
+        return executeFunction
+                .apply("SELECT COUNT(1) AS NUM FROM user_tables WHERE table_name='" + getDdlHistory() + "'");
     }
 
     @Override

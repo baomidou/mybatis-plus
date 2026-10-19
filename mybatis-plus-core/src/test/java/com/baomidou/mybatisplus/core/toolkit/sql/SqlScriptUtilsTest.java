@@ -14,7 +14,7 @@ class SqlScriptUtilsTest {
 
     @Test
     void convertParamMapping() {
-        assertThat(SqlScriptUtils.convertParamMapping(LocalDateTypeHandler.class, JdbcType.DATE,2))
-            .isEqualTo("typeHandler=org.apache.ibatis.type.LocalDateTypeHandler,jdbcType=DATE,numericScale=2");
+        assertThat(SqlScriptUtils.convertParamMapping(LocalDateTypeHandler.class, JdbcType.DATE, 2))
+                .isEqualTo("typeHandler=org.apache.ibatis.type.LocalDateTypeHandler,jdbcType=DATE,numericScale=2");
     }
 }

@@ -26,6 +26,7 @@ class MetadataTest {
     @Data
     @AllArgsConstructor
     private static class Metadata {
+
         private String name;
         private String type;
         private String sourceType;
@@ -33,14 +34,34 @@ class MetadataTest {
 
     @Test
     void checkSpringConfigurationMetadataJson() throws IOException {
-        DocumentContext documentContext = JsonPath.parse(new FileSystemResource("build/classes/java/main/META-INF/spring-configuration-metadata.json").getInputStream());
+        DocumentContext documentContext = JsonPath.parse(
+                new FileSystemResource("build/classes/java/main/META-INF/spring-configuration-metadata.json")
+                        .getInputStream());
         List<Map<String, String>> properties = documentContext.read("$.properties");
-        Map<String, Metadata> metadataMap = properties.stream().map(map -> new Metadata(map.get("name"), map.get("type"), map.get("sourceType"))).collect(Collectors.toMap(Metadata::getName, metadata -> metadata));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package", String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.global-config.db-config.table-underline"), new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(), GlobalConfig.DbConfig.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location", String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"), new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"), new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"), new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(), MybatisPlusProperties.CoreConfiguration.class.getName()));
+        Map<String, Metadata> metadataMap = properties.stream()
+                .map(map -> new Metadata(map.get("name"), map.get("type"), map.get("sourceType")))
+                .collect(Collectors.toMap(Metadata::getName, metadata -> metadata));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package",
+                        String.class.getName(), MybatisPlusProperties.class.getName()));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.global-config.db-config.table-underline"),
+                new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(),
+                        GlobalConfig.DbConfig.class.getName()));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location",
+                        String.class.getName(), MybatisPlusProperties.class.getName()));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"),
+                new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(),
+                        MybatisPlusProperties.CoreConfiguration.class.getName()));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"),
+                new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(),
+                        MybatisPlusProperties.CoreConfiguration.class.getName()));
+        Assertions.assertEquals(
+                metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"),
+                new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(),
+                        MybatisPlusProperties.CoreConfiguration.class.getName()));
     }
 }

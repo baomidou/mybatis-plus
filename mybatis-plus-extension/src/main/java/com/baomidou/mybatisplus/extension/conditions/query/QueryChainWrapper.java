@@ -33,7 +33,7 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings({"serial"})
 public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
-    implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
+        implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
     private final BaseMapper<T> baseMapper;
     private final Class<T> entityClass;
@@ -84,12 +84,8 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
         return entityClass;
     }
 
-
-    public LambdaQueryChainWrapper<T> lambda(){
-        return new LambdaQueryChainWrapper<>(
-            baseMapper,
-            wrapperChildren.lambda()
-        );
+    public LambdaQueryChainWrapper<T> lambda() {
+        return new LambdaQueryChainWrapper<>(baseMapper, wrapperChildren.lambda());
     }
 
 }

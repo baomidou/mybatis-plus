@@ -76,7 +76,7 @@ public class MybatisPlusProperties {
     private String typeAliasesPackage;
 
     /**
-     * The super class for filtering type alias.
+     * The super class for filtering type alias. <br>
      * If this not specifies, the MyBatis deal as type alias all classes that searched from typeAliasesPackage.
      */
     private Class<?> typeAliasesSuperType;
@@ -109,7 +109,7 @@ public class MybatisPlusProperties {
     private Properties configurationProperties;
 
     /**
-     * A Configuration object for customize default settings. If {@link #configLocation}
+     * A Configuration object for customize default settings. If {@link #configLocation} <br>
      * is specified, this property is not used.
      */
     private CoreConfiguration configuration;
@@ -120,10 +120,9 @@ public class MybatisPlusProperties {
     @NestedConfigurationProperty
     private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
-
     public Resource[] resolveMapperLocations() {
         return Stream.of(Optional.ofNullable(this.mapperLocations).orElse(new String[0]))
-            .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
+                .flatMap(location -> Stream.of(getResources(location))).toArray(Resource[]::new);
     }
 
     private Resource[] getResources(String location) {
@@ -135,7 +134,7 @@ public class MybatisPlusProperties {
     }
 
     /**
-     * The configuration properties for mybatis core module.
+     * The configuration properties for mybatis core module. <br>
      * 虽然为高版本新增开始,但为了美化配置提示,这里也在SpringBoot2上使用.
      *
      * @since 3.0.0
@@ -155,13 +154,15 @@ public class MybatisPlusProperties {
         private Boolean safeResultHandlerEnabled;
 
         /**
-         * Enables automatic mapping from classic database column names A_COLUMN to camel case classic Java property names
+         * Enables automatic mapping from classic database column names A_COLUMN to camel case classic Java property
+         * names <br>
          * aColumn. Default is false.
          */
         private Boolean mapUnderscoreToCamelCase;
 
         /**
-         * When enabled, any method call will load all the lazy properties of the object. Otherwise, each property is loaded
+         * When enabled, any method call will load all the lazy properties of the object. Otherwise, each property is
+         * loaded <br>
          * on demand (see also lazyLoadTriggerMethods). Default is false.
          */
         private Boolean aggressiveLazyLoading;
@@ -173,13 +174,15 @@ public class MybatisPlusProperties {
         private Boolean multipleResultSetsEnabled;
 
         /**
-         * Allows JDBC support for generated keys. A compatible driver is required. This setting forces generated keys to be
+         * Allows JDBC support for generated keys. A compatible driver is required. This setting forces generated keys
+         * to be <br>
          * used if set to true, as some drivers deny compatibility but still work (e.g. Derby). Default is false.
          */
         private Boolean useGeneratedKeys;
 
         /**
-         * Uses the column label instead of the column name. Different drivers behave differently in this respect. Refer to
+         * Uses the column label instead of the column name. Different drivers behave differently in this respect. Refer
+         * to <br>
          * the driver documentation, or test out both modes to determine how your driver behaves. Default is true.
          */
         private Boolean useColumnLabel;
@@ -191,7 +194,8 @@ public class MybatisPlusProperties {
 
         /**
          * Specifies if setters or map's put method will be called when a retrieved value is null. It is useful when you
-         * rely on Map.keySet() or null value initialization. Note primitives such as (int,boolean,etc.) will not be set to
+         * rely on Map.keySet() or null value initialization. Note primitives such as (int,boolean,etc.) will not be set
+         * to <br>
          * null. Default is false.
          */
         private Boolean callSettersOnNulls;
@@ -203,14 +207,17 @@ public class MybatisPlusProperties {
         private Boolean useActualParamName;
 
         /**
-         * MyBatis, by default, returns null when all the columns of a returned row are NULL. When this setting is enabled,
-         * MyBatis returns an empty instance instead. Note that it is also applied to nested results (i.e. collection and
+         * MyBatis, by default, returns null when all the columns of a returned row are NULL. When this setting is
+         * enabled, <br>
+         * MyBatis returns an empty instance instead. Note that it is also applied to nested results (i.e. collection
+         * and <br>
          * association). Default is false.
          */
         private Boolean returnInstanceForEmptyRow;
 
         /**
-         * Removes extra whitespace characters from the SQL. Note that this also affects literal strings in SQL. Default is
+         * Removes extra whitespace characters from the SQL. Note that this also affects literal strings in SQL. Default
+         * is <br>
          * false.
          */
         private Boolean shrinkWhitespacesInSql;
@@ -221,13 +228,15 @@ public class MybatisPlusProperties {
         private Boolean nullableOnForEach;
 
         /**
-         * When applying constructor auto-mapping, argument name is used to search the column to map instead of relying on
+         * When applying constructor auto-mapping, argument name is used to search the column to map instead of relying
+         * on <br>
          * the column order. Default is false.
          */
         private Boolean argNameBasedConstructorAutoMapping;
 
         /**
-         * Globally enables or disables lazy loading. When enabled, all relations will be lazily loaded. This value can be
+         * Globally enables or disables lazy loading. When enabled, all relations will be lazily loaded. This value can
+         * be <br>
          * superseded for a specific relation by using the fetchType attribute on it. Default is False.
          */
         private Boolean lazyLoadingEnabled;
@@ -238,22 +247,27 @@ public class MybatisPlusProperties {
         private Integer defaultStatementTimeout;
 
         /**
-         * Sets the driver a hint as to control fetching size for return results. This parameter value can be overridden by a
+         * Sets the driver a hint as to control fetching size for return results. This parameter value can be overridden
+         * by a <br>
          * query setting.
          */
         private Integer defaultFetchSize;
 
         /**
          * MyBatis uses local cache to prevent circular references and speed up repeated nested queries. By default,
-         * (SESSION) all queries executed during a session are cached. If localCacheScope=STATEMENT local session will be
+         * (SESSION) all queries executed during a session are cached. If localCacheScope=STATEMENT local session will
+         * be <br>
          * used just for statement execution, no data will be shared between two different calls to the same SqlSession.
+         * <br>
          * Default is SESSION.
          */
         private LocalCacheScope localCacheScope;
 
         /**
-         * Specifies the JDBC type for null values when no specific JDBC type was provided for the parameter. Some drivers
-         * require specifying the column JDBC type but others work with generic values like NULL, VARCHAR or OTHER. Default
+         * Specifies the JDBC type for null values when no specific JDBC type was provided for the parameter. Some
+         * drivers <br>
+         * require specifying the column JDBC type but others work with generic values like NULL, VARCHAR or OTHER.
+         * Default <br>
          * is OTHER.
          */
         private JdbcType jdbcTypeForNull;
@@ -264,14 +278,17 @@ public class MybatisPlusProperties {
         private ResultSetType defaultResultSetType;
 
         /**
-         * Configures the default executor. SIMPLE executor does nothing special. REUSE executor reuses prepared statements.
+         * Configures the default executor. SIMPLE executor does nothing special. REUSE executor reuses prepared
+         * statements. <br>
          * BATCH executor reuses statements and batches updates. Default is SIMPLE.
          */
         private ExecutorType defaultExecutorType;
 
         /**
-         * Specifies if and how MyBatis should automatically map columns to fields/properties. NONE disables auto-mapping.
+         * Specifies if and how MyBatis should automatically map columns to fields/properties. NONE disables
+         * auto-mapping. <br>
          * PARTIAL will only auto-map results with no nested result mappings defined inside. FULL will auto-map result
+         * <br>
          * mappings of any complexity (containing nested or otherwise). Default is PARTIAL.
          */
         private AutoMappingBehavior autoMappingBehavior;
@@ -293,7 +310,8 @@ public class MybatisPlusProperties {
         private Set<String> lazyLoadTriggerMethods;
 
         /**
-         * Specifies which logging implementation MyBatis should use. If this setting is not present logging implementation
+         * Specifies which logging implementation MyBatis should use. If this setting is not present logging
+         * implementation <br>
          * will be discovered.
          */
         private Class<? extends Log> logImpl;
@@ -304,7 +322,8 @@ public class MybatisPlusProperties {
         private Class<? extends VFS> vfsImpl;
 
         /**
-         * Specifies a sql provider class that holds provider method. This class apply to the type(or value) attribute on
+         * Specifies a sql provider class that holds provider method. This class apply to the type(or value) attribute
+         * on <br>
          * sql provider annotation(e.g. @SelectProvider), when these attribute was omitted.
          */
         private Class<?> defaultSqlProviderType;
@@ -315,8 +334,10 @@ public class MybatisPlusProperties {
         Class<? extends TypeHandler> defaultEnumTypeHandler;
 
         /**
-         * Specifies the class that provides an instance of Configuration. The returned Configuration instance is used to
-         * load lazy properties of deserialized objects. This class must have a method with a signature static Configuration
+         * Specifies the class that provides an instance of Configuration. The returned Configuration instance is used
+         * to <br>
+         * load lazy properties of deserialized objects. This class must have a method with a signature static
+         * Configuration <br>
          * getConfiguration().
          */
         private Class<?> configurationFactory;
@@ -353,7 +374,8 @@ public class MybatisPlusProperties {
             Optional.ofNullable(getReturnInstanceForEmptyRow()).ifPresent(target::setReturnInstanceForEmptyRow);
             Optional.ofNullable(getShrinkWhitespacesInSql()).ifPresent(target::setShrinkWhitespacesInSql);
             Optional.ofNullable(getNullableOnForEach()).ifPresent(target::setNullableOnForEach);
-            Optional.ofNullable(getArgNameBasedConstructorAutoMapping()).ifPresent(target::setArgNameBasedConstructorAutoMapping);
+            Optional.ofNullable(getArgNameBasedConstructorAutoMapping())
+                    .ifPresent(target::setArgNameBasedConstructorAutoMapping);
             Optional.ofNullable(getLazyLoadingEnabled()).ifPresent(target::setLazyLoadingEnabled);
             Optional.ofNullable(getLogPrefix()).ifPresent(target::setLogPrefix);
             Optional.ofNullable(getLazyLoadTriggerMethods()).ifPresent(target::setLazyLoadTriggerMethods);
@@ -364,7 +386,8 @@ public class MybatisPlusProperties {
             Optional.ofNullable(getDefaultResultSetType()).ifPresent(target::setDefaultResultSetType);
             Optional.ofNullable(getDefaultExecutorType()).ifPresent(target::setDefaultExecutorType);
             Optional.ofNullable(getAutoMappingBehavior()).ifPresent(target::setAutoMappingBehavior);
-            Optional.ofNullable(getAutoMappingUnknownColumnBehavior()).ifPresent(target::setAutoMappingUnknownColumnBehavior);
+            Optional.ofNullable(getAutoMappingUnknownColumnBehavior())
+                    .ifPresent(target::setAutoMappingUnknownColumnBehavior);
             Optional.ofNullable(getVariables()).ifPresent(target::setVariables);
             Optional.ofNullable(getLogImpl()).ifPresent(target::setLogImpl);
             Optional.ofNullable(getVfsImpl()).ifPresent(target::setVfsImpl);

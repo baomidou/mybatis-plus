@@ -61,7 +61,8 @@ public class SpringCompatibleSet implements CompatibleSet {
     @SneakyThrows
     @Override
     public boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc) {
-        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager
+                .getResource(sqlSessionFactory);
         boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
         if (sqlSessionHolder != null) {
             SqlSession sqlSession = sqlSessionHolder.getSqlSession();
@@ -82,9 +83,10 @@ public class SpringCompatibleSet implements CompatibleSet {
             sqlSession.rollback();
             Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
             if (unwrapped instanceof PersistenceException) {
-                MyBatisExceptionTranslator myBatisExceptionTranslator
-                    = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
-                Throwable throwable = myBatisExceptionTranslator.translateExceptionIfPossible((PersistenceException) unwrapped);
+                MyBatisExceptionTranslator myBatisExceptionTranslator = new MyBatisExceptionTranslator(
+                        sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
+                Throwable throwable = myBatisExceptionTranslator
+                        .translateExceptionIfPossible((PersistenceException) unwrapped);
                 if (throwable != null) {
                     throw throwable;
                 }
@@ -108,7 +110,8 @@ public class SpringCompatibleSet implements CompatibleSet {
             ObjectProvider<T> provider = applicationContext.getBeanProvider(clz);
             return provider.getIfAvailable();
         }
-        LOG.warn("The applicationContext property is empty. Please initialize it via the static field of applicationContext in SpringContextHolder or by calling the setApplicationContext method of MybatisSqlSessionFactoryBean.");
+        LOG.warn(
+                "The applicationContext property is empty. Please initialize it via the static field of applicationContext in SpringContextHolder or by calling the setApplicationContext method of MybatisSqlSessionFactoryBean.");
         return null;
     }
 

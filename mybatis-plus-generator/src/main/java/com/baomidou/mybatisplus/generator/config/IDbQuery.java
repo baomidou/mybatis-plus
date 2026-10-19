@@ -25,6 +25,7 @@ import java.sql.SQLException;
  * @since 2018-01-16
  */
 public interface IDbQuery {
+
     /**
      * 表信息查询 SQL
      */
@@ -83,7 +84,7 @@ public interface IDbQuery {
      * 获取主键sql
      *
      * @param dataSourceConfig 数据库配置信息
-     * @param tableName        表名
+     * @param tableName 表名
      * @return 主键查询sql
      * @since 3.5.7
      */

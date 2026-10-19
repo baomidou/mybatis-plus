@@ -48,7 +48,6 @@ public abstract class AbstractDatabaseQuery implements IDatabaseQuery {
 
     protected final GlobalConfig globalConfig;
 
-
     public AbstractDatabaseQuery(@NotNull ConfigBuilder configBuilder) {
         this.configBuilder = configBuilder;
         this.dataSourceConfig = configBuilder.getDataSourceConfig();
@@ -66,14 +65,15 @@ public abstract class AbstractDatabaseQuery implements IDatabaseQuery {
         return dataSourceConfig;
     }
 
-    protected void filter(List<TableInfo> tableList, List<TableInfo> includeTableList, List<TableInfo> excludeTableList) {
+    protected void filter(List<TableInfo> tableList, List<TableInfo> includeTableList,
+            List<TableInfo> excludeTableList) {
         boolean isInclude = !strategyConfig.getInclude().isEmpty();
         boolean isExclude = !strategyConfig.getExclude().isEmpty();
         if (isExclude || isInclude) {
-            Map<String, String> notExistTables = new HashSet<>(isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude())
-                .stream()
-                .filter(s -> !ConfigBuilder.matcherRegTable(s))
-                .collect(Collectors.toMap(String::toLowerCase, s -> s, (o, n) -> n));
+            Map<String, String> notExistTables = new HashSet<>(
+                    isExclude ? strategyConfig.getExclude() : strategyConfig.getInclude()).stream()
+                    .filter(s -> !ConfigBuilder.matcherRegTable(s))
+                    .collect(Collectors.toMap(String::toLowerCase, s -> s, (o, n) -> n));
             // 将已经存在的表移除，获取配置中数据库不存在的表
             for (TableInfo tabInfo : tableList) {
                 if (notExistTables.isEmpty()) {
@@ -83,7 +83,9 @@ public abstract class AbstractDatabaseQuery implements IDatabaseQuery {
                 notExistTables.remove(tabInfo.getName().toLowerCase());
             }
             if (!notExistTables.isEmpty()) {
-                LOGGER.warn("Table [{}] does not exist in the database!", String.join(StringPool.COMMA, notExistTables.values()));
+                LOGGER.warn(
+                        "Table [{}] does not exist in the database!",
+                        String.join(StringPool.COMMA, notExistTables.values()));
             }
             // 需要反向生成的表信息
             if (isExclude) {

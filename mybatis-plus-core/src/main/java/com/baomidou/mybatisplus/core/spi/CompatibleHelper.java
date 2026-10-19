@@ -23,7 +23,9 @@ import java.util.ServiceLoader;
 
 /**
  * 兼容处理辅助类
- * <p>默认加载使用SPI实现,需要手动指定请使用{@link #setCompatibleSet(CompatibleSet)}</p>
+ * <p>
+ * 默认加载使用SPI实现,需要手动指定请使用{@link #setCompatibleSet(CompatibleSet)}
+ * </p>
  */
 public class CompatibleHelper {
 
@@ -32,7 +34,8 @@ public class CompatibleHelper {
     private static CompatibleSet COMPATIBLE_SET = null;
 
     static {
-        ServiceLoader<CompatibleSet> loader = ServiceLoader.load(CompatibleSet.class, CompatibleSet.class.getClassLoader());
+        ServiceLoader<CompatibleSet> loader = ServiceLoader
+                .load(CompatibleSet.class, CompatibleSet.class.getClassLoader());
         int size = 0;
         for (CompatibleSet compatibleSet : loader) {
             size++;
@@ -66,13 +69,17 @@ public class CompatibleHelper {
 
     /**
      * 获取{@link com.baomidou.mybatisplus.core.spi.CompatibleSet}实例
-     * <p>当为空时会抛出异常,需要检查是否为空请使用{@link #hasCompatibleSet()}</p>
+     * <p>
+     * 当为空时会抛出异常,需要检查是否为空请使用{@link #hasCompatibleSet()}
+     * </p>
      *
      * @return {@link com.baomidou.mybatisplus.core.spi.CompatibleSet}
      * @see #setCompatibleSet(CompatibleSet)
      */
     public static CompatibleSet getCompatibleSet() {
-        Assert.isTrue(hasCompatibleSet(), "Please add specific implementation dependencies or use the setCompatibleSet method to specify");
+        Assert.isTrue(
+                hasCompatibleSet(),
+                "Please add specific implementation dependencies or use the setCompatibleSet method to specify");
         return COMPATIBLE_SET;
     }
 

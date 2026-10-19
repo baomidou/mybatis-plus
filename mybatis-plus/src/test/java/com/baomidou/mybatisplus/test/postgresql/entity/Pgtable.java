@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Pgtable {
+
     @TableId(type = IdType.AUTO)
     private Long id;
     private String compName;

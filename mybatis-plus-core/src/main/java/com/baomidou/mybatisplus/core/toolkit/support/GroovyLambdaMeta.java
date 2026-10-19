@@ -24,8 +24,8 @@ import java.lang.reflect.Proxy;
 /**
  * 在 Groovy 脚本中通过 {@code ::} 创建的方法引用（MethodClosure）的元信息解析。
  * <p>
- * Groovy 将 MethodClosure 包装为 {@link java.lang.reflect.Proxy}，其 {@link InvocationHandler}
- * 提供 {@code getDelegate()} 方法可返回底层的 MethodClosure 对象，再从中通过
+ * Groovy 将 MethodClosure 包装为 {@link java.lang.reflect.Proxy}，其 {@link InvocationHandler} <br>
+ * 提供 {@code getDelegate()} 方法可返回底层的 MethodClosure 对象，再从中通过 <br>
  * {@code getMethod()}（方法名）和 {@code getOwner()}（所属类/实例）解析出 Lambda 元信息。
  *
  * @author miemie
@@ -47,12 +47,13 @@ public class GroovyLambdaMeta implements LambdaMeta {
             Object owner = getOwner.invoke(delegate);
             this.clazz = (owner instanceof Class) ? (Class<?>) owner : owner.getClass();
         } catch (NoSuchMethodException e) {
-            throw new MybatisPlusException("Unsupported proxy type for Groovy lambda extraction: "
-                + handler.getClass().getName()
-                + ". Expected a Groovy ConvertedClosure handler exposing getDelegate().", e);
+            throw new MybatisPlusException(
+                    "Unsupported proxy type for Groovy lambda extraction: " + handler.getClass().getName()
+                            + ". Expected a Groovy ConvertedClosure handler exposing getDelegate().",
+                    e);
         } catch (Exception e) {
-            throw new MybatisPlusException("Failed to extract Groovy lambda meta from proxy handler: "
-                + handler.getClass().getName(), e);
+            throw new MybatisPlusException(
+                    "Failed to extract Groovy lambda meta from proxy handler: " + handler.getClass().getName(), e);
         }
     }
 

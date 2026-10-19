@@ -46,11 +46,7 @@ public class SqlRunnerInjector {
      *
      * @since 3.5.12
      */
-    public static final String SQL_SCRIPT = "<script>" +
-        "${sql}\n" +
-        "<if test=\"true\"></if>" +
-        "</script>";
-
+    public static final String SQL_SCRIPT = "<script>" + "${sql}\n" + "<if test=\"true\"></if>" + "</script>";
 
     public void inject(Configuration configuration) {
         this.configuration = configuration;
@@ -77,17 +73,19 @@ public class SqlRunnerInjector {
      * 创建查询MappedStatement
      *
      * @param mappedStatement mappedStatement
-     * @param sqlSource       执行的sqlSource
-     * @param resultType      返回的结果类型
+     * @param sqlSource 执行的sqlSource
+     * @param resultType 返回的结果类型
      */
     private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
-        MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
-            .resultMaps(new ArrayList<ResultMap>() {
-                {
-                    add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<>(0))
-                        .build());
-                }
-            }).build();
+        MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource,
+                SqlCommandType.SELECT).resultMaps(new ArrayList<ResultMap>() {
+
+                    {
+                        add(
+                                new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<>(0))
+                                        .build());
+                    }
+                }).build();
         // 缓存
         configuration.addMappedStatement(ms);
     }
@@ -96,17 +94,20 @@ public class SqlRunnerInjector {
      * 创建一个MappedStatement
      *
      * @param mappedStatement mappedStatement
-     * @param sqlSource       执行的sqlSource
-     * @param sqlCommandType  执行的sqlCommandType
+     * @param sqlSource 执行的sqlSource
+     * @param sqlCommandType 执行的sqlCommandType
      */
-    private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
-        MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
-            new ArrayList<ResultMap>() {
-                {
-                    add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<>(0))
-                        .build());
-                }
-            }).build();
+    private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource,
+            SqlCommandType sqlCommandType) {
+        MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType)
+                .resultMaps(new ArrayList<ResultMap>() {
+
+                    {
+                        add(
+                                new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<>(0))
+                                        .build());
+                    }
+                }).build();
         // 缓存
         configuration.addMappedStatement(ms);
     }

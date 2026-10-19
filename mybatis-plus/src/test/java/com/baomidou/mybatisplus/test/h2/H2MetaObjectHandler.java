@@ -6,7 +6,6 @@ import org.apache.ibatis.reflection.MetaObject;
 import java.sql.Timestamp;
 import java.util.Date;
 
-
 /**
  * 测试，自定义元对象字段填充控制器，实现公共字段自动写入
  *

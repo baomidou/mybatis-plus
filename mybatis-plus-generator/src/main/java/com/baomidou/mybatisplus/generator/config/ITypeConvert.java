@@ -32,7 +32,7 @@ public interface ITypeConvert {
      * 执行类型转换
      *
      * @param globalConfig 全局配置
-     * @param tableField   字段列信息
+     * @param tableField 字段列信息
      * @return ignore
      */
     default IColumnType processTypeConvert(@NotNull GlobalConfig globalConfig, @NotNull TableField tableField) {
@@ -43,7 +43,7 @@ public interface ITypeConvert {
      * 执行类型转换
      *
      * @param globalConfig 全局配置
-     * @param fieldType    字段类型
+     * @param fieldType 字段类型
      * @return ignore
      */
     IColumnType processTypeConvert(@NotNull GlobalConfig globalConfig, @NotNull String fieldType);

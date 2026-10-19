@@ -49,7 +49,7 @@ public class MybatisPlusConfig {
          */
         configuration.setMapUnderscoreToCamelCase(true);
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
-        configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
+        configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class); //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
 
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
@@ -66,12 +66,14 @@ public class MybatisPlusConfig {
              * 测试注入自定义方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration,
+                    Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
-//                methodList.add(new LogicDeleteByIdWithFill());
+                //                methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
-                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
-                    || t.isLogicDelete() || t.getProperty().equals("version"))));
+                methodList.add(
+                        new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE || t.isLogicDelete()
+                                || t.getProperty().equals("version"))));
                 return methodList;
             }
         });
@@ -83,14 +85,12 @@ public class MybatisPlusConfig {
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
         conf.setEnableSqlRunner(true)
-            .setDbConfig(new GlobalConfig.DbConfig()
-                .setLogicDeleteValue("1")
-                .setLogicNotDeleteValue("0"));
+                .setDbConfig(new GlobalConfig.DbConfig().setLogicDeleteValue("1").setLogicNotDeleteValue("0"));
         return conf;
     }
 
     @Bean
-    public TransactionTemplate transactionTemplate(PlatformTransactionManager platformTransactionManager){
+    public TransactionTemplate transactionTemplate(PlatformTransactionManager platformTransactionManager) {
         return new TransactionTemplate(platformTransactionManager);
     }
 

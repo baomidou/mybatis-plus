@@ -59,27 +59,20 @@ public class DmTypeConvert implements ITypeConvert {
      * <p>
      * 多媒体数据类型: TEXT,LONGVARCHAR,CLOB,BLOB,IMAGE
      *
-     * @param config    全局配置
+     * @param config 全局配置
      * @param fieldType 字段类型
      * @return 对应的数据类型
      */
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
-        return TypeConverts.use(fieldType)
-            .test(containsAny("char", "text").then(STRING))
-            .test(contains("number").then(DmTypeConvert::toNumberType))
-            .test(containsAny("numeric", "dec", "money").then(BIG_DECIMAL))
-            .test(containsAny("bit", "bool").then(BOOLEAN))
-            .test(contains("bigint").then(BIG_INTEGER))
-            .test(containsAny("int", "byte").then(INTEGER))
-            .test(contains("binary").then(BYTE_ARRAY))
-            .test(contains("float").then(FLOAT))
-            .test(containsAny("double", "real").then(DOUBLE))
-            .test(containsAny("date", "time").then(DATE))
-            .test(contains("clob").then(CLOB))
-            .test(contains("blob").then(BLOB))
-            .test(contains("image").then(BYTE_ARRAY))
-            .or(STRING);
+        return TypeConverts.use(fieldType).test(containsAny("char", "text").then(STRING))
+                .test(contains("number").then(DmTypeConvert::toNumberType))
+                .test(containsAny("numeric", "dec", "money").then(BIG_DECIMAL))
+                .test(containsAny("bit", "bool").then(BOOLEAN)).test(contains("bigint").then(BIG_INTEGER))
+                .test(containsAny("int", "byte").then(INTEGER)).test(contains("binary").then(BYTE_ARRAY))
+                .test(contains("float").then(FLOAT)).test(containsAny("double", "real").then(DOUBLE))
+                .test(containsAny("date", "time").then(DATE)).test(contains("clob").then(CLOB))
+                .test(contains("blob").then(BLOB)).test(contains("image").then(BYTE_ARRAY)).or(STRING);
     }
 
     private static IColumnType toNumberType(String typeName) {

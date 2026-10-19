@@ -35,6 +35,7 @@ class MybatisMapperAnnotationBuilderTest {
 
     @Data
     private static class A {
+
         private Long id;
     }
 

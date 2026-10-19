@@ -37,14 +37,16 @@ import java.util.Map;
  *
  * @author nieqiurong 2022/5/11.
  * @see ITypeConvertHandler 类型转换器(如果默认逻辑不能满足，可实现此接口重写类型转换)
- * <p>
- * 测试通过的数据库：H2、Mysql-5.7.37、Mysql-8.0.25、PostgreSQL-11.15、PostgreSQL-14.1、Oracle-11.2.0.1.0、DM8
- * </p>
- * <p>
- * FAQ:
- * 1.Mysql无法读取表注释: 链接增加属性 remarks=true&useInformationSchema=true 或者通过{@link DataSourceConfig.Builder#addConnectionProperty(String, String)}设置
- * 2.Oracle无法读取注释: 增加属性remarks=true，也有些驱动版本说是增加remarksReporting=true {@link DataSourceConfig.Builder#addConnectionProperty(String, String)}
- * </p>
+ *      <p>
+ *      测试通过的数据库：H2、Mysql-5.7.37、Mysql-8.0.25、PostgreSQL-11.15、PostgreSQL-14.1、Oracle-11.2.0.1.0、DM8
+ *      </p>
+ *      <p>
+ *      FAQ: <br>
+ *      1.Mysql无法读取表注释: 链接增加属性 remarks=true&useInformationSchema=true
+ *      或者通过{@link DataSourceConfig.Builder#addConnectionProperty(String, String)}设置 <br>
+ *      2.Oracle无法读取注释: 增加属性remarks=true，也有些驱动版本说是增加remarksReporting=true
+ *      {@link DataSourceConfig.Builder#addConnectionProperty(String, String)}
+ *      </p>
  * @since 3.5.3
  */
 public class DefaultQuery extends AbstractDatabaseQuery {
@@ -55,7 +57,8 @@ public class DefaultQuery extends AbstractDatabaseQuery {
     public DefaultQuery(@NotNull ConfigBuilder configBuilder) {
         super(configBuilder);
         typeRegistry = new TypeRegistry(configBuilder.getGlobalConfig());
-        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig.getConn(), dataSourceConfig.getSchemaName());
+        this.databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig.getConn(),
+                dataSourceConfig.getSchemaName());
     }
 
     @Override
@@ -105,7 +108,9 @@ public class DefaultQuery extends AbstractDatabaseQuery {
         }
         String[] types = skipView ? new String[]{"TABLE"} : new String[]{"TABLE", "VIEW"};
         if (StringUtils.isNotBlank(dataSourceConfig.getUrl()) && DbType.POSTGRE_SQL == dataSourceConfig.getDbType()) {
-            types = skipView ? new String[]{"TABLE", "PARTITIONED TABLE"} : new String[]{"TABLE", "VIEW", "PARTITIONED TABLE"};
+            types = skipView
+                    ? new String[]{"TABLE", "PARTITIONED TABLE"}
+                    : new String[]{"TABLE", "VIEW", "PARTITIONED TABLE"};
         }
         return databaseMetaDataWrapper.getTables(tableNamePattern, types);
     }
@@ -123,7 +128,9 @@ public class DefaultQuery extends AbstractDatabaseQuery {
                 field.primaryKey(columnInfo.isAutoIncrement());
                 tableInfo.setHavePrimaryKey(true);
                 if (field.isKeyIdentityFlag() && entity.getIdType() != null) {
-                    LOGGER.warn("The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.", tableName);
+                    LOGGER.warn(
+                            "The primary key of the current table [{}] is configured as auto-incrementing, which will override the global primary key ID type strategy.",
+                            tableName);
                 }
             }
             IColumnType columnType;
@@ -133,7 +140,8 @@ public class DefaultQuery extends AbstractDatabaseQuery {
             } else {
                 columnType = typeRegistry.getColumnType(metaInfo);
             }
-            field.setColumnName(columnName).setColumnType(columnType).setComment(columnInfo.getRemarks()).setMetaInfo(metaInfo);
+            field.setColumnName(columnName).setColumnType(columnType).setComment(columnInfo.getRemarks())
+                    .setMetaInfo(metaInfo);
             entity.handleTableFieldMetaInfo(tableInfo, field);
             String propertyName = entity.getNameConvert().propertyNameConvert(field);
             field.setPropertyName(propertyName);

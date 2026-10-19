@@ -73,8 +73,8 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         if (StringUtils.isNotBlank(mapperXml)) {
             try {
                 InputStream inputStream = Resources.getResourceAsStream(mapperXml);
-                MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(inputStream,
-                    configuration, mapperXml, configuration.getSqlFragments());
+                MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(inputStream, configuration,
+                        mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
             } catch (IOException e) {
                 throw ExceptionUtils.mpe(e);

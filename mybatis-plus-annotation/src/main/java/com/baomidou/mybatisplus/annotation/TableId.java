@@ -34,8 +34,7 @@ public @interface TableId {
     String value() default "";
 
     /**
-     * 主键类型
-     * {@link IdType}
+     * 主键类型 {@link IdType}
      */
     IdType type() default IdType.NONE;
 }

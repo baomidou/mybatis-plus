@@ -45,6 +45,7 @@ public class OrderBySegmentList extends AbstractISegmentList {
         if (isEmpty()) {
             return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(COMMA, SPACE + ORDER_BY.getSqlSegment() + SPACE, EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment)
+                .collect(joining(COMMA, SPACE + ORDER_BY.getSqlSegment() + SPACE, EMPTY));
     }
 }

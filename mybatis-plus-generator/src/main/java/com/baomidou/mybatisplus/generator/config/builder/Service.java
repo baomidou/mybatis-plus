@@ -46,7 +46,6 @@ public class Service implements ITemplate {
     @Getter
     private boolean generateServiceImpl = true;
 
-
     /**
      * 是否生成service
      *
@@ -185,7 +184,7 @@ public class Service implements ITemplate {
         /**
          * 转换输出service接口文件名称
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -197,7 +196,7 @@ public class Service implements ITemplate {
         /**
          * 转换输出service实现类文件名称
          *
-         * @param converter 　转换处理
+         * @param converter 转换处理
          * @return this
          * @since 3.5.0
          */
@@ -209,7 +208,7 @@ public class Service implements ITemplate {
         /**
          * 格式化service接口文件名称
          *
-         * @param format 　格式
+         * @param format 格式
          * @return this
          * @since 3.5.0
          */
@@ -220,7 +219,7 @@ public class Service implements ITemplate {
         /**
          * 格式化service实现类文件名称
          *
-         * @param format 　格式
+         * @param format 格式
          * @return this
          * @since 3.5.0
          */

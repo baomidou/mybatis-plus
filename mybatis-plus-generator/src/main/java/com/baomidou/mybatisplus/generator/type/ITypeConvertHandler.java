@@ -33,7 +33,7 @@ public interface ITypeConvertHandler {
      *
      * @param globalConfig 全局配置
      * @param typeRegistry 类型注册信息
-     * @param metaInfo     字段元数据信息
+     * @param metaInfo 字段元数据信息
      * @return 子类类型
      */
     @NotNull

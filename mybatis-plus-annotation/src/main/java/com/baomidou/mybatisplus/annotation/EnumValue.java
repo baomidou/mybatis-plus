@@ -19,9 +19,11 @@ import java.lang.annotation.*;
 
 /**
  * 支持普通枚举类字段, 只用在enum类的字段上
- * <p>当实体类的属性是普通枚举，且是其中一个字段，使用该注解来标注枚举类里的那个属性对应字段</p>
  * <p>
- * 使用方式参考 com.baomidou.mybatisplus.test.h2.H2StudentMapperTest
+ * 当实体类的属性是普通枚举，且是其中一个字段，使用该注解来标注枚举类里的那个属性对应字段
+ * </p>
+ * <p>
+ * 使用方式参考 com.baomidou.mybatisplus.test.h2.H2StudentMapperTest <br>
  * <pre>
  * &#64;TableName("student")
  * class Student {

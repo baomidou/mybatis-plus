@@ -49,7 +49,6 @@ public final class ArrayUtils {
         return !isEmpty(array);
     }
 
-
     /**
      * 判断是否为数组
      *

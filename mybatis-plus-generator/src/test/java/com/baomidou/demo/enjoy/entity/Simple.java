@@ -140,16 +140,8 @@ public class Simple implements Serializable {
 
     @Override
     public String toString() {
-        return "Simple{" +
-            "id = " + id +
-            ", name = " + name +
-            ", age = " + age +
-            ", deleteFlag = " + deleteFlag +
-            ", deleted = " + deleted +
-            ", isOk = " + isOk +
-            ", version = " + version +
-            ", createTime = " + createTime +
-            ", updateTime = " + updateTime +
-            "}";
+        return "Simple{" + "id = " + id + ", name = " + name + ", age = " + age + ", deleteFlag = " + deleteFlag
+                + ", deleted = " + deleted + ", isOk = " + isOk + ", version = " + version + ", createTime = "
+                + createTime + ", updateTime = " + updateTime + "}";
     }
 }

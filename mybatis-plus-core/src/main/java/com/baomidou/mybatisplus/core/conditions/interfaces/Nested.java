@@ -20,7 +20,9 @@ import java.util.function.Consumer;
 
 /**
  * 查询条件封装
- * <p>嵌套</p>
+ * <p>
+ * 嵌套
+ * </p>
  * <li>泛型 Param 是具体需要运行函数的类(也是 wrapper 的子类)</li>
  *
  * @author hubin miemie HCL
@@ -34,7 +36,7 @@ public interface Nested<Param, Children> extends Serializable {
      * 例: and(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     default Children and(Consumer<Param> consumer) {
@@ -48,7 +50,7 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     Children and(boolean condition, Consumer<Param> consumer);
@@ -59,7 +61,7 @@ public interface Nested<Param, Children> extends Serializable {
      * 例: or(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     default Children or(Consumer<Param> consumer) {
@@ -73,7 +75,7 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     Children or(boolean condition, Consumer<Param> consumer);
@@ -84,7 +86,7 @@ public interface Nested<Param, Children> extends Serializable {
      * 例: nested(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     default Children nested(Consumer<Param> consumer) {
@@ -98,7 +100,7 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     Children nested(boolean condition, Consumer<Param> consumer);
@@ -109,7 +111,7 @@ public interface Nested<Param, Children> extends Serializable {
      * 例: not(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     default Children not(Consumer<Param> consumer) {
@@ -123,7 +125,7 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param consumer  消费函数
+     * @param consumer 消费函数
      * @return children
      */
     Children not(boolean condition, Consumer<Param> consumer);

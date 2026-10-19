@@ -21,11 +21,14 @@ class AbstractWrapperTest {
         assertThat(s).isEqualTo("c=#{ew.paramNameValuePairs.MPGENVAL2,javaType=int}");
 
         s = wrapper.formatSqlMaybeWithParam("c={0,javaType=int} and b={1,jdbcType=NUMERIC} pp", 1, 2);
-        assertThat(s).isEqualTo("c=#{ew.paramNameValuePairs.MPGENVAL3,javaType=int} " +
-            "and b=#{ew.paramNameValuePairs.MPGENVAL4,jdbcType=NUMERIC} pp");
+        assertThat(s).isEqualTo(
+                "c=#{ew.paramNameValuePairs.MPGENVAL3,javaType=int} "
+                        + "and b=#{ew.paramNameValuePairs.MPGENVAL4,jdbcType=NUMERIC} pp");
 
-        s = wrapper.formatSqlMaybeWithParam("c={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler} pp", 1);
-        assertThat(s).isEqualTo("c=#{ew.paramNameValuePairs.MPGENVAL5,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler} pp");
+        s = wrapper
+                .formatSqlMaybeWithParam("c={0,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler} pp", 1);
+        assertThat(s).isEqualTo(
+                "c=#{ew.paramNameValuePairs.MPGENVAL5,javaType=int,jdbcType=NUMERIC,typeHandler=xxx.xxx.MyTypeHandler} pp");
 
         Exception ex = null;
         try {

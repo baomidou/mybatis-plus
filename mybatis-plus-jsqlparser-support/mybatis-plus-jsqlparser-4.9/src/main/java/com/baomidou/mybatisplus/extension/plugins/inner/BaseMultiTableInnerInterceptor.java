@@ -96,7 +96,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * 追加表达式，默认追加到后面，可以配置变量 {@link #expressionAppendMode} 来控制追加到前面还是后面
      *
      * @param currentExpression 原sql的条件表达式
-     * @param injectExpression  注入的表达式
+     * @param injectExpression 注入的表达式
      * @return 追加了条件的完整表达式(where条件 / on条件)
      * @since 3.5.11
      */
@@ -140,9 +140,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
 
     private List<Table> processFromItem(FromItem fromItem, final String whereSegment) {
         // 处理括号括起来的表达式
-//        while (fromItem instanceof ParenthesedFromItem) {
-//            fromItem = ((ParenthesedFromItem) fromItem).getFromItem();
-//        }
+        //        while (fromItem instanceof ParenthesedFromItem) {
+        //            fromItem = ((ParenthesedFromItem) fromItem).getFromItem();
+        //        }
 
         List<Table> mainTables = new ArrayList<>();
         // 无 join 时的处理逻辑
@@ -165,19 +165,19 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * <p>
      * 支持如下:
      * <ol>
-     *     <li>in</li>
-     *     <li>=</li>
-     *     <li>&gt;</li>
-     *     <li>&lt;</li>
-     *     <li>&gt;=</li>
-     *     <li>&lt;=</li>
-     *     <li>&lt;&gt;</li>
-     *     <li>EXISTS</li>
-     *     <li>NOT EXISTS</li>
+     * <li>in</li>
+     * <li>=</li>
+     * <li>&gt;</li>
+     * <li>&lt;</li>
+     * <li>&gt;=</li>
+     * <li>&lt;=</li>
+     * <li>&lt;&gt;</li>
+     * <li>EXISTS</li>
+     * <li>NOT EXISTS</li>
      * </ol>
      * <p>
-     * 前提条件:
-     * 1. 子查询必须放在小括号中
+     * 前提条件: <br>
+     * 1. 子查询必须放在小括号中 <br>
      * 2. 子查询一般放在比较操作符的右边
      *
      * @param where where 条件
@@ -233,8 +233,12 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
 
     /**
      * 处理函数
-     * <p>支持: 1. select fun(args..) 2. select fun1(fun2(args..),args..)<p>
-     * <p> fixed gitee pulls/141</p>
+     * <p>
+     * 支持: 1. select fun(args..) 2. select fun1(fun2(args..),args..)
+     * <p>
+     * <p>
+     * fixed gitee pulls/141
+     * </p>
      *
      * @param function
      */
@@ -295,8 +299,10 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * 处理 joins
      *
      * @param mainTables 可以为 null
-     * @param joins      join 集合
-     * @return List<Table> 右连接查询的 Table 列表
+     * @param joins join 集合
+     * @return List
+     *         <Table>
+     *         右连接查询的 Table 列表
      */
     private List<Table> processJoins(List<Table> mainTables, List<Join> joins, final String whereSegment) {
         // join 表达式中最终的主表
@@ -397,16 +403,16 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     /**
      * 处理条件
      */
-    protected Expression builderExpression(Expression currentExpression, List<Table> tables, final String whereSegment) {
+    protected Expression builderExpression(Expression currentExpression, List<Table> tables,
+            final String whereSegment) {
         // 没有表需要处理直接返回
         if (CollectionUtils.isEmpty(tables)) {
             return currentExpression;
         }
         // 构造每张表的条件
         List<Expression> expressions = tables.stream()
-            .map(item -> buildTableExpression(item, currentExpression, whereSegment))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .map(item -> buildTableExpression(item, currentExpression, whereSegment)).filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // 没有表需要处理直接返回
         if (CollectionUtils.isEmpty(expressions)) {
@@ -435,10 +441,11 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     /**
      * 构建数据库表的查询条件
      *
-     * @param table        表对象
-     * @param where        当前where条件
+     * @param table 表对象
+     * @param where 当前where条件
      * @param whereSegment 所属Mapper对象全路径
      * @return 需要拼接的新条件（不会覆盖原有的where条件，只会在原有条件上再加条件），为 null 则不加入新的条件
      */
-    public abstract Expression buildTableExpression(final Table table, final Expression where, final String whereSegment);
+    public abstract Expression buildTableExpression(final Table table, final Expression where,
+            final String whereSegment);
 }

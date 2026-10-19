@@ -58,7 +58,8 @@ class MybatisMapperAnnotationBuilderTest {
                         // (gcode issue #443) actual type can be a also a parameterized type
                         returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
                     } else if (returnTypeParameter instanceof GenericArrayType) {
-                        Class<?> componentType = (Class<?>) ((GenericArrayType) returnTypeParameter).getGenericComponentType();
+                        Class<?> componentType = (Class<?>) ((GenericArrayType) returnTypeParameter)
+                                .getGenericComponentType();
                         // (gcode issue #525) support List<byte[]>
                         returnType = Array.newInstance(componentType, 0).getClass();
                     }

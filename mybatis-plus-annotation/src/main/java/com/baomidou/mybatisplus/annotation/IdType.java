@@ -25,9 +25,12 @@ import lombok.Getter;
  */
 @Getter
 public enum IdType {
+
     /**
      * 数据库ID自增（该策略保存前手动设置ID无效且会被自动生成的ID回写，正确用法是保存对象插入成功后拿到自动生成的ID，然后再去关联业务使用）
-     * <p>该类型请确保数据库设置了 ID自增 否则无效</p>
+     * <p>
+     * 该类型请确保数据库设置了 ID自增 否则无效
+     * </p>
      */
     AUTO(0),
     /**
@@ -36,20 +39,22 @@ public enum IdType {
     NONE(1),
     /**
      * 用户输入ID
-     * <p>该类型可以通过自己注册自动填充插件进行填充</p>
+     * <p>
+     * 该类型可以通过自己注册自动填充插件进行填充
+     * </p>
      */
     INPUT(2),
 
     /* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
     /**
-     * 分配ID (主键类型为number或string）,
+     * 分配ID (主键类型为number或string）, <br>
      * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(雪花算法)
      *
      * @since 3.3.0
      */
     ASSIGN_ID(3),
     /**
-     * 分配UUID (主键类型为 string)
+     * 分配UUID (主键类型为 string) <br>
      * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(UUID.replace("-",""))
      */
     ASSIGN_UUID(4);

@@ -13,21 +13,24 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for dynamic logic-delete values supplied through the {@link MetaObjectHandler}
- * fill mechanism — addressing i18n / timezone support when the logic-delete field is a
+ * Tests for dynamic logic-delete values supplied through the {@link MetaObjectHandler} <br>
+ * fill mechanism — addressing i18n / timezone support when the logic-delete field is a <br>
  * timestamp (issue #5111).
  *
- * <p>Scenario: a table uses a nullable {@code deleted_at TIMESTAMP} column as the
- * logic-delete marker.  The application wants to control the timestamp value (e.g. to
- * apply a specific timezone) rather than delegating to the database {@code NOW()}
- * function.  By annotating the field with {@code @TableField(fill = FieldFill.UPDATE)}
- * <em>and</em> {@code @TableLogic}, the fill handler can inject the correct value at
+ * <p>
+ * Scenario: a table uses a nullable {@code deleted_at TIMESTAMP} column as the <br>
+ * logic-delete marker. The application wants to control the timestamp value (e.g. to <br>
+ * apply a specific timezone) rather than delegating to the database {@code NOW()} <br>
+ * function. By annotating the field with {@code @TableField(fill = FieldFill.UPDATE)} <br>
+ * <em>and</em> {@code @TableLogic}, the fill handler can inject the correct value at <br>
  * runtime.
  */
 public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
 
-    /** Sentinel timestamp used by the fill handler – deliberately far in the future so
-     *  it is easy to distinguish from any real "now". */
+    /**
+     * Sentinel timestamp used by the fill handler – deliberately far in the future so <br>
+     * it is easy to distinguish from any real "now".
+     */
     private static final LocalDateTime FILL_DELETED_AT = LocalDateTime.of(2099, 6, 15, 12, 0, 0);
 
     // -----------------------------------------------------------------------
@@ -35,9 +38,9 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
     // -----------------------------------------------------------------------
 
     /**
-     * When {@code deleteById(entity)} is called with an entity object the fill handler
-     * is invoked and the entity's {@code deletedAt} is set to the application-computed
-     * value.  The generated SQL should use {@code #{deletedAt}} (the filled value)
+     * When {@code deleteById(entity)} is called with an entity object the fill handler <br>
+     * is invoked and the entity's {@code deletedAt} is set to the application-computed <br>
+     * value. The generated SQL should use {@code #{deletedAt}} (the filled value) <br>
      * rather than the static {@code logicDeleteValue} string.
      */
     @Test
@@ -63,16 +66,16 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
 
         // Verify via raw JDBC that the row still exists and deleted_at equals the fill value.
         List<LocalDateTime> rows = jdbcTemplate.query(
-            "SELECT deleted_at FROM logic_del_fill_entity WHERE id = 1",
-            (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
+                "SELECT deleted_at FROM logic_del_fill_entity WHERE id = 1",
+                (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
         assertThat(rows).hasSize(1);
         assertThat(rows.get(0)).isEqualTo(FILL_DELETED_AT);
     }
 
     /**
-     * When {@code deleteByIds(Collection)} is called the framework creates a fresh
-     * entity instance (mpFillEt) for fill purposes.  The fill handler sets
-     * {@code deletedAt} on that instance, and the generated SQL should use
+     * When {@code deleteByIds(Collection)} is called the framework creates a fresh <br>
+     * entity instance (mpFillEt) for fill purposes. The fill handler sets <br>
+     * {@code deletedAt} on that instance, and the generated SQL should use <br>
      * {@code #{mpFillEt.deletedAt}} rather than the static value.
      */
     @Test
@@ -98,19 +101,19 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
 
         // Both rows should have deleted_at set to the fill value.
         List<LocalDateTime> rows = jdbcTemplate.query(
-            "SELECT deleted_at FROM logic_del_fill_entity WHERE id IN (2, 3) ORDER BY id",
-            (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
+                "SELECT deleted_at FROM logic_del_fill_entity WHERE id IN (2, 3) ORDER BY id",
+                (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
         assertThat(rows).hasSize(2);
         assertThat(rows.get(0)).isEqualTo(FILL_DELETED_AT);
         assertThat(rows.get(1)).isEqualTo(FILL_DELETED_AT);
     }
 
     /**
-     * When only a primary-key value is supplied (no entity object), the fill
-     * handler cannot be called, so the static {@code logicDeleteValue} configured on the
-     * global DbConfig is used as a fallback.  In the test configuration the static value is
-     * {@code "NOW()"}, which generates {@code deleted_at = NOW()} — the database function.
-     * This verifies that the static fallback still works so that callers who do not have an
+     * When only a primary-key value is supplied (no entity object), the fill <br>
+     * handler cannot be called, so the static {@code logicDeleteValue} configured on the <br>
+     * global DbConfig is used as a fallback. In the test configuration the static value is <br>
+     * {@code "NOW()"}, which generates {@code deleted_at = NOW()} — the database function. <br>
+     * This verifies that the static fallback still works so that callers who do not have an <br>
      * entity object available continue to function correctly.
      */
     @Test
@@ -134,8 +137,8 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
 
         // Verify the row is still physically present and deleted_at is non-null (set by NOW()).
         List<LocalDateTime> rows = jdbcTemplate.query(
-            "SELECT deleted_at FROM logic_del_fill_entity WHERE id = 10",
-            (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
+                "SELECT deleted_at FROM logic_del_fill_entity WHERE id = 10",
+                (rs, i) -> rs.getObject("deleted_at", LocalDateTime.class));
         assertThat(rows).hasSize(1);
         assertThat(rows.get(0)).isNotNull();
     }
@@ -148,6 +151,7 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
     protected GlobalConfig globalConfig() {
         GlobalConfig globalConfig = super.globalConfig();
         globalConfig.setMetaObjectHandler(new MetaObjectHandler() {
+
             @Override
             public void insertFill(MetaObject metaObject) {
                 // No insert fills for this entity.
@@ -162,22 +166,16 @@ public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
             }
         });
         // Configure a static fallback for callers that pass only a primary key.
-        globalConfig.getDbConfig()
-            .setLogicDeleteValue("NOW()")
-            .setLogicNotDeleteValue("null");
+        globalConfig.getDbConfig().setLogicDeleteValue("NOW()").setLogicNotDeleteValue("null");
         return globalConfig;
     }
 
     @Override
     protected List<String> tableSql() {
         return Arrays.asList(
-            "DROP TABLE IF EXISTS logic_del_fill_entity",
-            "CREATE TABLE logic_del_fill_entity (" +
-                "id      BIGINT       NOT NULL," +
-                "name    VARCHAR(30)  NULL DEFAULT NULL," +
-                "deleted_at TIMESTAMP NULL DEFAULT NULL," +
-                "PRIMARY KEY (id)" +
-                ")"
-        );
+                "DROP TABLE IF EXISTS logic_del_fill_entity",
+                "CREATE TABLE logic_del_fill_entity (" + "id      BIGINT       NOT NULL,"
+                        + "name    VARCHAR(30)  NULL DEFAULT NULL," + "deleted_at TIMESTAMP NULL DEFAULT NULL,"
+                        + "PRIMARY KEY (id)" + ")");
     }
 }

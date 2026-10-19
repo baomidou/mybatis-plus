@@ -18,10 +18,10 @@ import java.util.Date;
 public class BaseEntity extends SuperEntity {
 
     /**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 199327361052220940L;
-	private Boolean deleted;
+     * serialVersionUID
+     */
+    private static final long serialVersionUID = 199327361052220940L;
+    private Boolean deleted;
     private Date createTime;
 
 }

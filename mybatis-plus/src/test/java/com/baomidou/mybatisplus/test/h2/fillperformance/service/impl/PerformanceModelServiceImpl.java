@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.test.h2.fillperformance.service.IPerformanceMode
 import org.springframework.stereotype.Service;
 
 @Service
-public class PerformanceModelServiceImpl extends ServiceImpl<PerformanceModelMapper, PerformanceModel> implements IPerformanceModelService {
+public class PerformanceModelServiceImpl extends ServiceImpl<PerformanceModelMapper, PerformanceModel>
+        implements IPerformanceModelService {
 
 }

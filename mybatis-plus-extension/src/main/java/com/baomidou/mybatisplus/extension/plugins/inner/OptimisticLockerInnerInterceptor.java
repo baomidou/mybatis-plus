@@ -51,20 +51,44 @@ import java.util.regex.Pattern;
 
 /**
  * Optimistic Lock Light version
- * <p>Intercept on {@link Executor}.update;</p>
- * <p>Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp</p>
- * <p>For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.</p>
+ * <p>
+ * Intercept on {@link Executor}.update;
+ * </p>
+ * <p>
+ * Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp
+ * </p>
+ * <p>
+ * For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.
+ * </p>
  * <br>
- * <p>How to use?</p>
- * <p>(1) Define an Entity and add {@link Version} annotation on one entity field.</p>
- * <p>(2) Add {@link OptimisticLockerInnerInterceptor} into mybatis plugin.</p>
+ * <p>
+ * How to use?
+ * </p>
+ * <p>
+ * (1) Define an Entity and add {@link Version} annotation on one entity field.
+ * </p>
+ * <p>
+ * (2) Add {@link OptimisticLockerInnerInterceptor} into mybatis plugin.
+ * </p>
  * <br>
- * <p>How to work?</p>
- * <p>if update entity with version column=1:</p>
- * <p>(1) no {@link OptimisticLockerInnerInterceptor}:</p>
- * <p>SQL: update tbl_test set name='abc' where id=100001;</p>
- * <p>(2) add {@link OptimisticLockerInnerInterceptor}:</p>
- * <p>SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;</p>
+ * <p>
+ * How to work?
+ * </p>
+ * <p>
+ * if update entity with version column=1:
+ * </p>
+ * <p>
+ * (1) no {@link OptimisticLockerInnerInterceptor}:
+ * </p>
+ * <p>
+ * SQL: update tbl_test set name='abc' where id=100001;
+ * </p>
+ * <p>
+ * (2) add {@link OptimisticLockerInnerInterceptor}:
+ * </p>
+ * <p>
+ * SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;
+ * </p>
  *
  * @author yuxiaobin
  * @since 3.4.0
@@ -86,7 +110,8 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
     /**
      * 变量占位符正则
      */
-    private static final Pattern PARAM_PAIRS_RE = Pattern.compile("#\\{ew\\.paramNameValuePairs\\.(" + Constants.WRAPPER_PARAM + "\\d+)\\}");
+    private static final Pattern PARAM_PAIRS_RE = Pattern
+            .compile("#\\{ew\\.paramNameValuePairs\\.(" + Constants.WRAPPER_PARAM + "\\d+)\\}");
 
     /**
      * paramNameValuePairs存放的version值的key
@@ -197,13 +222,15 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
             if (originalVersionValue == null) {
                 return;
             }
-            final Object updatedVersionVal = getUpdatedVersionVal(originalVersionValue.getClass(), originalVersionValue);
+            final Object updatedVersionVal = getUpdatedVersionVal(
+                    originalVersionValue.getClass(), originalVersionValue);
             if (originalVersionValue == updatedVersionVal) {
                 return;
             }
             // 拼接新的version值
             paramNameValuePairs.put(UPDATED_VERSION_VAL_KEY, updatedVersionVal);
-            ((Update<?, ?>) ew).setSql(String.format("%s = #{%s.%s}", versionColumn, "ew.paramNameValuePairs", UPDATED_VERSION_VAL_KEY));
+            ((Update<?, ?>) ew).setSql(
+                    String.format("%s = #{%s.%s}", versionColumn, "ew.paramNameValuePairs", UPDATED_VERSION_VAL_KEY));
         }
     }
 
@@ -258,7 +285,7 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                     this.state = State.EQ_FOUND;
                     // 如果EQ找到并且value已找到
                 } else if (state == State.EQ_FOUND
-                    && (matcher = PARAM_PAIRS_RE.matcher(segment.getSqlSegment())).matches()) {
+                        && (matcher = PARAM_PAIRS_RE.matcher(segment.getSqlSegment())).matches()) {
                     this.valueKey = matcher.group(1);
                     this.state = State.VERSION_VALUE_PRESENT;
                     return true;

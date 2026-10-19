@@ -112,44 +112,14 @@ repositories {
     mavenCentral()
 }
 
-// Paths are relative to the repository root; add files here for full formatting.
-def formattedFiles = [
-    'mybatis-plus-up/src/**/*.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperRegistry.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLConfigBuilder.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLLanguageDriver.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLScriptBuilder.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisSqlSessionFactoryBuilder.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperBuilderAssistant.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisParameterHandler.java',
-    'mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/override/**/*.java',
-    'spring-boot-starter/mybatis-plus-boot-starter/src/**/*.java',
-    'spring-boot-starter/mybatis-plus-spring-boot3-starter/src/**/*.java',
-    'spring-boot-starter/mybatis-plus-spring-boot4-starter/src/**/*.java',
-    'spring-boot-starter/mybatis-plus-boot-starter-test/src/main/**/*.java',
-    'spring-boot-starter/mybatis-plus-spring-boot3-starter-test/src/main/**/*.java',
-    'spring-boot-starter/mybatis-plus-spring-boot4-starter-test/src/main/**/*.java',
-    'mybatis-plus-spring/src/main/java/com/baomidou/mybatisplus/spring/MybatisSqlSessionFactoryBean.java'
-]
-def formattingExcludes = ['**/build/**', '**/target/**', '**/.gradle/**', '**/out/**']
-def javaImportOrder = ['', 'java|javax|jakarta', '\\#']
-
 spotless {
     enforceCheck false
     java {
         target '**/*.java'
-        targetExclude(formattingExcludes + formattedFiles)
-        removeUnusedImports()
-        importOrder(*javaImportOrder)
-    }
-    format('selectedJava', com.diffplug.gradle.spotless.JavaExtension) {
-        target formattedFiles
-        targetExclude formattingExcludes
+        targetExclude '**/build/**', '**/target/**', '**/.gradle/**', '**/out/**'
         removeUnusedImports()
         eclipse().configFile(rootProject.file('MPCodeStyle.xml'))
-        importOrder(*javaImportOrder)
+        importOrder '', 'java|javax|jakarta', '\\#'
     }
 }
 

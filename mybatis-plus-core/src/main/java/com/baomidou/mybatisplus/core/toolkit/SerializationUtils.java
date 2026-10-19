@@ -17,9 +17,10 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import java.io.*;
 
-
 /**
- * <p> copy from spring-core#org.springframework.util.SerializationUtils version 5.2.8 </p>
+ * <p>
+ * copy from spring-core#org.springframework.util.SerializationUtils version 5.2.8
+ * </p>
  *
  * @since 1.0
  */
@@ -27,13 +28,15 @@ public class SerializationUtils {
 
     /**
      * Deep clone an {@code Object} using serialization.
-     * <p>This is many times slower than writing clone methods by hand
-     * on all objects in your object graph. However, for complex object
-     * graphs, or for those that don't support deep cloning this can
-     * be a simple alternative implementation. Of course all the objects
-     * must be {@code Serializable}.</p>
+     * <p>
+     * This is many times slower than writing clone methods by hand <br>
+     * on all objects in your object graph. However, for complex object <br>
+     * graphs, or for those that don't support deep cloning this can <br>
+     * be a simple alternative implementation. Of course all the objects <br>
+     * must be {@code Serializable}.
+     * </p>
      *
-     * @param <T>    the type of the object involved
+     * @param <T> the type of the object involved
      * @param object the {@code Serializable} object to clone
      * @return the cloned object
      */

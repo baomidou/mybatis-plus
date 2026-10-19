@@ -29,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * 分布式高效有序 ID 生产黑科技(sequence)
  *
- * <p>优化开源项目：<a href="https://gitee.com/yu120/sequence">sequence</a></p>
+ * <p>
+ * 优化开源项目：<a href="https://gitee.com/yu120/sequence">sequence</a>
+ * </p>
  *
  * @author hubin
  * @since 2016-08-18
@@ -98,7 +100,9 @@ public class Sequence {
         long end = System.nanoTime();
         if (end - start > Sequence.MAX_START_INTERVAL_TIME) {
             // 一般这里启动慢,是未指定inetAddress时出现,请查看本机hostname,将本机hostname写入至本地系统hosts文件之中进行解析
-            logger.warn("Initialization Sequence Very Slow! Get datacenterId:" + this.datacenterId + " workerId:" + this.workerId);
+            logger.warn(
+                    "Initialization Sequence Very Slow! Get datacenterId:" + this.datacenterId + " workerId:"
+                            + this.workerId);
         } else {
             initLog();
         }
@@ -113,14 +117,16 @@ public class Sequence {
     /**
      * 有参构造器
      *
-     * @param workerId     工作机器 ID
+     * @param workerId 工作机器 ID
      * @param datacenterId 序列号
      */
     public Sequence(long workerId, long datacenterId) {
-        Assert.isFalse(workerId > maxWorkerId || workerId < 0,
-            String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
-        Assert.isFalse(datacenterId > maxDatacenterId || datacenterId < 0,
-            String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+        Assert.isFalse(
+                workerId > maxWorkerId || workerId < 0,
+                String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+        Assert.isFalse(
+                datacenterId > maxDatacenterId || datacenterId < 0,
+                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
         initLog();
@@ -129,8 +135,10 @@ public class Sequence {
     /**
      * 获取共享序列实例
      *
-     * <p>同一 JVM 内 {@code workerId} 与 {@code datacenterId} 相同的多个序列各自维护序列号,
-     * 交错生成 ID 时会相互覆盖, 必然产生重复 ID, 因此机器标识相同的序列统一复用同一个实例.</p>
+     * <p>
+     * 同一 JVM 内 {@code workerId} 与 {@code datacenterId} 相同的多个序列各自维护序列号, <br>
+     * 交错生成 ID 时会相互覆盖, 必然产生重复 ID, 因此机器标识相同的序列统一复用同一个实例.
+     * </p>
      *
      * @param inetAddress IP 地址
      * @return 共享序列实例
@@ -143,7 +151,7 @@ public class Sequence {
     /**
      * 获取共享序列实例
      *
-     * @param workerId     工作机器 ID
+     * @param workerId 工作机器 ID
      * @param datacenterId 序列号
      * @return 共享序列实例
      * @since 3.5.18
@@ -159,7 +167,8 @@ public class Sequence {
      * @return 共享序列实例
      */
     private static Sequence share(Sequence sequence) {
-        return SHARED_SEQUENCES.computeIfAbsent(sequence.workerId + StringPool.DASH + sequence.datacenterId, key -> sequence);
+        return SHARED_SEQUENCES
+                .computeIfAbsent(sequence.workerId + StringPool.DASH + sequence.datacenterId, key -> sequence);
     }
 
     /**
@@ -194,7 +203,8 @@ public class Sequence {
             } else {
                 byte[] mac = network.getHardwareAddress();
                 if (null != mac) {
-                    id = ((0x000000FF & (long) mac[mac.length - 2]) | (0x0000FF00 & (((long) mac[mac.length - 1]) << 8))) >> 6;
+                    id = ((0x000000FF & (long) mac[mac.length - 2])
+                            | (0x0000FF00 & (((long) mac[mac.length - 1]) << 8))) >> 6;
                     id = id % (maxDatacenterId + 1);
                 }
             }
@@ -219,13 +229,15 @@ public class Sequence {
                     Thread.sleep(offset << 1);
                     timestamp = timeGen();
                     if (timestamp < lastTimestamp) {
-                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                        throw new RuntimeException(String
+                                .format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                throw new RuntimeException(
+                        String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
             }
         }
 
@@ -244,10 +256,8 @@ public class Sequence {
         lastTimestamp = timestamp;
 
         // 时间戳部分 | 数据中心部分 | 机器标识部分 | 序列号部分
-        return ((timestamp - twepoch) << timestampLeftShift)
-            | (datacenterId << datacenterIdShift)
-            | (workerId << workerIdShift)
-            | sequence;
+        return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift)
+                | (workerId << workerIdShift) | sequence;
     }
 
     protected long tilNextMillis(long lastTimestamp) {

@@ -31,7 +31,7 @@ public interface PostInitTableInfoHandler {
      * 提供对 TableInfo 增强的能力
      *
      * @param configuration MybatisConfiguration
-     * @param entityType    实体类型
+     * @param entityType 实体类型
      * @return {@link TableInfo}
      */
     default TableInfo creteTableInfo(Configuration configuration, Class<?> entityType) {
@@ -41,7 +41,7 @@ public interface PostInitTableInfoHandler {
     /**
      * 参与 TableInfo 初始化
      *
-     * @param tableInfo     TableInfo
+     * @param tableInfo TableInfo
      * @param configuration Configuration
      * @return {@link TableInfo}
      */

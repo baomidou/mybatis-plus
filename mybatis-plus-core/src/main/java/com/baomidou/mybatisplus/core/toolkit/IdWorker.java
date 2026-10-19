@@ -35,7 +35,8 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static IdentifierGenerator IDENTIFIER_GENERATOR = entity -> DefaultIdentifierGenerator.getInstance().nextId(entity);
+    private static IdentifierGenerator IDENTIFIER_GENERATOR = entity -> DefaultIdentifierGenerator.getInstance()
+            .nextId(entity);
 
     /**
      * 毫秒格式化时间
@@ -87,7 +88,9 @@ public class IdWorker {
 
     /**
      * 时间 ID = Time + ID
-     * <p>例如：可用于商品订单 ID</p>
+     * <p>
+     * 例如：可用于商品订单 ID
+     * </p>
      */
     public static String getTimeId() {
         return getMillisecond() + getIdStr();
@@ -95,9 +98,11 @@ public class IdWorker {
 
     /**
      * 初始化雪花 ID 生成器
-     * <p>多实例部署时，需要为每个实例分配唯一的 workerId 和 dataCenterId 组合，避免不同实例生成重复 ID。</p>
+     * <p>
+     * 多实例部署时，需要为每个实例分配唯一的 workerId 和 dataCenterId 组合，避免不同实例生成重复 ID。
+     * </p>
      *
-     * @param workerId     工作机器 ID
+     * @param workerId 工作机器 ID
      * @param dataCenterId 序列号
      * @see #setIdentifierGenerator(IdentifierGenerator)
      */

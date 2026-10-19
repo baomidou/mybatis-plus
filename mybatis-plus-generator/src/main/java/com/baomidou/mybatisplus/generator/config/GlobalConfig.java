@@ -27,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.function.Supplier;
 
-
 /**
  * 全局配置
  *
@@ -42,7 +41,7 @@ public class GlobalConfig {
     protected static final Logger LOGGER = LoggerFactory.getLogger(GlobalConfig.class);
 
     /**
-     * 生成文件的输出目录【 windows:D://  linux or mac:/tmp 】
+     * 生成文件的输出目录【 windows:D:// linux or mac:/tmp 】
      */
     @Getter
     private String outputDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://" : "/tmp";
@@ -88,9 +87,10 @@ public class GlobalConfig {
     private Supplier<String> commentDate = () -> new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
     /**
-     * 是否生成service 接口（默认 true）
-     * 增加此开关的原因：在某些项目实践中，只需要生成service实现类，不需要抽象sevice接口
+     * 是否生成service 接口（默认 true） <br>
+     * 增加此开关的原因：在某些项目实践中，只需要生成service实现类，不需要抽象sevice接口 <br>
      * 针对某些项目，生成service接口，开发时反而麻烦，这种情况，可以将该属性设置为false
+     * 
      * @deprecated 3.5.6 {@link Service.Builder#disableService()}
      */
     @Getter
@@ -112,7 +112,6 @@ public class GlobalConfig {
     public String getCommentDate() {
         return commentDate.get();
     }
-
 
     /**
      * 全局配置构建
@@ -193,7 +192,7 @@ public class GlobalConfig {
         }
 
         /**
-         * 注释日期获取处理
+         * 注释日期获取处理 <br>
          * example: () -> LocalDateTime.now().format(DateTimeFormatter.ISO_DATE)
          *
          * @param commentDate 获取注释日期

@@ -61,7 +61,7 @@ public abstract class AbstractJsonTypeHandler<T> extends BaseTypeHandler<T> impl
     /**
      * 通过字段初始化
      *
-     * @param type  类型
+     * @param type 类型
      * @param field 字段
      * @since 3.5.6
      */

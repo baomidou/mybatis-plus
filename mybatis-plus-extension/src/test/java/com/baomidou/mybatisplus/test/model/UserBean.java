@@ -13,9 +13,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserBean implements Serializable {
-    
+
     private Long id;
-    
+
     private String name;
-    
+
 }

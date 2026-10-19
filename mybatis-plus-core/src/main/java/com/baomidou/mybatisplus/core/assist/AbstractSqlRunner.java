@@ -42,7 +42,8 @@ public abstract class AbstractSqlRunner implements ISqlRunner {
      *
      * @since 3.5.12
      */
-    private static final GenericTokenParser DEFAULT_TOKEN_PARSER = new GenericTokenParser(LEFT_BRACE, RIGHT_BRACE, content -> HASH_LEFT_BRACE + content + RIGHT_BRACE);
+    private static final GenericTokenParser DEFAULT_TOKEN_PARSER = new GenericTokenParser(LEFT_BRACE, RIGHT_BRACE,
+            content -> HASH_LEFT_BRACE + content + RIGHT_BRACE);
 
     /**
      * 校验索引正则
@@ -58,11 +59,10 @@ public abstract class AbstractSqlRunner implements ISqlRunner {
      */
     private static final String ARG0 = "arg0";
 
-
     /**
      * 获取执行语句 (将原始占位符语句转换为标准占位符语句)
      *
-     * @param sql  原始sql
+     * @param sql 原始sql
      * @param args 参数
      * @return 执行语句 (带参数占位符)
      * @since 3.5.12
@@ -113,11 +113,11 @@ public abstract class AbstractSqlRunner implements ISqlRunner {
      * 自3.5.12开始,(当传入的参数是单参数时,支持使用Map,Array,List,JavaBean)
      * <li>当参数为 Map 时可通过{key}进行属性访问
      * <li>当参数为 JavaBean 时可通过{property}进行属性访问
-     * <li>当参数为 List 时直接访问索引 {0} </li>
-     * <li>当参数为 Array 时直接访问索引 {0} </li>
+     * <li>当参数为 List 时直接访问索引 {0}</li>
+     * <li>当参数为 Array 时直接访问索引 {0}</li>
      * </p>
      *
-     * @param sql  指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql 指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param args 参数
      * @return 参数集合
      */
@@ -132,11 +132,11 @@ public abstract class AbstractSqlRunner implements ISqlRunner {
      * 自3.5.12开始,(当传入的参数是单参数时,支持使用Map,Array,List,JavaBean)
      * <li>当参数为 Map 时可通过{key}进行属性访问
      * <li>当参数为 JavaBean 时可通过{property}进行属性访问
-     * <li>当参数为 List 时直接访问索引 {0} </li>
-     * <li>当参数为 Array 时直接访问索引 {0} </li>
+     * <li>当参数为 List 时直接访问索引 {0}</li>
+     * <li>当参数为 Array 时直接访问索引 {0}</li>
      * </p>
      *
-     * @param sql  指定参数的格式: {0}, {1} 或者 {property1}, {property2}
+     * @param sql 指定参数的格式: {0}, {1} 或者 {property1}, {property2}
      * @param page 分页模型
      * @param args 参数
      * @return 参数集合

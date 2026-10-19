@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-
 /**
  * SQL 默认注入器
  *
@@ -39,22 +38,24 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
     public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
         GlobalConfig.DbConfig dbConfig = GlobalConfigUtils.getDbConfig(configuration);
         Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder()
-            .add(new Insert(dbConfig.isInsertIgnoreAutoIncrementColumn()))
-            .add(new Delete())
-            .add(new Update())
-            .add(new SelectCount())
-            .add(new SelectMaps())
-            .add(new SelectObjs())
-            .add(new SelectList())
-            .add(new SelectWithCursor());
+                .add(new Insert(dbConfig.isInsertIgnoreAutoIncrementColumn())) //
+                .add(new Delete()) //
+                .add(new Update()) //
+                .add(new SelectCount()) //
+                .add(new SelectMaps()) //
+                .add(new SelectObjs()) //
+                .add(new SelectList()) //
+                .add(new SelectWithCursor()); //
         if (tableInfo.havePK()) {
-            builder.add(new DeleteById())
-                .add(new DeleteByIds())
-                .add(new UpdateById())
-                .add(new SelectById())
-                .add(new SelectByIds());
+            builder.add(new DeleteById()) //
+                    .add(new DeleteByIds()) //
+                    .add(new UpdateById()) //
+                    .add(new SelectById()) //
+                    .add(new SelectByIds()); //
         } else {
-            logger.warn(tableInfo.getEntityType() + " Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.");
+            logger.warn(
+                    tableInfo.getEntityType()
+                            + " Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.");
         }
         return builder.build().collect(toList());
     }

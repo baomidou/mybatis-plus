@@ -61,8 +61,7 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
-        throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
         Object value = metadata.getValue(parameter);
         if (jdbcType == null) {
             ps.setObject(i, value);

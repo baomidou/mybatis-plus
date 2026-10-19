@@ -47,7 +47,6 @@ public interface Constants extends StringPool, Serializable {
      */
     String AS = " AS ";
 
-
     /**
      * 实体类
      */
@@ -187,7 +186,6 @@ public interface Constants extends StringPool, Serializable {
      */
     String WRAPPER_PARAM = "MPGENVAL";
     String WRAPPER_PARAM_MIDDLE = ".paramNameValuePairs" + DOT;
-
 
     /**
      * 默认批次提交数量

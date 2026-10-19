@@ -228,7 +228,7 @@ public class DataSourceConfig {
     }
 
     /**
-     * 创建数据库连接对象
+     * 创建数据库连接对象 <br>
      * 这方法建议只调用一次，毕竟只是代码生成，用一个连接就行。
      *
      * @return Connection
@@ -270,12 +270,12 @@ public class DataSourceConfig {
     private void processProperties(Properties properties) {
         if (this.databaseQueryClass.getName().equals(DefaultQuery.class.getName())) {
             switch (this.getDbType()) {
-                case MYSQL:
+                case MYSQL :
                     properties.put("remarks", "true");
                     properties.put("useInformationSchema", "true");
                     break;
-                case ORACLE:
-                case POLARDB:
+                case ORACLE :
+                case POLARDB :
                     properties.put("remarks", "true");
                     properties.put("remarksReporting", "true");
                     break;
@@ -366,7 +366,7 @@ public class DataSourceConfig {
         /**
          * 构造初始化方法
          *
-         * @param url      数据库连接地址
+         * @param url 数据库连接地址
          * @param username 数据库账号
          * @param password 数据库密码
          */
@@ -474,7 +474,7 @@ public class DataSourceConfig {
         /**
          * 增加数据库连接属性
          *
-         * @param key   属性名
+         * @param key 属性名
          * @param value 属性值
          * @return this
          * @since 3.5.3

@@ -26,7 +26,7 @@ public interface TableNameHandler {
     /**
      * 生成动态表名
      *
-     * @param sql       当前执行 SQL
+     * @param sql 当前执行 SQL
      * @param tableName 表名
      * @return String
      */

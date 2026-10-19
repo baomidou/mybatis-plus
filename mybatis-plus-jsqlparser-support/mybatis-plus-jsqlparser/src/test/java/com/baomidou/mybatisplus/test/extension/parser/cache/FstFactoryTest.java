@@ -29,9 +29,8 @@ class FstFactoryTest {
         Set<String> expected;
         try (ScanResult scanResult = new ClassGraph().enableClassInfo().acceptPackages("net.sf.jsqlparser").scan()) {
             expected = scanResult.getAllClasses().stream()
-                .filter(classInfo -> !classInfo.isInterface() && classInfo.implementsInterface(Serializable.class))
-                .map(ClassInfo::getName)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                    .filter(classInfo -> !classInfo.isInterface() && classInfo.implementsInterface(Serializable.class))
+                    .map(ClassInfo::getName).collect(Collectors.toCollection(LinkedHashSet::new));
         }
         assertFalse(expected.isEmpty(), "No serializable JSqlParser classes found");
 
@@ -39,7 +38,7 @@ class FstFactoryTest {
         FSTConfiguration conf = new FstFactory().getConfig();
         FSTClazzNameRegistry registry = conf.getClassRegistry();
         Set<String> actual = new HashSet<>();
-        for (int id = FSTClazzNameRegistry.LOWEST_CLZ_ID; ; id++) {
+        for (int id = FSTClazzNameRegistry.LOWEST_CLZ_ID;; id++) {
             FSTClazzInfo classInfo = registry.getClazzFromId(id);
             if (classInfo == null) {
                 break;
@@ -54,12 +53,15 @@ class FstFactoryTest {
         // Generate registrations in scan order; the assertion checks only class membership.
         if (!expected.equals(actual)) {
             String registrations = expected.stream()
-                .map(name -> "conf.registerClass(" + name.replace('$', '.') + ".class);")
-                .collect(Collectors.joining("\n"));
+                    .map(name -> "conf.registerClass(" + name.replace('$', '.') + ".class);")
+                    .collect(Collectors.joining("\n"));
             System.out.println("Complete constructor registrations:\n" + registrations);
         }
-        assertTrue(expected.equals(actual), () -> "FstFactory registrations differ from the JSqlParser dependency"
-            + "\nMissing: " + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
-            + "\nUnexpected: " + actual.stream().filter(name -> !expected.contains(name)).sorted().collect(Collectors.toList()));
+        assertTrue(
+                expected.equals(actual),
+                () -> "FstFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
+                        + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
+                        + "\nUnexpected: " + actual.stream().filter(name -> !expected.contains(name)).sorted()
+                                .collect(Collectors.toList()));
     }
 }

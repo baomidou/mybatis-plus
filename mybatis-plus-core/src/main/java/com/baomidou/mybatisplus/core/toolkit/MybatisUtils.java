@@ -47,8 +47,9 @@ public class MybatisUtils {
     /**
      * 实例化Json类型处理器，支持解析父类Field属性
      */
-    public TypeHandler<?> resolveTypeHandler(Class<?> resultType, String property, Class<? extends TypeHandler<?>> typeHandler, Class<?> javaTypeClass,
-                                             Supplier<TypeHandler<?>> defaultResolveTypeHandler) {
+    public TypeHandler<?> resolveTypeHandler(Class<?> resultType, String property,
+            Class<? extends TypeHandler<?>> typeHandler, Class<?> javaTypeClass,
+            Supplier<TypeHandler<?>> defaultResolveTypeHandler) {
         if (null != typeHandler && IJsonTypeHandler.class.isAssignableFrom(typeHandler)) {
             TypeHandler<?> typeHandlerInstance = null;
             Class<?> currentResultType = resultType;
@@ -71,16 +72,17 @@ public class MybatisUtils {
     /**
      * 实例化Json类型处理器
      * <p>
-     * 1.子类需要包含构造(Class,Field)
+     * 1.子类需要包含构造(Class,Field) <br>
      * 2.如果无上述构造或者无属性字段,则使用默认构造(Class)进行实例化
      * </p>
      *
-     * @param typeHandler   类型处理器 {@link IJsonTypeHandler}
+     * @param typeHandler 类型处理器 {@link IJsonTypeHandler}
      * @param javaTypeClass java类型信息
-     * @param field         属性字段
+     * @param field 属性字段
      * @return 实例化类型处理器
      */
-    public static TypeHandler<?> newJsonTypeHandler(Class<? extends TypeHandler<?>> typeHandler, Class<?> javaTypeClass, Field field) {
+    public static TypeHandler<?> newJsonTypeHandler(Class<? extends TypeHandler<?>> typeHandler, Class<?> javaTypeClass,
+            Field field) {
         TypeHandler<?> result = null;
         if (IJsonTypeHandler.class.isAssignableFrom(typeHandler)) {
             if (field != null) {
@@ -103,8 +105,12 @@ public class MybatisUtils {
 
     /**
      * 获取SqlSessionFactory
-     * <p>当自定义实现{@link SqlSession}时,请实现对{@link SqlSessionFactory}的访问 (spring的方式)</p>
-     * <p>当无法获得{@link SqlSessionFactory}时,需要将{@link SqlSessionFactory}绑定至上下文对象中(原生mybatis访问方式)</p>
+     * <p>
+     * 当自定义实现{@link SqlSession}时,请实现对{@link SqlSessionFactory}的访问 (spring的方式)
+     * </p>
+     * <p>
+     * 当无法获得{@link SqlSessionFactory}时,需要将{@link SqlSessionFactory}绑定至上下文对象中(原生mybatis访问方式)
+     * </p>
      *
      * @param mybatisMapperProxy {@link MybatisMapperProxy}
      * @return SqlSessionFactory
@@ -131,8 +137,11 @@ public class MybatisUtils {
         if (metaObject.hasGetter(property)) {
             return (SqlSessionFactory) metaObject.getValue(property);
         }
-        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.getGlobalConfig(sqlSession.getConfiguration()).getSqlSessionFactory();
-        Assert.isTrue(sqlSessionFactory != null, "Please implement access to the sqlSessionFactory property or bind sqlSessionFactory to global access.");
+        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.getGlobalConfig(sqlSession.getConfiguration())
+                .getSqlSessionFactory();
+        Assert.isTrue(
+                sqlSessionFactory != null,
+                "Please implement access to the sqlSessionFactory property or bind sqlSessionFactory to global access.");
         return sqlSessionFactory;
     }
 
@@ -177,7 +186,6 @@ public class MybatisUtils {
         }
         return result;
     }
-
 
     /**
      * 获取MapperProxy元数据信息

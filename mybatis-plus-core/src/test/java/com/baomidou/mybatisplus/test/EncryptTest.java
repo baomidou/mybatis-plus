@@ -17,8 +17,7 @@ class EncryptTest {
 
     @Test
     void md5Base64() {
-        Assertions.assertEquals("Jgmg8jeuq9EyB1ybYtj1fg==",
-            EncryptUtils.md5Base64("犯我中华者虽远必诛"));
+        Assertions.assertEquals("Jgmg8jeuq9EyB1ybYtj1fg==", EncryptUtils.md5Base64("犯我中华者虽远必诛"));
     }
 
     @Test
@@ -30,7 +29,8 @@ class EncryptTest {
 
     @Test
     void testTableInfoHelper() {
-        TableInfo info = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Xx.class);
+        TableInfo info = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Xx.class);
         System.out.println("----------- AllInsertSqlColumn -----------");
         System.out.println(info.getAllInsertSqlColumnMaybeIf("et."));
         System.out.println("----------- AllInsertSqlProperty -----------");
@@ -43,6 +43,7 @@ class EncryptTest {
 
     @Data
     private static class Xx {
+
         @TableId(type = IdType.AUTO)
         private Long id;
         @TableField(fill = FieldFill.INSERT)

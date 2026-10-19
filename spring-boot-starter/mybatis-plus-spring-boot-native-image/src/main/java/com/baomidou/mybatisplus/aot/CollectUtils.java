@@ -95,7 +95,8 @@ class CollectUtils {
                 for (String className : classNames) {
                     try {
                         Class<?> clazz = classLoader.loadClass(className);
-                        if (predicate == null || predicate.test(clazz)) classes.add(clazz);
+                        if (predicate == null || predicate.test(clazz))
+                            classes.add(clazz);
                     } catch (ClassNotFoundException | LinkageError e) {
                         // 忽略无法加载的类
                     }
@@ -115,7 +116,8 @@ class CollectUtils {
                 for (String className : names) {
                     // 过滤掉Spring相关的生成类
                     // 详见：org.springframework.aot.generate.ClassNameGenerator
-                    if (className.contains("__")) continue;
+                    if (className.contains("__"))
+                        continue;
                     classNames.add(className);
                 }
             } catch (IOException e) {
@@ -128,7 +130,8 @@ class CollectUtils {
     public Set<Class<?>> findSpringBootApplicationClasses() throws IOException {
         return findClasses(c -> {
             for (Annotation annotation : c.getAnnotations()) {
-                if (annotation.annotationType().getName().equals("org.springframework.boot.autoconfigure.SpringBootApplication")) {
+                if (annotation.annotationType().getName()
+                        .equals("org.springframework.boot.autoconfigure.SpringBootApplication")) {
                     return true;
                 }
             }
@@ -157,7 +160,8 @@ class CollectUtils {
         findClassesInDirectory(directory, packageName, classNames, name -> true);
     }
 
-    public void findClassesInDirectory(File directory, String packageName, Set<String> classNames, Predicate<String> filter) {
+    public void findClassesInDirectory(File directory, String packageName, Set<String> classNames,
+            Predicate<String> filter) {
         File[] files = directory.listFiles();
         if (files == null) {
             return;
@@ -170,7 +174,8 @@ class CollectUtils {
             } else if (filename.endsWith(".class")) {
                 String className = filename.substring(0, filename.length() - 6);
                 String fullClassName = packageName.isEmpty() ? className : packageName + '.' + className;
-                if (filter.test(fullClassName)) classNames.add(fullClassName);
+                if (filter.test(fullClassName))
+                    classNames.add(fullClassName);
             }
         }
     }
@@ -179,7 +184,8 @@ class CollectUtils {
         findResourcesInDirectory(directory, parentPath, resources, name -> true);
     }
 
-    public void findResourcesInDirectory(File directory, String parentPath, Set<String> resources, Predicate<String> filter) {
+    public void findResourcesInDirectory(File directory, String parentPath, Set<String> resources,
+            Predicate<String> filter) {
         File[] files = directory.listFiles();
         if (files == null) {
             return;
@@ -192,7 +198,8 @@ class CollectUtils {
                 findResourcesInDirectory(file, currentPath, resources, filter);
             } else {
                 if (!fileName.endsWith(".class")) {
-                    if (filter.test(currentPath)) resources.add(currentPath);
+                    if (filter.test(currentPath))
+                        resources.add(currentPath);
                 }
             }
         }
@@ -297,7 +304,8 @@ class CollectUtils {
                 String entryName = entry.getName();
                 if (entryName.endsWith(".class") && !entry.isDirectory() && isUnderPath(entryName, path)) {
                     String className = entryName.replace('/', '.').substring(0, entryName.length() - 6);
-                    if (filter.test(className)) classNames.add(className);
+                    if (filter.test(className))
+                        classNames.add(className);
                 }
             }
         } catch (Exception e) {
@@ -312,7 +320,8 @@ class CollectUtils {
                 JarEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 if (!entryName.endsWith(".class") && !entry.isDirectory() && isUnderPath(entryName, path)) {
-                    if (filter.test(entryName)) resources.add(entryName);
+                    if (filter.test(entryName))
+                        resources.add(entryName);
                 }
             }
         } catch (Exception e) {
@@ -327,10 +336,8 @@ class CollectUtils {
         if (Boolean.getBoolean(REGISTER_ALL_XML_PROPERTY)) {
             return true;
         }
-        return resourceName.startsWith("mapper/")
-            || resourceName.contains("/mapper/")
-            || resourceName.startsWith("mappers/")
-            || resourceName.contains("/mappers/");
+        return resourceName.startsWith("mapper/") || resourceName.contains("/mapper/")
+                || resourceName.startsWith("mappers/") || resourceName.contains("/mappers/");
     }
 
     /**
@@ -423,12 +430,14 @@ class CollectUtils {
      */
     public boolean isMainClass(Class<?> c) {
         for (Method method : c.getMethods()) {
-            if (method.getName().equals("main") && method.getReturnType() == void.class && Modifier.isStatic(method.getModifiers())) {
+            if (method.getName().equals("main") && method.getReturnType() == void.class
+                    && Modifier.isStatic(method.getModifiers())) {
                 return true;
             }
         }
         for (Method m : c.getDeclaredMethods()) {
-            if (m.getName().equals("main") && m.getReturnType() == void.class && !Modifier.isPrivate(m.getModifiers())) {
+            if (m.getName().equals("main") && m.getReturnType() == void.class
+                    && !Modifier.isPrivate(m.getModifiers())) {
                 return true;
             }
         }
@@ -461,7 +470,8 @@ class CollectUtils {
                 String className = parseHClassValue(content);
                 if (className != null) {
                     Class<?> c = loadClass(className);
-                    if (c != null && isMainClass(c)) classes.add(c);
+                    if (c != null && isMainClass(c))
+                        classes.add(c);
                 }
             }
         }
@@ -477,12 +487,13 @@ class CollectUtils {
      * @return 解析到的类名，如果未找到则返回null
      */
     private String parseHClassValue(String argsStr) {
-        if (argsStr == null || argsStr.isBlank()) return null;
+        if (argsStr == null || argsStr.isBlank())
+            return null;
         Matcher matcher = H_CLASS_PATTERN.matcher(argsStr);
-        if (matcher.find()) return matcher.group(1);
+        if (matcher.find())
+            return matcher.group(1);
         return null;
     }
-
 
     /**
      * 获取启动类所在包名
@@ -501,7 +512,8 @@ class CollectUtils {
     }
 
     public Method[] collectMethods(Method[] m, String... name) {
-        if (name == null || name.length == 0) return m;
+        if (name == null || name.length == 0)
+            return m;
         return collectMethods(m, method -> {
             for (String s : name) {
                 if (method.getName().equals(s)) {
@@ -513,10 +525,12 @@ class CollectUtils {
     }
 
     public Method[] collectMethods(Method[] m, Predicate<Method> predicate) {
-        if (predicate == null) return m;
+        if (predicate == null)
+            return m;
         Set<Method> methods = new HashSet<>();
         for (Method method : m) {
-            if (predicate.test(method)) methods.add(method);
+            if (predicate.test(method))
+                methods.add(method);
         }
         return methods.toArray(EMPTY_METHOD_ARRAY);
     }
@@ -526,10 +540,11 @@ class CollectUtils {
     }
 
     public Field[] collectFields(Field[] f, String... name) {
-        if (name == null || name.length == 0) return f;
+        if (name == null || name.length == 0)
+            return f;
         List<String> names = new ArrayList<>(Arrays.asList(name));
         return collectFields(f, field -> {
-            for (Iterator<String> iterator = names.iterator(); iterator.hasNext(); ) {
+            for (Iterator<String> iterator = names.iterator(); iterator.hasNext();) {
                 String s = iterator.next();
                 if (field.getName().equals(s)) {
                     iterator.remove();
@@ -541,10 +556,12 @@ class CollectUtils {
     }
 
     public Field[] collectFields(Field[] f, Predicate<Field> predicate) {
-        if (predicate == null) return f;
+        if (predicate == null)
+            return f;
         Set<Field> fields = new HashSet<>();
         for (Field field : f) {
-            if (predicate.test(field)) fields.add(field);
+            if (predicate.test(field))
+                fields.add(field);
         }
         return fields.toArray(EMPTY_FIELD_ARRAY);
     }

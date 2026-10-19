@@ -182,7 +182,8 @@ public class TableInfoHelper {
      * @param clazz 反射实体类
      * @return 数据库表反射信息
      */
-    private static synchronized TableInfo initTableInfo(Configuration configuration, String currentNamespace, Class<?> clazz) {
+    private static synchronized TableInfo initTableInfo(Configuration configuration, String currentNamespace,
+            Class<?> clazz) {
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         PostInitTableInfoHandler postInitTableInfoHandler = globalConfig.getPostInitTableInfoHandler();
         /* 没有获取到缓存信息,则初始化 */
@@ -213,9 +214,9 @@ public class TableInfoHelper {
      * 初始化 表数据库类型,表名,resultMap
      * </p>
      *
-     * @param clazz        实体类
+     * @param clazz 实体类
      * @param globalConfig 全局配置
-     * @param tableInfo    数据库表反射信息
+     * @param tableInfo 数据库表反射信息
      * @return 需要排除的字段名
      */
     private static PropertySelector initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
@@ -289,7 +290,7 @@ public class TableInfoHelper {
      * 根据 DbConfig 初始化 表名
      *
      * @param className 类名
-     * @param dbConfig  DbConfig
+     * @param dbConfig DbConfig
      * @return 表名
      */
     private static String initTableNameWithDbConfig(String className, GlobalConfig.DbConfig dbConfig) {
@@ -313,12 +314,12 @@ public class TableInfoHelper {
      * 初始化 表主键,表字段
      * </p>
      *
-     * @param clazz        实体类
+     * @param clazz 实体类
      * @param globalConfig 全局配置
-     * @param tableInfo    数据库表反射信息
+     * @param tableInfo 数据库表反射信息
      */
     private static void initTableFields(Configuration configuration, Class<?> clazz, GlobalConfig globalConfig,
-                                        TableInfo tableInfo, PropertySelector propertySelector) {
+            TableInfo tableInfo, PropertySelector propertySelector) {
         AnnotationHandler annotationHandler = globalConfig.getAnnotationHandler();
         PostInitTableInfoHandler postInitTableInfoHandler = globalConfig.getPostInitTableInfoHandler();
         Reflector reflector = tableInfo.getReflector();
@@ -356,7 +357,8 @@ public class TableInfoHelper {
 
             if (isPK) {
                 if (orderBy != null) {
-                    tableInfo.getOrderByFields().add(new OrderFieldInfo(tableInfo.getKeyColumn(), orderBy.asc(), orderBy.sort()));
+                    tableInfo.getOrderByFields()
+                            .add(new OrderFieldInfo(tableInfo.getKeyColumn(), orderBy.asc(), orderBy.sort()));
                 }
                 continue;
             }
@@ -364,13 +366,15 @@ public class TableInfoHelper {
 
             /* 有 @TableField 注解的字段初始化 */
             if (tableField != null) {
-                TableFieldInfo tableFieldInfo = new TableFieldInfo(globalConfig, tableInfo, field, tableField, reflector, existTableLogic, isOrderBy);
+                TableFieldInfo tableFieldInfo = new TableFieldInfo(globalConfig, tableInfo, field, tableField,
+                        reflector, existTableLogic, isOrderBy);
                 fieldList.add(postInitTableInfoHandler.postFieldInfo(tableFieldInfo, configuration));
                 continue;
             }
 
             /* 无 @TableField  注解的字段初始化 */
-            TableFieldInfo tableFieldInfo = new TableFieldInfo(globalConfig, tableInfo, field, reflector, existTableLogic, isOrderBy);
+            TableFieldInfo tableFieldInfo = new TableFieldInfo(globalConfig, tableInfo, field, reflector,
+                    existTableLogic, isOrderBy);
             fieldList.add(postInitTableInfoHandler.postFieldInfo(tableFieldInfo, configuration));
         }
 
@@ -389,12 +393,13 @@ public class TableInfoHelper {
      * </p>
      *
      * @param clazz 实体类
-     * @param list  字段列表
+     * @param list 字段列表
      * @return true 为存在 {@link TableId} 注解;
      */
     public static boolean isExistTableId(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration())
+                .getAnnotationHandler();
         return isExistTableId(list, annotationHandler);
     }
 
@@ -416,12 +421,13 @@ public class TableInfoHelper {
      * </p>
      *
      * @param clazz 实体类
-     * @param list  字段列表
+     * @param list 字段列表
      * @return true 为存在 {@link TableLogic} 注解;
      */
     public static boolean isExistTableLogic(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration())
+                .getAnnotationHandler();
         return isExistTableLogic(list, annotationHandler);
     }
 
@@ -443,12 +449,13 @@ public class TableInfoHelper {
      * </p>
      *
      * @param clazz 实体类
-     * @param list  字段列表
+     * @param list 字段列表
      * @return true 为存在 {@link OrderBy} 注解;
      */
     public static boolean isExistOrderBy(Class<?> clazz, List<Field> list) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration())
+                .getAnnotationHandler();
         return isExistOrderBy(list, annotationHandler);
     }
 
@@ -457,7 +464,7 @@ public class TableInfoHelper {
      * 判断排序注解是否存在
      * </p>
      *
-     * @param list              字段列表
+     * @param list 字段列表
      * @param annotationHandler 注解处理类
      * @return true 为存在 {@link OrderBy} 注解;
      */
@@ -471,17 +478,20 @@ public class TableInfoHelper {
      * </p>
      *
      * @param globalConfig 全局配置信息
-     * @param tableInfo    表信息
-     * @param field        字段
-     * @param tableId      注解
+     * @param tableInfo 表信息
+     * @param field 字段
+     * @param tableId 注解
      */
-    private static void initTableIdWithAnnotation(GlobalConfig globalConfig, TableInfo tableInfo, Field field, TableId tableId) {
+    private static void initTableIdWithAnnotation(GlobalConfig globalConfig, TableInfo tableInfo, Field field,
+            TableId tableId) {
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         boolean underCamel = tableInfo.isUnderCamel();
         final String property = field.getName();
         if (globalConfig.getAnnotationHandler().isAnnotationPresent(field, TableField.class)) {
-            logger.warn(String.format("This \"%s\" is the table primary key by @TableId annotation in Class: \"%s\",So @TableField annotation will not work!",
-                property, tableInfo.getEntityType().getName()));
+            logger.warn(
+                    String.format(
+                            "This \"%s\" is the table primary key by @TableId annotation in Class: \"%s\",So @TableField annotation will not work!",
+                            property, tableInfo.getEntityType().getName()));
         }
         /* 主键策略（ 注解 > 全局 ） */
         // 设置 Sequence 其他策略无效
@@ -507,8 +517,10 @@ public class TableInfoHelper {
         }
         final Class<?> keyType = tableInfo.getReflector().getGetterType(property);
         if (keyType.isPrimitive()) {
-            logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
-                property, tableInfo.getEntityType().getName()));
+            logger.warn(
+                    String.format(
+                            "This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"", property,
+                            tableInfo.getEntityType().getName()));
         }
         if (StringUtils.isEmpty(tableId.value())) {
             String columnFormat = dbConfig.getColumnFormat();
@@ -516,10 +528,8 @@ public class TableInfoHelper {
                 column = String.format(columnFormat, column);
             }
         }
-        tableInfo.setKeyRelated(checkRelated(underCamel, property, column))
-            .setKeyColumn(column)
-            .setKeyProperty(property)
-            .setKeyType(keyType);
+        tableInfo.setKeyRelated(checkRelated(underCamel, property, column)).setKeyColumn(column)
+                .setKeyProperty(property).setKeyType(keyType);
     }
 
     /**
@@ -528,8 +538,8 @@ public class TableInfoHelper {
      * </p>
      *
      * @param globalConfig 全局配置
-     * @param tableInfo    表信息
-     * @param field        字段
+     * @param tableInfo 表信息
+     * @param field 字段
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableIdWithoutAnnotation(GlobalConfig globalConfig, TableInfo tableInfo, Field field) {
@@ -537,8 +547,10 @@ public class TableInfoHelper {
         final String property = field.getName();
         if (DEFAULT_ID_NAME.equalsIgnoreCase(property)) {
             if (globalConfig.getAnnotationHandler().isAnnotationPresent(field, TableField.class)) {
-                logger.warn(String.format("This \"%s\" is the table primary key by default name for `id` in Class: \"%s\",So @TableField will not work!",
-                    property, tableInfo.getEntityType().getName()));
+                logger.warn(
+                        String.format(
+                                "This \"%s\" is the table primary key by default name for `id` in Class: \"%s\",So @TableField will not work!",
+                                property, tableInfo.getEntityType().getName()));
             }
             String column = property;
             if (dbConfig.isCapitalMode()) {
@@ -546,18 +558,17 @@ public class TableInfoHelper {
             }
             final Class<?> keyType = tableInfo.getReflector().getGetterType(property);
             if (keyType.isPrimitive()) {
-                logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
-                    property, tableInfo.getEntityType().getName()));
+                logger.warn(
+                        String.format(
+                                "This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"", property,
+                                tableInfo.getEntityType().getName()));
             }
             String columnFormat = dbConfig.getColumnFormat();
             if (StringUtils.isNotBlank(columnFormat)) {
                 column = String.format(columnFormat, column);
             }
             tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), property, column))
-                .setIdType(dbConfig.getIdType())
-                .setKeyColumn(column)
-                .setKeyProperty(property)
-                .setKeyType(keyType);
+                    .setIdType(dbConfig.getIdType()).setKeyColumn(column).setKeyProperty(property).setKeyType(keyType);
             return true;
         }
         return false;
@@ -569,8 +580,8 @@ public class TableInfoHelper {
      * 为 true 表示不符合规则
      *
      * @param underCamel 驼峰命名
-     * @param property   属性名
-     * @param column     字段名
+     * @param property 属性名
+     * @param column 字段名
      * @return related
      */
     public static boolean checkRelated(boolean underCamel, String property, String column) {
@@ -579,8 +590,8 @@ public class TableInfoHelper {
         String columnUpper = column.toUpperCase(Locale.ENGLISH);
         if (underCamel) {
             // 开启了驼峰并且 column 包含下划线
-            return !(propertyUpper.equals(columnUpper) ||
-                propertyUpper.equals(columnUpper.replace(StringPool.UNDERSCORE, StringPool.EMPTY)));
+            return !(propertyUpper.equals(columnUpper)
+                    || propertyUpper.equals(columnUpper.replace(StringPool.UNDERSCORE, StringPool.EMPTY)));
         } else {
             // 未开启驼峰,直接判断 property 是否与 column 相同(全大写)
             return !propertyUpper.equals(columnUpper);
@@ -597,7 +608,8 @@ public class TableInfoHelper {
      */
     public static List<Field> getAllFields(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getAnnotationHandler();
+        AnnotationHandler annotationHandler = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration())
+                .getAnnotationHandler();
         return getAllFields(clazz, annotationHandler);
     }
 
@@ -606,21 +618,21 @@ public class TableInfoHelper {
      * 获取该类的所有属性列表
      * </p>
      *
-     * @param clazz             反射类
+     * @param clazz 反射类
      * @param annotationHandler 注解处理类
      * @return 属性集合
      */
     public static List<Field> getAllFields(Class<?> clazz, AnnotationHandler annotationHandler) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
-        return fieldList.stream()
-            .filter(field -> {
-                /* 过滤注解非表字段属性 */
-                TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
-                return (tableField == null || tableField.exist());
-            }).collect(toList());
+        return fieldList.stream().filter(field -> {
+            /* 过滤注解非表字段属性 */
+            TableField tableField = annotationHandler.getAnnotation(field, TableField.class);
+            return (tableField == null || tableField.exist());
+        }).collect(toList());
     }
 
-    public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
+    public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo,
+            MapperBuilderAssistant builderAssistant) {
         List<IKeyGenerator> keyGenerators = GlobalConfigUtils.getKeyGenerators(builderAssistant.getConfiguration());
         if (CollectionUtils.isEmpty(keyGenerators)) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
@@ -630,7 +642,8 @@ public class TableInfoHelper {
             // 多个主键生成器
             KeySequence keySequence = tableInfo.getKeySequence();
             if (null != keySequence && DbType.OTHER != keySequence.dbType()) {
-                keyGenerator = keyGenerators.stream().filter(k -> k.dbType() == keySequence.dbType()).findFirst().orElse(null);
+                keyGenerator = keyGenerators.stream().filter(k -> k.dbType() == keySequence.dbType()).findFirst()
+                        .orElse(null);
             }
         }
         // 无法找到注解指定生成器，默认使用第一个生成器
@@ -638,19 +651,21 @@ public class TableInfoHelper {
             keyGenerator = keyGenerators.get(0);
         }
         Configuration configuration = builderAssistant.getConfiguration();
-        String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(), new ArrayList<>()).build();
+        String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId
+                + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(),
+                new ArrayList<>()).build();
         MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,
-            new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())), SqlCommandType.SELECT)
-            .keyProperty(tableInfo.getKeyProperty())
-            .resultMaps(Collections.singletonList(resultMap))
-            .build();
+                new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())),
+                SqlCommandType.SELECT).keyProperty(tableInfo.getKeyProperty())
+                .resultMaps(Collections.singletonList(resultMap)).build();
         configuration.addMappedStatement(mappedStatement);
         return new SelectKeyGenerator(mappedStatement, true);
     }
 
     @FunctionalInterface
     private interface PropertySelector {
+
         boolean selection(String property);
     }
 }

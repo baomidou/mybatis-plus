@@ -9,13 +9,13 @@ import java.util.Objects;
 /**
  * Customizes generator field metadata after type conversion and before templates render.
  * <p>
- * The customizer runs after the database metadata has been converted to {@link TableField.MetaInfo}
- * and {@link TableField#setColumnType(com.baomidou.mybatisplus.generator.config.rules.IColumnType) column type},
- * and before property-name conversion, annotation handling,
+ * The customizer runs after the database metadata has been converted to {@link TableField.MetaInfo} <br>
+ * and {@link TableField#setColumnType(com.baomidou.mybatisplus.generator.config.rules.IColumnType) column type}, <br>
+ * and before property-name conversion, annotation handling, <br>
  * import collection, and template rendering.
  * <p>
- * Example: keep most fields on the default conversion path, but adjust a special database type such
- * as {@code POINT} before generated templates see it:
+ * Example: keep most fields on the default conversion path, but adjust a special database type such <br>
+ * as {@code POINT} before generated templates see it: <br>
  * <pre>{@code
  * new StrategyConfig.Builder()
  *     .entityBuilder()
@@ -42,7 +42,7 @@ public interface ITableFieldMetaInfoCustomizer {
     void customize(@NotNull TableInfo tableInfo, @NotNull TableField tableField);
 
     /**
-     * Returns a composed customizer that performs this customizer,
+     * Returns a composed customizer that performs this customizer, <br>
      * followed by the {@code after} customizer.
      *
      * @param after the customizer to perform after this customizer

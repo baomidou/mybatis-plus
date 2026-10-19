@@ -42,24 +42,28 @@ public class UUIDEntityTest extends BaseDbTest<UUIDEntityMapper> {
             Assertions.assertEquals(1, m.deleteByIds(List.of(uuidEntity)));
         });
 
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteByIds(
-            List.of(
-                UUID.randomUUID().toString(),
-                UUID.randomUUID(), 123, 321L,
-                Map.of("id", UUID.randomUUID()),
-                Map.of("id", UUID.randomUUID().toString()),
-                new DeleteByIdDto<>(UUID.randomUUID()),
-                new DeleteByIdDto<>(UUID.randomUUID().toString())
-            ))));
+        doTest(
+                m -> Assertions.assertDoesNotThrow(
+                        () -> m.deleteByIds(
+                                List.of(
+                                        UUID.randomUUID().toString(), UUID.randomUUID(), 123, 321L,
+                                        Map.of("id", UUID.randomUUID()), Map.of("id", UUID.randomUUID().toString()),
+                                        new DeleteByIdDto<>(UUID.randomUUID()),
+                                        new DeleteByIdDto<>(UUID.randomUUID().toString())))));
 
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID())));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID().toString())));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new UUIDEntity(){})));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID()))));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID().toString()))));
-        doTest(m -> Assertions.assertDoesNotThrow(()-> SqlRunner.db(UUIDEntity.class).delete("delete from entity where id = {0}", UUID.randomUUID())));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(UUID.randomUUID())));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(UUID.randomUUID().toString())));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(new UUIDEntity() {
+        })));
+        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID()))));
+        doTest(
+                m -> Assertions
+                        .assertDoesNotThrow(() -> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID().toString()))));
+        doTest(
+                m -> Assertions.assertDoesNotThrow(
+                        () -> SqlRunner.db(UUIDEntity.class)
+                                .delete("delete from entity where id = {0}", UUID.randomUUID())));
     }
-
 
     @Override
     protected Consumer<Configuration> consumer() {
@@ -73,12 +77,9 @@ public class UUIDEntityTest extends BaseDbTest<UUIDEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList("drop table if exists entity",
-            "CREATE TABLE IF NOT EXISTS entity (\n" +
-                "id VARCHAR(50) NOT NULL,\n" +
-                "name VARCHAR(30) NULL DEFAULT NULL,\n" +
-                "PRIMARY KEY (id)" +
-                ")");
+        return Arrays.asList(
+                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (\n" + "id VARCHAR(50) NOT NULL,\n"
+                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
     }
 
     @Override

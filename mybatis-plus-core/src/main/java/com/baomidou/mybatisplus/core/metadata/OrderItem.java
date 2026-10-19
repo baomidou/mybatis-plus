@@ -27,12 +27,13 @@ import java.util.stream.Collectors;
 /**
  * 排序元素载体
  *
- * @author HCL
- * Create at 2019/5/27
+ * @author HCL <br>
+ *         Create at 2019/5/27
  */
 @Getter
 @Setter
 public class OrderItem implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -59,6 +60,7 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据指定字段升序排序
+     * 
      * @param column 数据库字段
      * @return 排序字段
      */
@@ -68,6 +70,7 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据指定字段降序排序
+     * 
      * @param column 数据库字段
      * @return 排序字段
      */
@@ -77,8 +80,13 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据表达式排序
-     * <p>任意表达式语句,自行控制SQL注入</p>
-     * <p>不适用与反序列</p>
+     * <p>
+     * 任意表达式语句,自行控制SQL注入
+     * </p>
+     * <p>
+     * 不适用与反序列
+     * </p>
+     * 
      * @since 3.5.13
      * @param expression 字段表达式
      * @return 排序字段
@@ -89,8 +97,13 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据表达式排序
-     * <p>任意表达式语句,自行控制SQL注入</p>
-     * <p>不适用与反序列</p>
+     * <p>
+     * 任意表达式语句,自行控制SQL注入
+     * </p>
+     * <p>
+     * 不适用与反序列
+     * </p>
+     * 
      * @since 3.5.13
      * @param expression 字段表达式
      * @param asc 是否正序
@@ -102,6 +115,7 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据指定字段列表进行升序排序
+     * 
      * @param columns 字段列表
      * @return 排序字段
      */
@@ -111,6 +125,7 @@ public class OrderItem implements Serializable {
 
     /**
      * 根据指定字段列表进行降序排序
+     * 
      * @param columns 字段列表
      * @return 排序字段
      */
@@ -135,10 +150,7 @@ public class OrderItem implements Serializable {
 
     @Override
     public String toString() {
-        return "OrderItem{" +
-            "column='" + column + '\'' +
-            ", asc=" + asc +
-            '}';
+        return "OrderItem{" + "column='" + column + '\'' + ", asc=" + asc + '}';
     }
 
 }

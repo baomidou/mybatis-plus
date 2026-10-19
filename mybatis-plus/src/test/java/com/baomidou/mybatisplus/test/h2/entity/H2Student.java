@@ -26,7 +26,6 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 public class H2Student extends Model<H2Student> {
 
-
     /**
      * serialVersionUID
      */

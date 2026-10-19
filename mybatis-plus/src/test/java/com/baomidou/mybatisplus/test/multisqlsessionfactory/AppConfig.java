@@ -19,12 +19,9 @@ import javax.sql.DataSource;
  * @author nieqiurong
  */
 @ComponentScan("com.baomidou.mybatisplus.test.multisqlsessionfactory")
-@MapperScans(
-    {
+@MapperScans({
         @MapperScan(value = "com.baomidou.mybatisplus.test.multisqlsessionfactory.a.mapper", sqlSessionFactoryRef = "sqlSessionFactory1"),
-        @MapperScan(value = "com.baomidou.mybatisplus.test.multisqlsessionfactory.b.mapper", sqlSessionFactoryRef = "sqlSessionFactory2")
-    }
-)
+        @MapperScan(value = "com.baomidou.mybatisplus.test.multisqlsessionfactory.b.mapper", sqlSessionFactoryRef = "sqlSessionFactory2")})
 @Configuration
 public class AppConfig {
 
@@ -75,7 +72,6 @@ public class AppConfig {
     public TransactionTemplate transactionTemplateB(DataSourceTransactionManager transactionManagerB) {
         return new TransactionTemplate(transactionManagerB);
     }
-
 
     @Bean
     public SqlSessionFactory sqlSessionFactory2(DataSource dataSourceB) throws Exception {

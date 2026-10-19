@@ -16,14 +16,23 @@ public class PackageConfigTest {
     @Test
     void joinPackageTest() {
         Assertions.assertEquals("com.baomidou.demo", GeneratorBuilder.packageConfigBuilder().joinPackage("demo"));
-        Assertions.assertEquals("com.baomidou.mp.demo", GeneratorBuilder.packageConfigBuilder().moduleName("mp").joinPackage("demo"));
-        Assertions.assertEquals("com.baomihua.demo", GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").joinPackage("demo"));
-        Assertions.assertEquals("com.baomihua.mp.demo", GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage("demo"));
-        Assertions.assertEquals("com.baomihua.mp", GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage(null));
-        Assertions.assertEquals("com.baomihua.mp", GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage(""));
+        Assertions.assertEquals(
+                "com.baomidou.mp.demo", GeneratorBuilder.packageConfigBuilder().moduleName("mp").joinPackage("demo"));
+        Assertions.assertEquals(
+                "com.baomihua.demo",
+                GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").joinPackage("demo"));
+        Assertions.assertEquals(
+                "com.baomihua.mp.demo",
+                GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage("demo"));
+        Assertions.assertEquals(
+                "com.baomihua.mp",
+                GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage(null));
+        Assertions.assertEquals(
+                "com.baomihua.mp",
+                GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("mp").joinPackage(""));
     }
 
-    private void buildAssert(PackageConfig packageConfig){
+    private void buildAssert(PackageConfig packageConfig) {
         Assertions.assertEquals("com.baomihua.demo", packageConfig.getParent());
         Assertions.assertEquals("demo", packageConfig.getModuleName());
         Assertions.assertEquals("action", packageConfig.getController());
@@ -31,32 +40,29 @@ public class PackageConfigTest {
         Assertions.assertEquals("dao", packageConfig.getMapper());
         Assertions.assertEquals("iservice", packageConfig.getService());
         Assertions.assertEquals("serviceIm", packageConfig.getServiceImpl());
-        Assertions.assertEquals(1,packageConfig.getPathInfo().size());
+        Assertions.assertEquals(1, packageConfig.getPathInfo().size());
         Assertions.assertTrue(packageConfig.getPathInfo().containsKey(OutputFile.controller));
     }
 
     @Test
-    void buildTest(){
-        buildAssert(GeneratorBuilder.packageConfigBuilder().parent("com.baomihua")
-            .moduleName("demo").controller("action").entity("entity")
-            .mapper("dao").service("iservice").serviceImpl("serviceIm")
-            .pathInfo(Collections.singletonMap(OutputFile.controller,"bbbb")).build());
+    void buildTest() {
+        buildAssert(
+                GeneratorBuilder.packageConfigBuilder().parent("com.baomihua").moduleName("demo").controller("action")
+                        .entity("entity").mapper("dao").service("iservice").serviceImpl("serviceIm")
+                        .pathInfo(Collections.singletonMap(OutputFile.controller, "bbbb")).build());
     }
 
     @Test
     void testCustomFile() {
         var packageConfig = GeneratorBuilder.packageConfigBuilder().build();
         var injectionConfig = GeneratorBuilder.injectionConfigBuilder()
-            .customFile(new CustomFile.Builder()
-                .fileName("Dto.java").packageName("dto").templatePath("dto.vm")
-                .build())
-            .customFile(new CustomFile.Builder()
-                .fileName("Vo.java").templatePath("vo.vm")
-                .build())
-            .customFile(new CustomFile.Builder()
-                .fileName("Bo.java").packageName("com.baomidou.bo").templatePath("Bo.vm")
-                .build())
-            .build();
+                .customFile(
+                        new CustomFile.Builder().fileName("Dto.java").packageName("dto").templatePath("dto.vm").build())
+                .customFile(new CustomFile.Builder().fileName("Vo.java").templatePath("vo.vm").build())
+                .customFile(
+                        new CustomFile.Builder().fileName("Bo.java").packageName("com.baomidou.bo")
+                                .templatePath("Bo.vm").build())
+                .build();
         Map<String, String> packageInfo = packageConfig.getPackageInfo(injectionConfig);
         Assertions.assertNotNull(packageInfo.get("Dto"));
         Assertions.assertEquals("com.baomidou.dto", packageInfo.get("Dto"));

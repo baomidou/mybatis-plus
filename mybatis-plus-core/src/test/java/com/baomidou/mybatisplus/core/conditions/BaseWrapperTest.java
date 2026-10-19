@@ -35,6 +35,7 @@ class BaseWrapperTest {
 
     @Data
     protected static class Entity {
+
         private Integer id;
 
         @TableField("username")

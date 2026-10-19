@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyMapper {
+
     private final Properties delegate;
 
     public static PropertyMapper newInstance(Properties properties) {
@@ -77,7 +78,8 @@ public class PropertyMapper {
             Properties p = new Properties();
             String key = i.substring(group.length()) + StringPool.COLON;
             int keyIndex = key.length();
-            keys.stream().filter(j -> j.startsWith(key)).forEach(j -> p.setProperty(j.substring(keyIndex), delegate.getProperty(j)));
+            keys.stream().filter(j -> j.startsWith(key))
+                    .forEach(j -> p.setProperty(j.substring(keyIndex), delegate.getProperty(j)));
             map.put(delegate.getProperty(i), p);
         });
         return map;

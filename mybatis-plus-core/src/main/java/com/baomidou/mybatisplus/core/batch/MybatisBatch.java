@@ -89,7 +89,7 @@ public class MybatisBatch<T> {
     /**
      * 执行批量操作
      *
-     * @param statement        执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @param statement 执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
      * @param parameterConvert 参数转换器
      * @return 批处理结果
      */
@@ -101,7 +101,7 @@ public class MybatisBatch<T> {
      * 执行批量操作
      *
      * @param autoCommit 是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
-     * @param statement  执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @param statement 执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
      * @return 批处理结果
      */
     public List<BatchResult> execute(boolean autoCommit, String statement) {
@@ -118,11 +118,10 @@ public class MybatisBatch<T> {
         return execute(false, batchMethod);
     }
 
-
     /**
      * 执行批量操作
      *
-     * @param autoCommit  是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param autoCommit 是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
      * @param batchMethod 批量操作方法
      * @return 批处理结果
      */
@@ -133,8 +132,8 @@ public class MybatisBatch<T> {
     /**
      * 执行批量操作
      *
-     * @param autoCommit       是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
-     * @param statement        执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
+     * @param autoCommit 是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param statement 执行的 mapper 方法 (示例: com.baomidou.mybatisplus.core.mapper.BaseMapper.insert )
      * @param parameterConvert 参数转换器
      * @return 批处理结果
      */
@@ -156,43 +155,47 @@ public class MybatisBatch<T> {
     }
 
     /**
-     * 批量保存或更新
-     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 批量保存或更新 <br>
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交) <br>
      * 举个例子(事务开启状态下):
-     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突, <br>
      * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
-     * @param insertMethod    插入方法
+     * @param insertMethod 插入方法
      * @param insertPredicate 插入条件 (当条件满足时执行插入方法,否则执行更新方法)
-     * @param updateMethod    更新方法
+     * @param updateMethod 更新方法
      * @return 批处理结果
      */
-    public List<BatchResult> saveOrUpdate(BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
+    public List<BatchResult> saveOrUpdate(BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate,
+            BatchMethod<T> updateMethod) {
         return saveOrUpdate(false, insertMethod, insertPredicate, updateMethod);
     }
 
     /**
-     * 批量保存或更新
-     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交)
+     * 批量保存或更新 <br>
+     * 这里需要注意一下,如果在insertPredicate里判断调用其他sqlSession(类似mapper.xxx)时,要注意一级缓存问题或数据感知问题(因为当前会话数据还未提交) <br>
      * 举个例子(事务开启状态下):
-     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突,
+     * 如果当前批次里面执行两个主键相同的数据,当调用mapper.selectById时,如果数据库未有这条记录,在同个sqlSession下,由于一级缓存的问题,下次再查就还是null,导致插入主键冲突, <br>
      * 但使用 {@link BatchSqlSession}时,由于每次select操作都会触发一次flushStatements,就会执行更新操作
      *
-     * @param autoCommit      是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
-     * @param insertMethod    插入方法
+     * @param autoCommit 是否自动提交(这里生效的前提依赖于事务管理器 {@link org.apache.ibatis.transaction.Transaction})
+     * @param insertMethod 插入方法
      * @param insertPredicate 插入条件 (当条件满足时执行插入方法,否则执行更新方法)
-     * @param updateMethod    更新方法
+     * @param updateMethod 更新方法
      * @return 批处理结果
      */
-    public List<BatchResult> saveOrUpdate(boolean autoCommit, BatchMethod<T> insertMethod, BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
+    public List<BatchResult> saveOrUpdate(boolean autoCommit, BatchMethod<T> insertMethod,
+            BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
         List<BatchResult> resultList = new ArrayList<>();
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, autoCommit)) {
             BatchSqlSession session = new BatchSqlSession(sqlSession);
             for (T data : dataList) {
                 if (insertPredicate.test(session, data)) {
-                    sqlSession.insert(insertMethod.getStatementId(), toParameter(insertMethod.getParameterConvert(), data));
+                    sqlSession.insert(
+                            insertMethod.getStatementId(), toParameter(insertMethod.getParameterConvert(), data));
                 } else {
-                    sqlSession.update(updateMethod.getStatementId(), toParameter(updateMethod.getParameterConvert(), data));
+                    sqlSession.update(
+                            updateMethod.getStatementId(), toParameter(updateMethod.getParameterConvert(), data));
                 }
             }
             resultList.addAll(sqlSession.flushStatements());
@@ -208,7 +211,7 @@ public class MybatisBatch<T> {
      * 参数转换
      *
      * @param parameterConvert 参数转换器
-     * @param data             参数
+     * @param data 参数
      * @return 方法参数
      */
     protected Object toParameter(ParameterConvert<T> parameterConvert, T data) {
@@ -244,7 +247,7 @@ public class MybatisBatch<T> {
          * 新增方法
          *
          * @param function 转换函数
-         * @param <E>      实体
+         * @param <E> 实体
          * @return 新增方法
          */
         public <E> BatchMethod<E> insert(Function<E, T> function) {
@@ -268,7 +271,7 @@ public class MybatisBatch<T> {
          * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#updateById(java.lang.Object)}
          *
          * @param etFunction 实体转换
-         * @param <E>        实体
+         * @param <E> 实体
          * @return 更新方法
          */
         public <E> BatchMethod<E> updateById(Function<E, T> etFunction) {
@@ -280,10 +283,11 @@ public class MybatisBatch<T> {
         }
 
         /**
-         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
+         * 更新方法
+         * {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
          *
          * @param wrapperFunction 更新条件(不能为null)
-         * @param <E>             实体
+         * @param <E> 实体
          * @return 更新方法
          */
         public <E> BatchMethod<E> update(Function<E, Wrapper<T>> wrapperFunction) {
@@ -296,11 +300,12 @@ public class MybatisBatch<T> {
         }
 
         /**
-         * 更新方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
+         * 更新方法
+         * {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#update(java.lang.Object, com.baomidou.mybatisplus.core.conditions.Wrapper)}
          *
-         * @param entityFunction  实体参数
+         * @param entityFunction 实体参数
          * @param wrapperFunction wrapper参数
-         * @param <E>             实体
+         * @param <E> 实体
          * @return 更新方法
          */
         public <E> BatchMethod<E> update(Function<E, T> entityFunction, Function<E, Wrapper<T>> wrapperFunction) {
@@ -313,10 +318,11 @@ public class MybatisBatch<T> {
         }
 
         /**
-         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
+         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or
+         * {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
          *
          * @param function 参数转换
-         * @param <E>      实体
+         * @param <E> 实体
          * @return 删除方法
          */
         public <E> BatchMethod<E> deleteById(Function<E, T> function) {
@@ -324,7 +330,8 @@ public class MybatisBatch<T> {
         }
 
         /**
-         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
+         * 删除方法 {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Object)} or
+         * {@link com.baomidou.mybatisplus.core.mapper.BaseMapper#deleteById(Serializable)}
          *
          * @param <T> 实体
          * @return 删除方法

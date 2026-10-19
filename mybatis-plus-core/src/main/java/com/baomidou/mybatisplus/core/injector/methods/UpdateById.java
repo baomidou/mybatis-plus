@@ -44,9 +44,10 @@ public class UpdateById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         final String additional = optlockVersion(tableInfo) + tableInfo.getLogicDeleteSql(true, true);
-        String sql = SqlMethod.UPDATE_BY_ID.format(tableInfo.getTableName(),
-            sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
-            tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
+        String sql = SqlMethod.UPDATE_BY_ID.format(
+                tableInfo.getTableName(),
+                sqlSet(tableInfo.isWithLogicDelete(), false, tableInfo, false, ENTITY, ENTITY_DOT),
+                tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, methodName, sqlSource);
     }

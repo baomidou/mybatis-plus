@@ -36,8 +36,8 @@ class MyBaitsRuntimeHintsRegistrar implements RuntimeHintsRegistrar {
 
     private void registerXml(AotUtils aotUtils) {
         try {
-            aotUtils.registerPattern(aotUtils.findResources("",
-                CollectUtils::isMapperXmlResource).toArray(AotUtils.EMPTY_STRING_ARRAY));
+            aotUtils.registerPattern(
+                    aotUtils.findResources("", CollectUtils::isMapperXmlResource).toArray(AotUtils.EMPTY_STRING_ARRAY));
         } catch (IOException e) {
             throw new RuntimeException("注册用户资源目录的xml文件失败", e);
         }

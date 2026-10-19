@@ -25,8 +25,8 @@ public class GlobalConfigTest {
 
     @Test
     void builderTest() {
-        GlobalConfig globalConfig = GeneratorBuilder.globalConfigBuilder().author("mp").enableKotlin()
-            .enableSwagger().dateType(DateType.SQL_PACK).outputDir("/temp/code").build();
+        GlobalConfig globalConfig = GeneratorBuilder.globalConfigBuilder().author("mp").enableKotlin().enableSwagger()
+                .dateType(DateType.SQL_PACK).outputDir("/temp/code").build();
         buildAssert(globalConfig);
     }
 
@@ -35,7 +35,13 @@ public class GlobalConfigTest {
         String defaultDate = GeneratorBuilder.globalConfig().getCommentDate();
         String commentDate = GeneratorBuilder.globalConfigBuilder().commentDate("yyyy-MM-dd").build().getCommentDate();
         Assertions.assertEquals(defaultDate, commentDate);
-        Assertions.assertEquals("2200年11月10日", GeneratorBuilder.globalConfigBuilder().commentDate(() -> "2200年11月10日").build().getCommentDate());
-        Assertions.assertEquals(LocalDate.now().format(DateTimeFormatter.ISO_DATE), GeneratorBuilder.globalConfigBuilder().commentDate(() -> LocalDate.now().format(DateTimeFormatter.ISO_DATE)).build().getCommentDate());
+        Assertions.assertEquals(
+                "2200年11月10日",
+                GeneratorBuilder.globalConfigBuilder().commentDate(() -> "2200年11月10日").build().getCommentDate());
+        Assertions.assertEquals(
+                LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+                GeneratorBuilder.globalConfigBuilder()
+                        .commentDate(() -> LocalDate.now().format(DateTimeFormatter.ISO_DATE)).build()
+                        .getCommentDate());
     }
 }

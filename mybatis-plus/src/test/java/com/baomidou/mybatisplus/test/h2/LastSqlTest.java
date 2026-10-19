@@ -61,7 +61,7 @@ public class LastSqlTest {
     @Test
     @Order(5)
     public void selectMapsPage() {
-        IPage<Map<String,Object>> page = Page.of(0, 10);
+        IPage<Map<String, Object>> page = Page.of(0, 10);
         mapper.selectMapsPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
     }
 
@@ -98,10 +98,9 @@ public class LastSqlTest {
     public void selectListOrderBy() {
         List<H2Student> h2Students = mapper.selectList(null);
         Assertions.assertEquals(6, h2Students.size());
-        Assertions.assertEquals(6, mapper.selectList(new LambdaQueryWrapper<H2Student>()
-            .eq(H2Student::getAge, 1)).size());
-        Assertions.assertEquals(6, mapper.selectList(new QueryWrapper<H2Student>()
-            .orderByAsc("age")).size());
+        Assertions.assertEquals(
+                6, mapper.selectList(new LambdaQueryWrapper<H2Student>().eq(H2Student::getAge, 1)).size());
+        Assertions.assertEquals(6, mapper.selectList(new QueryWrapper<H2Student>().orderByAsc("age")).size());
     }
 
     @Test

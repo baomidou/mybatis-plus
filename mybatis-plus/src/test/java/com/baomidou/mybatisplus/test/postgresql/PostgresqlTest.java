@@ -15,6 +15,7 @@ import java.util.List;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:postgresql/spring-test-postgresql.xml"})
 public class PostgresqlTest {
+
     @Autowired
     private PgtableMappper mapper;
     @Autowired

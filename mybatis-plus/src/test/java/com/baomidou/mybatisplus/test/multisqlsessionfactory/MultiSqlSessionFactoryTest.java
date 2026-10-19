@@ -36,25 +36,21 @@ public class MultiSqlSessionFactoryTest {
 
     @Test
     void test() throws Exception {
-        new SqlRunner(dataSourceA.getConnection()).run(
-            """
+        new SqlRunner(dataSourceA.getConnection()).run("""
                    CREATE TABLE IF NOT EXISTS  t_entity_a (
                                            	id BIGINT NOT NULL AUTO_INCREMENT,
                                            	name VARCHAR(30) NULL DEFAULT NULL ,
                                            	PRIMARY KEY (id)
                                            );
-                """
-        );
+                """);
 
-        new SqlRunner(dataSourceB.getConnection()).run(
-            """
+        new SqlRunner(dataSourceB.getConnection()).run("""
                    CREATE TABLE IF NOT EXISTS  t_entity_b (
                                            	id BIGINT NOT NULL AUTO_INCREMENT,
                                            	name VARCHAR(30) NULL DEFAULT NULL ,
                                            	PRIMARY KEY (id)
                                            );
-                """
-        );
+                """);
         Assertions.assertEquals(0L, aEntityService.count());
         Assertions.assertEquals(0L, bEntityService.count());
         aEntityService.testSaveBath(List.of(new AEntity("test1"), new AEntity("test2")));

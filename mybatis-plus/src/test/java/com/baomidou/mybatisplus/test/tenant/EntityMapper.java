@@ -54,23 +54,21 @@ public interface EntityMapper extends BaseMapper<Entity> {
     }
 
     default Entity selectByIdWithIgnore6(IgnoreStrategy ignoreStrategy, Serializable id) {
-        return InterceptorIgnoreHelper.execute(ignoreStrategy, ()-> selectById(id));
+        return InterceptorIgnoreHelper.execute(ignoreStrategy, () -> selectById(id));
     }
 
     default Entity selectByIdWithIgnore7(IgnoreStrategy ignoreStrategy, Serializable id) {
-        return InterceptorIgnoreHelper.execute(ignoreStrategy, ()-> selectByIdWithIgnore(id));
+        return InterceptorIgnoreHelper.execute(ignoreStrategy, () -> selectByIdWithIgnore(id));
     }
 
     default Entity selectByIdWithIgnore8(IgnoreStrategy ignoreStrategy, Serializable id) {
-        return InterceptorIgnoreHelper.execute(ignoreStrategy, ()-> selectByIdWithIgnore2(id));
+        return InterceptorIgnoreHelper.execute(ignoreStrategy, () -> selectByIdWithIgnore2(id));
     }
 
-
-
-//    /**
-//     *  //TODO 由于是对ms级别的忽略,所以不考虑重载方法, 忽略deleteById方法
-//     */
-//    @InterceptorIgnore(tenantLine = "true")
-//    int deleteById(Entity entity);
+    //    /**
+    //     *  //TODO 由于是对ms级别的忽略,所以不考虑重载方法, 忽略deleteById方法
+    //     */
+    //    @InterceptorIgnore(tenantLine = "true")
+    //    int deleteById(Entity entity);
 
 }

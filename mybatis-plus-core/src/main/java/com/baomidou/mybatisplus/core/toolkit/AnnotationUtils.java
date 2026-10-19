@@ -56,13 +56,15 @@ public class AnnotationUtils {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Annotation> T getAnnotation(Class<T> annotationClazz, Set<Class<? extends Annotation>> annotationSet, Annotation... annotations) {
+    private <T extends Annotation> T getAnnotation(Class<T> annotationClazz,
+            Set<Class<? extends Annotation>> annotationSet, Annotation... annotations) {
         for (Annotation annotation : annotations) {
             if (annotationSet.add(annotation.annotationType())) {
                 if (annotationClazz.isAssignableFrom(annotation.annotationType())) {
                     return (T) annotation;
                 }
-                annotation = getAnnotation(annotationClazz, annotationSet, annotation.annotationType().getDeclaredAnnotations());
+                annotation = getAnnotation(
+                        annotationClazz, annotationSet, annotation.annotationType().getDeclaredAnnotations());
                 if (annotation != null) {
                     return (T) annotation;
                 }

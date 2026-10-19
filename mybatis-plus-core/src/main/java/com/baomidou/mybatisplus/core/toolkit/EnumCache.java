@@ -65,7 +65,8 @@ final class EnumCache {
     }
 
     static boolean isMpEnums(Class<?> clazz) {
-        return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFieldName(clazz).isPresent());
+        return clazz != null && clazz.isEnum()
+                && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFieldName(clazz).isPresent());
     }
 
     private static EnumMetadata createMetadata(Class<?> enumClassType) {
@@ -85,15 +86,15 @@ final class EnumCache {
             EnumUtils.putEnumValue(valueToEnum, value, enumConstant);
         }
         return new EnumMetadata(propertyType, enumConstants, Collections.unmodifiableMap(valueToEnum),
-            Collections.unmodifiableMap(enumToValue), getterName);
+                Collections.unmodifiableMap(enumToValue), getterName);
     }
 
     private static String resolveGetterName(Class<?> enumClassType) {
         if (IEnum.class.isAssignableFrom(enumClassType)) {
             return ENUM_VALUE_PROPERTY;
         }
-        return findEnumValueFieldName(enumClassType)
-            .orElseThrow(() -> new IllegalArgumentException("Could not find @EnumValue in Class: " + enumClassType.getName()));
+        return findEnumValueFieldName(enumClassType).orElseThrow(
+                () -> new IllegalArgumentException("Could not find @EnumValue in Class: " + enumClassType.getName()));
     }
 
     private static Object invokeValue(Invoker getInvoker, Enum<?> enumConstant) {

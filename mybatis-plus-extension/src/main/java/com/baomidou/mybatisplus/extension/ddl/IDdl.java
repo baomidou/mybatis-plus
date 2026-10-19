@@ -45,7 +45,9 @@ public interface IDdl {
 
     /**
      * 执行 SQL 脚本
-     * <p>Resources.getResourceAsReader("db/test.sql")</p>
+     * <p>
+     * Resources.getResourceAsReader("db/test.sql")
+     * </p>
      *
      * @return SQL 脚本文件列表
      */

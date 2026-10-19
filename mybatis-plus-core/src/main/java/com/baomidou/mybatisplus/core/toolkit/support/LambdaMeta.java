@@ -19,8 +19,8 @@ package com.baomidou.mybatisplus.core.toolkit.support;
  * Lambda 信息
  * <p>
  *
- * @author HCL
- * Created at 2021/5/14
+ * @author HCL <br>
+ *         Created at 2021/5/14
  */
 public interface LambdaMeta {
 

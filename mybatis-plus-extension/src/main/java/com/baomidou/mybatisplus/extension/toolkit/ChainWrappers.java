@@ -51,7 +51,9 @@ public final class ChainWrappers {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -65,7 +67,9 @@ public final class ChainWrappers {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -75,7 +79,9 @@ public final class ChainWrappers {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -84,7 +90,7 @@ public final class ChainWrappers {
     }
 
     /**
-     * 链式查询 lambda 式
+     * 链式查询 lambda 式 <br>
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类
@@ -94,7 +100,7 @@ public final class ChainWrappers {
     }
 
     /**
-     * 链式查询 lambda 式
+     * 链式查询 lambda 式 <br>
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类
@@ -104,8 +110,8 @@ public final class ChainWrappers {
     }
 
     /**
-     * 链式查询 lambda 式
-     * 仅支持 Kotlin
+     * 链式查询 lambda 式 <br>
+     * 仅支持 Kotlin <br>
      * 仅传 entityClass 实体类
      *
      * @return KtQueryWrapper 的包装类
@@ -113,7 +119,6 @@ public final class ChainWrappers {
     public static <T> KtQueryChainWrapper<T> ktQueryChain(Class<T> entityClass) {
         return new KtQueryChainWrapper<>(entityClass);
     }
-
 
     /**
      * 链式更改 普通
@@ -130,7 +135,9 @@ public final class ChainWrappers {
 
     /**
      * 链式更改 lambda 式
-     * <p>注意：不支持 Kotlin </p>
+     * <p>
+     * 注意：不支持 Kotlin
+     * </p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */
@@ -143,7 +150,7 @@ public final class ChainWrappers {
     }
 
     /**
-     * 链式更改 lambda 式
+     * 链式更改 lambda 式 <br>
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类
@@ -153,8 +160,8 @@ public final class ChainWrappers {
     }
 
     /**
-     * 链式更改 lambda 式
-     * 仅支持 Kotlin
+     * 链式更改 lambda 式 <br>
+     * 仅支持 Kotlin <br>
      * 仅传 entityClass 实体类
      *
      * @return KtUpdateWrapper 的包装类
@@ -163,9 +170,8 @@ public final class ChainWrappers {
         return new KtUpdateChainWrapper<>(entityClass);
     }
 
-
     /**
-     * 链式更改 lambda 式
+     * 链式更改 lambda 式 <br>
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类

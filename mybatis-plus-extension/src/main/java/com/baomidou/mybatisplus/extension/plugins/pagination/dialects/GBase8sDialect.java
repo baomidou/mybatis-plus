@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * GBase 8s V8.8 数据库分页语句组装实现
+ * GBase 8s V8.8 数据库分页语句组装实现 <br>
  * 通用分页版本
  *
  * @author liaojinqing
@@ -28,8 +28,7 @@ public class GBase8sDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        StringBuilder sql = new StringBuilder(originalSql)
-            .insert(6, " SKIP " + offset + " FIRST " + limit);
+        StringBuilder sql = new StringBuilder(originalSql).insert(6, " SKIP " + offset + " FIRST " + limit);
         return new DialectModel(sql.toString());
     }
 }

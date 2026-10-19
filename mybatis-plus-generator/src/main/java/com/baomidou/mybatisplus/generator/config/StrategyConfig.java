@@ -51,29 +51,29 @@ public class StrategyConfig {
     private boolean skipView;
 
     /**
-     * 过滤表前缀
-     * example: addTablePrefix("t_")
+     * 过滤表前缀 <br>
+     * example: addTablePrefix("t_") <br>
      * result: t_simple -> Simple
      */
     private final Set<String> tablePrefix = new HashSet<>();
 
     /**
-     * 过滤表后缀
-     * example: addTableSuffix("_0")
+     * 过滤表后缀 <br>
+     * example: addTableSuffix("_0") <br>
      * result: t_simple_0 -> Simple
      */
     private final Set<String> tableSuffix = new HashSet<>();
 
     /**
-     * 过滤字段前缀
-     * example: addFieldPrefix("is_")
+     * 过滤字段前缀 <br>
+     * example: addFieldPrefix("is_") <br>
      * result: is_deleted -> deleted
      */
     private final Set<String> fieldPrefix = new HashSet<>();
 
     /**
-     * 过滤字段后缀
-     * example: addFieldSuffix("_flag")
+     * 过滤字段后缀 <br>
+     * example: addFieldSuffix("_flag") <br>
      * result: deleted_flag -> deleted
      */
     private final Set<String> fieldSuffix = new HashSet<>();
@@ -267,10 +267,12 @@ public class StrategyConfig {
         boolean isInclude = !this.getInclude().isEmpty();
         boolean isExclude = !this.getExclude().isEmpty();
         if (isInclude && isExclude) {
-            throw new IllegalArgumentException("`include` and `exclude` configurations are mutually exclusive and cannot be used simultaneously.");
+            throw new IllegalArgumentException(
+                    "`include` and `exclude` configurations are mutually exclusive and cannot be used simultaneously.");
         }
         if (this.getNotLikeTable() != null && this.getLikeTable() != null) {
-            throw new IllegalArgumentException("`likeTable` and `notLikeTable` configurations are mutually exclusive and cannot be used simultaneously.");
+            throw new IllegalArgumentException(
+                    "`likeTable` and `notLikeTable` configurations are mutually exclusive and cannot be used simultaneously.");
         }
     }
 
@@ -299,7 +301,7 @@ public class StrategyConfig {
     /**
      * 表名匹配
      *
-     * @param tableName   表名
+     * @param tableName 表名
      * @param matchTables 匹配集合
      * @return 是否匹配
      * @since 3.5.0
@@ -312,7 +314,7 @@ public class StrategyConfig {
      * 表名匹配
      *
      * @param matchTableName 匹配表名
-     * @param dbTableName    数据库表名
+     * @param dbTableName 数据库表名
      * @return 是否匹配
      */
     private boolean tableNameMatches(@NotNull String matchTableName, @NotNull String dbTableName) {

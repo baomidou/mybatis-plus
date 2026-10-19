@@ -28,15 +28,13 @@ public class RepositoryDefaultScanTest {
 
     @Test
     void test() throws SQLException {
-        new SqlRunner(dataSource.getConnection()).run(
-            """
+        new SqlRunner(dataSource.getConnection()).run("""
                  CREATE TABLE IF NOT EXISTS demo (
                       id BIGINT NOT NULL AUTO_INCREMENT,
                       name VARCHAR(30) NULL DEFAULT NULL ,
                       PRIMARY KEY (id)
                  );
-                """
-        );
+                """);
         demoService.save(new Demo());
         demoService.saveBatch(List.of(new Demo()));
     }

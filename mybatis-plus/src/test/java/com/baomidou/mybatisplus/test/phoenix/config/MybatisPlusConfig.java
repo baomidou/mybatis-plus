@@ -31,16 +31,13 @@ import javax.sql.DataSource;
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(
-        DataSource dataSource,
-        GlobalConfig globalConfig
-    ) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, GlobalConfig globalConfig) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* xml扫描 */
-//        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-//            .getResources("classpath:/mapper/*.xml"));
+        //        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
+        //            .getResources("classpath:/mapper/*.xml"));
         /* 扫描 typeHandler */
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
@@ -60,14 +57,16 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
-//        conf.setDbConfig(new GlobalConfig.DbConfig()
-//            .setColumnFormat("`%s`"));
+        //        conf.setDbConfig(new GlobalConfig.DbConfig()
+        //            .setColumnFormat("`%s`"));
         DefaultSqlInjector phoenixSqlInjector = new DefaultSqlInjector() {
+
             /**
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
+            public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration,
+                    Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
                 methodList.add(new Upsert());
                 return methodList;
