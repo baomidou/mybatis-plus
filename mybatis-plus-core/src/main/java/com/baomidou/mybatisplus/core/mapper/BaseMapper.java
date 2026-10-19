@@ -344,16 +344,24 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param throwEx boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
-        List<T> list = this.selectList(queryWrapper);
-        int size = list.size();
+        List<T> results = new ArrayList<>(2);
+        this.selectList(queryWrapper, resultContext -> {
+            results.add(resultContext.getResultObject());
+            if (results.size() == 2) {
+                // 只需要知道结果是否唯一，不需要完整的匹配集合：映出第二行后立即停止映射，
+                // 避免条件误命中大量数据时把全部结果都转成对象（#7177）
+                resultContext.stop();
+            }
+        });
+        int size = results.size();
         if (size == 1) {
-            return list.get(0);
+            return results.get(0);
         } else if (size > 1) {
             if (throwEx) {
                 throw new TooManyResultsException(
                         "Expected one result (or null) to be returned by selectOne(), but found: " + size);
             }
-            return list.get(0);
+            return results.get(0);
         }
         return null;
     }
