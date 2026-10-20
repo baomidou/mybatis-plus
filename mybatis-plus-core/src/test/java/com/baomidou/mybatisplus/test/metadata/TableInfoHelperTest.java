@@ -355,4 +355,29 @@ class TableInfoHelperTest {
         assertThat(entity.id).isNotNull().isEqualTo(1L);
     }
 
+    @Test
+    void removeEntityOnlyClearsClassCache() {
+        TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), RemoveCacheEntity.class);
+        assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isNotNull();
+        assertThat(TableInfoHelper.getTableInfo("zz_remove_cache_entity")).isNotNull();
+
+        TableInfoHelper.remove(RemoveCacheEntity.class);
+
+        assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isNull();
+        // 特征化断言：remove() 只清 class 缓存，表名缓存仍有残留（非期望行为）。
+        // 若 remove() 补上清理表名缓存，本行必须同步改为 isNull()。
+        assertThat(TableInfoHelper.getTableInfo("zz_remove_cache_entity")).isNotNull();
+    }
+
+    @Data
+    @TableName("zz_remove_cache_entity")
+    private static class RemoveCacheEntity {
+
+        @TableId
+        private Long id;
+
+        private String name;
+    }
+
 }
