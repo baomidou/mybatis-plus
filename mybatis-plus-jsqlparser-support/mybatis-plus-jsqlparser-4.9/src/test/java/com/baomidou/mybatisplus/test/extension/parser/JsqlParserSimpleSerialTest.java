@@ -5,8 +5,6 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 import org.springframework.util.SerializationUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +20,6 @@ class JsqlParserSimpleSerialTest {
             + "LEFT JOIN entity2 e2 ON e2.id = e1.id " + "ON e1.id = e.id " + "WHERE (e.id = ? OR e.NAME = ?)";
 
     @Test
-    @EnabledOnJre(JRE.JAVA_8)
     void test() throws JSQLParserException {
         System.out.println("循环次数: " + len);
         noSerial();
