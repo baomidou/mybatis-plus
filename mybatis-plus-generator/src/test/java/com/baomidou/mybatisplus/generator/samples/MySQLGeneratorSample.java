@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 
 /**
  * MySQL 代码生成
+ * <p>
+ * 手工示例：需要连真实库执行 main()，不参与自动化测试，所以生成器对 MySQL 的适配目前没有机器验证的覆盖。
  *
  * @author lanjerry
  * @since 3.5.3
  */
-public class MySQLGeneratorTest extends BaseGeneratorTest {
+public class MySQLGeneratorSample extends BaseGeneratorTest {
 
     /**
      * 数据源配置

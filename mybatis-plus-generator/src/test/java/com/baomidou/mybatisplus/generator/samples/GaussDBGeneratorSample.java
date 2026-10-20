@@ -13,10 +13,14 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
+ * GaussDB 代码生成
+ * <p>
+ * 手工示例：需要连真实库执行 main()，不参与自动化测试，所以生成器对 GaussDB 的适配目前没有机器验证的覆盖。
+ *
  * @author nieqiurong
  * @since 3.5.13
  */
-public class GaussDBGeneratorTest {
+public class GaussDBGeneratorSample {
 
     private static final String CRATE_TABLE_DDL = """
 

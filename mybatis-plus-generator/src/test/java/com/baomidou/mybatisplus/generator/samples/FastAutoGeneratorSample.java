@@ -9,11 +9,13 @@ import java.sql.SQLException;
  * <p>
  * 快速生成
  * </p>
+ * <p>
+ * 手工示例：走 H2 但要控制台交互输入表名、作者、包名，不参与自动化测试。
  *
  * @author lanjerry
  * @since 2021-09-16
  */
-public class FastAutoGeneratorTest extends BaseGeneratorTest {
+public class FastAutoGeneratorSample extends BaseGeneratorTest {
 
     /**
      * 数据源配置
