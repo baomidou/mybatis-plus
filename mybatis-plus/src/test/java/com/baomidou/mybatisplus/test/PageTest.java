@@ -13,13 +13,13 @@ import com.google.gson.Gson;
 import org.apache.ibatis.reflection.property.PropertyCopier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnJre;
-import org.junit.jupiter.api.condition.JRE;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanCopier;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2020/3/20.
@@ -30,39 +30,53 @@ class PageTest {
 
     private final Gson gson = new Gson();
 
+    /**
+     * 特征化断言：Page 的属性访问方法不是 JavaBean 命名（orders()、optimizeCountSql()、searchCount()、maxLimit()、 countId() 都没有 is/get
+     * 前缀），四个标准属性又用链式 setter，于是基于 JavaBean 内省的拷贝工具会静默丢属性。
+     * <p>
+     * 三种拷贝方式的实测结果：MyBatis 的 PropertyCopier 全量拷贝；Spring BeanUtils 只拷 current、total、size、records； cglib BeanCopier 因为
+     * setter 有返回值，一个都拷不动。跨层传递分页结果请改用 PageDTO，它有标准 getter。
+     */
     @Test
-    @EnabledOnJre(JRE.JAVA_8)
-    void testCopy() {
+    void copyPageWithDifferentCopiers() {
         Page<?> page1 = new Page<>(2, 10, 100, false);
         page1.setOptimizeCountSql(false);
         page1.setOrders(Collections.singletonList(OrderItem.asc("test")));
+        page1.setCountId("cid");
+        page1.setMaxLimit(999L);
 
         Page<?> page2 = new Page<>();
         PropertyCopier.copyBeanProperties(Page.class, page1, page2);
-        Assertions.assertEquals(page1.getCurrent(), page2.getCurrent());
-        Assertions.assertEquals(page1.getTotal(), page2.getTotal());
-        Assertions.assertEquals(page1.getSize(), page2.getSize());
-        Assertions.assertEquals(page1.optimizeCountSql(), page2.optimizeCountSql());
-        Assertions.assertEquals(page1.searchCount(), page2.searchCount());
-        Assertions.assertEquals(page1.orders().size(), page2.orders().size());
+        assertThat(page2.getCurrent()).isEqualTo(2L);
+        assertThat(page2.getTotal()).isEqualTo(100L);
+        assertThat(page2.getSize()).isEqualTo(10L);
+        assertThat(page2.orders()).hasSize(1);
+        assertThat(page2.orders().get(0).getColumn()).isEqualTo("test");
+        assertThat(page2.optimizeCountSql()).isFalse();
+        assertThat(page2.searchCount()).isFalse();
+        assertThat(page2.countId()).isEqualTo("cid");
+        assertThat(page2.maxLimit()).isEqualTo(999L);
 
         Page<?> page3 = new Page<>();
         BeanUtils.copyProperties(page1, page3);
-        Assertions.assertEquals(page1.getCurrent(), page3.getCurrent());
-        Assertions.assertEquals(page1.getTotal(), page3.getTotal());
-        Assertions.assertEquals(page1.getSize(), page3.getSize());
-        Assertions.assertEquals(page1.optimizeCountSql(), page3.optimizeCountSql());
-        Assertions.assertEquals(page1.searchCount(), page3.searchCount());
-        Assertions.assertEquals(page1.orders().size(), page3.orders().size());
+        assertThat(page3.getCurrent()).isEqualTo(2L);
+        assertThat(page3.getTotal()).isEqualTo(100L);
+        assertThat(page3.getSize()).isEqualTo(10L);
+        // 以下属性读方法不符合 JavaBean 规范，Spring 内省不到，拷贝后仍是默认值
+        assertThat(page3.orders()).isEmpty();
+        assertThat(page3.optimizeCountSql()).isTrue();
+        assertThat(page3.searchCount()).isTrue();
+        assertThat(page3.countId()).isNull();
+        assertThat(page3.maxLimit()).isNull();
 
         Page<?> page4 = new Page<>();
         BeanCopier.create(page1.getClass(), page4.getClass(), false).copy(page1, page4, null);
-        //链式的set方法会导致属性BeanCopier的拷贝方法失败  https://github.com/cglib/cglib/issues/108.
-        Assertions.assertTrue(page4.optimizeCountSql());
-        Assertions.assertTrue(page4.searchCount());
-        Assertions.assertEquals(1, page4.getCurrent());
-        Assertions.assertEquals(1, page4.orders().size());
-        Assertions.assertEquals(10, page4.getSize());
+        // cglib 只认 void setter，链式 setter 让它拷不出任何属性 https://github.com/cglib/cglib/issues/108
+        assertThat(page4.getCurrent()).isEqualTo(1L);
+        assertThat(page4.getTotal()).isZero();
+        assertThat(page4.orders()).isEmpty();
+        assertThat(page4.optimizeCountSql()).isTrue();
+        assertThat(page4.searchCount()).isTrue();
     }
 
     @Test
