@@ -465,7 +465,7 @@ class H2UserTest extends BaseTest {
     void testClearSqlSessionCache() {
         H2User h2User;
         h2User = userService.getById(996102919L);
-        assert h2User == null;
+        Assertions.assertNull(h2User);
         userService.saveBatch(Collections.singletonList(new H2User(996102919L, "靓仔")));
         h2User = userService.getById(996102919L);
         Assertions.assertNotNull(h2User);

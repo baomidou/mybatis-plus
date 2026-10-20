@@ -39,7 +39,7 @@ class SelectBodyToPlainSelectTest {
         } catch (JSQLParserException e) {
             e.printStackTrace();
         }
-        assert selectStatement != null;
+        assertThat(selectStatement).isNotNull();
         Select finalSelectStatement = selectStatement;
         Assertions.assertThrows(ClassCastException.class, () -> {
             PlainSelect plainSelect = (PlainSelect) finalSelectStatement.getSelectBody();
