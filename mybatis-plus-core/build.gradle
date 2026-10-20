@@ -10,3 +10,14 @@ dependencies {
     testImplementation "${lib."mybatis-spring"}"
     testImplementation "${lib.'spring-jdbc'}"
 }
+
+// cglib 3.3.0 生成 BeanMap 时要反射 ClassLoader.defineClass，测试还直接读取 HashMap 内部字段，
+// JDK 9+ 强封装下不开这些包会直接 InaccessibleObjectException（与 jsqlparser 各模块的 FST 处理同构）。
+test {
+    doFirst {
+        if (javaLauncher.get().metadata.languageVersion.asInt() >= 9) {
+            jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',
+                '--add-opens=java.base/java.util=ALL-UNNAMED'
+        }
+    }
+}
