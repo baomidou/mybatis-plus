@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-logic-delete-h2.xml"})
-class H2LogicDeleteTest extends BaseTest {
+class H2LogicDeleteTest extends H2TestSupport {
 
     @Autowired
     protected H2UserLogicDeleteMapper logicDeleteMapper;

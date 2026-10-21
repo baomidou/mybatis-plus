@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-class H2User2Test extends BaseTest {
+class H2User2Test extends H2TestSupport {
 
     @Autowired
     private H2User2Mapper h2User2Mapper;

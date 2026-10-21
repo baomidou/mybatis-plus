@@ -64,7 +64,7 @@ import static org.assertj.core.api.Assertions.fail;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-class H2UserTest extends BaseTest {
+class H2UserTest extends H2TestSupport {
 
     @Autowired
     protected IH2UserService userService;

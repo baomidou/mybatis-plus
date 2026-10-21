@@ -8,8 +8,11 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
+/**
+ * h2 集成测试的 Spring 基类：注入 {@link JdbcTemplate}、带 {@code @DirtiesContext}， 再给子类一个按名字查 h2user 的助手。本身不含用例。
+ */
 @DirtiesContext
-public class BaseTest {
+public class H2TestSupport {
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;

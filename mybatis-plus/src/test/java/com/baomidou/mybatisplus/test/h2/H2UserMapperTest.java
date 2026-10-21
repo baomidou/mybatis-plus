@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-class H2UserMapperTest extends BaseTest {
+class H2UserMapperTest extends H2TestSupport {
 
     @Autowired
     protected H2UserMapper userMapper;

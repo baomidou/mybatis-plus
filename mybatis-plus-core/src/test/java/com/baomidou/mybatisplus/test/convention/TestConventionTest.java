@@ -162,8 +162,7 @@ class TestConventionTest {
      */
     private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
             "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
-            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
-            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java");
+            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

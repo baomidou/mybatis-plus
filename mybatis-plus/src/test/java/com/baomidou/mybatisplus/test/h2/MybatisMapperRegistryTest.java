@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @MapperScan(value = "com.baomidou.mybatisplus.test.h2")
 @ContextConfiguration(classes = {MybatisMapperRegistryTest.class, DBConfig.class})
-class MybatisMapperRegistryTest extends BaseTest {
+class MybatisMapperRegistryTest extends H2TestSupport {
 
     private interface H2StudentChildrenMapper extends H2StudentMapper {
 

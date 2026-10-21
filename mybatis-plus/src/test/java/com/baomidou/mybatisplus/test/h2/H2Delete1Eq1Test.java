@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-class H2Delete1Eq1Test extends BaseTest {
+class H2Delete1Eq1Test extends H2TestSupport {
 
     @Autowired
     protected H2UserMapper logicDeleteMapper;
