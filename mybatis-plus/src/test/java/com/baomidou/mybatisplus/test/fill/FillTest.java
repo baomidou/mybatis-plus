@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.batch.MybatisBatch;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2023年9月29日
  */
-public class FillTest extends BaseDbTest<FillMapper> {
+public class FillTest extends DbTestSupport<FillMapper> {
 
     @Test
     void testInsert() {

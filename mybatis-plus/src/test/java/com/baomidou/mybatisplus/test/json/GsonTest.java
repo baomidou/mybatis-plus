@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.json;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2024年3月4日
  */
-public class GsonTest extends BaseDbTest<GsonEntityMapper> {
+public class GsonTest extends DbTestSupport<GsonEntityMapper> {
 
     @Override
     protected List<String> tableSql() {

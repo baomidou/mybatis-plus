@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.uuid;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
+public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityMapper> {
 
     @Test
     void test() {

@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.json;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2024年3月4日
  */
-public class Fastjson2Test extends BaseDbTest<FastJson2EntityMapper> {
+public class Fastjson2Test extends DbTestSupport<FastJson2EntityMapper> {
 
     @Override
     protected List<String> tableSql() {

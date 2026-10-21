@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.enums;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-class EnumTest extends BaseDbTest<EntityMapper> {
+class EnumTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void test() {

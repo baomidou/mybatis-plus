@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.record;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2023年9月14日
  */
-public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
+public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
 
     @Test
     void testInsert() {

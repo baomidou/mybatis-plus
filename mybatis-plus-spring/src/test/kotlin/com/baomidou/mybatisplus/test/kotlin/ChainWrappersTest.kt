@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ChainWrappersTest : BaseDbTest<UserMapper>() {
+class ChainWrappersTest : DbTestSupport<UserMapper>() {
 
     @Test
     fun testQueryChain() {

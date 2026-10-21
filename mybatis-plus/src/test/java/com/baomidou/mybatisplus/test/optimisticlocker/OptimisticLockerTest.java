@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
-public class OptimisticLockerTest extends BaseDbTest<EntityMapper> {
+public class OptimisticLockerTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void test() {

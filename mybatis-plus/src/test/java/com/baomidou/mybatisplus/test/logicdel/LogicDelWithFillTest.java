@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.logicdel;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <em>and</em> {@code @TableLogic}, the fill handler can inject the correct value at <br>
  * runtime.
  */
-public class LogicDelWithFillTest extends BaseDbTest<LogicDelWithFillMapper> {
+public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillMapper> {
 
     /**
      * Sentinel timestamp used by the fill handler – deliberately far in the future so <br>

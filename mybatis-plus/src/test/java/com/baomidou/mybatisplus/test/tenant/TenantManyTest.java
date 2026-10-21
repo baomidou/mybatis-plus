@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.tenant;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.Getter;
 import lombok.Setter;
 import net.sf.jsqlparser.expression.LongValue;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @see <a href="https://github.com/baomidou/mybatis-plus/issues/6899">Issue #6899</a>
  */
-public class TenantManyTest extends BaseDbTest<TenantManyTest.OrderMapper> {
+public class TenantManyTest extends DbTestSupport<TenantManyTest.OrderMapper> {
 
     // ─── Entity classes ────────────────────────────────────────────────────────
 

@@ -158,13 +158,6 @@ class TestConventionTest {
             "StringUtilsTest", "TableInfoTest", "TenantLineInnerInterceptorTest");
 
     /**
-     * T5 文件名以 Test 结尾但本身不含用例的基类与夹具。
-     */
-    private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
-            "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
-            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java");
-
-    /**
      * T5 用 Thread.sleep 当同步的文件。
      */
     private static final Set<String> REGISTERED_THREAD_SLEEP_FILES = Set
@@ -315,14 +308,14 @@ class TestConventionTest {
     }
 
     @Test
-    void caseFreeTestFilesStayRegistered() {
+    void noCaseFreeTestFileRemains() {
         Set<String> found = new TreeSet<>();
         for (Source source : testClasses()) {
             if (!CASE_ANNOTATION.matcher(source.code()).find()) {
                 found.add(source.path());
             }
         }
-        assertThat(found).as("T5 名为 *Test 却不含用例的文件（基类、夹具）必须逐个登记，也不许留着已不存在的登记项").isEqualTo(REGISTERED_CASE_FREE_FILES);
+        assertThat(found).as("T5 名为 *Test 却不含用例的基类与夹具（零容忍）：改名 *Support/*Fixture/*Sample").isEmpty();
     }
 
     @Test

@@ -30,17 +30,20 @@ import java.util.function.Consumer;
 import javax.sql.DataSource;
 
 /**
+ * Mapper 测试的 H2 基类：按泛型参数装配 SqlSessionFactory、建表、灌数据，再给子类 doTest 系列的 会话包装。它自己没有用例，所以不叫 {@code *Test}；泛型实参就是子类的 Mapper
+ * 接口。
+ *
  * @author miemie
  * @since 2020-06-23
  */
-public abstract class BaseDbTest<T> extends TypeReference<T> {
+public abstract class DbTestSupport<T> extends TypeReference<T> {
 
     protected SqlSessionFactory sqlSessionFactory;
     protected Class<T> mapper;
     protected JdbcTemplate jdbcTemplate;
 
     @SuppressWarnings("unchecked")
-    public BaseDbTest() {
+    public DbTestSupport() {
         DataSource ds = dataSource();
         List<String> tableSql = tableSql();
         String tableDataSql = tableDataSql();

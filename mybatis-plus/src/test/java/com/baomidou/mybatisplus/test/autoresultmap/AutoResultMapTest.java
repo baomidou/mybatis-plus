@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.test.autoresultmap;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-public class AutoResultMapTest extends BaseDbTest<EntityMapper> {
+public class AutoResultMapTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void test() {

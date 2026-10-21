@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author <achao1441470436@gmail.com>
  * @since 2020-09-15
  */
-public class SqlHelperTest extends BaseDbTest<EntityMapper> {
+public class SqlHelperTest extends DbTestSupport<EntityMapper> {
 
     @Test
     public void testGetMapperAndExecute() {

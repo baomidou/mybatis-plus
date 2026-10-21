@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * @author miemie
  * @since 2021-03-16
  */
-public class SqlRunnerTest extends BaseDbTest<EntityMapper> {
+public class SqlRunnerTest extends DbTestSupport<EntityMapper> {
 
     public SqlRunnerTest() {
         SqlHelper.FACTORY = sqlSessionFactory;

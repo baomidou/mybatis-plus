@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.Data;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.result.DefaultResultHandler;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-class PageCacheTest extends BaseDbTest<PageCacheMapper> {
+class PageCacheTest extends DbTestSupport<PageCacheMapper> {
 
     @Test
     void page() {

@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author <achao1441470436@gmail.com>
  * @since 2021/11/9 18:30
  */
-class SimpleQueryTest extends BaseDbTest<EntityMapper> {
+class SimpleQueryTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void testList() {

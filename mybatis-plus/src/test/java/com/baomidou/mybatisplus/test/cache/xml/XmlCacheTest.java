@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.cache.xml;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.cache.Cache;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-class XmlCacheTest extends BaseDbTest<XmlCacheMapper> {
+class XmlCacheTest extends DbTestSupport<XmlCacheMapper> {
 
     @Test
     void page() {

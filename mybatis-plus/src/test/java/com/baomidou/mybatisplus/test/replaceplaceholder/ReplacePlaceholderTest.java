@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.replaceplaceholder;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-public class ReplacePlaceholderTest extends BaseDbTest<EntityMapper> {
+public class ReplacePlaceholderTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void replace() {

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 
-class DbTest : BaseDbTest<UserMapper>() {
+class DbTest : DbTestSupport<UserMapper>() {
 
     @Test
     fun testQuery() {

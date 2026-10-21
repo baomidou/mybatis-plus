@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.strategy;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
-public class StrategyTest extends BaseDbTest<EntityMapper> {
+public class StrategyTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void test() {

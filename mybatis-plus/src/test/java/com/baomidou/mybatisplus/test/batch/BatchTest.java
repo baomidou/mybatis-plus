@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.batch;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.session.ExecutorType;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-06
  */
-class BatchTest extends BaseDbTest<EntityMapper> {
+class BatchTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void save() {

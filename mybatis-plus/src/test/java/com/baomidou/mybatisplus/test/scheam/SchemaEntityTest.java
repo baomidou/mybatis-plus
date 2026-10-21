@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.scheam;
 
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
-public class SchemaEntityTest extends BaseDbTest<SchemaEntityMapper> {
+public class SchemaEntityTest extends DbTestSupport<SchemaEntityMapper> {
 
     @Test
     void test() {

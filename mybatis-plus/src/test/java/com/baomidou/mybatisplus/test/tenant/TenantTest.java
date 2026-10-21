@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
-public class TenantTest extends BaseDbTest<EntityMapper> {
+public class TenantTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void test() {

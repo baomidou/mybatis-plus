@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.test.version;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-07-04
  */
 @Slf4j
-public class VersionTest extends BaseDbTest<EntityMapper> {
+public class VersionTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void testWrapperMode() {

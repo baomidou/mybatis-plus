@@ -27,10 +27,13 @@ import java.util.function.Consumer
 import javax.sql.DataSource
 
 /**
+ * mybatis-plus 模块 [com.baomidou.mybatisplus.test.DbTestSupport] 的 Kotlin 对应版本：
+ * 按泛型实参装配 H2 与 SqlSessionFactory，本身不含用例。
+ *
  * @author miemie
  * @since 2020-06-23
  */
-abstract class BaseDbTest<T> : TypeReference<T>() {
+abstract class DbTestSupport<T> : TypeReference<T>() {
     protected var sqlSessionFactory: SqlSessionFactory
     protected var mapper: Class<T>
     protected var jdbcTemplate: JdbcTemplate

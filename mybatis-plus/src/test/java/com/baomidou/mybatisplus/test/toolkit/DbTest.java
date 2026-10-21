@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.sqlrunner.Entity;
 import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
 import org.apache.ibatis.exceptions.TooManyResultsException;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
  * @author VampireAchao
  * @since 2022-05-03
  */
-class DbTest extends BaseDbTest<EntityMapper> {
+class DbTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void testSave() {

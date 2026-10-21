@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.puginsome;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
-import com.baomidou.mybatisplus.test.BaseDbTest;
+import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
-public class PluginSomeTest extends BaseDbTest<AMapper> {
+public class PluginSomeTest extends DbTestSupport<AMapper> {
 
     /** 每个钩子被调用的次数；父类构造里建的拦截器持有本实例，钩子执行时字段已初始化。 */
     private final Map<String, AtomicInteger> calls = new ConcurrentHashMap<>();
