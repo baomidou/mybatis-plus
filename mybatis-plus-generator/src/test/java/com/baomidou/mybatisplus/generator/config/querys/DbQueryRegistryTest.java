@@ -1,25 +1,6 @@
-package com.baomidou.mybatisplus.generator.config;
+package com.baomidou.mybatisplus.generator.config.querys;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.generator.config.querys.ClickHouseQuery;
-import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
-import com.baomidou.mybatisplus.generator.config.querys.DMQuery;
-import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
-import com.baomidou.mybatisplus.generator.config.querys.FirebirdQuery;
-import com.baomidou.mybatisplus.generator.config.querys.GaussDBSqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.GbaseQuery;
-import com.baomidou.mybatisplus.generator.config.querys.H2Query;
-import com.baomidou.mybatisplus.generator.config.querys.KingbaseESQuery;
-import com.baomidou.mybatisplus.generator.config.querys.MariadbQuery;
-import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
-import com.baomidou.mybatisplus.generator.config.querys.OscarQuery;
-import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
-import com.baomidou.mybatisplus.generator.config.querys.SqliteQuery;
-import com.baomidou.mybatisplus.generator.config.querys.SybaseQuery;
-import com.baomidou.mybatisplus.generator.config.querys.XuguQuery;
-import com.baomidou.mybatisplus.generator.config.querys.ZenithQuery;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

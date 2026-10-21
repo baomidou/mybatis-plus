@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.autoconfigure;
 
-import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import org.junit.jupiter.api.Test;
 
