@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,8 +66,8 @@ public class Jackson3TypeHandlerTest extends BaseTypeHandlerTest {
     @Override
     public void getResultFromCallableStatement() throws Exception {
         UserBean bean;
-        lenient().when(callableStatement.getString(1)).thenReturn(null);
-        bean = (UserBean) JACKSON3_TYPE_HANDLER.getResult(resultSet, 1);
+        when(callableStatement.getString(1)).thenReturn(null);
+        bean = (UserBean) JACKSON3_TYPE_HANDLER.getResult(callableStatement, 1);
         assertThat(bean).isNull();
         when(callableStatement.getString(2)).thenReturn("");
         bean = (UserBean) JACKSON3_TYPE_HANDLER.getResult(callableStatement, 2);

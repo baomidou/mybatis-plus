@@ -65,8 +65,8 @@ public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
     @Override
     public void getResultFromCallableStatement() throws Exception {
         UserBean bean;
-        lenient().when(callableStatement.getString(1)).thenReturn(null);
-        bean = (UserBean) JACKSON_TYPE_HANDLER.getResult(resultSet, 1);
+        when(callableStatement.getString(1)).thenReturn(null);
+        bean = (UserBean) JACKSON_TYPE_HANDLER.getResult(callableStatement, 1);
         assertThat(bean).isNull();
         when(callableStatement.getString(2)).thenReturn("");
         bean = (UserBean) JACKSON_TYPE_HANDLER.getResult(callableStatement, 2);
