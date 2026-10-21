@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -29,9 +27,7 @@ public class ReflectionKitTest {
     @Test
     void testSuperClassGenericType() {
         // 多重继承测试
-        assertThat(
-                Objects.equals(ReflectionKit.getSuperClassGenericType(Mapper2.class, Mapper.class, 0), MyEntity.class));
-        assertThat(
-                Objects.equals(ReflectionKit.getSuperClassGenericType(Mapper3.class, Mapper.class, 0), MyEntity.class));
+        assertThat(ReflectionKit.getSuperClassGenericType(Mapper2.class, Mapper.class, 0)).isEqualTo(MyEntity.class);
+        assertThat(ReflectionKit.getSuperClassGenericType(Mapper3.class, Mapper.class, 0)).isEqualTo(MyEntity.class);
     }
 }
