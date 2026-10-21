@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +54,20 @@ class TestConventionTest {
 
     private static final Pattern JUNIT_FOUR = Pattern.compile("\\borg\\.junit\\.(Test|Before|After|Ignore|runner)\\b");
 
+    /**
+     * 形如 {@code 名字(参数) [throws ...] {} 的方法声明；参数表里不允许出现分号和大括号。
+     */
+    private static final Pattern METHOD = Pattern.compile("(\\w+)\\s*\\([^;{}]*\\)(?:\\s+throws[\\w.,\\s]+)?\\s*\\{");
+
+    /**
+     * {@code if (x) &#123;} 这类语句长得和方法声明一样，按名字排除掉。
+     */
+    private static final Set<String> NON_METHOD_NAMES = Set.of(
+            "if", "for", "while", "switch", "catch", "do", "else", "try", "synchronized", "return", "new", "class",
+            "interface", "enum", "record");
+
+    private static final Pattern SUPER = Pattern.compile("class\\s+[\\w.]+[^{;]*?\\bextends\\s+([\\w.]+)");
+
     private static final Path ROOT = locateRoot();
 
     private static final List<Source> TEST_SOURCES = scanTestSources();
@@ -68,9 +83,9 @@ class TestConventionTest {
     private static final Set<String> TIERS = Set.of("unit", "integration", "external-db", "build-metadata", "stress");
 
     /**
-     * T5 零断言用例数量（含 @Disabled 的用例，2026-10-21 实测）。
+     * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。
      */
-    private static final int MAX_ASSERTION_FREE_CASES = 78;
+    private static final int MAX_ASSERTION_FREE_CASES = 51;
 
     /**
      * T6 显式禁用用例数量。
@@ -276,11 +291,14 @@ class TestConventionTest {
     }
 
     /**
-     * 找出只有调用没有断言的用例，元素形如 {@code 路径#方法名}。
+     * 找出只有调用没有断言的用例，元素形如 {@code 路径#方法名}。<br>
+     * 用例经常通过基类的辅助方法（如 {@code BaseWrapperTest#logSqlWhere}）间接断言，这种要认下来：<br>
+     * 只按方法体里有没有 assert 字样判，存量会被假阳性填满，真实欠账反而看不见。
      */
     private static List<String> assertionFreeCases() {
         List<String> offenders = new ArrayList<>();
         for (Source source : testClasses()) {
+            Set<String> helpers = assertingHelpers(source);
             Matcher matcher = CASE_ANNOTATION.matcher(source.code());
             while (matcher.find()) {
                 int brace = bodyStart(source.blanks(), matcher.end());
@@ -288,12 +306,80 @@ class TestConventionTest {
                     continue;
                 }
                 String body = bodyOf(source.blanks(), brace);
-                if (body != null && !asserts(body)) {
+                if (body != null && !asserts(body, helpers)) {
                     offenders.add(source.path() + '#' + caseName(source.blanks(), brace));
                 }
             }
         }
         return offenders;
+    }
+
+    /**
+     * 本文件与其测试基类里"会断言"的辅助方法名：方法体自己出现 assert/verify/fail，或调用了同族里<br>
+     * 已经判定会断言的方法，迭代到不再新增为止。
+     */
+    private static Set<String> assertingHelpers(Source source) {
+        Set<String> helpers = new HashSet<>();
+        Set<String> visited = new HashSet<>();
+        for (Source current = source; current != null; current = superClass(current)) {
+            if (!visited.add(current.path())) {
+                break;
+            }
+            List<String> names = new ArrayList<>();
+            List<String> bodies = new ArrayList<>();
+            collectMethods(current.blanks(), names, bodies);
+            boolean grown = true;
+            while (grown) {
+                grown = false;
+                for (int i = 0; i < names.size(); i++) {
+                    String name = names.get(i);
+                    if (!helpers.contains(name) && asserts(bodies.get(i), helpers)) {
+                        helpers.add(name);
+                        grown = true;
+                    }
+                }
+            }
+        }
+        return helpers;
+    }
+
+    /**
+     * 逐个取出方法声明的名字与方法体。关键字和大括号是误匹配的来源：{@code if (x) &#123;} 长得和声明一样，<br>
+     * 所以名字落在 {@link #NON_METHOD_NAMES} 里的直接跳过。
+     */
+    private static void collectMethods(String blanks, List<String> names, List<String> bodies) {
+        Matcher matcher = METHOD.matcher(blanks);
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            if (NON_METHOD_NAMES.contains(name)) {
+                continue;
+            }
+            String body = bodyOf(blanks, matcher.end() - 1);
+            if (body != null) {
+                names.add(name);
+                bodies.add(body);
+            }
+        }
+    }
+
+    /**
+     * 沿 {@code extends} 往上找测试基类，只按简单类名在本仓库的测试源文件里认，找不到就当没有基类。
+     */
+    private static Source superClass(Source source) {
+        Matcher matcher = SUPER.matcher(source.code());
+        if (!matcher.find()) {
+            return null;
+        }
+        String name = matcher.group(1);
+        name = name.substring(name.lastIndexOf('.') + 1);
+        int generic = name.indexOf('<');
+        name = generic < 0 ? name : name.substring(0, generic);
+        for (Source candidate : TEST_SOURCES) {
+            if (fileName(candidate).equals(name)) {
+                return candidate;
+            }
+        }
+        return null;
     }
 
     private static List<Source> testClasses() {
@@ -392,8 +478,19 @@ class TestConventionTest {
         return blanks.substring(start, end);
     }
 
-    private static boolean asserts(String body) {
-        return body.contains("assert") || body.contains("Assert") || body.contains("verify(") || body.contains("fail(");
+    /**
+     * 方法体里自己断言，或调用了判定为"会断言"的辅助方法，都算这个体有验证。
+     */
+    private static boolean asserts(String body, Set<String> assertingHelpers) {
+        if (body.contains("assert") || body.contains("Assert") || body.contains("verify(") || body.contains("fail(")) {
+            return true;
+        }
+        for (String helper : assertingHelpers) {
+            if (Pattern.compile("\\b" + Pattern.quote(helper) + "\\s*\\(").matcher(body).find()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<Source> scanTestSources() {
