@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Mybatis Plus H2 Junit Test
  *
@@ -67,13 +69,21 @@ class H2StudentMapperTest extends BaseTest {
 
     }
 
+    /**
+     * 分页条件命中不到数据时，total/pages/records 一律归零，不会留下翻页残值。
+     */
     @Test
     @Order(Integer.MAX_VALUE)
     void pageCountZeroTest() {
-        IPage<H2Student> page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
-        if (null != page) {
-            System.out.println("total: " + page.getTotal());
-        }
+        Page<H2Student> page = new Page<>();
+        IPage<H2Student> result = studentMapper.selectPage(page, Wrappers.<H2Student>query().eq("name", "无"));
+        // 分页结果原地写回传入的 page
+        assertThat(result).isSameAs(page);
+        assertThat(result.getTotal()).isZero();
+        assertThat(result.getPages()).isZero();
+        assertThat(result.getRecords()).isEmpty();
+        assertThat(result.getCurrent()).isEqualTo(1L);
+        assertThat(result.getSize()).isEqualTo(10L);
     }
 
     /**
@@ -95,11 +105,25 @@ class H2StudentMapperTest extends BaseTest {
         Assertions.assertEquals(1, studentMapper.deleteById(h2Student));
     }
 
+    /**
+     * in 条件按集合元素个数生成占位符，命中不到的值不会混进结果；空集合 MP 不拦截，直接拼出非法的 IN ()。
+     */
     @Test
     void testIn() {
         LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery()
-                .in(H2Student::getName, Arrays.asList("a", "b"));
-        studentMapper.selectList(wrapper);
+                .in(H2Student::getName, Arrays.asList("zzInTestA", "zzInTestB"));
+        assertThat(wrapper.getTargetSql()).isEqualTo("(name IN (?,?))");
+        long hitId = 910001L;
+        studentMapper.insert(new H2Student(hitId, "zzInTestA", 1));
+        studentMapper.insert(new H2Student(910002L, "zzInTestC", 1));
+        List<H2Student> hit = studentMapper.selectList(wrapper);
+        assertThat(hit).hasSize(1);
+        assertThat(hit.getFirst().getId()).isEqualTo(hitId);
+        assertThat(hit.getFirst().getName()).isEqualTo("zzInTestA");
+        assertThat(Wrappers.<H2Student>lambdaQuery().in(H2Student::getName, List.of("zzInTestA")).getTargetSql())
+                .isEqualTo("(name IN (?))");
+        assertThat(Wrappers.<H2Student>lambdaQuery().in(H2Student::getName, List.of()).getTargetSql())
+                .isEqualTo("(name IN ())");
     }
 
 }
