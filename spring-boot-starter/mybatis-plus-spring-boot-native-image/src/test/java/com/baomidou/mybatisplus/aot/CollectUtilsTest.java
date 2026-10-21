@@ -128,6 +128,10 @@ class CollectUtilsTest {
         }
     }
 
+    /**
+     * 不能删：{@code findMainClassesFromNativeImageProperties} 只收录通过 {@code isMainClass} 的类， 上面的用例把 {@code -H:Class}
+     * 指向本类，靠这个方法把它认成启动类。
+     */
     public static void main(String[] args) {
     }
 
