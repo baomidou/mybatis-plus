@@ -11,24 +11,37 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author miemie
  * @since 2020-06-23
  */
 public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
 
+    /**
+     * 链式包装：func 的条件为 false 时既不 npe 也不留参数，groupBy 传单个值和传集合拼出的片段一致。
+     */
     @Test
     void test() {
         final String id = "id";
         Entity entity = new Entity();
-        doTest(
-                i -> i.queryChain().func(j -> j.isNotNull(id))
-                        .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
-                        .and(j -> j.isNotNull(id)).or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id))
-                        .not(j -> j.isNull(id)).list());
-        doTest(i -> i.queryChain().groupBy("id").list());
-        doTest(i -> i.queryChain().groupBy(List.of("id")).list());
-        doTest(i -> i.queryChain().groupBy(List.of("id", "name")).list());
+        doTest(i -> {
+            var chain = i.queryChain().func(j -> j.isNotNull(id))
+                    // entity.getId() 为 null，条件不成立：不进 SQL，也不会留下占位符参数
+                    .func(entity.getId() != null, j -> j.eq("id", entity.getId())).and(j -> j.isNotNull(id))
+                    .or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id)).not(j -> j.isNull(id));
+            assertThat(chain.getWrapper().getTargetSql()).isEqualTo(
+                    "(id IS NOT NULL AND (id IS NOT NULL)"
+                            + " OR (id IS NOT NULL) AND (id IS NOT NULL) AND NOT (id IS NULL))");
+            assertThat(chain.getWrapper().getParamNameValuePairs()).isEmpty();
+            assertThat(chain.list()).hasSize(2);
+            assertThat(i.queryChain().groupBy("id").getWrapper().getSqlSegment()).isEqualTo(" GROUP BY id");
+            assertThat(i.queryChain().groupBy(List.of("id")).getWrapper().getSqlSegment()).isEqualTo(" GROUP BY id");
+            assertThat(i.queryChain().groupBy(List.of("id", "name")).getWrapper().getSqlSegment())
+                    .isEqualTo(" GROUP BY id,name");
+            assertThat(i.queryChain().groupBy(List.of("id", "name")).list()).hasSize(2);
+        });
     }
 
     @ParameterizedTest
