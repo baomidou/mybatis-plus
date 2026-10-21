@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2021-01-27
  */
-class QueryWrapperTest extends BaseWrapperTest {
+class QueryWrapperTest extends WrapperTestSupport {
 
     @Test
     void testCacheSqlSegment() {

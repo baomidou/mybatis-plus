@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
-class LambdaQueryWrapperTest extends BaseWrapperTest {
+class LambdaQueryWrapperTest extends WrapperTestSupport {
 
     @BeforeAll
     static void initTableInfo() {

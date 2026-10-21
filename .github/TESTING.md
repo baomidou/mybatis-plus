@@ -21,7 +21,7 @@
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 27 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
-| T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 5、sleep 1；`assertThat` 不链断言方法零违规 |
+| T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 4、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 7 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单、wrapper 关键字表、WHERE 片段装配 |
 | T8 | 测试实体类名/表名全局唯一 | 未执行 | — |
@@ -90,7 +90,7 @@
 - 用 `Thread.sleep` 当同步手段。
 
 基线数字是存量欠账：补一个断言就把常量调小一格，禁止调大。用例调用本文件或测试基类里会断言的辅助方法
-（如 `BaseWrapperTest#logSqlWhere`）算已经断言，不计入 7。名为 `*Test` 却不含用例的基类和夹具
+（如 `WrapperTestSupport#logSqlWhere`）算已经断言，不计入 7。名为 `*Test` 却不含用例的基类和夹具
 登记在 `REGISTERED_CASE_FREE_FILES`，夹具改名成 `*Fixture`/`*Support` 可以直接从登记表消失，
 不必凑数加用例。
 

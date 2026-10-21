@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
-class UpdateWrapperIncrDecrTest extends BaseWrapperTest {
+class UpdateWrapperIncrDecrTest extends WrapperTestSupport {
 
     @BeforeAll
     static void initUser() {

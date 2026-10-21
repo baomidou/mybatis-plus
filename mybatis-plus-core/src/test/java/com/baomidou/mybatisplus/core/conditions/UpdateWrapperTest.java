@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2021-01-27
  */
-class UpdateWrapperTest extends BaseWrapperTest {
+class UpdateWrapperTest extends WrapperTestSupport {
 
     @Test
     void test1() {

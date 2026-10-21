@@ -161,7 +161,6 @@ class TestConventionTest {
      * T5 文件名以 Test 结尾但本身不含用例的基类与夹具。
      */
     private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
-            "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/BaseWrapperTest.java",
             "mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/handlers/BaseTypeHandlerTest.java",
             "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
@@ -412,7 +411,7 @@ class TestConventionTest {
 
     /**
      * 找出只有调用没有断言的用例，元素形如 {@code 路径#方法名}。<br>
-     * 用例经常通过基类的辅助方法（如 {@code BaseWrapperTest#logSqlWhere}）间接断言，这种要认下来：<br>
+     * 用例经常通过基类的辅助方法（如 {@code WrapperTestSupport#logSqlWhere}）间接断言，这种要认下来：<br>
      * 只按方法体里有没有 assert 字样判，存量会被假阳性填满，真实欠账反而看不见。
      */
     private static List<String> assertionFreeCases() {

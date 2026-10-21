@@ -9,10 +9,12 @@ import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * core 里 wrapper 测试共用的基类：三个 log* 方法边打印边断言，{@link Entity} 是它们公用的实体夹具。 本身不含用例，所以不叫 {@code *Test}。
+ *
  * @author miemie
  * @since 2021-01-27
  */
-class BaseWrapperTest {
+class WrapperTestSupport {
 
     void logParams(AbstractWrapper<?, ?, ?> wrapper) {
         wrapper.getParamNameValuePairs().forEach((k, v) -> {
