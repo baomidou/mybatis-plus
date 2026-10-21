@@ -42,6 +42,12 @@ class TestConventionTest {
      */
     private static final Pattern BARE_ASSERT = Pattern.compile("(?<![\\w.$])assert\\s*[({]");
 
+    /**
+     * AssertJ 的入口方法（{@code assertThat}、{@code assertThatCode}、{@code assertThatThrownBy} 等），<br>
+     * 后面捕获的是括号还是大括号，决定去哪里找它的收尾。
+     */
+    private static final Pattern ASSERTJ_ENTRY = Pattern.compile("\\bassertThat[A-Za-z]*\\s*([({])");
+
     private static final Pattern DISABLED = Pattern.compile("@Disabled\\b");
 
     private static final Pattern DISABLED_WITH_REASON = Pattern.compile("@Disabled\\s*\\(\\s*\"\\s*\\S");
@@ -329,6 +335,31 @@ class TestConventionTest {
         assertThat(offenders).as("T5 零断言用例存量只准降不准升，下面是要补断言的位置").hasSizeLessThanOrEqualTo(MAX_ASSERTION_FREE_CASES);
     }
 
+    /**
+     * {@code assertThat(x)} 单独一句只是造了个断言对象，没有任何校验，永远绿。<br>
+     * T5 的零断言扫描按方法体里有没有 assert 字样判，会被这种写法骗过去，所以单独一条规则盯收尾。
+     */
+    @Test
+    void assertjEntriesMustFinishWithAnAssertion() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            String blanks = source.blanks();
+            Matcher matcher = ASSERTJ_ENTRY.matcher(blanks);
+            while (matcher.find()) {
+                char opener = matcher.group(1).charAt(0);
+                int after = skipBalanced(blanks, matcher.end() - 1, opener, opener == '(' ? ')' : '}');
+                int next = after;
+                while (next < blanks.length() && Character.isWhitespace(blanks.charAt(next))) {
+                    next++;
+                }
+                if (next >= blanks.length() || blanks.charAt(next) != '.') {
+                    offenders.add(source.path() + ':' + lineOf(blanks, matcher.start()));
+                }
+            }
+        }
+        assertThat(offenders).as("T5 AssertJ 入口后面必须链一个断言方法，下面是光调用不断言的位置").isEmpty();
+    }
+
     @Test
     void packageMirroringViolationsDoNotGrow() {
         List<String> offenders = new ArrayList<>();
@@ -499,6 +530,19 @@ class TestConventionTest {
             }
         }
         return blanks.length();
+    }
+
+    /**
+     * 遮 blanks 时保留了换行，所以数换行就能把下标还原成行号。
+     */
+    private static int lineOf(String blanks, int index) {
+        int line = 1;
+        for (int i = 0; i < index; i++) {
+            if (blanks.charAt(i) == '\n') {
+                line++;
+            }
+        }
+        return line;
     }
 
     /**
