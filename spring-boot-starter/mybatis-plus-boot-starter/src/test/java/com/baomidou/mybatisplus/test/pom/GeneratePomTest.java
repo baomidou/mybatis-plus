@@ -6,7 +6,6 @@ import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查pom依赖
@@ -46,26 +47,26 @@ class GeneratePomTest {
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency mp = dependenciesMap.get("mybatis-plus");
-            Assertions.assertEquals("compile", mp.getScope());
-            Assertions.assertFalse(mp.isOptional());
+            assertThat(mp.getScope()).isEqualTo("compile");
+            assertThat(mp.isOptional()).isFalse();
             Dependency autoconfigure = dependenciesMap.get("spring-boot-autoconfigure");
-            Assertions.assertEquals("compile", autoconfigure.getScope());
-            Assertions.assertFalse(autoconfigure.isOptional());
+            assertThat(autoconfigure.getScope()).isEqualTo("compile");
+            assertThat(autoconfigure.isOptional()).isFalse();
             Dependency jdbc = dependenciesMap.get("spring-boot-starter-jdbc");
-            Assertions.assertEquals("compile", jdbc.getScope());
-            Assertions.assertFalse(jdbc.isOptional());
+            assertThat(jdbc.getScope()).isEqualTo("compile");
+            assertThat(jdbc.isOptional()).isFalse();
             Dependency configurationProcessor = dependenciesMap.get("spring-boot-configuration-processor");
-            Assertions.assertEquals("compile", configurationProcessor.getScope());
-            Assertions.assertTrue(configurationProcessor.isOptional());
+            assertThat(configurationProcessor.getScope()).isEqualTo("compile");
+            assertThat(configurationProcessor.isOptional()).isTrue();
             Dependency autoconfigureProcessor = dependenciesMap.get("spring-boot-autoconfigure-processor");
-            Assertions.assertEquals("compile", autoconfigureProcessor.getScope());
-            Assertions.assertTrue(autoconfigureProcessor.isOptional());
+            assertThat(autoconfigureProcessor.getScope()).isEqualTo("compile");
+            assertThat(autoconfigureProcessor.isOptional()).isTrue();
             Dependency bom = dependenciesMap.get("spring-boot-dependencies");
-            Assertions.assertEquals("import", bom.getScope());
-            Assertions.assertFalse(bom.isOptional());
-            Assertions.assertEquals("3.1.8", dependenciesMap.get("spring-cloud-commons").getVersion());
-            Assertions.assertEquals("2.1.2", dependenciesMap.get("mybatis-spring").getVersion());
-            Assertions.assertEquals("2.7.18", dependenciesMap.get("spring-boot-dependencies").getVersion());
+            assertThat(bom.getScope()).isEqualTo("import");
+            assertThat(bom.isOptional()).isFalse();
+            assertThat(dependenciesMap.get("spring-cloud-commons").getVersion()).isEqualTo("3.1.8");
+            assertThat(dependenciesMap.get("mybatis-spring").getVersion()).isEqualTo("2.1.2");
+            assertThat(dependenciesMap.get("spring-boot-dependencies").getVersion()).isEqualTo("2.7.18");
         }
     }
 }

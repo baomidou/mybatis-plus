@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfi
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
@@ -14,6 +13,8 @@ import org.springframework.core.io.FileSystemResource;
 import java.io.IOException;
 import java.util.Properties;
 import javax.sql.DataSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查元数据生成
@@ -37,15 +38,14 @@ class MetadataTest {
         properties.load(
                 new FileSystemResource("build/classes/java/main/META-INF/spring-autoconfigure-metadata.properties")
                         .getInputStream());
-        Assertions.assertEquals(
-                DataSourceAutoConfiguration.class.getName() + ","
-                        + MybatisPlusLanguageDriverAutoConfiguration.class.getName(),
-                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".AutoConfigureAfter"));
-        Assertions.assertEquals(
-                DataSource.class.getName(),
-                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"));
-        Assertions.assertEquals(
-                SqlSessionFactory.class.getName() + "," + SqlSessionFactoryBean.class.getName(),
-                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnClass"));
+        assertThat(properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".AutoConfigureAfter"))
+                .isEqualTo(
+                        DataSourceAutoConfiguration.class.getName() + ","
+                                + MybatisPlusLanguageDriverAutoConfiguration.class.getName());
+        assertThat(
+                properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"))
+                .isEqualTo(DataSource.class.getName());
+        assertThat(properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnClass"))
+                .isEqualTo(SqlSessionFactory.class.getName() + "," + SqlSessionFactoryBean.class.getName());
     }
 }

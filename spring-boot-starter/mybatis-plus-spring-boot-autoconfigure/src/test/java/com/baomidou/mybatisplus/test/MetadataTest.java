@@ -7,7 +7,6 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
@@ -15,6 +14,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查元数据生成
@@ -41,26 +42,22 @@ class MetadataTest {
         Map<String, Metadata> metadataMap = properties.stream()
                 .map(map -> new Metadata(map.get("name"), map.get("type"), map.get("sourceType")))
                 .collect(Collectors.toMap(Metadata::getName, metadata -> metadata));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package",
-                        String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.global-config.db-config.table-underline"),
+        assertThat(metadataMap.get("mybatis-plus.type-aliases-package")).isEqualTo(
+                new Metadata("mybatis-plus.type-aliases-package", String.class.getName(),
+                        MybatisPlusProperties.class.getName()));
+        assertThat(metadataMap.get("mybatis-plus.global-config.db-config.table-underline")).isEqualTo(
                 new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(),
                         GlobalConfig.DbConfig.class.getName()));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location",
-                        String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"),
+        assertThat(metadataMap.get("mybatis-plus.config-location")).isEqualTo(
+                new Metadata("mybatis-plus.config-location", String.class.getName(),
+                        MybatisPlusProperties.class.getName()));
+        assertThat(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls")).isEqualTo(
                 new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(),
                         MybatisPlusProperties.CoreConfiguration.class.getName()));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null"),
+        assertThat(metadataMap.get("mybatis-plus.configuration.jdbc-type-for-null")).isEqualTo(
                 new Metadata("mybatis-plus.configuration.jdbc-type-for-null", JdbcType.class.getName(),
                         MybatisPlusProperties.CoreConfiguration.class.getName()));
-        Assertions.assertEquals(
-                metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case"),
+        assertThat(metadataMap.get("mybatis-plus.configuration.map-underscore-to-camel-case")).isEqualTo(
                 new Metadata("mybatis-plus.configuration.map-underscore-to-camel-case", Boolean.class.getName(),
                         MybatisPlusProperties.CoreConfiguration.class.getName()));
     }

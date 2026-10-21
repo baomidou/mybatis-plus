@@ -2,8 +2,9 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -18,9 +19,9 @@ public class MybatisPlusPropertiesTest {
         coreConfiguration.setDatabaseId("test");
         coreConfiguration.setDefaultFetchSize(10);
         coreConfiguration.applyTo(configuration);
-        Assertions.assertTrue(configuration.isCacheEnabled());
-        Assertions.assertEquals("test", configuration.getDatabaseId());
-        Assertions.assertEquals(10, configuration.getDefaultFetchSize());
+        assertThat(configuration.isCacheEnabled()).isTrue();
+        assertThat(configuration.getDatabaseId()).isEqualTo("test");
+        assertThat(configuration.getDefaultFetchSize()).isEqualTo(10);
     }
 
     @Test
@@ -31,9 +32,9 @@ public class MybatisPlusPropertiesTest {
         configuration.setDefaultFetchSize(10);
         MybatisPlusProperties.CoreConfiguration coreConfiguration = new MybatisPlusProperties.CoreConfiguration();
         coreConfiguration.applyTo(configuration);
-        Assertions.assertTrue(configuration.isCacheEnabled());
-        Assertions.assertEquals("test", configuration.getDatabaseId());
-        Assertions.assertEquals(10, configuration.getDefaultFetchSize());
+        assertThat(configuration.isCacheEnabled()).isTrue();
+        assertThat(configuration.getDatabaseId()).isEqualTo("test");
+        assertThat(configuration.getDefaultFetchSize()).isEqualTo(10);
     }
 
 }

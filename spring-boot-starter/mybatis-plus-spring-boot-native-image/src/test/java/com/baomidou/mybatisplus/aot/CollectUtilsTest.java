@@ -27,8 +27,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CollectUtilsTest {
 
@@ -45,7 +44,7 @@ class CollectUtilsTest {
             Set<String> resources = collectUtils
                     .findResources("org/apache/ibatis/builder/xml", name -> name.endsWith(".dtd"));
 
-            assertTrue(resources.contains("org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd"));
+            assertThat(resources).contains("org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd");
         }
     }
 
@@ -62,10 +61,10 @@ class CollectUtilsTest {
             Set<String> classNames = collectUtils.findClassNames("com.example");
             Set<String> resources = collectUtils.findResources("mapper", name -> name.endsWith(".xml"));
 
-            assertTrue(classNames.contains("com.example.Target"));
-            assertFalse(classNames.contains("org.other.Other"));
-            assertTrue(resources.contains("mapper/UserMapper.xml"));
-            assertFalse(resources.contains("logback.xml"));
+            assertThat(classNames).contains("com.example.Target");
+            assertThat(classNames).doesNotContain("org.other.Other");
+            assertThat(resources).contains("mapper/UserMapper.xml");
+            assertThat(resources).doesNotContain("logback.xml");
         }
     }
 
@@ -80,20 +79,20 @@ class CollectUtilsTest {
             Set<String> mapperResources = collectUtils.findResources("", CollectUtils::isMapperXmlResource);
             Set<String> resourcesUnderMapper = collectUtils.findResources("mapper", name -> name.endsWith(".xml"));
 
-            assertTrue(mapperResources.contains("com/example/mapper/UserMapper.xml"));
-            assertTrue(mapperResources.contains("mapper/OrderMapper.xml"));
-            assertFalse(mapperResources.contains("logback.xml"));
-            assertTrue(resourcesUnderMapper.contains("mapper/OrderMapper.xml"));
+            assertThat(mapperResources).contains("com/example/mapper/UserMapper.xml");
+            assertThat(mapperResources).contains("mapper/OrderMapper.xml");
+            assertThat(mapperResources).doesNotContain("logback.xml");
+            assertThat(resourcesUnderMapper).contains("mapper/OrderMapper.xml");
         }
     }
 
     @Test
     void mapperXmlFilterExcludesNonMapperXmlByDefault() {
-        assertTrue(CollectUtils.isMapperXmlResource("mapper/UserMapper.xml"));
-        assertTrue(CollectUtils.isMapperXmlResource("com/example/mapper/UserMapper.xml"));
-        assertTrue(CollectUtils.isMapperXmlResource("mappers/UserMapper.xml"));
-        assertFalse(CollectUtils.isMapperXmlResource("logback.xml"));
-        assertFalse(CollectUtils.isMapperXmlResource("META-INF/spring/app.xml"));
+        assertThat(CollectUtils.isMapperXmlResource("mapper/UserMapper.xml")).isTrue();
+        assertThat(CollectUtils.isMapperXmlResource("com/example/mapper/UserMapper.xml")).isTrue();
+        assertThat(CollectUtils.isMapperXmlResource("mappers/UserMapper.xml")).isTrue();
+        assertThat(CollectUtils.isMapperXmlResource("logback.xml")).isFalse();
+        assertThat(CollectUtils.isMapperXmlResource("META-INF/spring/app.xml")).isFalse();
     }
 
     @Test
@@ -102,7 +101,7 @@ class CollectUtilsTest {
         try {
             System.setProperty(CollectUtils.REGISTER_ALL_XML_PROPERTY, "true");
 
-            assertTrue(CollectUtils.isMapperXmlResource("logback.xml"));
+            assertThat(CollectUtils.isMapperXmlResource("logback.xml")).isTrue();
         } finally {
             if (previous == null) {
                 System.clearProperty(CollectUtils.REGISTER_ALL_XML_PROPERTY);
@@ -125,7 +124,7 @@ class CollectUtilsTest {
 
             Set<Class<?>> mainClasses = collectUtils.findMainClassesFromNativeImageProperties();
 
-            assertTrue(mainClasses.contains(CollectUtilsTest.class));
+            assertThat(mainClasses).contains(CollectUtilsTest.class);
         }
     }
 
