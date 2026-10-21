@@ -25,6 +25,7 @@ import lombok.ToString;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
+import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -83,7 +84,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             return where;
         }
         if (where != null) {
-            if (where instanceof OrExpression) {
+            if (isLowPrecedence(where)) {
                 return appendExpression(new Parenthesis(where), expression);
             } else {
                 return appendExpression(where, expression);
@@ -431,11 +432,24 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         if (currentExpression == null) {
             return injectExpression;
         }
-        if (currentExpression instanceof OrExpression) {
+        if (isLowPrecedence(currentExpression)) {
             return appendExpression(new Parenthesis(currentExpression), injectExpression);
         } else {
             return appendExpression(currentExpression, injectExpression);
         }
+    }
+
+    /**
+     * 判断原条件表达式在与 {@code AND} 组合时是否需要加括号
+     * <p>
+     * 不只是 {@code OR},{@code XOR} 的优先级同样低于 {@code AND}.如果直接追加 {@code AND tenant_id = 1}, 数据库会按
+     * {@code WHERE 1 XOR (0 AND tenant_id = 1)} 计算,租户或数据权限条件被短路,从而读到、修改或删除 租户与权限范围之外的数据.
+     *
+     * @param expression 原条件表达式
+     * @return 需要加括号返回 {@code true}
+     */
+    protected boolean isLowPrecedence(Expression expression) {
+        return expression instanceof OrExpression || expression instanceof XorExpression;
     }
 
     /**

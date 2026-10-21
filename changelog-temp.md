@@ -1,1 +1,3 @@
 - feat: 支持配置加密在环境变量中使用
+- fix: 修复 `BlockAttackInnerInterceptor` 常量恒等式（如 `1 XOR 0`、`1 <= 1`、`NOT 1 = 2`）绕过全表更新/删除校验问题
+- fix: 修复 `TenantLineInnerInterceptor`、`DataPermissionInterceptor` 向 `XOR` 条件追加租户/权限条件时缺少括号，导致数据越权读写问题
