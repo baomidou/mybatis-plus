@@ -158,17 +158,14 @@ class TestConventionTest {
             "StringUtilsTest", "TableInfoTest", "TenantLineInnerInterceptorTest");
 
     /**
-     * T5 文件名以 Test 结尾但本身不含用例的基类与夹具；{@code entity/Test} 是恰好叫 Test 的实体类。
+     * T5 文件名以 Test 结尾但本身不含用例的基类与夹具。
      */
     private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
             "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/BaseWrapperTest.java",
             "mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/handlers/BaseTypeHandlerTest.java",
             "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
-            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java",
-            "spring-boot-starter/mybatis-plus-boot-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java",
-            "spring-boot-starter/mybatis-plus-spring-boot3-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java",
-            "spring-boot-starter/mybatis-plus-spring-boot4-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java");
+            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

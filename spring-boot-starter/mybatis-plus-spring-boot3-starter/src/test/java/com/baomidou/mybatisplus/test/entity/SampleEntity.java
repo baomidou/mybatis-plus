@@ -6,7 +6,7 @@ import lombok.Data;
  * @author nieqiurong 2019/5/4.
  */
 @Data
-public class Test {
+public class SampleEntity {
 
     private Long id;
 
