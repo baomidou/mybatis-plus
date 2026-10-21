@@ -121,9 +121,11 @@ class TestConventionTest {
     private static final Set<String> TIERS = Set.of("unit", "integration", "external-db", "build-metadata", "stress");
 
     /**
-     * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。
+     * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。<br>
+     * 剩下 7 个都有明确落点，补不了不是漏了：6 个挂在真实外部库上（达梦、Oracle、PostgreSQL、MySQL 与 ZooKeeper）， 1 个在 {@code postgresql} 包里被根
+     * {@code build.gradle} 的 Test 任务整包排除、根本不执行。 前者等 external-db 分层，后者等执行方式改造，两者都需要改动主干构建脚本。
      */
-    private static final int MAX_ASSERTION_FREE_CASES = 8;
+    private static final int MAX_ASSERTION_FREE_CASES = 7;
 
     /**
      * T6 显式禁用用例数量。
