@@ -51,6 +51,8 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Mybatis Plus H2 Junit Test
  *
@@ -558,7 +560,10 @@ class H2UserTest extends BaseTest {
 
     @Test
     void myQueryWithGroupByOrderBy() {
-        userService.mySelectMaps().forEach(System.out::println);
+        // 自带 group by / order by 的自定义语句再叠分页：分页只截断行数，不改列
+        List<Map<?, ?>> rows = userService.mySelectMaps();
+        assertThat(rows).isNotEmpty().hasSizeLessThanOrEqualTo(3);
+        rows.forEach(row -> assertThat(new HashSet<Object>(row.keySet())).contains("NAME", "COUNT(AGE)"));
     }
 
     @Test
@@ -581,9 +586,11 @@ class H2UserTest extends BaseTest {
      */
     @Test
     void batchInsertPerformanceTest() {
+        long before = userService.count();
         List<H2User> users = mockUser(10_000, 99989);
-        userService.saveBatch(users);
-        // 卧槽，速度挺快的
+        assertThat(userService.saveBatch(users)).isTrue();
+        // 卧槽，速度挺快的，而且一万条真的落库了
+        assertThat(userService.count()).isEqualTo(before + 10_000L);
     }
 
     /**
@@ -666,8 +673,10 @@ class H2UserTest extends BaseTest {
     }
 
     private void lambdaCache() {
-        Wrappers.<H2User>lambdaQuery().eq(H2User::getAge, 2).eq(H2User::getName, 2).eq(H2User::getPrice, 2)
-                .getTargetSql();
+        assertThat(
+                Wrappers.<H2User>lambdaQuery().eq(H2User::getAge, 2).eq(H2User::getName, 2).eq(H2User::getPrice, 2)
+                        .getTargetSql())
+                .isEqualTo("(age = ? AND name = ? AND price = ?)");
     }
 
     @Test
@@ -756,14 +765,21 @@ class H2UserTest extends BaseTest {
         H2User user = new H2User(1L, "Evan");
         userService.save(user);
         Optional<H2User> optional = userService.getOptById(1L);
-        optional.ifPresent(u -> log(u.toString()));
+        assertThat(optional).isPresent();
+        assertThat(optional.get().getTestId()).isEqualTo(1L);
+        assertThat(optional.get().getName()).isEqualTo("Evan");
     }
 
     @Test
     @Order(27)
     void testServiceGetOneOpt() {
-        userService.getOneOpt(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, "David"))
-                .ifPresent(u -> log(u.toString()));
+        String name = "DavidOpt";
+        // 查不到时是空 Optional，不是异常也不是 null
+        assertThat(userService.getOneOpt(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, name))).isEmpty();
+        userService.save(new H2User(name, AgeEnum.ONE));
+        Optional<H2User> optional = userService.getOneOpt(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, name));
+        assertThat(optional).isPresent();
+        assertThat(optional.get().getName()).isEqualTo(name);
     }
 
     @Test
@@ -931,61 +947,80 @@ class H2UserTest extends BaseTest {
 
     @Test
     void testUnchecked() {
-        Wrappers.<H2User>lambdaQuery().select(H2User::getAge, H2User::getAge)
-                .select(true, H2User::getDeleted, H2User::getDeleted)
-                .orderBy(true, true, H2User::getAge, H2User::getAge).orderByAsc(H2User::getAge, H2User::getDeleted)
-                .orderByAsc(true, H2User::getAge, H2User::getTestType).orderByDesc(H2User::getDeleted, H2User::getPrice)
-                .orderByDesc(true, H2User::getDeleted, H2User::getTestType).groupBy(H2User::getAge, H2User::getTestType)
-                .groupBy(true, H2User::getAge, H2User::getTestType);
+        // 特征化：重复列名不去重，group by 拼在 order by 前面
+        String segment = " GROUP BY age,test_type,age,test_type ORDER BY age ASC,age ASC,age ASC,deleted ASC,"
+                + "age ASC,test_type ASC,deleted DESC,price DESC,deleted DESC,test_type DESC";
 
-        new LambdaQueryChainWrapper<>(H2User.class).select(H2User::getAge)
-                .select(true, H2User::getDeleted, H2User::getDeleted)
-                .orderBy(true, true, H2User::getAge, H2User::getAge).orderByAsc(H2User::getAge, H2User::getDeleted)
-                .orderByAsc(true, H2User::getAge, H2User::getTestType).orderByDesc(H2User::getDeleted, H2User::getPrice)
-                .orderByDesc(true, H2User::getDeleted, H2User::getTestType).groupBy(H2User::getAge, H2User::getTestType)
-                .groupBy(true, H2User::getAge, H2User::getTestType);
+        assertThat(
+                Wrappers.<H2User>lambdaQuery().select(H2User::getAge, H2User::getAge)
+                        .select(true, H2User::getDeleted, H2User::getDeleted)
+                        .orderBy(true, true, H2User::getAge, H2User::getAge)
+                        .orderByAsc(H2User::getAge, H2User::getDeleted)
+                        .orderByAsc(true, H2User::getAge, H2User::getTestType)
+                        .orderByDesc(H2User::getDeleted, H2User::getPrice)
+                        .orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+                        .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType)
+                        .getTargetSql())
+                .isEqualTo(segment);
+
+        // 链式包装自己不给 SQL，得从它包着的 wrapper 上取
+        assertThat(
+                new LambdaQueryChainWrapper<>(H2User.class).select(H2User::getAge)
+                        .select(true, H2User::getDeleted, H2User::getDeleted)
+                        .orderBy(true, true, H2User::getAge, H2User::getAge)
+                        .orderByAsc(H2User::getAge, H2User::getDeleted)
+                        .orderByAsc(true, H2User::getAge, H2User::getTestType)
+                        .orderByDesc(H2User::getDeleted, H2User::getPrice)
+                        .orderByDesc(true, H2User::getDeleted, H2User::getTestType)
+                        .groupBy(H2User::getAge, H2User::getTestType).groupBy(true, H2User::getAge, H2User::getTestType)
+                        .getWrapper().getTargetSql())
+                .isEqualTo(segment);
 
         // 重写方法保留支持.
-        new LambdaQueryChainWrapper<>(H2User.class) {
+        int[] called = new int[5];
+        LambdaQueryChainWrapper<H2User> overridden = new LambdaQueryChainWrapper<>(H2User.class) {
 
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderByDesc(boolean condition, SFunction<H2User, ?> column,
                     List<SFunction<H2User, ?>> columns) {
-                System.out.println("-------处理OrderByDesc----------");
+                called[0]++;
                 return super.doOrderByDesc(condition, column, columns);
             }
 
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderByAsc(boolean condition, SFunction<H2User, ?> column,
                     List<SFunction<H2User, ?>> columns) {
-                System.out.println("-------处理OrderByAsc----------");
+                called[1]++;
                 return super.doOrderByAsc(condition, column, columns);
             }
 
             @Override
             protected LambdaQueryChainWrapper<H2User> doOrderBy(boolean condition, boolean isAsc,
                     SFunction<H2User, ?> column, List<SFunction<H2User, ?>> columns) {
-                System.out.println("-------处理OrderBy----------");
+                called[2]++;
                 return super.doOrderBy(condition, isAsc, column, columns);
             }
 
             @Override
             protected LambdaQueryChainWrapper<H2User> doGroupBy(boolean condition, SFunction<H2User, ?> column,
                     List<SFunction<H2User, ?>> columns) {
-                System.out.println("-------处理GroupBy----------");
+                called[3]++;
                 return super.doGroupBy(condition, column, columns);
             }
 
             @Override
             protected LambdaQueryChainWrapper<H2User> doSelect(boolean condition, List<SFunction<H2User, ?>> columns) {
-                System.out.println("-------处理Select----------");
+                called[4]++;
                 return super.doSelect(condition, columns);
             }
-        }.select(H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
+        };
+        overridden.select(H2User::getAge).select(true, H2User::getDeleted, H2User::getDeleted)
                 .orderBy(true, true, H2User::getAge, H2User::getAge).orderByAsc(H2User::getAge, H2User::getDeleted)
                 .orderByAsc(true, H2User::getAge, H2User::getTestType).orderByDesc(H2User::getDeleted, H2User::getPrice)
                 .orderByDesc(true, H2User::getDeleted, H2User::getTestType).groupBy(H2User::getAge, H2User::getTestType)
                 .groupBy(true, H2User::getAge, H2User::getTestType);
+        assertThat(called).as("五个受保护的钩子方法都得被子类重写接住").doesNotContain(0);
+        assertThat(overridden.getWrapper().getTargetSql()).isEqualTo(segment);
     }
 
     @Test
@@ -1002,32 +1037,32 @@ class H2UserTest extends BaseTest {
     void testResultSet() {
         BaseMapper<H2User> baseMapper = userService.getBaseMapper();
         Page<H2User> page = new Page<>(1, 1000000);
-        System.out.println("--------------------------------------------");
-        baseMapper.selectList(page, Wrappers.emptyWrapper());
+        List<H2User> rows = baseMapper.selectList(page, Wrappers.emptyWrapper());
         List<Long> ids = new ArrayList<>();
-        System.out.println("---------------selectListByPage-------------------");
-        baseMapper.selectList(page, Wrappers.emptyWrapper(), resultContext -> {
-            H2User resultObject = resultContext.getResultObject();
-            ids.add(resultObject.getTestId());
-            System.out.println(resultObject);
-        });
-        System.out.println("---------------selectBatchIds-------------------");
-        baseMapper.selectByIds(ids, resultContext -> System.out.println(resultContext.getResultObject()));
-        System.out.println("---------------selectList-------------------");
-        System.out.println("---------------selectObjs-------------------");
-        baseMapper.selectObjs(
-                Wrappers.emptyWrapper(),
-                (ResultHandler<Long>) resultContext -> System.out.println(resultContext.getResultObject()));
-        System.out.println("---------------selectByMap-------------------");
-        baseMapper.selectByMap(new HashMap<>(), resultContext -> System.out.println(resultContext.getResultObject()));
-        System.out.println("---------------selectMapsByPage-------------------");
-        baseMapper.selectMaps(
-                Page.of(1, 100000), Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject()
-                        .forEach((k, v) -> System.out.println(k + "--------" + v)));
-        System.out.println("---------------selectMaps-------------------");
-        baseMapper.selectMaps(
-                Wrappers.emptyWrapper(), resultContext -> resultContext.getResultObject()
-                        .forEach((k, v) -> System.out.println(k + "--------" + v)));
+        // 流式回调逐行收集的结果必须和普通分页查出来的一模一样
+        baseMapper.selectList(
+                page, Wrappers.emptyWrapper(), resultContext -> ids.add(resultContext.getResultObject().getTestId()));
+        assertThat(ids).containsExactlyElementsOf(rows.stream().map(H2User::getTestId).toList());
+
+        int[] visited = new int[1];
+        baseMapper.selectByIds(ids, resultContext -> visited[0]++);
+        assertThat(visited[0]).isEqualTo(ids.size());
+
+        visited[0] = 0;
+        baseMapper.selectObjs(Wrappers.emptyWrapper(), (ResultHandler<Long>) resultContext -> visited[0]++);
+        assertThat(visited[0]).isEqualTo(rows.size());
+
+        visited[0] = 0;
+        baseMapper.selectByMap(new HashMap<>(), resultContext -> visited[0]++);
+        assertThat(visited[0]).isEqualTo(rows.size());
+
+        visited[0] = 0;
+        baseMapper.selectMaps(Page.of(1, 100000), Wrappers.emptyWrapper(), resultContext -> visited[0]++);
+        assertThat(visited[0]).isEqualTo(rows.size());
+
+        visited[0] = 0;
+        baseMapper.selectMaps(Wrappers.emptyWrapper(), resultContext -> visited[0]++);
+        assertThat(visited[0]).isEqualTo(rows.size());
     }
 
     @Test
