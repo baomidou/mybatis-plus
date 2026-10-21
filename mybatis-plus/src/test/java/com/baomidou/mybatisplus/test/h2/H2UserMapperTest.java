@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -498,10 +499,23 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertEquals("1", userMapper.testCall());
     }
 
+    /**
+     * 逻辑删除：delete 走 UPDATE 打 deleted 标记，MP 的查询自动过滤，裸 SQL 仍能读到该行。
+     */
     @Test
     @Order(Integer.MAX_VALUE)
     void delete() {
-        userMapper.delete(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO)).eq("name", "Tony"));
+        H2User h2User = new H2User(IdWorker.getId(), "testDeleteLogic").setAge(AgeEnum.TWO);
+        assertThat(userMapper.insert(h2User)).isEqualTo(1);
+        QueryWrapper<H2User> wrapper = new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO))
+                .eq("name", "testDeleteLogic");
+        // 实体只当参数容器，delete 的条件来自 wrapper 本身
+        assertThat(userMapper.delete(wrapper)).isEqualTo(1);
+        assertThat(userMapper.selectById(h2User.getTestId())).isNull();
+        assertThat(userMapper.getById(h2User.getTestId())).isNotNull().satisfies(raw -> {
+            assertThat(raw.getName()).isEqualTo("testDeleteLogic");
+            assertThat(raw.getDeleted()).isEqualTo(1);
+        });
     }
 
     @Test
@@ -534,17 +548,50 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertEquals(1, selectObjs.size());
     }
 
+    /**
+     * 测试自定义注入的分页方法：分页插件按参数类型找 IPage，不看 @Param 名字， 参数位置调换或名字对不上照样分页；searchCount=false 时不查总数。
+     */
     @Test
     void test() {
         Page<H2User> page = new Page<>();
-        userMapper.testPage1(new H2User(), page);
-        userMapper.testPage2(page, new H2User());
+        IPage<H2User> result = userMapper.testPage1(new H2User(), page);
+        // 分页结果原地写回传入的 page，返回值就是它
+        assertThat(result).isSameAs(page);
+        assertThat(result.getSize()).isEqualTo(10L);
+        assertThat(result.getRecords()).hasSize((int) Math.min(result.getSize(), result.getTotal()));
+        assertThat(result.getPages()).isEqualTo((result.getTotal() + result.getSize() - 1) / result.getSize());
+
+        Page<H2User> firstPage = new Page<>(1, 3);
+        Page<H2User> secondPage = new Page<>(2, 3);
+        // testPage2 的 IPage 挂在 @Param("user") 上，"page" 反而是实体参数
+        assertThat(userMapper.testPage2(secondPage, new H2User())).isSameAs(secondPage);
+        userMapper.testPage1(new H2User(), firstPage);
+        assertThat(secondPage.getRecords()).hasSize(3);
+        List<Long> firstIds = firstPage.getRecords().stream().map(H2User::getTestId).collect(toList());
+        List<Long> secondIds = secondPage.getRecords().stream().map(H2User::getTestId).collect(toList());
+        // 主键不重叠才说明 offset 真的加上了
+        assertThat(firstIds).isNotEmpty().doesNotContainAnyElementsOf(secondIds);
+
+        Page<H2User> noCount = new Page<>(1, 3, false);
+        userMapper.testPage1(new H2User(), noCount);
+        assertThat(noCount.getRecords()).hasSize(3);
+        assertThat(noCount.getTotal()).as("searchCount=false 不该发 count 语句").isZero();
     }
 
     @Test
     void testCountLong() {
-        Long count = userMapper.selectCountLong();
-        System.out.println(count);
+        long physical = userMapper.selectCountLong();
+        long notDeleted = userMapper.selectCount(null);
+        assertThat(physical).isPositive();
+        H2User h2User = new H2User(IdWorker.getId(), "testCountLong").setAge(AgeEnum.ONE);
+        userMapper.insert(h2User);
+        // 自定义 @Select 返回包装类型 Long 也能正常映射
+        assertThat(userMapper.selectCountLong()).isEqualTo(physical + 1);
+        assertThat(userMapper.selectCount(null)).isEqualTo(notDeleted + 1);
+        userMapper.deleteById(h2User.getTestId());
+        // count(*) 数得到逻辑删除的行，MP 注入的 selectCount 数不到
+        assertThat(userMapper.selectCountLong()).isEqualTo(physical + 1);
+        assertThat(userMapper.selectCount(null)).isEqualTo(notDeleted);
     }
 
     @Test
