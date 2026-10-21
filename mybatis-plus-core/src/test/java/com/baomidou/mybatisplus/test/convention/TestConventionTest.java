@@ -1,0 +1,541 @@
+package com.baomidou.mybatisplus.test.convention;
+
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * 测试写法的机器闸门：纯文本扫描仓库内所有测试源文件，一条规范落成一个用例。<br>
+ * 用例断言消息里的 T 编号就是规范条目号，规范文档按同一个编号逐条说明。<br>
+ * 硬规则目前零违规，出现即红；存量太大的规则先钉住 2026-10-21 实测的数量，只准降不准升。<br>
+ * 扫描不解析语法：注释与字面量先遮掉，按文件名认被测类、按大括号配对取用例方法体。
+ *
+ * @author taoyu
+ */
+class TestConventionTest {
+
+    private static final Pattern CASE_ANNOTATION = Pattern
+            .compile("@(?:Test|ParameterizedTest|RepeatedTest|TestFactory)\\b");
+
+    /**
+     * Java 的 assert 语句与 Kotlin 的 assert() 函数，两者都不产生失败（或要 -ea 才生效）。
+     */
+    private static final Pattern BARE_ASSERT = Pattern.compile("(?<![\\w.$])assert\\s*[({]");
+
+    private static final Pattern DISABLED = Pattern.compile("@Disabled\\b");
+
+    private static final Pattern DISABLED_WITH_REASON = Pattern.compile("@Disabled\\s*\\(\\s*\"\\s*\\S");
+
+    private static final Pattern TAG = Pattern.compile("@Tag\\(\\s*\"([^\"]+)\"");
+
+    private static final Pattern PACKAGE = Pattern.compile("^package\\s+([\\w.]+)", Pattern.MULTILINE);
+
+    private static final Pattern JRE_GATE = Pattern.compile("@(?:Enabled|Disabled)(?:OnJre|ForJreRange)\\b");
+
+    private static final Pattern JUNIT_FOUR = Pattern.compile("\\borg\\.junit\\.(Test|Before|After|Ignore|runner)\\b");
+
+    private static final Path ROOT = locateRoot();
+
+    private static final List<Source> TEST_SOURCES = scanTestSources();
+
+    /**
+     * 模块名 -> (main 里的简单类名 -> 它的包名)，用于判断测试包有没有镜像被测类。
+     */
+    private static final Map<String, Map<String, Set<String>>> MAIN = scanMainPackages();
+
+    /**
+     * T3 分层标签词表；仓库里目前还没有 {@code @Tag}，S2 开始打标签这条闸门才真正起作用。
+     */
+    private static final Set<String> TIERS = Set.of("unit", "integration", "external-db", "build-metadata", "stress");
+
+    /**
+     * T5 零断言用例数量（含 @Disabled 的用例，2026-10-21 实测）。
+     */
+    private static final int MAX_ASSERTION_FREE_CASES = 78;
+
+    /**
+     * T6 显式禁用用例数量。
+     */
+    private static final int MAX_DISABLED_CASES = 6;
+
+    /**
+     * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。
+     */
+    private static final int MAX_PACKAGE_MISMATCHES = 67;
+
+    /**
+     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。
+     */
+    private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
+            "BlockAttackInnerInterceptorTest", "ChainWrappersTest", "DataChangeRecorderInnerInterceptorTest",
+            "DataPermissionInterceptorTest", "DbTest", "DynamicTableNameInnerInterceptorTest",
+            "DynamicTableNameJsqlParserInnerInterceptorTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest",
+            "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest",
+            "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
+            "MybatisMapperAnnotationBuilderTest", "MybatisPlusInterceptorTest", "MybatisPlusPropertiesTest",
+            "MybatisPlusSampleTest", "PaginationInnerInterceptorTest", "ReflectionKitTest",
+            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest",
+            "TenantLineInnerInterceptorTest");
+
+    /**
+     * T5 文件名以 Test 结尾但本身不含用例的基类与夹具；{@code entity/Test} 是恰好叫 Test 的实体类。
+     */
+    private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
+            "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/BaseWrapperTest.java",
+            "mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/handlers/BaseTypeHandlerTest.java",
+            "mybatis-plus-generator/src/test/java/com/baomidou/mybatisplus/generator/samples/BaseGeneratorTest.java",
+            "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
+            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
+            "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java",
+            "spring-boot-starter/mybatis-plus-boot-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java",
+            "spring-boot-starter/mybatis-plus-spring-boot3-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java",
+            "spring-boot-starter/mybatis-plus-spring-boot4-starter/src/test/java/com/baomidou/mybatisplus/test/entity/Test.java");
+
+    /**
+     * T5 用 Thread.sleep 当同步的文件。
+     */
+    private static final Set<String> REGISTERED_THREAD_SLEEP_FILES = Set
+            .of("mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/postgresql/PostgresqlTest.java");
+
+    /**
+     * @param path 相对仓库根的路径，统一用 /
+     * @param code 遮掉注释的源码，字面量保留
+     * @param blanks 注释与字面量都遮掉的版本
+     */
+    private record Source(String path, String code, String blanks) {
+    }
+
+    @Test
+    void scanReallyFoundTheRepository() {
+        assertThat(TEST_SOURCES).as("T0 扫不到测试源文件说明根目录定位失败，规范扫描不能假绿").hasSizeGreaterThanOrEqualTo(200);
+        assertThat(MAIN).as("T0 找不到 src/main 就无从判断包镜像").isNotEmpty();
+        List<String> legacyNames = TEST_SOURCES.stream().map(Source::path).filter(
+                path -> path.endsWith("Tests.java") || path.endsWith("Tests.kt") || path.endsWith("TestCase.java")
+                        || path.endsWith("TestCase.kt") || path.endsWith("IT.java") || path.endsWith("IT.kt"))
+                .toList();
+        assertThat(legacyNames).as("T2 测试类只用 Test 后缀，不再引入 *Tests/*TestCase/*IT").isEmpty();
+    }
+
+    @Test
+    void noBareAssertKeyword() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            if (BARE_ASSERT.matcher(source.blanks()).find()) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T4 断言只用 AssertJ，Java 的 assert 关键字运行时根本不执行").isEmpty();
+    }
+
+    @Test
+    void noPermanentSkipBehindJdkGates() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            if (JRE_GATE.matcher(source.code()).find()) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T9 按 JRE 版本门禁的写法在当前工具链上等于永久静默跳过").isEmpty();
+    }
+
+    @Test
+    void noJUnitFourLeft() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            if (JUNIT_FOUR.matcher(source.code()).find()) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T4 JUnit 4 与 Jupiter 混用会让用例计数不可信").isEmpty();
+    }
+
+    @Test
+    void everyDisabledCaseExplainsItself() {
+        List<String> offenders = new ArrayList<>();
+        int disabled = 0;
+        for (Source source : TEST_SOURCES) {
+            // 命中位置取自遮掉字面量的 blanks，本文件里的正则字面量才不会把自己扫成假命中；
+            // blanks 与 code 逐字符等长，所以同一个下标回到 code 上就能读到原因文本。
+            int found = 0;
+            int explained = 0;
+            Matcher hits = DISABLED.matcher(source.blanks());
+            while (hits.find()) {
+                found++;
+                if (DISABLED_WITH_REASON.matcher(source.code().substring(hits.start())).lookingAt()) {
+                    explained++;
+                }
+            }
+            disabled += found;
+            if (explained != found) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T6 每个 @Disabled 都要写清依赖或原因").isEmpty();
+        assertThat(disabled).as("T6 禁用用例数量只准降；放开或新增时请同步改这个常量").isEqualTo(MAX_DISABLED_CASES);
+    }
+
+    @Test
+    void tierTagsComeFromTheVocabulary() {
+        Set<String> unknown = new TreeSet<>();
+        for (Source source : TEST_SOURCES) {
+            Matcher matcher = TAG.matcher(source.code());
+            while (matcher.find()) {
+                if (!TIERS.contains(matcher.group(1))) {
+                    unknown.add(matcher.group(1) + " @ " + source.path());
+                }
+            }
+        }
+        assertThat(unknown).as("T3 分层标签只能用登记的层名").isEmpty();
+    }
+
+    @Test
+    void caseFreeTestFilesStayRegistered() {
+        Set<String> found = new TreeSet<>();
+        for (Source source : testClasses()) {
+            if (!CASE_ANNOTATION.matcher(source.code()).find()) {
+                found.add(source.path());
+            }
+        }
+        assertThat(found).as("T5 名为 *Test 却不含用例的文件（基类、夹具）必须逐个登记，也不许留着已不存在的登记项").isEqualTo(REGISTERED_CASE_FREE_FILES);
+    }
+
+    @Test
+    void duplicatedTestNamesStayRegistered() {
+        Map<String, List<String>> byName = new TreeMap<>();
+        for (Source source : testClasses()) {
+            if (!CASE_ANNOTATION.matcher(source.code()).find()) {
+                continue;
+            }
+            byName.computeIfAbsent(fileName(source), key -> new ArrayList<>()).add(source.path());
+        }
+        Set<String> found = new TreeSet<>();
+        byName.forEach((name, paths) -> {
+            if (paths.size() > 1) {
+                found.add(name);
+            }
+        });
+        assertThat(found).as("T2 同名测试类是复制出来的，去重只准减不准加，登记表也要同步收窄").isEqualTo(REGISTERED_DUPLICATE_NAMES);
+    }
+
+    @Test
+    void threadSleepStaysRegistered() {
+        Set<String> found = new TreeSet<>();
+        for (Source source : TEST_SOURCES) {
+            if (source.blanks().contains("Thread.sleep")) {
+                found.add(source.path());
+            }
+        }
+        assertThat(found).as("T5 用 Thread.sleep 当同步的文件必须逐个登记").isEqualTo(REGISTERED_THREAD_SLEEP_FILES);
+    }
+
+    @Test
+    void assertionFreeCasesDoNotGrow() {
+        List<String> offenders = assertionFreeCases();
+        assertThat(offenders).as("T5 零断言用例存量只准降不准升，下面是要补断言的位置").hasSizeLessThanOrEqualTo(MAX_ASSERTION_FREE_CASES);
+    }
+
+    @Test
+    void packageMirroringViolationsDoNotGrow() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : testClasses()) {
+            String name = fileName(source);
+            if (!name.endsWith("Test")) {
+                continue;
+            }
+            Set<String> candidates = MAIN.getOrDefault(moduleOf(source.path()), Map.of())
+                    .getOrDefault(name.substring(0, name.length() - "Test".length()), Set.of());
+            if (candidates.isEmpty()) {
+                // 被测类不在本模块（跨模块行为测试、夹具或改名），T1 先由人工判断
+                continue;
+            }
+            String testPackage = packageOf(source.code());
+            if (!candidates.contains(testPackage)) {
+                offenders.add(source.path() + " 在 " + testPackage + "，被测类在 " + candidates);
+            }
+        }
+        assertThat(offenders).as("T1 包镜像缺口存量只准降不准升，S6 逐模块收窄").hasSizeLessThanOrEqualTo(MAX_PACKAGE_MISMATCHES);
+    }
+
+    /**
+     * 找出只有调用没有断言的用例，元素形如 {@code 路径#方法名}。
+     */
+    private static List<String> assertionFreeCases() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : testClasses()) {
+            Matcher matcher = CASE_ANNOTATION.matcher(source.code());
+            while (matcher.find()) {
+                int brace = bodyStart(source.blanks(), matcher.end());
+                if (brace < 0) {
+                    continue;
+                }
+                String body = bodyOf(source.blanks(), brace);
+                if (body != null && !asserts(body)) {
+                    offenders.add(source.path() + '#' + caseName(source.blanks(), brace));
+                }
+            }
+        }
+        return offenders;
+    }
+
+    private static List<Source> testClasses() {
+        return TEST_SOURCES.stream()
+                .filter(source -> fileName(source).endsWith("Test") || fileName(source).endsWith("Tests")).toList();
+    }
+
+    private static String fileName(Source source) {
+        String path = source.path();
+        String name = path.substring(path.lastIndexOf('/') + 1);
+        int dot = name.lastIndexOf('.');
+        return dot < 0 ? name : name.substring(0, dot);
+    }
+
+    private static String moduleOf(String relativePath) {
+        String[] segments = relativePath.split("/");
+        int src = Arrays.asList(segments).indexOf("src");
+        return src > 0 ? String.join("/", Arrays.copyOfRange(segments, 0, src)) : relativePath;
+    }
+
+    private static String packageOf(String code) {
+        Matcher matcher = PACKAGE.matcher(code);
+        return matcher.find() ? matcher.group(1) : "";
+    }
+
+    /**
+     * 从注解位置往后找到方法体的起始大括号：注解的括号（如 {@code @CsvSource({"a","b"})}）里也有大括号， 必须整对跳过，否则会把参数表当成方法体。
+     *
+     * @return 起始大括号下标，找不到返回 -1
+     */
+    private static int bodyStart(String blanks, int from) {
+        for (int i = from; i < blanks.length();) {
+            char current = blanks.charAt(i);
+            if (current == '(') {
+                i = skipBalanced(blanks, i, '(', ')');
+            } else if (current == '{') {
+                return i;
+            } else {
+                i++;
+            }
+        }
+        return -1;
+    }
+
+    private static int skipBalanced(String blanks, int from, char open, char close) {
+        int depth = 0;
+        for (int i = from; i < blanks.length(); i++) {
+            char current = blanks.charAt(i);
+            if (current == open) {
+                depth++;
+            } else if (current == close) {
+                depth--;
+                if (depth == 0) {
+                    return i + 1;
+                }
+            }
+        }
+        return blanks.length();
+    }
+
+    /**
+     * 大括号配对取出方法体，注释与字面量已被遮成空格，不会再有游离的括号。
+     */
+    private static String bodyOf(String blanks, int brace) {
+        Deque<Character> stack = new ArrayDeque<>();
+        for (int i = brace; i < blanks.length(); i++) {
+            char current = blanks.charAt(i);
+            if (current == '{') {
+                stack.push(current);
+            } else if (current == '}') {
+                stack.pop();
+                if (stack.isEmpty()) {
+                    return blanks.substring(brace + 1, i);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 方法体起始大括号往前推：参数表左括号之前的标识符就是用例方法名。
+     */
+    private static String caseName(String blanks, int brace) {
+        int open = blanks.lastIndexOf('(', brace);
+        if (open < 0) {
+            return "?";
+        }
+        int end = open;
+        while (end > 0 && Character.isWhitespace(blanks.charAt(end - 1))) {
+            end--;
+        }
+        int start = end;
+        while (start > 0 && Character.isJavaIdentifierPart(blanks.charAt(start - 1))) {
+            start--;
+        }
+        return blanks.substring(start, end);
+    }
+
+    private static boolean asserts(String body) {
+        return body.contains("assert") || body.contains("Assert") || body.contains("verify(") || body.contains("fail(");
+    }
+
+    private static List<Source> scanTestSources() {
+        List<Source> sources = new ArrayList<>();
+        for (Path module : modules()) {
+            Path test = module.resolve("src").resolve("test");
+            if (!Files.isDirectory(test)) {
+                continue;
+            }
+            for (Path file : sources(test)) {
+                String raw = read(file);
+                sources.add(
+                        new Source(ROOT.relativize(file).toString().replace('\\', '/'), mask(raw, true),
+                                mask(raw, false)));
+            }
+        }
+        return sources;
+    }
+
+    private static Map<String, Map<String, Set<String>>> scanMainPackages() {
+        Map<String, Map<String, Set<String>>> byModule = new TreeMap<>();
+        for (Path module : modules()) {
+            Path main = module.resolve("src").resolve("main");
+            if (!Files.isDirectory(main)) {
+                continue;
+            }
+            String moduleName = ROOT.relativize(module).toString().replace('\\', '/');
+            Map<String, Set<String>> byClass = byModule.computeIfAbsent(moduleName, key -> new TreeMap<>());
+            for (Path file : sources(main)) {
+                String name = file.getFileName().toString();
+                String simpleName = name.substring(0, name.lastIndexOf('.'));
+                byClass.computeIfAbsent(simpleName, key -> new LinkedHashSet<>())
+                        .add(packageOf(mask(read(file), true)));
+            }
+        }
+        return byModule;
+    }
+
+    private static List<Path> modules() {
+        List<Path> dirs = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(ROOT, 3)) {
+            stream.filter(Files::isDirectory).filter(path -> !"build".equals(lastName(path)))
+                    .filter(path -> Files.isDirectory(path.resolve("src"))).forEach(dirs::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException("遍历 " + ROOT + " 失败", e);
+        }
+        return dirs;
+    }
+
+    private static List<Path> sources(Path root) {
+        List<Path> files = new ArrayList<>();
+        try (Stream<Path> stream = Files.walk(root)) {
+            stream.filter(Files::isRegularFile).filter(path -> {
+                String name = path.getFileName().toString();
+                return name.endsWith(".java") || name.endsWith(".kt");
+            }).sorted().forEach(files::add);
+        } catch (IOException e) {
+            throw new UncheckedIOException("遍历 " + root + " 失败", e);
+        }
+        return files;
+    }
+
+    private static String lastName(Path path) {
+        Path name = path.getFileName();
+        return name == null ? "" : name.toString();
+    }
+
+    private static String read(Path file) {
+        try {
+            return new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * 遮掉注释；keepLiterals 为 false 时把字符串与字符字面量也遮成空格，长度与换行位置不变。
+     */
+    private static String mask(String source, boolean keepLiterals) {
+        StringBuilder out = new StringBuilder(source.length());
+        int index = 0;
+        while (index < source.length()) {
+            char current = source.charAt(index);
+            if (source.startsWith("//", index)) {
+                int end = source.indexOf('\n', index);
+                end = end < 0 ? source.length() : end;
+                out.append(blanks(source, index, end));
+                index = end;
+            } else if (source.startsWith("/*", index)) {
+                int end = source.indexOf("*/", index + 2);
+                end = end < 0 ? source.length() : end + 2;
+                out.append(blanks(source, index, end));
+                index = end;
+            } else if (!keepLiterals && (current == '"' || current == '\'')) {
+                int end = literalEnd(source, index);
+                out.append(blanks(source, index, end));
+                index = end;
+            } else {
+                out.append(current);
+                index++;
+            }
+        }
+        return out.toString();
+    }
+
+    private static String blanks(String source, int from, int to) {
+        StringBuilder blanks = new StringBuilder(to - from);
+        for (int i = from; i < to; i++) {
+            blanks.append(source.charAt(i) == '\n' ? '\n' : ' ');
+        }
+        return blanks.toString();
+    }
+
+    private static int literalEnd(String source, int start) {
+        String quote = source.startsWith("\"\"\"", start) ? "\"\"\"" : source.substring(start, start + 1);
+        int index = start + quote.length();
+        while (index < source.length()) {
+            char current = source.charAt(index);
+            if (current == '\\') {
+                index += 2;
+                continue;
+            }
+            if (source.startsWith(quote, index)) {
+                return index + quote.length();
+            }
+            if (quote.length() == 1 && current == '\n') {
+                // 正常源码不会有跨行的普通字面量，遇到就停住，别让扫描器跑飞
+                return index;
+            }
+            index++;
+        }
+        return source.length();
+    }
+
+    private static Path locateRoot() {
+        Path start = Path.of(System.getProperty("user.dir")).toAbsolutePath();
+        for (Path current = start; current != null; current = current.getParent()) {
+            if (Files.isRegularFile(current.resolve("settings.gradle"))) {
+                return current;
+            }
+        }
+        throw new AssertionError("从 " + start + " 往上找不到 settings.gradle，定位不到仓库根，规范扫描不能静默通过");
+    }
+
+}
