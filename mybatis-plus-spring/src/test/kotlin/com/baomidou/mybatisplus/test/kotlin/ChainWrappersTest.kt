@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.extension.kotlin.KtQueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers
 import com.baomidou.mybatisplus.extension.toolkit.Db
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -14,54 +15,55 @@ class ChainWrappersTest : BaseDbTest<UserMapper>() {
     @Test
     fun testQueryChain() {
         val list = ChainWrappers.ktQueryChain(User::class.java).eq(User::id, 1).list()
-        Assertions.assertEquals(1, list.size)
+        assertThat(list).hasSize(1)
         val listRid = ChainWrappers.ktQueryChain(User::class.java).eq(User::roleId, 1).list()
-        Assertions.assertEquals(2, listRid.size)
+        assertThat(listRid).hasSize(2)
         val oneUser = ChainWrappers.ktQueryChain(User::class.java).eq(User::id, 1).one()
-        Assertions.assertEquals("gozei", oneUser.name)
+        assertThat(oneUser.name).isEqualTo("gozei")
         val count = ChainWrappers.ktQueryChain(User::class.java).eq(User::id, 1).count()
-        Assertions.assertEquals(1, count)
+        assertThat(count).isEqualTo(1L)
         val exists = ChainWrappers.ktQueryChain(User::class.java).eq(User::id, 1).exists()
-        Assertions.assertEquals(true, exists)
+        assertThat(exists).isTrue()
         val oneIdName = ChainWrappers.ktQueryChain(User::class.java).eq(User::id, 1).eq(User::name, "gozei").one()
-        Assertions.assertEquals(1, oneIdName.roleId)
+        assertThat(oneIdName.roleId).isEqualTo(1)
         val page: IPage<User> = Db.page(Page(1, 3), User::class.java)
         val pageU = ChainWrappers.ktQueryChain(User::class.java).page(page)
-        Assertions.assertEquals(3, pageU.size)
+        assertThat(pageU.size).isEqualTo(3)
     }
 
     @Test
     fun testUpdate() {
         ChainWrappers.ktUpdateChain(User::class.java).eq(User::id, 3).set(User::name, "haku").update()
-        Assertions.assertEquals("haku", Db.ktQuery(User::class.java).eq(User::id, 3).one().name)
+        assertThat(Db.ktQuery(User::class.java).eq(User::id, 3).one().name).isEqualTo("haku")
         ChainWrappers.ktUpdateChain(User::class.java).eq(User::id, 2).set(User::name, "haku").set(User::roleId, 4)
             .update()
-        Assertions.assertEquals(4, Db.ktQuery(User::class.java).eq(User::id, 2).one().roleId)
+        assertThat(Db.ktQuery(User::class.java).eq(User::id, 2).one().roleId).isEqualTo(4)
     }
 
     @Test
     fun testDefaultMethod() {
         doTestAutoCommit(fun(m) {
-            Assertions.assertEquals("hello baomidou!", m.hello())
-            Assertions.assertNotNull(m.findById(1))
-            Assertions.assertNull(m.findById(-1))
+            assertThat(m.hello()).isEqualTo("hello baomidou!")
+            assertThat(m.findById(1)).isNotNull()
+            assertThat(m.findById(-1)).isNull()
         })
     }
 
     @Test
     fun testSetSql() {
-        Assertions.assertTrue(
+        assertThat(
             ChainWrappers.ktUpdateChain(User::class.java).eq(User::id, 3).setSql("username = {0}", "haku").update()
-        );
+        ).isTrue()
     }
 
     @Test
     fun testSelectByPredicate() {
-        Assertions.assertDoesNotThrow { ChainWrappers.ktQueryChain(User::class.java).select({ true }).list() }
+        assertThatCode { ChainWrappers.ktQueryChain(User::class.java).select({ true }).list() }
+            .doesNotThrowAnyException()
         doTestAutoCommit(fun(m) {
-            Assertions.assertDoesNotThrow {
+            assertThatCode {
                 m.selectList(KtQueryWrapper(User()).select { true })
-            }
+            }.doesNotThrowAnyException()
         })
     }
 

@@ -2,8 +2,8 @@ package com.baomidou.mybatisplus.test.kotlin
 
 import com.baomidou.mybatisplus.extension.toolkit.Db
 import org.apache.ibatis.exceptions.PersistenceException
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -13,38 +13,38 @@ class DbTest : BaseDbTest<UserMapper>() {
     @Test
     fun testQuery() {
         val list = Db.ktQuery(User::class.java).eq(User::id, 1).list()
-        Assertions.assertEquals(1, list.size)
+        assertThat(list).hasSize(1)
         val user1 = Db.ktQuery(User::class.java).eq(User::id, 1).one()
-        Assertions.assertEquals("gozei", user1.name)
+        assertThat(user1.name).isEqualTo("gozei")
         val user2 = Db.ktQuery(User::class.java).eq(User::name, "gozei").eq(User::id, 1).one()
-        Assertions.assertEquals(1, user2::id.get())
+        assertThat(user2::id.get()).isEqualTo(1)
         val user3 = Db.ktQuery(User::class.java).list().first()
-        Assertions.assertEquals("gozei", user3.name)
+        assertThat(user3.name).isEqualTo("gozei")
         val exists = Db.ktQuery(User::class.java).eq(User::id, 1).exists()
-        Assertions.assertTrue(exists)
+        assertThat(exists).isTrue()
     }
 
     @Test
     fun testUpdate() {
         Db.ktUpdate(User::class.java).eq(User::id, 1).set(User::name, "sheep").update()
-        Assertions.assertEquals("sheep", Db.ktQuery(User::class.java).eq(User::id, 1).one().name)
+        assertThat(Db.ktQuery(User::class.java).eq(User::id, 1).one().name).isEqualTo("sheep")
         Db.ktUpdate(User::class.java).eq(User::name, "gozei").set(User::name, "sheep").update()
-        Assertions.assertEquals("sheep", Db.ktQuery(User::class.java).eq(User::id, 1).one().name)
+        assertThat(Db.ktQuery(User::class.java).eq(User::id, 1).one().name).isEqualTo("sheep")
     }
 
     @Test
     fun exceptionTest() {
-        assertThrows(PersistenceException::class.java) {
+        assertThatThrownBy {
             Db.ktQuery(User::class.java).eq(null, 1).one()
-        }
+        }.isInstanceOf(PersistenceException::class.java)
     }
 
     @Test
     fun remove() {
         val isSuccessId = Db.remove(Db.ktQuery(User::class.java).eq(User::id, 1).wrapper)
-        Assertions.assertTrue(isSuccessId)
+        assertThat(isSuccessId).isTrue()
         val isSuccessName = Db.remove(Db.ktQuery(User::class.java).eq(User::name, "gozei").wrapper)
-        Assertions.assertFalse(isSuccessName)
+        assertThat(isSuccessName).isFalse()
     }
 
     override fun tableDataSql(): String {
