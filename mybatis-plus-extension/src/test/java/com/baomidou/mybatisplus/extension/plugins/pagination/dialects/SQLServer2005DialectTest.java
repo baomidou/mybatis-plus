@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test.plugins.pagination;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

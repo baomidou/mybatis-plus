@@ -17,7 +17,7 @@
 
 | 编号 | 条目 | 状态 | 基线（2026-10-21 实测） |
 |---|---|---|---|
-| T1 | 测试与被测类同模块、包镜像 | 冻结 | 49 处缺口 |
+| T1 | 测试与被测类同模块、包镜像 | 冻结 | 39 处缺口 |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 26 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
@@ -118,7 +118,7 @@
 用全枚举 + 集合相等断言，新增未登记即红。现成参照：
 [JdbcUtilsTest](../mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/toolkit/JdbcUtilsTest.java)
 （URL → `DbType` 识别）与
-[IDialectTest](../mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/extension/plugins/pagination/dialects/IDialectTest.java)
+[IDialectTest](../mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/extension/plugins/pagination/dialects/IDialectTest.java)
 （方言全量）。注解与枚举成员名也是同类契约——`mybatis-plus-annotation` 的
 [IdTypeTest](../mybatis-plus-annotation/src/test/java/com/baomidou/mybatisplus/annotation/IdTypeTest.java)、
 [FieldStrategyTest](../mybatis-plus-annotation/src/test/java/com/baomidou/mybatisplus/annotation/FieldStrategyTest.java)

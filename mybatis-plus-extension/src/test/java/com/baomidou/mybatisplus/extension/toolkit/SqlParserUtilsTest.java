@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.extension.toolkit;
 
-import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

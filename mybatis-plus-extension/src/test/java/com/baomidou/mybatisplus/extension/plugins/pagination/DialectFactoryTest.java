@@ -1,8 +1,7 @@
-package com.baomidou.mybatisplus.test.plugins.pagination;
+package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBase8sDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GaussDBDialect;

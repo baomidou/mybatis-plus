@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 

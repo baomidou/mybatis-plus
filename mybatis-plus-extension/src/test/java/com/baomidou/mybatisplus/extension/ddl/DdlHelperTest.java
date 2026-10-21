@@ -1,7 +1,5 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.extension.ddl;
 
-import com.baomidou.mybatisplus.extension.ddl.DdlHelper;
-import com.baomidou.mybatisplus.extension.ddl.DdlScriptErrorHandler;
 import com.baomidou.mybatisplus.extension.ddl.history.IDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.MysqlDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.OracleDdlGenerator;

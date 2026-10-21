@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.extension.ddl;
 
-import com.baomidou.mybatisplus.extension.ddl.DdlScript;
 import org.h2.Driver;
 import org.junit.jupiter.api.Test;
 

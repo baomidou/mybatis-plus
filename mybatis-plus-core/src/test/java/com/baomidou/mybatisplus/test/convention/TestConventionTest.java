@@ -137,9 +137,10 @@ class TestConventionTest {
      * 2026-10-21 归位 core 的两批：{@code test.toolkit} 12 个类迁到 {@code core.toolkit} 并合掉 {@code test.pom} 下重复的
      * {@code ReflectionKitTest}（66 → 53）；再把
      * {@code test/MybatisConfigurationTest}、{@code test/MybatisParameterHandlerTest}、
-     * {@code test/metadata/TableInfoHelperTest}、{@code test/override/MybatisMapperMethodTest} 迁到被测类所在包（53 → 49）。
+     * {@code test/metadata/TableInfoHelperTest}、{@code test/override/MybatisMapperMethodTest} 迁到被测类所在包（53 → 49）；
+     * extension 的 ddl、handlers、pagination、toolkit 共 10 个类同批归位（49 → 39）。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 49;
+    private static final int MAX_PACKAGE_MISMATCHES = 39;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
