@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## [v3.5.18] 2026.10.21
+- fix: 安全修复 `BlockAttackInnerInterceptor` 常量恒等式（如 `1 XOR 0`、`1 <= 1`、`NOT 1 = 2`、`WHERE 1`）绕过全表更新/删除校验问题
+- fix: 安全修复 `TenantLineInnerInterceptor`、`DataPermissionInterceptor` 向 `XOR` 条件追加租户/权限条件时缺少括号，导致数据越权读写问题
+- feat: 支持配置加密在环境变量中使用
+
 ## [v3.5.17] 2026.07.07
 - fix: 修复 `issues/6899` 多租户插件 `@Many` 注解查无效问题
 - fix: 修复 `issues/6938` `HashMap` 设置类型转换器异常
