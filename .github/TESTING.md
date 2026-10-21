@@ -57,9 +57,10 @@
 - 禁止 JUnit 4 的 `org.junit.Test`/`@Before`/`@After`/`@Ignore`/`org.junit.runner.*`：
   与 Jupiter 混用会让用例计数不可信，`@Ignore` 也不会被 Jupiter 执行。
 - 存量里的 JUnit 4 风格断言不做批量转换，改到哪个文件就顺手换成 AssertJ。
-- 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。存量 134 个文件按数量冻结在
-  `MAX_JUNIT_ASSERTION_FILES`，转换掉一个就调小一格，禁止调大。不做批量转换：这套测试文件半年内改了
-  334 个，机械重写会和日常提交撞车。
+- 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。欠账按**能转换的文件数**冻结在
+  `MAX_JUNIT_ASSERTION_FILES`（2026-10-21 实测 133），转换掉一个就调小一格，禁止调大。
+  `assertAll`、`assertTimeout` 系列 AssertJ 没有对应物，留在原处是正确写法，不计入欠账。
+  不做批量转换：这套测试文件半年内改了 334 个，机械重写会和日常提交撞车。
 
 ## T5 绿必须有意义
 
