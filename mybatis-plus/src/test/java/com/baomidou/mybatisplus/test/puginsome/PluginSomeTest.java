@@ -17,6 +17,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author miemie
@@ -24,12 +29,24 @@ import java.util.List;
  */
 public class PluginSomeTest extends BaseDbTest<AMapper> {
 
+    /** 每个钩子被调用的次数；父类构造里建的拦截器持有本实例，钩子执行时字段已初始化。 */
+    private final Map<String, AtomicInteger> calls = new ConcurrentHashMap<>();
+
     @Test
     void test() {
-        doTest(m -> {
-            List<A> a = m.list();
-            a.forEach(System.out::println);
-        });
+        doTest(m -> assertThat(m.list()).hasSize(2));
+        // 一次查询：查询钩子各一次，一对多结果集要预编译三条语句
+        assertThat(calls).containsOnlyKeys("willDoQuery", "beforeQuery", "beforePrepare");
+        assertThat(calls.get("willDoQuery")).hasValue(1);
+        assertThat(calls.get("beforeQuery")).hasValue(1);
+        assertThat(calls.get("beforePrepare")).hasValue(3);
+
+        calls.clear();
+        doTest(m -> assertThat(m.deleteById(1)).isEqualTo(1));
+        // 更新只走 update 那组钩子
+        assertThat(calls).containsOnlyKeys("willDoUpdate", "beforeUpdate", "beforePrepare");
+        assertThat(calls.get("willDoUpdate")).hasValue(1);
+        assertThat(calls.get("beforeUpdate")).hasValue(1);
     }
 
     @Override
@@ -40,35 +57,35 @@ public class PluginSomeTest extends BaseDbTest<AMapper> {
             @Override
             public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
                     ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-                System.out.println("willDoQuery");
+                calls.computeIfAbsent("willDoQuery", k -> new AtomicInteger()).incrementAndGet();
                 return true;
             }
 
             @Override
             public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
                     ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-                System.out.println("beforeQuery");
+                calls.computeIfAbsent("beforeQuery", k -> new AtomicInteger()).incrementAndGet();
             }
 
             @Override
             public boolean willDoUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
-                System.out.println("willDoUpdate");
+                calls.computeIfAbsent("willDoUpdate", k -> new AtomicInteger()).incrementAndGet();
                 return true;
             }
 
             @Override
             public void beforeUpdate(Executor executor, MappedStatement ms, Object parameter) throws SQLException {
-                System.out.println("beforeUpdate");
+                calls.computeIfAbsent("beforeUpdate", k -> new AtomicInteger()).incrementAndGet();
             }
 
             @Override
             public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
-                System.out.println("beforePrepare");
+                calls.computeIfAbsent("beforePrepare", k -> new AtomicInteger()).incrementAndGet();
             }
 
             @Override
             public void beforeGetBoundSql(StatementHandler sh) {
-                System.out.println("beforeGetBoundSql");
+                calls.computeIfAbsent("beforeGetBoundSql", k -> new AtomicInteger()).incrementAndGet();
             }
         });
         return Collections.singletonList(interceptor);
