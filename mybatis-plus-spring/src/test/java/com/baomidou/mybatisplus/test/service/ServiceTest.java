@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.spring.service.IService;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.apache.ibatis.session.SqlSession;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -51,8 +50,8 @@ public class ServiceTest {
         IService<Demo>[] services = new IService[]{new DemoServiceImpl(baseMapper), new DemoServiceExtend(baseMapper)};
         for (IService<Demo> service : services) {
             ServiceImpl<?, ?> impl = (ServiceImpl<?, ?>) service;
-            Assertions.assertEquals(Demo.class, impl.getEntityClass());
-            Assertions.assertEquals(DemoMapper.class, impl.getMapperClass());
+            assertThat(impl.getEntityClass()).isEqualTo(Demo.class);
+            assertThat(impl.getMapperClass()).isEqualTo(DemoMapper.class);
         }
     }
 

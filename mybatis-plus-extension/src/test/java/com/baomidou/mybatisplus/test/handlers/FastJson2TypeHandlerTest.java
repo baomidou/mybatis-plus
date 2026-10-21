@@ -3,12 +3,11 @@ package com.baomidou.mybatisplus.test.handlers;
 import com.baomidou.mybatisplus.extension.handlers.Fastjson2TypeHandler;
 import com.baomidou.mybatisplus.test.model.UserBean;
 import org.apache.ibatis.type.JdbcType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,14 +37,14 @@ public class FastJson2TypeHandlerTest extends BaseTypeHandlerTest {
         UserBean bean;
         when(resultSet.getString("column")).thenReturn(null);
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, "column");
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(resultSet.getString("column")).thenReturn("");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, "column");
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(resultSet.getString("column")).thenReturn("{\"id\":123,\"name\":\"测试\"}");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, "column");
-        assertEquals(123L, bean.getId());
-        assertEquals("测试", bean.getName());
+        assertThat(bean.getId()).isEqualTo(123L);
+        assertThat(bean.getName()).isEqualTo("测试");
     }
 
     @Test
@@ -54,14 +53,14 @@ public class FastJson2TypeHandlerTest extends BaseTypeHandlerTest {
         UserBean bean;
         when(resultSet.getString(1)).thenReturn(null);
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, 1);
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(resultSet.getString(2)).thenReturn("");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, 2);
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(resultSet.getString(3)).thenReturn("{\"id\":123,\"name\":\"测试\"}");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, 3);
-        assertEquals(123L, bean.getId());
-        assertEquals("测试", bean.getName());
+        assertThat(bean.getId()).isEqualTo(123L);
+        assertThat(bean.getName()).isEqualTo("测试");
     }
 
     @Test
@@ -70,13 +69,13 @@ public class FastJson2TypeHandlerTest extends BaseTypeHandlerTest {
         UserBean bean;
         lenient().when(callableStatement.getString(1)).thenReturn(null);
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(resultSet, 1);
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(callableStatement.getString(2)).thenReturn("");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(callableStatement, 2);
-        Assertions.assertNull(bean);
+        assertThat(bean).isNull();
         when(callableStatement.getString(3)).thenReturn("{\"id\":123,\"name\":\"测试\"}");
         bean = (UserBean) FASTJSON_TYPE_HANDLER.getResult(callableStatement, 3);
-        assertEquals(123L, bean.getId());
-        assertEquals("测试", bean.getName());
+        assertThat(bean.getId()).isEqualTo(123L);
+        assertThat(bean.getName()).isEqualTo("测试");
     }
 }

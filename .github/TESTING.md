@@ -20,7 +20,7 @@
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 66 处缺口 |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 27 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
-| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4 | 机器 + 冻结 | 裸 `assert`/JUnit 4 零违规；调用可转换 JUnit 断言的文件 108 |
+| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4 | 机器 + 冻结 | 裸 `assert`/JUnit 4 零违规；调用可转换 JUnit 断言的文件 98 |
 | T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 冻结 | 零断言 8（含 6 个已禁用用例）、无用例 `*Test` 9、sleep 1 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | — |
@@ -56,11 +56,14 @@
 - 禁止 Java 的 `assert` 语句和 Kotlin 的 `assert()`：测试任务默认不开 `-ea`，写了等于没写。
 - 禁止 JUnit 4 的 `org.junit.Test`/`@Before`/`@After`/`@Ignore`/`org.junit.runner.*`：
   与 Jupiter 混用会让用例计数不可信，`@Ignore` 也不会被 Jupiter 执行。
-- 存量里的 JUnit 4 风格断言不做批量转换，改到哪个文件就顺手换成 AssertJ。
+- 存量里的 JUnit 风格断言按**模块成批**转换，一个模块一个提交，不做跨模块的机械扫射：
+  这套测试文件半年内改了 334 个，一次性重写会和日常提交撞车。
 - 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。欠账按**能转换的文件数**冻结在
-  `MAX_JUNIT_ASSERTION_FILES`（2026-10-21 清空 core 模块 25 个文件后实测 108），转换掉一个就调小一格，禁止调大。
+  `MAX_JUNIT_ASSERTION_FILES`（2026-10-21 清空 core 25 个、extension 9 个、spring 1 个后实测 98），
+  转换掉一个就调小一格，禁止调大。剩余欠账集中在 `mybatis-plus-jsqlparser-support`（30）、
+  `mybatis-plus`（30）、`mybatis-plus-generator`（23）、`spring-boot-starter`（12）、
+  `mybatis-plus-spring` 的 2 个 Kotlin 文件、`mybatis-plus-up`（1）。
   `assertAll`、`assertTimeout` 系列 AssertJ 没有对应物，留在原处是正确写法，不计入欠账。
-  不做批量转换：这套测试文件半年内改了 334 个，机械重写会和日常提交撞车。
 
 ## T5 绿必须有意义
 

@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,35 +30,37 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
         when(resultSet.getObject("column", Integer.class)).thenReturn(null);
-        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isNull();
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
-        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isEqualTo(SexEnum.MAN);
         when(resultSet.getObject("column", Integer.class)).thenReturn(2);
-        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isEqualTo(SexEnum.WO_MAN);
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(null);
-        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isNull();
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
-        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isEqualTo(GradeEnum.PRIMARY);
         when(resultSet.getObject("column", Integer.class)).thenReturn(2);
-        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isEqualTo(GradeEnum.SECONDARY);
 
         when(resultSet.getObject("column", Character.class)).thenReturn(null);
-        assertNull(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column")).isNull();
         when(resultSet.getObject("column", Character.class)).thenReturn('1');
-        assertEquals(CharacterEnum.MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"))
+                .isEqualTo(CharacterEnum.MAN);
         when(resultSet.getObject("column", Character.class)).thenReturn('2');
-        assertEquals(CharacterEnum.WO_MAN, CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertThat(CHARACTER_ENUM_MYBATIS_ENUM_TYPE_HANDLER.getResult(resultSet, "column"))
+                .isEqualTo(CharacterEnum.WO_MAN);
     }
 
     @Test
     void dealEnumType() {
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(String.class).isPresent());
-        Assertions.assertTrue(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(String.class).isPresent());
-        Assertions.assertTrue(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class).isPresent());
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isNotPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isNotPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isNotPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isNotPresent();
     }
 
     @Test
@@ -85,43 +85,43 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     @Override
     public void getResultFromResultSetByColumnIndex() throws Exception {
         when(resultSet.getObject(1, Integer.class)).thenReturn(1);
-        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 1));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 1)).isEqualTo(SexEnum.MAN);
         when(resultSet.getObject(2, Integer.class)).thenReturn(2);
-        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 2));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 2)).isEqualTo(SexEnum.WO_MAN);
         when(resultSet.getObject(3, Integer.class)).thenReturn(null);
-        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 3));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 3)).isNull();
 
         when(resultSet.getObject(4, Integer.class)).thenReturn(1);
-        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 4));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 4)).isEqualTo(GradeEnum.PRIMARY);
         when(resultSet.getObject(5, Integer.class)).thenReturn(2);
-        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 5));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 5)).isEqualTo(GradeEnum.SECONDARY);
         when(resultSet.getObject(6, Integer.class)).thenReturn(null);
-        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 6));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 6)).isNull();
     }
 
     @Test
     @Override
     public void getResultFromCallableStatement() throws Exception {
         when(callableStatement.getObject(1, Integer.class)).thenReturn(1);
-        assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1)).isEqualTo(SexEnum.MAN);
         when(callableStatement.getObject(2, Integer.class)).thenReturn(2);
-        assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 2));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 2)).isEqualTo(SexEnum.WO_MAN);
         when(callableStatement.getObject(3, Integer.class)).thenReturn(null);
-        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 3));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 3)).isNull();
 
         when(callableStatement.getObject(4, Integer.class)).thenReturn(1);
-        assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 4));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 4)).isEqualTo(GradeEnum.PRIMARY);
         when(callableStatement.getObject(5, Integer.class)).thenReturn(2);
-        assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 5));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 5)).isEqualTo(GradeEnum.SECONDARY);
         when(callableStatement.getObject(6, Integer.class)).thenReturn(null);
-        assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6));
+        assertThat(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6)).isNull();
     }
 
     @Test
     public void testNullButReturnZero() throws Exception {
         when(callableStatement.getObject(1, Integer.class)).thenReturn(0);
         when(callableStatement.wasNull()).thenReturn(true);
-        assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1));
+        assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1)).isNull();
     }
 
     @Getter

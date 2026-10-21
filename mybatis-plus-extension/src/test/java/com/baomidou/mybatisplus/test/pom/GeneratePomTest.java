@@ -6,7 +6,6 @@ import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查pom依赖
@@ -45,17 +46,17 @@ class GeneratePomTest {
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency core = dependenciesMap.get("mybatis-plus-core");
-            Assertions.assertEquals("compile", core.getScope());
-            Assertions.assertFalse(core.isOptional());
+            assertThat(core.getScope()).isEqualTo("compile");
+            assertThat(core.isOptional()).isFalse();
             Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
-            Assertions.assertEquals("compile", kotlinStdlib.getScope());
-            Assertions.assertTrue(kotlinStdlib.isOptional());
+            assertThat(kotlinStdlib.getScope()).isEqualTo("compile");
+            assertThat(kotlinStdlib.isOptional()).isTrue();
             Dependency kotlinReflect = dependenciesMap.get("kotlin-reflect");
-            Assertions.assertEquals("compile", kotlinReflect.getScope());
-            Assertions.assertTrue(kotlinReflect.isOptional());
+            assertThat(kotlinReflect.getScope()).isEqualTo("compile");
+            assertThat(kotlinReflect.isOptional()).isTrue();
             Dependency slf4jApi = dependenciesMap.get("slf4j-api");
-            Assertions.assertEquals("compile", slf4jApi.getScope());
-            Assertions.assertTrue(slf4jApi.isOptional());
+            assertThat(slf4jApi.getScope()).isEqualTo("compile");
+            assertThat(slf4jApi.isOptional()).isTrue();
         }
     }
 
