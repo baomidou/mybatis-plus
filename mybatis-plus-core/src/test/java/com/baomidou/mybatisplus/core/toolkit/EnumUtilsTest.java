@@ -1,9 +1,7 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.EnumMetadata;
-import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Test;
@@ -129,5 +129,20 @@ class ReflectionKitTest {
         entity.setParentId("123");
         assertThat(ReflectionKit.getFieldValue(entity, "parentId")).isEqualTo(entity.getParentId());
         assertThat(ReflectionKit.getFieldValue(entity, "pId")).isEqualTo(entity.getpId());
+    }
+
+    @Test
+    void resolvesGenericTypeThroughSeveralLevels() {
+        assertThat(ReflectionKit.getSuperClassGenericType(Mapper2.class, Mapper.class, 0)).isEqualTo(MyEntity.class);
+        assertThat(ReflectionKit.getSuperClassGenericType(Mapper3.class, Mapper.class, 0)).isEqualTo(MyEntity.class);
+    }
+
+    static class MyEntity {
+    }
+
+    interface Mapper2 extends Mapper<MyEntity> {
+    }
+
+    interface Mapper3 extends Mapper2 {
     }
 }

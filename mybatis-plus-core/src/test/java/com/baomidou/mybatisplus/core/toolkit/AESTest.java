@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.AES;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

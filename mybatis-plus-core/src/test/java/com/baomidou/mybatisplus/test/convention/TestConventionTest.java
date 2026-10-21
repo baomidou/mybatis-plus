@@ -133,9 +133,11 @@ class TestConventionTest {
     private static final int MAX_DISABLED_CASES = 6;
 
     /**
-     * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。
+     * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。<br>
+     * 2026-10-21 把 core 的 {@code test.toolkit} 12 个类迁到 {@code core.toolkit}， 并合掉 {@code test.pom} 下重复的
+     * {@code ReflectionKitTest}，66 → 53。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 66;
+    private static final int MAX_PACKAGE_MISMATCHES = 53;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
@@ -154,8 +156,8 @@ class TestConventionTest {
             "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest",
             "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
             "MybatisPlusInterceptorTest", "MybatisPlusPropertiesTest", "MybatisPlusSampleTest",
-            "PaginationInnerInterceptorTest", "ReflectionKitTest", "SelectBodyToPlainSelectTest", "SqlRunnerTest",
-            "StringUtilsTest", "TableInfoTest", "TenantLineInnerInterceptorTest");
+            "PaginationInnerInterceptorTest", "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest",
+            "TableInfoTest", "TenantLineInnerInterceptorTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

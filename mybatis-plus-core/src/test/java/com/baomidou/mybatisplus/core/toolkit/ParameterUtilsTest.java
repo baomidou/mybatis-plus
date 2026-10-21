@@ -1,9 +1,7 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,9 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 

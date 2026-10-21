@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.jupiter.api.Test;

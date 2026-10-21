@@ -1,6 +1,5 @@
-package com.baomidou.mybatisplus.test.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
