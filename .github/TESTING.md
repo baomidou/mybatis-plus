@@ -23,7 +23,7 @@
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 9、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
-| T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 6 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单、wrapper 关键字表 |
+| T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 7 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单、wrapper 关键字表、WHERE 片段装配 |
 | T8 | 测试实体类名/表名全局唯一 | 未执行 | — |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
@@ -134,6 +134,9 @@ wrapper 那一侧同理：
 钉 24 个关键字各自渲染出的 SQL 文本，
 [MatchSegmentTest](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/segments/MatchSegmentTest.java)
 钉 9 个开关各自认哪些片段——新增一个关键字或改判定条件而没同步整表，就会红。
+[MergeSegmentsTest](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/segments/MergeSegmentsTest.java)
+钉这套开关的消费端：自动补 AND、悬空 and/or 被吃掉、`not()` 只作用下一个条件、
+`APPLY` 标记只留原文、group by/having/order by 分流与拼接顺序。
 闸门必须用 `SetEquals`/`containsExactlyInAnyOrder`，不能只 `isTrue` 打个警告。
 
 ## T8 测试夹具名字全局唯一
