@@ -1170,7 +1170,7 @@ class H2UserTest extends H2TestSupport {
 
     @Test
     @Transactional
-    void selectUsersWithCursor() {
+    void selectUsersWithCursor() throws IOException {
         // 使用 try-with-resources 确保 Cursor 被正确关闭
         // 注意：必须添加 @Transactional 注解，保证 SqlSession 在迭代期间保持打开状态
         LambdaQueryWrapper<H2User> lqw = Wrappers.<H2User>lambdaQuery().eq(H2User::getAge, 3);
@@ -1185,8 +1185,6 @@ class H2UserTest extends H2TestSupport {
                 // 处理单条记录
                 System.out.println("Processing user: " + user.getName());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         assertThatThrownBy(() -> userService.getBaseMapper().selectOne(lqw))

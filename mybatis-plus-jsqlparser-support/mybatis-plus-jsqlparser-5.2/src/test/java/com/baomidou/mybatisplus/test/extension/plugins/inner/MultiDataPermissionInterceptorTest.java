@@ -78,9 +78,8 @@ public class MultiDataPermissionInterceptorTest {
                             sqlSegmentExpression.toString());
                     return sqlSegmentExpression;
                 } catch (JSQLParserException e) {
-                    logger.error("解析错误:", e);
+                    throw new IllegalStateException("数据权限规则解析失败", e);
                 }
-                return null;
             }
         });
     }

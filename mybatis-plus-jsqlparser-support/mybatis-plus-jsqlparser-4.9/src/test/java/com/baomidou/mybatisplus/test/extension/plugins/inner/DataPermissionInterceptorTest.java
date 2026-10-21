@@ -58,9 +58,8 @@ public class DataPermissionInterceptorTest {
                     }
                     return sqlSegmentExpression;
                 } catch (JSQLParserException e) {
-                    log.error("解析错误:", e);
+                    throw new IllegalStateException("数据权限规则解析失败", e);
                 }
-                return null;
             });
 
     @Test

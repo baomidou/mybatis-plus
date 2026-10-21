@@ -106,6 +106,18 @@ class TestConventionTest {
 
     private static final Pattern SUPER = Pattern.compile("class\\s+[\\w.]+[^{;]*?\\bextends\\s+([\\w.]+)");
 
+    /**
+     * catch 块的开头，参数表里不许出现分号和大括号。
+     */
+    private static final Pattern CATCH = Pattern.compile("catch\\s*\\([^;{}]*\\)\\s*\\{");
+
+    /**
+     * catch 里"确实处理了"的字样：让用例失败（{@code throw}/{@code fail}）、断言，<br>
+     * 或者把异常收到变量与集合里，留给后面的断言。只打日志或只 {@code printStackTrace} 都不算。
+     */
+    private static final Pattern CATCH_HANDLED = Pattern
+            .compile("\\bthrow\\b|\\bfail\\s*\\(|assert|assumeTrue|\\b\\w+\\s*=\\s*\\w+;|\\.add\\s*\\(");
+
     private static final Path ROOT = locateRoot();
 
     private static final List<Source> TEST_SOURCES = scanTestSources();
@@ -354,6 +366,25 @@ class TestConventionTest {
             }
         }
         assertThat(found).as("T5 用 Thread.sleep 当同步的文件必须逐个登记").isEqualTo(REGISTERED_THREAD_SLEEP_FILES);
+    }
+
+    /**
+     * 测试类里的 catch 块。异常在用例里被吃掉是最贵的一种假绿：被测代码真的坏了，测试结果照样绿。<br>
+     * 处理办法只有三种——让它失败（{@code throw} 重新抛或 {@code fail()}）、当场断言， 或者把异常收到变量/集合里，再由后面的断言验一次。
+     */
+    @Test
+    void catchBlocksEitherFailTheCaseOrKeepTheException() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : testClasses()) {
+            Matcher matcher = CATCH.matcher(source.blanks());
+            while (matcher.find()) {
+                String body = bodyOf(source.blanks(), matcher.end() - 1);
+                if (body != null && !CATCH_HANDLED.matcher(body).find()) {
+                    offenders.add(source.path() + " -> " + String.join(" ", body.split("\\R")).trim());
+                }
+            }
+        }
+        assertThat(offenders).as("T5 catch 到异常却不失败不断言（零容忍）：只打日志或 printStackTrace 等于吞掉").isEmpty();
     }
 
     @Test

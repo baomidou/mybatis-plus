@@ -31,18 +31,11 @@ class SelectBodyToPlainSelectTest {
      * 报错的测试
      */
     @Test
-    void testSelectBodyToPlainSelectThrowException() {
-        Select selectStatement = null;
-        try {
-            String originalUnionSql = "select * from test union select * from test";
-            selectStatement = (Select) CCJSqlParserUtil.parse(originalUnionSql);
-        } catch (JSQLParserException e) {
-            e.printStackTrace();
-        }
-        assertThat(selectStatement).isNotNull();
-        Select finalSelectStatement = selectStatement;
+    void testSelectBodyToPlainSelectThrowException() throws JSQLParserException {
+        String originalUnionSql = "select * from test union select * from test";
+        Select selectStatement = (Select) CCJSqlParserUtil.parse(originalUnionSql);
         assertThatThrownBy(() -> {
-            PlainSelect plainSelect = (PlainSelect) finalSelectStatement.getSelectBody();
+            PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
         }).isInstanceOf(ClassCastException.class);
     }
 
