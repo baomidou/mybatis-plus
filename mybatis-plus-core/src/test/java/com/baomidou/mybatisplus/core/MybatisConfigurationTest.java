@@ -1,8 +1,5 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
-import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.test.mapper.AMapper;
 import com.baomidou.mybatisplus.test.mapper.BMapper;
 import org.apache.ibatis.builder.StaticSqlSource;

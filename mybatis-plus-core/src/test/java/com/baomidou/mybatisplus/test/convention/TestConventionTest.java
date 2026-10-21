@@ -134,10 +134,12 @@ class TestConventionTest {
 
     /**
      * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。<br>
-     * 2026-10-21 把 core 的 {@code test.toolkit} 12 个类迁到 {@code core.toolkit}， 并合掉 {@code test.pom} 下重复的
-     * {@code ReflectionKitTest}，66 → 53。
+     * 2026-10-21 归位 core 的两批：{@code test.toolkit} 12 个类迁到 {@code core.toolkit} 并合掉 {@code test.pom} 下重复的
+     * {@code ReflectionKitTest}（66 → 53）；再把
+     * {@code test/MybatisConfigurationTest}、{@code test/MybatisParameterHandlerTest}、
+     * {@code test/metadata/TableInfoHelperTest}、{@code test/override/MybatisMapperMethodTest} 迁到被测类所在包（53 → 49）。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 53;
+    private static final int MAX_PACKAGE_MISMATCHES = 49;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
