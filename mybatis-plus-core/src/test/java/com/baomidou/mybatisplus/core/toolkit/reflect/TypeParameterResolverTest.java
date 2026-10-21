@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Create by hcl at 2023/9/25
@@ -37,13 +37,18 @@ class TypeParameterResolverTest {
 
     @Test
     void test() {
-        assertSame(null, TypeParameterResolver.resolveClassIndexedParameter(Mapper1.class, Mapper.class, 0));
-        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper2.class, Mapper.class, 0));
-        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper3.class, Mapper.class, 0));
-        assertSame(MyEntity.class, TypeParameterResolver.resolveClassIndexedParameter(Mapper5.class, Mapper.class, 0));
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper1.class, Mapper.class, 0)).isNull();
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper2.class, Mapper.class, 0))
+                .isSameAs(MyEntity.class);
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper3.class, Mapper.class, 0))
+                .isSameAs(MyEntity.class);
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper5.class, Mapper.class, 0))
+                .isSameAs(MyEntity.class);
 
-        assertSame(Number.class, TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CA.class, 0));
-        assertSame(Number.class, TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CB.class, 1));
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CA.class, 0))
+                .isSameAs(Number.class);
+        assertThat(TypeParameterResolver.resolveClassIndexedParameter(MyEntity.class, CB.class, 1))
+                .isSameAs(Number.class);
     }
 
 }

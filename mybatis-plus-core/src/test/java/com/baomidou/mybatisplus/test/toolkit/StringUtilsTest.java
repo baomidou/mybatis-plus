@@ -1,11 +1,9 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author HCL <br>
@@ -17,16 +15,16 @@ class StringUtilsTest {
     @Test
     void camelToUnderlineTest() {
         String s = "userId";
-        Assertions.assertEquals("user_id", StringUtils.camelToUnderline(s));
-        Assertions.assertEquals("a", StringUtils.camelToUnderline("A"));
+        assertThat(StringUtils.camelToUnderline(s)).isEqualTo("user_id");
+        assertThat(StringUtils.camelToUnderline("A")).isEqualTo("a");
     }
 
     @Test
     void isCapitalModeTest() {
-        Assertions.assertFalse(StringUtils.isCapitalMode("test"));
-        Assertions.assertFalse(StringUtils.isCapitalMode("Test"));
-        Assertions.assertFalse(StringUtils.isCapitalMode("teSt"));
-        assertTrue(StringUtils.isCapitalMode("TEST"));
+        assertThat(StringUtils.isCapitalMode("test")).isFalse();
+        assertThat(StringUtils.isCapitalMode("Test")).isFalse();
+        assertThat(StringUtils.isCapitalMode("teSt")).isFalse();
+        assertThat(StringUtils.isCapitalMode("TEST")).isTrue();
     }
 
     /**
@@ -44,10 +42,10 @@ class StringUtilsTest {
      */
     @Test
     void equal() {
-        assertTrue(StringUtils.equals(null, null));
-        Assertions.assertFalse(StringUtils.equals(null, "abc"));
-        Assertions.assertFalse(StringUtils.equals("abc", null));
-        assertTrue(StringUtils.equals("abc", "abc"));
-        Assertions.assertFalse(StringUtils.equals("abc", "ABC"));
+        assertThat(StringUtils.equals(null, null)).isTrue();
+        assertThat(StringUtils.equals(null, "abc")).isFalse();
+        assertThat(StringUtils.equals("abc", null)).isFalse();
+        assertThat(StringUtils.equals("abc", "abc")).isTrue();
+        assertThat(StringUtils.equals("abc", "ABC")).isFalse();
     }
 }

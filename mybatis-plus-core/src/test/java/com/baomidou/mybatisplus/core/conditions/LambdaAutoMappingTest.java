@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class LambdaAutoMappingTest {
 
@@ -33,12 +33,11 @@ class LambdaAutoMappingTest {
     private <W extends AbstractLambdaWrapper<Entity, W>> void assertConditions(W wrapper, boolean mapping) {
         wrapper.eq(Entity::getName, "a").notIn(Entity::getName, Arrays.asList("b", "c"))
                 .notIn(Entity::getName, "d", "e");
-        assertEquals(
+        assertThat(wrapper.getSqlSegment()).isEqualTo(
                 "(name = " + param(1, mapping) + " AND name NOT IN (" + param(2, mapping) + "," + param(3, mapping)
-                        + ")" + " AND name NOT IN (" + param(4, mapping) + "," + param(5, mapping) + "))",
-                wrapper.getSqlSegment());
-        assertEquals(5, wrapper.getParamNameValuePairs().size());
-        assertEquals("e", wrapper.getParamNameValuePairs().get("MPGENVAL5"));
+                        + ")" + " AND name NOT IN (" + param(4, mapping) + "," + param(5, mapping) + "))");
+        assertThat(wrapper.getParamNameValuePairs().size()).isEqualTo(5);
+        assertThat(wrapper.getParamNameValuePairs().get("MPGENVAL5")).isEqualTo("e");
     }
 
     @Test
@@ -51,9 +50,8 @@ class LambdaAutoMappingTest {
 
     private <W extends AbstractLambdaWrapper<Entity, W>> void assertNested(W wrapper, boolean mapping) {
         wrapper.and(w -> w.notIn(Entity::getName, Arrays.asList("a")).or(n -> n.notIn(Entity::getName, "b")));
-        assertEquals(
-                "((name NOT IN (" + param(1, mapping) + ") OR (name NOT IN (" + param(2, mapping) + "))))",
-                wrapper.getSqlSegment());
+        assertThat(wrapper.getSqlSegment())
+                .isEqualTo("((name NOT IN (" + param(1, mapping) + ") OR (name NOT IN (" + param(2, mapping) + "))))");
     }
 
     private String param(int index, boolean mapping) {

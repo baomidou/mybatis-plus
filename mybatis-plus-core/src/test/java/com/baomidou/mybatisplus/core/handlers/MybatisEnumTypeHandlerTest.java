@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,9 +23,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,13 +52,13 @@ class MybatisEnumTypeHandlerTest {
         MybatisEnumTypeHandler<SexEnum> handler = new MybatisEnumTypeHandler<>(SexEnum.class);
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
-        assertEquals(SexEnum.MAN, handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(SexEnum.MAN);
 
         when(resultSet.getObject(1, Integer.class)).thenReturn(2);
-        assertEquals(SexEnum.WO_MAN, handler.getResult(resultSet, 1));
+        assertThat(handler.getResult(resultSet, 1)).isEqualTo(SexEnum.WO_MAN);
 
         when(callableStatement.getObject(1, Integer.class)).thenReturn(null);
-        assertNull(handler.getResult(callableStatement, 1));
+        assertThat(handler.getResult(callableStatement, 1)).isNull();
 
         handler.setParameter(preparedStatement, 1, SexEnum.MAN, null);
         verify(preparedStatement).setObject(1, 1);
@@ -74,10 +72,10 @@ class MybatisEnumTypeHandlerTest {
         MybatisEnumTypeHandler<GradeEnum> handler = new MybatisEnumTypeHandler<>(GradeEnum.class);
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
-        assertEquals(GradeEnum.PRIMARY, handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(GradeEnum.PRIMARY);
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(3);
-        assertEquals(GradeEnum.HIGH, handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(GradeEnum.HIGH);
 
         handler.setParameter(preparedStatement, 1, GradeEnum.SECONDARY, null);
         verify(preparedStatement).setObject(1, 2);
@@ -88,35 +86,35 @@ class MybatisEnumTypeHandlerTest {
         MybatisEnumTypeHandler<SexEnum> handler = new MybatisEnumTypeHandler<>(SexEnum.class);
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(null);
-        assertNull(handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isNull();
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(9);
-        assertNull(handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isNull();
 
         when(callableStatement.getObject(1, Integer.class)).thenReturn(0);
         when(callableStatement.wasNull()).thenReturn(true);
-        assertNull(handler.getResult(callableStatement, 1));
+        assertThat(handler.getResult(callableStatement, 1)).isNull();
     }
 
     @Test
     void shouldUseNormalizedMapKey() throws Exception {
         MybatisEnumTypeHandler<LongEnum> longHandler = new MybatisEnumTypeHandler<>(LongEnum.class);
         when(resultSet.getObject(eq("longColumn"), eq(Long.class))).thenAnswer(invocation -> Integer.valueOf(1));
-        assertEquals(LongEnum.ONE, longHandler.getResult(resultSet, "longColumn"));
+        assertThat(longHandler.getResult(resultSet, "longColumn")).isEqualTo(LongEnum.ONE);
 
         MybatisEnumTypeHandler<BigIntegerEnum> bigIntegerHandler = new MybatisEnumTypeHandler<>(BigIntegerEnum.class);
         when(resultSet.getObject(eq("bigIntegerColumn"), eq(BigInteger.class)))
                 .thenAnswer(invocation -> Integer.valueOf(2));
-        assertEquals(BigIntegerEnum.TWO, bigIntegerHandler.getResult(resultSet, "bigIntegerColumn"));
+        assertThat(bigIntegerHandler.getResult(resultSet, "bigIntegerColumn")).isEqualTo(BigIntegerEnum.TWO);
 
         MybatisEnumTypeHandler<StringEnum> stringHandler = new MybatisEnumTypeHandler<>(StringEnum.class);
         when(resultSet.getObject(eq("stringColumn"), eq(String.class))).thenAnswer(invocation -> Integer.valueOf(3));
-        assertEquals(StringEnum.THREE, stringHandler.getResult(resultSet, "stringColumn"));
+        assertThat(stringHandler.getResult(resultSet, "stringColumn")).isEqualTo(StringEnum.THREE);
 
         MybatisEnumTypeHandler<CharacterEnum> characterHandler = new MybatisEnumTypeHandler<>(CharacterEnum.class);
         when(resultSet.getObject(eq("characterColumn"), eq(Character.class)))
                 .thenAnswer(invocation -> Integer.valueOf(4));
-        assertEquals(CharacterEnum.FOUR, characterHandler.getResult(resultSet, "characterColumn"));
+        assertThat(characterHandler.getResult(resultSet, "characterColumn")).isEqualTo(CharacterEnum.FOUR);
     }
 
     @Test
@@ -124,25 +122,26 @@ class MybatisEnumTypeHandlerTest {
         MybatisEnumTypeHandler<DecimalEnum> handler = new MybatisEnumTypeHandler<>(DecimalEnum.class);
 
         when(resultSet.getObject(eq("column"), eq(BigDecimal.class))).thenAnswer(invocation -> Long.valueOf(10L));
-        assertEquals(DecimalEnum.TEN, handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(DecimalEnum.TEN);
 
         when(resultSet.getObject(eq("column"), eq(BigDecimal.class))).thenAnswer(invocation -> BigDecimal.valueOf(20L));
-        assertEquals(DecimalEnum.TWENTY, handler.getResult(resultSet, "column"));
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(DecimalEnum.TWENTY);
     }
 
     @Test
     void shouldFailFastForIllegalEnum() {
-        assertThrows(IllegalArgumentException.class, () -> new MybatisEnumTypeHandler<>(PlainEnum.class));
+        assertThatThrownBy(() -> new MybatisEnumTypeHandler<>(PlainEnum.class))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void shouldDetectMpEnums() {
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(String.class).isPresent());
-        Assertions.assertTrue(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class).isPresent());
-        Assertions.assertTrue(EnumUtils.isMpEnums(SexEnum.class));
-        Assertions.assertTrue(EnumUtils.isMpEnums(GradeEnum.class));
-        Assertions.assertFalse(EnumUtils.isMpEnums(PlainEnum.class));
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isEmpty();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isEmpty();
+        assertThat(EnumUtils.isMpEnums(SexEnum.class)).isTrue();
+        assertThat(EnumUtils.isMpEnums(GradeEnum.class)).isTrue();
+        assertThat(EnumUtils.isMpEnums(PlainEnum.class)).isFalse();
     }
 
     @Test
@@ -167,9 +166,9 @@ class MybatisEnumTypeHandlerTest {
             });
         }
         startLatch.countDown();
-        Assertions.assertTrue(doneLatch.await(10, TimeUnit.SECONDS));
+        assertThat(doneLatch.await(10, TimeUnit.SECONDS)).isTrue();
         executorService.shutdownNow();
-        Assertions.assertTrue(errors.isEmpty());
+        assertThat(errors).isEmpty();
     }
 
     @Getter

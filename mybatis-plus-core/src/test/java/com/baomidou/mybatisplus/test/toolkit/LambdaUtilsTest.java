@@ -12,8 +12,7 @@ import java.lang.invoke.MethodHandleProxies;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试 Lambda 解析类
@@ -30,7 +29,7 @@ class LambdaUtilsTest {
         test(function);
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle getter = lookup.findVirtual(TestModel.class, "getId", MethodType.methodType(int.class));
-        assertNotNull(SerializedLambda.extract(function));
+        assertThat(SerializedLambda.extract(function)).isNotNull();
         function = (SFunction<TestModel, Object>) MethodHandleProxies.asInterfaceInstance(SFunction.class, getter);
         test(function);
     }
@@ -38,8 +37,8 @@ class LambdaUtilsTest {
     private void test(SFunction<TestModel, Object> function) {
         function.apply(new TestModel());
         LambdaMeta meta = LambdaUtils.extract(function);
-        assertNotNull(meta);
-        assertSame(TestModel.class, meta.getInstantiatedClass());
+        assertThat(meta).isNotNull();
+        assertThat(meta.getInstantiatedClass()).isSameAs(TestModel.class);
     }
 
     /**

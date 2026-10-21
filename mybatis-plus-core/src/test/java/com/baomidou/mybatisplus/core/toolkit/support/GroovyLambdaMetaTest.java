@@ -23,7 +23,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Groovy 脚本中 lambda 代理解析测试。
@@ -105,9 +106,9 @@ class GroovyLambdaMetaTest {
 
         GroovyLambdaMeta meta = new GroovyLambdaMeta((Proxy) proxy);
 
-        assertEquals("getName", meta.getImplMethodName());
-        assertSame(TestEntity.class, meta.getInstantiatedClass());
-        assertEquals("TestEntity::getName", meta.toString());
+        assertThat(meta.getImplMethodName()).isEqualTo("getName");
+        assertThat(meta.getInstantiatedClass()).isSameAs(TestEntity.class);
+        assertThat(meta.toString()).isEqualTo("TestEntity::getName");
     }
 
     @Test
@@ -118,8 +119,8 @@ class GroovyLambdaMetaTest {
 
         GroovyLambdaMeta meta = new GroovyLambdaMeta((Proxy) proxy);
 
-        assertEquals("getName", meta.getImplMethodName());
-        assertSame(TestEntity.class, meta.getInstantiatedClass());
+        assertThat(meta.getImplMethodName()).isEqualTo("getName");
+        assertThat(meta.getInstantiatedClass()).isSameAs(TestEntity.class);
     }
 
     @Test
@@ -129,9 +130,9 @@ class GroovyLambdaMetaTest {
 
         LambdaMeta meta = LambdaUtils.extract(proxy);
 
-        assertNotNull(meta);
-        assertSame(TestEntity.class, meta.getInstantiatedClass());
-        assertEquals("getName", meta.getImplMethodName());
+        assertThat(meta).isNotNull();
+        assertThat(meta.getInstantiatedClass()).isSameAs(TestEntity.class);
+        assertThat(meta.getImplMethodName()).isEqualTo("getName");
     }
 
     @Test
@@ -142,7 +143,7 @@ class GroovyLambdaMetaTest {
                 .newProxyInstance(TestEntity.class.getClassLoader(), new Class[]{SFunction.class}, (p, m, args) -> null // plain handler, no getDelegate()
                 );
 
-        assertThrows(MybatisPlusException.class, () -> new GroovyLambdaMeta((Proxy) proxy));
+        assertThatThrownBy(() -> new GroovyLambdaMeta((Proxy) proxy)).isInstanceOf(MybatisPlusException.class);
     }
 
 }

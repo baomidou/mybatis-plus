@@ -10,7 +10,7 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.IntSupplier;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * IDEA 代理 Lambda 表达式测试
@@ -27,7 +27,7 @@ class IdeaProxyLambdaMetaTest {
         // 模拟 IDEA 的 lambda 生成
         IntSupplier supplier = MethodHandleProxies.asInterfaceInstance(IntSupplier.class, handle);
         IdeaProxyLambdaMeta meta = new IdeaProxyLambdaMeta((Proxy) supplier);
-        assertEquals("s", meta.getImplMethodName());
+        assertThat(meta.getImplMethodName()).isEqualTo("s");
     }
 
     private static int s() {

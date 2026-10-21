@@ -3,8 +3,9 @@ package com.baomidou.mybatisplus.core.conditions;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.test.User;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author miemie
@@ -25,6 +26,6 @@ class UpdateWrapperTest extends BaseWrapperTest {
                         + "name=#{ew.paramNameValuePairs.MPGENVAL2,typeHandler=org.apache.ibatis.type.StringTypeHandler,jdbcType=VARCHAR},"
                         + "name=#{ew.paramNameValuePairs.MPGENVAL3,typeHandler=org.apache.ibatis.type.StringTypeHandler,jdbcType=VARCHAR,numericScale=2}");
         logParams(wrapper);
-        Assertions.assertThrows(MybatisPlusException.class, wrapper::getSqlSegment);
+        assertThatThrownBy(wrapper::getSqlSegment).isInstanceOf(MybatisPlusException.class);
     }
 }

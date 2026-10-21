@@ -6,12 +6,14 @@ import com.baomidou.mybatisplus.core.toolkit.EnumMetadata;
 import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Tests for {@link EnumUtils}.
@@ -25,12 +27,12 @@ class EnumUtilsTest {
     void shouldExposeMetadata() {
         EnumMetadata metadata = EnumUtils.metadata(GradeEnum.class);
 
-        Assertions.assertEquals(Integer.class, metadata.getPropertyType());
-        Assertions.assertEquals("code", metadata.getGetterName());
-        Assertions.assertArrayEquals(GradeEnum.values(), metadata.getEnumConstants());
-        Assertions.assertEquals(GradeEnum.PRIMARY, metadata.valueOf(1));
-        Assertions.assertEquals(GradeEnum.PRIMARY, metadata.valueOf(1L));
-        Assertions.assertEquals(1, metadata.getValue(GradeEnum.PRIMARY));
+        assertThat(metadata.getPropertyType()).isEqualTo(Integer.class);
+        assertThat(metadata.getGetterName()).isEqualTo("code");
+        assertThat(metadata.getEnumConstants()).isEqualTo(GradeEnum.values());
+        assertThat(metadata.<GradeEnum>valueOf(1)).isEqualTo(GradeEnum.PRIMARY);
+        assertThat(metadata.<GradeEnum>valueOf(1L)).isEqualTo(GradeEnum.PRIMARY);
+        assertThat(metadata.getValue(GradeEnum.PRIMARY)).isEqualTo(1);
     }
 
     @Test
@@ -40,51 +42,51 @@ class EnumUtilsTest {
         Enum<?>[] enumConstants = metadata.getEnumConstants();
         enumConstants[0] = null;
 
-        Assertions.assertEquals(GradeEnum.PRIMARY, metadata.getEnumConstants()[0]);
+        assertThat(metadata.getEnumConstants()[0]).isEqualTo(GradeEnum.PRIMARY);
     }
 
     @Test
     void shouldResolveEnumValue() {
-        Assertions.assertEquals(SexEnum.MAN, EnumUtils.valueOf(SexEnum.class, 1));
-        Assertions.assertEquals(SexEnum.WO_MAN, EnumUtils.valueOf(SexEnum.class, "2"));
-        Assertions.assertEquals(GradeEnum.HIGH, EnumUtils.valueOf(GradeEnum.class, BigInteger.valueOf(3L)));
-        Assertions.assertEquals(BigDecimalEnum.TEN, EnumUtils.valueOf(BigDecimalEnum.class, BigInteger.TEN));
-        Assertions.assertNull(EnumUtils.valueOf(GradeEnum.class, 9));
+        assertThat(EnumUtils.valueOf(SexEnum.class, 1)).isEqualTo(SexEnum.MAN);
+        assertThat(EnumUtils.valueOf(SexEnum.class, "2")).isEqualTo(SexEnum.WO_MAN);
+        assertThat(EnumUtils.valueOf(GradeEnum.class, BigInteger.valueOf(3L))).isEqualTo(GradeEnum.HIGH);
+        assertThat(EnumUtils.valueOf(BigDecimalEnum.class, BigInteger.TEN)).isEqualTo(BigDecimalEnum.TEN);
+        assertThat(EnumUtils.valueOf(GradeEnum.class, 9)).isNull();
     }
 
     @Test
     void shouldResolvePersistentValue() {
-        Assertions.assertEquals(1, EnumUtils.getValue(SexEnum.MAN));
-        Assertions.assertEquals(3, EnumUtils.getValue(GradeEnum.HIGH));
-        Assertions.assertNull(EnumUtils.getValue(null));
+        assertThat(EnumUtils.getValue(SexEnum.MAN)).isEqualTo(1);
+        assertThat(EnumUtils.getValue(GradeEnum.HIGH)).isEqualTo(3);
+        assertThat(EnumUtils.getValue(null)).isNull();
     }
 
     @Test
     void shouldDetectMpEnums() {
         Optional<String> fieldName = EnumUtils.findEnumValueFieldName(GradeEnum.class);
 
-        Assertions.assertTrue(fieldName.isPresent());
-        Assertions.assertEquals("code", fieldName.get());
-        Assertions.assertFalse(EnumUtils.findEnumValueFieldName(SexEnum.class).isPresent());
-        Assertions.assertFalse(EnumUtils.findEnumValueFieldName(String.class).isPresent());
-        Assertions.assertTrue(EnumUtils.isMpEnums(SexEnum.class));
-        Assertions.assertTrue(EnumUtils.isMpEnums(GradeEnum.class));
-        Assertions.assertFalse(EnumUtils.isMpEnums(PlainEnum.class));
+        assertThat(fieldName).isPresent();
+        assertThat(fieldName.get()).isEqualTo("code");
+        assertThat(EnumUtils.findEnumValueFieldName(SexEnum.class)).isEmpty();
+        assertThat(EnumUtils.findEnumValueFieldName(String.class)).isEmpty();
+        assertThat(EnumUtils.isMpEnums(SexEnum.class)).isTrue();
+        assertThat(EnumUtils.isMpEnums(GradeEnum.class)).isTrue();
+        assertThat(EnumUtils.isMpEnums(PlainEnum.class)).isFalse();
     }
 
     @Test
     void shouldNormalizeValue() {
-        Assertions.assertEquals(1L, EnumUtils.normalizeValue(1));
-        Assertions.assertEquals(1L, EnumUtils.normalizeValue(BigInteger.ONE));
-        Assertions.assertEquals(10L, EnumUtils.normalizeValue(BigDecimal.TEN));
-        Assertions.assertEquals(new BigDecimal("1.1"), EnumUtils.normalizeValue(new BigDecimal("1.10")));
+        assertThat(EnumUtils.normalizeValue(1)).isEqualTo(1L);
+        assertThat(EnumUtils.normalizeValue(BigInteger.ONE)).isEqualTo(1L);
+        assertThat(EnumUtils.normalizeValue(BigDecimal.TEN)).isEqualTo(10L);
+        assertThat(EnumUtils.normalizeValue(new BigDecimal("1.10"))).isEqualTo(new BigDecimal("1.1"));
     }
 
     @Test
     void shouldFailFastForIllegalType() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> EnumUtils.metadata(null));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> EnumUtils.metadata(String.class));
-        Assertions.assertThrows(IllegalArgumentException.class, () -> EnumUtils.metadata(PlainEnum.class));
+        assertThatThrownBy(() -> EnumUtils.metadata(null)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> EnumUtils.metadata(String.class)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> EnumUtils.metadata(PlainEnum.class)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Getter

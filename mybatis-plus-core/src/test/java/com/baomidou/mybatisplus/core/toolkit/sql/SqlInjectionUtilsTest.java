@@ -1,7 +1,8 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * SQL 注入验证工具类测试
@@ -84,6 +85,6 @@ class SqlInjectionUtilsTest {
     }
 
     private void assertSql(boolean injection, String sql) {
-        Assertions.assertEquals(injection, SqlInjectionUtils.check(sql));
+        assertThat(SqlInjectionUtils.check(sql)).isEqualTo(injection);
     }
 }

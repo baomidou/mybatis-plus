@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +18,7 @@ class EncryptTest {
 
     @Test
     void md5Base64() {
-        Assertions.assertEquals("Jgmg8jeuq9EyB1ybYtj1fg==", EncryptUtils.md5Base64("犯我中华者虽远必诛"));
+        assertThat(EncryptUtils.md5Base64("犯我中华者虽远必诛")).isEqualTo("Jgmg8jeuq9EyB1ybYtj1fg==");
     }
 
     /**
