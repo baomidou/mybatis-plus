@@ -20,7 +20,7 @@
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 66 处缺口 |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 27 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
-| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4 | 机器 | 零违规 |
+| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4 | 机器 + 冻结 | 裸 `assert`/JUnit 4 零违规；仍用 JUnit `Assertions` 的文件 134 |
 | T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 冻结 | 零断言 8（含 6 个已禁用用例）、无用例 `*Test` 9、sleep 1 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | — |
@@ -57,6 +57,9 @@
 - 禁止 JUnit 4 的 `org.junit.Test`/`@Before`/`@After`/`@Ignore`/`org.junit.runner.*`：
   与 Jupiter 混用会让用例计数不可信，`@Ignore` 也不会被 Jupiter 执行。
 - 存量里的 JUnit 4 风格断言不做批量转换，改到哪个文件就顺手换成 AssertJ。
+- 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。存量 134 个文件按数量冻结在
+  `MAX_JUNIT_ASSERTION_FILES`，转换掉一个就调小一格，禁止调大。不做批量转换：这套测试文件半年内改了
+  334 个，机械重写会和日常提交撞车。
 
 ## T5 绿必须有意义
 
@@ -86,10 +89,14 @@
 
 `DbType`、`IDialect` 实现、注入器、拦截器、生成器策略这类"新增一个值就得改测试"的公共契约，
 用全枚举 + 集合相等断言，新增未登记即红。现成参照：
-[JdbcUtilsTest](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/test/toolkit/JdbcUtilsTest.java)
+[JdbcUtilsTest](../mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/toolkit/JdbcUtilsTest.java)
 （URL → `DbType` 识别）与
 [IDialectTest](../mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/extension/plugins/pagination/dialects/IDialectTest.java)
-（方言全量）。闸门必须用 `SetEquals`/`containsExactlyInAnyOrder`，不能只 `isTrue` 打个警告。
+（方言全量）。注解与枚举成员名也是同类契约——`mybatis-plus-annotation` 的
+[IdTypeTest](../mybatis-plus-annotation/src/test/java/com/baomidou/mybatisplus/annotation/IdTypeTest.java)、
+[FieldStrategyTest](../mybatis-plus-annotation/src/test/java/com/baomidou/mybatisplus/annotation/FieldStrategyTest.java)
+钉的是"配置里写的名字"和"`key >= 3` 才自动生成主键"这条分界线。
+闸门必须用 `SetEquals`/`containsExactlyInAnyOrder`，不能只 `isTrue` 打个警告。
 
 ## T8 测试夹具名字全局唯一
 
@@ -118,7 +125,7 @@ T3 的"每类必带层标签"、T5 的吞异常与 warn-only、T6 的"必须带 
 ## 例外怎么登记
 
 例外只有两类落点，都在闸门文件顶部：`MAX_ASSERTION_FREE_CASES`、`MAX_DISABLED_CASES`、
-`MAX_PACKAGE_MISMATCHES` 三个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、`REGISTERED_CASE_FREE_FILES`、
-`REGISTERED_THREAD_SLEEP_FILES` 三个登记表。只准降不准升；要放宽必须在评审里写清为什么。
+`MAX_PACKAGE_MISMATCHES`、`MAX_JUNIT_ASSERTION_FILES` 四个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、
+`REGISTERED_CASE_FREE_FILES`、`REGISTERED_THREAD_SLEEP_FILES` 三个登记表。只准降不准升；要放宽必须在评审里写清为什么。
 不引入 ArchUnit/Checkstyle：这些规则都是纯文本级别的写法检查，自研一个文件、零新依赖，
 失败信息还能直接指到具体路径。

@@ -55,6 +55,11 @@ class TestConventionTest {
     private static final Pattern JUNIT_FOUR = Pattern.compile("\\borg\\.junit\\.(Test|Before|After|Ignore|runner)\\b");
 
     /**
+     * JUnit 自己的断言类。规范只用 AssertJ，但存量不批量转换，所以按文件数冻结只准降。
+     */
+    private static final Pattern JUNIT_ASSERTIONS = Pattern.compile("\\borg\\.junit\\.jupiter\\.api\\.Assertions\\b");
+
+    /**
      * 形如 {@code 名字(参数) [throws ...] {} 的方法声明；参数表里不允许出现分号和大括号。
      */
     private static final Pattern METHOD = Pattern.compile("(\\w+)\\s*\\([^;{}]*\\)(?:\\s+throws[\\w.,\\s]+)?\\s*\\{");
@@ -96,6 +101,12 @@ class TestConventionTest {
      * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。
      */
     private static final int MAX_PACKAGE_MISMATCHES = 66;
+
+    /**
+     * T4 仍在用 {@code org.junit.jupiter.api.Assertions} 的测试文件数（2026-10-21 实测）。 新文件只准用
+     * AssertJ；改到哪个存量文件就顺手转换一个，转换够数就把本常量调小。
+     */
+    private static final int MAX_JUNIT_ASSERTION_FILES = 134;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。
@@ -180,6 +191,18 @@ class TestConventionTest {
             }
         }
         assertThat(offenders).as("T4 JUnit 4 与 Jupiter 混用会让用例计数不可信").isEmpty();
+    }
+
+    @Test
+    void junitAssertionFilesDoNotGrow() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            if (JUNIT_ASSERTIONS.matcher(source.code()).find()) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T4 断言只用 AssertJ，这批存量只准减；转换一个就把常量调小一格，禁止调大")
+                .hasSizeLessThanOrEqualTo(MAX_JUNIT_ASSERTION_FILES);
     }
 
     @Test
