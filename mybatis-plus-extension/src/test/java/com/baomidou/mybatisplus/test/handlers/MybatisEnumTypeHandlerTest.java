@@ -58,9 +58,6 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isNotPresent();
         assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
         assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isNotPresent();
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isNotPresent();
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isNotPresent();
     }
 
     @Test
