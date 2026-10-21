@@ -20,7 +20,7 @@
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 66 处缺口 |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 27 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
-| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4 | 机器 + 冻结 | 裸 `assert`/JUnit 4 零违规；调用可转换 JUnit 断言的文件 54 |
+| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；调用可转换 JUnit 断言的文件 24 |
 | T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 8（含 6 个已禁用用例）、无用例 `*Test` 9、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | — |
@@ -60,9 +60,14 @@
   这套测试文件半年内改了 334 个，一次性重写会和日常提交撞车。
 - 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。欠账按**能转换的文件数**冻结在
   `MAX_JUNIT_ASSERTION_FILES`（2026-10-21 清空 core、extension、spring、spring-boot-starter（12 个）、
-  `mybatis-plus-jsqlparser-support` 4 个子模块（30 个、702 处调用）后实测 54），转换掉一个就调小一格，禁止调大。
-  剩余欠账集中在 `mybatis-plus`（30）、`mybatis-plus-generator`（23）、`mybatis-plus-up`（1）。
+  `mybatis-plus-jsqlparser-support` 4 个子模块（30 个、702 处调用）、`mybatis-plus`（41 个、711 处调用）后实测 24），
+  转换掉一个就调小一格，禁止调大。剩余欠账集中在 `mybatis-plus-generator`（23）、`mybatis-plus-up`（1）。
   `assertAll`、`assertTimeout` 系列 AssertJ 没有对应物，留在原处是正确写法，不计入欠账。
+- 禁止 `import org.junit.jupiter.api.*;`：它把 `Assertions` 一起请进文件，按类名找 JUnit 断言的扫描会整个漏掉，
+  上一批欠账盘点就这么少算了 10 个文件。要什么就导什么。
+- 换成 AssertJ 时注意**数值断言的重载**：JUnit 的 `assertEquals(3, shortValue)` 会把两边都放宽成 `int`，
+  AssertJ 的 `assertThat(shortValue).isEqualTo(3)` 里 3 装箱成 `Integer`，和 `Short` 永远不相等，直接判红。
+  比 `short`/`byte`/`char` 时把字面量显式转型（`isEqualTo((short) 3)`），别指望编译器。
 
 ## T5 绿必须有意义
 

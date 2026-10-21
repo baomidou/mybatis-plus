@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -92,9 +95,9 @@ class H2Delete1Eq1Test extends BaseTest {
     void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
-        Assertions.assertEquals(0, logicDeleteMapper.selectCount(new QueryWrapper<>()));
+        assertThat(logicDeleteMapper.selectCount(new QueryWrapper<>())).isEqualTo(0);
         List<H2User> userList = queryByName(null);
         System.out.println(userList.size());
-        Assertions.assertNotEquals(0, userList.size());
+        assertThat(userList.size()).isNotEqualTo(0);
     }
 }

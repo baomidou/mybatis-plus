@@ -6,11 +6,12 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -27,14 +28,14 @@ public class OrderByMapperTest extends BaseDbTest<OrderByMapper> {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(OrderByEntity.class);
         for (OrderFieldInfo orderByField : tableInfo.getOrderByFields()) {
             if ("oid".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(3, orderByField.getSort());
-                Assertions.assertEquals(Constants.DESC, orderByField.getType());
+                assertThat(orderByField.getSort()).isEqualTo((short) 3);
+                assertThat(orderByField.getType()).isEqualTo(Constants.DESC);
             } else if ("age".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(2, orderByField.getSort());
-                Assertions.assertEquals(Constants.ASC, orderByField.getType());
+                assertThat(orderByField.getSort()).isEqualTo((short) 2);
+                assertThat(orderByField.getType()).isEqualTo(Constants.ASC);
             } else if ("tel".equals(orderByField.getColumn())) {
-                Assertions.assertEquals(Short.MAX_VALUE, orderByField.getSort());
-                Assertions.assertEquals(Constants.DESC, orderByField.getType());
+                assertThat(orderByField.getSort()).isEqualTo(Short.MAX_VALUE);
+                assertThat(orderByField.getType()).isEqualTo(Constants.DESC);
             }
         }
     }

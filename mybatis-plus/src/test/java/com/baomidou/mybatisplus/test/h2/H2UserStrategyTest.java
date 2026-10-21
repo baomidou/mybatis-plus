@@ -3,11 +3,16 @@ package com.baomidou.mybatisplus.test.h2;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.entity.H2UserStrategy;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserStrategyMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -30,25 +35,24 @@ class H2UserStrategyTest extends BaseTest {
         insertUser.setName("userStrategy").setDesc("updateStrategy=IGNORE").setVersion(1);
         int row = userStrategyMapper.insert(insertUser);
         Long id = insertUser.getTestId();
-        Assertions.assertEquals(1, row);
-        Assertions.assertEquals(3, userStrategyMapper.selectById(id).getTestType(), "autofilled with 3");
+        assertThat(row).isEqualTo(1);
+        assertThat(userStrategyMapper.selectById(id).getTestType()).as("autofilled with 3").isEqualTo(3);
 
         QueryWrapper<H2UserStrategy> wrapper = new QueryWrapper<>(
                 new H2UserStrategy().setDesc("updateStrategy=IGNORE").setTestType(3));
-        Assertions.assertEquals(
-                0, userStrategyMapper.selectCount(wrapper),
-                "name is whereStrategy=IGNORE, so should have where name=null which cause count=0");
+        assertThat(userStrategyMapper.selectCount(wrapper))
+                .as("name is whereStrategy=IGNORE, so should have where name=null which cause count=0").isEqualTo(0);
 
         H2UserStrategy updateUser = new H2UserStrategy().setName("update");
         updateUser.setTestId(id);
-        Assertions.assertEquals(1, userStrategyMapper.updateById(updateUser));
+        assertThat(userStrategyMapper.updateById(updateUser)).isEqualTo(1);
 
         H2UserStrategy selectUser = userStrategyMapper.selectById(id);
-        Assertions.assertEquals("update", selectUser.getName());
-        Assertions.assertNull(
-                selectUser.getDesc(), "desc is updateStrategy=IGNORE, so should have set desc=null when updateById");
-        Assertions.assertNull(
-                selectUser.getTestType(), "handle: strategy=IGNORED, should be set test_type=null when updateById ");
+        assertThat(selectUser.getName()).isEqualTo("update");
+        assertThat(selectUser.getDesc())
+                .as("desc is updateStrategy=IGNORE, so should have set desc=null when updateById").isNull();
+        assertThat(selectUser.getTestType())
+                .as("handle: strategy=IGNORED, should be set test_type=null when updateById ").isNull();
 
     }
 

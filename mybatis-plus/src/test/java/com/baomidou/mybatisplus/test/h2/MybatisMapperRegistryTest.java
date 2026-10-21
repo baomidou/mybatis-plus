@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -25,6 +24,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
 import javax.sql.DataSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2019/4/12.
@@ -66,11 +67,11 @@ class MybatisMapperRegistryTest extends BaseTest {
             Configuration configuration = sqlSessionFactory.getConfiguration();
             MybatisMapperRegistry mapperRegistry = (MybatisMapperRegistry) sqlSessionFactory.getConfiguration()
                     .getMapperRegistry();
-            Assertions.assertTrue(mapperRegistry.hasMapper(H2UserMapper.class));
-            Assertions.assertTrue(mapperRegistry.hasMapper(H2StudentChildrenMapper.class));
+            assertThat(mapperRegistry.hasMapper(H2UserMapper.class)).isTrue();
+            assertThat(mapperRegistry.hasMapper(H2StudentChildrenMapper.class)).isTrue();
             H2StudentMapper studentMapper = mapperRegistry.getMapper(H2StudentMapper.class, sqlSession);
 
-            Assertions.assertTrue(configuration.hasStatement(H2StudentMapper.class.getName() + ".selectById"));
+            assertThat(configuration.hasStatement(H2StudentMapper.class.getName() + ".selectById")).isTrue();
             studentMapper.selectById(1);
 
             Field field = mapperRegistry.getClass().getDeclaredField("knownMappers");
@@ -81,13 +82,13 @@ class MybatisMapperRegistryTest extends BaseTest {
 
             H2StudentChildrenMapper h2StudentChildrenMapper = mapperRegistry
                     .getMapper(H2StudentChildrenMapper.class, sqlSession);
-            Assertions.assertTrue(configuration.hasStatement(H2StudentChildrenMapper.class.getName() + ".selectById"));
+            assertThat(configuration.hasStatement(H2StudentChildrenMapper.class.getName() + ".selectById")).isTrue();
             Map<Method, ?> methodCache = mybatisMapperProxyFactory.getMethodCache();
-            Assertions.assertTrue(methodCache.isEmpty());
+            assertThat(methodCache.isEmpty()).isTrue();
 
             h2StudentChildrenMapper.selectById(2);
             methodCache = mybatisMapperProxyFactory.getMethodCache();
-            Assertions.assertFalse(methodCache.isEmpty());
+            assertThat(methodCache.isEmpty()).isFalse();
         }
     }
 }

@@ -9,7 +9,10 @@ import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,6 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
@@ -35,42 +40,42 @@ class CacheTest {
         Cache cache = getCache();
         IPage<CacheModel> cacheModelIPage1 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
         IPage<CacheModel> cacheModelIPage2 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
-        Assertions.assertEquals(2, cache.getSize());
-        Assertions.assertEquals(cacheModelIPage1.getTotal(), cacheModelIPage2.getTotal());
-        Assertions.assertEquals(cacheModelIPage1.getRecords().size(), cacheModelIPage2.getRecords().size());
+        assertThat(cache.getSize()).isEqualTo(2);
+        assertThat(cacheModelIPage2.getTotal()).isEqualTo(cacheModelIPage1.getTotal());
+        assertThat(cacheModelIPage2.getRecords().size()).isEqualTo(cacheModelIPage1.getRecords().size());
         IPage<CacheModel> cacheModelIPage3 = cacheService.page(new Page<>(2, 3), new QueryWrapper<>());
-        Assertions.assertEquals(cacheModelIPage1.getTotal(), cacheModelIPage3.getTotal());
-        Assertions.assertEquals(2, cacheModelIPage3.getRecords().size());
-        Assertions.assertEquals(3, cache.getSize());
+        assertThat(cacheModelIPage3.getTotal()).isEqualTo(cacheModelIPage1.getTotal());
+        assertThat(cacheModelIPage3.getRecords().size()).isEqualTo(2);
+        assertThat(cache.getSize()).isEqualTo(3);
         IPage<CacheModel> cacheModelIPage4 = cacheService.page(new Page<>(2, 3, false), new QueryWrapper<>());
-        Assertions.assertEquals(0L, cacheModelIPage4.getTotal());
-        Assertions.assertEquals(2, cacheModelIPage4.getRecords().size());
-        Assertions.assertEquals(3, cache.getSize());
+        assertThat(cacheModelIPage4.getTotal()).isEqualTo(0L);
+        assertThat(cacheModelIPage4.getRecords().size()).isEqualTo(2);
+        assertThat(cache.getSize()).isEqualTo(3);
         IPage<CacheModel> cacheModelIPage5 = cacheService.page(new Page<>(2, 3, true), new QueryWrapper<>());
-        Assertions.assertEquals(cacheModelIPage5.getTotal(), cacheModelIPage3.getTotal());
-        Assertions.assertEquals(2, cacheModelIPage5.getRecords().size());
+        assertThat(cacheModelIPage3.getTotal()).isEqualTo(cacheModelIPage5.getTotal());
+        assertThat(cacheModelIPage5.getRecords().size()).isEqualTo(2);
         IPage<CacheModel> cacheModelIPage6 = cacheService
                 .page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 2L));
-        Assertions.assertEquals(4, cacheModelIPage6.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage6.getRecords().size());
+        assertThat(cacheModelIPage6.getTotal()).isEqualTo(4);
+        assertThat(cacheModelIPage6.getRecords().size()).isEqualTo(3);
         IPage<CacheModel> cacheModelIPage7 = cacheService
                 .page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 2L));
-        Assertions.assertEquals(0L, cacheModelIPage7.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage7.getRecords().size());
+        assertThat(cacheModelIPage7.getTotal()).isEqualTo(0L);
+        assertThat(cacheModelIPage7.getRecords().size()).isEqualTo(3);
         IPage<CacheModel> cacheModelIPage8 = cacheService
                 .page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
-        Assertions.assertEquals(0L, cacheModelIPage8.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage8.getRecords().size());
+        assertThat(cacheModelIPage8.getTotal()).isEqualTo(0L);
+        assertThat(cacheModelIPage8.getRecords().size()).isEqualTo(3);
         cacheModelIPage8 = cacheService.page(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
-        Assertions.assertEquals(0L, cacheModelIPage8.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage8.getRecords().size());
+        assertThat(cacheModelIPage8.getTotal()).isEqualTo(0L);
+        assertThat(cacheModelIPage8.getRecords().size()).isEqualTo(3);
         IPage<CacheModel> cacheModelIPage9 = cacheService
                 .page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
-        Assertions.assertEquals(3L, cacheModelIPage9.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage9.getRecords().size());
+        assertThat(cacheModelIPage9.getTotal()).isEqualTo(3L);
+        assertThat(cacheModelIPage9.getRecords().size()).isEqualTo(3);
         cacheModelIPage9 = cacheService.page(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
-        Assertions.assertEquals(3L, cacheModelIPage9.getTotal());
-        Assertions.assertEquals(3, cacheModelIPage9.getRecords().size());
+        assertThat(cacheModelIPage9.getTotal()).isEqualTo(3L);
+        assertThat(cacheModelIPage9.getRecords().size()).isEqualTo(3);
     }
 
     @Test
@@ -79,13 +84,13 @@ class CacheTest {
         CacheModel model = new CacheModel("靓仔");
         cacheService.save(model);
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         cacheService.getById(model.getId());
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(1);
         cacheService.updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));
-        Assertions.assertEquals(0, cache.getSize());
-        Assertions.assertEquals("旺仔", cacheService.getById(model.getId()).getName());
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
+        assertThat(cacheService.getById(model.getId()).getName()).isEqualTo("旺仔");
+        assertThat(cache.getSize()).isEqualTo(1);
     }
 
     @Test
@@ -93,10 +98,10 @@ class CacheTest {
     void testBatchTransactionalClear1() {
         Cache cache = getCache();
         long id = cacheService.testBatchTransactionalClear1();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertEquals("旺仔", cacheModel.getName());
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel.getName()).isEqualTo("旺仔");
     }
 
     @Test
@@ -104,10 +109,10 @@ class CacheTest {
     void testBatchTransactionalClear2() {
         long id = cacheService.testBatchTransactionalClear2();
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertEquals("小红", cacheModel.getName());
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel.getName()).isEqualTo("小红");
     }
 
     @Test
@@ -115,10 +120,10 @@ class CacheTest {
     void testBatchTransactionalClear3() {
         long id = cacheService.testBatchTransactionalClear3();
         Cache cache = getCache();
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(1);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertEquals("小红", cacheModel.getName());
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel.getName()).isEqualTo("小红");
     }
 
     @Test
@@ -126,10 +131,10 @@ class CacheTest {
     void testBatchTransactionalClear4() {
         long id = cacheService.testBatchTransactionalClear4();
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertEquals("旺仔", cacheModel.getName());
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel.getName()).isEqualTo("旺仔");
     }
 
     @Test
@@ -137,10 +142,10 @@ class CacheTest {
     void testBatchTransactionalClear5() {
         long id = cacheService.testBatchTransactionalClear5();
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertNull(cacheModel);
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel).isNull();
     }
 
     @Test
@@ -148,10 +153,10 @@ class CacheTest {
     void testBatchTransactionalClear6() {
         long id = cacheService.testBatchTransactionalClear6();
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertNull(cacheModel);
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel).isNull();
     }
 
     @Test
@@ -159,10 +164,10 @@ class CacheTest {
     void testBatchTransactionalClear7() {
         long id = cacheService.testBatchTransactionalClear7();
         Cache cache = getCache();
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
-        Assertions.assertEquals(1, cache.getSize());
-        Assertions.assertNull(cacheModel);
+        assertThat(cache.getSize()).isEqualTo(1);
+        assertThat(cacheModel).isNull();
     }
 
     @Test
@@ -172,29 +177,29 @@ class CacheTest {
         Page<CacheModel> page = new Page<>(1, 10, false);
         page.setOrders(Collections.singletonList(OrderItem.asc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(1);
         page.setOrders(Arrays.asList(OrderItem.asc("id"), OrderItem.asc("name")));
         cacheService.page(page);
-        Assertions.assertEquals(2, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(2);
         page.setOrders(Arrays.asList(OrderItem.asc("name"), OrderItem.asc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(3, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(3);
         page.setOrders(Collections.singletonList(OrderItem.desc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(4, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(4);
         page = new Page<>(1, 10, true);
         page.setOrders(Collections.singletonList(OrderItem.asc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(5, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(5);
         page.setOrders(Arrays.asList(OrderItem.asc("id"), OrderItem.asc("name")));
         cacheService.page(page);
-        Assertions.assertEquals(5, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(5);
         page.setOrders(Arrays.asList(OrderItem.asc("name"), OrderItem.asc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(5, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(5);
         page.setOrders(Collections.singletonList(OrderItem.desc("id")));
         cacheService.page(page);
-        Assertions.assertEquals(5, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(5);
     }
 
     @Test
@@ -202,17 +207,17 @@ class CacheTest {
         Cache cache = getCache();
         cache.clear();
         CustomPage<CacheModel> page1 = new CustomPage<>(2, 10, false);
-        Assertions.assertEquals(0, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(0);
         cacheService.page(page1);
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(1);
         cacheService.page(page1);
-        Assertions.assertEquals(1, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(1);
         //页数其他条件不变，改变分页偏移量的骚操作.
         page1.setOffset(12L);
         cacheService.page(page1);
-        Assertions.assertEquals(2, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(2);
         cacheService.page(page1);
-        Assertions.assertEquals(2, cache.getSize());
+        assertThat(cache.getSize()).isEqualTo(2);
     }
 
     //    @Test

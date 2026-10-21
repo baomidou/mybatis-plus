@@ -2,11 +2,12 @@ package com.baomidou.mybatisplus.test;
 
 import lombok.Data;
 import org.apache.ibatis.scripting.xmltags.OgnlCache;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiuqiu
@@ -30,22 +31,22 @@ class OgnlTest {
         Map<String, Object> propertiesMap = new HashMap<>();
         propertiesMap.put("color", "yellow");
         propertiesMap.put("size", "xxxL");
-        Assertions.assertEquals("yellow", OgnlCache.getValue("color", propertiesMap));
-        Assertions.assertEquals(2, OgnlCache.getValue("size", propertiesMap));
-        Assertions.assertFalse((Boolean) OgnlCache.getValue("isEmpty", propertiesMap));
-        Assertions.assertNull(OgnlCache.getValue("['isEmpty']", propertiesMap));
-        Assertions.assertEquals("xxxL", OgnlCache.getValue("['size']", propertiesMap));
-        Assertions.assertEquals("yellow", OgnlCache.getValue("['color']", propertiesMap));
+        assertThat(OgnlCache.getValue("color", propertiesMap)).isEqualTo("yellow");
+        assertThat(OgnlCache.getValue("size", propertiesMap)).isEqualTo(2);
+        assertThat((Boolean) OgnlCache.getValue("isEmpty", propertiesMap)).isFalse();
+        assertThat(OgnlCache.getValue("['isEmpty']", propertiesMap)).isNull();
+        assertThat(OgnlCache.getValue("['size']", propertiesMap)).isEqualTo("xxxL");
+        assertThat(OgnlCache.getValue("['color']", propertiesMap)).isEqualTo("yellow");
         Bean bean = new Bean();
         bean.setName("靓仔");
         bean.setProperties(propertiesMap);
-        Assertions.assertEquals("靓仔", OgnlCache.getValue("name", bean));
-        Assertions.assertEquals("靓仔", OgnlCache.getValue("['name']", bean));
-        Assertions.assertEquals(2, OgnlCache.getValue("properties.size", bean));
-        Assertions.assertEquals("xxxL", OgnlCache.getValue("properties['size']", bean));
-        Assertions.assertEquals("yellow", OgnlCache.getValue("properties.color", bean));
-        Assertions.assertEquals("yellow", OgnlCache.getValue("properties['color']", bean));
-        Assertions.assertFalse((Boolean) OgnlCache.getValue("properties.isEmpty", bean));
-        Assertions.assertNull(OgnlCache.getValue("properties['isEmpty']", bean));
+        assertThat(OgnlCache.getValue("name", bean)).isEqualTo("靓仔");
+        assertThat(OgnlCache.getValue("['name']", bean)).isEqualTo("靓仔");
+        assertThat(OgnlCache.getValue("properties.size", bean)).isEqualTo(2);
+        assertThat(OgnlCache.getValue("properties['size']", bean)).isEqualTo("xxxL");
+        assertThat(OgnlCache.getValue("properties.color", bean)).isEqualTo("yellow");
+        assertThat(OgnlCache.getValue("properties['color']", bean)).isEqualTo("yellow");
+        assertThat((Boolean) OgnlCache.getValue("properties.isEmpty", bean)).isFalse();
+        assertThat(OgnlCache.getValue("properties['isEmpty']", bean)).isNull();
     }
 }

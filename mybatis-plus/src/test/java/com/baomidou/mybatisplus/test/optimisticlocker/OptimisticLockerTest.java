@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.plugin.Interceptor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -60,10 +59,10 @@ public class OptimisticLockerTest extends BaseDbTest<EntityMapper> {
         var entity3 = new Entity().setName("testBatch").setVersion(1);
         var entityList = List.of(entity1, entity2, entity3);
         doTest(mapper -> {
-            Assertions.assertTrue(SqlHelper.retBool(mapper.insert(entityList)));
-            Assertions.assertTrue(SqlHelper.retBool(mapper.updateById(entityList)));
+            assertThat(SqlHelper.retBool(mapper.insert(entityList))).isTrue();
+            assertThat(SqlHelper.retBool(mapper.updateById(entityList))).isTrue();
             entity2.setVersion(6);
-            Assertions.assertFalse(SqlHelper.retBool(mapper.updateById(entityList)));
+            assertThat(SqlHelper.retBool(mapper.updateById(entityList))).isFalse();
         });
     }
 

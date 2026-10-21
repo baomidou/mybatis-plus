@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static com.baomidou.mybatisplus.core.enums.SqlMethod.UPSERT_ONE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author: fly <br>
@@ -37,10 +37,10 @@ public class PhoenixTest {
         int size = 10;
         for (int i = 0; i < 10; i++) {
             PhoenixTestInfo testInfo = new PhoenixTestInfo().setId(i).setName("test");
-            assertEquals(1, mapper.upsert(testInfo));
+            assertThat(mapper.upsert(testInfo)).isEqualTo(1);
         }
 
-        assertEquals(size, mapper.selectList(Wrappers.emptyWrapper()).size());
+        assertThat(mapper.selectList(Wrappers.emptyWrapper()).size()).isEqualTo(size);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class PhoenixTest {
             sqlSession.commit();
             //            sqlSession.flushStatements();
         }
-        assertEquals(size, mapper.selectList(Wrappers.emptyWrapper()).size());
+        assertThat(mapper.selectList(Wrappers.emptyWrapper()).size()).isEqualTo(size);
     }
 
     @Test
@@ -63,10 +63,10 @@ public class PhoenixTest {
         Page<PhoenixTestInfo> page = new Page<>(2, 100);
         IPage<PhoenixTestInfo> result = mapper.selectPage(page, Wrappers.emptyWrapper());
 
-        assertEquals(10000, result.getTotal());
-        assertEquals(2, result.getCurrent());
-        assertEquals(100, result.getPages());
-        assertEquals(100, result.getRecords().size());
+        assertThat(result.getTotal()).isEqualTo(10000);
+        assertThat(result.getCurrent()).isEqualTo(2);
+        assertThat(result.getPages()).isEqualTo(100);
+        assertThat(result.getRecords().size()).isEqualTo(100);
 
     }
 

@@ -32,7 +32,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
@@ -52,6 +51,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -98,7 +100,7 @@ class H2UserTest extends BaseTest {
         String name = "自定义insert";
         int version = 1;
         int row = userService.myInsert(name, version);
-        Assertions.assertEquals(1, row);
+        assertThat(row).isEqualTo(1);
     }
 
     @Test
@@ -107,7 +109,7 @@ class H2UserTest extends BaseTest {
         String name = "自定义insert带Param注解";
         int version = 1;
         int row = userService.myInsertWithParam(name, version);
-        Assertions.assertEquals(1, row);
+        assertThat(row).isEqualTo(1);
     }
 
     @Test
@@ -116,14 +118,14 @@ class H2UserTest extends BaseTest {
         String name = "自定义insert带Param注解";
         int version = 1;
         int row = userService.myInsertWithoutParam(name, version);
-        Assertions.assertEquals(1, row);
+        assertThat(row).isEqualTo(1);
     }
 
     @Test
     @Order(6)
     void testSelectLambdaById() {
         H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getTestId, 101));
-        Assertions.assertNotNull(h2User);
+        assertThat(h2User).isNotNull();
     }
 
     @Test
@@ -134,7 +136,7 @@ class H2UserTest extends BaseTest {
                 Wrappers.<H2User>lambdaQuery().apply(
                         "name={0,typeHandler=" + H2userNameJsonTypeHandler.class.getCanonicalName() + "}",
                         "{\"id\":101,\"name\":\"Tomcat\"}"));
-        Assertions.assertNotNull(h2User);
+        assertThat(h2User).isNotNull();
     }
 
     @Test
@@ -144,9 +146,9 @@ class H2UserTest extends BaseTest {
         ew.select("test_id, name, age");
         List<H2User> list = userService.list(ew);
         for (H2User u : list) {
-            Assertions.assertNotNull(u.getTestId());
-            Assertions.assertNotNull(u.getName());
-            Assertions.assertNull(u.getPrice());
+            assertThat(u.getTestId()).isNotNull();
+            assertThat(u.getName()).isNotNull();
+            assertThat(u.getPrice()).isNull();
         }
     }
 
@@ -159,10 +161,10 @@ class H2UserTest extends BaseTest {
         param.put("ageFrom", 1);
         param.put("ageTo", 100);
         List<H2User> list = userService.queryWithParamInSelectStatememt(param);
-        Assertions.assertNotNull(list);
+        assertThat(list).isNotNull();
         for (H2User u : list) {
-            Assertions.assertEquals(nameParam, u.getName());
-            Assertions.assertNotNull(u.getTestId());
+            assertThat(u.getName()).isEqualTo(nameParam);
+            assertThat(u.getTestId()).isNotNull();
         }
     }
 
@@ -175,7 +177,7 @@ class H2UserTest extends BaseTest {
         param.put("ageFrom", 1);
         param.put("ageTo", 100);
         int count = userService.selectCountWithParamInSelectItems(param);
-        Assertions.assertNotEquals(0, count);
+        assertThat(count).isNotEqualTo(0);
     }
 
     @Test
@@ -195,18 +197,18 @@ class H2UserTest extends BaseTest {
         userService.save(user);
 
         H2User userDB = userService.getById(id);
-        Assertions.assertEquals(1, userDB.getVersion().intValue());
-        Assertions.assertEquals(0, userDB.getCreatedDt().compareTo(dateTime));
+        assertThat(userDB.getVersion().intValue()).isEqualTo(1);
+        assertThat(userDB.getCreatedDt().compareTo(dateTime)).isEqualTo(0);
 
         userDB.setName("992");
         userDB.setCreatedDt(dateTime);
         System.out.println("===============================================");
         userService.updateById(userDB);
-        Assertions.assertEquals(2, userDB.getVersion().intValue(), "updated version value should be updated to entity");
+        assertThat(userDB.getVersion().intValue()).as("updated version value should be updated to entity").isEqualTo(2);
 
         userDB = userService.getById(id);
-        Assertions.assertEquals(2, userDB.getVersion().intValue());
-        Assertions.assertEquals("992", userDB.getName());
+        assertThat(userDB.getVersion().intValue()).isEqualTo(2);
+        assertThat(userDB.getName()).isEqualTo("992");
         userDB.setCreatedDt(LocalDateTime.now());
         userService.updateById(userDB);
         System.out.println("===============================================");
@@ -242,7 +244,7 @@ class H2UserTest extends BaseTest {
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             if (u.getTestId().equals(id99)) {
-                Assertions.assertEquals(100, u.getVersion().intValue(), "optLocker should update version+=1");
+                assertThat(u.getVersion().intValue()).as("optLocker should update version+=1").isEqualTo(100);
             }
         }
     }
@@ -277,25 +279,24 @@ class H2UserTest extends BaseTest {
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             if (u.getTestId().equals(id99)) {
-                Assertions.assertEquals(100, u.getVersion().intValue(), "optLocker should update version+=1");
+                assertThat(u.getVersion().intValue()).as("optLocker should update version+=1").isEqualTo(100);
             } else {
-                Assertions.assertEquals(
-                        idPriceMap.get(u.getTestId()), u.getPrice(), "other records should not be updated");
+                assertThat(u.getPrice()).as("other records should not be updated")
+                        .isEqualTo(idPriceMap.get(u.getTestId()));
             }
         }
         userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
         for (H2User u : userService.list(new QueryWrapper<>())) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
-            Assertions.assertEquals(
-                    u.getPrice().setScale(2, RoundingMode.HALF_UP).intValue(),
-                    BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP).intValue(), "all records should be updated");
+            assertThat(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP).intValue()).as("all records should be updated")
+                    .isEqualTo(u.getPrice().setScale(2, RoundingMode.HALF_UP).intValue());
         }
         try {
             initBatchLimitation(3);
             userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
-            Assertions.fail("SHOULD NOT REACH HERE");
+            fail("SHOULD NOT REACH HERE");
         } catch (Exception e) {
-            Assertions.assertTrue(checkIsDataUpdateLimitationException(e));
+            assertThat(checkIsDataUpdateLimitationException(e)).isTrue();
         }
     }
 
@@ -316,7 +317,7 @@ class H2UserTest extends BaseTest {
             userService.testBatchTransactional();
         } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "batch"));
-            Assertions.assertTrue(CollectionUtils.isEmpty(list));
+            assertThat(CollectionUtils.isEmpty(list)).isTrue();
         }
     }
 
@@ -327,7 +328,7 @@ class H2UserTest extends BaseTest {
             userService.testSimpleTransactional();
         } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
-            Assertions.assertTrue(CollectionUtils.isEmpty(list));
+            assertThat(CollectionUtils.isEmpty(list)).isTrue();
         }
     }
 
@@ -338,85 +339,92 @@ class H2UserTest extends BaseTest {
             userService.testSaveOrUpdateBatchTransactional();
         } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "savOrUpdate"));
-            Assertions.assertTrue(CollectionUtils.isEmpty(list));
+            assertThat(CollectionUtils.isEmpty(list)).isTrue();
         }
     }
 
     @Test
     @Order(21)
     void testSaveBatch() {
-        Assertions.assertTrue(userService.saveBatch(List.of(new H2User("saveBatch0"))));
-        Assertions.assertTrue(
+        assertThat(userService.saveBatch(List.of(new H2User("saveBatch0")))).isTrue();
+        assertThat(
                 userService.saveBatch(
                         List.of(
                                 new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"),
-                                new H2User("saveBatch4"))));
-        Assertions.assertEquals(5, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
-        Assertions.assertTrue(
+                                new H2User("saveBatch4"))))
+                .isTrue();
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "saveBatch"))).isEqualTo(5);
+        assertThat(
                 userService.saveBatch(
                         List.of(
                                 new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"),
                                 new H2User("saveBatch8")),
-                        2));
-        Assertions.assertEquals(9, userService.count(new QueryWrapper<H2User>().like("name", "saveBatch")));
+                        2))
+                .isTrue();
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "saveBatch"))).isEqualTo(9);
     }
 
     @Test
     @Order(22)
     void testUpdateBatch() {
-        Assertions.assertTrue(
+        assertThat(
                 userService.updateBatchById(
                         Arrays.asList(
                                 new H2User(1010L, "batch1010"), new H2User(1011L, "batch1011"),
-                                new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012"))));
-        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
-        Assertions.assertEquals("batch1011", userService.getById(1011L).getName());
-        Assertions.assertEquals("batch1012", userService.getById(1012L).getName());
-        Assertions.assertTrue(
+                                new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012"))))
+                .isTrue();
+        assertThat(userService.getById(1010L).getName()).isEqualTo("batch1010");
+        assertThat(userService.getById(1011L).getName()).isEqualTo("batch1011");
+        assertThat(userService.getById(1012L).getName()).isEqualTo("batch1012");
+        assertThat(
                 userService.updateBatchById(
                         Arrays.asList(
                                 new H2User(1010L, "batch1010A"), new H2User(1011L, "batch1011A"),
                                 new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012")),
-                        1));
-        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
-        Assertions.assertEquals("batch1011A", userService.getById(1011L).getName());
-        Assertions.assertEquals("batch1012", userService.getById(1012L).getName());
+                        1))
+                .isTrue();
+        assertThat(userService.getById(1010L).getName()).isEqualTo("batch1010");
+        assertThat(userService.getById(1011L).getName()).isEqualTo("batch1011A");
+        assertThat(userService.getById(1012L).getName()).isEqualTo("batch1012");
     }
 
     @Test
     @Order(23)
     void testSaveOrUpdateBatch() {
-        Assertions.assertTrue(
+        assertThat(
                 userService.saveOrUpdateBatch(
                         Arrays.asList(
                                 new H2User(1010L, "batch1010"), new H2User("batch1011"), new H2User(1010L, "batch1010"),
-                                new H2User("batch1015"))));
-        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
-        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1011")));
-        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1015")));
-        Assertions.assertTrue(
+                                new H2User("batch1015"))))
+                .isTrue();
+        assertThat(userService.getById(1010L).getName()).isEqualTo("batch1010");
+        assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011"))).isEqualTo(1);
+        assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "batch1015"))).isEqualTo(1);
+        assertThat(
                 userService.saveOrUpdateBatch(
                         Arrays.asList(
                                 new H2User(1010L, "batch1010A"), new H2User("batch1011AB"),
                                 new H2User(1010L, "batch1010"), new H2User("batch1016")),
-                        1));
-        Assertions.assertEquals("batch1010", userService.getById(1010L).getName());
-        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1011AB")));
-        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "batch1016")));
+                        1))
+                .isTrue();
+        assertThat(userService.getById(1010L).getName()).isEqualTo("batch1010");
+        assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011AB"))).isEqualTo(1);
+        assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "batch1016"))).isEqualTo(1);
     }
 
     @Test
     @Order(24)
     void testSimpleAndBatch() {
-        Assertions.assertTrue(userService.save(new H2User("testSimpleAndBatch1", 0)));
-        Assertions.assertEquals(1, userService.count(new QueryWrapper<H2User>().eq("name", "testSimpleAndBatch1")));
-        Assertions.assertTrue(
+        assertThat(userService.save(new H2User("testSimpleAndBatch1", 0))).isTrue();
+        assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "testSimpleAndBatch1"))).isEqualTo(1);
+        assertThat(
                 userService.saveOrUpdateBatch(
                         Arrays.asList(
                                 new H2User("testSimpleAndBatch2"), new H2User("testSimpleAndBatch3"),
                                 new H2User("testSimpleAndBatch4")),
-                        1));
-        Assertions.assertEquals(4, userService.count(new QueryWrapper<H2User>().like("name", "testSimpleAndBatch")));
+                        1))
+                .isTrue();
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "testSimpleAndBatch"))).isEqualTo(4);
     }
 
     @Test
@@ -426,7 +434,7 @@ class H2UserTest extends BaseTest {
             userService.testSimpleAndBatchTransactional();
         } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simpleAndBatchTx"));
-            Assertions.assertTrue(CollectionUtils.isEmpty(list));
+            assertThat(CollectionUtils.isEmpty(list)).isTrue();
         }
     }
 
@@ -434,19 +442,19 @@ class H2UserTest extends BaseTest {
     @Order(26)
     void testServiceImplInnerLambdaQuery() {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").one();
-        Assertions.assertNotNull(tomcat);
-        Assertions.assertNotEquals(0L, userService.lambdaQuery().like(H2User::getName, "a").count().longValue());
+        assertThat(tomcat).isNotNull();
+        assertThat(userService.lambdaQuery().like(H2User::getName, "a").count().longValue()).isNotEqualTo(0L);
 
         List<H2User> users = userService.lambdaQuery().like(H2User::getName, "T").ne(H2User::getAge, AgeEnum.TWO)
                 .ge(H2User::getVersion, 1).isNull(H2User::getPrice).list();
-        Assertions.assertTrue(users.isEmpty());
+        assertThat(users.isEmpty()).isTrue();
     }
 
     @Test
     @Order(27)
     void testServiceChainQuery() {
         H2User tomcat = userService.query().eq("name", "Tomcat").one();
-        Assertions.assertNotNull(tomcat, "tomcat should not be null");
+        assertThat(tomcat).as("tomcat should not be null").isNotNull();
         userService.query().nested(i -> i.eq("name", "Tomcat")).list();
         userService.lambdaUpdate().set(H2User::getName, "Tom").eq(H2User::getName, "Tomcat").update();
     }
@@ -457,7 +465,7 @@ class H2UserTest extends BaseTest {
         try {
             userService.saveBatch(Arrays.asList(new H2User(1L, "tom"), new H2User(1L, "andy")));
         } catch (Exception e) {
-            Assertions.assertInstanceOf(DataAccessException.class, e);
+            assertThat(e).isInstanceOf(DataAccessException.class);
         }
     }
 
@@ -467,18 +475,18 @@ class H2UserTest extends BaseTest {
     void testClearSqlSessionCache() {
         H2User h2User;
         h2User = userService.getById(996102919L);
-        Assertions.assertNull(h2User);
+        assertThat(h2User).isNull();
         userService.saveBatch(Collections.singletonList(new H2User(996102919L, "靓仔")));
         h2User = userService.getById(996102919L);
-        Assertions.assertNotNull(h2User);
+        assertThat(h2User).isNotNull();
     }
 
     @Test
     @Order(30)
     void testSaveBatchNoTransactional1() {
         userService.testSaveBatchNoTransactional1();
-        Assertions.assertEquals(
-                3, userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional1")));
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional1")))
+                .isEqualTo(3);
     }
 
     @Test
@@ -487,20 +495,20 @@ class H2UserTest extends BaseTest {
         try {
             userService.testSaveBatchNoTransactional2();
         } catch (Exception e) {
-            Assertions.assertEquals(
-                    3, userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional2")));
+            assertThat(userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional2")))
+                    .isEqualTo(3);
         }
     }
 
     @Test
     @Order(31)
     void testSpaceCharacter() {
-        Assertions.assertFalse(StringUtils.isNotBlank(" "));
-        Assertions.assertTrue(StringUtils.checkValNotNull(" "));
+        assertThat(StringUtils.isNotBlank(" ")).isFalse();
+        assertThat(StringUtils.checkValNotNull(" ")).isTrue();
         H2User h2User = new H2User();
         h2User.setName(" ");
-        Assertions.assertTrue(
-                CollectionUtils.isEmpty(userService.list(new QueryWrapper<>(h2User).gt("age", 1).lt("age", 5))));
+        assertThat(CollectionUtils.isEmpty(userService.list(new QueryWrapper<>(h2User).gt("age", 1).lt("age", 5))))
+                .isTrue();
     }
 
     @Test
@@ -509,7 +517,7 @@ class H2UserTest extends BaseTest {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testCustomSqlSegment(new QueryWrapper<H2User>().like("name", "y%"));
-        Assertions.assertEquals(2, h2Users.size());
+        assertThat(h2Users.size()).isEqualTo(2);
     }
 
     @Test
@@ -518,7 +526,7 @@ class H2UserTest extends BaseTest {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testWrapperSetAliasByParam(new QueryWrapper<H2User>().like("name", "y%"));
-        Assertions.assertEquals(2, h2Users.size());
+        assertThat(h2Users.size()).isEqualTo(2);
     }
 
     @Test
@@ -542,20 +550,20 @@ class H2UserTest extends BaseTest {
             }
         }.eq("name", "Jerry");
         List<H2User> h2Users = userService.testMultiWrapperQuery(leftTable, rightTable);
-        Assertions.assertEquals(1, h2Users.size());
+        assertThat(h2Users.size()).isEqualTo(1);
     }
 
     @Test
     @Order(35)
     void testUpdateWrapperSetAliasByParam() {
         H2User user = new H2User("aliasBefore", AgeEnum.ONE);
-        Assertions.assertTrue(userService.save(user));
+        assertThat(userService.save(user)).isTrue();
 
         UpdateWrapper<H2User> updateWrapper = new UpdateWrapper<H2User>().set("name", "aliasAfter")
                 .eq("test_id", user.getTestId());
 
-        Assertions.assertEquals(1, h2UserMapper.testUpdateWrapperSetAliasByParam(updateWrapper));
-        Assertions.assertEquals("aliasAfter", userService.getById(user.getTestId()).getName());
+        assertThat(h2UserMapper.testUpdateWrapperSetAliasByParam(updateWrapper)).isEqualTo(1);
+        assertThat(userService.getById(user.getTestId()).getName()).isEqualTo("aliasAfter");
     }
 
     @Test
@@ -570,15 +578,15 @@ class H2UserTest extends BaseTest {
     void notParser() throws Exception {
         final String targetSql1 = "SELECT * FROM user WHERE id NOT LIKE ?";
         final Select select = (Select) CCJSqlParserUtil.parse(targetSql1);
-        Assertions.assertEquals(targetSql1, select.toString());
+        assertThat(select.toString()).isEqualTo(targetSql1);
 
         final String targetSql2 = "SELECT * FROM user WHERE id NOT IN (?)";
         final Select select2 = (Select) CCJSqlParserUtil.parse(targetSql2);
-        Assertions.assertEquals(targetSql2, select2.toString());
+        assertThat(select2.toString()).isEqualTo(targetSql2);
 
         final String targetSql3 = "SELECT * FROM user WHERE id IS NOT NULL";
         final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
-        Assertions.assertEquals(targetSql3, select3.toString());
+        assertThat(select3.toString()).isEqualTo(targetSql3);
     }
 
     /**
@@ -623,16 +631,16 @@ class H2UserTest extends BaseTest {
     void testSimpleWrapperClear() {
         userService.save(new H2User("逗号", AgeEnum.TWO));
         QueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().eq("name", "咩咩");
-        Assertions.assertEquals(0, userService.count(queryWrapper));
+        assertThat(userService.count(queryWrapper)).isEqualTo(0);
         queryWrapper.clear();
         queryWrapper.eq("name", "逗号");
-        Assertions.assertEquals(1, userService.count(queryWrapper));
+        assertThat(userService.count(queryWrapper)).isEqualTo(1);
         UpdateWrapper<H2User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("name", "逗号二号");
-        Assertions.assertFalse(userService.update(updateWrapper.eq("name", "逗号一号")));
+        assertThat(userService.update(updateWrapper.eq("name", "逗号一号"))).isFalse();
         updateWrapper.clear();
         updateWrapper.set("name", "逗号一号");
-        Assertions.assertTrue(userService.update(updateWrapper.eq("name", "逗号")));
+        assertThat(userService.update(updateWrapper.eq("name", "逗号"))).isTrue();
     }
 
     @Test
@@ -640,16 +648,16 @@ class H2UserTest extends BaseTest {
         userService.save(new H2User("小红", AgeEnum.TWO));
         LambdaQueryWrapper<H2User> lambdaQueryWrapper = new QueryWrapper<H2User>().lambda().eq(H2User::getName, "小宝");
         lambdaQueryWrapper.orderByDesc(H2User::getName);
-        Assertions.assertEquals(0, userService.count(lambdaQueryWrapper));
+        assertThat(userService.count(lambdaQueryWrapper)).isEqualTo(0);
         lambdaQueryWrapper.clear();
         lambdaQueryWrapper.eq(H2User::getName, "小红");
-        Assertions.assertEquals(1, userService.count(lambdaQueryWrapper));
+        assertThat(userService.count(lambdaQueryWrapper)).isEqualTo(1);
         LambdaUpdateWrapper<H2User> lambdaUpdateWrapper = new UpdateWrapper<H2User>().lambda()
                 .set(H2User::getName, "小红二号");
-        Assertions.assertFalse(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红一号")));
+        assertThat(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红一号"))).isFalse();
         lambdaUpdateWrapper.clear();
         lambdaUpdateWrapper.set(H2User::getName, "小红一号");
-        Assertions.assertTrue(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红")));
+        assertThat(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红"))).isTrue();
     }
 
     @Test
@@ -657,11 +665,11 @@ class H2UserTest extends BaseTest {
         H2User h2User = new H2User("逻辑删除(根据ID)不填充", AgeEnum.TWO);
         userService.save(h2User);
         userService.removeById(h2User.getTestId());
-        Assertions.assertNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNull();
         h2User = new H2User("测试逻辑(根据实体)删除填充", AgeEnum.TWO);
         userService.save(h2User);
         userService.removeById(h2User);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
     }
 
     /**
@@ -698,38 +706,39 @@ class H2UserTest extends BaseTest {
         h2UserMapper.insert(h2User);
         h2UserMapper.deleteById(h2User.getTestId());
         h2User = h2UserMapper.getById(h2User.getTestId());
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
 
         h2User = new H2User("test");
         h2UserMapper.insert(h2User);
         h2UserMapper.deleteById(h2User.getTestId(), false);
         h2User = h2UserMapper.getById(h2User.getTestId());
-        Assertions.assertNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNull();
 
         h2User = new H2User("test");
         h2UserMapper.insert(h2User);
         h2UserMapper.deleteById(String.valueOf(h2User.getTestId()));
         h2User = h2UserMapper.getById(h2User.getTestId());
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
     }
 
     @Test
     void testPageOrderBy() {
         // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
         Page<H2User> page = Page.of(1, 10);
-        Assertions.assertTrue(
+        assertThat(
                 userService.page(page, Wrappers.<H2User>query().select("test_id,name").orderByDesc("test_id"))
-                        .getPages() > 0);
-        Assertions.assertTrue(
-                userService.page(page, Wrappers.<H2User>lambdaQuery().orderByDesc(H2User::getTestId)).getPages() > 0);
+                        .getPages() > 0)
+                .isTrue();
+        assertThat(userService.page(page, Wrappers.<H2User>lambdaQuery().orderByDesc(H2User::getTestId)).getPages() > 0)
+                .isTrue();
     }
 
     @Test
     void testPageNegativeSize() {
         Page<H2User> page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
-        Assertions.assertEquals(0, page.getTotal());
-        Assertions.assertEquals(userService.lambdaQuery().list(Page.of(1, -1, false)).size(), page.getRecords().size());
+        assertThat(page.getTotal()).isEqualTo(0);
+        assertThat(page.getRecords().size()).isEqualTo(userService.lambdaQuery().list(Page.of(1, -1, false)).size());
     }
 
     @Test
@@ -809,11 +818,11 @@ class H2UserTest extends BaseTest {
         H2User condition = new H2User();
         condition.setName("Tomcat");
         H2User user = userService.lambdaQuery(condition).one();
-        Assertions.assertNotNull(user);
-        Assertions.assertEquals("Tomcat", user.getName());
+        assertThat(user).isNotNull();
+        assertThat(user.getName()).isEqualTo("Tomcat");
         H2User h2User = userService.lambdaQuery().setEntity(condition).one();
-        Assertions.assertNotNull(h2User);
-        Assertions.assertEquals("Tomcat", h2User.getName());
+        assertThat(h2User).isNotNull();
+        assertThat(h2User.getName()).isEqualTo("Tomcat");
     }
 
     @Test
@@ -849,9 +858,8 @@ class H2UserTest extends BaseTest {
                 .ifPresent(u -> log(u.toString()));
 
         // 异常情况
-        Assertions.assertThrows(
-                TooManyResultsException.class,
-                () -> userService.getOneOpt(Wrappers.<H2User>lambdaQuery().like(H2User::getName, "tes")));
+        assertThatThrownBy(() -> userService.getOneOpt(Wrappers.<H2User>lambdaQuery().like(H2User::getName, "tes")))
+                .isInstanceOf(TooManyResultsException.class);
     }
 
     @Test
@@ -859,58 +867,58 @@ class H2UserTest extends BaseTest {
         H2User h2User;
         h2User = new H2User("insertFillByCustomMethod1", AgeEnum.ONE);
         h2StudentMapper.insertFillByCustomMethod1(h2User);
-        Assertions.assertNotNull(h2User.getTestType());
+        assertThat(h2User.getTestType()).isNotNull();
 
         h2User = new H2User("insertFillByCustomMethod2", AgeEnum.ONE);
         h2StudentMapper.insertFillByCustomMethod2(h2User);
-        Assertions.assertNotNull(h2User.getTestType());
+        assertThat(h2User.getTestType()).isNotNull();
 
         h2User = new H2User("insertFillByCustomMethod3", AgeEnum.ONE);
         h2StudentMapper.insertFillByCustomMethod3(h2User, "fillByCustomMethod3");
-        Assertions.assertNotNull(h2User.getTestType());
+        assertThat(h2User.getTestType()).isNotNull();
 
         List<H2User> list;
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod4-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod4-2", AgeEnum.ONE));
         h2StudentMapper.insertFillByCustomMethod4(list);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod5-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod5-2", AgeEnum.ONE));
         h2StudentMapper.insertFillByCustomMethod5(list);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod6-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod6-2", AgeEnum.ONE));
         h2StudentMapper.insertFillByCustomMethod6(list);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod7-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod7-2", AgeEnum.ONE));
         h2StudentMapper.insertFillByCustomMethod7(list);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         H2User[] h2Users;
         h2Users = new H2User[]{new H2User("insertFillByCustomMethod8-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod8-2", AgeEnum.ONE)};
         h2StudentMapper.insertFillByCustomMethod8(h2Users);
-        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        Arrays.stream(h2Users).forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         h2Users = new H2User[]{new H2User("insertFillByCustomMethod9-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod9-2", AgeEnum.ONE)};
         h2StudentMapper.insertFillByCustomMethod9(h2Users);
-        Arrays.stream(h2Users).forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        Arrays.stream(h2Users).forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         Map<String, Object> map;
         h2User = new H2User("insertFillByCustomMethod10", AgeEnum.ONE);
         map = new HashMap<>();
         map.put("et", h2User);
         h2StudentMapper.insertFillByCustomMethod10(map);
-        Assertions.assertNotNull(h2User.getTestType());
+        assertThat(h2User.getTestType()).isNotNull();
 
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod11-1", AgeEnum.ONE),
@@ -918,7 +926,7 @@ class H2UserTest extends BaseTest {
         map = new HashMap<>();
         map.put("list", list);
         h2StudentMapper.insertFillByCustomMethod11(map);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         list = Arrays.asList(
                 new H2User("insertFillByCustomMethod12-1", AgeEnum.ONE),
@@ -926,14 +934,14 @@ class H2UserTest extends BaseTest {
         map = new HashMap<>();
         map.put("coll", list);
         h2StudentMapper.insertFillByCustomMethod12(map);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
 
         h2Users = new H2User[]{new H2User("insertFillByCustomMethod13-1", AgeEnum.ONE),
                 new H2User("insertFillByCustomMethod13-2", AgeEnum.ONE)};
         map = new HashMap<>();
         map.put("array", h2Users);
         h2StudentMapper.insertFillByCustomMethod13(map);
-        list.forEach(user -> Assertions.assertNotNull(user.getTestType()));
+        list.forEach(user -> assertThat(user.getTestType()).isNotNull());
     }
 
     @Test
@@ -945,61 +953,55 @@ class H2UserTest extends BaseTest {
         map.put("et", h2User);
         map.put("list", Arrays.asList(1L, 2L, 3L));
         h2StudentMapper.updateFillByCustomMethod1(map);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
 
         h2User = new H2User();
         h2StudentMapper.updateFillByCustomMethod2(Arrays.asList(1L, 2L, 3L), h2User);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
 
         h2User = new H2User();
         h2StudentMapper.updateFillByCustomMethod3(Arrays.asList(1L, 2L, 3L), h2User);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
 
         h2User = new H2User();
         h2StudentMapper.updateFillByCustomMethod4(Arrays.asList(1L, 2L, 3L), h2User);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
 
     }
 
     @Test
     void testListMapsByPage() {
-        Assertions.assertEquals(userService.listMaps().size(), userService.count());
-        Assertions.assertEquals(
-                userService.listMaps(new Page<>(1, 2)).size(), userService.page(new Page<>(1, 2)).getRecords().size());
-        Assertions.assertEquals(
-                userService.listMaps(new Page<>(2, 2)).size(), userService.page(new Page<>(2, 2)).getRecords().size());
+        assertThat(userService.count()).isEqualTo(userService.listMaps().size());
+        assertThat(userService.page(new Page<>(1, 2)).getRecords().size())
+                .isEqualTo(userService.listMaps(new Page<>(1, 2)).size());
+        assertThat(userService.page(new Page<>(2, 2)).getRecords().size())
+                .isEqualTo(userService.listMaps(new Page<>(2, 2)).size());
 
-        Assertions.assertEquals(
-                userService.pageMaps(new Page<>(1, 2, false)).getRecords().size(),
-                userService.listMaps(new Page<>(1, 2, false)).size());
-        Assertions.assertEquals(
-                userService.pageMaps(new Page<>(2, 2, false)).getRecords().size(),
-                userService.listMaps(new Page<>(2, 2, false)).size());
+        assertThat(userService.listMaps(new Page<>(1, 2, false)).size())
+                .isEqualTo(userService.pageMaps(new Page<>(1, 2, false)).getRecords().size());
+        assertThat(userService.listMaps(new Page<>(2, 2, false)).size())
+                .isEqualTo(userService.pageMaps(new Page<>(2, 2, false)).getRecords().size());
 
-        Assertions.assertEquals(
-                userService.pageMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size(),
-                userService.listMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size());
-        Assertions.assertEquals(
-                userService.pageMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size(),
-                userService.listMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size());
+        assertThat(userService.listMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size())
+                .isEqualTo(userService.pageMaps(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size());
+        assertThat(userService.listMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size())
+                .isEqualTo(userService.pageMaps(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size());
     }
 
     @Test
     void testListByPage() {
-        Assertions.assertEquals(userService.list().size(), userService.count());
-        Assertions.assertEquals(
-                userService.list(new Page<>(1, 2)).size(), userService.page(new Page<>(1, 2)).getRecords().size());
-        Assertions.assertEquals(
-                userService.list(new Page<>(2, 2)).size(), userService.page(new Page<>(2, 2)).getRecords().size());
-        Assertions.assertEquals(
-                userService.list(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size(),
-                userService.page(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size());
+        assertThat(userService.count()).isEqualTo(userService.list().size());
+        assertThat(userService.page(new Page<>(1, 2)).getRecords().size())
+                .isEqualTo(userService.list(new Page<>(1, 2)).size());
+        assertThat(userService.page(new Page<>(2, 2)).getRecords().size())
+                .isEqualTo(userService.list(new Page<>(2, 2)).size());
+        assertThat(userService.page(new Page<>(1, 2, false), Wrappers.emptyWrapper()).getRecords().size())
+                .isEqualTo(userService.list(new Page<>(1, 2, false), Wrappers.emptyWrapper()).size());
 
         List<H2User> list = userService.list(new Page<>(2, 2, false));
 
-        Assertions.assertEquals(
-                userService.list(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size(),
-                userService.page(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size());
+        assertThat(userService.page(new Page<>(2, 2, false), Wrappers.emptyWrapper()).getRecords().size())
+                .isEqualTo(userService.list(new Page<>(2, 2, false), Wrappers.emptyWrapper()).size());
     }
 
     @Test
@@ -1083,7 +1085,7 @@ class H2UserTest extends BaseTest {
     @Test
     void testSelectObjs() {
         for (Object o : userService.listObjs()) {
-            Assertions.assertEquals(Long.class, o.getClass());
+            assertThat(o.getClass()).isEqualTo(Long.class);
         }
         for (Long id : userService.<Long>listObjs()) {
             System.out.println(id);
@@ -1124,10 +1126,10 @@ class H2UserTest extends BaseTest {
 
     @Test
     void testSelectOne() {
-        Assertions.assertTrue(userService.list().size() > 2);
-        Assertions.assertThrows(
-                TooManyResultsException.class, () -> userService.getBaseMapper().selectOne(Wrappers.emptyWrapper()));
-        Assertions.assertNotNull(userService.getBaseMapper().selectOne(Wrappers.emptyWrapper(), false));
+        assertThat(userService.list().size() > 2).isTrue();
+        assertThatThrownBy(() -> userService.getBaseMapper().selectOne(Wrappers.emptyWrapper()))
+                .isInstanceOf(TooManyResultsException.class);
+        assertThat(userService.getBaseMapper().selectOne(Wrappers.emptyWrapper(), false)).isNotNull();
     }
 
     @Test
@@ -1135,8 +1137,8 @@ class H2UserTest extends BaseTest {
         var id = IdWorker.getId();
         var userList = List
                 .of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
-        Assertions.assertThrowsExactly(
-                PersistenceException.class, () -> userService.testSaveOrUpdateTransactional1(userList));
+        assertThatThrownBy(() -> userService.testSaveOrUpdateTransactional1(userList))
+                .isExactlyInstanceOf(PersistenceException.class);
     }
 
     @Test
@@ -1145,7 +1147,7 @@ class H2UserTest extends BaseTest {
         var userList = List
                 .of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
         userService.testSaveOrUpdateTransactional2(userList);
-        Assertions.assertEquals("test-3", userService.getById(id).getName());
+        assertThat(userService.getById(id).getName()).isEqualTo("test-3");
     }
 
     @Test
@@ -1163,7 +1165,7 @@ class H2UserTest extends BaseTest {
                   ELSE 1
                 END
                 """, false));
-        Assertions.assertDoesNotThrow(() -> userService.page(page));
+        assertThatCode(() -> userService.page(page)).doesNotThrowAnyException();
     }
 
     @Test
@@ -1187,7 +1189,8 @@ class H2UserTest extends BaseTest {
             e.printStackTrace();
         }
 
-        Assertions.assertThrows(TooManyResultsException.class, () -> userService.getBaseMapper().selectOne(lqw));
+        assertThatThrownBy(() -> userService.getBaseMapper().selectOne(lqw))
+                .isInstanceOf(TooManyResultsException.class);
     }
 
 }

@@ -18,7 +18,10 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,6 +39,7 @@ import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -61,8 +65,8 @@ class H2UserMapperTest extends BaseTest {
     void testMapperSaveBatch() {
         var list = List.of(new H2User("秋秋1"), new H2User("秋秋2"));
         List<BatchResult> batchResults = userMapper.insert(list);
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
-        Assertions.assertEquals(2, batchResults.getFirst().getUpdateCounts().length);
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
+        assertThat(batchResults.getFirst().getUpdateCounts().length).isEqualTo(2);
     }
 
     @Test
@@ -73,8 +77,8 @@ class H2UserMapperTest extends BaseTest {
             h2User.setName("test" + 1);
         }
         List<BatchResult> batchResults = userMapper.updateById(list);
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
-        Assertions.assertEquals(2, batchResults.getFirst().getUpdateCounts().length);
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
+        assertThat(batchResults.getFirst().getUpdateCounts().length).isEqualTo(2);
     }
 
     @Test
@@ -89,7 +93,7 @@ class H2UserMapperTest extends BaseTest {
             });
         } catch (Exception exception) {
             for (H2User h2User : h2UserList) {
-                Assertions.assertNull(userMapper.selectById(h2User.getTestId()));
+                assertThat(userMapper.selectById(h2User.getTestId())).isNull();
             }
         }
         transactionTemplate.execute(status -> {
@@ -98,7 +102,7 @@ class H2UserMapperTest extends BaseTest {
             return MybatisBatchUtils.execute(sqlSessionFactory, h2UserList, mapperMethod.insert());
         });
         for (H2User h2User : h2UserList) {
-            Assertions.assertNotNull(userMapper.selectById(h2User.getTestId()));
+            assertThat(userMapper.selectById(h2User.getTestId())).isNotNull();
         }
     }
 
@@ -113,13 +117,13 @@ class H2UserMapperTest extends BaseTest {
         // 执行批量插入
         List<BatchResult> batchResults = MybatisBatchUtils
                 .execute(sqlSessionFactory, h2UserList, mapperMethod.insert());
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         int[] updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
         List<Long> ids = Arrays.asList(120000L, 120001L);
         MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
-        Assertions.assertTrue(
-                SqlHelper.retBool(MybatisBatchUtils.execute(sqlSessionFactory, ids, method.insert(H2User::ofId))));
+        assertThat(SqlHelper.retBool(MybatisBatchUtils.execute(sqlSessionFactory, ids, method.insert(H2User::ofId))))
+                .isTrue();
     }
 
     @Test
@@ -134,9 +138,9 @@ class H2UserMapperTest extends BaseTest {
         MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
         // 执行批量插入
         batchResults = MybatisBatchUtils.execute(sqlSessionFactory, h2UserList, method.get("myInsertWithoutParam"));
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
         h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
             h2UserList.add(new H2User("myInsertWithParam" + i));
@@ -145,9 +149,9 @@ class H2UserMapperTest extends BaseTest {
         batchResults = MybatisBatchUtils.execute(
                 sqlSessionFactory, h2UserList,
                 method.get("myInsertWithParam", parameter -> Map.of("user1", parameter)));
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
         h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
             h2UserList.add(new H2User("myInsertWithParam" + i));
@@ -155,9 +159,9 @@ class H2UserMapperTest extends BaseTest {
         batchResults = MybatisBatchUtils.execute(
                 sqlSessionFactory, h2UserList,
                 method.get("myInsertWithParam", parameter -> Map.of("user1", parameter)));
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
     }
 
     @Test
@@ -176,17 +180,17 @@ class H2UserMapperTest extends BaseTest {
             userList.add(h2User);
             return h2User;
         }));
-        Assertions.assertFalse(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isFalse();
         int[] updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
         for (H2User h2User : userList) {
-            Assertions.assertNotNull(h2User.getLastUpdatedDt());
+            assertThat(h2User.getLastUpdatedDt()).isNotNull();
         }
         // 不能走填充
         batchResults = MybatisBatchUtils.execute(sqlSessionFactory, ids, method.deleteById());
-        Assertions.assertFalse(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isFalse();
         updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
     }
 
     @Test
@@ -200,42 +204,46 @@ class H2UserMapperTest extends BaseTest {
         // 执行批量更新
         List<BatchResult> batchResults = MybatisBatchUtils
                 .execute(sqlSessionFactory, h2UserList, mapperMethod.updateById());
-        Assertions.assertFalse(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isFalse();
         int[] updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
 
         List<Long> ids = Arrays.asList(120000L, 120001L);
         MybatisBatch.Method<H2User> method = new MybatisBatch.Method<>(H2UserMapper.class);
 
-        Assertions.assertFalse(
+        assertThat(
                 SqlHelper.retBool(
                         MybatisBatchUtils.execute(
                                 sqlSessionFactory, ids,
                                 method.update(
                                         id -> Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "updateTest")
-                                                .eq(H2User::getTestId, id)))));
-        Assertions.assertFalse(
+                                                .eq(H2User::getTestId, id)))))
+                .isFalse();
+        assertThat(
                 SqlHelper.retBool(
                         MybatisBatchUtils.execute(
                                 sqlSessionFactory, ids,
                                 method.update(
                                         id -> new H2User().setName("updateTest2"),
-                                        id -> Wrappers.<H2User>lambdaUpdate().eq(H2User::getTestId, id)))));
+                                        id -> Wrappers.<H2User>lambdaUpdate().eq(H2User::getTestId, id)))))
+                .isFalse();
 
-        Assertions.assertFalse(
+        assertThat(
                 SqlHelper.retBool(
                         MybatisBatchUtils.execute(
                                 sqlSessionFactory, h2UserList,
                                 method.update(
                                         user -> Wrappers.<H2User>update().set("name", "updateTest3")
-                                                .eq("test_id", user.getTestId())))));
-        Assertions.assertFalse(
+                                                .eq("test_id", user.getTestId())))))
+                .isFalse();
+        assertThat(
                 SqlHelper.retBool(
                         MybatisBatchUtils.execute(
                                 sqlSessionFactory, h2UserList,
                                 method.update(
                                         user -> new H2User("updateTests4"),
-                                        p -> Wrappers.<H2User>update().eq("test_id", p.getTestId())))));
+                                        p -> Wrappers.<H2User>update().eq("test_id", p.getTestId())))))
+                .isFalse();
     }
 
     @Test
@@ -250,9 +258,9 @@ class H2UserMapperTest extends BaseTest {
                 sqlSessionFactory, h2UserList, mapperMethod.insert(),
                 ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null), mapperMethod.updateById());
         // 没有使用共享的sqlSession,由于都是新增返回还是一个批次
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         int[] updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
     }
 
     @Test
@@ -263,12 +271,12 @@ class H2UserMapperTest extends BaseTest {
             h2UserList.add(new H2User(Long.valueOf(140000 + i), "test" + i));
         }
         List<BatchResult> batchResults = userMapper.insertOrUpdate(h2UserList);
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
-        Assertions.assertEquals(batchSize, batchResults.size());
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
+        assertThat(batchResults.size()).isEqualTo(batchSize);
         // 使用共享的sqlSession,等于每次都是刷新了,批次总结果集就等于数据大小了
         for (BatchResult batchResult : batchResults) {
-            Assertions.assertEquals(1, batchResult.getUpdateCounts().length);
-            Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
+            assertThat(batchResult.getUpdateCounts().length).isEqualTo(1);
+            assertThat(batchResult.getUpdateCounts()[0]).isEqualTo(1);
         }
     }
 
@@ -281,10 +289,10 @@ class H2UserMapperTest extends BaseTest {
         }
         List<BatchResult> batchResults = userMapper.insertOrUpdate(
                 h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null));
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
         // 没有使用共享的sqlSession,由于都是新增返回还是一个批次
         int[] updateCounts = batchResults.getFirst().getUpdateCounts();
-        Assertions.assertEquals(batchSize, updateCounts.length);
+        assertThat(updateCounts.length).isEqualTo(batchSize);
     }
 
     @Test
@@ -293,9 +301,10 @@ class H2UserMapperTest extends BaseTest {
         var h2UserList = List
                 .of(new H2User(id, "testSaveOrUpdateBatchMapper3"), new H2User(id, "testSaveOrUpdateBatchMapper3-1"));
         // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
-        Assertions.assertThrowsExactly(
-                PersistenceException.class, () -> userMapper.insertOrUpdate(
-                        h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null)));
+        assertThatThrownBy(
+                () -> userMapper.insertOrUpdate(
+                        h2UserList, ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null)))
+                .isExactlyInstanceOf(PersistenceException.class);
     }
 
     @Test
@@ -308,25 +317,24 @@ class H2UserMapperTest extends BaseTest {
         var batchResults = userMapper.insertOrUpdate(
                 h2UserList, ((sqlSession, h2User) -> sqlSession
                         .selectList(mapperMethod.get("selectById").getStatementId(), h2User.getTestId()).isEmpty()));
-        Assertions.assertTrue(SqlHelper.retBool(batchResults));
-        Assertions.assertEquals(
-                h2UserList.size(), batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).count());
-        Assertions.assertEquals("testSaveOrUpdateBatchMapper4-1", userMapper.selectById(id).getName());
+        assertThat(SqlHelper.retBool(batchResults)).isTrue();
+        assertThat(batchResults.stream().flatMapToInt(r -> IntStream.of(r.getUpdateCounts())).count())
+                .isEqualTo(h2UserList.size());
+        assertThat(userMapper.selectById(id).getName()).isEqualTo("testSaveOrUpdateBatchMapper4-1");
     }
 
     @Test
     void testRemoveByIds() {
-        Assertions.assertEquals(
-                userMapper.deleteByIds(List.of(666666661, "2")),
-                userMapper.deleteByIds(List.of(666666661, "2"), false));
+        assertThat(userMapper.deleteByIds(List.of(666666661, "2"), false))
+                .isEqualTo(userMapper.deleteByIds(List.of(666666661, "2")));
         H2User h2User = new H2User("testRemoveByIds");
-        Assertions.assertEquals(1, userMapper.insert(h2User));
-        Assertions.assertEquals(1, userMapper.deleteByIds(List.of(h2User)));
-        Assertions.assertNotNull(userMapper.getById(h2User.getTestId()).getLastUpdatedDt());
+        assertThat(userMapper.insert(h2User)).isEqualTo(1);
+        assertThat(userMapper.deleteByIds(List.of(h2User))).isEqualTo(1);
+        assertThat(userMapper.getById(h2User.getTestId()).getLastUpdatedDt()).isNotNull();
         h2User = new H2User("testRemoveByIds");
-        Assertions.assertEquals(1, userMapper.insert(h2User));
-        Assertions.assertEquals(1, userMapper.deleteByIds(List.of(h2User), false));
-        Assertions.assertNull(userMapper.getById(h2User.getTestId()).getLastUpdatedDt());
+        assertThat(userMapper.insert(h2User)).isEqualTo(1);
+        assertThat(userMapper.deleteByIds(List.of(h2User), false)).isEqualTo(1);
+        assertThat(userMapper.getById(h2User.getTestId()).getLastUpdatedDt()).isNull();
     }
 
     @Test
@@ -343,10 +351,10 @@ class H2UserMapperTest extends BaseTest {
                         .selectList(H2UserMapper.class.getName() + ".selectById", h2User.getTestId()).isEmpty()),
                 mapperMethod.updateById());
         // 使用共享的sqlSession,等于每次都是刷新了,批次总结果集就等于数据大小了
-        Assertions.assertEquals(batchSize, batchResults.size());
+        assertThat(batchResults.size()).isEqualTo(batchSize);
         for (BatchResult batchResult : batchResults) {
-            Assertions.assertEquals(1, batchResult.getUpdateCounts().length);
-            Assertions.assertEquals(1, batchResult.getUpdateCounts()[0]);
+            assertThat(batchResult.getUpdateCounts().length).isEqualTo(1);
+            assertThat(batchResult.getUpdateCounts()[0]).isEqualTo(1);
         }
     }
 
@@ -356,12 +364,12 @@ class H2UserMapperTest extends BaseTest {
         var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch3"), new H2User(id, "testSaveOrUpdateBatch3-1"));
         var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
         // 由于没有共享一个sqlSession,第二条记录selectById的时候第一个sqlSession的数据还没提交,会执行插入导致主键冲突.
-        Assertions.assertThrowsExactly(
-                PersistenceException.class,
+        assertThatThrownBy(
                 () -> MybatisBatchUtils.saveOrUpdate(
                         sqlSessionFactory, h2UserList, mapperMethod.insert(),
                         ((sqlSession, h2User) -> userMapper.selectById(h2User.getTestId()) == null),
-                        mapperMethod.updateById()));
+                        mapperMethod.updateById()))
+                .isExactlyInstanceOf(PersistenceException.class);
 
     }
 
@@ -378,9 +386,9 @@ class H2UserMapperTest extends BaseTest {
                 mapperMethod.updateById());
         var updateCounts = batchResults.getFirst().getUpdateCounts();
         for (int updateCount : updateCounts) {
-            Assertions.assertEquals(1, updateCount);
+            assertThat(updateCount).isEqualTo(1);
         }
-        Assertions.assertEquals("testSaveOrUpdateBatch4-1", userMapper.selectById(id).getName());
+        assertThat(userMapper.selectById(id).getName()).isEqualTo("testSaveOrUpdateBatch4-1");
     }
 
     @Test
@@ -392,7 +400,7 @@ class H2UserMapperTest extends BaseTest {
         h2User.setDeleted(0);
         h2User.setDesc("这是一个不错的小伙子");
         h2User.setTestType(1);
-        Assertions.assertEquals(1, userMapper.insert(h2User));
+        assertThat(userMapper.insert(h2User)).isEqualTo(1);
 
         log(h2User.getTestId());
 
@@ -403,7 +411,7 @@ class H2UserMapperTest extends BaseTest {
         for (int i = 0; i < 10; i++) {
             userMapper.insert(new H2User("mp" + i, AgeEnum.ONE));
         }
-        Assertions.assertEquals(1, userMapper.deleteById(1L));
+        assertThat(userMapper.deleteById(1L)).isEqualTo(1);
 
         Map<String, Object> map = new HashMap<>();
         map.put("name", "mp0");
@@ -411,58 +419,59 @@ class H2UserMapperTest extends BaseTest {
 
         // 根据 map 查询
         h2User = userMapper.selectByMap(map).getFirst();
-        Assertions.assertSame(AgeEnum.ONE, h2User.getAge());
+        assertThat(h2User.getAge()).isSameAs(AgeEnum.ONE);
 
         // 根据 map 删除
-        Assertions.assertEquals(1, userMapper.deleteByMap(map));
+        assertThat(userMapper.deleteByMap(map)).isEqualTo(1);
 
         // 查询列表
         LambdaQueryWrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().like(H2User::getName, "mp");
         log(wrapper.getSqlSegment());
 
         List<H2User> h2UserList = userMapper.selectList(wrapper);
-        Assertions.assertTrue(CollectionUtils.isNotEmpty(h2UserList));
+        assertThat(CollectionUtils.isNotEmpty(h2UserList)).isTrue();
 
         // 查询总数
         long count = userMapper.selectCount(wrapper.clone());
-        Assertions.assertTrue(count > 1);
+        assertThat(count > 1).isTrue();
 
         // 批量删除
-        Assertions.assertEquals(
-                count, userMapper.deleteByIds(h2UserList.stream().map(SuperEntity::getTestId).collect(toList())));
+        assertThat(userMapper.deleteByIds(h2UserList.stream().map(SuperEntity::getTestId).collect(toList())))
+                .isEqualTo(count);
 
         // 更新
         h2User = new H2User();
         h2User.setAge(AgeEnum.TWO);
         h2User.setDesc("测试置空");
-        Assertions.assertEquals(1, userMapper.update(h2User, new QueryWrapper<H2User>().eq("name", NQQ)));
+        assertThat(userMapper.update(h2User, new QueryWrapper<H2User>().eq("name", NQQ))).isEqualTo(1);
 
         log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.TWO))));
 
         h2User.setAge(AgeEnum.THREE);
         h2User.setDesc(null);
-        Assertions.assertTrue(
+        assertThat(
                 userMapper.update(
-                        h2User, new UpdateWrapper<H2User>().lambda().set(H2User::getDesc, "")
-                                .eq(H2User::getName, "Jerry")) > 0);
+                        h2User,
+                        new UpdateWrapper<H2User>().lambda().set(H2User::getDesc, "").eq(H2User::getName, "Jerry")) > 0)
+                .isTrue();
 
         log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.THREE))));
 
-        Assertions.assertEquals(1, userMapper.insert(h2User));
+        assertThat(userMapper.insert(h2User)).isEqualTo(1);
         // 根据主键更新 age = 18
         h2User.setAge(AgeEnum.TWO);
-        Assertions.assertEquals(1, userMapper.updateById(h2User));
+        assertThat(userMapper.updateById(h2User)).isEqualTo(1);
         long testId = h2User.getTestId();
         // https://github.com/baomidou/mybatis-plus/issues/299
-        Assertions.assertEquals(1, userMapper.updateById(new H2User() {
+        assertThat(userMapper.updateById(new H2User() {
 
             {
                 setTestId(testId);
                 setAge(AgeEnum.TWO);
             }
-        }));
+        })).isEqualTo(1);
         // 查询一条记录
-        Assertions.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1))));
+        assertThat(userMapper.selectOne(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1)))).isNotNull();
 
         log(h2User.toString());
 
@@ -472,8 +481,7 @@ class H2UserMapperTest extends BaseTest {
             System.out.println(h2UserPage.getTotal());
             System.out.println(h2UserPage.getSize());
         }
-        Assertions
-                .assertNotNull(userMapper.selectPage(new Page<>(1, 10), new QueryWrapper<H2User>().orderByAsc("name")));
+        assertThat(userMapper.selectPage(new Page<>(1, 10), new QueryWrapper<H2User>().orderByAsc("name"))).isNotNull();
 
         // 查询结果集，测试 lambda 对象后 QueryWrapper 是否参数继续传递
         QueryWrapper<H2User> qw = new QueryWrapper<>();
@@ -484,19 +492,19 @@ class H2UserMapperTest extends BaseTest {
                 System.out.println(m);
             }
         }
-        Assertions.assertTrue(
-                CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setTestType(3)))));
+        assertThat(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setTestType(3)))))
+                .isTrue();
 
         // 测试自定义注入方法
         h2User.setDesc("");
         h2User.setTestDate(new Date());
-        Assertions.assertTrue(userMapper.alwaysUpdateSomeColumnById(h2User) > 0);
-        Assertions.assertEquals("", userMapper.selectById(h2User.getTestId()).getDesc());
+        assertThat(userMapper.alwaysUpdateSomeColumnById(h2User) > 0).isTrue();
+        assertThat(userMapper.selectById(h2User.getTestId()).getDesc()).isEqualTo("");
     }
 
     @Test
     void testCall() {
-        Assertions.assertEquals("1", userMapper.testCall());
+        assertThat(userMapper.testCall()).isEqualTo("1");
     }
 
     /**
@@ -524,28 +532,28 @@ class H2UserMapperTest extends BaseTest {
         userMapper.delete(new QueryWrapper<H2User>().comment("deleteAllUsers"));
         String name = "name1", nameNew = "name1New";
         int insertCount = userMapper.insert(new H2User().setName(name).setAge(AgeEnum.ONE));
-        Assertions.assertEquals(1, insertCount);
+        assertThat(insertCount).isEqualTo(1);
         int updateCount = userMapper.update(
                 new H2User(), new UpdateWrapper<H2User>().comment("updateUserName1").lambda()
                         .set(H2User::getName, nameNew).eq(H2User::getName, name));
-        Assertions.assertEquals(1, updateCount);
+        assertThat(updateCount).isEqualTo(1);
         H2User h2User = userMapper.selectOne(
                 new QueryWrapper<H2User>().lambda().comment("getUserByUniqueName").eq(H2User::getName, nameNew));
-        Assertions.assertNotNull(h2User);
+        assertThat(h2User).isNotNull();
         LambdaQueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().lambda().ge(H2User::getAge, 1);
         long userCount = userMapper.selectCount(queryWrapper.comment("getUserCount"));
-        Assertions.assertEquals(1, userCount);
+        assertThat(userCount).isEqualTo(1);
         List<H2User> h2UserList = userMapper.selectList(queryWrapper.comment("getUserList"));
-        Assertions.assertEquals(1, h2UserList.size());
+        assertThat(h2UserList.size()).isEqualTo(1);
         IPage<H2User> h2UserIPage = userMapper.selectPage(new Page<>(1, 10), queryWrapper.comment("getUserPage"));
-        Assertions.assertEquals(1, h2UserIPage.getRecords().size());
+        assertThat(h2UserIPage.getRecords().size()).isEqualTo(1);
         List<Map<String, Object>> selectMaps = userMapper.selectMaps(queryWrapper.comment("getUserMaps"));
-        Assertions.assertEquals(1, selectMaps.size());
+        assertThat(selectMaps.size()).isEqualTo(1);
         IPage<Map<String, Object>> selectMapsPage = userMapper
                 .selectMapsPage(new Page<>(1, 10), queryWrapper.comment("getUserMapsPage"));
-        Assertions.assertEquals(1, selectMapsPage.getRecords().size());
+        assertThat(selectMapsPage.getRecords().size()).isEqualTo(1);
         List<Object> selectObjs = userMapper.selectObjs(queryWrapper.comment("getUserObjs"));
-        Assertions.assertEquals(1, selectObjs.size());
+        assertThat(selectObjs.size()).isEqualTo(1);
     }
 
     /**
@@ -600,19 +608,19 @@ class H2UserMapperTest extends BaseTest {
         userMapper.insert(h2User);
         var wrapper = Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "testUpdateByWrapper")
                 .eq(H2User::getTestId, h2User.getTestId());
-        Assertions.assertEquals(1, userMapper.update(wrapper));
-        Assertions.assertEquals("testUpdateByWrapper", userMapper.selectById(h2User.getTestId()).getName());
+        assertThat(userMapper.update(wrapper)).isEqualTo(1);
+        assertThat(userMapper.selectById(h2User.getTestId()).getName()).isEqualTo("testUpdateByWrapper");
     }
 
     @Test
     void testSaveOrUpdate() {
         var h2User = new H2User();
         userMapper.insertOrUpdate(h2User);
-        Assertions.assertNotNull(h2User.getTestId());
-        Assertions.assertNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getTestId()).isNotNull();
+        assertThat(h2User.getLastUpdatedDt()).isNull();
         h2User.setName("test");
         userMapper.insertOrUpdate(h2User);
-        Assertions.assertNotNull(h2User.getLastUpdatedDt());
+        assertThat(h2User.getLastUpdatedDt()).isNotNull();
     }
 
 }

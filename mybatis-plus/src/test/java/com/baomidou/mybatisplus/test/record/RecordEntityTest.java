@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.test.record;
 
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2023年9月14日
@@ -17,7 +18,7 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
         doTest(mapper -> {
             //TODO 无法使用自动填充与主键生成,不建议充当PO使用
             RecordEntity recordEntity = new RecordEntity(123L, "苗人凤", "13388888888");
-            Assertions.assertEquals(1, mapper.insert(recordEntity));
+            assertThat(mapper.insert(recordEntity)).isEqualTo(1);
         });
     }
 
@@ -25,10 +26,10 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
     void testUpdate() {
         doTest(mapper -> {
             RecordEntity recordEntity = new RecordEntity(2L, "苗人凤2", null);
-            Assertions.assertEquals(1, mapper.updateById(recordEntity));
+            assertThat(mapper.updateById(recordEntity)).isEqualTo(1);
             recordEntity = mapper.selectById(2L);
-            Assertions.assertEquals("苗人凤2", recordEntity.name());
-            Assertions.assertNotNull(recordEntity.phone(), "13322222222");
+            assertThat(recordEntity.name()).isEqualTo("苗人凤2");
+            assertThat(recordEntity.phone()).as("13322222222").isNotNull();
         });
     }
 
@@ -36,14 +37,14 @@ public class RecordEntityTest extends BaseDbTest<RecordEntityMapper> {
     void testSelect() {
         doTest(mapper -> {
             RecordEntity recordEntity = mapper.selectById(3L);
-            Assertions.assertEquals("demo3", recordEntity.name());
-            Assertions.assertNotNull(recordEntity.phone(), "13333333333");
+            assertThat(recordEntity.name()).isEqualTo("demo3");
+            assertThat(recordEntity.phone()).as("13333333333").isNotNull();
         });
     }
 
     @Test
     void testDelete() {
-        doTest(mapper -> Assertions.assertEquals(1, mapper.deleteById(new RecordEntity(1L, "-----", "1"))));
+        doTest(mapper -> assertThat(mapper.deleteById(new RecordEntity(1L, "-----", "1"))).isEqualTo(1));
     }
 
     @Override

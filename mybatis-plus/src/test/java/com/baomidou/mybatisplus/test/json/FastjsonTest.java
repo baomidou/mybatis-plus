@@ -1,13 +1,14 @@
 package com.baomidou.mybatisplus.test.json;
 
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2024年3月4日
@@ -34,16 +35,16 @@ public class FastjsonTest extends BaseDbTest<FastJsonEntityMapper> {
                     new HashMap<>(Map.of("name", "1", "test2", "2")), new HashMap<>(Map.of("test1", "1", "test2", 2)));
             mapper.insert(entity);
             FastJsonEntity jackJsonEntity = mapper.selectById(entity.getId());
-            Assertions.assertEquals("秋秋", jackJsonEntity.getName());
-            Assertions.assertEquals(2, jackJsonEntity.getAttr().size());
-            Assertions.assertNotNull(jackJsonEntity.getCard());
-            Assertions.assertEquals(1, jackJsonEntity.getAttr2().size());
-            Assertions.assertEquals("小红", jackJsonEntity.getAttr2().get("test").getName());
-            Assertions.assertEquals(2, jackJsonEntity.getAttr3().size());
-            Assertions.assertEquals("1", jackJsonEntity.getAttr3().get("name"));
-            Assertions.assertEquals("2", jackJsonEntity.getAttr3().get("test2"));
-            Assertions.assertEquals(2, jackJsonEntity.getAttr4().size());
-            Assertions.assertEquals(2, jackJsonEntity.getAttr4().get("test2"));
+            assertThat(jackJsonEntity.getName()).isEqualTo("秋秋");
+            assertThat(jackJsonEntity.getAttr().size()).isEqualTo(2);
+            assertThat(jackJsonEntity.getCard()).isNotNull();
+            assertThat(jackJsonEntity.getAttr2().size()).isEqualTo(1);
+            assertThat(jackJsonEntity.getAttr2().get("test").getName()).isEqualTo("小红");
+            assertThat(jackJsonEntity.getAttr3().size()).isEqualTo(2);
+            assertThat(jackJsonEntity.getAttr3().get("name")).isEqualTo("1");
+            assertThat(jackJsonEntity.getAttr3().get("test2")).isEqualTo("2");
+            assertThat(jackJsonEntity.getAttr4().size()).isEqualTo(2);
+            assertThat(jackJsonEntity.getAttr4().get("test2")).isEqualTo(2);
         });
 
     }

@@ -2,13 +2,14 @@ package com.baomidou.mybatisplus.test.scheam;
 
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.session.Configuration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -19,7 +20,7 @@ public class SchemaEntityTest extends BaseDbTest<SchemaEntityMapper> {
     void test() {
         doTest(mapper -> {
             SchemaEntity schemaEntity = mapper.selectById(1);
-            Assertions.assertNotNull(schemaEntity);
+            assertThat(schemaEntity).isNotNull();
         });
     }
 

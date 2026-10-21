@@ -3,7 +3,6 @@ package com.baomidou.mybatisplus.test.chainwrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -12,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author miemie
@@ -48,8 +48,8 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     @ValueSource(booleans = {true, false})
     void oneWithNoResults(boolean throwEx) {
         doTest(mapper -> {
-            Assertions.assertNull(mapper.queryChain().eq("id", 0).one(throwEx));
-            Assertions.assertNull(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 0).one(throwEx));
+            assertThat(mapper.queryChain().eq("id", 0).one(throwEx)).isNull();
+            assertThat(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 0).one(throwEx)).isNull();
         });
     }
 
@@ -57,41 +57,41 @@ public class ChainWrapperTest extends BaseDbTest<EntityMapper> {
     @ValueSource(booleans = {true, false})
     void oneWithSingleResult(boolean throwEx) {
         doTest(mapper -> {
-            Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().eq("id", 2).one(throwEx).getId());
-            Assertions.assertEquals(
-                    Long.valueOf(2), ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one(throwEx).getId());
+            assertThat(mapper.queryChain().eq("id", 2).one(throwEx).getId()).isEqualTo(Long.valueOf(2));
+            assertThat(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one(throwEx).getId())
+                    .isEqualTo(Long.valueOf(2));
         });
     }
 
     @Test
     void oneWithMultipleResultsThrowsWhenRequested() {
         doTest(mapper -> {
-            Assertions.assertThrows(TooManyResultsException.class, () -> mapper.queryChain().one(true));
-            Assertions.assertThrows(
-                    TooManyResultsException.class, () -> ChainWrappers.lambdaQueryChain(mapper).one(true));
+            assertThatThrownBy(() -> mapper.queryChain().one(true)).isInstanceOf(TooManyResultsException.class);
+            assertThatThrownBy(() -> ChainWrappers.lambdaQueryChain(mapper).one(true))
+                    .isInstanceOf(TooManyResultsException.class);
         });
     }
 
     @Test
     void oneWithMultipleResultsReturnsFirstWhenAllowed() {
         doTest(mapper -> {
-            Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().orderByDesc("id").one(false).getId());
-            Assertions.assertEquals(
-                    Long.valueOf(2),
-                    ChainWrappers.lambdaQueryChain(mapper).orderByDesc(Entity::getId).one(false).getId());
+            assertThat(mapper.queryChain().orderByDesc("id").one(false).getId()).isEqualTo(Long.valueOf(2));
+            assertThat(ChainWrappers.lambdaQueryChain(mapper).orderByDesc(Entity::getId).one(false).getId())
+                    .isEqualTo(Long.valueOf(2));
         });
     }
 
     @Test
     void oneWithoutArgumentKeepsExistingBehavior() {
         doTest(mapper -> {
-            Assertions.assertNull(mapper.queryChain().eq("id", 0).one());
-            Assertions.assertEquals(Long.valueOf(2), mapper.queryChain().eq("id", 2).one().getId());
-            Assertions.assertThrows(TooManyResultsException.class, () -> mapper.queryChain().one());
-            Assertions.assertNull(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 0).one());
-            Assertions.assertEquals(
-                    Long.valueOf(2), ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one().getId());
-            Assertions.assertThrows(TooManyResultsException.class, () -> ChainWrappers.lambdaQueryChain(mapper).one());
+            assertThat(mapper.queryChain().eq("id", 0).one()).isNull();
+            assertThat(mapper.queryChain().eq("id", 2).one().getId()).isEqualTo(Long.valueOf(2));
+            assertThatThrownBy(() -> mapper.queryChain().one()).isInstanceOf(TooManyResultsException.class);
+            assertThat(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 0).one()).isNull();
+            assertThat(ChainWrappers.lambdaQueryChain(mapper).eq(Entity::getId, 2).one().getId())
+                    .isEqualTo(Long.valueOf(2));
+            assertThatThrownBy(() -> ChainWrappers.lambdaQueryChain(mapper).one())
+                    .isInstanceOf(TooManyResultsException.class);
         });
     }
 

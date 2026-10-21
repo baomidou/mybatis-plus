@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.test.h2.idgenerator;
 
 import com.baomidou.mybatisplus.test.h2.idgenerator.mapper.*;
 import com.baomidou.mybatisplus.test.h2.idgenerator.model.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
@@ -41,38 +42,38 @@ class IdentifierGeneratorTest {
     void test() {
         LongIdGeneratorModel longIdGeneratorModel1 = new LongIdGeneratorModel("旺仔");
         longIdGeneratorMapper.insert(longIdGeneratorModel1);
-        Assertions.assertEquals(666L, longIdGeneratorModel1.getId());
+        assertThat(longIdGeneratorModel1.getId()).isEqualTo(666L);
         LongIdGeneratorModel longIdGeneratorModel2 = new LongIdGeneratorModel("靓仔");
         longIdGeneratorMapper.insert(longIdGeneratorModel2);
-        Assertions.assertEquals(777L, longIdGeneratorModel2.getId());
+        assertThat(longIdGeneratorModel2.getId()).isEqualTo(777L);
 
         IntegerIdGeneratorModel integerIdGeneratorModel1 = new IntegerIdGeneratorModel("旺仔");
         integerIdGeneratorMapper.insert(integerIdGeneratorModel1);
-        Assertions.assertEquals(666, integerIdGeneratorModel1.getId());
+        assertThat(integerIdGeneratorModel1.getId()).isEqualTo(666);
         IntegerIdGeneratorModel integerIdGeneratorModel2 = new IntegerIdGeneratorModel("靓仔");
         integerIdGeneratorMapper.insert(integerIdGeneratorModel2);
-        Assertions.assertEquals(777, integerIdGeneratorModel2.getId());
+        assertThat(integerIdGeneratorModel2.getId()).isEqualTo(777);
 
         StringIdGeneratorModel stringIdGeneratorModel1 = new StringIdGeneratorModel("旺仔");
         stringIdGeneratorMapper.insert(stringIdGeneratorModel1);
-        Assertions.assertEquals("66666666666", stringIdGeneratorModel1.getId());
+        assertThat(stringIdGeneratorModel1.getId()).isEqualTo("66666666666");
         StringIdGeneratorModel stringIdGeneratorModel2 = new StringIdGeneratorModel("靓仔");
         stringIdGeneratorMapper.insert(stringIdGeneratorModel2);
-        Assertions.assertEquals("77777777777", stringIdGeneratorModel2.getId());
+        assertThat(stringIdGeneratorModel2.getId()).isEqualTo("77777777777");
 
         LongStringIdGeneratorModel longStringIdGeneratorModel1 = new LongStringIdGeneratorModel("旺仔");
         longStringIdGeneratorMapper.insert(longStringIdGeneratorModel1);
-        Assertions.assertEquals("666", longStringIdGeneratorModel1.getId());
+        assertThat(longStringIdGeneratorModel1.getId()).isEqualTo("666");
         LongStringIdGeneratorModel longStringIdGeneratorModel2 = new LongStringIdGeneratorModel("靓仔");
         longStringIdGeneratorMapper.insert(longStringIdGeneratorModel2);
-        Assertions.assertEquals("777", longStringIdGeneratorModel2.getId());
+        assertThat(longStringIdGeneratorModel2.getId()).isEqualTo("777");
 
         IntegerStringIdGeneratorModel integerStringIdGeneratorModel1 = new IntegerStringIdGeneratorModel("旺仔");
         integerStringIdGeneratorMapper.insert(integerStringIdGeneratorModel1);
-        Assertions.assertEquals("666", integerStringIdGeneratorModel1.getId());
+        assertThat(integerStringIdGeneratorModel1.getId()).isEqualTo("666");
         IntegerStringIdGeneratorModel integerStringIdGeneratorModel2 = new IntegerStringIdGeneratorModel("靓仔");
         integerStringIdGeneratorMapper.insert(integerStringIdGeneratorModel2);
-        Assertions.assertEquals("777", integerStringIdGeneratorModel2.getId());
+        assertThat(integerStringIdGeneratorModel2.getId()).isEqualTo("777");
 
         BigDecimalIdGeneratorModel bigDecimalIdGeneratorModel = new BigDecimalIdGeneratorModel("测试");
         bigDecimalIdGeneratorMapper.insert(bigDecimalIdGeneratorModel);

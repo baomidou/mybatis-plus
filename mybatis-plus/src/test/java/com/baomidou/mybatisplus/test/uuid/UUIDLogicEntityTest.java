@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
 
@@ -23,10 +25,10 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
             uuidEntity.setId(UUID.randomUUID());
             uuidEntity.setName("test1");
             uuidEntity.setDeleted(false);
-            Assertions.assertEquals(1, m.insert(uuidEntity));
-            Assertions.assertNotNull(m.selectById(uuidEntity.getId()));
-            Assertions.assertEquals(1, m.deleteById(uuidEntity));
-            Assertions.assertNull(m.selectById(uuidEntity.getId()));
+            assertThat(m.insert(uuidEntity)).isEqualTo(1);
+            assertThat(m.selectById(uuidEntity.getId())).isNotNull();
+            assertThat(m.deleteById(uuidEntity)).isEqualTo(1);
+            assertThat(m.selectById(uuidEntity.getId())).isNull();
         });
 
         doTest(m -> {
@@ -34,9 +36,9 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
             uuidEntity.setId(UUID.randomUUID());
             uuidEntity.setName("test2");
             uuidEntity.setDeleted(false);
-            Assertions.assertEquals(1, m.insert(uuidEntity));
-            Assertions.assertEquals(1, m.deleteByIds(List.of(uuidEntity.getId())));
-            Assertions.assertNull(m.selectById(uuidEntity.getId()));
+            assertThat(m.insert(uuidEntity)).isEqualTo(1);
+            assertThat(m.deleteByIds(List.of(uuidEntity.getId()))).isEqualTo(1);
+            assertThat(m.selectById(uuidEntity.getId())).isNull();
         });
 
         doTest(m -> {
@@ -44,23 +46,24 @@ public class UUIDLogicEntityTest extends BaseDbTest<UUIDLogicEntityMapper> {
             uuidEntity.setId(UUID.randomUUID());
             uuidEntity.setName("test3");
             uuidEntity.setDeleted(false);
-            Assertions.assertEquals(1, m.insert(uuidEntity));
-            Assertions.assertEquals(1, m.deleteByIds(List.of(uuidEntity)));
-            Assertions.assertNull(m.selectById(uuidEntity.getId()));
+            assertThat(m.insert(uuidEntity)).isEqualTo(1);
+            assertThat(m.deleteByIds(List.of(uuidEntity))).isEqualTo(1);
+            assertThat(m.selectById(uuidEntity.getId())).isNull();
         });
 
         doTest(
-                m -> Assertions.assertDoesNotThrow(
+                m -> assertThatCode(
                         () -> m.deleteByIds(
                                 List.of(
                                         UUID.randomUUID().toString(), UUID.randomUUID(), 123, 321L,
                                         Map.of("id", UUID.randomUUID()), Map.of("id", UUID.randomUUID().toString()),
                                         new DeleteByIdDto<>(UUID.randomUUID()),
-                                        new DeleteByIdDto<>(UUID.randomUUID().toString())))));
+                                        new DeleteByIdDto<>(UUID.randomUUID().toString()))))
+                        .doesNotThrowAnyException());
 
-        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(UUID.randomUUID())));
-        doTest(m -> Assertions.assertDoesNotThrow(() -> m.deleteById(new UUIDLogicEntity() {
-        })));
+        doTest(m -> assertThatCode(() -> m.deleteById(UUID.randomUUID())).doesNotThrowAnyException());
+        doTest(m -> assertThatCode(() -> m.deleteById(new UUIDLogicEntity() {
+        })).doesNotThrowAnyException());
         // TODO 下面三种类型无法转为UUID，看是否增加一个类型转换器让用户能注册处理自己的类型转换
         //        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(UUID.randomUUID().toString())));
         //        doTest(m -> Assertions.assertDoesNotThrow(()-> m.deleteById(new DeleteByIdDto<>(UUID.randomUUID()))));

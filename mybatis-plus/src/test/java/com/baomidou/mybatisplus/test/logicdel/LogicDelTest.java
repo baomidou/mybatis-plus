@@ -10,7 +10,6 @@ import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class LogicDelTest extends BaseDbTest<EntityMapper> {
             entityList.add(entity2);
             assertThat(mapper.testDeleteBatch(entityList)).isEqualTo(2);
             entityList.forEach(entity -> {
-                Assertions.assertEquals("聂秋秋", entity.getDeleteBy());
+                assertThat(entity.getDeleteBy()).isEqualTo("聂秋秋");
             });
         });
 

@@ -77,6 +77,13 @@ class TestConventionTest {
             .compile("import\\s+static\\s+org\\.junit\\.jupiter\\.api\\.Assertions\\.(\\w+|\\*)\\s*;");
 
     /**
+     * {@code import org.junit.jupiter.api.*;} 同样把 {@code Assertions} 请进了文件，<br>
+     * 只按全限定类名找 JUnit 断言会漏掉这批通配导入的存量，欠账数就少算一截。
+     */
+    private static final Pattern JUPITER_WILDCARD_IMPORT = Pattern
+            .compile("import\\s+org\\.junit\\.jupiter\\.api\\.\\*\\s*;");
+
+    /**
      * 有 AssertJ 等价写法的 JUnit 断言，才算 T4 的欠账；{@code assertAll}、{@code assertTimeout} 系列<br>
      * AssertJ 没有对应物，留着是正确写法，不能拿它们凑转换数。
      */
@@ -129,10 +136,11 @@ class TestConventionTest {
     private static final int MAX_PACKAGE_MISMATCHES = 66;
 
     /**
-     * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 实测）。新文件只准用 AssertJ；<br>
+     * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 清空 mybatis-plus 40 个文件后实测，<br>
+     * 这一批同时把 {@code org.junit.jupiter.api.*} 通配导入也计入欠账）。新文件只准用 AssertJ；<br>
      * 改到哪个存量文件就顺手转换一个，转换够数就把本常量调小，禁止调大。
      */
-    private static final int MAX_JUNIT_ASSERTION_FILES = 54;
+    private static final int MAX_JUNIT_ASSERTION_FILES = 24;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。
@@ -223,12 +231,34 @@ class TestConventionTest {
     void junitAssertionFilesDoNotGrow() {
         List<String> offenders = new ArrayList<>();
         for (Source source : TEST_SOURCES) {
-            if (JUNIT_ASSERTIONS.matcher(source.code()).find() && usesConvertibleAssertion(source.code())) {
+            if (junitAssertionsInScope(source.code()) && usesConvertibleAssertion(source.code())) {
                 offenders.add(source.path());
             }
         }
         assertThat(offenders).as("T4 断言只用 AssertJ，这批存量只准减；转换一个就把常量调小一格，禁止调大")
                 .hasSizeLessThanOrEqualTo(MAX_JUNIT_ASSERTION_FILES);
+    }
+
+    /**
+     * {@code org.junit.jupiter.api.*} 通配导入把 {@code Assertions} 一起带进文件，<br>
+     * 上一批欠账盘点就是这么漏掉这批文件的，所以通配导入也不许用。
+     */
+    @Test
+    void noWildcardJupiterImport() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : TEST_SOURCES) {
+            if (JUPITER_WILDCARD_IMPORT.matcher(source.code()).find()) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T4 禁用 import org.junit.jupiter.api.*，它让 JUnit 断言在文件里看不出来源").isEmpty();
+    }
+
+    /**
+     * 这个文件里的 {@code Assertions.assertEquals()} 到底是不是 JUnit 的：直接导入，或整个 jupiter api 包通配导入。
+     */
+    private static boolean junitAssertionsInScope(String code) {
+        return JUNIT_ASSERTIONS.matcher(code).find() || JUPITER_WILDCARD_IMPORT.matcher(code).find();
     }
 
     /**

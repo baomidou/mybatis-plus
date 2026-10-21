@@ -2,12 +2,13 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试XML配置
@@ -24,7 +25,7 @@ class TestXmlConfig {
     @Test
     void test() {
         H2User user = userService.getById(101L);
-        Assertions.assertNotNull(user);
+        assertThat(user).isNotNull();
     }
 
 }

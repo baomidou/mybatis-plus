@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.test.BaseDbTest;
 import org.apache.ibatis.reflection.MetaObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2023年9月29日
@@ -82,8 +83,8 @@ public class FillTest extends BaseDbTest<FillMapper> {
     }
 
     void assertEntity(FillEntity entity, String name, int seq) {
-        Assertions.assertEquals(entity.getName(), name);
-        Assertions.assertEquals(entity.getSeq(), seq);
+        assertThat(name).isEqualTo(entity.getName());
+        assertThat(seq).isEqualTo(entity.getSeq());
     }
 
     @Override

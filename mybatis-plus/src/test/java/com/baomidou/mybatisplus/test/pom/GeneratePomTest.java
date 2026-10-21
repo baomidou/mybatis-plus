@@ -6,7 +6,6 @@ import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查pom依赖
@@ -45,17 +46,17 @@ class GeneratePomTest {
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency extension = dependenciesMap.get("mybatis-plus-spring");
-            Assertions.assertEquals("compile", extension.getScope());
-            Assertions.assertFalse(extension.isOptional());
+            assertThat(extension.getScope()).isEqualTo("compile");
+            assertThat(extension.isOptional()).isFalse();
             Dependency mybatisSpring = dependenciesMap.get("mybatis-spring");
-            Assertions.assertEquals("compile", mybatisSpring.getScope());
-            Assertions.assertTrue(mybatisSpring.isOptional());
+            assertThat(mybatisSpring.getScope()).isEqualTo("compile");
+            assertThat(mybatisSpring.isOptional()).isTrue();
             Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
-            Assertions.assertEquals("compile", kotlinStdlib.getScope());
-            Assertions.assertTrue(kotlinStdlib.isOptional());
+            assertThat(kotlinStdlib.getScope()).isEqualTo("compile");
+            assertThat(kotlinStdlib.isOptional()).isTrue();
             Dependency jsqlparserLib = dependenciesMap.get("mybatis-plus-jsqlparser-4.9");
-            Assertions.assertEquals("compile", jsqlparserLib.getScope());
-            Assertions.assertTrue(jsqlparserLib.isOptional());
+            assertThat(jsqlparserLib.getScope()).isEqualTo("compile");
+            assertThat(jsqlparserLib.isOptional()).isTrue();
 
         }
     }

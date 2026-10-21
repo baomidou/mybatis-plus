@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +56,9 @@ class ActiveRecordTest {
     @Order(2)
     void testUpdate() {
         H2Student student = new H2Student(1L, "Tom长大了", 2);
-        Assertions.assertTrue(student.updateById());
+        assertThat(student.updateById()).isTrue();
         student.setName("不听话的学生");
-        Assertions.assertTrue(student.update(new QueryWrapper<H2Student>().gt("id", 10)));
+        assertThat(student.update(new QueryWrapper<H2Student>().gt("id", 10))).isTrue();
     }
 
     @Test
@@ -63,8 +66,8 @@ class ActiveRecordTest {
     void testSelect() {
         H2Student student = new H2Student();
         student.setId(1L);
-        Assertions.assertNotNull(student.selectById());
-        Assertions.assertNotNull(student.selectById(1L));
+        assertThat(student.selectById()).isNotNull();
+        assertThat(student.selectById(1L)).isNotNull();
     }
 
     @Test
@@ -73,7 +76,7 @@ class ActiveRecordTest {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectList(new QueryWrapper<>(student));
         students.forEach($this -> LOGGER.info("用户信息:{}", $this));
-        Assertions.assertTrue(students.size() > 1);
+        assertThat(students.size() > 1).isTrue();
     }
 
     @Test
@@ -85,7 +88,7 @@ class ActiveRecordTest {
         List<H2Student> records = page.getRecords();
         LOGGER.info("总数:{}", page.getTotal());
         records.forEach($this -> LOGGER.info("用户信息:{}", $this));
-        Assertions.assertTrue(page.getTotal() > 1);
+        assertThat(page.getTotal() > 1).isTrue();
     }
 
     @Test
@@ -94,16 +97,16 @@ class ActiveRecordTest {
         H2Student student = new H2Student();
         long count = new H2Student().selectCount(new QueryWrapper<>(student));
         LOGGER.info("count:{}", count);
-        Assertions.assertTrue(count > 1);
+        assertThat(count > 1).isTrue();
     }
 
     @Test
     @Order(7)
     void testInsertOrUpdate() {
         H2Student student = new H2Student(2L, "Jerry也长大了", 2);
-        Assertions.assertTrue(student.insertOrUpdate());
+        assertThat(student.insertOrUpdate()).isTrue();
         student.setId(null);
-        Assertions.assertTrue(student.insertOrUpdate());
+        assertThat(student.insertOrUpdate()).isTrue();
     }
 
     @Test
@@ -111,7 +114,7 @@ class ActiveRecordTest {
     void testSelectAll() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectAll();
-        Assertions.assertNotNull(students);
+        assertThat(students).isNotNull();
         students.forEach($this -> LOGGER.info("用户信息:{}", $this));
     }
 
@@ -119,7 +122,7 @@ class ActiveRecordTest {
     @Order(9)
     void testSelectOne() {
         H2Student student = new H2Student();
-        Assertions.assertNotNull(student.selectOne(new QueryWrapper<>()));
+        assertThat(student.selectOne(new QueryWrapper<>())).isNotNull();
     }
 
     @Test
@@ -130,7 +133,7 @@ class ActiveRecordTest {
         } catch (MybatisPlusException e) {
             List<H2Student> students = new H2Student()
                     .selectList(new QueryWrapper<H2Student>().lambda().like(H2Student::getName, "tx"));
-            Assertions.assertTrue(CollectionUtils.isEmpty(students));
+            assertThat(CollectionUtils.isEmpty(students)).isTrue();
         }
     }
 
@@ -139,9 +142,9 @@ class ActiveRecordTest {
     void testDelete() {
         H2Student student = new H2Student();
         student.setId(2L);
-        Assertions.assertTrue(student.deleteById());
-        Assertions.assertTrue(student.deleteById(12L));
-        Assertions.assertTrue(student.delete(new QueryWrapper<H2Student>().gt("id", 10)));
+        assertThat(student.deleteById()).isTrue();
+        assertThat(student.deleteById(12L)).isTrue();
+        assertThat(student.delete(new QueryWrapper<H2Student>().gt("id", 10))).isTrue();
     }
 
     @Test
@@ -150,19 +153,19 @@ class ActiveRecordTest {
         String name = "name1", nameNew = "name1New";
         H2Student student = new H2Student().setName(name).setAge(2);
         student.delete(new QueryWrapper<H2Student>().comment("deleteAllStu"));
-        Assertions.assertTrue(student.insert());
+        assertThat(student.insert()).isTrue();
         boolean updated = new H2Student().setName(nameNew)
                 .update(new QueryWrapper<H2Student>().comment("updateStuName1").lambda().eq(H2Student::getName, name));
-        Assertions.assertTrue(updated);
+        assertThat(updated).isTrue();
         H2Student h2Student = student.selectOne(
                 new QueryWrapper<H2Student>().lambda().comment("getStuByUniqueName").eq(H2Student::getName, nameNew));
-        Assertions.assertNotNull(h2Student);
+        assertThat(h2Student).isNotNull();
         LambdaQueryWrapper<H2Student> queryWrapper = new QueryWrapper<H2Student>().lambda().ge(H2Student::getAge, 1);
         long userCount = student.selectCount(queryWrapper.comment("getStuCount"));
-        Assertions.assertEquals(1, userCount);
+        assertThat(userCount).isEqualTo(1);
         List<H2Student> h2StudentList = student.selectList(queryWrapper.comment("getStuList"));
-        Assertions.assertEquals(1, h2StudentList.size());
+        assertThat(h2StudentList.size()).isEqualTo(1);
         IPage<H2Student> h2StudentIPage = student.selectPage(new Page<>(1, 10), queryWrapper.comment("getStuPage"));
-        Assertions.assertEquals(1, h2StudentIPage.getRecords().size());
+        assertThat(h2StudentIPage.getRecords().size()).isEqualTo(1);
     }
 }

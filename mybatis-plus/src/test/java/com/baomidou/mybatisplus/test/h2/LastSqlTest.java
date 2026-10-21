@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,28 +39,28 @@ public class LastSqlTest {
     @Order(1)
     public void delete() {
         int res = mapper.delete(new LambdaUpdateWrapper<H2Student>().last(" and 1 = 2 ").eq(H2Student::getId, 0));
-        Assertions.assertTrue(res <= 0);
+        assertThat(res <= 0).isTrue();
     }
 
     @Test
     @Order(2)
     public void selectCount() {
         long result = mapper.selectCount(new LambdaQueryWrapper<H2Student>().last("where 1 =2"));
-        Assertions.assertTrue(result <= 0);
+        assertThat(result <= 0).isTrue();
     }
 
     @Test
     @Order(3)
     public void selectList() {
         List<H2Student> h2Students = mapper.selectList(new LambdaQueryWrapper<H2Student>().last("limit 1"));
-        Assertions.assertEquals(1, h2Students.size());
+        assertThat(h2Students.size()).isEqualTo(1);
     }
 
     @Test
     @Order(4)
     public void selectMaps() {
         List<Map<String, Object>> maps = mapper.selectMaps(new LambdaQueryWrapper<H2Student>().last("limit 1"));
-        Assertions.assertEquals(1, maps.size());
+        assertThat(maps.size()).isEqualTo(1);
     }
 
     @Test
@@ -74,14 +77,14 @@ public class LastSqlTest {
     @Order(6)
     public void selectObjs() {
         List<Object> objects = mapper.selectObjs(new QueryWrapper<H2Student>().last(" limit 1"));
-        Assertions.assertEquals(1, objects.size());
+        assertThat(objects.size()).isEqualTo(1);
     }
 
     @Test
     @Order(7)
     public void SelectOne() {
         H2Student h2Student = mapper.selectOne(new QueryWrapper<H2Student>().last(" where 1 = 2"));
-        Assertions.assertNull(h2Student);
+        assertThat(h2Student).isNull();
     }
 
     @Test
@@ -97,17 +100,16 @@ public class LastSqlTest {
     @Order(9)
     public void update() {
         int res = mapper.update(null, new UpdateWrapper<H2Student>().set("name", "dog").last(" where 1 =2 "));
-        Assertions.assertTrue(res <= 0);
+        assertThat(res <= 0).isTrue();
     }
 
     @Test
     @Order(10)
     public void selectListOrderBy() {
         List<H2Student> h2Students = mapper.selectList(null);
-        Assertions.assertEquals(6, h2Students.size());
-        Assertions.assertEquals(
-                6, mapper.selectList(new LambdaQueryWrapper<H2Student>().eq(H2Student::getAge, 1)).size());
-        Assertions.assertEquals(6, mapper.selectList(new QueryWrapper<H2Student>().orderByAsc("age")).size());
+        assertThat(h2Students.size()).isEqualTo(6);
+        assertThat(mapper.selectList(new LambdaQueryWrapper<H2Student>().eq(H2Student::getAge, 1)).size()).isEqualTo(6);
+        assertThat(mapper.selectList(new QueryWrapper<H2Student>().orderByAsc("age")).size()).isEqualTo(6);
     }
 
     @Test
@@ -122,7 +124,7 @@ public class LastSqlTest {
     @Order(12)
     public void selectMapsOrderBy() {
         List<Map<String, Object>> maps = mapper.selectMaps(null);
-        Assertions.assertEquals(6, maps.size());
+        assertThat(maps.size()).isEqualTo(6);
     }
 
     @Test
@@ -137,6 +139,6 @@ public class LastSqlTest {
     @Order(12)
     public void selectObjsOrderBy() {
         List<Object> objs = mapper.selectObjs(null);
-        Assertions.assertEquals(6, objs.size());
+        assertThat(objs.size()).isEqualTo(6);
     }
 }

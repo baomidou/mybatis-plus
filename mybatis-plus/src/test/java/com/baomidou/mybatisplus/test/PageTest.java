@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.apache.ibatis.reflection.property.PropertyCopier;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanCopier;
@@ -139,12 +138,12 @@ class PageTest {
 
     private void assertPage(Page<?> source) throws JsonProcessingException {
         toConvert(source, Page.class).forEach(target -> {
-            Assertions.assertEquals(source.getCurrent(), target.getCurrent());
-            Assertions.assertEquals(source.getTotal(), target.getTotal());
-            Assertions.assertEquals(source.getSize(), target.getSize());
-            Assertions.assertEquals(source.countId(), target.countId());
-            Assertions.assertEquals(source.getRecords().size(), target.getRecords().size());
-            Assertions.assertEquals(source.getPages(), target.getPages());
+            assertThat(target.getCurrent()).isEqualTo(source.getCurrent());
+            assertThat(target.getTotal()).isEqualTo(source.getTotal());
+            assertThat(target.getSize()).isEqualTo(source.getSize());
+            assertThat(target.countId()).isEqualTo(source.countId());
+            assertThat(target.getRecords().size()).isEqualTo(source.getRecords().size());
+            assertThat(target.getPages()).isEqualTo(source.getPages());
         });
     }
 
@@ -159,24 +158,24 @@ class PageTest {
 
     private void assertPageDto(PageDTO<?> source) throws JsonProcessingException {
         toConvert(source, PageDTO.class).forEach(target -> {
-            Assertions.assertEquals(source.toString(), target.toString());
-            Assertions.assertEquals(source.getCurrent(), target.getCurrent());
-            Assertions.assertEquals(source.getTotal(), target.getTotal());
-            Assertions.assertEquals(source.getSize(), target.getSize());
-            Assertions.assertEquals(source.countId(), target.getCountId());
-            Assertions.assertEquals(source.countId(), target.countId());
-            Assertions.assertEquals(source.searchCount(), target.isSearchCount());
-            Assertions.assertEquals(source.searchCount(), target.searchCount());
-            Assertions.assertEquals(source.optimizeCountSql(), target.isOptimizeCountSql());
-            Assertions.assertEquals(source.optimizeCountSql(), target.optimizeCountSql());
-            Assertions.assertEquals(source.optimizeJoinOfCountSql(), target.optimizeJoinOfCountSql());
-            Assertions.assertEquals(source.optimizeJoinOfCountSql(), target.isOptimizeJoinOfCountSql());
-            Assertions.assertEquals(source.getRecords().size(), target.getRecords().size());
-            Assertions.assertEquals(source.maxLimit(), target.getMaxLimit());
-            Assertions.assertEquals(source.maxLimit(), target.maxLimit());
-            Assertions.assertEquals(source.getOrders().size(), target.getOrders().size());
-            Assertions.assertEquals(source.getOrders().size(), target.orders().size());
-            Assertions.assertEquals(source.getPages(), target.getPages());
+            assertThat(target.toString()).isEqualTo(source.toString());
+            assertThat(target.getCurrent()).isEqualTo(source.getCurrent());
+            assertThat(target.getTotal()).isEqualTo(source.getTotal());
+            assertThat(target.getSize()).isEqualTo(source.getSize());
+            assertThat(target.getCountId()).isEqualTo(source.countId());
+            assertThat(target.countId()).isEqualTo(source.countId());
+            assertThat(target.isSearchCount()).isEqualTo(source.searchCount());
+            assertThat(target.searchCount()).isEqualTo(source.searchCount());
+            assertThat(target.isOptimizeCountSql()).isEqualTo(source.optimizeCountSql());
+            assertThat(target.optimizeCountSql()).isEqualTo(source.optimizeCountSql());
+            assertThat(target.optimizeJoinOfCountSql()).isEqualTo(source.optimizeJoinOfCountSql());
+            assertThat(target.isOptimizeJoinOfCountSql()).isEqualTo(source.optimizeJoinOfCountSql());
+            assertThat(target.getRecords().size()).isEqualTo(source.getRecords().size());
+            assertThat(target.getMaxLimit()).isEqualTo(source.maxLimit());
+            assertThat(target.maxLimit()).isEqualTo(source.maxLimit());
+            assertThat(target.getOrders().size()).isEqualTo(source.getOrders().size());
+            assertThat(target.orders().size()).isEqualTo(source.getOrders().size());
+            assertThat(target.getPages()).isEqualTo(source.getPages());
         });
     }
 

@@ -13,7 +13,6 @@ import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -25,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.sql.DataSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -116,13 +117,13 @@ public class GaussdbTest {
             LOGGER.info("insert data:{}", demoMapper.insert(demo));
 
             Demo selectDemo = demoMapper.selectById(demo.getId());
-            Assertions.assertNotNull(selectDemo);
+            assertThat(selectDemo).isNotNull();
             LOGGER.info("select data:{}", selectDemo);
 
             Demo updateDemo = new Demo();
             updateDemo.setAge(23);
             updateDemo.setId(selectDemo.getId());
-            Assertions.assertEquals(1, demoMapper.updateById(updateDemo));
+            assertThat(demoMapper.updateById(updateDemo)).isEqualTo(1);
 
             LOGGER.info("delete by id:{}", demoMapper.deleteById(demo));
 
@@ -139,18 +140,18 @@ public class GaussdbTest {
 
             Long count = demoMapper.selectCount(Wrappers.emptyWrapper());
             LOGGER.info("select count:{}", count);
-            Assertions.assertEquals(50L, count);
+            assertThat(count).isEqualTo(50L);
 
             Page<Demo> page = demoMapper.selectPage(new Page<>(1, 10), Wrappers.emptyWrapper());
-            Assertions.assertEquals(50, page.getTotal());
-            Assertions.assertEquals(10, page.getSize());
+            assertThat(page.getTotal()).isEqualTo(50);
+            assertThat(page.getSize()).isEqualTo(10);
             for (Demo record : page.getRecords()) {
                 LOGGER.info("record:{}", record);
             }
             LOGGER.info("next page .");
             page = demoMapper.selectPage(new Page<>(2, 10), Wrappers.emptyWrapper());
-            Assertions.assertEquals(50, page.getTotal());
-            Assertions.assertEquals(10, page.getSize());
+            assertThat(page.getTotal()).isEqualTo(50);
+            assertThat(page.getSize()).isEqualTo(10);
             for (Demo record : page.getRecords()) {
                 LOGGER.info("record:{}", record);
             }

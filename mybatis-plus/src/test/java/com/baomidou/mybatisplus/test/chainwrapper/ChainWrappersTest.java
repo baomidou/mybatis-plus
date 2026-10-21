@@ -2,11 +2,12 @@ package com.baomidou.mybatisplus.test.chainwrapper;
 
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.test.BaseDbTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 /**
  * @author VampireAchao
@@ -18,7 +19,7 @@ public class ChainWrappersTest extends BaseDbTest<EntityMapper> {
     void test() {
         final String id = "id";
         Entity entity = new Entity();
-        Assertions.assertAll(
+        assertAll(
                 () -> ChainWrappers.queryChain(entity.getClass()).func(j -> j.isNotNull(id))
                         .func(entity.getId() != null, j -> j.eq("id", entity.getId()))// 不会npe,也不会加入sql
                         .and(j -> j.isNotNull(id)).or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id))
