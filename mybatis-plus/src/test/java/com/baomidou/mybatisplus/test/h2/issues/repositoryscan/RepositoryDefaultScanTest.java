@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author nieqiurong
  */
@@ -35,8 +37,16 @@ public class RepositoryDefaultScanTest {
                       PRIMARY KEY (id)
                  );
                 """);
-        demoService.save(new Demo());
-        demoService.saveBatch(List.of(new Demo()));
+        long before = demoService.count();
+        Demo demo = new Demo();
+        assertThat(demoService.save(demo)).isTrue();
+        // 主键由 MP 生成,不依赖数据库自增
+        assertThat(demo.getId()).isNotNull();
+        assertThat(demoService.getById(demo.getId())).isNotNull();
+        assertThat(demoService.saveBatch(List.of(new Demo(), new Demo()))).isTrue();
+        assertThat(demoService.count()).isEqualTo(before + 3);
+        // 没有 @MapperScan,mapper 仍由容器交给 MP 解析
+        assertThat(demoService.getBaseMapper()).isNotNull();
     }
 
 }

@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.h2.issues.repositoryscan;
 
 import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.entity.Demo;
+import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.mapper.DemoRepositoryMapper;
 import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.service.IDemoRepositoryService;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -35,8 +38,16 @@ public class RepositoryMapperScanTest {
                       PRIMARY KEY (id)
                  );
                 """);
-        demoService.save(new Demo());
-        demoService.saveBatch(List.of(new Demo()));
+        long before = demoService.count();
+        Demo demo = new Demo();
+        assertThat(demoService.save(demo)).isTrue();
+        // 主键由 MP 生成,不依赖数据库自增
+        assertThat(demo.getId()).isNotNull();
+        assertThat(demoService.getById(demo.getId())).isNotNull();
+        assertThat(demoService.saveBatch(List.of(new Demo(), new Demo()))).isTrue();
+        assertThat(demoService.count()).isEqualTo(before + 3);
+        // @MapperScan 按 @Repository 过滤,扫到的就是这张接口的 mapper
+        assertThat(demoService.getBaseMapper()).isInstanceOf(DemoRepositoryMapper.class);
     }
 
 }
