@@ -5,13 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import org.apache.ibatis.binding.MapperMethod;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ParameterUtilsTest {
 
@@ -75,13 +76,13 @@ class ParameterUtilsTest {
 
     @Test
     void testFindPage() {
-        Assertions.assertFalse(ParameterUtils.findPage(null).isPresent());
+        assertThat(ParameterUtils.findPage(null)).isEmpty();
         MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
         param.put(Constants.ENTITY, null);
-        Assertions.assertFalse(ParameterUtils.findPage(param).isPresent());
+        assertThat(ParameterUtils.findPage(param)).isEmpty();
         param.put("page", new Page<>());
-        Assertions.assertTrue(ParameterUtils.findPage(param).isPresent());
-        Assertions.assertTrue(ParameterUtils.findPage(new Page<>()).isPresent());
-        Assertions.assertFalse(ParameterUtils.findPage(new HashMap<>()).isPresent());
+        assertThat(ParameterUtils.findPage(param)).isPresent();
+        assertThat(ParameterUtils.findPage(new Page<>())).isPresent();
+        assertThat(ParameterUtils.findPage(new HashMap<>())).isEmpty();
     }
 }

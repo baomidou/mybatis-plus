@@ -6,7 +6,6 @@ import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -14,6 +13,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 检查pom依赖
@@ -45,14 +46,14 @@ class GeneratePomTest {
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency annotation = dependenciesMap.get("mybatis-plus-annotation");
-            Assertions.assertEquals("compile", annotation.getScope());
-            Assertions.assertFalse(annotation.isOptional());
+            assertThat(annotation.getScope()).isEqualTo("compile");
+            assertThat(annotation.isOptional()).isFalse();
             Dependency mybatis = dependenciesMap.get("mybatis");
-            Assertions.assertEquals("compile", mybatis.getScope());
-            Assertions.assertFalse(mybatis.isOptional());
+            assertThat(mybatis.getScope()).isEqualTo("compile");
+            assertThat(mybatis.isOptional()).isFalse();
             Dependency cglib = dependenciesMap.get("cglib");
-            Assertions.assertEquals("compile", cglib.getScope());
-            Assertions.assertTrue(cglib.isOptional());
+            assertThat(cglib.getScope()).isEqualTo("compile");
+            assertThat(cglib.isOptional()).isTrue();
         }
     }
 

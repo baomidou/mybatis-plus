@@ -1,8 +1,9 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.AES;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试 AES 算法
@@ -19,6 +20,6 @@ public class AESTest {
         System.out.println("AES 密钥：" + randomKey);
         String result = AES.encrypt(data, randomKey);
         System.out.println("AES 加密内容：" + result);
-        Assertions.assertEquals(data, AES.decrypt(result, randomKey));
+        assertThat(AES.decrypt(result, randomKey)).isEqualTo(data);
     }
 }

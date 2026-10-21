@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试
@@ -22,10 +23,10 @@ class ClassUtilsTest {
     void newInstanceTest() {
         // 根据设计，只要能实例化，并且 对象不为 null ， 即认为执行成功
         Demo demo = ClassUtils.newInstance(Demo.class);
-        Assertions.assertNotNull(demo);
+        assertThat(demo).isNotNull();
 
         Map<?, ?> map = ClassUtils.newInstance(HashMap.class);
-        Assertions.assertNotNull(map);
+        assertThat(map).isNotNull();
     }
 
     /**

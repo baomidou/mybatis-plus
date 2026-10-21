@@ -5,11 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author miemie
@@ -166,27 +168,26 @@ class QueryWrapperTest extends BaseWrapperTest {
     @Test
     void testCheckSqlInjection() {
         QueryWrapper<Entity> qw = new QueryWrapper<Entity>().checkSqlInjection().eq("a", "b");
-        Assertions.assertEquals("WHERE (a = #{ew.paramNameValuePairs.MPGENVAL1})", qw.getCustomSqlSegment());
+        assertThat(qw.getCustomSqlSegment()).isEqualTo("WHERE (a = #{ew.paramNameValuePairs.MPGENVAL1})");
 
         qw.orderByAsc("select 1 from xxx");
-        Assertions.assertThrows(MybatisPlusException.class, qw::getCustomSqlSegment);
+        assertThatThrownBy(qw::getCustomSqlSegment).isInstanceOf(MybatisPlusException.class);
     }
 
     @Test
     void testGroupBy() {
-        Assertions.assertEquals("GROUP BY id", new QueryWrapper<Entity>().groupBy("id").getSqlSegment().trim());
-        Assertions.assertEquals(
-                "GROUP BY id,name",
-                new QueryWrapper<Entity>().groupBy(Arrays.asList("id", "name")).getSqlSegment().trim());
-        Assertions.assertEquals(
-                "GROUP BY id,name", new QueryWrapper<Entity>().groupBy(List.of("id", "name")).getSqlSegment().trim());
-        Assertions.assertEquals("GROUP BY id,name", new QueryWrapper<Entity>().groupBy(new ArrayList<>() {
+        assertThat(new QueryWrapper<Entity>().groupBy("id").getSqlSegment().trim()).isEqualTo("GROUP BY id");
+        assertThat(new QueryWrapper<Entity>().groupBy(Arrays.asList("id", "name")).getSqlSegment().trim())
+                .isEqualTo("GROUP BY id,name");
+        assertThat(new QueryWrapper<Entity>().groupBy(List.of("id", "name")).getSqlSegment().trim())
+                .isEqualTo("GROUP BY id,name");
+        assertThat(new QueryWrapper<Entity>().groupBy(new ArrayList<>() {
 
             {
                 add("id");
                 add("name");
             }
-        }).getSqlSegment().trim());
+        }).getSqlSegment().trim()).isEqualTo("GROUP BY id,name");
     }
 
     private List<Object> getList() {

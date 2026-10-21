@@ -3,12 +3,13 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 反射工具类测试
@@ -96,16 +97,16 @@ class ReflectionKitTest {
     @Test
     void testGetFieldList() {
         List<Field> fieldList = ReflectionKit.getFieldList(C.class);
-        Assertions.assertEquals(5, fieldList.size());
+        assertThat(fieldList.size()).isEqualTo(5);
     }
 
     @Test
     void testGetFieldMap() throws NoSuchFieldException {
         Map<String, Field> fieldMap = ReflectionKit.getFieldMap(C.class);
-        Assertions.assertEquals(5, fieldMap.size());
-        Assertions.assertEquals(fieldMap.get("sex"), C.class.getDeclaredField("sex"));
-        Assertions.assertEquals(fieldMap.get("age"), B.class.getDeclaredField("age"));
-        Assertions.assertEquals(fieldMap.get("name"), A.class.getDeclaredField("name"));
+        assertThat(fieldMap.size()).isEqualTo(5);
+        assertThat(fieldMap.get("sex")).isEqualTo(C.class.getDeclaredField("sex"));
+        assertThat(fieldMap.get("age")).isEqualTo(B.class.getDeclaredField("age"));
+        assertThat(fieldMap.get("name")).isEqualTo(A.class.getDeclaredField("name"));
     }
 
     @Test
@@ -114,19 +115,19 @@ class ReflectionKitTest {
         c.setSex("女");
         c.setName("妹纸");
         c.setAge(18);
-        Assertions.assertEquals(c.getSex(), ReflectionKit.getFieldValue(c, "sex"));
-        Assertions.assertEquals(c.getAge(), ReflectionKit.getFieldValue(c, "age"));
+        assertThat(ReflectionKit.getFieldValue(c, "sex")).isEqualTo(c.getSex());
+        assertThat(ReflectionKit.getFieldValue(c, "age")).isEqualTo(c.getAge());
 
         EntityByLombok entityByLombok = new EntityByLombok();
         entityByLombok.setPId("6666");
         entityByLombok.setParentId("123");
-        Assertions.assertEquals(entityByLombok.getPId(), ReflectionKit.getFieldValue(entityByLombok, "pId"));
-        Assertions.assertEquals(entityByLombok.getParentId(), ReflectionKit.getFieldValue(entityByLombok, "parentId"));
+        assertThat(ReflectionKit.getFieldValue(entityByLombok, "pId")).isEqualTo(entityByLombok.getPId());
+        assertThat(ReflectionKit.getFieldValue(entityByLombok, "parentId")).isEqualTo(entityByLombok.getParentId());
 
         Entity entity = new Entity();
         entity.setpId("6666");
         entity.setParentId("123");
-        Assertions.assertEquals(entity.getParentId(), ReflectionKit.getFieldValue(entity, "parentId"));
-        Assertions.assertEquals(entity.getpId(), ReflectionKit.getFieldValue(entity, "pId"));
+        assertThat(ReflectionKit.getFieldValue(entity, "parentId")).isEqualTo(entity.getParentId());
+        assertThat(ReflectionKit.getFieldValue(entity, "pId")).isEqualTo(entity.getpId());
     }
 }

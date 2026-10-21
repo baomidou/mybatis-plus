@@ -16,13 +16,14 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.jdbc.JdbcTransaction;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2023/8/5 10:28
@@ -49,8 +50,9 @@ public class PluginUtilsTest {
         RoutingStatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, new Object(),
                 new RowBounds(), null, Mockito.mock(BoundSql.class));
         Object plugin = new TestInterceptor().plugin(statementHandler);
-        Assertions.assertTrue(Proxy.isProxyClass(plugin.getClass()));
-        Assertions.assertEquals(statementHandler, PluginUtils.realTarget(plugin));
+        assertThat(Proxy.isProxyClass(plugin.getClass())).isTrue();
+        Object realTarget = PluginUtils.realTarget(plugin);
+        assertThat(realTarget).isEqualTo(statementHandler);
     }
 
 }

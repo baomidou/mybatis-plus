@@ -126,7 +126,7 @@ class TestConventionTest {
      * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 实测）。新文件只准用 AssertJ；<br>
      * 改到哪个存量文件就顺手转换一个，转换够数就把本常量调小，禁止调大。
      */
-    private static final int MAX_JUNIT_ASSERTION_FILES = 133;
+    private static final int MAX_JUNIT_ASSERTION_FILES = 120;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。

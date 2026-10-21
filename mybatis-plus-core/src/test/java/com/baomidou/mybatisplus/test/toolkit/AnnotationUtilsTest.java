@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.toolkit.AnnotationUtils;
 import lombok.Data;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Documented;
@@ -14,6 +13,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -88,73 +89,73 @@ public class AnnotationUtilsTest {
     void test() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("id"));
-        Assertions.assertNull(tableField);
+        assertThat(tableField).isNull();
     }
 
     @Test
     void test1() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertTrue(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isTrue();
     }
 
     @Test
     void test2() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name1"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertFalse(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isFalse();
     }
 
     @Test
     void test3() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name2"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertTrue(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isTrue();
     }
 
     @Test
     void test4() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name3"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertFalse(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isFalse();
     }
 
     @Test
     void test5() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name4"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertFalse(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isFalse();
     }
 
     @Test
     void test6() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name5"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertTrue(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isTrue();
     }
 
     @Test
     void test7() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("deleted"));
-        Assertions.assertNotNull(tableField);
-        Assertions.assertTrue(tableField.exist());
+        assertThat(tableField).isNotNull();
+        assertThat(tableField.exist()).isTrue();
         TableLogic tableLogic = AnnotationUtils
                 .findFirstAnnotation(TableLogic.class, Demo.class.getDeclaredField("deleted"));
-        Assertions.assertNotNull(tableLogic);
+        assertThat(tableLogic).isNotNull();
     }
 
     @Test
     void test8() {
         TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, Demo.class);
-        Assertions.assertNotNull(tableName);
-        Assertions.assertEquals("test", tableName.schema());
+        assertThat(tableName).isNotNull();
+        assertThat(tableName.schema()).isEqualTo("test");
     }
 
 }

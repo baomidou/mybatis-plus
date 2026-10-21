@@ -3,10 +3,11 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.BeanUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 测试 bean utils
@@ -28,13 +29,13 @@ class BeanUtilsTest {
                 setName("baomidou");
             }
         });
-        Assertions.assertEquals(2, map.size());
-        Assertions.assertEquals(123, map.get("id"));
-        Assertions.assertEquals("baomidou", map.get("name"));
+        assertThat(map.size()).isEqualTo(2);
+        assertThat(map.get("id")).isEqualTo(123);
+        assertThat(map.get("name")).isEqualTo("baomidou");
         // 测试反向转换过程
         User user = BeanUtils.mapToBean(map, User.class);
-        Assertions.assertEquals(123, user.getId());
-        Assertions.assertEquals("baomidou", user.getName());
+        assertThat(user.getId()).isEqualTo(123);
+        assertThat(user.getName()).isEqualTo("baomidou");
 
     }
 
