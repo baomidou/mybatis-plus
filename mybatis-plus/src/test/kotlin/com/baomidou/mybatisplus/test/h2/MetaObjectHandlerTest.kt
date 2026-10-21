@@ -7,15 +7,11 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper
 import org.apache.ibatis.builder.MapperBuilderAssistant
 import org.apache.ibatis.reflection.MetaObject
-import org.junit.jupiter.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.sql.Time
-import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Date
 
 /**
  *
@@ -23,59 +19,54 @@ import java.util.*
  */
 class MetaObjectHandlerTest {
 
+    /**
+     * 特征化 strictInsertFill 的类型闸门：实体属性在字节码里是包装类型，
+     * 传原始类型的 Class 匹配不上会被静默跳过，只有 javaObjectType 才填得进去。
+     */
     @Test
-    fun println() {
-        val clzs = arrayOf(
-            String::class, Long::class, Int::class, Double::class, Float::class,
-            Short::class, Byte::class, Boolean::class, Date::class,
-            Time::class,
-            Timestamp::class, java.sql.Date::class, LocalDate::class, LocalDateTime::class, BigInteger::class,
-            BigDecimal::class, BigInteger::class
-        )
-        for (clz in clzs) {
-            println("kotlinType:" + clz.simpleName + "----->" + "JavaObjectType:" + clz.javaObjectType.name + "---->" + "JavaType:" + clz.java.name)
-        }
+    fun strictInsertFillOnlyAcceptsBoxedClass() {
+        assertThat(Long::class.java).describedAs("原始 long.class 和实体属性的 java.lang.Long 是两个不同的 Class")
+            .isNotEqualTo(Long::class.javaObjectType)
+        val demo = Demo()
+        fillHandler().insertFill(metaObjectOf(demo))
+        assertThat(demo.testLong).describedAs("按原始类型 Class 匹配不到属性，既不报错也不填").isNull()
+        assertThat(demo.testInt).describedAs("换成包装类型就填得上").isEqualTo(123)
     }
 
+    /**
+     * 特征化注解了 INSERT_UPDATE 的字段都会走 insertFill，且已有值不被覆盖。
+     */
     @Test
-    fun test() {
+    fun strictInsertFillWritesEveryAnnotatedField() {
+        val demo = Demo().apply { testString = "原有值" }
+        fillHandler().insertFill(metaObjectOf(demo))
+        assertThat(demo.testString).describedAs("有值不覆盖").isEqualTo("原有值")
+        assertThat(demo.testDate).isNotNull()
+        assertThat(demo.testLocalDateTime).isNotNull()
+        assertThat(demo.testLocalDate).isNotNull()
+        assertThat(demo.testBoolean).isFalse()
+    }
+
+    private fun metaObjectOf(demo: Demo): MetaObject {
         val configuration = MybatisConfiguration()
-        val mapperBuilderAssistant = MapperBuilderAssistant(configuration, "")
-        val tableInfo = TableInfoHelper.initTableInfo(mapperBuilderAssistant, Demo::class.java)
-        for (tableFieldInfo in tableInfo.fieldList) {
-            println(tableFieldInfo.property + "----->" + tableFieldInfo.propertyType.name)
-        }
-        val demo = Demo()
-        val metaObjectHandler = object : MetaObjectHandler {
-            override fun insertFill(metaObject: MetaObject) {
-                this.strictInsertFill(metaObject, "testString", String::class.java, "123")
-                this.strictInsertFill(metaObject, "testLong", Long::class.javaObjectType, 123456L)
-                this.strictInsertFill(metaObject, "testInt", Int::class.javaObjectType, 123)
-                this.strictInsertFill(
-                    metaObject,
-                    "testLocalDateTime",
-                    LocalDateTime::class.javaObjectType,
-                    LocalDateTime.now()
-                )
-                this.strictInsertFill(metaObject, "testBoolean", Boolean::class.javaObjectType, false)
-                this.strictInsertFill(metaObject, "testDate", Date::class.javaObjectType, Date())
-                this.strictInsertFill(metaObject, "testLocalDate", LocalDate::class.javaObjectType, LocalDate.now())
-            }
+        TableInfoHelper.initTableInfo(MapperBuilderAssistant(configuration, ""), Demo::class.java)
+        return configuration.newMetaObject(demo)
+    }
 
-            override fun updateFill(metaObject: MetaObject) {
-
-            }
+    private fun fillHandler(): MetaObjectHandler = object : MetaObjectHandler {
+        override fun insertFill(metaObject: MetaObject) {
+            this.strictInsertFill(metaObject, "testString", String::class.java, "123")
+            this.strictInsertFill(metaObject, "testInt", Int::class.javaObjectType, 123)
+            this.strictInsertFill(metaObject, "testLocalDateTime", LocalDateTime::class.java, LocalDateTime.now())
+            this.strictInsertFill(metaObject, "testBoolean", Boolean::class.javaObjectType, false)
+            this.strictInsertFill(metaObject, "testDate", Date::class.java, Date())
+            this.strictInsertFill(metaObject, "testLocalDate", LocalDate::class.java, LocalDate.now())
+            // 故意用原始类型 long.class，用例要靠它演示填充被静默跳过
+            this.strictInsertFill(metaObject, "testLong", Long::class.java, 123456L)
         }
-        val metaObject: MetaObject = configuration.newMetaObject(demo)
-        metaObjectHandler.insertFill(metaObject)
-        Assertions.assertNotNull(demo.testString)
-        Assertions.assertNotNull(demo.testInt)
-        Assertions.assertNotNull(demo.testLong)
-        Assertions.assertNotNull(demo.testDate)
-        Assertions.assertNotNull(demo.testLocalDateTime)
-        Assertions.assertNotNull(demo.testBoolean)
-        Assertions.assertNotNull(demo.testLocalDate)
-        println(demo)
+
+        override fun updateFill(metaObject: MetaObject) {
+        }
     }
 
 }
