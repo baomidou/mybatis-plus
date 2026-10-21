@@ -85,7 +85,7 @@ class TestConventionTest {
     /**
      * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。
      */
-    private static final int MAX_ASSERTION_FREE_CASES = 19;
+    private static final int MAX_ASSERTION_FREE_CASES = 18;
 
     /**
      * T6 显式禁用用例数量。

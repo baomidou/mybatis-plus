@@ -77,13 +77,26 @@ class PageCacheTest extends BaseDbTest<PageCacheMapper> {
         });
     }
 
+    /**
+     * 结果交给 ResultHandler 时，分页插件拼的 limit 仍然生效，但 records/total 回填不到 page 上。
+     */
     @Test
     void handlerTest() {
-        doTest(i -> {
-            Page<PageCache> page = new Page<>(1, 2);
-            i.otherPageHandler(page, new Tj(), new DefaultResultHandler());
-            System.out.println(page);
-        });
+        DefaultResultHandler first = new DefaultResultHandler();
+        Page<PageCache> firstPage = new Page<>(1, 2);
+        doTest(i -> i.otherPageHandler(firstPage, new Tj(), first));
+        assertThat(first.getResultList()).hasSize(2).extracting("id").containsExactly(1L, 2L);
+        assertThat(firstPage.getRecords()).isEmpty();
+        assertThat(firstPage.getTotal()).isZero();
+
+        DefaultResultHandler second = new DefaultResultHandler();
+        Page<PageCache> secondPage = new Page<>(2, 2);
+        doTest(i -> i.otherPageHandler(secondPage, new Tj(), second));
+        // 翻页只改 SQL 的 offset，page 自身的状态没人写
+        assertThat(second.getResultList()).extracting("id").containsExactly(3L, 4L);
+        assertThat(secondPage.getCurrent()).isEqualTo(2L);
+        assertThat(secondPage.getSize()).isEqualTo(2L);
+        assertThat(secondPage.getRecords()).isEmpty();
     }
 
     @Override
