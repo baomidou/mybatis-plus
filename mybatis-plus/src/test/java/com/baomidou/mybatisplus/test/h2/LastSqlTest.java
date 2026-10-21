@@ -17,6 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * OrderBy LastSql 混合测试
  *
@@ -62,7 +64,10 @@ public class LastSqlTest {
     @Order(5)
     public void selectMapsPage() {
         IPage<Map<String, Object>> page = Page.of(0, 10);
-        mapper.selectMapsPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
+        IPage<Map<String, Object>> result = mapper
+                .selectMapsPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ ").comment("test"));
+        assertThat(result.getTotal()).isEqualTo(6L);
+        assertThat(result.getRecords()).hasSize(6);
     }
 
     @Test
@@ -83,7 +88,9 @@ public class LastSqlTest {
     @Order(8)
     public void selectPage() {
         IPage<H2Student> page = Page.of(0, 10);
-        mapper.selectPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ "));
+        IPage<H2Student> result = mapper.selectPage(page, new QueryWrapper<H2Student>().last(" /* testSql */ "));
+        assertThat(result.getTotal()).isEqualTo(6L);
+        assertThat(result.getRecords()).hasSize(6);
     }
 
     @Test
@@ -106,7 +113,9 @@ public class LastSqlTest {
     @Test
     @Order(11)
     public void selectPageOrderBy() {
-        mapper.selectPage(Page.of(0, 10), null);
+        IPage<H2Student> result = mapper.selectPage(Page.of(0, 10), null);
+        assertThat(result.getTotal()).isEqualTo(6L);
+        assertThat(result.getRecords()).hasSize(6);
     }
 
     @Test
@@ -119,7 +128,9 @@ public class LastSqlTest {
     @Test
     @Order(12)
     public void selectMapsPageOrderBy() {
-        mapper.selectMapsPage(Page.of(0, 10), null);
+        IPage<Map<String, Object>> result = mapper.selectMapsPage(Page.of(0, 10), null);
+        assertThat(result.getTotal()).isEqualTo(6L);
+        assertThat(result.getRecords()).hasSize(6);
     }
 
     @Test
