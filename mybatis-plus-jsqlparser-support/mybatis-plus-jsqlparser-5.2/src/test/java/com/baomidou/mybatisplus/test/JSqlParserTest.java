@@ -24,11 +24,10 @@ class JSqlParserTest {
 
         PlainSelect ps = (PlainSelect) select;
 
-        System.out.println(ps.getWhere().toString());
-        System.out.println(ps.getSelectItems().get(1).toString());
-
+        assertThat(ps.getWhere().toString()).isEqualTo("t.col = 9 AND b = c");
+        assertThat(ps.getSelectItems().get(1).toString()).isEqualTo("b");
         AndExpression e = (AndExpression) ps.getWhere();
-        System.out.println(e.getLeftExpression());
+        assertThat(e.getLeftExpression().toString()).isEqualTo("t.col = 9");
     }
 
     @Test
