@@ -136,11 +136,11 @@ class TestConventionTest {
     private static final int MAX_PACKAGE_MISMATCHES = 66;
 
     /**
-     * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 清空 mybatis-plus-generator 23 个文件后实测，<br>
-     * 只剩 mybatis-plus-up 的 SourcePatchToolTest 一个）。新文件只准用 AssertJ；<br>
-     * 改到哪个存量文件就顺手转换一个，转换够数就把本常量调小，禁止调大。
+     * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
+     * spring-boot-starter、jsqlparser-support、mybatis-plus、generator、up，<b>欠账已清零，本常量只能是 0</b>： 再调大等于允许有人往测试里塞回 JUnit
+     * 断言。{@code assertAll}、{@code assertTimeout} 系列 AssertJ 没有对应物，不计入欠账。
      */
-    private static final int MAX_JUNIT_ASSERTION_FILES = 1;
+    private static final int MAX_JUNIT_ASSERTION_FILES = 0;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。

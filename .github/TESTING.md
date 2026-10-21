@@ -20,7 +20,7 @@
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 66 处缺口 |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 27 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
-| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；调用可转换 JUnit 断言的文件 1 |
+| T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 8（含 6 个已禁用用例）、无用例 `*Test` 9、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | — |
@@ -58,11 +58,10 @@
   与 Jupiter 混用会让用例计数不可信，`@Ignore` 也不会被 Jupiter 执行。
 - 存量里的 JUnit 风格断言按**模块成批**转换，一个模块一个提交，不做跨模块的机械扫射：
   这套测试文件半年内改了 334 个，一次性重写会和日常提交撞车。
-- 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。欠账按**能转换的文件数**冻结在
-  `MAX_JUNIT_ASSERTION_FILES`（2026-10-21 清空 core、extension、spring、spring-boot-starter（12 个）、
-  `mybatis-plus-jsqlparser-support` 4 个子模块（30 个、702 处调用）、`mybatis-plus`（41 个、711 处调用）、
-  `mybatis-plus-generator`（23 个、464 处调用）后实测 1），
-  转换掉一个就调小一格，禁止调大。剩余欠账只有 `mybatis-plus-up` 的 `SourcePatchToolTest`。
+- 新文件只用 AssertJ，不要再引 `org.junit.jupiter.api.Assertions`。存量欠账已在 2026-10-21 逐模块清零
+  （core、extension、spring、spring-boot-starter（12 个）、`mybatis-plus-jsqlparser-support` 4 个子模块
+  （30 个、702 处调用）、`mybatis-plus`（41 个、711 处调用）、`mybatis-plus-generator`（23 个、464 处调用）、
+  `mybatis-plus-up`（1 个、103 处调用）），`MAX_JUNIT_ASSERTION_FILES` **只能是 0**，调大等于允许有人塞回去。
   `assertAll`、`assertTimeout` 系列 AssertJ 没有对应物，留在原处是正确写法，不计入欠账。
 - 禁止 `import org.junit.jupiter.api.*;`：它把 `Assertions` 一起请进文件，按类名找 JUnit 断言的扫描会整个漏掉，
   上一批欠账盘点就这么少算了 10 个文件。要什么就导什么。
@@ -72,6 +71,10 @@
 - 机械转换只保证"等价"，不保证"惯用"：`assertThat(list.size()).isEqualTo(3)`、`assertThat(list.isEmpty()).isFalse()`
   能编译能红，但失败信息只报一个数字，看不出断的是哪个集合。落到这类形状就地改成
   `hasSize(3)`、`isEmpty()`/`isNotEmpty()`、`containsKey(k)`，别留着下次再改。
+- 取 `assertThrows` 返回值的写法不能机械换：AssertJ 没有"返回异常对象的 assertThrows"。
+  改成 `assertThatThrownBy(...).isInstanceOf(X.class).hasMessageContaining("...")` 一条链，
+  顺带把"异常消息里有没有这句话"从 `assertTrue(error.getMessage().contains(...))`（消息为 null 直接 NPE）
+  变成会正常判红的断言。
 
 ## T5 绿必须有意义
 
