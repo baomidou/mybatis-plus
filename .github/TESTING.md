@@ -24,7 +24,7 @@
 | T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 7 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单、wrapper 关键字表、WHERE 片段装配 |
-| T8 | 测试实体类名/表名全局唯一 | 未执行 | — |
+| T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 共用表名 6 处已登记（`h2user`、`key_generator_model`、`sys_user`、`t_simple`、`xxx`、`entity`），新增即红 |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
 
@@ -143,9 +143,12 @@ wrapper 那一侧同理：
 
 ## T8 测试夹具名字全局唯一
 
-框架有按类名/表名缓存的静态状态（`TableInfoHelper` 的 `TABLE_INFO_CACHE`、`LambdaUtils` 的 `CACHE`）
-且没有 `clearAll()`，同名实体会跨用例串状态。新增测试实体类和表名带主题前缀，约定
-`zz_<主题>_user` 这种形式，保证全仓不撞。
+框架有按类名/表名缓存的静态状态（`TableInfoHelper` 的 `TABLE_INFO_CACHE` 与按表名后写覆盖前写的
+`TABLE_NAME_INFO_CACHE`、`LambdaUtils` 的 `CACHE`）且没有 `clearAll()`，同名实体会跨用例串状态。
+新增测试实体类和表名带主题前缀，约定 `zz_<主题>_user` 这种形式，保证全仓不撞。
+表名这一半已经由 `sharedFixtureTableNamesStayRegistered` 机器盯住：两个以上测试实体共用一个
+`@TableName` 就红，存量的 6 处（同一张表测不同注解/主键类型、kotlin 与多模板的平行夹具、占位表名）
+登记在 `REGISTERED_SHARED_TABLE_NAMES`，只准减不准加。
 
 ## T9 不许按 JRE 版本门禁
 
@@ -163,14 +166,14 @@ wrapper 那一侧同理：
 ## 尚未机器执行
 
 T3 的"每类必带层标签"、T5 的 warn-only 检查（catch 吞异常已经由机器盯住，剩下的"发现问题只打日志"
-还散在用例正文里没法机械化判）、T6 的"必须带 issue 号"、T7、T8、T10 目前只靠评审。
+还散在用例正文里没法机械化判）、T6 的"必须带 issue 号"、T7、T10 目前只靠评审。
 这些条目还在建设中，落成检查之前不要拿它们当阻塞合并的理由。
 
 ## 例外怎么登记
 
 例外只有两类落点，都在闸门文件顶部：`MAX_ASSERTION_FREE_CASES`、`MAX_DISABLED_CASES`、
-`MAX_PACKAGE_MISMATCHES` 三个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、`REGISTERED_THREAD_SLEEP_FILES`
-两个登记表。只准降不准升；要放宽必须在评审里写清为什么。
+`MAX_PACKAGE_MISMATCHES` 三个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、`REGISTERED_THREAD_SLEEP_FILES`、
+`REGISTERED_SHARED_TABLE_NAMES` 三个登记表。只准降不准升；要放宽必须在评审里写清为什么。
 清零的欠账不留登记表：可转换 JUnit 断言已经是 `MAX_JUNIT_ASSERTION_FILES = 0`，
 名为 `*Test` 却不含用例的基类与夹具已经全部改名 `*Support`/`*Fixture`/`*Sample`，改成零容忍。
 不引入 ArchUnit/Checkstyle：这些规则都是纯文本级别的写法检查，自研一个文件、零新依赖，

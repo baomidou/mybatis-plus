@@ -118,6 +118,13 @@ class TestConventionTest {
     private static final Pattern CATCH_HANDLED = Pattern
             .compile("\\bthrow\\b|\\bfail\\s*\\(|assert|assumeTrue|\\b\\w+\\s*=\\s*\\w+;|\\.add\\s*\\(");
 
+    /**
+     * {@code @TableName("字面量")} 与紧随其后的实体类名；注解和类声明之间不许出现分号或大括号。
+     */
+    private static final Pattern TABLE_NAME = Pattern.compile(
+            "@TableName\\s*\\(\\s*(?:value\\s*=\\s*)?\"([^\"]+)\"[^;{}]*?\\b(?:class|record|enum)\\s+(\\w+)",
+            Pattern.DOTALL);
+
     private static final Path ROOT = locateRoot();
 
     private static final List<Source> TEST_SOURCES = scanTestSources();
@@ -164,6 +171,15 @@ class TestConventionTest {
      * 断言。{@code assertAll}、{@code assertTimeout} 系列 AssertJ 没有对应物，不计入欠账。
      */
     private static final int MAX_JUNIT_ASSERTION_FILES = 0;
+
+    /**
+     * T8 被两个以上测试实体共用的表名。{@code TableInfoHelper.TABLE_NAME_INFO_CACHE} 以表名为键、后写覆盖前写， 共用一张表的实体会互相顶掉，聚合模块那套共享 H2
+     * 库还会让它们在数据上串味。 这里登记的都是有意的变体：{@code h2user}/{@code key_generator_model} 拿同一张表测不同注解与主键类型，
+     * {@code sys_user}/{@code t_simple} 是 kotlin 与多模板的平行夹具，{@code xxx}/{@code entity} 是占位表名。 只准减不准加，新夹具必须按
+     * {@code zz_<主题>_xxx} 换名。
+     */
+    private static final Set<String> REGISTERED_SHARED_TABLE_NAMES = Set
+            .of("entity", "h2user", "key_generator_model", "sys_user", "t_simple", "xxx");
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。
@@ -385,6 +401,26 @@ class TestConventionTest {
             }
         }
         assertThat(offenders).as("T5 catch 到异常却不失败不断言（零容忍）：只打日志或 printStackTrace 等于吞掉").isEmpty();
+    }
+
+    @Test
+    void sharedFixtureTableNamesStayRegistered() {
+        Map<String, Set<String>> byTable = new TreeMap<>();
+        for (Source source : TEST_SOURCES) {
+            Matcher matcher = TABLE_NAME.matcher(source.code());
+            while (matcher.find()) {
+                byTable.computeIfAbsent(matcher.group(1), key -> new TreeSet<>())
+                        .add(source.path() + '#' + matcher.group(2));
+            }
+        }
+        Set<String> found = new TreeSet<>();
+        byTable.forEach((table, classes) -> {
+            if (classes.size() > 1) {
+                found.add(table);
+            }
+        });
+        assertThat(found).as("T8 测试实体共用表名（TableInfoHelper 按表名缓存，后写覆盖前写）只准减不准加")
+                .isEqualTo(REGISTERED_SHARED_TABLE_NAMES);
     }
 
     @Test
