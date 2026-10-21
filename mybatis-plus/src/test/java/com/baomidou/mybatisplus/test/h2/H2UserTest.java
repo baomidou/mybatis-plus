@@ -734,16 +734,73 @@ class H2UserTest extends BaseTest {
 
     @Test
     void testDeleteByFill() {
-        H2User h2User = new H2User(3L, "test");
-        userService.removeById(1L);
-        userService.removeById(1L, true);
-        userService.removeById(1, true);
-        userService.removeById("1", true);
-        userService.removeById(1L, false);
-        userService.removeById(h2User);
-        userService.removeById(h2User, true);
-        userService.removeById(h2User, false);
-        userService.removeBatchByIds(Arrays.asList(1L, 2L, h2User));
+        // 共享内存库，只碰自己插入的行，收尾全部逻辑删除，别的用例查不到。
+        String own = "deleteByFill-";
+
+        H2User byId = insertUser(own + "byId");
+        assertThat(columnOf(byId.getTestId(), "deleted")).as("新行处于未删除状态，后面的 WHERE deleted=0 才拦得住").isEqualTo(0);
+        assertThat(userService.removeById(byId.getTestId(), true)).as("useFill=true 会先把 id 包成一个新实体再删，才走得到填充分支")
+                .isTrue();
+        assertThat(columnOf(byId.getTestId(), "deleted")).isEqualTo(1);
+        assertThat(columnOf(byId.getTestId(), "last_updated_dt")).as("走填充分支就写时间戳").isNotNull();
+        assertThat(userService.removeById(byId.getTestId(), true)).as("已删除的行被 deleted=0 挡在外面，逻辑删除幂等").isFalse();
+
+        H2User noFill = insertUser(own + "noFill");
+        assertThat(userService.removeById(noFill.getTestId(), false)).isTrue();
+        assertThat(columnOf(noFill.getTestId(), "deleted")).isEqualTo(1);
+        assertThat(columnOf(noFill.getTestId(), "last_updated_dt"))
+                .as("useFill=false 把原始 id 直接交给 SQL，参数不是实体，填充那段 set 整个被跳过").isNull();
+
+        H2User stringId = insertUser(own + "stringId");
+        assertThat(userService.removeById(String.valueOf(stringId.getTestId()), true)).as("主键是 Long，传字符串照样被转成主键类型")
+                .isTrue();
+        assertThat(columnOf(stringId.getTestId(), "last_updated_dt")).isNotNull();
+
+        H2User entityArg = insertUser(own + "entityArg");
+        assertThat(userService.removeById(entityArg, false)).as("入参是实体时 useFill 不参与判断，实体自己就是填充目标").isTrue();
+        assertThat(entityArg.getLastUpdatedDt()).as("填充改写的就是传进来的那个对象").isNotNull();
+        assertThat(columnOf(entityArg.getTestId(), "last_updated_dt")).isNotNull();
+
+        assertThat(userService.removeById(IdWorker.getId())).as("库里没有这个主键，影响 0 行").isFalse();
+    }
+
+    @Test
+    void testRemoveBatchByIdsByFill() {
+        // name 列只有 VARCHAR(30)，前缀留短一点
+        String own = "bDel-";
+        H2User batchId = insertUser(own + "batchId");
+        H2User batchEntity = insertUser(own + "batchEntity");
+        assertThat(userService.removeBatchByIds(Arrays.asList(batchId.getTestId(), batchEntity))).as("列表里 id 和实体混着放也能删")
+                .isTrue();
+        assertThat(columnOf(batchId.getTestId(), "deleted")).isEqualTo(1);
+        assertThat(columnOf(batchId.getTestId(), "last_updated_dt")).as("批量 useFill=true 挂一个空实体当填充目标，整行一起填")
+                .isNotNull();
+        assertThat(columnOf(batchEntity.getTestId(), "last_updated_dt")).isNotNull();
+        assertThat(batchEntity.getLastUpdatedDt()).as("列表里的实体也会被送去填充，只是落库取的是框架追加的那个填充目标").isNotNull();
+
+        H2User batchNoFillId = insertUser(own + "batchNoFillId");
+        H2User batchNoFillEntity = insertUser(own + "batchNoFillEntity");
+        assertThat(
+                userService.removeByIds(
+                        Arrays.asList(batchNoFillId.getTestId(), batchNoFillEntity, IdWorker.getId()), false))
+                .as("列表里混一个不存在的主键也不会报错").isTrue();
+        assertThat(columnOf(batchNoFillId.getTestId(), "deleted")).isEqualTo(1);
+        assertThat(columnOf(batchNoFillId.getTestId(), "last_updated_dt")).as("批量 useFill=false 不挂填充目标，只写 deleted")
+                .isNull();
+        assertThat(columnOf(batchNoFillEntity.getTestId(), "last_updated_dt")).isNull();
+        assertThat(batchNoFillEntity.getLastUpdatedDt()).as("对象仍会被填充器改写，useFill=false 省掉的只是 SQL 里那段 set").isNotNull();
+    }
+
+    private H2User insertUser(String name) {
+        H2User user = new H2User(name, AgeEnum.ONE);
+        assertThat(userService.save(user)).as("插入 %s", name).isTrue();
+        assertThat(user.getTestId()).as("主键由雪花生成后回填到实体").isNotNull();
+        return user;
+    }
+
+    /* 绕过逻辑删除过滤读原始列，才看得到 deleted 和 last_updated_dt 的真实落库值 */
+    private Object columnOf(Long id, String column) {
+        return jdbcTemplate.queryForObject("select " + column + " from h2user where test_id = " + id, Object.class);
     }
 
     @Test
