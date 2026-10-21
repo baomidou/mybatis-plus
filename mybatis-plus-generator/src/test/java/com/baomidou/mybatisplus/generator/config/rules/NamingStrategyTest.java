@@ -1,37 +1,38 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class NamingStrategyTest {
 
     @Test
     void removePrefixTest() {
-        Assertions.assertEquals("_ab", NamingStrategy.removePrefix("test_ab", new HashSet<>() {
+        assertThat(NamingStrategy.removePrefix("test_ab", new HashSet<>() {
 
             {
                 add("t_");
                 add("test");
             }
-        }));
+        })).isEqualTo("_ab");
     }
 
     @Test
     void underlineToCamelTest() {
-        Assertions.assertEquals("aid", NamingStrategy.underlineToCamel("Aid"));
-        Assertions.assertEquals("aId", NamingStrategy.underlineToCamel("AId"));
-        Assertions.assertEquals("testId", NamingStrategy.underlineToCamel("test_id"));
-        Assertions.assertEquals("testId", NamingStrategy.underlineToCamel("TEST_ID"));
-        Assertions.assertEquals("testId", NamingStrategy.underlineToCamel("Test_id"));
-        Assertions.assertEquals("testId", NamingStrategy.underlineToCamel("Test_ID"));
-        Assertions.assertEquals("testId", NamingStrategy.underlineToCamel("TeSt_id"));
-        Assertions.assertEquals("createTime", NamingStrategy.underlineToCamel("createTime"));
-        Assertions.assertEquals("createTime", NamingStrategy.underlineToCamel("create_time"));
-        Assertions.assertEquals("createTime", NamingStrategy.underlineToCamel("create_Time"));
-        Assertions.assertEquals("createTime", NamingStrategy.underlineToCamel("Create_Time"));
-        Assertions.assertEquals("createtime", NamingStrategy.underlineToCamel("CREATETIME"));
+        assertThat(NamingStrategy.underlineToCamel("Aid")).isEqualTo("aid");
+        assertThat(NamingStrategy.underlineToCamel("AId")).isEqualTo("aId");
+        assertThat(NamingStrategy.underlineToCamel("test_id")).isEqualTo("testId");
+        assertThat(NamingStrategy.underlineToCamel("TEST_ID")).isEqualTo("testId");
+        assertThat(NamingStrategy.underlineToCamel("Test_id")).isEqualTo("testId");
+        assertThat(NamingStrategy.underlineToCamel("Test_ID")).isEqualTo("testId");
+        assertThat(NamingStrategy.underlineToCamel("TeSt_id")).isEqualTo("testId");
+        assertThat(NamingStrategy.underlineToCamel("createTime")).isEqualTo("createTime");
+        assertThat(NamingStrategy.underlineToCamel("create_time")).isEqualTo("createTime");
+        assertThat(NamingStrategy.underlineToCamel("create_Time")).isEqualTo("createTime");
+        assertThat(NamingStrategy.underlineToCamel("Create_Time")).isEqualTo("createTime");
+        assertThat(NamingStrategy.underlineToCamel("CREATETIME")).isEqualTo("createtime");
     }
 
 }

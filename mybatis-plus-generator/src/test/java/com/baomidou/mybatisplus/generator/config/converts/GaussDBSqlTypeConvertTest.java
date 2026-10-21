@@ -3,7 +3,6 @@ package com.baomidou.mybatisplus.generator.config.converts;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
@@ -18,6 +17,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.LONG;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.OBJECT;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRING;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.TIME;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -28,31 +28,31 @@ public class GaussDBSqlTypeConvertTest {
     void test() {
         GlobalConfig globalConfig = GeneratorBuilder.globalConfig();
         GaussDBSqlTypeConvert convert = GaussDBSqlTypeConvert.INSTANCE;
-        Assertions.assertEquals(STRING, convert.processTypeConvert(globalConfig, "char"));
-        Assertions.assertEquals(STRING, convert.processTypeConvert(globalConfig, "xml"));
-        Assertions.assertEquals(STRING, convert.processTypeConvert(globalConfig, "text"));
+        assertThat(convert.processTypeConvert(globalConfig, "char")).isEqualTo(STRING);
+        assertThat(convert.processTypeConvert(globalConfig, "xml")).isEqualTo(STRING);
+        assertThat(convert.processTypeConvert(globalConfig, "text")).isEqualTo(STRING);
 
-        Assertions.assertEquals(OBJECT, convert.processTypeConvert(globalConfig, "uuid"));
-        Assertions.assertEquals(OBJECT, convert.processTypeConvert(globalConfig, "json"));
+        assertThat(convert.processTypeConvert(globalConfig, "uuid")).isEqualTo(OBJECT);
+        assertThat(convert.processTypeConvert(globalConfig, "json")).isEqualTo(OBJECT);
 
-        Assertions.assertEquals(LONG, convert.processTypeConvert(globalConfig, "bigint"));
-        Assertions.assertEquals(INTEGER, convert.processTypeConvert(globalConfig, "int"));
-        Assertions.assertEquals(BOOLEAN, convert.processTypeConvert(globalConfig, "bit"));
-        Assertions.assertEquals(BIG_DECIMAL, convert.processTypeConvert(globalConfig, "decimal"));
-        Assertions.assertEquals(BIG_DECIMAL, convert.processTypeConvert(globalConfig, "numeric"));
-        Assertions.assertEquals(FLOAT, convert.processTypeConvert(globalConfig, "float"));
+        assertThat(convert.processTypeConvert(globalConfig, "bigint")).isEqualTo(LONG);
+        assertThat(convert.processTypeConvert(globalConfig, "int")).isEqualTo(INTEGER);
+        assertThat(convert.processTypeConvert(globalConfig, "bit")).isEqualTo(BOOLEAN);
+        assertThat(convert.processTypeConvert(globalConfig, "decimal")).isEqualTo(BIG_DECIMAL);
+        assertThat(convert.processTypeConvert(globalConfig, "numeric")).isEqualTo(BIG_DECIMAL);
+        assertThat(convert.processTypeConvert(globalConfig, "float")).isEqualTo(FLOAT);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.SQL_PACK).build();
-        Assertions.assertEquals(DATE_SQL, convert.processTypeConvert(globalConfig, "date"));
-        Assertions.assertEquals(TIME, convert.processTypeConvert(globalConfig, "time"));
+        assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE_SQL);
+        assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(TIME);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.TIME_PACK).build();
-        Assertions.assertEquals(LOCAL_DATE, convert.processTypeConvert(globalConfig, "date"));
-        Assertions.assertEquals(LOCAL_TIME, convert.processTypeConvert(globalConfig, "time"));
+        assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(LOCAL_DATE);
+        assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(LOCAL_TIME);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.ONLY_DATE).build();
-        Assertions.assertEquals(DATE, convert.processTypeConvert(globalConfig, "date"));
-        Assertions.assertEquals(DATE, convert.processTypeConvert(globalConfig, "time"));
+        assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE);
+        assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(DATE);
     }
 
 }

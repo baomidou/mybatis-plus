@@ -20,8 +20,9 @@ import com.baomidou.mybatisplus.generator.config.querys.SqliteQuery;
 import com.baomidou.mybatisplus.generator.config.querys.SybaseQuery;
 import com.baomidou.mybatisplus.generator.config.querys.XuguQuery;
 import com.baomidou.mybatisplus.generator.config.querys.ZenithQuery;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong
@@ -32,26 +33,26 @@ public class DbQueryRegistryTest {
     void test() {
         DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
         dbQueryRegistry.getDbQuery(DbType.GAUSS_DB);
-        Assertions.assertInstanceOf(OracleQuery.class, dbQueryRegistry.getDbQuery(DbType.ORACLE));
-        Assertions.assertInstanceOf(OracleQuery.class, dbQueryRegistry.getDbQuery(DbType.POLARDB));
-        Assertions.assertInstanceOf(SqlServerQuery.class, dbQueryRegistry.getDbQuery(DbType.SQL_SERVER));
-        Assertions.assertInstanceOf(PostgreSqlQuery.class, dbQueryRegistry.getDbQuery(DbType.POSTGRE_SQL));
-        Assertions.assertInstanceOf(DB2Query.class, dbQueryRegistry.getDbQuery(DbType.DB2));
-        Assertions.assertInstanceOf(MariadbQuery.class, dbQueryRegistry.getDbQuery(DbType.MARIADB));
-        Assertions.assertInstanceOf(H2Query.class, dbQueryRegistry.getDbQuery(DbType.H2));
-        Assertions.assertInstanceOf(H2Query.class, dbQueryRegistry.getDbQuery(DbType.LEALONE));
-        Assertions.assertInstanceOf(SqliteQuery.class, dbQueryRegistry.getDbQuery(DbType.SQLITE));
-        Assertions.assertInstanceOf(DMQuery.class, dbQueryRegistry.getDbQuery(DbType.DM));
-        Assertions.assertInstanceOf(KingbaseESQuery.class, dbQueryRegistry.getDbQuery(DbType.KINGBASE_ES));
-        Assertions.assertInstanceOf(MySqlQuery.class, dbQueryRegistry.getDbQuery(DbType.MYSQL));
-        Assertions.assertInstanceOf(ZenithQuery.class, dbQueryRegistry.getDbQuery(DbType.GAUSS));
-        Assertions.assertInstanceOf(GaussDBSqlQuery.class, dbQueryRegistry.getDbQuery(DbType.GAUSS_DB));
-        Assertions.assertInstanceOf(OscarQuery.class, dbQueryRegistry.getDbQuery(DbType.OSCAR));
-        Assertions.assertInstanceOf(FirebirdQuery.class, dbQueryRegistry.getDbQuery(DbType.FIREBIRD));
-        Assertions.assertInstanceOf(XuguQuery.class, dbQueryRegistry.getDbQuery(DbType.XU_GU));
-        Assertions.assertInstanceOf(ClickHouseQuery.class, dbQueryRegistry.getDbQuery(DbType.CLICK_HOUSE));
-        Assertions.assertInstanceOf(GbaseQuery.class, dbQueryRegistry.getDbQuery(DbType.GBASE));
-        Assertions.assertInstanceOf(SybaseQuery.class, dbQueryRegistry.getDbQuery(DbType.SYBASE));
+        assertThat(dbQueryRegistry.getDbQuery(DbType.ORACLE)).isInstanceOf(OracleQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.POLARDB)).isInstanceOf(OracleQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.SQL_SERVER)).isInstanceOf(SqlServerQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.POSTGRE_SQL)).isInstanceOf(PostgreSqlQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.DB2)).isInstanceOf(DB2Query.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.MARIADB)).isInstanceOf(MariadbQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.H2)).isInstanceOf(H2Query.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.LEALONE)).isInstanceOf(H2Query.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.SQLITE)).isInstanceOf(SqliteQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.DM)).isInstanceOf(DMQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.KINGBASE_ES)).isInstanceOf(KingbaseESQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.MYSQL)).isInstanceOf(MySqlQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.GAUSS)).isInstanceOf(ZenithQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.GAUSS_DB)).isInstanceOf(GaussDBSqlQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.OSCAR)).isInstanceOf(OscarQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.FIREBIRD)).isInstanceOf(FirebirdQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.XU_GU)).isInstanceOf(XuguQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.CLICK_HOUSE)).isInstanceOf(ClickHouseQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.GBASE)).isInstanceOf(GbaseQuery.class);
+        assertThat(dbQueryRegistry.getDbQuery(DbType.SYBASE)).isInstanceOf(SybaseQuery.class);
 
     }
 }

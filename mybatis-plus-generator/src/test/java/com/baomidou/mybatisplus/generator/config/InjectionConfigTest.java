@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author lanjerry
@@ -21,9 +22,9 @@ public class InjectionConfigTest {
         customFile.put("test.txt", "/templates/test.vm");
         InjectionConfig injectionConfig = GeneratorBuilder.injectionConfigBuilder().customMap(customMap)
                 .customFile(customFile).build();
-        Assertions.assertEquals(1, injectionConfig.getCustomMap().size());
-        Assertions.assertEquals("baomidou", injectionConfig.getCustomMap().get("test"));
-        Assertions.assertEquals(1, injectionConfig.getCustomFiles().size());
-        Assertions.assertEquals("/templates/test.vm", injectionConfig.getCustomFiles().getFirst().getTemplatePath());
+        assertThat(injectionConfig.getCustomMap()).hasSize(1);
+        assertThat(injectionConfig.getCustomMap().get("test")).isEqualTo("baomidou");
+        assertThat(injectionConfig.getCustomFiles()).hasSize(1);
+        assertThat(injectionConfig.getCustomFiles().getFirst().getTemplatePath()).isEqualTo("/templates/test.vm");
     }
 }

@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,7 +36,7 @@ class DefaultQueryTest {
     @ValueSource(booleans = {false, true})
     void includesPostgreSqlPartitionedTable(boolean skipView) throws SQLException {
         StrategyConfig.Builder strategy = strategy(skipView).addInclude("dynamic_record");
-        assertEquals(Arrays.asList("dynamic_record"), queryTableNames(POSTGRESQL_URL, strategy));
+        assertThat(queryTableNames(POSTGRESQL_URL, strategy)).isEqualTo(Arrays.asList("dynamic_record"));
     }
 
     @ParameterizedTest
@@ -47,7 +47,7 @@ class DefaultQueryTest {
         if (!skipView) {
             expected.add("record_view");
         }
-        assertEquals(expected, queryTableNames(POSTGRESQL_URL, strategy(skipView)));
+        assertThat(queryTableNames(POSTGRESQL_URL, strategy(skipView))).isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -60,14 +60,13 @@ class DefaultQueryTest {
         if (!skipView) {
             expected.add("record_view");
         }
-        assertEquals(expected, queryTableNames(url, strategy(skipView)));
+        assertThat(queryTableNames(url, strategy(skipView))).isEqualTo(expected);
     }
 
     @Test
     void excludesPartitionChildWithoutExcludingParent() throws SQLException {
-        assertEquals(
-                Arrays.asList("dynamic_record", "ordinary_record"),
-                queryTableNames(POSTGRESQL_URL, strategy(true).addExclude("dynamic_record_p0")));
+        assertThat(queryTableNames(POSTGRESQL_URL, strategy(true).addExclude("dynamic_record_p0")))
+                .isEqualTo(Arrays.asList("dynamic_record", "ordinary_record"));
     }
 
     private StrategyConfig.Builder strategy(boolean skipView) {

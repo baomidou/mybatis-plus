@@ -136,11 +136,11 @@ class TestConventionTest {
     private static final int MAX_PACKAGE_MISMATCHES = 66;
 
     /**
-     * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 清空 mybatis-plus 40 个文件后实测，<br>
-     * 这一批同时把 {@code org.junit.jupiter.api.*} 通配导入也计入欠账）。新文件只准用 AssertJ；<br>
+     * T4 仍在调用可转换 JUnit 断言的测试文件数（2026-10-21 清空 mybatis-plus-generator 23 个文件后实测，<br>
+     * 只剩 mybatis-plus-up 的 SourcePatchToolTest 一个）。新文件只准用 AssertJ；<br>
      * 改到哪个存量文件就顺手转换一个，转换够数就把本常量调小，禁止调大。
      */
-    private static final int MAX_JUNIT_ASSERTION_FILES = 24;
+    private static final int MAX_JUNIT_ASSERTION_FILES = 1;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。

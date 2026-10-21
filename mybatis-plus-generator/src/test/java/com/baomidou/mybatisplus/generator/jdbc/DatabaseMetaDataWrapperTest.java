@@ -2,10 +2,11 @@ package com.baomidou.mybatisplus.generator.jdbc;
 
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import org.apache.ibatis.type.JdbcType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DatabaseMetaDataWrapperTest {
 
@@ -17,10 +18,10 @@ public class DatabaseMetaDataWrapperTest {
                 dataSourceConfig.getSchemaName());
         Map<String, DatabaseMetaDataWrapper.Column> columnsInfo = databaseMetaDataWrapper
                 .getColumnsInfo(null, null, "USERS", true);
-        Assertions.assertNotNull(columnsInfo);
+        assertThat(columnsInfo).isNotNull();
         DatabaseMetaDataWrapper.Column name = columnsInfo.get("user_name");
-        Assertions.assertTrue(name.isNullable());
-        Assertions.assertEquals(JdbcType.VARCHAR, name.getJdbcType());
+        assertThat(name.isNullable()).isTrue();
+        assertThat(name.getJdbcType()).isEqualTo(JdbcType.VARCHAR);
     }
 
 }

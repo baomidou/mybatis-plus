@@ -8,10 +8,11 @@ import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.po.TableInfoTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2020/10/11.
@@ -25,11 +26,11 @@ public class TemplateEngineTest {
                 TableInfoTest.dataSourceConfig, GeneratorBuilder.strategyConfig(), null, null, null), "user");
         tableInfo.processTable();
         Map<String, Object> objectMap = velocityTemplateEngine.getObjectMap(configBuilder, tableInfo);
-        Assertions.assertEquals(Boolean.FALSE, objectMap.get("enableCache"));
-        Assertions.assertEquals(Boolean.TRUE, objectMap.get("baseResultMap"));
-        Assertions.assertEquals(Boolean.TRUE, objectMap.get("baseColumnList"));
-        Assertions.assertEquals(Boolean.TRUE, objectMap.get("activeRecord"));
-        Assertions.assertEquals(IdType.INPUT.toString(), objectMap.get("idType"));
+        assertThat(objectMap.get("enableCache")).isEqualTo(Boolean.FALSE);
+        assertThat(objectMap.get("baseResultMap")).isEqualTo(Boolean.TRUE);
+        assertThat(objectMap.get("baseColumnList")).isEqualTo(Boolean.TRUE);
+        assertThat(objectMap.get("activeRecord")).isEqualTo(Boolean.TRUE);
+        assertThat(objectMap.get("idType")).isEqualTo(IdType.INPUT.toString());
     }
 
     @Test

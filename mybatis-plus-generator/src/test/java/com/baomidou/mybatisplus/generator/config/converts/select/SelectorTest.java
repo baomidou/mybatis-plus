@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.generator.config.converts.select;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author hanchunlin <br>
@@ -12,8 +12,8 @@ class SelectorTest {
 
     @Test
     void test() {
-        assertEquals("1", asString(1));
-        assertEquals("123", asString(4));
+        assertThat(asString(1)).isEqualTo("1");
+        assertThat(asString(4)).isEqualTo("123");
     }
 
     /**

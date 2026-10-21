@@ -2,11 +2,12 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author nieqiurong 2020/10/12.
@@ -14,13 +15,13 @@ import java.time.format.DateTimeFormatter;
 public class GlobalConfigTest {
 
     private void buildAssert(GlobalConfig globalConfig) {
-        Assertions.assertTrue(globalConfig.isKotlin());
-        Assertions.assertTrue(globalConfig.isSwagger());
-        Assertions.assertTrue(globalConfig.isOpen());
-        Assertions.assertEquals("mp", globalConfig.getAuthor());
-        Assertions.assertEquals("/temp/code", globalConfig.getOutputDir());
-        Assertions.assertEquals(DateType.SQL_PACK, globalConfig.getDateType());
-        Assertions.assertTrue(globalConfig.isServiceInterface());
+        assertThat(globalConfig.isKotlin()).isTrue();
+        assertThat(globalConfig.isSwagger()).isTrue();
+        assertThat(globalConfig.isOpen()).isTrue();
+        assertThat(globalConfig.getAuthor()).isEqualTo("mp");
+        assertThat(globalConfig.getOutputDir()).isEqualTo("/temp/code");
+        assertThat(globalConfig.getDateType()).isEqualTo(DateType.SQL_PACK);
+        assertThat(globalConfig.isServiceInterface()).isTrue();
     }
 
     @Test
@@ -34,14 +35,12 @@ public class GlobalConfigTest {
     void commentDateTest() {
         String defaultDate = GeneratorBuilder.globalConfig().getCommentDate();
         String commentDate = GeneratorBuilder.globalConfigBuilder().commentDate("yyyy-MM-dd").build().getCommentDate();
-        Assertions.assertEquals(defaultDate, commentDate);
-        Assertions.assertEquals(
-                "2200年11月10日",
-                GeneratorBuilder.globalConfigBuilder().commentDate(() -> "2200年11月10日").build().getCommentDate());
-        Assertions.assertEquals(
-                LocalDate.now().format(DateTimeFormatter.ISO_DATE),
+        assertThat(commentDate).isEqualTo(defaultDate);
+        assertThat(GeneratorBuilder.globalConfigBuilder().commentDate(() -> "2200年11月10日").build().getCommentDate())
+                .isEqualTo("2200年11月10日");
+        assertThat(
                 GeneratorBuilder.globalConfigBuilder()
-                        .commentDate(() -> LocalDate.now().format(DateTimeFormatter.ISO_DATE)).build()
-                        .getCommentDate());
+                        .commentDate(() -> LocalDate.now().format(DateTimeFormatter.ISO_DATE)).build().getCommentDate())
+                .isEqualTo(LocalDate.now().format(DateTimeFormatter.ISO_DATE));
     }
 }
