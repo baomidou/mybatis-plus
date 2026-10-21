@@ -315,7 +315,7 @@ class TableInfoHelperTest {
 
     @Test
     void getTableInfoInterface() {
-        TableInfoHelper.getTableInfo(Mapper.class);
+        assertThat(TableInfoHelper.getTableInfo(Mapper.class)).isNull();
     }
 
     @Data

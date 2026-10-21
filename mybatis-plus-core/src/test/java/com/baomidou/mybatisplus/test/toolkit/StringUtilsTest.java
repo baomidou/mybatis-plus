@@ -30,14 +30,6 @@ class StringUtilsTest {
     }
 
     /**
-     * 测试当前字符串能否是合法的列名
-     */
-    @Test
-    void canBeAColumnName() {
-        //        assertTrue(StringUtils.canBeColumnName("a$"));
-    }
-
-    /**
      * 取列名
      */
     @Test

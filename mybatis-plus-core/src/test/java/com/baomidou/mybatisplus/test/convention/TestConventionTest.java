@@ -85,7 +85,7 @@ class TestConventionTest {
     /**
      * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。
      */
-    private static final int MAX_ASSERTION_FREE_CASES = 51;
+    private static final int MAX_ASSERTION_FREE_CASES = 47;
 
     /**
      * T6 显式禁用用例数量。
@@ -95,7 +95,7 @@ class TestConventionTest {
     /**
      * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 67;
+    private static final int MAX_PACKAGE_MISMATCHES = 66;
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。
@@ -106,10 +106,9 @@ class TestConventionTest {
             "DynamicTableNameJsqlParserInnerInterceptorTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest",
             "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest",
             "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
-            "MybatisMapperAnnotationBuilderTest", "MybatisPlusInterceptorTest", "MybatisPlusPropertiesTest",
-            "MybatisPlusSampleTest", "PaginationInnerInterceptorTest", "ReflectionKitTest",
-            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest",
-            "TenantLineInnerInterceptorTest");
+            "MybatisPlusInterceptorTest", "MybatisPlusPropertiesTest", "MybatisPlusSampleTest",
+            "PaginationInnerInterceptorTest", "ReflectionKitTest", "SelectBodyToPlainSelectTest", "SqlRunnerTest",
+            "StringUtilsTest", "TableInfoTest", "TenantLineInnerInterceptorTest");
 
     /**
      * T5 文件名以 Test 结尾但本身不含用例的基类与夹具；{@code entity/Test} 是恰好叫 Test 的实体类。
