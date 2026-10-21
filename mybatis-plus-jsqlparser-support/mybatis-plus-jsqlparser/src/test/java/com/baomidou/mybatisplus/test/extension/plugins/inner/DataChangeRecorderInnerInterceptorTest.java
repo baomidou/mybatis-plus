@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.inner.DataChangeRecorderInnerI
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +12,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author miemie
@@ -31,10 +32,10 @@ class DataChangeRecorderInnerInterceptorTest {
     @Test
     void setProperties() throws Exception {
         final Object ignoreAllColumns = getFieldValue(interceptor, "ignoreAllColumns");
-        Assertions.assertEquals(Set.of("COLUMN1", "COLUMN2"), ignoreAllColumns);
+        assertThat(ignoreAllColumns).isEqualTo(Set.of("COLUMN1", "COLUMN2"));
         final Object ignoredTableColumns = getFieldValue(interceptor, "ignoredTableColumns");
-        Assertions.assertEquals(
-                Map.of("H2USER", Set.of("*"), "TABLE_NAME1", Set.of("COLUMN1", "COLUMN2")), ignoredTableColumns);
+        assertThat(ignoredTableColumns)
+                .isEqualTo(Map.of("H2USER", Set.of("*"), "TABLE_NAME1", Set.of("COLUMN1", "COLUMN2")));
     }
 
     private Object getFieldValue(Object obj, String fieldName) throws NoSuchFieldException, IllegalAccessException {
@@ -49,9 +50,9 @@ class DataChangeRecorderInnerInterceptorTest {
         insert.setTable(new Table("H2USER"));
         final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor
                 .processInsert(insert, null);
-        Assertions.assertEquals(operationResult.getTableName(), "H2USER:*");
-        Assertions.assertFalse(operationResult.isRecordStatus());
-        Assertions.assertNull(operationResult.getChangedData());
+        assertThat("H2USER:*").isEqualTo(operationResult.getTableName());
+        assertThat(operationResult.isRecordStatus()).isFalse();
+        assertThat(operationResult.getChangedData()).isNull();
     }
 
     @Test
@@ -60,39 +61,39 @@ class DataChangeRecorderInnerInterceptorTest {
         update.setTable(new Table("H2USER"));
         final DataChangeRecorderInnerInterceptor.OperationResult operationResult = interceptor
                 .processUpdate(update, null, null, null);
-        Assertions.assertEquals(operationResult.getTableName(), "H2USER:*");
-        Assertions.assertFalse(operationResult.isRecordStatus());
-        Assertions.assertNull(operationResult.getChangedData());
+        assertThat("H2USER:*").isEqualTo(operationResult.getTableName());
+        assertThat(operationResult.isRecordStatus()).isFalse();
+        assertThat(operationResult.getChangedData()).isNull();
     }
 
     @Test
     void isDataChangedTest() {
         var columnChangeResult = new DataChangeRecorderInnerInterceptor.DataColumnChangeResult();
-        Assertions.assertFalse(columnChangeResult.isDataChanged(null));
-        Assertions.assertTrue(columnChangeResult.isDataChanged(BigDecimal.ZERO));
+        assertThat(columnChangeResult.isDataChanged(null)).isFalse();
+        assertThat(columnChangeResult.isDataChanged(BigDecimal.ZERO)).isTrue();
 
         columnChangeResult = new DataChangeRecorderInnerInterceptor.DataColumnChangeResult();
         columnChangeResult.setOriginalValue(new Object());
-        Assertions.assertTrue(columnChangeResult.isDataChanged(null));
-        Assertions.assertTrue(columnChangeResult.isDataChanged(BigDecimal.ZERO));
+        assertThat(columnChangeResult.isDataChanged(null)).isTrue();
+        assertThat(columnChangeResult.isDataChanged(BigDecimal.ZERO)).isTrue();
 
         columnChangeResult = new DataChangeRecorderInnerInterceptor.DataColumnChangeResult();
         columnChangeResult.setOriginalValue(new BigDecimal("0"));
-        Assertions.assertFalse(columnChangeResult.isDataChanged(BigDecimal.ZERO));
+        assertThat(columnChangeResult.isDataChanged(BigDecimal.ZERO)).isFalse();
 
         columnChangeResult = new DataChangeRecorderInnerInterceptor.DataColumnChangeResult();
         columnChangeResult.setOriginalValue(BigDecimal.ZERO);
-        Assertions.assertFalse(columnChangeResult.isDataChanged(BigDecimal.ZERO));
+        assertThat(columnChangeResult.isDataChanged(BigDecimal.ZERO)).isFalse();
 
         columnChangeResult = new DataChangeRecorderInnerInterceptor.DataColumnChangeResult();
         columnChangeResult.setOriginalValue(BigDecimal.ZERO);
-        Assertions.assertTrue(columnChangeResult.isDataChanged("0"));
-        Assertions.assertTrue(columnChangeResult.isDataChanged(0));
+        assertThat(columnChangeResult.isDataChanged("0")).isTrue();
+        assertThat(columnChangeResult.isDataChanged(0)).isTrue();
 
-        Assertions.assertFalse(columnChangeResult.isDataChanged(new BigDecimal("0") {
-        }));
-        Assertions.assertTrue(columnChangeResult.isDataChanged(new BigDecimal("1") {
-        }));
+        assertThat(columnChangeResult.isDataChanged(new BigDecimal("0") {
+        })).isFalse();
+        assertThat(columnChangeResult.isDataChanged(new BigDecimal("1") {
+        })).isTrue();
     }
 
 }

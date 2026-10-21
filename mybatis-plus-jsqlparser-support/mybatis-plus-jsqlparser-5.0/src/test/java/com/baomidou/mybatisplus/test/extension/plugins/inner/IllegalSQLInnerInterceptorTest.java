@@ -4,13 +4,15 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerInterceptor;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.h2.jdbcx.JdbcDataSource;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author miemie
@@ -50,213 +52,235 @@ class IllegalSQLInnerInterceptorTest {
 
     @Test
     void test() {
-        Assertions.assertDoesNotThrow(
-                () -> interceptor.parserSingle("SELECT COUNT(*) AS total FROM t_user WHERE (client_id = ?)", null));
-        Assertions
-                .assertThrows(MybatisPlusException.class, () -> interceptor.parserSingle("select * from t_user", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle("update t_user set age = 18", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle("delete from t_user set age = 18", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from t_user where age != 1", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from t_user where age = 1 or name = 'test'", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from t_user where (age = 1 or name = 'test')", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("update t_user set age = 1 where age = 1 or name = 'test'", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("update t_user set age = 1 where (age = 1 or name = 'test')", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("delete t_user where age = 1 or name = 'test'", null));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("delete t_user where (age = 1 or name = 'test')", null));
+        assertThatCode(
+                () -> interceptor.parserSingle("SELECT COUNT(*) AS total FROM t_user WHERE (client_id = ?)", null))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(() -> interceptor.parserSingle("select * from t_user", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("update t_user set age = 18", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("delete from t_user set age = 18", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("select * from t_user where age != 1", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("select * from t_user where age = 1 or name = 'test'", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from t_user where (age = 1 or name = 'test')", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("update t_user set age = 1 where age = 1 or name = 'test'", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("update t_user set age = 1 where (age = 1 or name = 'test')", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("delete t_user where age = 1 or name = 'test'", null))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(() -> interceptor.parserSingle("delete t_user where (age = 1 or name = 'test')", null))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from `T_DEMO` where  b = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from `T_DEMO` where  b = 2", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatCode(
                 () -> interceptor
-                        .parserSingle("select * from T_DEMO where `a` = 1 and `b` = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        .parserSingle("select * from T_DEMO where `a` = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor
-                        .parserSingle("select * from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
+                        .parserSingle("select * from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
 
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor
-                        .parserSingle("select * from `T_DEMO` where `a` = 1 and `b` = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        .parserSingle("select * from `T_DEMO` where `a` = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor
-                        .parserSingle("select * from `T_DEMO` where a = 1 and `b` = 2", dataSource.getConnection()));
+                        .parserSingle("select * from `T_DEMO` where a = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
 
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from `T_DEMO` where c = 3", dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from T_DEMO where c = 3", dataSource.getConnection()));
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from `T_DEMO` where c = 3", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from T_DEMO where c = 3", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from test.`T_DEMO` where c = 3", dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
-                () -> interceptor.parserSingle("select * from test.T_DEMO where c = 3", dataSource.getConnection()));
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from test.`T_DEMO` where c = 3", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle("select * from test.T_DEMO where c = 3", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM `T_DEMO` a INNER JOIN `T_TEST` b ON a.a = b.a WHERE a.a = 1",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM `T_DEMO` a INNER JOIN `test` b ON a.a = b.a WHERE a.b = 1",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM PUBLIC.`T_DEMO` a INNER JOIN PUBLIC.`T_TEST` b ON a.a = b.a WHERE a.a = 1",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM PUBLIC.`T_DEMO` a INNER JOIN PUBLIC.`T_TEST` b ON a.a = b.a WHERE a.b = 1",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM T_DEMO a INNER JOIN `T_TEST` b ON a.a = b.a WHERE a.a = 1",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM T_DEMO a INNER JOIN `T_TEST` b ON a.a = b.a WHERE a.b = 1",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM `T_DEMO` a LEFT JOIN `T_TEST` b ON a.a = b.a WHERE a.a = 1",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "SELECT * FROM `T_DEMO` a LEFT JOIN `T_TEST` b ON a.a = b.a WHERE a.b = 1",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
 
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor
-                        .parserSingle("select * from `T_DEMO` where (c = 3 OR b = 2)", dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor
-                        .parserSingle("select * from `T_DEMO` where c = 3 OR b = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
-                () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where a = 3 AND (c = 3 OR b = 2)", dataSource.getConnection()));
-
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where (a = 3 AND c = 3 OR b = 2)", dataSource.getConnection()));
-
-        Assertions.assertDoesNotThrow(
+        assertThatThrownBy(
                 () -> interceptor
-                        .parserSingle("select * from `T_DEMO` where a in (1,3,2)", dataSource.getConnection()));
-
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where a in (1,3,2) or b = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        .parserSingle("select * from `T_DEMO` where (c = 3 OR b = 2)", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor
+                        .parserSingle("select * from `T_DEMO` where c = 3 OR b = 2", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatCode(
                 () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where a in (1,3,2) AND b = 2", dataSource.getConnection()));
+                        "select * from `T_DEMO` where a = 3 AND (c = 3 OR b = 2)", dataSource.getConnection()))
+                .doesNotThrowAnyException();
 
-        Assertions.assertDoesNotThrow(
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where (a = 3 AND c = 3 AND b = 2)", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        "select * from `T_DEMO` where (a = 3 AND c = 3 OR b = 2)", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+
+        assertThatCode(
+                () -> interceptor.parserSingle("select * from `T_DEMO` where a in (1,3,2)", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+
+        assertThatThrownBy(
+                () -> interceptor
+                        .parserSingle("select * from `T_DEMO` where a in (1,3,2) or b = 2", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatCode(
+                () -> interceptor.parserSingle(
+                        "select * from `T_DEMO` where a in (1,3,2) AND b = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+
+        assertThatCode(
+                () -> interceptor.parserSingle(
+                        "select * from `T_DEMO` where (a = 3 AND c = 3 AND b = 2)", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` a INNER JOIN T_TEST b ON a.a = b.a where a.a = 3 AND (b.c = 3 OR b.b = 2)",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
 
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` where a != (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
         //TODO 低版本这里的抛异常了.看着应该不用抛出
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where a = (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        "select * from `T_DEMO` where a = (SELECT b FROM T_TEST limit 1) ", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` where a >= (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` where a <= (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
 
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
-                        "select * from `T_DEMO` where b = (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        "select * from `T_DEMO` where b = (SELECT b FROM T_TEST limit 1) ", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` where b >= (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "select * from `T_DEMO` where b <= (SELECT b FROM T_TEST limit 1) ",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
     }
     @Test
     void testCount() {
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
-                        "select count(*) from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        "select count(*) from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "select count(*) from (select * from T_DEMO where a = 1 and `b` = 2) a",
-                        dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
                         "select count(*) from (select count(*) from (select * from T_DEMO where a = 1 and `b` = 2) a) c",
-                        dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor
-                        .parserSingle("select count(*) from (select * from `T_DEMO`) a ", dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class,
+                        dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatThrownBy(
+                () -> interceptor
+                        .parserSingle("select count(*) from (select * from `T_DEMO`) a ", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
                 () -> interceptor.parserSingle(
                         "select count(*) from (select * from `T_DEMO` where b = (SELECT b FROM T_TEST limit 1)) a ",
-                        dataSource.getConnection()));
+                        dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
     }
 
     @Test
     void testCatalogAndSchemaName() {
-        Assertions.assertDoesNotThrow(
+        assertThatCode(
                 () -> interceptor.parserSingle(
-                        "select count(*) from TEST.PUBLIC.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
-        Assertions.assertDoesNotThrow(
+                        "select count(*) from TEST.PUBLIC.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
+        assertThatCode(
                 () -> interceptor.parserSingle(
-                        "select count(*) from PUBLIC.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
+                        "select count(*) from PUBLIC.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .doesNotThrowAnyException();
         // 非同一模式,读不到索引的情况
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle(
-                        "select count(*) from DB.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
-        Assertions.assertThrows(
-                MybatisPlusException.class, () -> interceptor.parserSingle(
-                        "select count(*) from PUBLIC.DB.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()));
+        assertThatThrownBy(
+                () -> interceptor.parserSingle(
+                        "select count(*) from DB.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
+        assertThatThrownBy(
+                () -> interceptor.parserSingle(
+                        "select count(*) from PUBLIC.DB.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
+                .isInstanceOf(MybatisPlusException.class);
     }
 
 }

@@ -6,7 +6,6 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * SelectBody强转PlainSelect不支持sql里面最外层带union <br>
@@ -41,9 +41,9 @@ class SelectBodyToPlainSelectTest {
         }
         assertThat(selectStatement).isNotNull();
         Select finalSelectStatement = selectStatement;
-        Assertions.assertThrows(ClassCastException.class, () -> {
+        assertThatThrownBy(() -> {
             PlainSelect plainSelect = (PlainSelect) finalSelectStatement.getSelectBody();
-        });
+        }).isInstanceOf(ClassCastException.class);
     }
 
     @BeforeEach

@@ -18,9 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author miemie
@@ -40,7 +38,7 @@ class FuryFactoryTest {
                                     && (classInfo.isEnum() || classInfo.implementsInterface(Serializable.class)))
                     .map(ClassInfo::getName).collect(Collectors.toCollection(LinkedHashSet::new));
         }
-        assertFalse(expected.isEmpty(), "No serializable JSqlParser classes found");
+        assertThat(expected).as("No serializable JSqlParser classes found").isNotEmpty();
 
         // Inspect a fresh factory without exposing its serializer in the production
         // API.
@@ -59,12 +57,12 @@ class FuryFactoryTest {
                     .collect(Collectors.joining("\n"));
             System.out.println("Complete constructor registrations:\n" + registrations);
         }
-        assertTrue(
-                expected.equals(actual),
+        assertThat(actual).overridingErrorMessage(
                 () -> "FuryFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
                         + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
                         + "\nUnexpected: " + actual.stream().filter(name -> !expected.contains(name)).sorted()
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()))
+                .isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -74,7 +72,7 @@ class FuryFactoryTest {
         Statement statement = CCJSqlParserUtil.parse(sql);
         FuryFactory factory = new FuryFactory();
         Object restored = factory.deserialize(factory.serialize(statement));
-        assertEquals(statement.getClass(), restored.getClass());
-        assertEquals(statement.toString(), restored.toString());
+        assertThat(restored.getClass()).isEqualTo(statement.getClass());
+        assertThat(restored.toString()).isEqualTo(statement.toString());
     }
 }
