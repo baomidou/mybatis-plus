@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
  * @author lanjerry
  * @since 3.5.3
  */
-public class DMGeneratorSample extends BaseGeneratorTest {
+public class DMGeneratorSample extends BaseGeneratorSample {
 
     /**
      * 数据源配置

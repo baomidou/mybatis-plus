@@ -163,7 +163,6 @@ class TestConventionTest {
     private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
             "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/conditions/BaseWrapperTest.java",
             "mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/handlers/BaseTypeHandlerTest.java",
-            "mybatis-plus-generator/src/test/java/com/baomidou/mybatisplus/generator/samples/BaseGeneratorTest.java",
             "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java",

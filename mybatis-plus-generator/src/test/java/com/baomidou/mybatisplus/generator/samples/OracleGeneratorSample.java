@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
  * @author lanjerry
  * @since 3.5.3
  */
-public class OracleGeneratorSample extends BaseGeneratorTest {
+public class OracleGeneratorSample extends BaseGeneratorSample {
 
     /**
      * 数据源配置

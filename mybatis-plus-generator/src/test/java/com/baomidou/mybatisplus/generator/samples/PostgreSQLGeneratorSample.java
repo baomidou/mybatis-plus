@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
  * @author lanjerry
  * @since 3.5.3
  */
-public class PostgreSQLGeneratorSample extends BaseGeneratorTest {
+public class PostgreSQLGeneratorSample extends BaseGeneratorSample {
 
     /**
      * 数据源配置

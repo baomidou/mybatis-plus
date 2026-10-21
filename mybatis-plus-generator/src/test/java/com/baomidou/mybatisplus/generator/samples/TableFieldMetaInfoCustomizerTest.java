@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TableFieldMetaInfoCustomizerTest extends BaseGeneratorTest {
+class TableFieldMetaInfoCustomizerTest extends BaseGeneratorSample {
 
     private static final String H2URL = "jdbc:h2:mem:test-h2-meta-customizer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";
 

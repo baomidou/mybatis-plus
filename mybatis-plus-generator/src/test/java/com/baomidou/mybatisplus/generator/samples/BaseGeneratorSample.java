@@ -9,12 +9,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * 基础测试类
+ * 生成器示例共用的配置与建库工具，本身不含用例。
  *
  * @author lanjerry
  * @since 3.5.3
  */
-public class BaseGeneratorTest {
+public class BaseGeneratorSample {
 
     /**
      * 执行数据库脚本

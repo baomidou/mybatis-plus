@@ -52,7 +52,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin, lanjerry
  * @since 3.5.3
  */
-public class H2CodeGeneratorTest extends BaseGeneratorTest {
+public class H2CodeGeneratorTest extends BaseGeneratorSample {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(H2CodeGeneratorTest.class);
 

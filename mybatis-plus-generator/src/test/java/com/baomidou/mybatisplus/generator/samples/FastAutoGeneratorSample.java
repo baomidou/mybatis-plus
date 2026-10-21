@@ -15,7 +15,7 @@ import java.sql.SQLException;
  * @author lanjerry
  * @since 2021-09-16
  */
-public class FastAutoGeneratorSample extends BaseGeneratorTest {
+public class FastAutoGeneratorSample extends BaseGeneratorSample {
 
     /**
      * 数据源配置
