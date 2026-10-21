@@ -161,7 +161,6 @@ class TestConventionTest {
      * T5 文件名以 Test 结尾但本身不含用例的基类与夹具。
      */
     private static final Set<String> REGISTERED_CASE_FREE_FILES = Set.of(
-            "mybatis-plus-extension/src/test/java/com/baomidou/mybatisplus/test/handlers/BaseTypeHandlerTest.java",
             "mybatis-plus-spring/src/test/kotlin/com/baomidou/mybatisplus/test/kotlin/BaseDbTest.kt",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/BaseDbTest.java",
             "mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/h2/BaseTest.java");

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author nieqiurong 2020/2/28.
  */
 @ExtendWith(MockitoExtension.class)
-public class FastJsonTypeHandlerTest extends BaseTypeHandlerTest {
+public class FastJsonTypeHandlerTest extends TypeHandlerTestSupport {
 
     private static final FastjsonTypeHandler FASTJSON_TYPE_HANDLER = new FastjsonTypeHandler(UserBean.class);
 

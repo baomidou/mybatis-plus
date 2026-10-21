@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
  * @author nieqiurong 2020/2/28.
  */
 @ExtendWith(MockitoExtension.class)
-public class Jackson3TypeHandlerTest extends BaseTypeHandlerTest {
+public class Jackson3TypeHandlerTest extends TypeHandlerTestSupport {
 
     private static final Jackson3TypeHandler JACKSON3_TYPE_HANDLER = new Jackson3TypeHandler(UserBean.class);
 

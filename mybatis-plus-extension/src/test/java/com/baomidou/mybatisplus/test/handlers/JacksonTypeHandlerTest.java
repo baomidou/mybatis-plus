@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author nieqiurong 2020/2/28.
  */
 @ExtendWith(MockitoExtension.class)
-public class JacksonTypeHandlerTest extends BaseTypeHandlerTest {
+public class JacksonTypeHandlerTest extends TypeHandlerTestSupport {
 
     private static final JacksonTypeHandler JACKSON_TYPE_HANDLER = new JacksonTypeHandler(UserBean.class);
 

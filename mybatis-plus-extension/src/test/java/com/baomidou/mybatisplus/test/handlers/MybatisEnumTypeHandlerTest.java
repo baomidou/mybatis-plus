@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
+public class MybatisEnumTypeHandlerTest extends TypeHandlerTestSupport {
 
     private static final MybatisEnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(
             SexEnum.class);

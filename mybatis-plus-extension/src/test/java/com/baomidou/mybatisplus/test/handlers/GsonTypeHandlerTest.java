@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
  * @author nieqiurong 2020/2/28.
  */
 @ExtendWith(MockitoExtension.class)
-public class GsonTypeHandlerTest extends BaseTypeHandlerTest {
+public class GsonTypeHandlerTest extends TypeHandlerTestSupport {
 
     private static final GsonTypeHandler GSON_TYPE_HANDLER = new GsonTypeHandler(UserBean.class);
 
