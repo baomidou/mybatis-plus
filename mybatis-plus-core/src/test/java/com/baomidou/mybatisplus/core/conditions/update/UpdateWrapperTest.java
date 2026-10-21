@@ -1,6 +1,6 @@
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.core.conditions.update;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.WrapperTestSupport;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.test.User;
 import org.junit.jupiter.api.Test;

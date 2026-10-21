@@ -139,10 +139,12 @@ class TestConventionTest {
      * {@code test/MybatisConfigurationTest}、{@code test/MybatisParameterHandlerTest}、
      * {@code test/metadata/TableInfoHelperTest}、{@code test/override/MybatisMapperMethodTest} 迁到被测类所在包（53 → 49）；
      * extension 的 ddl、handlers、pagination、toolkit 共 10 个类同批归位（49 → 39）； generator 的 {@code DbQueryRegistryTest} 与
-     * autoconfigure 的 {@code MybatisPlusPropertiesTest} 各 1 个（39 → 37）。<br>
-     * 剩下的 37 处里 34 处在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets} 复用一份源头的办法一次解决，单独搬文件只会把副本再搬一遍。
+     * autoconfigure 的 {@code MybatisPlusPropertiesTest} 各 1 个（39 → 37）；core 的 3 个 wrapper 测试进
+     * {@code conditions.query}/{@code conditions.update}，为此把 {@code WrapperTestSupport} 放开成 public（37 → 34）。<br>
+     * 剩下的 34 处全部落在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets}
+     * 复用一份源头的办法一次解决，单独搬文件只会把副本再搬一遍；core、extension、spring、generator、autoconfigure、starter 已经零缺口。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 37;
+    private static final int MAX_PACKAGE_MISMATCHES = 34;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
