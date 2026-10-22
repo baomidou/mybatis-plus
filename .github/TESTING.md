@@ -23,7 +23,7 @@
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
-| T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 7 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单、wrapper 关键字表、WHERE 片段装配 |
+| T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 8 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单与 `SqlMethod` 模板、wrapper 关键字表、WHERE 片段装配 |
 | T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 共用表名 6 处已登记（`h2user`、`key_generator_model`、`sys_user`、`t_simple`、`xxx`、`entity`），新增即红 |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
@@ -133,6 +133,9 @@ SQL 注入器同样按这张清单来：
 13 条语句各自的 `SqlCommandType`、`BaseMapper` 抽象方法必须都能拿到语句、逻辑删除把 3 个 `delete*`
 改写成 UPDATE 且 `select*` 带上 `AND deleted=0`、`mapperRegistryCache` 对重复注入的拦截。
 注入清单和 `BaseMapper` 方法表是两条会各自漂移的线，所以断言写成集合相等而不是条数。
+`SqlMethod` 的 26 个常量同样整表登记：
+[SqlMethodTest](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/enums/SqlMethodTest.java)
+钉每个常量的 `method` 名（即 `MappedStatement` id 后缀）与模板渲染结果，新增常量或改模板文本都会红。
 wrapper 那一侧同理：
 [SqlKeywordTest](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/enums/SqlKeywordTest.java)
 钉 24 个关键字各自渲染出的 SQL 文本，
