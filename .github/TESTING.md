@@ -18,7 +18,7 @@
 | 编号 | 条目 | 状态 | 基线（2026-10-21 实测） |
 |---|---|---|---|
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 34 处缺口，全部是 4 个 JSqlParser 版本模块的整文件复制（其余模块已零缺口） |
-| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 26 组 |
+| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 28 组 |
 | T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
@@ -38,7 +38,9 @@
 
 类名 `<被测类>Test`，简单名在全仓唯一。新增测试类不允许用 `*Tests`、`*TestCase`、`*IT` 后缀。
 多版本（JSqlParser 4.9/5.0/5.2、Boot 2/3/4）的支持靠共享源——公共基类或 `sourceSets` 复用同一份
-测试代码，**不要复制文件**。现存 26 组同名类多数是 starter 与 JSqlParser 版本支持模块的整文件复制，
+测试代码，**不要复制文件**。现存 28 组同名类多数是 starter 与 JSqlParser 版本支持模块的整文件复制
+（上游安全修复新增的 `BlockAttackInnerInterceptorTautologyTest`、`MultiTableXorExpressionTest` 也是四副本，
+已一并登记），
 去重一组就从 `REGISTERED_DUPLICATE_NAMES` 里删掉对应项；两份内容互补的就合成一份
 （core 的 `ReflectionKitTest` 已经这样并掉 `test.pom` 下那份）。
 
