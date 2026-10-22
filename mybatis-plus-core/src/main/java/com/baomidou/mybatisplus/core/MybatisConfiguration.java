@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core;
 import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.plugins.SelectOneCacheInterceptor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -93,6 +94,8 @@ public class MybatisConfiguration extends Configuration {
      */
     public MybatisConfiguration() {
         super();
+        // Register first so cache isolation runs after application plugins have finalized their query keys.
+        interceptorChain.addInterceptor(new SelectOneCacheInterceptor());
         this.mapUnderscoreToCamelCase = true;
         typeHandlerRegistry.setDefaultEnumTypeHandler(CompositeEnumTypeHandler.class);
         languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);

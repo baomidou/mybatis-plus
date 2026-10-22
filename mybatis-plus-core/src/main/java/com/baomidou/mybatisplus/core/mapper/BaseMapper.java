@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.handlers.SelectOneResultHandler;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -345,14 +346,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
         List<T> results = new ArrayList<>(2);
-        this.selectList(queryWrapper, resultContext -> {
-            results.add(resultContext.getResultObject());
-            if (results.size() == 2) {
-                // 只需要知道结果是否唯一，不需要完整的匹配集合：映出第二行后立即停止映射，
-                // 避免条件误命中大量数据时把全部结果都转成对象（#7177）
-                resultContext.stop();
-            }
-        });
+        this.selectList(queryWrapper, new SelectOneResultHandler<>(results));
         int size = results.size();
         if (size == 1) {
             return results.get(0);

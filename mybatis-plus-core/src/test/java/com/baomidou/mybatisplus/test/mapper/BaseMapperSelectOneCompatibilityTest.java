@@ -45,7 +45,7 @@ class BaseMapperSelectOneCompatibilityTest {
     void selectOneReturnsFirstResultWhenThrowExIsFalse() {
         BaseMapper<Object> mapper = Mockito.mock(BaseMapper.class, Mockito.CALLS_REAL_METHODS);
         Object first = new Object();
-        AtomicBoolean stopped = feedRows(mapper, List.of(first, new Object()));
+        AtomicBoolean stopped = feedRows(mapper, List.of(first, new Object(), new Object()));
 
         assertThat(mapper.selectOne(new QueryWrapper<>(), false)).isSameAs(first);
         assertThat(stopped).as("throwEx=false must stop mapping after the second row too").isTrue();
@@ -77,6 +77,9 @@ class BaseMapperSelectOneCompatibilityTest {
                     return null;
                 }).when(context).stop();
                 handler.handleResult(context);
+                if (stopped.get()) {
+                    break;
+                }
             }
             return null;
         }).when(mapper).selectList(any(Wrapper.class), any(ResultHandler.class));
