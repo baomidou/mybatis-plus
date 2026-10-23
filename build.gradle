@@ -30,8 +30,8 @@ buildscript {
         ]
 
         lib = [
-            "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.4.0",
-            "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.0",
+            "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.4.21",
+            "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.21",
             "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
             "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
             "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.2.0",
@@ -91,7 +91,7 @@ buildscript {
 
     dependencies {
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21"
         classpath "io.freefair.gradle:lombok-plugin:8.10"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.3"
         classpath "com.github.jakemarsden.git-hooks:com.github.jakemarsden.git-hooks.gradle.plugin:0.0.2"
