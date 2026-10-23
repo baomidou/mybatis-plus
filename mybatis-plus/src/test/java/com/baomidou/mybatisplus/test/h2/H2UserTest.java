@@ -1193,7 +1193,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void selectOneResultHandlerDoesNotPoisonLocalCache() {
+    void selectOneRowBoundsDoesNotPoisonLocalCache() {
         QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
@@ -1203,7 +1203,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void selectOneResultHandlerDoesNotPoisonLocalCacheWhenThrowing() {
+    void selectOneRowBoundsDoesNotPoisonLocalCacheWhenThrowing() {
         QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
@@ -1213,7 +1213,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void selectOneResultHandlerPreservesExistingLocalCache() {
+    void selectOneRowBoundsPreservesExistingLocalCache() {
         QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
