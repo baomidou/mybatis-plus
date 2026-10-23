@@ -32,6 +32,7 @@ import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.ognl.OgnlOps;
 import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -344,15 +345,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param throwEx boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
-        List<T> results = new ArrayList<>(2);
-        this.selectList(queryWrapper, resultContext -> {
-            results.add(resultContext.getResultObject());
-            if (results.size() == 2) {
-                // 只需要知道结果是否唯一，不需要完整的匹配集合：映出第二行后立即停止映射，
-                // 避免条件误命中大量数据时把全部结果都转成对象（#7177）
-                resultContext.stop();
-            }
-        });
+        List<T> results = this.selectList(queryWrapper, new RowBounds(0, 2));
         int size = results.size();
         if (size == 1) {
             return results.get(0);
@@ -400,6 +393,15 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+
+    /**
+     * 根据 entity 条件和 RowBounds 查询记录
+     *
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param rowBounds 分页查询条件
+     * @return 查询结果
+     */
+    List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper, RowBounds rowBounds);
 
     /**
      * 根据 entity 条件，查询全部记录

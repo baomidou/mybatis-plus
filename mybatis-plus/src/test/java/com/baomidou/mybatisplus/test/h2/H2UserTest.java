@@ -30,6 +30,7 @@ import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 import org.junit.jupiter.api.MethodOrderer;
@@ -1191,4 +1192,39 @@ class H2UserTest extends H2TestSupport {
                 .isInstanceOf(TooManyResultsException.class);
     }
 
+    @Test
+    void selectOneRowBoundsDoesNotPoisonLocalCache() {
+        QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
+            assertThat(mapper.selectOne(query, false)).isNotNull();
+            assertThat(mapper.selectList(query)).hasSizeGreaterThan(2);
+        }
+    }
+
+    @Test
+    void selectOneRowBoundsDoesNotPoisonLocalCacheWhenThrowing() {
+        QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
+            assertThatThrownBy(() -> mapper.selectOne(query)).isInstanceOf(TooManyResultsException.class);
+            assertThat(mapper.selectList(query)).hasSizeGreaterThan(2);
+        }
+    }
+
+    @Test
+    void selectOneRowBoundsPreservesExistingLocalCache() {
+        QueryWrapper<H2User> query = Wrappers.<H2User>query().orderByAsc("test_id");
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
+            List<H2User> cached = mapper.selectList(query);
+            assertThat(cached).hasSizeGreaterThan(2);
+            H2User unrelated = mapper.selectById(cached.get(0).getTestId());
+            mapper.selectOne(query, false);
+            assertThat(mapper.selectList(query)).isSameAs(cached);
+            assertThat(mapper.selectById(cached.get(0).getTestId())).isSameAs(unrelated);
+            assertThatThrownBy(() -> mapper.selectOne(query)).isInstanceOf(TooManyResultsException.class);
+            assertThat(mapper.selectList(query)).isSameAs(cached);
+        }
+    }
 }
