@@ -3,7 +3,37 @@
 ## [v3.5.18] 2026.10.21
 - fix: 安全修复 `BlockAttackInnerInterceptor` 常量恒等式（如 `1 XOR 0`、`1 <= 1`、`NOT 1 = 2`、`WHERE 1`）绕过全表更新/删除校验问题
 - fix: 安全修复 `TenantLineInnerInterceptor`、`DataPermissionInterceptor` 向 `XOR` 条件追加租户/权限条件时缺少括号，导致数据越权读写问题
-- feat: 支持配置加密在环境变量中使用
+- fix: core restore Implementation-Version in JAR manifests
+- fix: keep BaseMapper.selectOne independent of JDBC cursor support
+- fix: 修复同一 JVM 内机器标识相同的多个默认主键生成器生成重复 ID
+- fix: avoid O(N^2) DEBUG log output in parserMulti
+- fix: generator recognize PostgreSQL partitioned tables
+- fix: 补齐 notIn 参数映射并增加 Lambda Wrapper 自动映射开关
+- fix: 补齐 Fury 类和枚举注册并增加完整性与序列化测试
+- fix: 恢复 JAR 清单信息及 LICENSE 和 Maven POM
+- fix: 移除 LIKE 条件的字段参数映射
+- fix: selectOne 使用 ResultHandler 在映出第二行后停止映射
+- feat: 新增多数据源插件
+- feat: 新增 mybatis-plus-up 模块及相关测试用例
+- feat: 新增支持配置加密在环境变量中使用
+- feat: Merge pull request #7182 from jianjindream/fix/postgresql-partitioned-table
+- feat: Merge pull request #7172 from jjj-n/codex/chain-query-one-throw-ex
+- feat: Merge pull request #7180 from zh-hanlabs/fix/jsqlparser-multi-debug-log
+- feat: Merge pull request #7178 from hebulin/fix/7135-duplicate-id-shared-sequence
+- feat: Merge pull request #7166 from smf-h/codex/fix-selectone-cursor-compatibility
+- feat: Merge pull request #7184 from zhanghien/feature/polardb-oracle
+- feat: Merge pull request #7186 from Lyin-OTTF/fix/7177-selectone-early-stop
+- feat: Merge pull request #7164 from arimu1/fix/7150-implementation-version-manife
+- feat: add ChainQuery.one(boolean throwEx)
+- opt: 应用 Spotless 格式化，统一导入顺序并清理无用导入
+- opt: 升级 Gradle Wrapper 至 9.6.0 并接入 Spotless 与 git 钩子
+- opt: 保留 JSqlParser 5.2 模块并升级默认模块至 5.4
+- opt: 忽略 VS Code/Zed 目录并注释本地签名配置
+- opt: 引入上游源码副本、差异补丁及发布校验
+- opt: 使用 Eclipse 120 列规则并统一源码格式
+- opt: 完善格式规则并同步上游源码与补丁格式
+- opt: 按 Boot 版本拆分测试支持并完善上游源码维护
+- opt: 调整 PolarDB 数据库说明与生成器识别
 
 ## [v3.5.17] 2026.07.07
 - fix: 修复 `issues/6899` 多租户插件 `@Many` 注解查无效问题
