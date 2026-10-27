@@ -8,6 +8,6 @@ org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration
 com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration
 com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration
 com.baomidou.mybatisplus.autoconfigure.IdentifierGeneratorAutoConfiguration
-optional:org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration
-optional:org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
+optional:org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration
+optional:org.springframework.boot.liquibase.autoconfigure.LiquibaseAutoConfiguration
 optional:org.springframework.boot.testcontainers.service.connection.ServiceConnectionAutoConfiguration
