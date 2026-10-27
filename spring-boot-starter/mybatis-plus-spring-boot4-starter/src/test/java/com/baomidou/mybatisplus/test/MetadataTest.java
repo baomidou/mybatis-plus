@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfiguration;
+import com.baomidou.mybatisplus.autoconfigure.ShardingAutoConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -42,6 +43,8 @@ class MetadataTest {
                 .isEqualTo(
                         DataSourceAutoConfiguration.class.getName() + ","
                                 + MybatisPlusLanguageDriverAutoConfiguration.class.getName());
+        assertThat(properties.getProperty(ShardingAutoConfiguration.class.getName() + ".AutoConfigureBefore"))
+                .isEqualTo(DataSourceAutoConfiguration.class.getName());
         assertThat(
                 properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"))
                 .isEqualTo(DataSource.class.getName());
