@@ -2,8 +2,8 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.datasource.DataSourceProperty;
-import com.baomidou.mybatisplus.extension.plugins.datasource.DriverManagerDataSourceProvider;
 import com.baomidou.mybatisplus.extension.plugins.datasource.DbCluster;
+import com.baomidou.mybatisplus.extension.plugins.datasource.DriverManagerDataSourceProvider;
 import com.baomidou.mybatisplus.extension.plugins.datasource.IShardingProcessor;
 import com.baomidou.mybatisplus.extension.plugins.datasource.Sharding;
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingContext;
@@ -16,7 +16,6 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -57,8 +56,8 @@ class ShardingInnerInterceptorTest {
         };
         ShardingContext.set("orders#reader");
 
-        new ShardingInnerInterceptor(processor).beforeQuery(executor, mappedStatement, "parameter", RowBounds.DEFAULT,
-            null, BOUND_SQL);
+        new ShardingInnerInterceptor(processor)
+                .beforeQuery(executor, mappedStatement, "parameter", RowBounds.DEFAULT, null, BOUND_SQL);
 
         assertThat(capturedStatement).hasValue(mappedStatement);
         assertThat(capturedParameter).hasValue("parameter");
@@ -104,14 +103,14 @@ class ShardingInnerInterceptorTest {
     void routesWithoutExplicitHelperInitAfterConstructingShardingDatasource() throws Exception {
         ShardingProperties properties = new ShardingProperties();
         properties.setPrimary("orders");
-        properties.setDatasource(Collections.singletonMap("orders", Collections.singletonList(
-            datasource("writer", DbCluster.master))));
-        new ShardingDatasource(new DriverManagerDataSourceProvider(), Collections.emptyMap(), Collections.emptyMap(), properties);
+        properties.setDatasource(
+                Collections.singletonMap("orders", Collections.singletonList(datasource("writer", DbCluster.master))));
+        new ShardingDatasource(new DriverManagerDataSourceProvider(), Collections.emptyMap(), Collections.emptyMap(),
+                properties);
 
         Executor executor = mock(Executor.class);
         MappedStatement update = statement(AnnotatedMapper.class.getName() + ".update", SqlCommandType.UPDATE);
-        new ShardingInnerInterceptor((ms, parameter, key) -> false)
-            .beforeUpdate(executor, update, null);
+        new ShardingInnerInterceptor((ms, parameter, key) -> false).beforeUpdate(executor, update, null);
 
         assertThat(ShardingContext.get()).isEqualTo("orders#writer#IUD");
     }
@@ -135,8 +134,10 @@ class ShardingInnerInterceptorTest {
     private static void initializeSharding() {
         ShardingProperties properties = new ShardingProperties();
         properties.setPrimary("orders");
-        properties.setDatasource(Collections.singletonMap("orders", Arrays.asList(
-            datasource("writer", DbCluster.master), datasource("reader", DbCluster.slave))));
+        properties.setDatasource(
+                Collections.singletonMap(
+                        "orders",
+                        Arrays.asList(datasource("writer", DbCluster.master), datasource("reader", DbCluster.slave))));
         ShardingHelper.initDbSharding(properties);
     }
 
@@ -148,12 +149,13 @@ class ShardingInnerInterceptorTest {
     }
 
     private static MappedStatement statement(String id, SqlCommandType commandType) {
-        return new MappedStatement.Builder(CONFIGURATION, id,
-            new StaticSqlSource(CONFIGURATION, "select 1"), commandType).build();
+        return new MappedStatement.Builder(CONFIGURATION, id, new StaticSqlSource(CONFIGURATION, "select 1"),
+                commandType).build();
     }
 
     @Sharding("orders")
     interface AnnotatedMapper {
+
         void select();
 
         void update();

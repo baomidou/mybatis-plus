@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public final class ShardingHelper {
+
     private static final Map<String, MappedSharding> MAPPINGS = new ConcurrentHashMap<>();
     private static final Map<Class<? extends IShardingStrategy>, IShardingStrategy> STRATEGIES = new ConcurrentHashMap<>();
     private static volatile MappedSharding primary;
@@ -40,7 +41,9 @@ public final class ShardingHelper {
 
     public static void initDbSharding(ShardingProperties properties) {
         ShardingContext.initialize(properties);
-        IShardingStrategy strategy = properties.getShardingStrategy() == null ? new RandomShardingStrategy() : properties.getShardingStrategy();
+        IShardingStrategy strategy = properties.getShardingStrategy() == null
+                ? new RandomShardingStrategy()
+                : properties.getShardingStrategy();
         primary = new MappedSharding(properties.getPrimary(), strategy);
         STRATEGIES.put(strategy.getClass(), strategy);
         MAPPINGS.clear();
@@ -84,9 +87,7 @@ public final class ShardingHelper {
     }
 
     /**
-     * 解析语句对应 Mapper 上的 {@link Sharding} 注解；方法级注解优先于类级注解，
-     * 重载方法任一携带注解即生效；类级注解沿接口/父类层级查找。
-     * 无法解析（如 XML 独立命名空间、反射失败）时回退主库组。
+     * 解析语句对应 Mapper 上的 {@link Sharding} 注解；方法级注解优先于类级注解， 重载方法任一携带注解即生效；类级注解沿接口/父类层级查找。 无法解析（如 XML 独立命名空间、反射失败）时回退主库组。
      */
     private static MappedSharding resolve(String statementId) {
         if (statementId == null) {
@@ -103,13 +104,17 @@ public final class ShardingHelper {
             if (annotation == null) {
                 return primary;
             }
-            String group = annotation.value().trim().isEmpty() ? ShardingContext.primaryGroup() : annotation.value().trim();
+            String group = annotation.value().trim().isEmpty()
+                    ? ShardingContext.primaryGroup()
+                    : annotation.value().trim();
             return new MappedSharding(group, strategy(annotation.strategy()));
         } catch (ClassNotFoundException e) {
             log.debug("Statement [{}] namespace is not a mapper class, falling back to primary group", statementId);
             return primary;
         } catch (RuntimeException e) {
-            log.warn("Failed to resolve sharding mapping for statement [{}], falling back to primary group", statementId, e);
+            log.warn(
+                    "Failed to resolve sharding mapping for statement [{}], falling back to primary group", statementId,
+                    e);
             return primary;
         }
     }

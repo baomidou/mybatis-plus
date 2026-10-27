@@ -53,13 +53,14 @@ public final class ShardingKey {
     /**
      * 切换数据源 KEY
      *
-     * @param group    数据源组
-     * @param type     {@link SqlCommandType}
+     * @param group 数据源组
+     * @param type {@link SqlCommandType}
      * @param selector 动态数据库组信息函数
      */
     public static void change(String group, SqlCommandType type, Function<ShardingGroupProperty, String> selector) {
         String key = selector.apply(ShardingContext.group(group));
-        if (key == null) throw new IllegalStateException("No healthy datasource for group " + group);
+        if (key == null)
+            throw new IllegalStateException("No healthy datasource for group " + group);
         String databaseKey = getDatabaseKey(group, key);
         if (type == SqlCommandType.INSERT || type == SqlCommandType.UPDATE || type == SqlCommandType.DELETE) {
             databaseKey += ShardingContext.WRITE_FLAG;

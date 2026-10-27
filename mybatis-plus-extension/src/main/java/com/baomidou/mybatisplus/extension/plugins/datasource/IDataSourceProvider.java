@@ -15,8 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.datasource;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 /**
  * 数据源提供者
@@ -29,7 +29,7 @@ public interface IDataSourceProvider {
     /**
      * 创建数据源
      *
-     * @param group    数据库分组
+     * @param group 数据库分组
      * @param property 数据源配置
      */
     DataSource createDataSource(String group, DataSourceProperty property) throws SQLException;

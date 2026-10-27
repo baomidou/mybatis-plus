@@ -26,6 +26,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
  */
 @Getter
 public class MappedSharding {
+
     private final String group;
     private final IShardingStrategy strategy;
 

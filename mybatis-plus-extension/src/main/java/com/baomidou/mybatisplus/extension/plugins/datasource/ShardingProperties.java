@@ -30,6 +30,7 @@ import java.util.Map;
  */
 @Getter
 public class ShardingProperties {
+
     @Setter
     private String primary;
     @Setter

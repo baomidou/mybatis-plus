@@ -23,15 +23,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 分库上下文
- * <p>上下文基于 {@link ThreadLocal} 保存当前数据源 KEY，拦截器在每条语句执行前都会重设；
- * 但框架无法在语句结束后自动清理，线程池复用时上一请求的 KEY 可能残留。
- * 典型受影响场景：Spring 声明式事务在首条语句执行前即获取连接，此时会读到残留 KEY，
- * 建议在请求入口/出口处调用 {@link #clear()} 兜底。
+ * <p>
+ * 上下文基于 {@link ThreadLocal} 保存当前数据源 KEY，拦截器在每条语句执行前都会重设； 但框架无法在语句结束后自动清理，线程池复用时上一请求的 KEY 可能残留。 典型受影响场景：Spring
+ * 声明式事务在首条语句执行前即获取连接，此时会读到残留 KEY， 建议在请求入口/出口处调用 {@link #clear()} 兜底。
  *
  * @author hubin
  * @since 3.5.18
  */
 public final class ShardingContext {
+
     /**
      * 写路由标记，追加在数据源 KEY 末尾（group#key#IUD），用于写后读绑定及事务提交识别
      */

@@ -47,7 +47,7 @@ public class ShardingInnerInterceptor implements InnerInterceptor {
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement statement, Object parameter, RowBounds rowBounds,
-                            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         changeDatasource(statement, parameter);
     }
 
@@ -62,7 +62,7 @@ public class ShardingInnerInterceptor implements InnerInterceptor {
             return;
         }
         boolean changed = processor != null
-            && processor.changeDatasource(statement, parameter, ShardingHelper.getDatabaseKey());
+                && processor.changeDatasource(statement, parameter, ShardingHelper.getDatabaseKey());
         if (!changed) {
             ShardingHelper.changeDatasource(statement.getId(), parameter, commandType);
         }

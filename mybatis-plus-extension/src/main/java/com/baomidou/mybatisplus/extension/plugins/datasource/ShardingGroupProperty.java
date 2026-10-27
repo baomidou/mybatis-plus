@@ -34,6 +34,7 @@ import java.util.List;
 @Setter
 @Getter
 public class ShardingGroupProperty {
+
     private List<String> masterKeys;
     private List<String> slaveKeys;
 

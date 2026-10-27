@@ -27,6 +27,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DataSourceProperty {
+
     private String driverClassName;
     private String url;
     private String username;

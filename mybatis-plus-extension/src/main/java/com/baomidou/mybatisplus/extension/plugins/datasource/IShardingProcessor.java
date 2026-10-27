@@ -27,8 +27,8 @@ public interface IShardingProcessor {
 
     /**
      * @param mappedStatement 执行语句
-     * @param parameter       执行参数
-     * @param datasourceKey   当前上下文数据源 KEY
+     * @param parameter 执行参数
+     * @param datasourceKey 当前上下文数据源 KEY
      * @return 是否已处理数据源切换，返回 false 时走默认分片路由
      */
     boolean changeDatasource(MappedStatement mappedStatement, Object parameter, String datasourceKey);

@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.datasource;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -23,8 +22,9 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 import java.util.function.Function;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  * 分库数据源
@@ -33,12 +33,13 @@ import java.util.function.Function;
  * @since 3.5.18
  */
 public class ShardingDatasource implements DataSource {
+
     private final IDataSourceProvider provider;
     private final Map<String, DataSource> dataSources;
     private final Map<String, DataSourceProperty> properties;
 
     public ShardingDatasource(IDataSourceProvider provider, Map<String, DataSource> dataSources,
-                              Map<String, DataSourceProperty> properties, ShardingProperties shardingProperties) {
+            Map<String, DataSourceProperty> properties, ShardingProperties shardingProperties) {
         this.provider = provider;
         this.dataSources = new ConcurrentHashMap<>(dataSources == null ? Collections.emptyMap() : dataSources);
         this.properties = new ConcurrentHashMap<>(properties == null ? Collections.emptyMap() : properties);
@@ -76,7 +77,8 @@ public class ShardingDatasource implements DataSource {
         return this;
     }
 
-    public void change(String group, String key, Function<String, DataSourceProperty> propertyFactory) throws SQLException {
+    public void change(String group, String key, Function<String, DataSourceProperty> propertyFactory)
+            throws SQLException {
         String databaseKey = ShardingKey.getDatabaseKey(group, key);
         try {
             dataSources.computeIfAbsent(databaseKey, lookupKey -> {
@@ -96,6 +98,7 @@ public class ShardingDatasource implements DataSource {
     }
 
     private static class DataSourceCreateException extends RuntimeException {
+
         private final SQLException cause;
 
         DataSourceCreateException(String databaseKey, SQLException cause) {
@@ -146,7 +149,8 @@ public class ShardingDatasource implements DataSource {
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (iface.isInstance(this)) return iface.cast(this);
+        if (iface.isInstance(this))
+            return iface.cast(this);
         return determineDataSource().unwrap(iface);
     }
 

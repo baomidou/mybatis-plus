@@ -24,12 +24,13 @@ class ShardingDatasourceTest {
         ShardingProperties properties = new ShardingProperties();
         properties.setPrimary("orders");
         properties.setDatasource(Collections.singletonMap("orders", Arrays.asList(master, slave)));
-        ShardingDatasource router = new ShardingDatasource(new DriverManagerDataSourceProvider(), new HashMap<>(), new HashMap<>(), properties);
+        ShardingDatasource router = new ShardingDatasource(new DriverManagerDataSourceProvider(), new HashMap<>(),
+                new HashMap<>(), properties);
 
         ShardingContext.group("orders").getDatasourceKeys(SqlCommandType.SELECT, "orders")
-            .forEach(key -> assertThat(key).isEqualTo("s1"));
+                .forEach(key -> assertThat(key).isEqualTo("s1"));
         ShardingContext.group("orders").getDatasourceKeys(SqlCommandType.UPDATE, "orders")
-            .forEach(key -> assertThat(key).isEqualTo("m1"));
+                .forEach(key -> assertThat(key).isEqualTo("m1"));
         ShardingKey.change("orders", SqlCommandType.SELECT, group -> group.getSlaveKeys().get(0));
         assertThat(ShardingContext.currentOrPrimary()).isEqualTo("orders#s1");
         ShardingKey.change("orders", SqlCommandType.UPDATE, group -> group.getMasterKeys().get(0));

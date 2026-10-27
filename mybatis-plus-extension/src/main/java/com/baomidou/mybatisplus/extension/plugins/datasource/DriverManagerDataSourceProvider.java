@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.datasource;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  * 数据源提供者
@@ -44,6 +44,7 @@ public class DriverManagerDataSourceProvider implements IDataSourceProvider {
     }
 
     private static final class DriverManagerDataSource implements DataSource {
+
         private final DataSourceProperty property;
         private PrintWriter logWriter;
         private int loginTimeout;
@@ -90,7 +91,8 @@ public class DriverManagerDataSourceProvider implements IDataSourceProvider {
 
         @Override
         public <T> T unwrap(Class<T> iface) throws SQLException {
-            if (iface.isInstance(this)) return iface.cast(this);
+            if (iface.isInstance(this))
+                return iface.cast(this);
             throw new SQLException("Not a wrapper for " + iface);
         }
 

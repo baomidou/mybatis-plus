@@ -31,10 +31,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.sql.DataSource;
 
 /**
  * 分库插件自动配置
@@ -70,7 +70,7 @@ public class ShardingAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean(DataSource.class)
     public ShardingDatasource shardingDatasource(ShardingProperties properties, IDataSourceProvider provider,
-                                                            ObjectProvider<IShardingStrategy> strategies) throws SQLException {
+            ObjectProvider<IShardingStrategy> strategies) throws SQLException {
         IShardingStrategy strategy = strategies.getIfAvailable();
         if (strategy != null) {
             properties.setShardingStrategy(strategy);

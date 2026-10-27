@@ -22,12 +22,14 @@ import java.util.TreeMap;
 
 /**
  * 一致性 hash 分库策略
- * <p>哈希环按数据源列表内容缓存，检测到列表变化（动态加删数据源）时自动重建。
+ * <p>
+ * 哈希环按数据源列表内容缓存，检测到列表变化（动态加删数据源）时自动重建。
  *
  * @author hubin
  * @since 3.5.18
  */
 public class ConsistentHashShardingStrategy extends AbstractShardingStrategy {
+
     private static final int DEFAULT_VIRTUAL_NODE_COUNT = 128;
     private final int virtualNodeCount;
     private volatile HashRing cache;
@@ -38,16 +40,18 @@ public class ConsistentHashShardingStrategy extends AbstractShardingStrategy {
 
     /**
      * @param virtualNodeCount 虚拟节点数
-     * @param fixedNode        兼容保留：哈希环已按数据源列表内容缓存，该参数不再影响行为
+     * @param fixedNode 兼容保留：哈希环已按数据源列表内容缓存，该参数不再影响行为
      */
     public ConsistentHashShardingStrategy(int virtualNodeCount, boolean fixedNode) {
-        if (virtualNodeCount <= 0) throw new IllegalArgumentException("virtualNodeCount must be greater than 0");
+        if (virtualNodeCount <= 0)
+            throw new IllegalArgumentException("virtualNodeCount must be greater than 0");
         this.virtualNodeCount = virtualNodeCount;
     }
 
     @Override
     public String chooseKey(List<String> keys, String statementId, Object parameter) {
-        if (keys.size() == 1) return keys.get(0);
+        if (keys.size() == 1)
+            return keys.get(0);
         String hashKey = buildHashKey(statementId, parameter);
         return hashKey == null ? chooseRandomKey(keys) : chooseConsistentKey(keys, hashKey);
     }
@@ -92,6 +96,7 @@ public class ConsistentHashShardingStrategy extends AbstractShardingStrategy {
     }
 
     private static final class HashRing {
+
         private final List<String> keys;
         private final TreeMap<Long, String> ring;
 

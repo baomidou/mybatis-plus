@@ -20,22 +20,22 @@ import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingDatasource;
 import org.mybatis.spring.transaction.SpringManagedTransaction;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.sql.DataSource;
 
 /**
  * 分库事务管理
- * <p>同一事务内按路由 KEY 维护多个物理连接：同组写后读会绑定到写连接以保证读己之写；
- * 提交/回滚时对各连接逐个执行，任一失败不会回滚已提交的其他连接，
- * 跨库场景为最终一致性的 best-effort 语义，并非分布式事务。
+ * <p>
+ * 同一事务内按路由 KEY 维护多个物理连接：同组写后读会绑定到写连接以保证读己之写； 提交/回滚时对各连接逐个执行，任一失败不会回滚已提交的其他连接， 跨库场景为最终一致性的 best-effort 语义，并非分布式事务。
  *
  * @author hubin
  * @since 3.5.18
  */
 public class ShardingManagedTransaction extends SpringManagedTransaction {
+
     private final DataSource routingDataSource;
     private final Map<String, Connection> connections = new ConcurrentHashMap<>();
     private final Map<String, String> writeRoutes = new ConcurrentHashMap<>();
