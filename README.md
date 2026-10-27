@@ -75,86 +75,185 @@ It provides efficient, and out-of-the-box features (such as code generation, con
 
 ## Getting started
 
-- Add MyBatis-Plus dependency
-    - Latest
-      Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
-    - Maven:
-    - SpringBoot2
-      ```xml
-      <dependency>
-          <groupId>com.baomidou</groupId>
-          <artifactId>mybatis-plus-boot-starter</artifactId>
-          <version>Latest Version</version>
-      </dependency>
-      ```
-    - SpringBoot3
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
-    - SpringBoot4 `^3.5.13`
-      ```xml
-      <dependency>
-      <groupId>com.baomidou</groupId>
-      <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-      <version>Latest Version</version>
-      </dependency>
-      ```
-    - `^3.5.9` may need additional citations
-        - jdk11+
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-jsqlparser</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
-        - jdk8
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
+### Add MyBatis-Plus dependency
 
-    - Gradle
-    - SpringBoot2
-      ```groovy
-      implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
-      ```
-    - SpringBoot3
-      ```groovy
-      implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
-      ```
-    - SpringBoot4
-      ```groovy
-      implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot4-starter', version: 'Latest Version'
-      ```
+Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
 
-- Modify mapper file extends BaseMapper interface
+Choose the starter for your Spring Boot version and replace `Latest Version` with the MyBatis-Plus version you want to use.
 
-  ```java
-  public interface UserMapper extends BaseMapper<User> {
+#### Spring Boot 4
 
-  }
-  ```
+Requires MyBatis-Plus 3.5.13 or later.
 
-- Use it
-  ``` java
-  List<User> userList = userMapper.selectList(
-          new QueryWrapper<User>()
-                  .lambda()
-                  .ge(User::getAge, 18)
-  );
-  ```
-  MyBatis-Plus will execute the following SQL
-    ```sql
-    SELECT * FROM user WHERE age >= 18
-    ```
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-spring-boot4-starter:Latest Version'
+```
+
+**Test dependency (optional)**
+
+To write tests with `@MybatisPlusTest`, add the matching test starter using the same version as the starter above.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot4-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-spring-boot4-starter-test:Latest Version'
+```
+
+#### Spring Boot 3
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:Latest Version'
+```
+
+**Test dependency (optional)**
+
+To write tests with `@MybatisPlusTest`, add the matching test starter using the same version as the starter above.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot3-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-spring-boot3-starter-test:Latest Version'
+```
+
+#### Spring Boot 2
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-boot-starter:Latest Version'
+```
+
+**Test dependency (optional)**
+
+To write tests with `@MybatisPlusTest`, add the matching test starter using the same version as the starter above.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:Latest Version'
+```
+
+#### SQL parser dependency (optional)
+
+Since MyBatis-Plus 3.5.9, plugins that parse SQL, such as the pagination plugin, require one of the following parser modules. Choose one module matching your JDK and required JSqlParser version, and use the same MyBatis-Plus version as the starter.
+
+The JSqlParser versions below reflect the dependency configuration in the current repository. For other MyBatis-Plus releases, refer to the dependencies of that release.
+
+| MyBatis-Plus module | JSqlParser version | JDK requirement |
+| --- | --- | --- |
+| `mybatis-plus-jsqlparser` | 5.4 | JDK 11+ |
+| `mybatis-plus-jsqlparser-5.2` | 5.2 | JDK 11+ |
+| `mybatis-plus-jsqlparser-5.0` | 5.0 | JDK 11+ |
+| `mybatis-plus-jsqlparser-4.9` | 4.9 | JDK 8+ |
+
+The following example uses `mybatis-plus-jsqlparser`. For another JSqlParser version, replace the module name with the corresponding module from the table above.
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-jsqlparser</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-jsqlparser:Latest Version'
+```
+
+### Extend the BaseMapper interface
+
+```java
+public interface UserMapper extends BaseMapper<User> {
+
+}
+```
+
+### Use it
+
+```java
+List<User> userList = userMapper.selectList(
+        new QueryWrapper<User>()
+                .lambda()
+                .ge(User::getAge, 18)
+);
+```
+
+MyBatis-Plus will execute the following SQL:
+
+```sql
+SELECT * FROM user WHERE age >= 18
+```
 
 > This showcase is just a small part of MyBatis-Plus features. If you want to learn more, please refer to
 > the [documentation](https://baomidou.com).

@@ -57,63 +57,159 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 依赖引用
 
-- Latest
-  Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
-    - Maven:
-    - SpringBoot2
-      ```xml
-      <dependency>
-          <groupId>com.baomidou</groupId>
-          <artifactId>mybatis-plus-boot-starter</artifactId>
-          <version>Latest Version</version>
-      </dependency>
-      ```
-    - SpringBoot3
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
-    - SpringBoot4 `^3.5.13`
-      ```xml
-      <dependency>
-      <groupId>com.baomidou</groupId>
-      <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
-      <version>Latest Version</version>
-      </dependency>
-      ```
-    - `^3.5.9` 你可能需要额外的引用
-        - jdk11+
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-jsqlparser</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
-        - jdk8
-      ```xml
-      <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
-        <version>Latest Version</version>
-      </dependency>
-      ```
-        - Gradle
-        - SpringBoot2
-          ```groovy
-          implementation group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: 'Latest Version'
-          ```
-        - SpringBoot3
-          ```groovy
-          implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot3-starter', version: 'Latest Version'
-          ```
-        - SpringBoot4
-          ```groovy
-          implementation group: 'com.baomidou', name: 'mybatis-plus-spring-boot4-starter', version: 'Latest Version'
-          ```
+Latest Version: [![Maven Central](https://img.shields.io/maven-central/v/com.baomidou/mybatis-plus.svg)](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
+
+根据项目使用的 Spring Boot 版本选择对应的 Starter，将 `Latest Version` 替换为所需的 MyBatis-Plus 版本。
+
+## Spring Boot 4
+
+需要 MyBatis-Plus 3.5.13 及以上版本。
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-spring-boot4-starter:Latest Version'
+```
+
+**测试依赖（按需引入）**
+
+使用 `@MybatisPlusTest` 编写测试时，引入对应的测试 Starter，版本与上述 Starter 保持一致。
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot4-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-spring-boot4-starter-test:Latest Version'
+```
+
+## Spring Boot 3
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:Latest Version'
+```
+
+**测试依赖（按需引入）**
+
+使用 `@MybatisPlusTest` 编写测试时，引入对应的测试 Starter，版本与上述 Starter 保持一致。
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-spring-boot3-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-spring-boot3-starter-test:Latest Version'
+```
+
+## Spring Boot 2
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-boot-starter:Latest Version'
+```
+
+**测试依赖（按需引入）**
+
+使用 `@MybatisPlusTest` 编写测试时，引入对应的测试 Starter，版本与上述 Starter 保持一致。
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter-test</artifactId>
+    <version>Latest Version</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+testImplementation 'com.baomidou:mybatis-plus-boot-starter-test:Latest Version'
+```
+
+## SQL 解析依赖（按需引入）
+
+从 MyBatis-Plus 3.5.9 开始，使用分页等依赖 SQL 解析的插件时，需要额外引入以下解析模块之一。请选择一个与 JDK 及所需 JSqlParser 版本匹配的模块，并与 Starter 保持相同的 MyBatis-Plus 版本。
+
+下表中的 JSqlParser 版本以当前仓库的依赖配置为准；使用其他 MyBatis-Plus 版本时，请以对应发布版本的依赖为准。
+
+| MyBatis-Plus 模块 | JSqlParser 版本 | JDK 要求 |
+| --- | --- | --- |
+| `mybatis-plus-jsqlparser` | 5.4 | JDK 11+ |
+| `mybatis-plus-jsqlparser-5.2` | 5.2 | JDK 11+ |
+| `mybatis-plus-jsqlparser-5.0` | 5.0 | JDK 11+ |
+| `mybatis-plus-jsqlparser-4.9` | 4.9 | JDK 8+ |
+
+以下以 `mybatis-plus-jsqlparser` 为例；使用其他 JSqlParser 版本时，将模块名替换为上表中的对应模块即可。
+
+Maven:
+
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-jsqlparser</artifactId>
+    <version>Latest Version</version>
+</dependency>
+```
+
+Gradle:
+
+```groovy
+implementation 'com.baomidou:mybatis-plus-jsqlparser:Latest Version'
+```
 
 # 优点 | Advantages
 
