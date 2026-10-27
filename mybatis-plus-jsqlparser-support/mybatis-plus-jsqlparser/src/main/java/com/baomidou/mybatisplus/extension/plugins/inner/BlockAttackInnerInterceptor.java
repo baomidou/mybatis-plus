@@ -134,8 +134,15 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         } else if (where instanceof OrExpression) {
 
             OrExpression orExpression = (OrExpression) where;
-            return fullMatch(orExpression.getLeftExpression(), logicField)
-                    || fullMatch(orExpression.getRightExpression(), logicField);
+            Boolean left = fullMatch(orExpression.getLeftExpression(), logicField);
+            if (Boolean.TRUE.equals(left)) {
+                return Boolean.TRUE;
+            }
+            Boolean right = fullMatch(orExpression.getRightExpression(), logicField);
+            if (Boolean.TRUE.equals(right)) {
+                return Boolean.TRUE;
+            }
+            return left == null || right == null ? null : Boolean.FALSE;
         } else if (where instanceof XorExpression) {
             // example: 1 xor 0,操作数按数据库真值语义解释,不能只看比较运算符
             Boolean left = fullMatch(((XorExpression) where).getLeftExpression(), logicField);

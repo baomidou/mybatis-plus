@@ -1,7 +1,13 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +76,58 @@ class BlockAttackInnerInterceptorTautologyTest {
         checkNotEx("update records set status = 2 where status is null");
         checkNotEx("update records set status = 2 where name like 'a%'");
         checkNotEx("delete from records where id = 1");
+    }
+
+    @Test
+    void orWithUnknownPredicate() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            for (String predicate : new String[]{"rfid is null", "id in (1, 2)", "name like 'a%'", "id > 0"}) {
+                checkNotEx(statement + " where " + predicate + " or rfid = ''");
+                checkNotEx(statement + " where rfid = '' or " + predicate);
+                checkNotEx(statement + " where " + predicate + " or rfid is null");
+            }
+            checkNotEx(statement + " where id in (1, 2) and (rfid is null or rfid = '')");
+        }
+    }
+
+    @Test
+    void orWithUnknownAndConstant() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            checkEx(statement + " where rfid is null or 1 = 1");
+            checkEx(statement + " where 1 = 1 or rfid is null");
+            checkNotEx(statement + " where rfid is null or 1 = 0");
+            checkNotEx(statement + " where 1 = 0 or rfid is null");
+            checkNotEx(statement + " where not (rfid is null or 1 = 0)");
+            checkNotEx(statement + " where not (1 = 0 or rfid is null)");
+            checkNotEx(statement + " where 1 = 0 or 2 = 0");
+            checkEx(statement + " where not (1 = 0 or 2 = 0)");
+            checkEx(statement + " where (rfid is null or rfid = '') or 1 = 1");
+        }
+    }
+
+    @Test
+    void orWithLogicDelete() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LogicRecord.class);
+        try {
+            for (String statement : new String[]{"update block_attack_or_logic set rfid = ?",
+                    "delete from block_attack_or_logic"}) {
+                checkNotEx(statement + " where id in (1, 2) and del_flag = 0 and (rfid is null or rfid = '')");
+                checkEx(statement + " where del_flag = 0 or rfid is null");
+                checkEx(statement + " where rfid is null or del_flag = 0");
+            }
+        } finally {
+            TableInfoHelper.remove(LogicRecord.class);
+        }
+    }
+
+    @TableName("block_attack_or_logic")
+    private static class LogicRecord {
+
+        @TableId
+        private Long id;
+        @TableLogic
+        private Integer delFlag;
+        private String rfid;
     }
 
     void checkEx(String sql) {
