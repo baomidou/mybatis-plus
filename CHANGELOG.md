@@ -1,5 +1,12 @@
 ﻿# CHANGELOG
 
+## [v3.5.18.1] 2026.10.27
+- fix: isolate starter configurations and adapt Spring Boot 4
+- fix: correct test convention source scanning
+- fix: 修复全表操作拦截器 OR 条件空指针 (#7195)
+- opt: check formatting before build
+- opt: 优化格式化多数据源相关代码
+
 ## [v3.5.18] 2026.10.21
 - fix: 安全修复 `BlockAttackInnerInterceptor` 常量恒等式（如 `1 XOR 0`、`1 <= 1`、`NOT 1 = 2`、`WHERE 1`）绕过全表更新/删除校验问题
 - fix: 安全修复 `TenantLineInnerInterceptor`、`DataPermissionInterceptor` 向 `XOR` 条件追加租户/权限条件时缺少括号，导致数据越权读写问题
