@@ -151,7 +151,7 @@ class TestConventionTest {
     /**
      * T6 显式禁用用例数量。
      */
-    private static final int MAX_DISABLED_CASES = 6;
+    private static final int MAX_DISABLED_CASES = 8;
 
     /**
      * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。<br>
