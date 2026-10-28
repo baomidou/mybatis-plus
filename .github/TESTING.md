@@ -28,6 +28,27 @@
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
 
+## 字节码兼容矩阵
+
+各模块编译产物的 class 版本必须与承诺的 JDK 版本一致。用 `./gradlew verifyBytecodeVersion` 校验。
+
+| 模块 | compileJava release | class major | 说明 |
+|---|---|---|---|
+| mybatis-plus-annotation | 8 | 52 | 元数据注解，最低兼容 |
+| mybatis-plus-core | 8 | 52 | 核心 API，最低兼容 |
+| mybatis-plus-extension | 8 | 52 | 扩展插件 |
+| mybatis-plus-spring | 8 | 52 | Spring 集成 |
+| mybatis-plus | 8 | 52 | 聚合模块 |
+| mybatis-plus-generator | 8 | 52 | 代码生成器 |
+| mybatis-plus-jsqlparser-4.9 | 8 | 52 | JSqlParser 4.9 支持 |
+| mybatis-plus-jsqlparser (5.4) | 11 | 55 | JSqlParser 5.x 需要 JDK 11+ |
+| mybatis-plus-jsqlparser-5.0 | 11 | 55 | JSqlParser 5.0 支持 |
+| mybatis-plus-jsqlparser-5.2 | 11 | 55 | JSqlParser 5.2 支持 |
+| spring-boot-*-starter | 17 | 61 | Spring Boot 3/4 需要 JDK 17+ |
+| mybatis-plus-up | 21 | 65 | 上游同步工具，不发布 |
+
+测试代码统一 `compileTestJava release = 17`（JUnit 6 最低要求），`mybatis-plus-up` 例外为 21。
+
 ## T1 测试放对位置
 
 测试类的包应与被测类的包一致，且放在被测类所在模块。跨模块的行为测试放聚合模块
