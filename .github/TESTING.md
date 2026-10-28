@@ -19,7 +19,7 @@
 |---|---|---|---|
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 34 处缺口，全部是 4 个 JSqlParser 版本模块的整文件复制（其余模块已零缺口） |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 28 组 |
-| T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
+| T3 | 每个测试类属于一个层 | 机制就位，待补标签 | 5 个层任务入口已注册；默认 `test` 排除 external-db/stress/build-metadata |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
@@ -47,12 +47,22 @@
 ## T3 分层
 
 层名固定五个：`unit`、`integration`、`external-db`、`build-metadata`、`stress`。
-现在只机器保证"用了 `@Tag` 就必须来自这五个"；"每个类恰好一个层标签"要等按标签过滤的执行入口
-（`testUnit` / `testIntegration` / …）落地后才强制。在此之前新增测试请顺手带上标签，
-别等补分层时一次性大改。
+机器保证"用了 `@Tag` 就必须来自这五个"。按标签过滤的执行入口已就位：
+
+```bash
+./gradlew testUnit           # 只跑 unit 层
+./gradlew testIntegration    # 只跑 integration 层
+./gradlew testExternalDb     # 只跑 external-db 层（需真实数据库）
+./gradlew testBuildMetadata  # 只跑 build-metadata 层（校验 pom/产物）
+./gradlew testStress         # 只跑 stress 层（性能/压力测试）
+./gradlew test               # 默认跑 unit + integration（排除 external-db/stress/build-metadata）
+./gradlew test -PincludeTags=unit,integration  # 自定义标签组合
+```
+
+新增测试必须带一个层标签。"每个类恰好一个层标签"的强制检查待 S4 步骤逐模块补标签后启用。
 
 需要真实数据库、本机中间件（ZooKeeper、Redis）的用例属于 `external-db`，当前一律
-`@Disabled` + 原因，等入口就位后换成标签。
+`@Disabled` + 原因，等补标签后换成 `@Tag("external-db")` + `Assumptions.assumeTrue(可达)`。
 
 ## T4 断言只用 AssertJ
 

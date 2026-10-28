@@ -176,7 +176,35 @@ subprojects {
         if (!skipPublishingProjects.contains(project.path)) {
             dependsOn("generatePomFileForMavenPublication")
         }
-        useJUnitPlatform()
+        useJUnitPlatform {
+            if (project.hasProperty('includeTags')) {
+                includeTags project.property('includeTags').split(',')*.trim() as String[]
+            } else {
+                excludeTags 'external-db', 'stress', 'build-metadata'
+            }
+        }
+        systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    }
+
+    def layerTags = [
+        testUnit: 'unit',
+        testIntegration: 'integration',
+        testExternalDb: 'external-db',
+        testBuildMetadata: 'build-metadata',
+        testStress: 'stress'
+    ]
+    layerTags.each { taskName, tagName ->
+        tasks.register(taskName, Test) {
+            group = 'verification'
+            description = "Run tests tagged with '${tagName}'"
+            if (!skipPublishingProjects.contains(project.path)) {
+                dependsOn("generatePomFileForMavenPublication")
+            }
+            useJUnitPlatform {
+                includeTags tagName
+            }
+            systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
