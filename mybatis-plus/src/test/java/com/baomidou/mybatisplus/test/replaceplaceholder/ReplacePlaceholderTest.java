@@ -23,13 +23,13 @@ public class ReplacePlaceholderTest extends DbTestSupport<EntityMapper> {
         doTest(i -> {
             List<Entity> list = i.selectAll();
             System.out.println(list);
-            assertThat(list.getFirst().getId()).isNull();
-            assertThat(list.getFirst().getName()).isNull();
-            assertThat(list.getFirst().getAge()).isNotNull();
+            assertThat(list.get(0).getId()).isNull();
+            assertThat(list.get(0).getName()).isNull();
+            assertThat(list.get(0).getAge()).isNotNull();
             list = i.selectAll2();
             System.out.println(list);
-            assertThat(list.getFirst().getEs().getId()).isNull();
-            assertThat(list.getFirst().getEs().getName()).isNotBlank();
+            assertThat(list.get(0).getEs().getId()).isNull();
+            assertThat(list.get(0).getEs().getName()).isNotBlank();
         });
     }
 

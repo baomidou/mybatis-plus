@@ -173,7 +173,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
         map.put("id", 1L);
         List<Entity> list = Db.listByMap(map, Entity.class);
         assertThat(list.size()).isEqualTo(1);
-        assertThat(list.getFirst().getName()).isEqualTo("ruben");
+        assertThat(list.get(0).getName()).isEqualTo("ruben");
     }
 
     @Test

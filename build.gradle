@@ -150,6 +150,10 @@ subprojects {
         options.release = 8
     }
 
+    compileTestJava {
+        options.release = 17
+    }
+
     repositories {
         mavenLocal()
         maven { url "https://maven.aliyun.com/repository/public" }
@@ -188,6 +192,11 @@ subprojects {
         tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
             kotlinOptions {
                 suppressWarnings = true
+            }
+        }
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).matching { it.name.contains('Test') }.configureEach {
+            kotlinOptions {
+                jvmTarget = '17'
             }
         }
     }

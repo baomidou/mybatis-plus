@@ -47,7 +47,7 @@ public class MultiAopTest {
         List<BatchResult> batchResults = demoService.getBaseMapper()
                 .insert(List.of(new Demo(), new Demo(), new Demo()));
         assertThat(batchResults).hasSize(1);
-        assertThat(batchResults.getFirst().getUpdateCounts()).containsExactly(1, 1, 1);
+        assertThat(batchResults.get(0).getUpdateCounts()).containsExactly(1, 1, 1);
         // 代理层层叠加也不能影响批量方法落库
         assertThat(demoService.count()).isEqualTo(before + 6);
     }

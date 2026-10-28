@@ -229,7 +229,7 @@ class TableInfoHelperTest {
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         List<TableFieldInfo> logic = fieldList.stream().filter(TableFieldInfo::isLogicDelete).toList();
         assertThat(logic.size()).isEqualTo(1);
-        assertThat(logic.getFirst().getProperty()).isEqualTo("deleted");
+        assertThat(logic.get(0).getProperty()).isEqualTo("deleted");
     }
 
     @Test

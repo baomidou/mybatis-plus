@@ -9,6 +9,10 @@ compileJava {
     options.release = 21
 }
 
+compileTestJava {
+    options.release = 21
+}
+
 configurations {
     mybatisSources {
         canBeConsumed = false

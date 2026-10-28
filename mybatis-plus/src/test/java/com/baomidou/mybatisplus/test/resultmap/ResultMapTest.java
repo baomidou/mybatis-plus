@@ -35,13 +35,13 @@ public class ResultMapTest extends DbTestSupport<EntityMapper> {
             assertThat(entity.getGg2().getName()).as("是老李").isEqualTo("老李");
 
             assertThat(entity.getGg3()).as("typeHandler正常").isNotNull();
-            assertThat(entity.getGg3().getFirst().getName()).as("是老张").isEqualTo("老张");
+            assertThat(entity.getGg3().get(0).getName()).as("是老张").isEqualTo("老张");
 
             assertThat(entity.getGg4()).as("typeHandler正常").isNotNull();
-            assertThat(entity.getGg4().getFirst().getName()).as("是秋秋").isEqualTo("秋秋");
-            assertThat(entity.getGg4().getFirst().getGg().getName()).as("是小红").isEqualTo("小红");
-            assertThat(entity.getGg4().getFirst().getGgList().getFirst().getName()).as("是小猫").isEqualTo("小猫");
-            assertThat(entity.getGg4().getFirst().getGgMap().get("test").getName()).as("是小明").isEqualTo("小明");
+            assertThat(entity.getGg4().get(0).getName()).as("是秋秋").isEqualTo("秋秋");
+            assertThat(entity.getGg4().get(0).getGg().getName()).as("是小红").isEqualTo("小红");
+            assertThat(entity.getGg4().get(0).getGgList().get(0).getName()).as("是小猫").isEqualTo("小猫");
+            assertThat(entity.getGg4().get(0).getGgMap().get("test").getName()).as("是小明").isEqualTo("小明");
 
             assertThat(entity.getStr()).as("typeHandler正常").isNotNull();
             assertThat(entity.getStr()[0]).isEqualTo("hello");

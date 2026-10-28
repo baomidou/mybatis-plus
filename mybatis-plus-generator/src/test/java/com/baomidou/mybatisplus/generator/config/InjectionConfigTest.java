@@ -25,6 +25,6 @@ public class InjectionConfigTest {
         assertThat(injectionConfig.getCustomMap()).hasSize(1);
         assertThat(injectionConfig.getCustomMap().get("test")).isEqualTo("baomidou");
         assertThat(injectionConfig.getCustomFiles()).hasSize(1);
-        assertThat(injectionConfig.getCustomFiles().getFirst().getTemplatePath()).isEqualTo("/templates/test.vm");
+        assertThat(injectionConfig.getCustomFiles().get(0).getTemplatePath()).isEqualTo("/templates/test.vm");
     }
 }

@@ -121,8 +121,8 @@ class H2StudentMapperTest extends H2TestSupport {
         studentMapper.insert(new H2Student(910002L, "zzInTestC", 1));
         List<H2Student> hit = studentMapper.selectList(wrapper);
         assertThat(hit).hasSize(1);
-        assertThat(hit.getFirst().getId()).isEqualTo(hitId);
-        assertThat(hit.getFirst().getName()).isEqualTo("zzInTestA");
+        assertThat(hit.get(0).getId()).isEqualTo(hitId);
+        assertThat(hit.get(0).getName()).isEqualTo("zzInTestA");
         assertThat(Wrappers.<H2Student>lambdaQuery().in(H2Student::getName, List.of("zzInTestA")).getTargetSql())
                 .isEqualTo("(name IN (?))");
         assertThat(Wrappers.<H2Student>lambdaQuery().in(H2Student::getName, List.of()).getTargetSql())
