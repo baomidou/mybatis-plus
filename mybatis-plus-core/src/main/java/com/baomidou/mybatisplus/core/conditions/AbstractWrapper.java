@@ -534,17 +534,22 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
                 String target = Constants.LEFT_BRACE + i + Constants.RIGHT_BRACE;
+                boolean found = false;
                 if (sqlStr.contains(target)) {
                     sqlStr = sqlStr.replace(target, formatParam(null, params[i]));
-                } else {
-                    Matcher matcher = Pattern.compile("[{]" + i + ",[a-zA-Z0-9.,=]+}").matcher(sqlStr);
-                    if (!matcher.find()) {
-                        throw ExceptionUtils
-                                .mpe("Please check the syntax correctness! sql not contains: \"%s\"", target);
-                    }
+                    found = true;
+                }
+                Matcher matcher = Pattern.compile("[{]" + i + ",[a-zA-Z0-9.,=]+}").matcher(sqlStr);
+                while (matcher.find()) {
                     String group = matcher.group();
-                    sqlStr = sqlStr.replace(
-                            group, formatParam(group.substring(target.length(), group.length() - 1), params[i]));
+                    if (sqlStr.contains(group)) {
+                        sqlStr = sqlStr.replace(
+                                group, formatParam(group.substring(target.length(), group.length() - 1), params[i]));
+                    }
+                    found = true;
+                }
+                if (!found) {
+                    throw ExceptionUtils.mpe("Please check the syntax correctness! sql not contains: \"%s\"", target);
                 }
             }
         }
