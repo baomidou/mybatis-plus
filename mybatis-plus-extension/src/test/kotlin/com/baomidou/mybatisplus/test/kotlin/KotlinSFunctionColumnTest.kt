@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.test.kotlin
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableName
 import com.baomidou.mybatisplus.core.MybatisConfiguration
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @TableName("sys_user")
+@Tag("unit")
 class User {
     var id: Int? = null
 
@@ -37,6 +40,7 @@ class User {
 }
 
 @TableName("account")
+@Tag("unit")
 class Account {
     var id: Int? = null
     var isActive: Boolean = false
@@ -47,6 +51,7 @@ class Account {
  * 作为 Java 的 SFunction 参数传递时，编译器会生成合成的 implMethodName，导致列名无法解析。
  * 该测试覆盖在 Kotlin 中直接使用 Java 版 Lambda Wrapper 的场景。
  */
+@Tag("unit")
 class KotlinSFunctionColumnTest {
 
     @BeforeEach

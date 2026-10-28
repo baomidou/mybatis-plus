@@ -200,6 +200,8 @@ subprojects {
             if (!skipPublishingProjects.contains(project.path)) {
                 dependsOn("generatePomFileForMavenPublication")
             }
+            testClassesDirs = sourceSets.test.output.classesDirs
+            classpath = sourceSets.test.runtimeClasspath
             useJUnitPlatform {
                 includeTags tagName
             }

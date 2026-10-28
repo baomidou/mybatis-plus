@@ -10,6 +10,7 @@ import lombok.Data;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.result.DefaultResultHandler;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 class PageCacheTest extends DbTestSupport<PageCacheMapper> {
 
     @Test

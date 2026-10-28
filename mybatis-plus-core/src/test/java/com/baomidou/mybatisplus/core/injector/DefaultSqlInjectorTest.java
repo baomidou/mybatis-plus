@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 注入清单、语句命令类型、逻辑删除改写、重复注入的幂等性全靠评审兜底。本类把这几张契约钉成集合相等断言 —— 多注入或漏注入一个 {@code xxById}、把某个 SELECT 改成
  * UPDATE、逻辑删除分支漏改写，都会红。真库执行结果由 h2 那套集成测试负责。
  */
+@Tag("unit")
 class DefaultSqlInjectorTest {
 
     /**

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author TaoYu
  */
+@Tag("unit")
 class SystemClockTest {
 
     private static final long TOLERANCE_MILLIS = 5_000;

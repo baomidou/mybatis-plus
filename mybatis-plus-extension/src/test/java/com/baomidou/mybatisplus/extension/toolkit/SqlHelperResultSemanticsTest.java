@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Statement;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.when;
  *
  * @author TaoYu
  */
+@Tag("unit")
 class SqlHelperResultSemanticsTest {
 
     @Test

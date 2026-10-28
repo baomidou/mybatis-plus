@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.annotation;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author taoyu
  */
+@Tag("unit")
 class SqlConditionTest {
 
     @Test

@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong 2019/5/4.
  */
+@Tag("integration")
 class MybatisPlusPropertiesTest {
 
     @Test

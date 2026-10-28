@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.incrementer;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hebulin
  * @since 2026-09-23
  */
+@Tag("stress")
 class DefaultIdentifierGeneratorTest {
 
     /**

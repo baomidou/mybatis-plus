@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
  * @author XiaoBingBy
  * @since 2019-08-30
  */
+@Tag("integration")
 class StringUtilsTest {
 
     @Test

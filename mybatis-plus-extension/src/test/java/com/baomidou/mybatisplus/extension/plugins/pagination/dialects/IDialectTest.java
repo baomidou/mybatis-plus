@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
 
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2022-05-30
  */
+@Tag("unit")
 class IDialectTest {
 
     /**

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 加密测试
  */
+@Tag("unit")
 class EncryptTest {
 
     @Test

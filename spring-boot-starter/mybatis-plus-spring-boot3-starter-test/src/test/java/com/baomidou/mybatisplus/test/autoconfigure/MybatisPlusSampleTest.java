@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.autoconfigure;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 //@MybatisPlusTest(properties = "spring.datasource.schema=classpath:schema.sql")
 @MybatisPlusTest
+@Tag("integration")
 class MybatisPlusSampleTest {
 
     @Autowired

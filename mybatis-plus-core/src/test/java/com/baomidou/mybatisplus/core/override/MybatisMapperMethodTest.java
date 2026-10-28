@@ -19,6 +19,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationHandler;
@@ -43,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Wrapper。用例用 {@link Proxy} 造的 SqlSession 替身驱动真类， 盯的就是这张分派表：语句 id 取哪个、走 SqlSession 的哪个方法、行数怎么换算成声明返回类型。 真库执行由 h2
  * 那套集成测试负责。
  */
+@Tag("unit")
 class MybatisMapperMethodTest {
 
     /**

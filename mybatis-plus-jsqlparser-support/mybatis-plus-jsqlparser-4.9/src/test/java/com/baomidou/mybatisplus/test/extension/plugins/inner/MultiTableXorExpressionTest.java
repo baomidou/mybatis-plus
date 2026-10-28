@@ -10,6 +10,7 @@ import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 3.5.18
  */
+@Tag("unit")
 class MultiTableXorExpressionTest {
 
     private final TenantLineInnerInterceptor tenantInterceptor = new TenantLineInnerInterceptor(

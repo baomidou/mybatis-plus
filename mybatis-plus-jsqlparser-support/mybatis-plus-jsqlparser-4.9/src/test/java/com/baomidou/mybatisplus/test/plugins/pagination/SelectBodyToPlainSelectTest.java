@@ -7,6 +7,7 @@ import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * SelectBody强转PlainSelect不支持sql里面最外层带union <br>
  * 用SetOperationList处理sql带union的语句
  */
+@Tag("unit")
 class SelectBodyToPlainSelectTest {
 
     private static final List<OrderItem> ITEMS = new ArrayList<>();

@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.mapping.ParameterMapping;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.entry;
  * {@code mybatis_plus_first}/{@code mybatis_plus_second} 两个占位， 再往 {@code additionalParameters} 放对应的偏移量与行数。方言本身只给字符串，
  * 参数能不能对上全看这个袋子，而它此前没有任何直接用例。
  */
+@Tag("unit")
 class DialectModelTest {
 
     private static final String FIRST = "mybatis_plus_first";

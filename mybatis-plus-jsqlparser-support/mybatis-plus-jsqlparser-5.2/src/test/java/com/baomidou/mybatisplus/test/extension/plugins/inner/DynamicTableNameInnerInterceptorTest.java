@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameInnerInterceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie, hcl
  * @since 2020-07-16
  */
+@Tag("unit")
 class DynamicTableNameInnerInterceptorTest {
 
     /**

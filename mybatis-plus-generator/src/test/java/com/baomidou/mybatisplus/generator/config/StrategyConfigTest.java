@@ -13,6 +13,7 @@ import com.baomidou.mybatisplus.generator.entity.SuperEntity;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2019-02-20
  */
+@Tag("unit")
 class StrategyConfigTest {
 
     @Test

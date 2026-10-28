@@ -11,6 +11,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.*;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2019/2/23.
  */
+@Tag("unit")
 class MybatisConfigurationTest {
 
     @Test

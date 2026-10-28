@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.test.sqlrunner.Entity;
 import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.when;
  * @author VampireAchao
  * @since 2022-05-03
  */
+@Tag("integration")
 class DbTest extends DbTestSupport<EntityMapper> {
 
     @Test

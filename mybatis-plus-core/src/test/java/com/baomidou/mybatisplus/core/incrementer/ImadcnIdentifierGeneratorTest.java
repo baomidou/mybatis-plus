@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.incrementer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
  * @since 2020-08-11
  */
 @Disabled("需要本机 ZooKeeper localhost:2181，尚未进入 external-db 分层")
+@Tag("external-db")
 class ImadcnIdentifierGeneratorTest {
 
     private static ImadcnIdentifierGenerator generator;

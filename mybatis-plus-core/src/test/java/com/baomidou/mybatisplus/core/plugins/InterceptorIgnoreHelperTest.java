@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core.plugins;
 
 import com.baomidou.mybatisplus.annotation.InterceptorIgnore;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-08-02
  */
+@Tag("unit")
 class InterceptorIgnoreHelperTest {
 
     @BeforeEach

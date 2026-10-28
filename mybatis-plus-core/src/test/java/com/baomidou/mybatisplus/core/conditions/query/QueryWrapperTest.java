@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.WrapperTestSupport;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2021-01-27
  */
+@Tag("unit")
 class QueryWrapperTest extends WrapperTestSupport {
 
     @Test

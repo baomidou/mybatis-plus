@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.when;
  * @since 3.5.15
  */
 @ExtendWith(MockitoExtension.class)
+@Tag("unit")
 class MybatisEnumTypeHandlerTest {
 
     @Mock

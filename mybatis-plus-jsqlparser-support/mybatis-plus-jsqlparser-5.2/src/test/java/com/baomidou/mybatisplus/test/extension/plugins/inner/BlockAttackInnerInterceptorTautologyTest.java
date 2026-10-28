@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author hubin
  * @since 3.5.18
  */
+@Tag("unit")
 class BlockAttackInnerInterceptorTautologyTest {
 
     private final BlockAttackInnerInterceptor interceptor = new BlockAttackInnerInterceptor();

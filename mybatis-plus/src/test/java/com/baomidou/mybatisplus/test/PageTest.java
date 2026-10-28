@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.apache.ibatis.reflection.property.PropertyCopier;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cglib.beans.BeanCopier;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/3/20.
  */
+@Tag("integration")
 class PageTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();

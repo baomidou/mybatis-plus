@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.aot;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.jar.JarOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("integration")
 class CollectUtilsTest {
 
     @Test

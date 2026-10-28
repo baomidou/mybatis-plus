@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.invoke.MethodHandle;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 测试 Lambda 解析类
  */
+@Tag("unit")
 class LambdaUtilsTest {
 
     /**

@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit.support;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.invoke.MethodHandle;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <p>
  * Create by hcl at 2022/8/12
  */
+@Tag("unit")
 class IdeaProxyLambdaMetaTest {
 
     @Test

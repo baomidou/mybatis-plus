@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.extension.plugins.datasource;
 
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 class ShardingDatasourceTest {
 
     @AfterEach

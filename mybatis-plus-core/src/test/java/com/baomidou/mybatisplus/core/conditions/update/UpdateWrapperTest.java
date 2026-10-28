@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.conditions.update;
 import com.baomidou.mybatisplus.core.conditions.WrapperTestSupport;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.test.User;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2021-01-27
  */
+@Tag("unit")
 class UpdateWrapperTest extends WrapperTestSupport {
 
     @Test

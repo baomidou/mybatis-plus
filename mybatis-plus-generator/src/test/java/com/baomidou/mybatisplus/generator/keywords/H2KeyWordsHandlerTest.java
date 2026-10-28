@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.generator.keywords;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/5/8.
  */
+@Tag("unit")
 class H2KeyWordsHandlerTest {
 
     @Test

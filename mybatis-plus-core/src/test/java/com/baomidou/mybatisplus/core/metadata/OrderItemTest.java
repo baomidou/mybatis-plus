@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author TaoYu
  */
+@Tag("unit")
 class OrderItemTest {
 
     @Test

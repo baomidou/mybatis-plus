@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SimpleQuery;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author <achao1441470436@gmail.com>
  * @since 2021/11/9 18:30
  */
+@Tag("integration")
 class SimpleQueryTest extends DbTestSupport<EntityMapper> {
 
     @Test

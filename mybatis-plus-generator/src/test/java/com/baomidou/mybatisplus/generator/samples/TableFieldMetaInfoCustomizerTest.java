@@ -14,6 +14,7 @@ import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import com.baomidou.mybatisplus.generator.query.SQLQuery;
 import org.apache.ibatis.type.JdbcType;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -26,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 class TableFieldMetaInfoCustomizerTest extends BaseGeneratorSample {
 
     private static final String H2URL = "jdbc:h2:mem:test-h2-meta-customizer;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;MODE=MYSQL;DATABASE_TO_LOWER=TRUE";

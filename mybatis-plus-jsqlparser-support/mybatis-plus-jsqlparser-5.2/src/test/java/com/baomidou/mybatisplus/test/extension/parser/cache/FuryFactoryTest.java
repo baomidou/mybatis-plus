@@ -8,6 +8,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import org.apache.fury.ThreadSafeFury;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2026-10-09
  */
+@Tag("unit")
 class FuryFactoryTest {
 
     @Test

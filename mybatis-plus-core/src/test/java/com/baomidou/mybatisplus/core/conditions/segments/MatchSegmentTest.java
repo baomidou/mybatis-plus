@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.conditions.segments;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.WrapperKeyword;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * AND、上一个 {@code not()} 要不要落到本次条件上。 每个开关认哪些值是一条硬契约——新增一个 {@link SqlKeyword} 却忘了同步判定，运行期只会静默走 normal 分支，
  * 所以这里按整表相等钉死，多认或少认都会红。
  */
+@Tag("unit")
 class MatchSegmentTest {
 
     private static final Map<MatchSegment, Set<ISqlSegment>> MATCHES = Map.ofEntries(

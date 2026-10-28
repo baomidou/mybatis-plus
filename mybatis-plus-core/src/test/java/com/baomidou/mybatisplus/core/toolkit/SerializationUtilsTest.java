@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * 序列化深拷贝与失败路径，异常类型和消息是给调用方的契约
  */
+@Tag("unit")
 class SerializationUtilsTest {
 
     @Test

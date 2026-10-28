@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerIntercept
 import com.baomidou.mybatisplus.jsqlparser.enums.ExpressionAppendMode;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-07-30
  */
+@Tag("unit")
 class TenantLineInnerInterceptorTest {
 
     private static final Map<String, String> FIRS_RESULT_TMAP = new HashMap<>();

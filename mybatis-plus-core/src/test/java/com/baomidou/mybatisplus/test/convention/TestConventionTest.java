@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.convention;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author taoyu
  */
+@Tag("unit")
 class TestConventionTest {
 
     private static final Pattern CASE_ANNOTATION = Pattern

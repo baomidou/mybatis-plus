@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.parser.cache.FstFactory;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.SerializationUtils;
 
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2023-08-03
  */
+@Tag("unit")
 class JsqlParserSimpleSerialTest {
 
     private final static int len = 1000;

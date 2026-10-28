@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.IllegalSQLInnerIntercept
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2022-04-11
  */
+@Tag("unit")
 class IllegalSQLInnerInterceptorTest {
 
     private final IllegalSQLInnerInterceptor interceptor = new IllegalSQLInnerInterceptor();

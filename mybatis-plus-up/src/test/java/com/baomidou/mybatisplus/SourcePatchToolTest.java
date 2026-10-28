@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -16,6 +17,7 @@ import java.util.jar.JarOutputStream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Tag("unit")
 class SourcePatchToolTest {
 
     private static final String SOURCE = "package example;\nclass Original {}\n";

@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@link StringEscape} 是 MySQL 那套字符串转义：{@code \0 ' " \ \n \r Ctrl-Z} 六个字符必须换成反斜杠形式， 其余原样保留。仓库里唯一的调用点是已废弃的
  * {@code StringUtils.quotaMark}，所以它此前没有任何直接用例—— 转义表整个是靠 MySQL 文档"抄"来的，改动只能靠这份清单兜住。
  */
+@Tag("unit")
 class StringEscapeTest {
 
     @Test

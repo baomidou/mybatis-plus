@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.kotlin
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.core.metadata.IPage
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
@@ -10,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
 import java.util.*
 
+@Tag("unit")
 class ChainWrappersTest : DbTestSupport<UserMapper>() {
 
     @Test
