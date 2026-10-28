@@ -4,3 +4,12 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+// 共享测试源：4 个版本模块的相同测试放这里，避免复制
+sourceSets {
+    testShared {
+        java {
+            srcDir 'src/test-shared/java'
+        }
+    }
+}

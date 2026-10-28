@@ -183,19 +183,17 @@ class TestConventionTest {
             .of("entity", "h2user", "key_generator_model", "t_simple", "xxx");
 
     /**
-     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。 上游安全修复又带进两组 JSqlParser 四副本（
-     * {@code BlockAttackInnerInterceptorTautologyTest}/{@code MultiTableXorExpressionTest}），一并登记，等共享源落地后回收。
+     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。 JSqlParser 8
+     * 个共享测试已落地（BlockAttack/DataChange/Dynamic/MultiTable/MybatisPlus/Pagination/TenantLine）， 剩余同名仍是版本模块或 starter
+     * 的整文件复制。
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "BlockAttackInnerInterceptorTest", "BlockAttackInnerInterceptorTautologyTest", "ChainWrappersTest",
-            "DataChangeRecorderInnerInterceptorTest", "DataPermissionInterceptorTest", "DbTest",
-            "DynamicTableNameInnerInterceptorTest", "DynamicTableNameJsqlParserInnerInterceptorTest", "FstFactoryTest",
-            "FuryFactoryTest", "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest",
-            "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest", "MetadataTest", "MultiDataPermissionInterceptorTest",
-            "MultiTableXorExpressionTest", "MybatisEnumTypeHandlerTest", "MybatisPlusInterceptorTest",
-            "MybatisPlusPropertiesTest", "MybatisPlusSampleTest", "PaginationInnerInterceptorTest",
-            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest",
-            "TenantLineInnerInterceptorTest");
+            "ChainWrappersTest", "DataPermissionInterceptorTest", "DbTest",
+            "DynamicTableNameJsqlParserInnerInterceptorTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest",
+            "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest",
+            "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
+            "MybatisPlusPropertiesTest", "MybatisPlusSampleTest", "SelectBodyToPlainSelectTest", "SqlRunnerTest",
+            "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。
