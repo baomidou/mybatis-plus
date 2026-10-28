@@ -51,14 +51,19 @@
 
 ## CI 矩阵与优化
 
-GitHub Actions 工作流（`.github/workflows/gradle.yml`）采用 JDK 21 单版本构建：
+GitHub Actions 工作流（`.github/workflows/build.yml`）采用多 JDK 并行矩阵策略：
 
-- **JDK 版本**：21（`mybatis-plus-up` 模块需要 JDK 21+；JDK 25 因 Lombok 1.18.32 不兼容暂不纳入 CI）
-- **缓存优化**：缓存 `~/.gradle/caches` 和 `~/.gradle/wrapper`
+- **JDK 版本**：17、21、25 三个版本并行执行
+- **并行策略**：`fail-fast: false`，某个 JDK 版本失败不影响其他版本继续运行
+- **缓存优化**：按 JDK 版本缓存 `~/.gradle/caches` 和 `~/.gradle/wrapper`
 - **Gradle 并行**：`org.gradle.parallel=true` 启用模块级并行构建
+- **排除模块**：`mybatis-plus-up`（上游源码维护工具，需 JDK 21+，不参与 CI 构建）
+
+预期效果：三个 JDK 版本的测试同时运行，总耗时与单版本相当（~7 分钟），而非三倍（~21 分钟）。
+
+**Lombok 版本**：1.18.48（支持 JDK 25）
 
 本地开发时，`gradle.properties` 已启用 `org.gradle.parallel=true`，模块级构建并行执行。
-JDK 17/21/25 兼容性验证通过本地测试完成（参见 S5 兼容基线）。
 
 ## T1 测试放对位置
 

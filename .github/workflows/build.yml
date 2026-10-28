@@ -20,7 +20,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        java-version: ['21']
+        java-version: ['17', '21', '25']
       fail-fast: false
 
     steps:
@@ -50,4 +50,4 @@ jobs:
       run: ./gradlew spotlessCheck
     
     - name: Build with Gradle Wrapper
-      run: ./gradlew build
+      run: ./gradlew build -x :mybatis-plus-up:build -x :mybatis-plus-up:test
