@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-11
  */
+@Tag("unit")
 class MetaObjectHandlerTest {
 
     private static final MybatisConfiguration configuration = new MybatisConfiguration();

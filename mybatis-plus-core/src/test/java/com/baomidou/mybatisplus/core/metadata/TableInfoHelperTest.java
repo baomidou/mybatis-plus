@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.mapping.ResultMap;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 class TableInfoHelperTest {
 
     @Data

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.extension.plugins.inner.DynamicTableNameJsqlParserInnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 class DynamicTableNameJsqlParserInnerInterceptorTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicTableNameJsqlParserInnerInterceptor.class);

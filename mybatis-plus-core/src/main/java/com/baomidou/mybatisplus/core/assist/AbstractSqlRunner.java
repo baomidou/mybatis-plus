@@ -68,7 +68,7 @@ public abstract class AbstractSqlRunner implements ISqlRunner {
      * @since 3.5.12
      */
     protected String parse(String sql, Object... args) {
-        if (args != null && args.length == 1) {
+        if (args != null && args.length == 1 && args[0] != null) {
             Object arg = args[0];
             Class<?> clazz = arg.getClass();
             return new GenericTokenParser(LEFT_BRACE, RIGHT_BRACE, content -> {

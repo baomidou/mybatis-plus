@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 空值判定按"长度/元素数"算，标量一律算非空
  */
+@Tag("unit")
 class ObjectUtilsTest {
 
     @Test

@@ -18,6 +18,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 /**
  * Tests the executor hooks used by {@link ShardingInnerInterceptor}.
  */
+@Tag("integration")
 class ShardingInnerInterceptorTest {
 
     private static final MybatisConfiguration CONFIGURATION = new MybatisConfiguration();

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core;
 
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 断言前压平空白（{@link #collapse}），因为换行与缩进的数量取决于 XML 排版，会随格式化漂移。<br>
  * 真正要钉住的是各标签保留了哪些片段，以及节点拼接处会不会漏空格。
  */
+@Tag("unit")
 class MybatisXMLLanguageDriverTest {
 
     private static final XMLLanguageDriver MYBATIS = new XMLLanguageDriver();

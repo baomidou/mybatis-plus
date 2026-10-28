@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-11-07
  */
+@Tag("unit")
 class MybatisMapperAnnotationBuilderTest {
 
     @Test

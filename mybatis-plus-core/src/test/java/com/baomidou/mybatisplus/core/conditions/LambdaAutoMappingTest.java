@@ -8,12 +8,14 @@ import lombok.Data;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.type.StringTypeHandler;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 class LambdaAutoMappingTest {
 
     @BeforeAll

@@ -5,6 +5,7 @@ import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-28
  */
+@Tag("unit")
 class DataChangeRecorderInnerInterceptorTest {
 
     private final DataChangeRecorderInnerInterceptor interceptor = new DataChangeRecorderInnerInterceptor();

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit.support;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationHandler;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * 通过模拟 Groovy MethodClosure 代理结构（无需引入 Groovy 运行时依赖）， <br>
  * 验证 {@link GroovyLambdaMeta} 及 {@link LambdaUtils#extract} 的正确性。
  */
+@Tag("unit")
 class GroovyLambdaMetaTest {
 
     // ----- mock Groovy delegate (MethodClosure-like) -----

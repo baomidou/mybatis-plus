@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2021-08-15
  */
+@Tag("unit")
 class SqlInjectionUtilsTest {
 
     @Test

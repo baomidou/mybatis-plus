@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.ddl.history;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -9,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 四个方言 DDL 生成器的 SQL 文本闸门，改模板或改表名都会红
  */
+@Tag("unit")
 class IDdlGeneratorTest {
 
     @Test

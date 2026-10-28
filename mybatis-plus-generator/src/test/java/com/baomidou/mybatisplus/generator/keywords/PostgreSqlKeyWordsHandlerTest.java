@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.generator.keywords;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/5/9.
  */
+@Tag("unit")
 class PostgreSqlKeyWordsHandlerTest {
 
     @Test

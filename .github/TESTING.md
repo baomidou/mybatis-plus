@@ -18,8 +18,8 @@
 | 编号 | 条目 | 状态 | 基线（2026-10-21 实测） |
 |---|---|---|---|
 | T1 | 测试与被测类同模块、包镜像 | 冻结 | 34 处缺口，全部是 4 个 JSqlParser 版本模块的整文件复制（其余模块已零缺口） |
-| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 28 组 |
-| T3 | 每个测试类属于一个层 | 未执行（仅词表是机器） | 仓库里还没有 `@Tag` |
+| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 20 组（JSqlParser 8 个共享测试已去重） |
+| T3 | 每个测试类属于一个层 | 机制就位，待补标签 | 5 个层任务入口已注册；默认 `test` 排除 external-db/stress/build-metadata |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
 | T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
@@ -27,6 +27,43 @@
 | T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 共用表名 6 处已登记（`h2user`、`key_generator_model`、`sys_user`、`t_simple`、`xxx`、`entity`），新增即红 |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
+
+## 字节码兼容矩阵
+
+各模块编译产物的 class 版本必须与承诺的 JDK 版本一致。用 `./gradlew verifyBytecodeVersion` 校验。
+
+| 模块 | compileJava release | class major | 说明 |
+|---|---|---|---|
+| mybatis-plus-annotation | 8 | 52 | 元数据注解，最低兼容 |
+| mybatis-plus-core | 8 | 52 | 核心 API，最低兼容 |
+| mybatis-plus-extension | 8 | 52 | 扩展插件 |
+| mybatis-plus-spring | 8 | 52 | Spring 集成 |
+| mybatis-plus | 8 | 52 | 聚合模块 |
+| mybatis-plus-generator | 8 | 52 | 代码生成器 |
+| mybatis-plus-jsqlparser-4.9 | 8 | 52 | JSqlParser 4.9 支持 |
+| mybatis-plus-jsqlparser (5.4) | 11 | 55 | JSqlParser 5.x 需要 JDK 11+ |
+| mybatis-plus-jsqlparser-5.0 | 11 | 55 | JSqlParser 5.0 支持 |
+| mybatis-plus-jsqlparser-5.2 | 11 | 55 | JSqlParser 5.2 支持 |
+| spring-boot-*-starter | 17 | 61 | Spring Boot 3/4 需要 JDK 17+ |
+| mybatis-plus-up | 21 | 65 | 上游同步工具，不发布 |
+
+测试代码统一 `compileTestJava release = 17`（JUnit 6 最低要求），`mybatis-plus-up` 例外为 21。
+
+## CI 矩阵与优化
+
+GitHub Actions 工作流（`.github/workflows/build.yml`）采用多 JDK 并行矩阵策略：
+
+- **JDK 版本**：17、21、25 三个版本并行执行
+- **并行策略**：`fail-fast: false`，某个 JDK 版本失败不影响其他版本继续运行
+- **缓存优化**：按 JDK 版本缓存 `~/.gradle/caches` 和 `~/.gradle/wrapper`
+- **Gradle 并行**：`org.gradle.parallel=true` 启用模块级并行构建
+- **排除模块**：`mybatis-plus-up`（上游源码维护工具，需 JDK 21+，不参与 CI 构建）
+
+预期效果：三个 JDK 版本的测试同时运行，总耗时与单版本相当（~7 分钟），而非三倍（~21 分钟）。
+
+**Lombok 版本**：1.18.48（支持 JDK 25）
+
+本地开发时，`gradle.properties` 已启用 `org.gradle.parallel=true`，模块级构建并行执行。
 
 ## T1 测试放对位置
 
@@ -47,12 +84,22 @@
 ## T3 分层
 
 层名固定五个：`unit`、`integration`、`external-db`、`build-metadata`、`stress`。
-现在只机器保证"用了 `@Tag` 就必须来自这五个"；"每个类恰好一个层标签"要等按标签过滤的执行入口
-（`testUnit` / `testIntegration` / …）落地后才强制。在此之前新增测试请顺手带上标签，
-别等补分层时一次性大改。
+机器保证"用了 `@Tag` 就必须来自这五个"。按标签过滤的执行入口已就位：
+
+```bash
+./gradlew testUnit           # 只跑 unit 层
+./gradlew testIntegration    # 只跑 integration 层
+./gradlew testExternalDb     # 只跑 external-db 层（需真实数据库）
+./gradlew testBuildMetadata  # 只跑 build-metadata 层（校验 pom/产物）
+./gradlew testStress         # 只跑 stress 层（性能/压力测试）
+./gradlew test               # 默认跑 unit + integration（排除 external-db/stress/build-metadata）
+./gradlew test -PincludeTags=unit,integration  # 自定义标签组合
+```
+
+新增测试必须带一个层标签。"每个类恰好一个层标签"的强制检查待 S4 步骤逐模块补标签后启用。
 
 需要真实数据库、本机中间件（ZooKeeper、Redis）的用例属于 `external-db`，当前一律
-`@Disabled` + 原因，等入口就位后换成标签。
+`@Disabled` + 原因，等补标签后换成 `@Tag("external-db")` + `Assumptions.assumeTrue(可达)`。
 
 ## T4 断言只用 AssertJ
 

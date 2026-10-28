@@ -11,6 +11,7 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-cache-h2.xml"})
+@Tag("integration")
 class CacheTest {
 
     @Autowired

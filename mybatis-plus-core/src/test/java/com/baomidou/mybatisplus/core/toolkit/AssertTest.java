@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author TaoYu
  */
+@Tag("unit")
 class AssertTest {
 
     @Test

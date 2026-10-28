@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.parser.cache.FstFactory;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.nustaq.serialization.FSTClazzInfo;
 import org.nustaq.serialization.FSTClazzNameRegistry;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2023-08-06
  */
+@Tag("unit")
 class FstFactoryTest {
 
     @Test

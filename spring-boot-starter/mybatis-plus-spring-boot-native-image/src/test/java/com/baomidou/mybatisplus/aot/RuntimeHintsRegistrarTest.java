@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.aot;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.ResourcePatternHint;
 import org.springframework.aot.hint.RuntimeHints;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author xiaochen
  * @since 2026/1/12
  */
+@Tag("integration")
 class RuntimeHintsRegistrarTest {
 
     /**

@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.batch;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.session.ExecutorType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-06
  */
+@Tag("integration")
 class BatchTest extends DbTestSupport<EntityMapper> {
 
     @Test

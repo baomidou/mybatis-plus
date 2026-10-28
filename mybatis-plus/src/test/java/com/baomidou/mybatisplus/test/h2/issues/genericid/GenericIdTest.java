@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.test.h2.issues.genericid.entity.StringEntity;
 import com.baomidou.mybatisplus.test.h2.issues.genericid.mapper.LongEntityMapper;
 import com.baomidou.mybatisplus.test.h2.issues.genericid.mapper.StringEntityMapper;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:issues/genericid/spring.xml"})
+@Tag("integration")
 class GenericIdTest {
 
     @Autowired

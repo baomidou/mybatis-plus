@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.h2.kotlin
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.test.h2.KtTestConfig
 import com.baomidou.mybatisplus.test.h2.kotlin.entity.KtH2User
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum
@@ -19,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
  */
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [KtTestConfig::class])
+@Tag("integration")
 class KtH2UserTest {
 
     @Autowired

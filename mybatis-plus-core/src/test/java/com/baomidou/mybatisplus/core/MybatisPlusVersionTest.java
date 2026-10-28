@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 /**
  * Regression for #7150: version must resolve from Implementation-Version in the JAR manifest.
  */
+@Tag("unit")
 class MybatisPlusVersionTest {
 
     @Test

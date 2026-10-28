@@ -11,6 +11,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @MapperScan(value = "com.baomidou.mybatisplus.test.h2")
 @ContextConfiguration(classes = {MybatisMapperRegistryTest.class, DBConfig.class})
+@Tag("integration")
 class MybatisMapperRegistryTest extends H2TestSupport {
 
     private interface H2StudentChildrenMapper extends H2StudentMapper {

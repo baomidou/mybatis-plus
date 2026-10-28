@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.enums;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumMap;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 注入器 SQL 模板的整表闸门：新增常量、改方法名或改模板文本都会红
  */
+@Tag("unit")
 class SqlMethodTest {
 
     private static final Map<SqlMethod, String> METHOD_NAMES = Map.ofEntries(

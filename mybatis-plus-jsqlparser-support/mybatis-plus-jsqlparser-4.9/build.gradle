@@ -13,6 +13,15 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
+// 引入共享测试源
+sourceSets {
+    test {
+        java {
+            srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"
+        }
+    }
+}
+
 // FST inspects JDK fields reflectively when FstFactory is constructed.
 test {
     doFirst {

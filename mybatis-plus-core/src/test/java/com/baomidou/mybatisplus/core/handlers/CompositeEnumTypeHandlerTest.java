@@ -7,6 +7,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
  * {@code MybatisEnumTypeHandler}（按持久值读写）， 其余走用户配置的默认处理器（没配就是 MyBatis 的 {@link EnumTypeHandler}，按 {@code name()} 读写）。
  * 这个分派表此前没有任何用例提过，而配错默认处理器会让全库的枚举映射静默变形。 注意它有两个静态状态：按枚举类缓存的判定结果，和可被 setter 改写的默认处理器， 所以每个用例跑完都要把默认处理器还原。
  */
+@Tag("unit")
 class CompositeEnumTypeHandlerTest {
 
     @AfterEach

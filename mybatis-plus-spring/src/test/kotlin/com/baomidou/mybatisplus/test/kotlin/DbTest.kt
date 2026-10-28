@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.kotlin
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.extension.toolkit.Db
 import org.apache.ibatis.exceptions.PersistenceException
 import org.assertj.core.api.Assertions.assertThat
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 
+@Tag("unit")
 class DbTest : DbTestSupport<UserMapper>() {
 
     @Test

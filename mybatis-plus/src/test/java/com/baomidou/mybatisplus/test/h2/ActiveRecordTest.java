@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
+@Tag("integration")
 class ActiveRecordTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveRecordTest.class);

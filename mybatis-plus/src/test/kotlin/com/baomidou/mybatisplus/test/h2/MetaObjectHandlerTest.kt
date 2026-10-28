@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.h2
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.annotation.FieldFill
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.core.MybatisConfiguration
@@ -17,6 +19,7 @@ import java.util.Date
  *
  * @author nieqiurong
  */
+@Tag("integration")
 class MetaObjectHandlerTest {
 
     /**
@@ -71,6 +74,7 @@ class MetaObjectHandlerTest {
 
 }
 
+@Tag("integration")
 class Demo {
 
     @TableField(fill = FieldFill.INSERT_UPDATE)

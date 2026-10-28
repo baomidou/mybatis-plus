@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.autoconfigure.MybatisPlusLanguageDriverAutoConfi
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong 2019/2/9.
  */
+@Tag("integration")
 class MetadataTest {
 
     @Data

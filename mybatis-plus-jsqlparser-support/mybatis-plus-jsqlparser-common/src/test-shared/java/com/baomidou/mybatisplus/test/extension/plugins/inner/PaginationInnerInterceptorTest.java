@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.extension.plugins.inner;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-28
  */
+@Tag("unit")
 class PaginationInnerInterceptorTest {
 
     private final PaginationInnerInterceptor interceptor = new PaginationInnerInterceptor();

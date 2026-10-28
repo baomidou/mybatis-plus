@@ -6,6 +6,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2023-08-01
  */
+@Tag("unit")
 class AbstractWrapperTest {
 
     @Test
@@ -54,6 +56,7 @@ class AbstractWrapperTest {
         assertThat(ex).isNotNull();
         System.out.println(ex.getMessage());
     }
+
     @Test
     void repeatedParameterCanMixDefaultAndExplicitMappings() {
         QueryWrapper<Object> wrapper = new QueryWrapper<>();

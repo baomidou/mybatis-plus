@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import org.apache.ibatis.binding.MapperMethod;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 class ParameterUtilsTest {
 
     static class Page<T> implements IPage<T> {

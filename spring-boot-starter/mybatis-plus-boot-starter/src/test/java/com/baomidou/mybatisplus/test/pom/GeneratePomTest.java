@@ -6,6 +6,7 @@ import jodd.jerry.JerryParser;
 import jodd.lagarto.dom.LagartoDOMBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong 2019/2/9.
  */
+@Tag("build-metadata")
 class GeneratePomTest {
 
     @Data

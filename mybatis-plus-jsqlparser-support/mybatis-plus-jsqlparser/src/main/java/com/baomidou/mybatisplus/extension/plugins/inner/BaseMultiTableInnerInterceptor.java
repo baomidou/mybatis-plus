@@ -305,7 +305,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         Deque<List<Table>> onTableDeque = new LinkedList<>();
         for (Join join : joins) {
             // 处理 on 表达式
-            FromItem joinItem = join.getRightItem();
+            FromItem joinItem = join.getFromItem();
 
             // 获取当前 join 的表，subJoint 可以看作是一张表
             List<Table> joinTables = null;

@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiuqiu 2019/1/16.
  */
+@Tag("unit")
 class ReflectionKitTest {
 
     @Data

@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.handlers;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2019-03-21
  */
+@Tag("unit")
 class MybatisMapWrapperTest {
 
     private final MybatisMapWrapper mapWrapper = new MybatisMapWrapper(null, Collections.emptyMap());

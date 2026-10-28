@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.test.User;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
+@Tag("unit")
 class UpdateWrapperIncrDecrTest extends WrapperTestSupport {
 
     @BeforeAll

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author HCL <br>
  *         2018/7/24 17:44
  */
+@Tag("unit")
 class BeanUtilsTest {
 
     /**

@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.mock;
  *
  * @author TaoYu
  */
+@Tag("unit")
 class GlobalConfigUtilsTest {
 
     @Test

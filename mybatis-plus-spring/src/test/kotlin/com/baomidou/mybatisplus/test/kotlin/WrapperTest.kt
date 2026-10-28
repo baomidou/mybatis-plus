@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.kotlin
 
+import org.junit.jupiter.api.Tag
+
 import com.baomidou.mybatisplus.core.MybatisConfiguration
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryWrapper
@@ -9,6 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@Tag("unit")
 class WrapperTest {
 
     @BeforeEach

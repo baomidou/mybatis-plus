@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.enums;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@link SqlKeyword} 的每个值都会被直接拼进最终 SQL：{@code and}/{@code or}/{@code not} 的衔接、 {@code between} 的写法、比较符全靠这串文本。本类把 24
  * 个关键字的渲染文本钉成整表断言， 顺手钉住 {@link WrapperKeyword#APPLY} 那个"只用来辨识、不参与拼接"的空文本约定； 改文本或者新增一个没登记的值都会红。
  */
+@Tag("unit")
 class SqlKeywordTest {
 
     private static final Map<SqlKeyword, String> KEYWORD_TEXT = Map.ofEntries(

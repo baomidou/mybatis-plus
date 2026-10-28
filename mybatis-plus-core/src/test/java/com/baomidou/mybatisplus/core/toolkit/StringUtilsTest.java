@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *         Create at 2018/9/17
  */
 
+@Tag("unit")
 class StringUtilsTest {
 
     @Test

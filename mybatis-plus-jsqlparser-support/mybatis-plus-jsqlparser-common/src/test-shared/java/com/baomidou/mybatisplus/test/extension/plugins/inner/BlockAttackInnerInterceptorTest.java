@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-08-18
  */
+@Tag("unit")
 class BlockAttackInnerInterceptorTest {
 
     private final BlockAttackInnerInterceptor interceptor = new BlockAttackInnerInterceptor();

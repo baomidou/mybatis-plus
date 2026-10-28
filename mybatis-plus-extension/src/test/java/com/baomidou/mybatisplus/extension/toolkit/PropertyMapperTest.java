@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.entry;
 /**
  * 拦截器属性按别名分组的规则：{@code @别名=类名}，{@code 别名:属性=值}
  */
+@Tag("unit")
 class PropertyMapperTest {
 
     @Test

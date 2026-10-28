@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author HCL <br>
  *         2018/7/26 9:53
  */
+@Tag("unit")
 class ClassUtilsTest {
 
     /**

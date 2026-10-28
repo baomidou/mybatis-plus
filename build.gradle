@@ -143,7 +143,7 @@ subprojects {
     }
 
     lombok {
-        version = "1.18.32"
+        version = "1.18.48"
     }
 
     compileJava {
@@ -176,7 +176,37 @@ subprojects {
         if (!skipPublishingProjects.contains(project.path)) {
             dependsOn("generatePomFileForMavenPublication")
         }
-        useJUnitPlatform()
+        useJUnitPlatform {
+            if (project.hasProperty('includeTags')) {
+                includeTags project.property('includeTags').split(',')*.trim() as String[]
+            } else {
+                excludeTags 'external-db', 'stress', 'build-metadata'
+            }
+        }
+        systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    }
+
+    def layerTags = [
+        testUnit: 'unit',
+        testIntegration: 'integration',
+        testExternalDb: 'external-db',
+        testBuildMetadata: 'build-metadata',
+        testStress: 'stress'
+    ]
+    layerTags.each { taskName, tagName ->
+        tasks.register(taskName, Test) {
+            group = 'verification'
+            description = "Run tests tagged with '${tagName}'"
+            if (!skipPublishingProjects.contains(project.path)) {
+                dependsOn("generatePomFileForMavenPublication")
+            }
+            testClassesDirs = sourceSets.test.output.classesDirs
+            classpath = sourceSets.test.runtimeClasspath
+            useJUnitPlatform {
+                includeTags tagName
+            }
+            systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
@@ -251,6 +281,41 @@ subprojects {
         exclude("**/phoenix/**")
         exclude("**/postgresql/**")
         exclude("**/gaussdb/**")
+    }
+
+    // 字节码版本校验任务：确保编译产物的 class 版本与承诺的 release 一致
+    tasks.register('verifyBytecodeVersion') {
+        group = 'verification'
+        description = 'Verify compiled class files match their target bytecode version'
+        dependsOn tasks.named('classes')
+
+        doLast {
+            def releaseVersion = 8  // 默认 release=8
+            if (tasks.named('compileJava').get().options.release.isPresent()) {
+                releaseVersion = tasks.named('compileJava').get().options.release.get()
+            }
+
+            def expectedMajor = releaseVersion + 44  // JDK 8 = 52, JDK 11 = 55, JDK 17 = 61, JDK 21 = 65
+
+            sourceSets.main.output.classesDirs.files.each { dir ->
+                if (dir.exists()) {
+                    dir.eachFileRecurse { file ->
+                        if (file.name.endsWith('.class')) {
+                            def bytes = file.bytes
+                            if (bytes.length >= 8) {
+                                def major = ((bytes[6] & 0xFF) << 8) | (bytes[7] & 0xFF)
+                                if (major != expectedMajor) {
+                                    throw new GradleException(
+                                        "${file.path}: expected class version ${expectedMajor} (JDK ${releaseVersion}), but found ${major}"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            println "✓ ${project.name}: all classes target JDK ${releaseVersion} (version ${expectedMajor})"
+        }
     }
 
     if (!skipPublishingProjects.contains(project.path)) {

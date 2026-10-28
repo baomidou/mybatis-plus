@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.generator.config.converts.select;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hanchunlin <br>
  *         Created at 2020/6/11 19:43
  */
+@Tag("unit")
 class SelectorTest {
 
     @Test

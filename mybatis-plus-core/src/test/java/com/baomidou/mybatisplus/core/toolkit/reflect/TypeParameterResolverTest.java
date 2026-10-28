@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core.toolkit.reflect;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Create by hcl at 2023/9/25
  */
+@Tag("unit")
 class TypeParameterResolverTest {
 
     static class CA<E> {
