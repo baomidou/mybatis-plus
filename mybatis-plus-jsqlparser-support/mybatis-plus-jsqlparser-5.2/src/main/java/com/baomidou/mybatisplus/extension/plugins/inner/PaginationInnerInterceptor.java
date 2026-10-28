@@ -69,7 +69,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections
             .singletonList(new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total")));
-    protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
+    protected static final Map<MappedStatement, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
@@ -217,8 +217,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             final Configuration configuration = ms.getConfiguration();
             try {
-                return CollectionUtils
-                        .computeIfAbsent(countMsCache, countId, key -> configuration.getMappedStatement(key, false));
+                return configuration.getMappedStatement(countId, false);
             } catch (Exception e) {
                 logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
             }
@@ -235,8 +234,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     protected MappedStatement buildAutoCountMappedStatement(MappedStatement ms) {
         final String countId = ms.getId() + "_mpCount";
         final Configuration configuration = ms.getConfiguration();
-        return CollectionUtils.computeIfAbsent(countMsCache, countId, key -> {
-            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(),
+        return CollectionUtils.computeIfAbsent(countMsCache, ms, key -> {
+            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, countId, ms.getSqlSource(),
                     ms.getSqlCommandType());
             builder.resource(ms.getResource());
             builder.fetchSize(ms.getFetchSize());
