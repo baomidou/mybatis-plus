@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,10 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class MybatisPlusPropertiesTest {
 
     @Test
-    void testValue() {
+    void shouldApplyCoreConfigurationValues() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         MybatisPlusProperties.CoreConfiguration coreConfiguration = new MybatisPlusProperties.CoreConfiguration();
         coreConfiguration.setCacheEnabled(true);
@@ -24,7 +26,7 @@ public class MybatisPlusPropertiesTest {
     }
 
     @Test
-    void testNull() {
+    void shouldKeepExistingValuesWhenCoreConfigIsNull() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setCacheEnabled(true);
         configuration.setDatabaseId("test");

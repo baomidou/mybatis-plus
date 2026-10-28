@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,10 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2023年9月29日
  */
+@Tag("integration")
 public class FillTest extends DbTestSupport<FillMapper> {
 
     @Test
-    void testInsert() {
+    void shouldFillOnInsert() {
         doTest(mapper -> {
             var entity = new FillEntity();
             mapper.insert(entity);
@@ -29,7 +31,7 @@ public class FillTest extends DbTestSupport<FillMapper> {
     }
 
     @Test
-    void testInsertBatch1() {
+    void shouldFillOnInsertBatch1() {
         doTest(mapper -> {
             var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
             mapper.insertBatch1(entityList);
@@ -40,7 +42,7 @@ public class FillTest extends DbTestSupport<FillMapper> {
     }
 
     @Test
-    void testInsertBatch2() {
+    void shouldFillOnInsertBatch2() {
         doTest(mapper -> {
             var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
             mapper.insertBatch2(entityList);
@@ -51,7 +53,7 @@ public class FillTest extends DbTestSupport<FillMapper> {
     }
 
     @Test
-    void testInsertBatch3() {
+    void shouldFillOnInsertBatch3() {
         doTest(mapper -> {
             var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
             mapper.insertBatch3(entityList);
@@ -62,7 +64,7 @@ public class FillTest extends DbTestSupport<FillMapper> {
     }
 
     @Test
-    void testInsertBatch4() {
+    void shouldFillOnInsertBatch4() {
         doTest(mapper -> {
             var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
             mapper.insertBatch4(entityList, "", "", "");
@@ -73,7 +75,7 @@ public class FillTest extends DbTestSupport<FillMapper> {
     }
 
     @Test
-    void testBatch() {
+    void shouldFillOnMybatisBatch() {
         var entityList = new ArrayList<>(Arrays.asList(new FillEntity(), new FillEntity()));
         var method = new MybatisBatch.Method<FillEntity>(FillMapper.class);
         MybatisBatchUtils.execute(sqlSessionFactory, entityList, method.insert());

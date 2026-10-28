@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EnumTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldHandleMultipleEnumTypes() {
         Long id = 1L;
         doTestAutoCommit(m -> {
             Entity entity = new Entity().setId(id).setEnumInt(EnumInt.ONE).setEnumStr(EnumStr.TWO)

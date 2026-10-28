@@ -10,6 +10,6 @@ import java.util.List;
  */
 public interface BEntityService extends IService<BEntity> {
 
-    void testSaveBath(List<BEntity> bEntityList);
+    void shouldSaveBatch(List<BEntity> bEntityList);
 
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,18 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 public class ReplacePlaceholderTest extends DbTestSupport<EntityMapper> {
 
     @Test
     void replace() {
         doTest(i -> {
             List<Entity> list = i.selectAll();
-            System.out.println(list);
             assertThat(list.get(0).getId()).isNull();
             assertThat(list.get(0).getName()).isNull();
             assertThat(list.get(0).getAge()).isNotNull();
             list = i.selectAll2();
-            System.out.println(list);
             assertThat(list.get(0).getEs().getId()).isNull();
             assertThat(list.get(0).getEs().getName()).isNotBlank();
         });

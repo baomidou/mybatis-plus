@@ -4,11 +4,8 @@ import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.H2UserLogicDelete;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserLogicDeleteMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +21,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2018-06-05
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-logic-delete-h2.xml"})
 @Tag("integration")
@@ -34,7 +30,6 @@ class H2LogicDeleteTest extends H2TestSupport {
     protected H2UserLogicDeleteMapper logicDeleteMapper;
 
     @Test
-    @Order(1)
     void crudTest() {
         String name = "LogicDelete4Date";
         H2UserLogicDelete user = new H2UserLogicDelete();

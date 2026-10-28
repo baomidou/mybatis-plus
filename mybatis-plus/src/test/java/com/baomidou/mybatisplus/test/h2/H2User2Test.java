@@ -3,11 +3,10 @@ package com.baomidou.mybatisplus.test.h2;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.h2.mapper.H2User2Mapper;
 import org.apache.ibatis.executor.BatchResult;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -18,7 +17,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
@@ -27,9 +25,19 @@ class H2User2Test extends H2TestSupport {
     @Autowired
     private H2User2Mapper h2User2Mapper;
 
+    @BeforeEach
+    void setUp() {
+        jdbcTemplate.execute("DELETE FROM h2user WHERE test_id IN (101, 102)");
+        h2User2Mapper.insert(new H2User2(101L, "{\"id\":101,\"name\":\"Tomcat\"}"));
+    }
+
+    @AfterEach
+    void tearDown() {
+        jdbcTemplate.execute("DELETE FROM h2user WHERE test_id IN (101, 102)");
+    }
+
     @Test
-    @Order(1)
-    void testLambdaTypeHandler() {
+    void shouldHandleLambdaTypeHandler() {
         List<H2User2> h2User2List = h2User2Mapper.selectList(
                 Wrappers.<H2User2>lambdaQuery().enableAutoMapping()
                         .eq(H2User2::getName, "{\"id\":101,\"name\":\"Tomcat\"}"));
@@ -38,8 +46,7 @@ class H2User2Test extends H2TestSupport {
     }
 
     @Test
-    @Order(2)
-    void testCollectionUpdateById() {
+    void shouldUpdateByIdWithCollection() {
         List<H2User2> h2User2List = new ArrayList<>();
         h2User2List.add(new H2User2(101L, "{\"id\":101,\"name\":\"hi 101\"}"));
         h2User2List.add(new H2User2(102L, "{\"id\":101,\"name\":\"hi 102\"}"));

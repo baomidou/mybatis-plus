@@ -15,6 +15,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.jdbc.JdbcTransaction;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -27,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2023/8/5 10:28
  */
+@Tag("unit")
 public class PluginUtilsTest {
 
     @Intercepts({
@@ -41,7 +43,7 @@ public class PluginUtilsTest {
     }
 
     @Test
-    void testRealTargetByProxy() {
+    void shouldUnwrapProxyToRealTarget() {
         Configuration configuration = new Configuration();
         Executor executor = new SimpleExecutor(configuration, new JdbcTransaction(Mockito.mock(Connection.class)));
         MappedStatement mappedStatement = new MappedStatement.Builder(configuration, "test",

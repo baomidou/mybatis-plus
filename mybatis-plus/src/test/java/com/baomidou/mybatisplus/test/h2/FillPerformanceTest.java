@@ -3,10 +3,8 @@ package com.baomidou.mybatisplus.test.h2;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.fillperformance.model.PerformanceModel;
 import com.baomidou.mybatisplus.test.h2.fillperformance.service.IPerformanceModelService;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-fill-performance-h2.xml"})
 @Tag("integration")
@@ -32,7 +29,7 @@ class FillPerformanceTest {
      * 批量插入 5000 行只是冒烟,不断言耗时;真正钉住的是每一行都走完了自动填充,且没填到不该填的列。
      */
     @Test
-    void test() {
+    void shouldBatchFillWithoutTouchingUntargetedColumns() {
         // 表只有本用例在用,先清一次,后面才能用绝对条数断言
         performanceModelService.remove(new QueryWrapper<>());
         assertThat(performanceModelService.count()).isZero();

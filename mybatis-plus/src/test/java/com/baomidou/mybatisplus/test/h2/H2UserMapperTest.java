@@ -18,11 +18,10 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,6 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -48,7 +48,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author hubin
  * @since 2018-06-05
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
@@ -63,8 +62,37 @@ class H2UserMapperTest extends H2TestSupport {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
+    /**
+     * 本类多用例断言的是"这批主键根本不存在，所以批量更新/删除一行也打不到"， 而 H2 库在整个上下文里是共享的、用例之间也不保证先后。所以进和出每个用例都把
+     * 自己用到的固定主键物理删掉，既不让前一个用例插入的行改掉自己的结论，也不把行留给别人。
+     */
+    @BeforeEach
+    void purgeFixedIdRows() {
+        deleteFixedIdRows();
+    }
+
+    @AfterEach
+    void tearDown() {
+        deleteFixedIdRows();
+        userMapper.delete(new QueryWrapper<H2User>().eq("name", NQQ));
+        userMapper.deleteById(1L);
+        userMapper.delete(new QueryWrapper<H2User>().likeRight("name", "mp"));
+        userMapper.delete(new QueryWrapper<H2User>().eq("name", "testDeleteLogic"));
+    }
+
+    private void deleteFixedIdRows() {
+        // 120000/120001 由 shouldInsertBatch 插入、shouldUpdateBatch 用来验证打不到行；
+        // 1000036/10000367 是 shouldRollbackBatchTransaction 回滚前后要查的主键。
+        jdbcTemplate.update("DELETE FROM h2user WHERE test_id IN (1, 120000, 120001, 1000036, 10000367)");
+        // 30000+ 是"更新不到"的区间，40000+/50000+/140000+ 是 saveOrUpdate 各用例的区间，
+        // 7120000+ 是"删不掉"的区间；每个区间都留足 1000 个位置。
+        for (long base : new long[]{30000L, 40000L, 50000L, 140000L, 7120000L}) {
+            jdbcTemplate.update("DELETE FROM h2user WHERE test_id BETWEEN ? AND ?", base, base + 999L);
+        }
+    }
+
     @Test
-    void testMapperSaveBatch() {
+    void shouldSaveBatchViaMapper() {
         var list = List.of(new H2User("秋秋1"), new H2User("秋秋2"));
         List<BatchResult> batchResults = userMapper.insert(list);
         assertThat(SqlHelper.retBool(batchResults)).isTrue();
@@ -72,7 +100,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testMapperUpdateBatch() {
+    void shouldUpdateBatchViaMapper() {
         var list = List.of(new H2User("秋秋1"), new H2User("秋秋2"));
         userMapper.insert(list);
         for (H2User h2User : list) {
@@ -84,7 +112,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testBatchTransaction() {
+    void shouldRollbackBatchTransaction() {
         List<H2User> h2UserList = Arrays.asList(new H2User(1000036L, "测试12323232"), new H2User(10000367L, "测试3323232"));
         try {
             transactionTemplate.execute((TransactionCallback<List<BatchResult>>) status -> {
@@ -109,7 +137,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testInsertBatch() {
+    void shouldInsertBatch() {
         int batchSize = 1000;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -129,7 +157,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testInsertBatchByCustomMethod() {
+    void shouldInsertBatchByCustomMethod() {
         int batchSize = 1000;
         List<BatchResult> batchResults;
         int[] updateCounts;
@@ -167,7 +195,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testDeleteByIds() {
+    void shouldDeleteByIds() {
         List<BatchResult> batchResults;
         int batchSize = 1000;
         List<Long> ids = new ArrayList<>();
@@ -196,7 +224,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testUpdateBatch() {
+    void shouldUpdateBatch() {
         int batchSize = 1000;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -249,7 +277,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatch1() {
+    void shouldSaveOrUpdateBatchWithoutSharedSession() {
         int batchSize = 10;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -266,7 +294,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatchMapper1() {
+    void shouldSaveOrUpdateBatchViaMapperWithSharedSession() {
         int batchSize = 10;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -283,7 +311,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatchMapper2() {
+    void shouldSaveOrUpdateBatchViaMapperWithExistChecker() {
         int batchSize = 10;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -298,7 +326,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatchMapper3() {
+    void shouldThrowOnDuplicateKeyWithUnsharedSession() {
         var id = IdWorker.getId();
         var h2UserList = List
                 .of(new H2User(id, "testSaveOrUpdateBatchMapper3"), new H2User(id, "testSaveOrUpdateBatchMapper3-1"));
@@ -310,7 +338,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatchMapper4() {
+    void shouldUpdateExistingRecordWithSharedSession() {
         var id = IdWorker.getId();
         var h2UserList = List
                 .of(new H2User(id, "testSaveOrUpdateBatchMapper4"), new H2User(id, "testSaveOrUpdateBatchMapper4-1"));
@@ -326,7 +354,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testRemoveByIds() {
+    void shouldRemoveByIds() {
         assertThat(userMapper.deleteByIds(List.of(666666661, "2"), false))
                 .isEqualTo(userMapper.deleteByIds(List.of(666666661, "2")));
         H2User h2User = new H2User("testRemoveByIds");
@@ -340,7 +368,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatch2() {
+    void shouldSaveOrUpdateBatchWithSharedSession() {
         int batchSize = 10;
         List<H2User> h2UserList = new ArrayList<>();
         for (int i = 0; i < batchSize; i++) {
@@ -361,7 +389,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatch3() {
+    void shouldThrowOnDuplicateKeyInSaveOrUpdateBatch() {
         var id = IdWorker.getId();
         var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch3"), new H2User(id, "testSaveOrUpdateBatch3-1"));
         var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
@@ -376,7 +404,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateBatch4() {
+    void shouldUpdateExistingInSaveOrUpdateBatch() {
         var id = IdWorker.getId();
         var h2UserList = List.of(new H2User(id, "testSaveOrUpdateBatch4"), new H2User(id, "testSaveOrUpdateBatch4-1"));
         var mapperMethod = new MybatisBatch.Method<H2User>(H2UserMapper.class);
@@ -394,7 +422,6 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    @Order(1)
     void crudTest() {
         H2User h2User = new H2User();
         h2User.setName(NQQ);
@@ -404,7 +431,7 @@ class H2UserMapperTest extends H2TestSupport {
         h2User.setTestType(1);
         assertThat(userMapper.insert(h2User)).isEqualTo(1);
 
-        log(h2User.getTestId());
+        assertThat(h2User.getTestId()).as("插入后主键应回填到实体").isNotNull();
 
         // 新增一条自定义 ID = 1 的测试删除数据
         h2User.setTestId(1L);
@@ -428,7 +455,6 @@ class H2UserMapperTest extends H2TestSupport {
 
         // 查询列表
         LambdaQueryWrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().like(H2User::getName, "mp");
-        log(wrapper.getSqlSegment());
 
         List<H2User> h2UserList = userMapper.selectList(wrapper);
         assertThat(CollectionUtils.isNotEmpty(h2UserList)).isTrue();
@@ -447,7 +473,8 @@ class H2UserMapperTest extends H2TestSupport {
         h2User.setDesc("测试置空");
         assertThat(userMapper.update(h2User, new QueryWrapper<H2User>().eq("name", NQQ))).isEqualTo(1);
 
-        log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.TWO))));
+        assertThat(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.TWO))))
+                .as("按名字和年龄能查到刚更新的那一行").isNotNull();
 
         h2User.setAge(AgeEnum.THREE);
         h2User.setDesc(null);
@@ -457,7 +484,8 @@ class H2UserMapperTest extends H2TestSupport {
                         new UpdateWrapper<H2User>().lambda().set(H2User::getDesc, "").eq(H2User::getName, "Jerry")) > 0)
                 .isTrue();
 
-        log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.THREE))));
+        assertThat(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.THREE))))
+                .as("年龄改成 3 的是 Jerry 那行，NQQ 这行仍停在 2，按 3 查不到").isNull();
 
         assertThat(userMapper.insert(h2User)).isEqualTo(1);
         // 根据主键更新 age = 18
@@ -473,27 +501,18 @@ class H2UserMapperTest extends H2TestSupport {
             }
         })).isEqualTo(1);
         // 查询一条记录
-        assertThat(userMapper.selectOne(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1)))).isNotNull();
-
-        log(h2User.toString());
+        assertThat(userMapper.selectList(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1)))).isNotEmpty();
 
         // 分页查询
         IPage<H2User> h2UserPage = userMapper.selectPage(new Page<>(1, 10), null);
-        if (null != h2UserPage) {
-            System.out.println(h2UserPage.getTotal());
-            System.out.println(h2UserPage.getSize());
-        }
+        assertThat(h2UserPage).as("分页查询不该返回 null").isNotNull();
+        assertThat(h2UserPage.getRecords()).as("分页查询应当查到数据").isNotEmpty();
         assertThat(userMapper.selectPage(new Page<>(1, 10), new QueryWrapper<H2User>().orderByAsc("name"))).isNotNull();
 
         // 查询结果集，测试 lambda 对象后 QueryWrapper 是否参数继续传递
         QueryWrapper<H2User> qw = new QueryWrapper<>();
         qw.lambda().eq(H2User::getName, NQQ);
         List<Map<String, Object>> mapList = userMapper.selectMaps(qw);
-        if (CollectionUtils.isNotEmpty(mapList)) {
-            for (Map<String, Object> m : mapList) {
-                System.out.println(m);
-            }
-        }
         assertThat(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setTestType(3)))))
                 .isTrue();
 
@@ -505,7 +524,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testCall() {
+    void shouldCallStoredProcedure() {
         assertThat(userMapper.testCall()).isEqualTo("1");
     }
 
@@ -513,7 +532,6 @@ class H2UserMapperTest extends H2TestSupport {
      * 逻辑删除：delete 走 UPDATE 打 deleted 标记，MP 的查询自动过滤，裸 SQL 仍能读到该行。
      */
     @Test
-    @Order(Integer.MAX_VALUE)
     void delete() {
         H2User h2User = new H2User(IdWorker.getId(), "testDeleteLogic").setAge(AgeEnum.TWO);
         assertThat(userMapper.insert(h2User)).isEqualTo(1);
@@ -529,10 +547,10 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    @Order(Integer.MAX_VALUE)
     void sqlCommentTest() {
-        userMapper.delete(new QueryWrapper<H2User>().comment("deleteAllUsers"));
-        String name = "name1", nameNew = "name1New";
+        // 名字带随机后缀，本用例独占这两行，count/list/page 的条数才能断言到确切值
+        String name = "zz_sqlComment_" + UUID.randomUUID().toString().substring(0, 8);
+        String nameNew = name + "_new";
         int insertCount = userMapper.insert(new H2User().setName(name).setAge(AgeEnum.ONE));
         assertThat(insertCount).isEqualTo(1);
         int updateCount = userMapper.update(
@@ -542,27 +560,32 @@ class H2UserMapperTest extends H2TestSupport {
         H2User h2User = userMapper.selectOne(
                 new QueryWrapper<H2User>().lambda().comment("getUserByUniqueName").eq(H2User::getName, nameNew));
         assertThat(h2User).isNotNull();
-        LambdaQueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().lambda().ge(H2User::getAge, 1);
+        LambdaQueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().lambda().ge(H2User::getAge, 1)
+                .eq(H2User::getName, nameNew);
         long userCount = userMapper.selectCount(queryWrapper.comment("getUserCount"));
-        assertThat(userCount).isEqualTo(1);
+        assertThat(userCount).as("带注释的 count 只命中本用例那一行").isEqualTo(1);
         List<H2User> h2UserList = userMapper.selectList(queryWrapper.comment("getUserList"));
-        assertThat(h2UserList.size()).isEqualTo(1);
+        assertThat(h2UserList).as("带注释的 list 只命中本用例那一行").hasSize(1);
         IPage<H2User> h2UserIPage = userMapper.selectPage(new Page<>(1, 10), queryWrapper.comment("getUserPage"));
-        assertThat(h2UserIPage.getRecords().size()).isEqualTo(1);
+        assertThat(h2UserIPage.getRecords()).as("带注释的分页只命中本用例那一行").hasSize(1);
+        assertThat(h2UserIPage.getTotal()).as("带注释的分页总数等于命中行数").isEqualTo(1);
         List<Map<String, Object>> selectMaps = userMapper.selectMaps(queryWrapper.comment("getUserMaps"));
-        assertThat(selectMaps.size()).isEqualTo(1);
+        assertThat(selectMaps).as("带注释的 maps 只命中本用例那一行").hasSize(1);
         IPage<Map<String, Object>> selectMapsPage = userMapper
                 .selectMapsPage(new Page<>(1, 10), queryWrapper.comment("getUserMapsPage"));
-        assertThat(selectMapsPage.getRecords().size()).isEqualTo(1);
+        assertThat(selectMapsPage.getRecords()).as("带注释的 maps 分页只命中本用例那一行").hasSize(1);
         List<Object> selectObjs = userMapper.selectObjs(queryWrapper.comment("getUserObjs"));
-        assertThat(selectObjs.size()).isEqualTo(1);
+        assertThat(selectObjs).as("带注释的 objs 只命中本用例那一行").hasSize(1);
+        // 带注释的删除语句同样要能执行，且只删掉本用例自己那一行
+        assertThat(userMapper.delete(new QueryWrapper<H2User>().comment("deleteSqlCommentUser").eq("name", nameNew)))
+                .as("带注释的删除只删掉本用例那一行").isEqualTo(1);
     }
 
     /**
      * 测试自定义注入的分页方法：分页插件按参数类型找 IPage，不看 @Param 名字， 参数位置调换或名字对不上照样分页；searchCount=false 时不查总数。
      */
     @Test
-    void test() {
+    void shouldPaginateWithCustomInjectedMethodAndSkipCount() {
         Page<H2User> page = new Page<>();
         IPage<H2User> result = userMapper.testPage1(new H2User(), page);
         // 分页结果原地写回传入的 page，返回值就是它
@@ -589,7 +612,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testCountLong() {
+    void shouldCountLong() {
         long physical = userMapper.selectCountLong();
         long notDeleted = userMapper.selectCount(null);
         assertThat(physical).isPositive();
@@ -605,7 +628,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testUpdateByWrapper() {
+    void shouldUpdateByWrapper() {
         var h2User = new H2User();
         userMapper.insert(h2User);
         var wrapper = Wrappers.<H2User>lambdaUpdate().set(H2User::getName, "testUpdateByWrapper")
@@ -615,7 +638,7 @@ class H2UserMapperTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdate() {
+    void shouldSaveOrUpdateViaMapper() {
         var h2User = new H2User();
         userMapper.insertOrUpdate(h2User);
         assertThat(h2User.getTestId()).isNotNull();

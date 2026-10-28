@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,10 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("integration")
 public class OrderByMapperTest extends DbTestSupport<OrderByMapper> {
 
     @Test
-    void test() {
+    void shouldApplyOrderByAnnotation() {
         doTest(mapper -> {
             mapper.selectList(Wrappers.emptyWrapper());
 

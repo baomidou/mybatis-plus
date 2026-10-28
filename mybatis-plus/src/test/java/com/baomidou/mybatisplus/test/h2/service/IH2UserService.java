@@ -32,17 +32,17 @@ public interface IH2UserService extends IService<H2User> {
 
     List<Map<?, ?>> mySelectMaps();
 
-    void testBatchTransactional();
+    void batchTransactional();
 
-    void testSimpleTransactional();
+    void simpleTransactional();
 
-    void testSaveOrUpdateBatchTransactional();
+    void saveOrUpdateBatchTransactional();
 
-    void testSimpleAndBatchTransactional();
+    void simpleAndBatchTransactional();
 
-    void testSaveBatchNoTransactional1();
+    void saveBatchNoTransactional1();
 
-    void testSaveBatchNoTransactional2();
+    void saveBatchNoTransactional2();
 
     List<H2User> testCustomSqlSegment(Wrapper wrapper);
 
@@ -50,8 +50,8 @@ public interface IH2UserService extends IService<H2User> {
 
     List<H2User> testMultiWrapperQuery(Wrapper wrapper, Wrapper wrapper2);
 
-    void testSaveOrUpdateTransactional1(List<H2User> users);
+    void saveOrUpdateTransactional1(List<H2User> users);
 
-    void testSaveOrUpdateTransactional2(List<H2User> users);
+    void saveOrUpdateTransactional2(List<H2User> users);
 
 }

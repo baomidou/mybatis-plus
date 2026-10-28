@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.extension.ddl;
 
 import org.h2.Driver;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+@Tag("unit")
 public class DdlScriptTest {
 
     private static final String URL = "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
@@ -24,7 +26,7 @@ public class DdlScriptTest {
      * 特征化 DdlScript 的结果上报:带消费者时成功返回 true 且不回调,失败返回 false 并把异常信息交给消费者;不带消费者的重载直接把异常抛出。
      */
     @Test
-    void test() throws Exception {
+    void shouldRunSqlScriptAndHandleSuccessAndErrorWithConsumer() throws Exception {
         DdlScript ddlScript = ddlScript();
         assertThat(ddlScript.run("select 1 from dual;", errors::add)).isTrue();
         assertThat(ddlScript.run("select 2 from dual;select 3 from dual;", errors::add)).isTrue();

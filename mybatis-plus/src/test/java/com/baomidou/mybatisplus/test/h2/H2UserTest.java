@@ -33,15 +33,17 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +65,6 @@ import static org.assertj.core.api.Assertions.fail;
  * @author Caratacus
  * @since 2017/4/1
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
@@ -80,26 +81,61 @@ class H2UserTest extends H2TestSupport {
     @Autowired
     private H2UserMapper h2UserMapper;
 
-    public void initBatchLimitation(int limitation) {
+    private String testUuid;
+
+    /**
+     * h2user 是全套件共用的内存表，别的类也会往里塞数据。用例进门前重放一次种子脚本，出门时也重放一次： 脚本第一条就是 delete，顺带把用例改过的列一并复位， 留给下一个类的是一张和脚本一模一样的标准种子表。
+     */
+    @BeforeEach
+    void setUp() {
+        restoreSeed();
+        testUuid = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+    }
+
+    @AfterEach
+    void tearDown() {
+        restoreSeed();
+        // 批量更新上限是拦截器上的粘性开关（只有 open 没有 close），用例把它调小过就要复位，
+        // 不然后面用例里的全表更新会被判定超限。
+        DataChangeRecorderInnerInterceptor recorder = dataChangeRecorder();
+        if (recorder != null) {
+            recorder.setBatchUpdateLimit(Integer.MAX_VALUE);
+        }
+    }
+
+    private void restoreSeed() {
+        ConnectionCallback<Void> restore = connection -> {
+            new ResourceDatabasePopulator(new ClassPathResource("h2/user.insert.sql")).populate(connection);
+            return null;
+        };
+        jdbcTemplate.execute(restore);
+    }
+
+    private DataChangeRecorderInnerInterceptor dataChangeRecorder() {
         if (sqlSessionFactory instanceof DefaultSqlSessionFactory) {
             Configuration configuration = sqlSessionFactory.getConfiguration();
             for (Interceptor interceptor : configuration.getInterceptors()) {
                 if (interceptor instanceof MybatisPlusInterceptor) {
-                    List<InnerInterceptor> innerInterceptors = ((MybatisPlusInterceptor) interceptor).getInterceptors();
-                    for (InnerInterceptor innerInterceptor : innerInterceptors) {
-                        if (innerInterceptor instanceof DataChangeRecorderInnerInterceptor) {
-                            ((DataChangeRecorderInnerInterceptor) innerInterceptor).setBatchUpdateLimit(limitation)
-                                    .openBatchUpdateLimitation();
+                    for (InnerInterceptor inner : ((MybatisPlusInterceptor) interceptor).getInterceptors()) {
+                        if (inner instanceof DataChangeRecorderInnerInterceptor) {
+                            return (DataChangeRecorderInnerInterceptor) inner;
                         }
                     }
                 }
             }
         }
+        return null;
+    }
+
+    public void initBatchLimitation(int limitation) {
+        DataChangeRecorderInnerInterceptor recorder = dataChangeRecorder();
+        if (recorder != null) {
+            recorder.setBatchUpdateLimit(limitation).openBatchUpdateLimitation();
+        }
     }
 
     @Test
-    @Order(1)
-    void testInsertMy() {
+    void shouldInsertUser() {
         String name = "自定义insert";
         int version = 1;
         int row = userService.myInsert(name, version);
@@ -107,8 +143,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(2)
-    void testInsertObjectWithParam() {
+    void shouldInsertObjectWithParam() {
         String name = "自定义insert带Param注解";
         int version = 1;
         int row = userService.myInsertWithParam(name, version);
@@ -116,8 +151,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(3)
-    void testInsertObjectWithoutParam() {
+    void shouldInsertObjectWithoutParam() {
         String name = "自定义insert带Param注解";
         int version = 1;
         int row = userService.myInsertWithoutParam(name, version);
@@ -125,15 +159,13 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(6)
-    void testSelectLambdaById() {
+    void shouldSelectByLambdaId() {
         H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getTestId, 101));
         assertThat(h2User).isNotNull();
     }
 
     @Test
-    @Order(7)
-    void testLambdaTypeHandler() {
+    void shouldHandleLambdaTypeHandler() {
         // 演示 json 格式 Wrapper TypeHandler 查询
         H2User h2User = userService.getOne(
                 Wrappers.<H2User>lambdaQuery().apply(
@@ -143,8 +175,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(10)
-    void testEntityWrapperSelectSql() {
+    void shouldBuildEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
         ew.select("test_id, name, age");
         List<H2User> list = userService.list(ew);
@@ -156,8 +187,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(10)
-    void testQueryWithParamInSelectStatement() {
+    void shouldQueryWithParamInSelect() {
         Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
@@ -172,8 +202,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(10)
-    void testSelectCountWithParamInSelectItems() {
+    void shouldSelectCountWithParam() {
         Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
@@ -184,8 +213,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(15)
-    void testUpdateByIdWithOptLock() {
+    void shouldUpdateByIdWithOptLock() {
         Long id = 991L;
         H2User user = new H2User();
         user.setTestId(id);
@@ -205,7 +233,6 @@ class H2UserTest extends H2TestSupport {
 
         userDB.setName("992");
         userDB.setCreatedDt(dateTime);
-        System.out.println("===============================================");
         userService.updateById(userDB);
         assertThat(userDB.getVersion().intValue()).as("updated version value should be updated to entity").isEqualTo(2);
 
@@ -214,16 +241,13 @@ class H2UserTest extends H2TestSupport {
         assertThat(userDB.getName()).isEqualTo("992");
         userDB.setCreatedDt(LocalDateTime.now());
         userService.updateById(userDB);
-        System.out.println("===============================================");
         userService.lambdaUpdate().set(H2User::getAge, AgeEnum.THREE).eq(H2User::getTestId, id).update();
-
     }
 
     @Test
-    @Order(16)
-    void testUpdateByEwWithOptLock() {
+    void shouldUpdateByWrapperWithOptLock() {
         H2User userInsert = new H2User();
-        userInsert.setName("optLockerTest");
+        userInsert.setName("zz_optLockerEw_" + testUuid);
         userInsert.setAge(AgeEnum.THREE);
         userInsert.setPrice(BigDecimal.TEN);
         userInsert.setDesc("asdf");
@@ -235,17 +259,14 @@ class H2UserTest extends H2TestSupport {
         ew.ge("age", AgeEnum.TWO.getValue());
         Long id99 = null;
         for (H2User u : userService.list(ew)) {
-            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             if (u.getVersion() != null && u.getVersion() == 99) {
                 id99 = u.getTestId();
             }
         }
         userService.update(new H2User().setPrice(BigDecimal.TEN).setVersion(99), ew);
-        System.out.println("============after update");
         ew = new QueryWrapper<>();
         ew.ge("age", AgeEnum.TWO.getValue());
         for (H2User u : userService.list(ew)) {
-            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             if (u.getTestId().equals(id99)) {
                 assertThat(u.getVersion().intValue()).as("optLocker should update version+=1").isEqualTo(100);
             }
@@ -253,10 +274,9 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(17)
-    void testOptLocker4WrapperIsNull() {
+    void shouldHandleOptLockWhenWrapperIsNull() {
         H2User userInsert = new H2User();
-        userInsert.setName("optLockerTest");
+        userInsert.setName("zz_optLockerNull_" + testUuid);
         userInsert.setAge(AgeEnum.THREE);
         userInsert.setPrice(BigDecimal.TEN);
         userInsert.setDesc("asdf");
@@ -269,18 +289,15 @@ class H2UserTest extends H2TestSupport {
         Long id99 = null;
         Map<Long, BigDecimal> idPriceMap = new HashMap<>();
         for (H2User u : userService.list(ew)) {
-            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             idPriceMap.put(u.getTestId(), u.getPrice());
             if (u.getVersion() != null && u.getVersion() == 99) {
                 id99 = u.getTestId();
             }
         }
         userService.update(new H2User().setPrice(BigDecimal.TEN).setVersion(99), null);
-        System.out.println("============after update");
         ew = new QueryWrapper<>();
         ew.ge("age", AgeEnum.TWO.getValue());
         for (H2User u : userService.list(ew)) {
-            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             if (u.getTestId().equals(id99)) {
                 assertThat(u.getVersion().intValue()).as("optLocker should update version+=1").isEqualTo(100);
             } else {
@@ -290,7 +307,6 @@ class H2UserTest extends H2TestSupport {
         }
         userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
         for (H2User u : userService.list(new QueryWrapper<>())) {
-            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
             assertThat(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP).intValue()).as("all records should be updated")
                     .isEqualTo(u.getPrice().setScale(2, RoundingMode.HALF_UP).intValue());
         }
@@ -314,41 +330,28 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(18)
-    void testBatchTransactional() {
-        try {
-            userService.testBatchTransactional();
-        } catch (MybatisPlusException e) {
-            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "batch"));
-            assertThat(CollectionUtils.isEmpty(list)).isTrue();
-        }
+    void shouldBatchTransactional() {
+        assertThatThrownBy(() -> userService.batchTransactional()).isInstanceOf(MybatisPlusException.class);
+        assertThat(userService.list(new QueryWrapper<H2User>().like("name", "batch")))
+                .as("batchTransactional 回滚后不该留下 name 含 batch 的行").isEmpty();
     }
 
     @Test
-    @Order(19)
-    void testSimpleTransactional() {
-        try {
-            userService.testSimpleTransactional();
-        } catch (MybatisPlusException e) {
-            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
-            assertThat(CollectionUtils.isEmpty(list)).isTrue();
-        }
+    void shouldSimpleTransactional() {
+        assertThatThrownBy(() -> userService.simpleTransactional()).isInstanceOf(MybatisPlusException.class);
+        assertThat(userService.list(new QueryWrapper<H2User>().like("name", "simple")))
+                .as("simpleTransactional 回滚后不该留下 name 含 simple 的行").isEmpty();
     }
 
     @Test
-    @Order(20)
-    void testSaveOrUpdateBatchTransactional() {
-        try {
-            userService.testSaveOrUpdateBatchTransactional();
-        } catch (MybatisPlusException e) {
-            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "savOrUpdate"));
-            assertThat(CollectionUtils.isEmpty(list)).isTrue();
-        }
+    void shouldSaveOrUpdateBatchTransactional() {
+        assertThatThrownBy(() -> userService.saveOrUpdateBatchTransactional()).isInstanceOf(MybatisPlusException.class);
+        assertThat(userService.list(new QueryWrapper<H2User>().like("name", "savOrUpdate")))
+                .as("saveOrUpdateBatchTransactional 回滚后不该留下 name 含 savOrUpdate 的行").isEmpty();
     }
 
     @Test
-    @Order(21)
-    void testSaveBatch() {
+    void shouldSaveBatch() {
         assertThat(userService.saveBatch(List.of(new H2User("saveBatch0")))).isTrue();
         assertThat(
                 userService.saveBatch(
@@ -368,8 +371,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(22)
-    void testUpdateBatch() {
+    void shouldUpdateBatch() {
         assertThat(
                 userService.updateBatchById(
                         Arrays.asList(
@@ -392,8 +394,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(23)
-    void testSaveOrUpdateBatch() {
+    void shouldSaveOrUpdateBatch() {
         assertThat(
                 userService.saveOrUpdateBatch(
                         Arrays.asList(
@@ -416,8 +417,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(24)
-    void testSimpleAndBatch() {
+    void shouldMixSimpleAndBatchOps() {
         assertThat(userService.save(new H2User("testSimpleAndBatch1", 0))).isTrue();
         assertThat(userService.count(new QueryWrapper<H2User>().eq("name", "testSimpleAndBatch1"))).isEqualTo(1);
         assertThat(
@@ -431,19 +431,14 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(25)
-    void testSimpleAndBatchTransactional() {
-        try {
-            userService.testSimpleAndBatchTransactional();
-        } catch (MybatisPlusException e) {
-            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simpleAndBatchTx"));
-            assertThat(CollectionUtils.isEmpty(list)).isTrue();
-        }
+    void shouldMixSimpleAndBatchTransactional() {
+        assertThatThrownBy(() -> userService.simpleAndBatchTransactional()).isInstanceOf(MybatisPlusException.class);
+        assertThat(userService.list(new QueryWrapper<H2User>().like("name", "simpleAndBatchTx")))
+                .as("simpleAndBatchTransactional 回滚后不该留下 name 含 simpleAndBatchTx 的行").isEmpty();
     }
 
     @Test
-    @Order(26)
-    void testServiceImplInnerLambdaQuery() {
+    void shouldQueryByServiceImplInnerLambda() {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").one();
         assertThat(tomcat).isNotNull();
         assertThat(userService.lambdaQuery().like(H2User::getName, "a").count().longValue()).isNotEqualTo(0L);
@@ -454,8 +449,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(27)
-    void testServiceChainQuery() {
+    void shouldChainQueryByService() {
         H2User tomcat = userService.query().eq("name", "Tomcat").one();
         assertThat(tomcat).as("tomcat should not be null").isNotNull();
         userService.query().nested(i -> i.eq("name", "Tomcat")).list();
@@ -463,19 +457,15 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(28)
-    void testSaveBatchException() {
-        try {
-            userService.saveBatch(Arrays.asList(new H2User(1L, "tom"), new H2User(1L, "andy")));
-        } catch (Exception e) {
-            assertThat(e).isInstanceOf(DataAccessException.class);
-        }
+    void shouldThrowOnSaveBatchException() {
+        // 同一批次里两条记录主键撞了，MyBatis 会把 SQL 异常翻译成 Spring 的 DataAccessException 抛出来
+        assertThatThrownBy(() -> userService.saveBatch(Arrays.asList(new H2User(1L, "tom"), new H2User(1L, "andy"))))
+                .isInstanceOf(DataAccessException.class);
     }
 
     @Test
-    @Order(29)
     @Transactional
-    void testClearSqlSessionCache() {
+    void shouldClearSqlSessionCache() {
         H2User h2User;
         h2User = userService.getById(996102919L);
         assertThat(h2User).isNull();
@@ -485,27 +475,22 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(30)
-    void testSaveBatchNoTransactional1() {
-        userService.testSaveBatchNoTransactional1();
-        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional1")))
+    void shouldSaveBatchWithoutTransactional1() {
+        userService.saveBatchNoTransactional1();
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "saveBatchNoTransactional1")))
                 .isEqualTo(3);
     }
 
     @Test
-    @Order(30)
-    void testSaveBatchNoTransactional2() {
-        try {
-            userService.testSaveBatchNoTransactional2();
-        } catch (Exception e) {
-            assertThat(userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional2")))
-                    .isEqualTo(3);
-        }
+    void shouldSaveBatchWithoutTransactional2() {
+        // 方法上没有事务，异常前已经 flush 的三行会留在库里，不会跟着后面的语句一起回滚
+        assertThatThrownBy(() -> userService.saveBatchNoTransactional2()).isInstanceOf(RuntimeException.class);
+        assertThat(userService.count(new QueryWrapper<H2User>().like("name", "saveBatchNoTransactional2")))
+                .as("无事务时异常前写入的三行应当留下").isEqualTo(3);
     }
 
     @Test
-    @Order(31)
-    void testSpaceCharacter() {
+    void shouldHandleSpaceCharacter() {
         assertThat(StringUtils.isNotBlank(" ")).isFalse();
         assertThat(StringUtils.checkValNotNull(" ")).isTrue();
         H2User h2User = new H2User();
@@ -515,8 +500,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(32)
-    void testSqlInjectionByCustomSqlSegment() {
+    void shouldPreventSqlInjectionByCustomSqlSegment() {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testCustomSqlSegment(new QueryWrapper<H2User>().like("name", "y%"));
@@ -524,8 +508,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(33)
-    void testWrapperSetAliasByParam() {
+    void shouldSetWrapperAliasByParam() {
         // Preparing: select * from h2user WHERE (name LIKE ?)
         // Parameters: %y%%(String)
         List<H2User> h2Users = userService.testWrapperSetAliasByParam(new QueryWrapper<H2User>().like("name", "y%"));
@@ -533,8 +516,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(34)
-    void testMultiWrapperQuery() {
+    void shouldQueryWithMultiWrapper() {
         // Preparing: select * from h2user a inner join h2user b on a.name=b.name WHERE (a.name LIKE ?) and (b.name = ?)
         // Parameters: %y%%(String), Jerry(String)
         QueryWrapper<H2User> leftTable = new QueryWrapper<H2User>() {
@@ -544,7 +526,6 @@ class H2UserTest extends H2TestSupport {
                 return "a." + super.columnToString(column);
             }
         }.like("name", "y%");
-        System.out.println(leftTable.getCustomSqlSegment());
         QueryWrapper<H2User> rightTable = new QueryWrapper<H2User>() {
 
             @Override
@@ -557,8 +538,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(35)
-    void testUpdateWrapperSetAliasByParam() {
+    void shouldSetUpdateWrapperAliasByParam() {
         H2User user = new H2User("aliasBefore", AgeEnum.ONE);
         assertThat(userService.save(user)).isTrue();
 
@@ -631,7 +611,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testSimpleWrapperClear() {
+    void shouldClearSimpleWrapper() {
         userService.save(new H2User("逗号", AgeEnum.TWO));
         QueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().eq("name", "咩咩");
         assertThat(userService.count(queryWrapper)).isEqualTo(0);
@@ -647,7 +627,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testLambdaWrapperClear() {
+    void shouldClearLambdaWrapper() {
         userService.save(new H2User("小红", AgeEnum.TWO));
         LambdaQueryWrapper<H2User> lambdaQueryWrapper = new QueryWrapper<H2User>().lambda().eq(H2User::getName, "小宝");
         lambdaQueryWrapper.orderByDesc(H2User::getName);
@@ -664,7 +644,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testLogicDelWithFill() {
+    void shouldLogicDeleteWithFill() {
         H2User h2User = new H2User("逻辑删除(根据ID)不填充", AgeEnum.TWO);
         userService.save(h2User);
         userService.removeById(h2User.getTestId());
@@ -679,7 +659,7 @@ class H2UserTest extends H2TestSupport {
      * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#extract(SFunction)}
      */
     @RepeatedTest(1000)
-    void testLambdaCache() {
+    void shouldCacheLambdaMeta() {
         lambdaCache();
     }
 
@@ -691,7 +671,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testRemove() {
+    void shouldRemoveEntity() {
         //不报错即可，无需关注返回值
         H2User h2User = new H2User(12L, "test");
         //        userService.removeById((short) 100);
@@ -725,7 +705,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testPageOrderBy() {
+    void shouldOrderByInPage() {
         // test https://gitee.com/baomidou/mybatis-plus/issues/I4BGE2
         Page<H2User> page = Page.of(1, 10);
         assertThat(
@@ -737,7 +717,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testPageNegativeSize() {
+    void shouldHandleNegativePageSize() {
         Page<H2User> page = Page.of(1, -1);
         userService.lambdaQuery().page(page);
         assertThat(page.getTotal()).isEqualTo(0);
@@ -745,7 +725,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testDeleteByFill() {
+    void shouldDeleteByFill() {
         // 共享内存库，只碰自己插入的行，收尾全部逻辑删除，别的用例查不到。
         String own = "deleteByFill-";
 
@@ -777,7 +757,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testRemoveBatchByIdsByFill() {
+    void shouldRemoveBatchByIdsWithFill() {
         // name 列只有 VARCHAR(30)，前缀留短一点
         String own = "bDel-";
         H2User batchId = insertUser(own + "batchId");
@@ -816,8 +796,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(25)
-    void testServiceImplInnerLambdaQueryConstructorSetEntity() {
+    void shouldSetEntityInServiceImplInnerLambdaQueryConstructor() {
         H2User condition = new H2User();
         condition.setName("Tomcat");
         H2User user = userService.lambdaQuery(condition).one();
@@ -829,8 +808,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(26)
-    void testServiceGetOptById() {
+    void shouldGetOptionalByIdViaService() {
         H2User user = new H2User(1L, "Evan");
         userService.save(user);
         Optional<H2User> optional = userService.getOptById(1L);
@@ -840,8 +818,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(27)
-    void testServiceGetOneOpt() {
+    void shouldGetOneOptionalViaService() {
         String name = "DavidOpt";
         // 查不到时是空 Optional，不是异常也不是 null
         assertThat(userService.getOneOpt(Wrappers.<H2User>lambdaQuery().eq(H2User::getName, name))).isEmpty();
@@ -852,13 +829,16 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    @Order(28)
-    void testServiceGetOneOptThrowEx() {
-        userService.getOneOpt(new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), false)
-                .ifPresent(u -> log(u.toString()));
+    void shouldThrowWhenGetOneOptExceedsLimit() {
+        // 种子行里没有名字含 "tes" 的，自己插两行才有"命中多行"可测；这两行由 @AfterEach 按未知主键清掉
+        userService.save(new H2User("zz_tes_a" + testUuid, AgeEnum.ONE));
+        userService.save(new H2User("zz_tes_b" + testUuid, AgeEnum.ONE));
 
-        userService.getOneOpt(new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test"), false)
-                .ifPresent(u -> log(u.toString()));
+        assertThat(userService.getOneOpt(new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test1"), false))
+                .as("查不到时返回空 Optional，不抛异常").isEmpty();
+
+        assertThat(userService.getOneOpt(new LambdaQueryWrapper<H2User>().eq(H2User::getName, "test"), false))
+                .as("查不到时返回空 Optional，不抛异常").isEmpty();
 
         // 异常情况
         assertThatThrownBy(() -> userService.getOneOpt(Wrappers.<H2User>lambdaQuery().like(H2User::getName, "tes")))
@@ -866,7 +846,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testInsertFill() {
+    void shouldFillOnInsert() {
         H2User h2User;
         h2User = new H2User("insertFillByCustomMethod1", AgeEnum.ONE);
         h2StudentMapper.insertFillByCustomMethod1(h2User);
@@ -948,7 +928,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testUpdateFill() {
+    void shouldFillOnUpdate() {
         Map<String, Object> map;
         H2User h2User;
         h2User = new H2User();
@@ -973,7 +953,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testListMapsByPage() {
+    void shouldListMapsByPage() {
         assertThat(userService.count()).isEqualTo(userService.listMaps().size());
         assertThat(userService.page(new Page<>(1, 2)).getRecords().size())
                 .isEqualTo(userService.listMaps(new Page<>(1, 2)).size());
@@ -992,7 +972,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testListByPage() {
+    void shouldListByPage() {
         assertThat(userService.count()).isEqualTo(userService.list().size());
         assertThat(userService.page(new Page<>(1, 2)).getRecords().size())
                 .isEqualTo(userService.list(new Page<>(1, 2)).size());
@@ -1008,7 +988,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testUnchecked() {
+    void shouldHandleUncheckedTypes() {
         // 特征化：重复列名不去重，group by 拼在 order by 前面
         String segment = " GROUP BY age,test_type,age,test_type ORDER BY age ASC,age ASC,age ASC,deleted ASC,"
                 + "age ASC,test_type ASC,deleted DESC,price DESC,deleted DESC,test_type DESC";
@@ -1086,17 +1066,15 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testSelectObjs() {
+    void shouldSelectObjs() {
         for (Object o : userService.listObjs()) {
             assertThat(o.getClass()).isEqualTo(Long.class);
         }
-        for (Long id : userService.<Long>listObjs()) {
-            System.out.println(id);
-        }
+        assertThat(userService.<Long>listObjs()).isNotEmpty();
     }
 
     @Test
-    void testResultSet() {
+    void shouldHandleResultSet() {
         BaseMapper<H2User> baseMapper = userService.getBaseMapper();
         Page<H2User> page = new Page<>(1, 1000000);
         List<H2User> rows = baseMapper.selectList(page, Wrappers.emptyWrapper());
@@ -1128,7 +1106,7 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testSelectOne() {
+    void shouldSelectOne() {
         assertThat(userService.list().size() > 2).isTrue();
         assertThatThrownBy(() -> userService.getBaseMapper().selectOne(Wrappers.emptyWrapper()))
                 .isInstanceOf(TooManyResultsException.class);
@@ -1136,25 +1114,25 @@ class H2UserTest extends H2TestSupport {
     }
 
     @Test
-    void testSaveOrUpdateTransactional1() {
+    void shouldSaveOrUpdateTransactional1() {
         var id = IdWorker.getId();
         var userList = List
                 .of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
-        assertThatThrownBy(() -> userService.testSaveOrUpdateTransactional1(userList))
+        assertThatThrownBy(() -> userService.saveOrUpdateTransactional1(userList))
                 .isExactlyInstanceOf(PersistenceException.class);
     }
 
     @Test
-    void testSaveOrUpdateTransactional2() {
+    void shouldSaveOrUpdateTransactional2() {
         var id = IdWorker.getId();
         var userList = List
                 .of(new H2User(id, "test-1"), new H2User(IdWorker.getId(), "test-2"), new H2User(id, "test-3"));
-        userService.testSaveOrUpdateTransactional2(userList);
+        userService.saveOrUpdateTransactional2(userList);
         assertThat(userService.getById(id).getName()).isEqualTo("test-3");
     }
 
     @Test
-    void testOrderByExpression() {
+    void shouldBuildOrderByExpression() {
         Page<H2User> page = new Page<>();
         page.addOrder(OrderItem.withExpression("""
                 CASE
@@ -1182,11 +1160,7 @@ class H2UserTest extends H2TestSupport {
             // 遍历游标，逐条处理数据
             Iterator<H2User> iterator = cursor.iterator();
             while (iterator.hasNext()) {
-                // 每次读取一条数据
-                H2User user = iterator.next();
-
-                // 处理单条记录
-                System.out.println("Processing user: " + user.getName());
+                iterator.next();
             }
         }
 

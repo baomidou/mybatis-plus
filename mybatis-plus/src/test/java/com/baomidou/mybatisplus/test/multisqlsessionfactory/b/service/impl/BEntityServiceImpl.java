@@ -22,7 +22,7 @@ public class BEntityServiceImpl extends ServiceImpl<BEntityMapper, BEntity> impl
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, transactionManager = "transactionManagerB")
-    public void testSaveBath(List<BEntity> bEntityList) {
+    public void shouldSaveBatch(List<BEntity> bEntityList) {
         transactionTemplateB.execute((c) -> {
             saveBatch(bEntityList);
             return null;

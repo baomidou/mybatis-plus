@@ -2,16 +2,18 @@ package com.baomidou.mybatisplus.generator.jdbc;
 
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 public class DatabaseMetaDataWrapperTest {
 
     @Test
-    void test() {
+    void shouldRetrieveColumnMetadataFromH2Database() {
         DataSourceConfig dataSourceConfig = new DataSourceConfig.Builder(
                 "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE", "sa", "").build();
         DatabaseMetaDataWrapper databaseMetaDataWrapper = new DatabaseMetaDataWrapper(dataSourceConfig.getConn(),

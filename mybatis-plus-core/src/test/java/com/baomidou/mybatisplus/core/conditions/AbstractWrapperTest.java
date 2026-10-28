@@ -54,7 +54,6 @@ class AbstractWrapperTest {
             ex = e;
         }
         assertThat(ex).isNotNull();
-        System.out.println(ex.getMessage());
     }
 
     @Test

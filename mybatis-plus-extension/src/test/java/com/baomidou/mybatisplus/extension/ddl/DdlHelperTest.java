@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.ddl.history.PostgreDdlGenerator;
 import com.baomidou.mybatisplus.extension.ddl.history.SQLiteDdlGenerator;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -27,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong
  */
+@Tag("unit")
 public class DdlHelperTest {
 
     private static final List<String> SCRIPTS = List.of("ddl/test.sql");
@@ -119,7 +121,7 @@ public class DdlHelperTest {
 
     @Test
     @Disabled("需要本地 MySQL: jdbc:mysql://127.0.0.1:3306/baomidou，尚未进入 external-db 分层")
-    void testForMysql() throws SQLException {
+    void shouldRunDdlForMysql() throws SQLException {
         var dataSource = new UnpooledDataSource(com.mysql.cj.jdbc.Driver.class.getName(),
                 "jdbc:mysql://127.0.0.1:3306/baomidou?serverTimezone=Asia/Shanghai", "root", "123456");
         runAndRecord(new MysqlDdlGenerator(), dataSource);
@@ -127,7 +129,7 @@ public class DdlHelperTest {
 
     @Test
     @Disabled("需要本地 PostgreSQL: jdbc:postgresql://localhost:5432/postgres，尚未进入 external-db 分层")
-    void testForPostgresql() throws SQLException {
+    void shouldRunDdlForPostgresql() throws SQLException {
         var dataSource = new UnpooledDataSource(org.postgresql.Driver.class.getName(),
                 "jdbc:postgresql://localhost:5432/postgres", "postgres", "123456");
         IDdlGenerator ddlGenerator = PostgreDdlGenerator.newInstance();
@@ -140,7 +142,7 @@ public class DdlHelperTest {
 
     @Test
     @Disabled("需要本地 PostgreSQL: jdbc:postgresql://localhost:5432/postgres，尚未进入 external-db 分层")
-    void testForPostgresqlForAuto() throws SQLException {
+    void shouldRunDdlForPostgresqlWithAutoSchema() throws SQLException {
         var dataSource = new UnpooledDataSource(org.postgresql.Driver.class.getName(),
                 "jdbc:postgresql://localhost:5432/postgres", "postgres", "123456");
         IDdlGenerator ddlGenerator = PostgreDdlGenerator.newInstanceWithAutoSchema();
@@ -154,14 +156,14 @@ public class DdlHelperTest {
 
     @Test
     @Disabled("需要本地 Oracle: jdbc:oracle:thin:@127.0.0.1:1521:orcl，尚未进入 external-db 分层")
-    void testForOracle() throws SQLException {
+    void shouldRunDdlForOracle() throws SQLException {
         var dataSource = new UnpooledDataSource(oracle.jdbc.driver.OracleDriver.class.getName(),
                 "jdbc:oracle:thin:@127.0.0.1:1521:orcl", "system", "123456");
         runAndRecord(new OracleDdlGenerator(), dataSource);
     }
 
     @Test
-    void testForSQLite() throws SQLException {
+    void shouldRunDdlForSQLite() throws SQLException {
         // 落在临时目录，避免在工作区留下 test.db
         var dataSource = new UnpooledDataSource(org.sqlite.JDBC.class.getName(),
                 "jdbc:sqlite:" + tempDir.resolve("ddl.db").toFile().getPath(), "", "");
@@ -171,7 +173,7 @@ public class DdlHelperTest {
     }
 
     @Test
-    void testForH2() throws SQLException {
+    void shouldRunDdlForH2WithAutoDetect() throws SQLException {
         var dataSource = h2DataSource("ddl_h2", "DATABASE_TO_LOWER=TRUE");
         // 生成器留空，由 jdbcUrl 推断出 PostgreDdlGenerator
         runAndRecord(null, dataSource);
@@ -180,7 +182,7 @@ public class DdlHelperTest {
     }
 
     @Test
-    void testForH2Mysql() throws SQLException {
+    void shouldRunDdlForH2MysqlMode() throws SQLException {
         var dataSource = h2DataSource("ddl_h2_mysql", "MODE=MySQL;DATABASE_TO_LOWER=TRUE");
         runAndRecord(new MysqlDdlGenerator(), dataSource);
         assertRecorded(dataSource);
@@ -188,7 +190,7 @@ public class DdlHelperTest {
     }
 
     @Test
-    void testForH2Postgresql() throws SQLException {
+    void shouldRunDdlForH2PostgresqlMode() throws SQLException {
         var dataSource = h2DataSource("ddl_h2_postgresql", "MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE");
         runAndRecord(new PostgreDdlGenerator(), dataSource);
         assertRecorded(dataSource);
@@ -199,7 +201,7 @@ public class DdlHelperTest {
      * 分隔符写在脚本名里（{@code ddl/test.sql#;}），执行完仍然只记账一行，且记下的是去掉后缀的文件名。
      */
     @Test
-    void testCustomDelimiterScriptName() throws SQLException {
+    void shouldHandleCustomDelimiterInScriptName() throws SQLException {
         var dataSource = h2DataSource("ddl_h2_delimiter", "MODE=MySQL;DATABASE_TO_LOWER=TRUE");
         DdlHelper.runScript(new MysqlDdlGenerator(), dataSource, List.of("ddl/test.sql#;"), true, THROWS);
         assertRecorded(dataSource);
@@ -207,7 +209,7 @@ public class DdlHelperTest {
 
     @Test
     @Disabled("需要本地达梦: jdbc:dm://127.0.0.1:5236/DMSERVER，尚未进入 external-db 分层")
-    void testForDm() throws SQLException {
+    void shouldRunDdlForDm() throws SQLException {
         var dataSource = new UnpooledDataSource(dm.jdbc.driver.DmDriver.class.getName(),
                 "jdbc:dm://127.0.0.1:5236/DMSERVER", "SYSDBA", "Dm123456");
         runAndRecord(new OracleDdlGenerator(), dataSource);

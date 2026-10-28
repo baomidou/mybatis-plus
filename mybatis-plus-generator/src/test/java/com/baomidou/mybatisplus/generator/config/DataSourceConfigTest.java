@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.keywords.MySqlKeyWordsHandler;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.h2.Driver;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/10/10.
  */
+@Tag("unit")
 public class DataSourceConfigTest {
 
     @Test

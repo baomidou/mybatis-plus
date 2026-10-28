@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.json;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2024年3月4日
  */
+@Tag("integration")
 public class JacksonTest extends DbTestSupport<JackJsonEntityMapper> {
 
     @Override
@@ -27,7 +29,7 @@ public class JacksonTest extends DbTestSupport<JackJsonEntityMapper> {
     }
 
     @Test
-    void test() {
+    void shouldSerializeAndDeserializeWithJackson() {
         doTest(mapper -> {
             var entity = new JackJsonEntity("123", "秋秋", new JackJsonEntity.Card("1", "1111"),
                     Arrays.asList(new JackJsonEntity.Attr("age", "18"), new JackJsonEntity.Attr("sex", "女")),

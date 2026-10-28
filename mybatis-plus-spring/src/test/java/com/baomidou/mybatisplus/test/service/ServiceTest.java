@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.spring.service.IService;
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import org.apache.ibatis.session.SqlSession;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2021/1/19.
  */
+@Tag("unit")
 public class ServiceTest {
 
     static class Demo {
@@ -62,7 +64,7 @@ public class ServiceTest {
     }
 
     @Test
-    void testSuperClassGenericType() {
+    void shouldResolveSuperClassGenericType() {
         // 多重继承测试
         assertThat(ReflectionKit.getSuperClassGenericType(MyServiceExtend.class, ServiceImpl.class, 0))
                 .isEqualTo(DemoMapper.class);

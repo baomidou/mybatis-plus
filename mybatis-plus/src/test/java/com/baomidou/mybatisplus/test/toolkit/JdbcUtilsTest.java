@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.toolkit;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author hubin
  * @since 2020-09-15
  */
+@Tag("unit")
 public class JdbcUtilsTest {
 
     /**
@@ -36,7 +38,7 @@ public class JdbcUtilsTest {
             .of(DbType.ORACLE_12C, DbType.GBASEDBT, DbType.GBASE_INFORMIX);
 
     @Test
-    public void testPattern() {
+    public void shouldMatchJdbcUrlPattern() {
         String regex = ":dm\\d*:";
         assertThat(JdbcUtils.regexFind(regex, ":dm:")).isTrue();
         assertThat(JdbcUtils.regexFind(regex, ":dm8:")).isTrue();

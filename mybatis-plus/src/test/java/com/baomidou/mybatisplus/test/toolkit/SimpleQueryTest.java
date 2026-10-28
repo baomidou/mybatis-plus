@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SimpleQueryTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void testList() {
+    void shouldQueryListWithSimpleQuery() {
         // 我要这张表里的ids
         List<Long> entityIds = SimpleQuery.list(lambdaQuery(), Entity::getId);
         assertThat(entityIds).containsExactly(1L, 2L);
@@ -40,7 +40,7 @@ class SimpleQueryTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testMap() {
+    void shouldQueryMapWithSimpleQuery() {
         // 我要这个表里对应条件的用户，用id作为key给我一个map
         Map<Long, Entity> idEntityMap = SimpleQuery
                 .keyMap(Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1L), Entity::getId);
@@ -60,7 +60,7 @@ class SimpleQueryTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testGroup() {
+    void shouldGroupWithSimpleQuery() {
         // 我需要相同名字的用户的分为一组，再造一条数据
         doTestAutoCommit(m -> {
             Entity entity = new Entity();

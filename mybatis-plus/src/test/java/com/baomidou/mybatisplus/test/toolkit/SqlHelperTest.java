@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.rewrite.Entity;
 import com.baomidou.mybatisplus.test.rewrite.EntityMapper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,10 +18,11 @@ import java.util.List;
  * @author <achao1441470436@gmail.com>
  * @since 2020-09-15
  */
+@Tag("unit")
 public class SqlHelperTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    public void testGetMapperAndExecute() {
+    public void shouldGetMapperAndExecuteViaSqlHelper() {
 
         List<Entity> entityList = SqlHelper.execute(Entity.class, m -> m.selectList(Wrappers.lambdaQuery()));
 

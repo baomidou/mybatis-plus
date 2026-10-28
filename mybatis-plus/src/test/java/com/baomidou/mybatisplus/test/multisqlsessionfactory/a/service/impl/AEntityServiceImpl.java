@@ -22,7 +22,7 @@ public class AEntityServiceImpl extends ServiceImpl<AEntityMapper, AEntity> impl
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class, transactionManager = "transactionManagerA")
-    public void testSaveBath(List<AEntity> aEntityList) {
+    public void shouldSaveBatch(List<AEntity> aEntityList) {
         transactionTemplateA.execute((c) -> {
             this.saveBatch(aEntityList);
             return null;

@@ -7,6 +7,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong 2019/2/9.
  */
+@Tag("integration")
 class MetadataTest {
 
     @Data

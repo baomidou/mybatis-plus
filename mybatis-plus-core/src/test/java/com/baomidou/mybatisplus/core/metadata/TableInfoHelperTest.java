@@ -71,7 +71,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testExcludeProperty() {
+    void shouldExcludePropertiesFromTableName() {
         TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelThree.class);
         assertThat(tableInfo.havePK()).isTrue();
@@ -140,7 +140,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testCustomAnnotation() {
+    void shouldRecognizeCustomComposedAnnotations() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
         TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), CustomAnnotation.class);
@@ -165,7 +165,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testIsExistTableId() {
+    void shouldDetectTableIdAnnotation() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), ModelOne.class);
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(mybatisConfiguration, ""), ModelTwo.class);
@@ -187,7 +187,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testMoreTableId() {
+    void shouldThrowExceptionWhenMultipleTableIdDefined() {
         Exception ex = null;
         try {
             TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFive.class);
@@ -196,11 +196,10 @@ class TableInfoHelperTest {
         }
         assertThat(ex).isNotNull();
         assertThat(ex).isInstanceOf(MybatisPlusException.class);
-        System.out.println(ex.getMessage());
     }
 
     @Test
-    void testPriorityTableId() {
+    void shouldUseExplicitTableIdOverImplicitField() {
         TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelSex.class);
         assertThat(tableInfo.havePK()).isTrue();
@@ -208,7 +207,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testVersion() {
+    void shouldThrowExceptionWhenMultipleVersionFieldsDefined() {
         Exception ex = null;
         try {
             TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Versions.class);
@@ -217,11 +216,10 @@ class TableInfoHelperTest {
         }
         assertThat(ex).isNotNull();
         assertThat(ex).isInstanceOf(MybatisPlusException.class);
-        System.out.println(ex.getMessage());
     }
 
     @Test
-    void testLogic() {
+    void shouldDetectGlobalLogicDeleteField() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         GlobalConfig config = GlobalConfigUtils.defaults();
         config.getDbConfig().setLogicDeleteField("logic");
@@ -235,7 +233,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testColumnFormat() {
+    void shouldApplyColumnAndTableFormat() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         GlobalConfig config = GlobalConfigUtils.defaults();
         GlobalConfig.DbConfig dbConfig = config.getDbConfig();
@@ -286,7 +284,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testTableNamePrefix() {
+    void shouldOverrideTableNameWhenExplicitAnnotationIgnoresPrefix() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         GlobalConfig config = GlobalConfigUtils.defaults();
         config.getDbConfig().setTablePrefix("ttt_");
@@ -302,7 +300,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testTableNamePrefix2() {
+    void shouldApplyGlobalPrefixWhenKeepGlobalPrefixIsTrue() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         GlobalConfig config = GlobalConfigUtils.defaults();
         config.getDbConfig().setTablePrefix("ttt_");
@@ -324,7 +322,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testTableAutoResultMap() {
+    void shouldStripBackticksFromAutoResultMapColumns() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(configuration, ""), AutoResultMapTable.class);
@@ -346,7 +344,7 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void testNewInstance() {
+    void shouldInstantiateEntityAndSetPrimaryKey() {
         TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelOne.class);
         ModelOne entity = tableInfo.newInstance();

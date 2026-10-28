@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.record;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,10 +12,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2023年9月14日
  */
+@Tag("integration")
 public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
 
     @Test
-    void testInsert() {
+    void shouldInsertRecord() {
         doTest(mapper -> {
             //TODO 无法使用自动填充与主键生成,不建议充当PO使用
             RecordEntity recordEntity = new RecordEntity(123L, "苗人凤", "13388888888");
@@ -23,7 +25,7 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
     }
 
     @Test
-    void testUpdate() {
+    void shouldUpdateRecord() {
         doTest(mapper -> {
             RecordEntity recordEntity = new RecordEntity(2L, "苗人凤2", null);
             assertThat(mapper.updateById(recordEntity)).isEqualTo(1);
@@ -34,7 +36,7 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
     }
 
     @Test
-    void testSelect() {
+    void shouldSelectRecordById() {
         doTest(mapper -> {
             RecordEntity recordEntity = mapper.selectById(3L);
             assertThat(recordEntity.name()).isEqualTo("demo3");
@@ -43,7 +45,7 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
     }
 
     @Test
-    void testDelete() {
+    void shouldDeleteRecord() {
         doTest(mapper -> assertThat(mapper.deleteById(new RecordEntity(1L, "-----", "1"))).isEqualTo(1));
     }
 

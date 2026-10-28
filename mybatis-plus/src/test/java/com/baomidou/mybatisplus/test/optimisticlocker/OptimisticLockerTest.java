@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -18,10 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
+@Tag("integration")
 public class OptimisticLockerTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldApplyOptimisticLockingOnUpdate() {
         doTestAutoCommit(m -> {
             Entity entity = new Entity().setId(1L).setName("老王");
             int updateById = m.updateById(entity);
@@ -53,7 +55,7 @@ public class OptimisticLockerTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testBatch() {
+    void shouldUpdateBatchWithOptimisticLock() {
         var entity1 = new Entity().setName("testBatch").setVersion(1);
         var entity2 = new Entity().setName("testBatch").setVersion(1);
         var entity3 = new Entity().setName("testBatch").setVersion(1);

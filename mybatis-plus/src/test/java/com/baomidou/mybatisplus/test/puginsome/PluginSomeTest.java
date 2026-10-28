@@ -10,6 +10,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -27,13 +28,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
+@Tag("integration")
 public class PluginSomeTest extends DbTestSupport<AMapper> {
 
     /** 每个钩子被调用的次数；父类构造里建的拦截器持有本实例，钩子执行时字段已初始化。 */
     private final Map<String, AtomicInteger> calls = new ConcurrentHashMap<>();
 
     @Test
-    void test() {
+    void shouldInvokeInterceptorHooksOnQueryAndUpdate() {
         doTest(m -> assertThat(m.list()).hasSize(2));
         // 一次查询：查询钩子各一次，一对多结果集要预编译三条语句
         assertThat(calls).containsOnlyKeys("willDoQuery", "beforeQuery", "beforePrepare");

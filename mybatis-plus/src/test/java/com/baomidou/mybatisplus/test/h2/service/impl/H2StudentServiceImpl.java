@@ -17,7 +17,7 @@ public class H2StudentServiceImpl extends ServiceImpl<H2StudentMapper, H2Student
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testTransactional() {
+    public void shouldRunTransactional() {
         new H2Student(null, "tx1", 2).insert();
         new H2Student(null, "tx2", 2).insert();
         new H2Student(null, "tx3", 2).insert();
@@ -26,7 +26,7 @@ public class H2StudentServiceImpl extends ServiceImpl<H2StudentMapper, H2Student
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSqlRunnerTransactional() {
+    public void shouldRunSqlRunnerTransactional() {
         SqlRunner.db().insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )", "sqlRunnerTx1", 2);
         SqlRunner.db().insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )", "sqlRunnerTx2", 2);
         throw new MybatisPlusException("测试普通插入事务回滚");

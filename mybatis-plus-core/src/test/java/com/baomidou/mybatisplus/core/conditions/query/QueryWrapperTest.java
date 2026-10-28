@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class QueryWrapperTest extends WrapperTestSupport {
 
     @Test
-    void testCacheSqlSegment() {
+    void shouldCacheSqlSegmentAcrossMutations() {
         QueryWrapper<Entity> ew = new QueryWrapper<Entity>().eq("xxx", 123)
                 .and(i -> i.eq("andx", 65444).le("ande", 66666)).ne("xxx", 222);
         logSqlWhere("xx", ew, "(xxx = ? AND (andx = ? AND ande <= ?) AND xxx <> ?)");
@@ -37,7 +37,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testQueryWrapper() {
+    void shouldBuildSqlWithOrNestedAndGroupBy() {
         logSqlWhere(
                 "去除第一个 or,以及自动拼接 and,以及手动拼接 or,以及去除最后的多个or",
                 new QueryWrapper<Entity>().or().ge("age", 3).or().ge("age", 3).ge("age", 3).or().or().or().or(),
@@ -88,7 +88,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testCompare() {
+    void shouldBuildSqlWithCompareOperators() {
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().allEq(getMap()).allEq((k, v) -> true, getMap())
                 .eq("id", 1).ne("id", 1).or().gt("id", 1).ge("id", 1).lt("id", 1).le("id", 1).or().between("id", 1, 2)
                 .notBetween("id", 1, 3).like("id", 1).notLike("id", 1).notLikeLeft("id", 3).notLikeRight("id", 4).or()
@@ -100,7 +100,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testFunc() {
+    void shouldBuildSqlWithFuncOperators() {
         Entity entity = new Entity();
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().isNull("nullColumn").or()
                 .isNotNull("notNullColumn").orderByAsc("id").orderByDesc("name", "name2").groupBy("id")
@@ -116,7 +116,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testJoin() {
+    void shouldBuildSqlWithApplyAndExistsConditions() {
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().last("limit 1").or()
                 .apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
                 .apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now()).or()
@@ -128,7 +128,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testNested() {
+    void shouldBuildSqlWithNestedAndOrNotConditions() {
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>()
                 .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2))).or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
                 .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2))).not(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
@@ -139,7 +139,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testPluralLambda() {
+    void shouldSupportMultipleLambdaConditionsOnSameWrapper() {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(Entity::getName, "sss");
@@ -149,13 +149,13 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testInEmptyColl() {
+    void shouldHandleInWithEmptyCollection() {
         QueryWrapper<Entity> queryWrapper = new QueryWrapper<Entity>().in("xxx", Collections.emptyList());
         logSqlWhere("测试 empty 的 coll", queryWrapper, "(xxx IN ())");
     }
 
     @Test
-    void testExistsValue() {
+    void shouldBuildExistsAndNotExistsConditions() {
         QueryWrapper<Entity> wrapper = new QueryWrapper<Entity>().eq("a", "b")
                 .exists("select 1 from xxx where id = {0} and name = {1}", 1, "Bob");
         logSqlWhere("testExistsValue", wrapper, "(a = ? AND EXISTS (select 1 from xxx where id = ? and name = ?))");
@@ -168,7 +168,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testCheckSqlInjection() {
+    void shouldDetectSqlInjectionInOrderBy() {
         QueryWrapper<Entity> qw = new QueryWrapper<Entity>().checkSqlInjection().eq("a", "b");
         assertThat(qw.getCustomSqlSegment()).isEqualTo("WHERE (a = #{ew.paramNameValuePairs.MPGENVAL1})");
 
@@ -177,7 +177,7 @@ class QueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testGroupBy() {
+    void shouldBuildGroupByFromVariousCollectionTypes() {
         assertThat(new QueryWrapper<Entity>().groupBy("id").getSqlSegment().trim()).isEqualTo("GROUP BY id");
         assertThat(new QueryWrapper<Entity>().groupBy(Arrays.asList("id", "name")).getSqlSegment().trim())
                 .isEqualTo("GROUP BY id,name");

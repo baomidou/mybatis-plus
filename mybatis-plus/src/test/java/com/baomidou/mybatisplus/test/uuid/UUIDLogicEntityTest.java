@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,10 +17,11 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+@Tag("integration")
 public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityMapper> {
 
     @Test
-    void test() {
+    void shouldCrudWithUuidPrimaryKeyAndLogicalDelete() {
         doTest(m -> {
             var uuidEntity = new UUIDLogicEntity();
             uuidEntity.setId(UUID.randomUUID());

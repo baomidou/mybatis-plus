@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.rewrite;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 public class RewriteTest extends DbTestSupport<EntityMapper> {
 
     @Test

@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class H2KeyWordsHandlerTest {
 
     @Test
-    void test() {
+    void shouldDetectKeywordsAndFormatColumnsWithCustomListForH2() {
         H2KeyWordsHandler keyWordsHandler = new H2KeyWordsHandler();
         assertThat(keyWordsHandler.isKeyWords("CHECK")).isTrue();
         assertThat(keyWordsHandler.isKeyWords("check")).isTrue();

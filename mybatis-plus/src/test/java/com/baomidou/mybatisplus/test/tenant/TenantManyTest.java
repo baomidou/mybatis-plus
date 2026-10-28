@@ -8,6 +8,7 @@ import lombok.Setter;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @see <a href="https://github.com/baomidou/mybatis-plus/issues/6899">Issue #6899</a>
  */
+@Tag("integration")
 public class TenantManyTest extends DbTestSupport<TenantManyTest.OrderMapper> {
 
     // ─── Entity classes ────────────────────────────────────────────────────────

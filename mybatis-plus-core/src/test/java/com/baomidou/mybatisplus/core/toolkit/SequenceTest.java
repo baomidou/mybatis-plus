@@ -21,13 +21,11 @@ class SequenceTest {
         Sequence sequence = new Sequence(null);
         long id = sequence.nextId();
         LocalDateTime now = LocalDateTime.now();
-        System.out.println(sequence.nextId() + "---" + now);
 
         long timestamp = Sequence.parseIdTimestamp(id);
         Instant instant = Instant.ofEpochMilli(timestamp);
         ZoneId zone = ZoneId.systemDefault();
         LocalDateTime time = LocalDateTime.ofInstant(instant, zone);
-        System.out.println(timestamp + "---" + time);
         assertThat(now).isAfter(time);
     }
 }

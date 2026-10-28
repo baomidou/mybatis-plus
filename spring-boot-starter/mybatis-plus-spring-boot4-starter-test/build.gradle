@@ -14,3 +14,12 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-cache"
     testImplementation "${lib.h2}"
 }
+
+// 引入共享测试源
+sourceSets {
+    test {
+        java {
+            srcDir "${project(':spring-boot-starter:mybatis-plus-boot-starter-test').projectDir}/src/test-shared/java"
+        }
+    }
+}

@@ -55,7 +55,7 @@ public class BaseGeneratorSample {
     protected static InjectionConfig.Builder injectionConfig() {
         // 测试自定义输出文件之前注入操作，该操作再执行生成代码前 debug 查看
         return new InjectionConfig.Builder().beforeOutputFile((tableInfo, objectMap) -> {
-            System.out.println("tableInfo: " + tableInfo.getEntityName() + " objectMap: " + objectMap.size());
+            // no-op callback
         });
     }
 }

@@ -31,7 +31,7 @@ class UpdateWrapperIncrDecrTest extends WrapperTestSupport {
     }
 
     @Test
-    void testIncrByAndDecrBy() {
+    void shouldGenerateIncrByAndDecrByForIntValues() {
         assertSqlSet(
                 new UpdateWrapper<User>().setIncrBy("role_id", 1).setDecrBy("username", 1),
                 "role_id=role_id + 1,username=username - 1");
@@ -42,7 +42,7 @@ class UpdateWrapperIncrDecrTest extends WrapperTestSupport {
     }
 
     @Test
-    void testIncrByAndDecrByBigDecimal() {
+    void shouldGenerateIncrByAndDecrByForBigDecimalValues() {
         assertSqlSet(
                 new LambdaUpdateWrapper<User>().setIncrBy(User::getRoleId, new BigDecimal("1"))
                         .setIncrBy(User::getRoleId, new BigDecimal(1))

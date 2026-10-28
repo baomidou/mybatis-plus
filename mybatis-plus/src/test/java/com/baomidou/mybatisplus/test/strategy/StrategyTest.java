@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.strategy;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -12,10 +13,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-01-27
  */
+@Tag("integration")
 public class StrategyTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldApplyFieldStrategyOnInsertAndUpdate() {
         long id = 1L;
         doTestAutoCommit(i -> {
             Entity entity = new Entity();

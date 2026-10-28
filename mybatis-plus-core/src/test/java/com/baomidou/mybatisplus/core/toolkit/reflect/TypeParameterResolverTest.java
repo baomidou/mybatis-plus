@@ -38,7 +38,7 @@ class TypeParameterResolverTest {
     }
 
     @Test
-    void test() {
+    void shouldResolveClassIndexedParameterThroughTypeHierarchy() {
         assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper1.class, Mapper.class, 0)).isNull();
         assertThat(TypeParameterResolver.resolveClassIndexedParameter(Mapper2.class, Mapper.class, 0))
                 .isSameAs(MyEntity.class);

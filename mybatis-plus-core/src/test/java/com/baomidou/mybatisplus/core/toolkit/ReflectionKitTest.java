@@ -97,13 +97,13 @@ class ReflectionKitTest {
     }
 
     @Test
-    void testGetFieldList() {
+    void shouldGetAllFieldsIncludingInherited() {
         List<Field> fieldList = ReflectionKit.getFieldList(C.class);
         assertThat(fieldList.size()).isEqualTo(5);
     }
 
     @Test
-    void testGetFieldMap() throws NoSuchFieldException {
+    void shouldGetFieldMapWithInheritedFields() throws NoSuchFieldException {
         Map<String, Field> fieldMap = ReflectionKit.getFieldMap(C.class);
         assertThat(fieldMap.size()).isEqualTo(5);
         assertThat(fieldMap.get("sex")).isEqualTo(C.class.getDeclaredField("sex"));
@@ -112,7 +112,7 @@ class ReflectionKitTest {
     }
 
     @Test
-    void testGetFieldValue() {
+    void shouldGetFieldValueFromVariousEntityStyles() {
         C c = new C();
         c.setSex("女");
         c.setName("妹纸");

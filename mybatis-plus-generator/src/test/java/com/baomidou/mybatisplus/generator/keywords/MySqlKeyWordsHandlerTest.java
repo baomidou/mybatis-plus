@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MySqlKeyWordsHandlerTest {
 
     @Test
-    void test() {
+    void shouldDetectKeywordsAndFormatColumnsWithCustomListForMysql() {
         MySqlKeyWordsHandler keyWordsHandler = new MySqlKeyWordsHandler();
         assertThat(keyWordsHandler.isKeyWords("FILE")).isTrue();
         assertThat(keyWordsHandler.isKeyWords("file")).isTrue();

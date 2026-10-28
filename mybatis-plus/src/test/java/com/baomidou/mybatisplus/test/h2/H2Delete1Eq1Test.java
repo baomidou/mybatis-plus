@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -27,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2018-06-05
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
@@ -44,10 +44,23 @@ class H2Delete1Eq1Test extends H2TestSupport {
     private static final String OWN = "del1eq1-";
 
     /**
+     * delete() 会把 h2user 全表打上删除标记、把 h2student 整表删空，而这两张表是整个套件共用的内存表。 所以收尾重放两个种子脚本（脚本第一条就是
+     * delete，顺带把删除标记也复位），留给下一个类的是一张干净的标准种子表。
+     */
+    @AfterEach
+    void tearDown() {
+        ConnectionCallback<Void> restore = connection -> {
+            new ResourceDatabasePopulator(new ClassPathResource("h2/user.insert.sql"),
+                    new ClassPathResource("h2/student.insert.sql")).populate(connection);
+            return null;
+        };
+        jdbcTemplate.execute(restore);
+    }
+
+    /**
      * 特征化条件查询：转义列 {@code `desc`} 能排序，实体非空字段会进 WHERE，实体条件与同名 eq 是 AND 叠加。
      */
     @Test
-    @Order(1)
     void crudTest() {
         for (int i = 0; i < 10; i++) {
             assertThat(logicDeleteMapper.insert(new H2User(OWN + i, AgeEnum.ONE).setDesc(String.valueOf(i))))
@@ -93,13 +106,14 @@ class H2Delete1Eq1Test extends H2TestSupport {
     }
 
     @Test
-    @Order(Integer.MAX_VALUE)
     void delete() {
+        for (int i = 0; i < 3; i++) {
+            logicDeleteMapper.insert(new H2User(OWN + "d" + i, AgeEnum.ONE));
+        }
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
         assertThat(logicDeleteMapper.selectCount(new QueryWrapper<>())).isEqualTo(0);
         List<H2User> userList = queryByName(null);
-        System.out.println(userList.size());
         assertThat(userList.size()).isNotEqualTo(0);
     }
 }

@@ -1009,7 +1009,7 @@ class TenantLineInnerInterceptorTest {
 
     @ParameterizedTest
     @EnumSource(ExpressionAppendMode.class)
-    void testDuplicateKeyUpdate(ExpressionAppendMode appendMode) {
+    void shouldHandleDuplicateKeyUpdate(ExpressionAppendMode appendMode) {
         assertSql(
                 "INSERT INTO entity (name,age) VALUES ('秋秋',18),('秋秋','22') ON DUPLICATE KEY UPDATE age=18",
                 appendMode);

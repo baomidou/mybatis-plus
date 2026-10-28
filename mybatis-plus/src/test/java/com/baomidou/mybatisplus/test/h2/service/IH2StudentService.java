@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.test.h2.entity.H2Student;
  */
 public interface IH2StudentService extends IService<H2Student> {
 
-    void testTransactional();
+    void shouldRunTransactional();
 
-    void testSqlRunnerTransactional();
+    void shouldRunSqlRunnerTransactional();
 }

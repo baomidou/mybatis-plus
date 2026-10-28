@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Documented;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class AnnotationUtilsTest {
 
     @Documented
@@ -85,14 +87,14 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test() throws Exception {
+    void shouldReturnNullWhenAnnotationNotPresentOnField() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("id"));
         assertThat(tableField).isNull();
     }
 
     @Test
-    void test1() throws Exception {
+    void shouldFindDirectTableFieldAnnotation() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name"));
         assertThat(tableField).isNotNull();
@@ -100,7 +102,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test2() throws Exception {
+    void shouldFindTableFieldViaMetaAnnotationWithExistFalse() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name1"));
         assertThat(tableField).isNotNull();
@@ -108,7 +110,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test3() throws Exception {
+    void shouldFindTableFieldViaTableField3MetaAnnotation() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name2"));
         assertThat(tableField).isNotNull();
@@ -116,7 +118,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test4() throws Exception {
+    void shouldFindTableFieldViaDeepMetaAnnotationChain() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name3"));
         assertThat(tableField).isNotNull();
@@ -124,7 +126,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test5() throws Exception {
+    void shouldFindFirstMetaAnnotationWhenFieldHasMultipleSources() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name4"));
         assertThat(tableField).isNotNull();
@@ -132,7 +134,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test6() throws Exception {
+    void shouldResolveAnnotationWithReversedMetaAnnotationOrder() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("name5"));
         assertThat(tableField).isNotNull();
@@ -140,7 +142,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test7() throws Exception {
+    void shouldFindBothTableFieldAndTableLogicOnSameField() throws Exception {
         TableField tableField = AnnotationUtils
                 .findFirstAnnotation(TableField.class, Demo.class.getDeclaredField("deleted"));
         assertThat(tableField).isNotNull();
@@ -151,7 +153,7 @@ public class AnnotationUtilsTest {
     }
 
     @Test
-    void test8() {
+    void shouldFindMetaTableNameAnnotationOnClass() {
         TableName tableName = AnnotationUtils.findFirstAnnotation(TableName.class, Demo.class);
         assertThat(tableName).isNotNull();
         assertThat(tableName.schema()).isEqualTo("test");

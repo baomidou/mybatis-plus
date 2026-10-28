@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.entity.Demo;
 import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.mapper.DemoRepositoryMapper;
 import com.baomidou.mybatisplus.test.h2.issues.repositoryscan.service.IDemoRepositoryService;
 import org.apache.ibatis.jdbc.SqlRunner;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AppConfigWithMapperScan.class})
+@Tag("integration")
 public class RepositoryMapperScanTest {
 
     @Autowired
@@ -30,7 +32,7 @@ public class RepositoryMapperScanTest {
     private DataSource dataSource;
 
     @Test
-    void test() throws SQLException {
+    void shouldScanRepositoryWithMapperScan() throws SQLException {
         new SqlRunner(dataSource.getConnection()).run("""
                  CREATE TABLE IF NOT EXISTS demo (
                       id BIGINT NOT NULL AUTO_INCREMENT,

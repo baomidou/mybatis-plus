@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.test.h2.issues.aop.entity.Demo;
 import com.baomidou.mybatisplus.test.h2.issues.aop.service.IDemoService;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.jdbc.SqlRunner;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.aop.support.AopUtils;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AppConfig.class, AopConfig1.class})
+@Tag("integration")
 public class SingleAopTest {
 
     @Autowired
@@ -31,7 +33,7 @@ public class SingleAopTest {
     private DataSource dataSource;
 
     @Test
-    void test() throws SQLException {
+    void shouldBatchWithSingleAopProxy() throws SQLException {
         new SqlRunner(dataSource.getConnection()).run("""
                  CREATE TABLE IF NOT EXISTS demo (
                       id BIGINT NOT NULL AUTO_INCREMENT,

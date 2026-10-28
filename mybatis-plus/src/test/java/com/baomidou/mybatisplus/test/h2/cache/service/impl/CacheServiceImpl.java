@@ -14,7 +14,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     @Override
     @Transactional
-    public long testBatchTransactionalClear1() {
+    public long batchTransactionalClear1() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         getById(model.getId());
@@ -24,7 +24,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     @Override
     @Transactional
-    public long testBatchTransactionalClear2() {
+    public long batchTransactionalClear2() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         getById(model.getId());
@@ -36,7 +36,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     @Override
     @Transactional
-    public long testBatchTransactionalClear3() {
+    public long batchTransactionalClear3() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));
@@ -47,7 +47,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
     }
 
     @Override
-    public long testBatchTransactionalClear4() {
+    public long batchTransactionalClear4() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));
@@ -55,7 +55,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
     }
 
     @Override
-    public long testBatchTransactionalClear5() {
+    public long batchTransactionalClear5() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         removeBatchByIds(Collections.singletonList(model.getId()));
@@ -65,7 +65,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     @Override
     @Transactional
-    public long testBatchTransactionalClear6() {
+    public long batchTransactionalClear6() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         removeBatchByIds(Collections.singletonList(model.getId()));
@@ -74,7 +74,7 @@ public class CacheServiceImpl extends ServiceImpl<CacheMapper, CacheModel> imple
 
     @Override
     @Transactional
-    public long testBatchTransactionalClear7() {
+    public long batchTransactionalClear7() {
         CacheModel model = new CacheModel("靓仔");
         save(model);
         updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));

@@ -36,7 +36,7 @@ class GeneratePomTest {
     }
 
     @Test
-    void test() throws IOException {
+    void shouldVerifyBoot3StarterPomDependencies() throws IOException {
         try (InputStream inputStream = new FileInputStream("build/publications/maven/pom-default.xml")) {
             JerryParser jerryParser = Jerry.create(new LagartoDOMBuilder().enableXmlMode());
             Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));

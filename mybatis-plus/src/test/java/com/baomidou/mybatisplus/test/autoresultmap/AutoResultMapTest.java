@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.autoresultmap;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,10 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 public class AutoResultMapTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldAutoMapResultWithTypeHandler() {
         doTestAutoCommit(m -> m.insert(new Entity().setName("老王").setGg(new Entity.Gg("老王"))));
         doTest(m -> {
             Entity entity = m.selectOne(null);

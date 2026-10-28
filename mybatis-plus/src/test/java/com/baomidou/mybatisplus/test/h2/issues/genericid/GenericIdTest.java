@@ -4,10 +4,8 @@ import com.baomidou.mybatisplus.test.h2.issues.genericid.entity.LongEntity;
 import com.baomidou.mybatisplus.test.h2.issues.genericid.entity.StringEntity;
 import com.baomidou.mybatisplus.test.h2.issues.genericid.mapper.LongEntityMapper;
 import com.baomidou.mybatisplus.test.h2.issues.genericid.mapper.StringEntityMapper;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiuqiu
  * @date 2019-12-20
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:issues/genericid/spring.xml"})
 @Tag("integration")
@@ -38,7 +35,7 @@ class GenericIdTest {
      * 特征化泛型主键:同一个父类分别以 Long 和 String 做主键,MP 要按主键字段的类型生成并回填 id。
      */
     @Test
-    void test() {
+    void shouldResolveGenericIdForLongAndStringEntities() {
         LongEntity longEntity = new LongEntity("zzGenericLong");
         assertThat(longEntityMapper.insert(longEntity)).isEqualTo(1);
         // 表里的 id 列没有自增,能插进去说明主键是 MP 生成的

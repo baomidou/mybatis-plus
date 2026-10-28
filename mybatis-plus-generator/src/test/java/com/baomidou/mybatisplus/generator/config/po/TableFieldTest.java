@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/10/8.
  */
+@Tag("unit")
 public class TableFieldTest {
 
     @Test
@@ -247,7 +249,7 @@ public class TableFieldTest {
     }
 
     @Test
-    void testIdConvert() {
+    void shouldSetConvertFlagWhenPropertyNameDiffersFromColumnName() {
         ConfigBuilder configBuilder;
         configBuilder = new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig,
                 GeneratorBuilder.strategyConfig(), null, GeneratorBuilder.globalConfig(), null);

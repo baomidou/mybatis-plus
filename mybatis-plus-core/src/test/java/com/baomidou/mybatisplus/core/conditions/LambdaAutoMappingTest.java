@@ -24,7 +24,7 @@ class LambdaAutoMappingTest {
     }
 
     @Test
-    void testDefaultAndExplicitMapping() {
+    void shouldToggleAutoMappingOnLambdaQueryAndUpdateWrappers() {
         assertConditions(Wrappers.<Entity>lambdaQuery(), false);
         assertConditions(Wrappers.<Entity>lambdaUpdate(), false);
         assertConditions(Wrappers.<Entity>lambdaQuery().enableAutoMapping(), true);
@@ -43,7 +43,7 @@ class LambdaAutoMappingTest {
     }
 
     @Test
-    void testNestedMapping() {
+    void shouldApplyAutoMappingInNestedLambdaConditions() {
         assertNested(Wrappers.<Entity>lambdaQuery().enableAutoMapping(), true);
         assertNested(Wrappers.<Entity>lambdaUpdate().enableAutoMapping(), true);
         assertNested(Wrappers.<Entity>lambdaQuery(), false);

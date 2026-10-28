@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Nadeem Mohammad
  * @since 2019-04-22
  */
+@Tag("unit")
 public class TableNameParserTest {
 
     private static final String SQL_SELECT_SUB_QUERY = "SELECT /*+ materialize*/ strategy_id" + "FROM"
@@ -98,174 +100,174 @@ public class TableNameParserTest {
             + "   WHERE procVer.variable_name <> 'TierResultSSName';";
 
     @Test
-    public void testSelectOneTable() {
+    public void shouldParseSingleTableFromSelect() {
         String sql = "SELECT name, age FROM table1 group by xyx";
         Assertions.assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
     }
 
     @Test
-    public void testSelectTwoTables() {
+    public void shouldParseTwoTablesFromSelect() {
         String sql = "SELECT name, age FROM table1,table2";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testSelectThreeTables() {
+    public void shouldParseThreeTablesFromSelect() {
         String sql = "SELECT name, age FROM table1,table2,table3 group by xyx";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2", "table3"));
     }
 
     @Test
-    public void testSelectOneTableWithAliase() {
+    public void shouldParseSelectWithTableAlias() {
         String sql = "SELECT name, age FROM table1 t1 whatever group by xyx";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
     }
 
     @Test
-    public void testSelectTwoTablesWithAliase() {
+    public void shouldParseTwoTablesWithAliases() {
         String sql = "SELECT name, age FROM table1 t1,table2 t2 whatever group by xyx";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testSelectTwoTablesWithAliaseAndNoCondition() {
+    public void shouldParseTwoTablesWithAliasesAndNoCondition() {
         String sql = "select xx from table1 a,table2 b";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testSelectThreeTablesWithAliase() {
+    public void shouldParseThreeTablesWithAliases() {
         String sql = "SELECT name, age FROM table1 t1,table2 t2, table3 t3 whatever group by xyx";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2", "table3"));
     }
 
     @Test
-    public void testSelectWithSubQuery() {
+    public void shouldParseTablesFromSubQuery() {
         assertThat(new TableNameParser(SQL_SELECT_SUB_QUERY).tables()).isEqualTo(asSet("strategy", "doc_sect_ver"));
     }
 
     @Test
-    public void testSelectWithOneJoin() {
+    public void shouldParseTablesFromJoin() {
         String sql = "SELECT coluname(s) FROM table1 join table2 ON table1.coluname=table2.coluname";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testSelectOneJoinWithAliase() {
+    public void shouldParseTablesFromJoinWithAliases() {
         String sql = "SELECT coluname(s) FROM table1 t1 join table2 t2 ON t1.coluname=t2.coluname";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testSelectOneLeftJoin() {
+    public void shouldParseTablesFromLeftJoin() {
         String sql = "SELECT coluname(s) FROM table1 left outer join table2 ON table1.coluname=table2.coluname";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testShouldIgnoreDual() {
+    public void shouldIgnoreDualTable() {
         String sql = "select * from dual";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testSelectTwoJoinWithAliase() {
+    public void shouldParseMultipleJoinWithAliases() {
         assertThat(new TableNameParser(SQL_SELECT_THREE_JOIN_WITH_ALIASE).tables())
                 .isEqualTo(asSet("colleges", "students", "results"));
     }
 
     @Test
-    public void testInsertWithValues() {
+    public void shouldParseTableFromInsertWithValues() {
         String sql = "INSERT INTO table_name VALUES (value1,value2,value3,...)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table_name"));
     }
 
     @Test
-    public void testInsertComplex() {
+    public void shouldParseTablesFromComplexInsert() {
         assertThat(new TableNameParser(SQL_COMPLEX_ONE).tables()).isEqualTo(
                 asSet("static_product", "DR_BD_PRODUCT", "DR_BUNDLE", "map_edge_ver", "ITEM", "DR_BUNDLE_DISCOUNT"));
     }
 
     @Test
-    public void testInsertWithSelect() {
+    public void shouldParseTablesFromInsertWithSelect() {
         String sql = "INSERT INTO Customers (CustomerName, Country) SELECT SupplierName, Country FROM Suppliers;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("Customers", "Suppliers"));
     }
 
     @Test
-    public void testDelete() {
+    public void shouldParseTableFromDelete() {
         String sql = "DELETE FROM validation_task WHERE task_name = 'ValidateSoldToCustId' AND conf_id IN (SELECT conf_id FROM validation_conf WHERE conf_name IN ('SaleValidation'))";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("validation_task", "validation_conf"));
     }
 
     @Test
-    public void testOracleSpecialDelete() {
+    public void shouldParseTableFromOracleSpecialDelete() {
         String sql = "delete table1 where column_name=xyz";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
     }
 
     @Test
-    public void testAlter() {
+    public void shouldParseTableFromAlter() {
         String sql = "ALTER TABLE Persons ADD UNIQUE (P_Id)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("Persons"));
     }
 
     @Test
-    public void testAlter2() {
+    public void shouldParseTableFromAlterModify() {
         String sql = "ALTER TABLE table_name MODIFY coluname datatype";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table_name"));
     }
 
     @Test
-    public void testDrop() {
+    public void shouldParseTableFromDrop() {
         String sql = "DROP table tname;\n\r";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("tname"));
     }
 
     @Test
-    public void testDropFunction() {
+    public void shouldReturnEmptyForDropFunction() {
         String sql = "DROP FUNCTION functionName;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testDropProcedure() {
+    public void shouldReturnEmptyForDropProcedure() {
         String sql = "drop procedure procedureName";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testDropView() {
+    public void shouldReturnEmptyForDropView() {
         String sql = "DROP VIEW viewName";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testDropIndex() {
+    public void shouldReturnEmptyForDropIndex() {
         String sql = "DROP INDEX indexName";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testUnionAll() {
+    public void shouldParseTablesFromUnionAll() {
         String sql = "SELECT coluname(s) FROM table1 UNION ALL SELECT coluname(s) FROM table2;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testMerge() {
+    public void shouldParseTablesFromMerge() {
         String sql = "MERGE INTO employees e  USING hr_records h  ON (e.id = h.emp_id) WHEN MATCHED THEN  UPDATE SET e.address = h.address  WHEN NOT MATCHED THEN    INSERT (id, address) VALUES (h.emp_id, h.address);";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("employees", "hr_records"));
     }
 
     @Test
-    public void testMergeUsingQuery() {
+    public void shouldParseTablesFromMergeUsingQuery() {
         String sql = "MERGE INTO employees e USING (SELECT * FROM hr_records WHERE start_date > ADD_MONTHS(SYSDATE, -1)) h  ON (e.id = h.emp_id)  WHEN MATCHED THEN  UPDATE SET e.address = h.address WHEN NOT MATCHED THEN INSERT (id, address) VALUES (h.emp_id, h.address)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("employees", "hr_records"));
     }
 
     @Test
-    public void testMergeComplexQuery() {
+    public void shouldParseTablesFromComplexMerge() {
         assertThat(new TableNameParser(SQL_MERGE_COMPLEX).tables()).isEqualTo(
                 asSet(
                         "non_strategy_comps", "cf_procedure", "struct_doc_Sect_ver", "cf_period", "cf_component",
@@ -273,139 +275,139 @@ public class TableNameParserTest {
     }
 
     @Test
-    public void testMergeComplexQuery2() {
+    public void shouldParseTablesFromSecondComplexMerge() {
         assertThat(new TableNameParser(SQL_MERGE_COMPLEX_TWO).tables())
                 .isEqualTo(asSet("cf_procedure_ver", "cf_procedure"));
     }
 
     @Test
-    public void testCreateTable() {
+    public void shouldParseTableFromCreateTable() {
         String sql = "CREATE TABLE Persons(PersonID int,LastName varchar(255),FirstName varchar(255),Address varchar(255),City varchar(255));";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("Persons"));
     }
 
     @Test
-    public void testCreateGlobalTable() {
+    public void shouldParseTableFromCreateGlobalTemporaryTable() {
         String sql = "CREATE GLOBAL TEMPORARY TABLE excl_cust (gen_name VARCHAR2(100),run_date TIMESTAMP(3), item_root_uuid  VARCHAR2(22), owner_member_id  NUMBER(20)) ON COMMIT DELETE ROWS";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("excl_cust"));
     }
 
     @Test
-    public void testCreateIndex() {
+    public void shouldParseTableFromCreateIndex() {
         String sql = "CREATE INDEX temp_name_idx ON table1(name) NOLOGGING PARALLEL (DEGREE 8);";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
     }
 
     @Test
-    public void testCreateView() {
+    public void shouldParseTableFromCreateView() {
         String sql = "CREATE VIEW dept AS SELECT * FROM dept;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("dept"));
     }
 
     @Test
-    public void testCreateView2() {
+    public void shouldParseTablesFromCreateViewWithJoin() {
         String sql = "CREATE VIEW division1_staff AS SELECT ename, empno, job, dname FROM emp, dept WHERE emp.deptno IN (10, 30) AND emp.deptno = dept.deptno;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("dept", "emp"));
     }
 
     @Test
-    public void testCreateType() {
+    public void shouldReturnEmptyForCreateType() {
         String sql = "CREATE OR REPLACE TYPE TYPE_NAME IS TABLE OF VARCHAR2(100)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet());
     }
 
     @Test
-    public void testUpdateTable() {
+    public void shouldParseTableFromUpdate() {
         String sql = "UPDATE tableName SET column1 = expression1, column2 = expression2";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("tableName"));
     }
 
     @Test
-    public void testUpdateTableSubQuery() {
+    public void shouldParseTablesFromUpdateWithSubQuery() {
         String sql = "UPDATE table1 SET table1.value = (SELECT table2.CODE FROM table2 WHERE table1.value = table2.DESC) WHERE table1.UPDATETYPE='blah' AND EXISTS (SELECT table2.CODE  FROM table2    WHERE table1.value = table2.DESC);";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testUpdateTableSubQuery2() {
+    public void shouldParseTablesFromUpdateWithInlineSubQuery() {
         String sql = "UPDATE (SELECT table1.value as OLD, table2.CODE as NEW FROM table1 INNER JOIN table2 ON table1.value = table2.DESC  WHERE table1.UPDATETYPE='blah' ) t SET t.OLD = t.NEW";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));
     }
 
     @Test
-    public void testUpdateTableSubQueryWithOracleHint() {
+    public void shouldParseTableFromUpdateWithOracleHint() {
         String sql = "update /*+ PARALLEL OPT_PARAM('parallel_min_percent','0') */ eligible ec set ec.END_DATE = ec.END_DATE + INTERVAL '0 0:0:0.999' DAY TO SECOND";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("eligible"));
     }
 
     @Test
-    public void testTruncateTable() {
+    public void shouldParseTableFromTruncate() {
         String sql = "truncate table eligible_item";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("eligible_item"));
     }
 
     @Test
-    public void testSqlWithComment() {
+    public void shouldParseTableIgnoringTrailingComment() {
         String sql = "select * from foo -- this is a comment";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo"));
     }
 
     @Test
-    public void testSqlWithCommentContainingKeyword() {
+    public void shouldParseTableIgnoringCommentContainingKeyword() {
         String sql = "select * from foo -- what happens if I say update in a comment";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo"));
     }
 
     @Test
-    public void testSqlWithCommentEndingWithKeyword() {
+    public void shouldParseTableIgnoringCommentEndingWithKeyword() {
         String sql = "select * from foo -- what happens if I end a comment with an update";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo"));
     }
 
     @Test
-    public void testSqlWithCommentInTheMiddle() {
+    public void shouldParseTableWithCommentInMiddle() {
         String sql = "select * -- I like stars \n from foo";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo"));
     }
 
     @Test
-    public void testSqlWithCommentInTheMiddleAndEnd() {
+    public void shouldParseTableWithCommentInMiddleAndEnd() {
         String sql = "select * -- I like stars \n from foo -- comment ending with update";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo"));
     }
 
     @Test
-    public void testSqlWithMultipleCommentsInTheMiddle() {
+    public void shouldParseTableWithMultipleInlineComments() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n join bar b -- I also like bar \n on f.id = b.id";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
 
     @Test
-    public void testSqlWithMultipleCommentsAndNewlines() {
+    public void shouldParseTableWithMultipleCommentsAndBlankLines() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n\n join bar b -- I also like bar \n on f.id = b.id";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
 
     @Test
-    public void testSqlWithMultipleCommentsInTheMiddleAndEnd() {
+    public void shouldParseTableWithMultipleCommentsEndingWithKeyword() {
         String sql = "select * -- I like stars \n from foo f -- I like foo \n join bar b -- I also like bar \n on f.id = b.id -- comment ending with update";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("foo", "bar"));
     }
 
     @Test
-    void testSelectForUpdate() {
+    void shouldParseTableFromSelectForUpdate() {
         //TODO 暂时解决不能使用的问题,当碰到for update nowait这样的,后面的 nowait 会被当做成表但也不是很影响苗老板的动态表过滤.
         assertThat(new TableNameParser("select * from mp where id = 1 for update").tables()).isEqualTo(asSet("mp"));
     }
 
     @Test
-    public void testOnDuplicateKeyUpdate() {
+    public void shouldParseTableFromInsertOnDuplicateKeyUpdate() {
         String sql = "INSERT INTO cf_procedure (_id,password) VALUES ('1','password') ON DUPLICATE KEY UPDATE id = 'UpId', password = 'upPassword';";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("cf_procedure"));
     }
 
     @Test
-    public void testUpdateIgnore() {
+    public void shouldParseTableFromUpdateIgnore() {
         String sql = "update ignore student set name = 'abc' where id = 4";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("student"));
 
@@ -414,13 +416,13 @@ public class TableNameParserTest {
     }
 
     @Test
-    public void testInsertIgnore() {
+    public void shouldParseTableFromInsertIgnore() {
         String sql = "INSERT IGNORE INTO student (userid,username) VALUES (2,'swan'),(4,'bear') ;";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("student"));
     }
 
     @Test
-    void testCreateTableIfNotExists() {
+    void shouldParseTableFromCreateTableIfNotExists() {
         var sql = """
                 CREATE TABLE IF NOT EXISTS `user_info` (
                     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -433,7 +435,7 @@ public class TableNameParserTest {
     }
 
     @Test
-    void testCreateUniqueIndex() {
+    void shouldParseTableFromCreateUniqueIndex() {
         var sql = "CREATE UNIQUE INDEX index_name ON table1 (a, b)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
         sql = "ALTER TABLE table1 ADD UNIQUE INDEX `a`(`a`)";
@@ -441,7 +443,7 @@ public class TableNameParserTest {
     }
 
     @Test
-    void testCreateFullTextIndex() {
+    void shouldParseTableFromCreateFullTextIndex() {
         var sql = "CREATE FULLTEXT INDEX index_name ON table1 (a, b)";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1"));
         sql = "ALTER TABLE table1 ADD FULLTEXT INDEX `a`(`a`)";

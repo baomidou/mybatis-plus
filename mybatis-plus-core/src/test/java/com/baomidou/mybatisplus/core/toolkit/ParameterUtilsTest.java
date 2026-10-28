@@ -75,7 +75,7 @@ class ParameterUtilsTest {
     }
 
     @Test
-    void testFindPage() {
+    void shouldFindPageFromVariousParameterTypes() {
         assertThat(ParameterUtils.findPage(null)).isEmpty();
         MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
         param.put(Constants.ENTITY, null);

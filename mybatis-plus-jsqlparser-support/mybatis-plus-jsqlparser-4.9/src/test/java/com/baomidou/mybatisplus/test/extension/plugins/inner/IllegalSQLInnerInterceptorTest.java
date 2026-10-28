@@ -53,7 +53,7 @@ class IllegalSQLInnerInterceptorTest {
     }
 
     @Test
-    void test() {
+    void shouldRejectIllegalSqlAndAcceptValidSql() {
         assertThatCode(
                 () -> interceptor.parserSingle("SELECT COUNT(*) AS total FROM t_user WHERE (client_id = ?)", null))
                 .doesNotThrowAnyException();
@@ -238,7 +238,7 @@ class IllegalSQLInnerInterceptorTest {
                 .isInstanceOf(MybatisPlusException.class);
     }
     @Test
-    void testCount() {
+    void shouldCountIllegalSqlStatements() {
         assertThatCode(
                 () -> interceptor.parserSingle(
                         "select count(*) from T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))
@@ -265,7 +265,7 @@ class IllegalSQLInnerInterceptorTest {
     }
 
     @Test
-    void testCatalogAndSchemaName() {
+    void shouldValidateCatalogAndSchemaName() {
         assertThatCode(
                 () -> interceptor.parserSingle(
                         "select count(*) from TEST.PUBLIC.T_DEMO where a = 1 and `b` = 2", dataSource.getConnection()))

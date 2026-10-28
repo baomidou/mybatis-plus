@@ -29,7 +29,7 @@ class OgnlTest {
      * @see org.apache.ibatis.ognl.MapPropertyAccessor#getProperty
      */
     @Test
-    void test() {
+    void shouldEvaluateOgnlExpressionsOnMapAndBean() {
         Map<String, Object> propertiesMap = new HashMap<>();
         propertiesMap.put("color", "yellow");
         propertiesMap.put("size", "xxxL");

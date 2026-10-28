@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SelectorTest {
 
     @Test
-    void test() {
+    void shouldResolveBranchOrFallback() {
         assertThat(asString(1)).isEqualTo("1");
         assertThat(asString(4)).isEqualTo("123");
     }

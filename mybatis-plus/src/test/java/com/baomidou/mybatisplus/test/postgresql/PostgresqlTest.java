@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.postgresql;
 import com.baomidou.mybatisplus.test.postgresql.entity.Pgtable;
 import com.baomidou.mybatisplus.test.postgresql.mapper.PgtableMappper;
 import com.baomidou.mybatisplus.test.postgresql.service.IPgtableService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:postgresql/spring-test-postgresql.xml"})
+@Tag("external-db")
 public class PostgresqlTest {
 
     @Autowired
@@ -23,10 +25,9 @@ public class PostgresqlTest {
     private IPgtableService pgtableService;
 
     @Test
-    void test() {
+    void shouldInsertAndQueryWithPostgresql() {
         Pgtable pgtable = Pgtable.builder().compName("test").age(10).build();
         assertThat(mapper.insert(pgtable) > 0).isTrue();
-        System.out.println(pgtable.getId());
 
         List<Pgtable> pgtableList = mapper.selectList(null);
         assertThat(pgtableList).isNotNull();
@@ -34,9 +35,9 @@ public class PostgresqlTest {
     }
 
     @Test
-    void testTask() throws InterruptedException {
+    void shouldExecuteServiceTask() throws InterruptedException {
         // 测试线程
-        pgtableService.testTask();
+        pgtableService.shouldRunTask();
         // 主线程休眠
         Thread.sleep(10000);
     }

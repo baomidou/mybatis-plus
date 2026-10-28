@@ -1,13 +1,15 @@
 package com.baomidou.mybatisplus.generator.index;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 public class MapperMethodHandlerTest {
 
     @Test
-    void testIsPrimaryKey() {
+    void shouldRecognizePrimaryKeyNames() {
         var method = new DefaultGenerateMapperMethodHandler();
         assertThat(method.isPrimaryKey("PRIMARY")).isTrue();
         assertThat(method.isPrimaryKey("primary")).isTrue();

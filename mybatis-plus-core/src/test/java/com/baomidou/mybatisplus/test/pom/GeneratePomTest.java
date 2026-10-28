@@ -35,7 +35,7 @@ class GeneratePomTest {
     }
 
     @Test
-    void test() throws IOException {
+    void shouldGeneratePomWithCorrectCompileDependencies() throws IOException {
         try (InputStream inputStream = new FileInputStream("build/publications/maven/pom-default.xml");) {
             JerryParser jerryParser = Jerry.create(new LagartoDOMBuilder().enableXmlMode());
             Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
@@ -48,14 +48,14 @@ class GeneratePomTest {
                                 Boolean.parseBoolean($this.s("optional").text())));
             });
             Dependency annotation = dependenciesMap.get("mybatis-plus-annotation");
-            assertThat(annotation.getScope()).isEqualTo("compile");
-            assertThat(annotation.isOptional()).isFalse();
+            assertThat(annotation.getScope()).as("mybatis-plus-annotation 必须是 compile 作用域").isEqualTo("compile");
+            assertThat(annotation.isOptional()).as("mybatis-plus-annotation 不能是 optional").isFalse();
             Dependency mybatis = dependenciesMap.get("mybatis");
-            assertThat(mybatis.getScope()).isEqualTo("compile");
-            assertThat(mybatis.isOptional()).isFalse();
+            assertThat(mybatis.getScope()).as("mybatis 必须是 compile 作用域").isEqualTo("compile");
+            assertThat(mybatis.isOptional()).as("mybatis 不能是 optional").isFalse();
             Dependency cglib = dependenciesMap.get("cglib");
-            assertThat(cglib.getScope()).isEqualTo("compile");
-            assertThat(cglib.isOptional()).isTrue();
+            assertThat(cglib.getScope()).as("cglib 必须是 compile 作用域").isEqualTo("compile");
+            assertThat(cglib.isOptional()).as("cglib 必须是 optional(仅需要代理时引入)").isTrue();
         }
     }
 

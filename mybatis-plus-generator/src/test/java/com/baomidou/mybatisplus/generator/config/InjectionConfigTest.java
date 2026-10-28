@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author lanjerry
  * @since 2021-09-06
  */
+@Tag("unit")
 public class InjectionConfigTest {
 
     @Test

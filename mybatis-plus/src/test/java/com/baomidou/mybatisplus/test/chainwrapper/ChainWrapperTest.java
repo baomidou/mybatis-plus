@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.chainwrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.exceptions.TooManyResultsException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,13 +18,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 public class ChainWrapperTest extends DbTestSupport<EntityMapper> {
 
     /**
      * 链式包装：func 的条件为 false 时既不 npe 也不留参数，groupBy 传单个值和传集合拼出的片段一致。
      */
     @Test
-    void test() {
+    void shouldBuildChainQueryWithConditionalFunc() {
         final String id = "id";
         Entity entity = new Entity();
         doTest(i -> {

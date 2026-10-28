@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.generator.config.converts;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
@@ -11,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author lanjerry 2020/10/23.
  */
+@Tag("unit")
 public class SqlServerTypeConvertTest {
 
     @Test

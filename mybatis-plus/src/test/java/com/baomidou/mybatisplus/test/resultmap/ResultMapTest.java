@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.resultmap;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,10 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
+@Tag("integration")
 public class ResultMapTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldMapNestedResultsWithTypeHandlers() {
         doTestAutoCommit(
                 m -> m.insert(
                         new Entity().setGg1(new Entity.Gg("老王")).setStr(new String[]{"hello"})

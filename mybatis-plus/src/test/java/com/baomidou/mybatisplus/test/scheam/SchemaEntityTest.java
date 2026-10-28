@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.scheam;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -14,10 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("integration")
 public class SchemaEntityTest extends DbTestSupport<SchemaEntityMapper> {
 
     @Test
-    void test() {
+    void shouldQueryEntityWithSchemaVariable() {
         doTest(mapper -> {
             SchemaEntity schemaEntity = mapper.selectById(1);
             assertThat(schemaEntity).isNotNull();

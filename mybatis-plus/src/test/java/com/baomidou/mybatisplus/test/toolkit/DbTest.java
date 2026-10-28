@@ -42,7 +42,7 @@ import static org.mockito.Mockito.when;
 class DbTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void testSave() {
+    void shouldSaveEntity() {
         Entity entity = new Entity();
         entity.setName("ruben");
         boolean isSuccess = Db.save(entity);
@@ -51,7 +51,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testSaveBatch() {
+    void shouldSaveBatch() {
         List<Entity> list = Arrays.asList(new Entity(), new Entity());
         boolean isSuccess = Db.saveBatch(list);
         assertThat(isSuccess).isTrue();
@@ -59,7 +59,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testSaveOrUpdateBatch() {
+    void shouldSaveOrUpdateBatch() {
         Entity entity = new Entity();
         entity.setId(1L);
         entity.setName("cat");
@@ -70,7 +70,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testRemoveById() {
+    void shouldRemoveById() {
         Entity entity = new Entity();
         entity.setId(1L);
         boolean isSuccess = Db.removeById(entity);
@@ -82,7 +82,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testUpdateById() {
+    void shouldUpdateEntityById() {
         Entity entity = new Entity();
         entity.setId(1L);
         entity.setName("bee bee I'm a sheep");
@@ -92,7 +92,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testUpdate() {
+    void shouldUpdateEntityWithWrapper() {
         boolean isSuccess = Db
                 .update(Wrappers.lambdaUpdate(Entity.class).eq(Entity::getId, 1L).set(Entity::getName, "be better"));
         assertThat(isSuccess).isTrue();
@@ -107,7 +107,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testUpdateBatchById() {
+    void shouldUpdateBatchById() {
         Entity sheep = new Entity();
         sheep.setId(1L);
         sheep.setName("bee bee I'm a sheep");
@@ -122,28 +122,28 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testRemove() {
+    void shouldRemoveByWrapper() {
         boolean isSuccess = Db.remove(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L));
         assertThat(isSuccess).isTrue();
         assertThat(Db.count(Entity.class)).isEqualTo(1);
     }
 
     @Test
-    void testRemoveByIds() {
+    void shouldRemoveByIds() {
         boolean isSuccess = Db.removeByIds(Arrays.asList(1L, 2L), Entity.class);
         assertThat(isSuccess).isTrue();
         assertThat(Db.count(Entity.class)).isEqualTo(0);
     }
 
     @Test
-    void testRemoveByMap() {
+    void shouldRemoveByMap() {
         boolean isSuccess = Db.removeByMap(Collections.singletonMap("id", 1L), Entity.class);
         assertThat(isSuccess).isTrue();
         assertThat(Db.count(Entity.class)).isEqualTo(1);
     }
 
     @Test
-    void testSaveOrUpdate() {
+    void shouldSaveOrUpdateEntity() {
         Entity entity = new Entity();
         entity.setId(null);
         entity.setName("bee bee I'm a sheep");
@@ -158,7 +158,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testGetOne() {
+    void shouldGetOne() {
         LambdaQueryWrapper<Entity> wrapper = Wrappers.lambdaQuery(Entity.class);
         assertThatThrownBy(() -> Db.getOne(wrapper)).isInstanceOf(TooManyResultsException.class);
         Entity one = Db.getOne(wrapper, false);
@@ -170,7 +170,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testListByMap() {
+    void shouldListByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1L);
         List<Entity> list = Db.listByMap(map, Entity.class);
@@ -179,13 +179,13 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testByIds() {
+    void shouldListByIds() {
         List<Entity> list = Db.listByIds(Arrays.asList(1L, 2L), Entity.class);
         assertThat(list.size()).isEqualTo(2);
     }
 
     @Test
-    void testGetMap() {
+    void shouldGetMap() {
         Map<String, Object> map = Db.getMap(Wrappers.lambdaQuery(Entity.class));
         assertThat(map).isNotNull();
 
@@ -196,7 +196,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testList() {
+    void shouldListEntities() {
         List<Entity> list = Db.list(Wrappers.lambdaQuery(Entity.class));
         assertThat(list.size()).isEqualTo(2);
 
@@ -210,7 +210,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testListMaps() {
+    void shouldListMaps() {
         List<Map<String, Object>> list = Db.listMaps(Wrappers.lambdaQuery(Entity.class));
         assertThat(list.size()).isEqualTo(2);
 
@@ -224,7 +224,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testListObjs() {
+    void shouldListObjs() {
         List<Entity> list = Db.listObjs(Entity.class);
         assertThat(list.size()).isEqualTo(2);
 
@@ -243,7 +243,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testPageMaps() {
+    void shouldPageMaps() {
         Page<Map<String, Object>> page = Db.pageMaps(new Page<>(1, 1), Entity.class);
         assertThat(page.getTotal()).isEqualTo(2);
 
@@ -257,7 +257,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testPage() {
+    void shouldPageEntities() {
         IPage<Entity> page = Db.page(new Page<>(1, 1), Entity.class);
         assertThat(page.getTotal()).isEqualTo(2);
         assertThat(page.getRecords().size()).isEqualTo(Db.list(new Page<Entity>(1, 1), Entity.class).size());
@@ -270,7 +270,7 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testChain() {
+    void shouldQueryAndUpdateWithChainWrapper() {
         QueryChainWrapper<Entity> query = Db.query(Entity.class);
         List<Entity> list = query.eq("id", 1L).list();
         assertThat(list.size()).isEqualTo(1);
@@ -289,13 +289,13 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void testGetObj() {
+    void shouldGetObj() {
         String name = Db.getObj(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L), Entity::getName);
         assertThat(name).isEqualTo("ruben");
     }
 
     @Test
-    void testCount() {
+    void shouldCountEntities() {
         verifyCount(0, null);
         verifyCount(0, 0L);
         verifyCount(1, 1L);

@@ -79,7 +79,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testBatchTransactional() {
+    public void batchTransactional() {
         saveBatch(Arrays.asList(new H2User("batch1", 0), new H2User("batch2", 0), new H2User("batch3", 0)));
         saveBatch(Arrays.asList(new H2User("batch4", 0), new H2User("batch5", 0), new H2User("batch6", 0)));
         throw new MybatisPlusException("测试批量插入事务回滚");
@@ -87,7 +87,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSimpleTransactional() {
+    public void simpleTransactional() {
         save(new H2User("simple1", 0));
         save(new H2User("simple2", 0));
         throw new MybatisPlusException("测试普通插入事务回滚");
@@ -95,7 +95,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSaveOrUpdateBatchTransactional() {
+    public void saveOrUpdateBatchTransactional() {
         saveOrUpdateBatch(
                 Arrays.asList(
                         new H2User("savOrUpdate1", 0), new H2User("savOrUpdate2", 0), new H2User("savOrUpdate3", 0)),
@@ -109,7 +109,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSimpleAndBatchTransactional() {
+    public void simpleAndBatchTransactional() {
         save(new H2User("simpleAndBatchTx1", 0));
         saveBatch(
                 Arrays.asList(
@@ -125,22 +125,22 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
-    public void testSaveBatchNoTransactional1() {
+    public void saveBatchNoTransactional1() {
         saveBatch(
                 Arrays.asList(
-                        new H2User("testSaveBatchNoTransactional1", 0), new H2User("testSaveBatchNoTransactional1", 0),
-                        new H2User("testSaveBatchNoTransactional1", 0)),
+                        new H2User("saveBatchNoTransactional1", 0), new H2User("saveBatchNoTransactional1", 0),
+                        new H2User("saveBatchNoTransactional1", 0)),
                 1);
     }
 
     @Override
-    public void testSaveBatchNoTransactional2() {
+    public void saveBatchNoTransactional2() {
         //非事物下，制造一个批量主键冲突
-        save(new H2User(1577431655447L, "testSaveBatchNoTransactional2"));
+        save(new H2User(1577431655447L, "saveBatchNoTransactional2"));
         saveBatch(
                 Arrays.asList(
-                        new H2User("testSaveBatchNoTransactional2", 0), new H2User("testSaveBatchNoTransactional2", 0),
-                        new H2User(1577431655447L, "testSaveBatchNoTransactional2")),
+                        new H2User("saveBatchNoTransactional2", 0), new H2User("saveBatchNoTransactional2", 0),
+                        new H2User(1577431655447L, "saveBatchNoTransactional2")),
                 1);
     }
 
@@ -161,7 +161,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSaveOrUpdateTransactional1(List<H2User> users) {
+    public void saveOrUpdateTransactional1(List<H2User> users) {
         var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
         MybatisBatchUtils.saveOrUpdate(
                 getSqlSessionFactory(), users, method.insert(),
@@ -170,7 +170,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
-    public void testSaveOrUpdateTransactional2(List<H2User> users) {
+    public void saveOrUpdateTransactional2(List<H2User> users) {
         var method = new MybatisBatch.Method<H2User>(H2UserMapper.class);
         MybatisBatchUtils.saveOrUpdate(
                 getSqlSessionFactory(), users, method.insert(), (sqlSession, user) -> sqlSession

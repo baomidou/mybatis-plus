@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,6 +53,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin, lanjerry
  * @since 3.5.3
  */
+@Tag("integration")
 public class H2CodeGeneratorTest extends BaseGeneratorSample {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(H2CodeGeneratorTest.class);
@@ -124,7 +126,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 简单生成
      */
     @Test
-    public void testSimple() throws IOException {
+    public void shouldGenerateCodeForSimpleTable() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         generator.global(tempGlobalConfig().build());
@@ -139,7 +141,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
         assertGenerated("TSimpleController.java");
     }
 
-    static Stream<Arguments> testByTemplateEngine() {
+    static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {
         return Stream.of(
                 Arguments.arguments("velocity", new VelocityTemplateEngine()),
                 Arguments.arguments("freemarker", new FreemarkerTemplateEngine()),
@@ -149,7 +151,8 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
 
     @MethodSource
     @ParameterizedTest
-    public void testByTemplateEngine(String engine, AbstractTemplateEngine templateEngine) throws IOException {
+    public void shouldGenerateCodeWithEachTemplateEngine(String engine, AbstractTemplateEngine templateEngine)
+            throws IOException {
         Path javaOutput = tempDir.resolve("java");
         LOGGER.info("当前执行引擎:{}, 输出目录:{}", engine, javaOutput);
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
@@ -233,7 +236,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * result: t_simple -> simple
      */
     @Test
-    public void testTablePrefix() throws IOException {
+    public void shouldStripTablePrefix() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().addTablePrefix("t_", "c_").build());
         generator.global(tempGlobalConfig().build());
@@ -248,7 +251,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * result: deleted_flag -> deleted
      */
     @Test
-    public void testFieldSuffix() throws IOException {
+    public void shouldStripFieldSuffix() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().addFieldSuffix("_flag").build());
         generator.global(tempGlobalConfig().build());
@@ -264,7 +267,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * result: 新增@TableField(value = "xxx", fill = FieldFill.xxx)注解
      */
     @Test
-    public void testVersionAndFill() throws IOException {
+    public void shouldAddVersionAndFillAnnotations() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 strategyConfig().entityBuilder().versionColumnName("version") // 基于数据库字段
@@ -286,7 +289,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * result: 不生成
      */
     @Test
-    public void testLogicDeleteAndIgnoreColumn() throws IOException {
+    public void shouldAddLogicDeleteAndSkipIgnoredColumns() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 strategyConfig().entityBuilder().logicDeleteColumnName("deleted") // 基于数据库字段
@@ -304,7 +307,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * result: TSimple -> TSimpleEntity
      */
     @Test
-    public void testCustomTemplateName() throws IOException {
+    public void shouldRenameGeneratedFiles() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 strategyConfig().entityBuilder().formatFileName("%sEntity").mapperBuilder()
@@ -328,7 +331,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * @see OutputFile
      */
     @Test
-    public void testCustomTemplatePath() throws IOException {
+    public void shouldOutputToCustomPaths() throws IOException {
         Path xmlDir = tempDir.resolve("customXml");
         Path entityDir = tempDir.resolve("customEntity");
         // 设置自定义路径
@@ -349,7 +352,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 替换模板
      */
     @Test
-    public void testCustomTemplate() throws IOException {
+    public void shouldUseCustomTemplate() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().entityBuilder().javaTemplate("/templates/entity1.java").build());
         generator.global(tempGlobalConfig().build());
@@ -362,7 +365,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试文件覆盖
      */
     @Test
-    public void testFileOverride() throws IOException {
+    public void shouldOverrideExistingFiles() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 strategyConfig()
@@ -387,7 +390,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试日期类型
      */
     @Test
-    public void testDateType() throws IOException {
+    public void shouldUseDateTypeForDateColumns() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().build());
         // 关闭其它模块生成只生成实体
@@ -407,7 +410,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 注入自定义属性
      */
     @Test
-    public void testCustomMap() throws IOException {
+    public void shouldInjectCustomMapProperties() throws IOException {
         // 设置自定义属性
         Map<String, Object> map = new HashMap<>();
         map.put("abc", 123);
@@ -425,7 +428,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * key为文件名称，value为文件路径
      */
     @Test
-    public void testCustomFileByMap() throws IOException {
+    public void shouldGenerateCustomFileByMap() throws IOException {
         // 设置自定义输出文件
         Map<String, String> customFile = new HashMap<>();
         customFile.put("DTO.java", "/templates/dto.java.vm");
@@ -444,7 +447,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 自定义模板（单个文件）
      */
     @Test
-    public void testCustomFileBySingle() throws IOException {
+    public void shouldGenerateCustomFileBySingleConfig() throws IOException {
         // 设置自定义输出文件
         CustomFile customFile = new CustomFile.Builder().fileName("DTO.java").templatePath("templates/dto.java.vm")
                 .packageName("dto").build();
@@ -461,7 +464,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 自定义模板（列表）
      */
     @Test
-    public void testCustomFileByList() throws IOException {
+    public void shouldGenerateCustomFilesByList() throws IOException {
         // 设置自定义输出文件
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
@@ -499,7 +502,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试内置模板路径自定义输出
      */
     @Test
-    public void testOutputFile() throws IOException {
+    public void shouldCustomizeOutputFilePath() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         GlobalConfig globalConfig = tempGlobalConfig().build();
         generator.global(globalConfig);
@@ -522,7 +525,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试开启生成实体时生成字段注解
      */
     @Test
-    public void testEnableTableFieldAnnotation() throws IOException {
+    public void shouldAddTableFieldAnnotation() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(strategyConfig().entityBuilder().enableTableFieldAnnotation().build());
         generator.global(tempGlobalConfig().build());
@@ -535,7 +538,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试开正则匹配包含的表名
      */
     @Test
-    public void testAddIncludeTables() throws IOException {
+    public void shouldIncludeTablesByRegex() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(new StrategyConfig.Builder().addInclude("^t_.*").build());
         generator.global(tempGlobalConfig().build());
@@ -550,7 +553,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试开正则匹配排除的表名
      */
     @Test
-    public void testAddExcludeTables() throws IOException {
+    public void shouldExcludeTablesByRegex() throws IOException {
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 new StrategyConfig.Builder().addExclude(
@@ -569,7 +572,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 测试开启Boolean类型字段移除is前缀
      */
     @Test
-    public void testEnableRemoveIsPrefix() throws IOException {
+    public void shouldRemoveIsPrefixFromBooleanFields() throws IOException {
         AutoGenerator generator = new AutoGenerator(new DataSourceConfig.Builder(H2URL, "sa", "")
                 .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
                     IColumnType dbColumnType = typeRegistry.getColumnType(metaInfo);
@@ -590,7 +593,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
      * 自定义模板（列表）
      */
     @Test
-    public void testCustomFileByLambda() throws IOException {
+    public void shouldGenerateCustomFileByLambda() throws IOException {
         Path dtoDir = tempDir.resolve("dtoFile");
         Path voDir = tempDir.resolve("voFile");
         // 设置自定义属性

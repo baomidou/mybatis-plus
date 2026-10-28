@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.generator.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -9,10 +10,11 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 public class ClassAnnotationAttributesTest {
 
     @Test
-    void test() {
+    void shouldSupportAllConstructorOverloadsForClassAnnotationAttributes() {
         var classAnnotationAttributes = new ClassAnnotationAttributes(TableName.class);
         assertThat(classAnnotationAttributes.getDisplayNameFunction()).isNull();
         assertThat(classAnnotationAttributes.getDisplayName()).isEqualTo("@TableName");

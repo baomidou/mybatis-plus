@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2021-03-16
  */
+@Tag("integration")
 public class SqlRunnerTest extends DbTestSupport<EntityMapper> {
 
     public SqlRunnerTest() {
@@ -30,7 +32,7 @@ public class SqlRunnerTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void test() {
+    void shouldCrudViaSqlRunner() {
         assertThat(SqlRunner.db().insert("insert into entity(id,name) values({0},{1})", 6, "6")).isTrue();
 
         assertThat(SqlRunner.db().update("update entity set name = {0} where id = {1}", "老王", 6)).isTrue();

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.chainwrapper;
 
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,10 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
  * @author VampireAchao
  * @since 2022-04-18
  */
+@Tag("integration")
 public class ChainWrappersTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldBuildChainQueryViaChainWrappers() {
         final String id = "id";
         Entity entity = new Entity();
         assertAll(

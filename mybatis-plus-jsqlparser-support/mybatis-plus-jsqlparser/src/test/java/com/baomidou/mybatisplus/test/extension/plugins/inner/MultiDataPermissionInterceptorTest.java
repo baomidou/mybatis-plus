@@ -8,6 +8,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Table;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author houkunlin
  * @since 3.5.2 +
  */
+@Tag("unit")
 public class MultiDataPermissionInterceptorTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MultiDataPermissionInterceptorTest.class);

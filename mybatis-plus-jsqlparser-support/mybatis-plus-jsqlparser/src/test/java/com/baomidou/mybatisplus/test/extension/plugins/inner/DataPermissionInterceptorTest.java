@@ -7,6 +7,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 3.4.1 +
  */
 @Slf4j
+@Tag("unit")
 public class DataPermissionInterceptorTest {
 
     private static final String TEST_1 = "com.baomidou.userMapper.selectByUsername";
@@ -49,7 +51,6 @@ public class DataPermissionInterceptorTest {
                     String sqlSegment = SQL_SEGMENT_MAP.get(mappedStatementId);
                     Expression sqlSegmentExpression = CCJSqlParserUtil.parseCondExpression(sqlSegment);
                     if (null != where) {
-                        System.out.println("原 where : " + where);
                         if (mappedStatementId.equals(TEST_4)) {
                             // 这里测试返回 OR 条件
                             return new OrExpression(where, sqlSegmentExpression);

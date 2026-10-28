@@ -10,13 +10,15 @@ import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -32,7 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author hubin
  * @since 2018-06-05
  */
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
@@ -41,8 +42,20 @@ class H2StudentMapperTest extends H2TestSupport {
     @Autowired
     protected H2StudentMapper studentMapper;
 
+    /**
+     * h2student 是全套件共用的内存表，别的类（比如整表删除的用例）会把它清空， 而本类的用例要更新种子行 id=15。所以用例进出都重放一次种子脚本： 进来时保证自己要的行在，出去时不把残行留给别人。
+     */
+    @BeforeEach
+    @AfterEach
+    void restoreSeed() {
+        ConnectionCallback<Void> restore = connection -> {
+            new ResourceDatabasePopulator(new ClassPathResource("h2/student.insert.sql")).populate(connection);
+            return null;
+        };
+        jdbcTemplate.execute(restore);
+    }
+
     @Test
-    @Order(1)
     void crudTest() {
         //        H2Student stu = new H2Student();
         //        stu.setGrade(GradeEnum.HIGH);
@@ -57,7 +70,6 @@ class H2StudentMapperTest extends H2TestSupport {
 
         List<H2Student> list = studentMapper.selectList(new QueryWrapper<>());
         for (H2Student s : list) {
-            System.out.println(s.getGrade());
             if (Objects.equals(s.getId(), id)) {
                 Assert.notNull(s.getGrade(), "id=" + id + " should have grade");
                 Assert.notNull(s.getGender(), "id=" + id + " should have gender");
@@ -78,7 +90,6 @@ class H2StudentMapperTest extends H2TestSupport {
      * 分页条件命中不到数据时，total/pages/records 一律归零，不会留下翻页残值。
      */
     @Test
-    @Order(Integer.MAX_VALUE)
     void pageCountZeroTest() {
         Page<H2Student> page = new Page<>();
         IPage<H2Student> result = studentMapper.selectPage(page, Wrappers.<H2Student>query().eq("name", "无"));
@@ -98,13 +109,12 @@ class H2StudentMapperTest extends H2TestSupport {
     void groupByOrderBy() {
         LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery().groupBy(H2Student::getAge);
         LambdaQueryWrapper<H2Student> wrapper2 = Wrappers.<H2Student>lambdaQuery().orderByAsc(H2Student::getAge);
-        System.out.println(wrapper.getSqlSegment());
         assertThat(wrapper.getSqlSegment()).isEqualTo(" GROUP BY age");
         assertThat(wrapper2.getSqlSegment()).isEqualTo(" ORDER BY age ASC");
     }
 
     @Test
-    void testDeleteByIdWithEntity() {
+    void shouldDeleteByIdWithEntity() {
         H2Student h2Student = new H2Student(111L, "测试根据实体删除", 12);
         studentMapper.insert(h2Student);
         assertThat(studentMapper.deleteById(h2Student)).isEqualTo(1);
@@ -114,7 +124,7 @@ class H2StudentMapperTest extends H2TestSupport {
      * in 条件按集合元素个数生成占位符，命中不到的值不会混进结果；空集合 MP 不拦截，直接拼出非法的 IN ()。
      */
     @Test
-    void testIn() {
+    void shouldGenerateInClauseWithCorrectPlaceholders() {
         LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery()
                 .in(H2Student::getName, Arrays.asList("zzInTestA", "zzInTestB"));
         assertThat(wrapper.getTargetSql()).isEqualTo("(name IN (?,?))");

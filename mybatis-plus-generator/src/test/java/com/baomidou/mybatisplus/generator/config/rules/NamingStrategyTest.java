@@ -1,11 +1,13 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("unit")
 public class NamingStrategyTest {
 
     @Test

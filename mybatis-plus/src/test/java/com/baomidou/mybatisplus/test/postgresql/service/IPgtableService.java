@@ -7,5 +7,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface IPgtableService extends IService<Pgtable> {
 
-    void testTask();
+    void shouldRunTask();
 }

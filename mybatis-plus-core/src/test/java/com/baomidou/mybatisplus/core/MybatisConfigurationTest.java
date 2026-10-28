@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MybatisConfigurationTest {
 
     @Test
-    void testXml() throws IOException {
+    void shouldLoadDefaultConfigurationFromXml() throws IOException {
         Reader reader = Resources.getResourceAsReader("mybatis-config-empty.xml");
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);
         Configuration configuration = factory.getConfiguration();
@@ -66,7 +66,7 @@ class MybatisConfigurationTest {
     }
 
     @Test
-    void testBean() {
+    void shouldHaveExpectedDefaultConfigurationValues() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         assertThat(configuration.isCacheEnabled()).isTrue();
         //3.4.1以下是true
@@ -101,7 +101,7 @@ class MybatisConfigurationTest {
     }
 
     @Test
-    void testUseGeneratedShortKey() {
+    void shouldGenerateShortKeysWhenUseGeneratedShortKeyEnabled() {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setUseGeneratedShortKey(true);
         addMappedStatement(configuration, 200);
@@ -124,7 +124,7 @@ class MybatisConfigurationTest {
     }
 
     @Test
-    void testReload() {
+    void shouldReloadMapperWithoutDuplicatingMetadata() {
         MybatisConfiguration mybatisConfiguration = new MybatisConfiguration();
         mybatisConfiguration.addMapper(BMapper.class);
         mybatisConfiguration.addMapper(AMapper.class);

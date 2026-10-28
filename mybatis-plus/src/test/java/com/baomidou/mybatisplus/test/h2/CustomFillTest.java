@@ -6,9 +6,8 @@ import com.baomidou.mybatisplus.test.h2.customfill.mapper.TestModelMapper;
 import com.baomidou.mybatisplus.test.h2.customfill.model.TestModel;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -16,9 +15,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-custom-fill-test-h2.xml"})
+@Tag("integration")
 public class CustomFillTest {
 
     @Autowired
@@ -30,7 +29,7 @@ public class CustomFillTest {
     }
 
     @Test
-    public void testInsert() {
+    public void shouldInsertWithCustomFill() {
 
         TestModel testModel = new TestModel();
         testModelMapper.insert(testModel);

@@ -32,7 +32,7 @@ class JSqlParserTest {
     }
 
     @Test
-    void testDecr() throws JSQLParserException {
+    void shouldParseDecrementInUpdate() throws JSQLParserException {
         // 如果连一起 SqlParser 将无法解析 , 还有种处理方式就自减为负数的时候 转为 自增.
         var parse1 = CCJSqlParserUtil.parse("UPDATE test SET a = a --110");
         assertThat(parse1.toString()).isEqualTo("UPDATE test SET a = a");
@@ -41,7 +41,7 @@ class JSqlParserTest {
     }
 
     @Test
-    void testIncr() throws JSQLParserException {
+    void shouldParseIncrementInUpdate() throws JSQLParserException {
         var parse1 = CCJSqlParserUtil.parse("UPDATE test SET a = a +-110");
         assertThat(parse1.toString()).isEqualTo("UPDATE test SET a = a + -110");
         var parse2 = CCJSqlParserUtil.parse("UPDATE test SET a = a + -110");
@@ -69,7 +69,7 @@ class JSqlParserTest {
     }
 
     @Test
-    void testSelectForUpdate() throws Exception {
+    void shouldParseSelectForUpdate() throws Exception {
         assertThat(CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString())
                 .isEqualTo("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE");
         assertThat(

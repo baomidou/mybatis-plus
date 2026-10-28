@@ -53,13 +53,6 @@ class FstFactoryTest {
             }
         }
 
-        // Sorting only makes the generated replacement list stable; registration order is not checked.
-        if (!expected.equals(actual)) {
-            String registrations = expected.stream()
-                    .map(name -> "conf.registerClass(" + name.replace('$', '.') + ".class);")
-                    .collect(Collectors.joining("\n"));
-            System.out.println("Complete constructor registrations:\n" + registrations);
-        }
         assertThat(actual).overridingErrorMessage(
                 () -> "FstFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
                         + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())

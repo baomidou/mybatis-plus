@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.extension.handlers;
 import com.baomidou.mybatisplus.test.handlers.TypeHandlerTestSupport;
 import com.baomidou.mybatisplus.test.model.UserBean;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author nieqiurong 2020/2/28.
  */
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class Jackson3TypeHandlerTest extends TypeHandlerTestSupport {
 

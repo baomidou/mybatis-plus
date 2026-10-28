@@ -61,7 +61,7 @@ class MybatisParameterHandlerTest {
     }
 
     @Test
-    void test() {
+    void shouldFillParametersForInsertUpdateSelectAndBatchOperations() {
         Configuration configuration = new MybatisConfiguration();
         BoundSql boundSql = mock(BoundSql.class);
         StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
@@ -292,7 +292,7 @@ class MybatisParameterHandlerTest {
     }
 
     @Test
-    void testIgnoreMapperStatement() {
+    void shouldSkipFillWhenMetaObjectHandlerIgnoresStatement() {
         MappedStatement mappedStatement;
         Configuration configuration = new MybatisConfiguration();
         BoundSql boundSql = mock(BoundSql.class);

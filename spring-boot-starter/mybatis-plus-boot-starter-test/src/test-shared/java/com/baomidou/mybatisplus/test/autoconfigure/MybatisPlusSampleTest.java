@@ -19,7 +19,7 @@ class MybatisPlusSampleTest {
     private SampleMapper sampleMapper;
 
     @Test
-    void testInsert() {
+    void shouldInsertSampleEntity() {
         Sample sample = new Sample();
         sampleMapper.insert(sample);
         assertThat(sample.getId()).isNotNull();

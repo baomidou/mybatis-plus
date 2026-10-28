@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.generator.config.querys;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,10 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class DbQueryRegistryTest {
 
     @Test
-    void test() {
+    void shouldReturnCorrectDbQueryForEachDbType() {
         DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
         dbQueryRegistry.getDbQuery(DbType.GAUSS_DB);
         assertThat(dbQueryRegistry.getDbQuery(DbType.ORACLE)).isInstanceOf(OracleQuery.class);

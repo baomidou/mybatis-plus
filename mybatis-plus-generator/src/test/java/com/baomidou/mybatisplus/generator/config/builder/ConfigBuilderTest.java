@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/10/6.
  */
+@Tag("unit")
 public class ConfigBuilderTest {
 
     private static final DataSourceConfig DATA_SOURCE_CONFIG = new DataSourceConfig.Builder(

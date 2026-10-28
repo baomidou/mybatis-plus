@@ -151,7 +151,7 @@ class TestConventionTest {
     /**
      * T6 显式禁用用例数量。
      */
-    private static final int MAX_DISABLED_CASES = 8;
+    private static final int MAX_DISABLED_CASES = 6;
 
     /**
      * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。<br>
@@ -159,13 +159,14 @@ class TestConventionTest {
      * {@code ReflectionKitTest}（66 → 53）；再把
      * {@code test/MybatisConfigurationTest}、{@code test/MybatisParameterHandlerTest}、
      * {@code test/metadata/TableInfoHelperTest}、{@code test/override/MybatisMapperMethodTest} 迁到被测类所在包（53 → 49）；
-     * extension 的 ddl、handlers、pagination、toolkit 共 10 个类同批归位（49 → 39）； generator 的 {@code DbQueryRegistryTest} 与
+     * extension 的 ddl、handlers、 pagination、toolkit 共 10 个类同批归位（49 → 39）； generator 的 {@code DbQueryRegistryTest} 与
      * autoconfigure 的 {@code MybatisPlusPropertiesTest} 各 1 个（39 → 37）；core 的 3 个 wrapper 测试进
      * {@code conditions.query}/{@code conditions.update}，为此把 {@code WrapperTestSupport} 放开成 public（37 → 34）。<br>
-     * 剩下的 34 处全部落在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets}
+     * spring-boot-starter 的 {@code MybatisPlusPropertiesTest} 迁入 test-shared 后不再被扫描，去掉 3 处（34 → 31）。<br>
+     * 剩下的 31 处全部落在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets}
      * 复用一份源头的办法一次解决，单独搬文件只会把副本再搬一遍；core、extension、spring、generator、autoconfigure、starter 已经零缺口。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 34;
+    private static final int MAX_PACKAGE_MISMATCHES = 31;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
@@ -184,22 +185,29 @@ class TestConventionTest {
 
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。 JSqlParser 8
-     * 个共享测试已落地（BlockAttack/DataChange/Dynamic/MultiTable/MybatisPlus/Pagination/TenantLine）， 剩余同名仍是版本模块或 starter
-     * 的整文件复制。
+     * 个共享测试已落地（BlockAttack/DataChange/Dynamic/MultiTable/MybatisPlus/Pagination/TenantLine）， spring-boot-starter 的
+     * MybatisPlusPropertiesTest 与 MybatisPlusSampleTest 已迁入 test-shared， 剩余同名仍是版本模块或 starter 的整文件复制。
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
             "ChainWrappersTest", "DataPermissionInterceptorTest", "DbTest",
             "DynamicTableNameJsqlParserInnerInterceptorTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest",
             "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest",
             "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
-            "MybatisPlusPropertiesTest", "MybatisPlusSampleTest", "SelectBodyToPlainSelectTest", "SqlRunnerTest",
-            "StringUtilsTest", "TableInfoTest");
+            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。
      */
     private static final Set<String> REGISTERED_THREAD_SLEEP_FILES = Set
             .of("mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/postgresql/PostgresqlTest.java");
+
+    /**
+     * T9 使用 {@code @EnabledOnJre} / {@code @DisabledOnJre} 按 JDK 版本门禁的文件。<br>
+     * MethodHandleProxies 在 JDK 25 行为变化导致 lambda 代理测试失败，这两个文件限制在 JDK 17/21 上运行。
+     */
+    private static final Set<String> REGISTERED_JRE_GATE_FILES = Set.of(
+            "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/toolkit/LambdaUtilsTest.java",
+            "mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/core/toolkit/support/IdeaProxyLambdaMetaTest.java");
 
     /**
      * @param path 相对仓库根的路径，统一用 /
@@ -232,14 +240,14 @@ class TestConventionTest {
     }
 
     @Test
-    void noPermanentSkipBehindJdkGates() {
-        List<String> offenders = new ArrayList<>();
+    void jdkGatesStayRegistered() {
+        Set<String> found = new TreeSet<>();
         for (Source source : TEST_SOURCES) {
             if (JRE_GATE.matcher(source.code()).find()) {
-                offenders.add(source.path());
+                found.add(source.path());
             }
         }
-        assertThat(offenders).as("T9 按 JRE 版本门禁的写法在当前工具链上等于永久静默跳过").isEmpty();
+        assertThat(found).as("T9 按 JRE 版本门禁的写法必须逐个登记，只准减不准加").isEqualTo(REGISTERED_JRE_GATE_FILES);
     }
 
     @Test

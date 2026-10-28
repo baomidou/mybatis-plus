@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.json;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2024年3月4日
  */
+@Tag("integration")
 public class GsonTest extends DbTestSupport<GsonEntityMapper> {
 
     @Override
@@ -27,7 +29,7 @@ public class GsonTest extends DbTestSupport<GsonEntityMapper> {
     }
 
     @Test
-    void test() {
+    void shouldSerializeAndDeserializeWithGson() {
         doTest(mapper -> {
             var entity = new GsonEntity("123", "秋秋", new GsonEntity.Card("1", "1111"),
                     Arrays.asList(new GsonEntity.Attr("age", "18"), new GsonEntity.Attr("sex", "女")),

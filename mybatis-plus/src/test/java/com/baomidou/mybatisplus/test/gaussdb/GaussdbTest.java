@@ -13,6 +13,7 @@ import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiurong
  * @since 3.5.13
  */
+@Tag("external-db")
 public class GaussdbTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GaussdbTest.class);
@@ -102,7 +104,7 @@ public class GaussdbTest {
 
     @ParameterizedTest
     @MethodSource("dataSource")
-    void test(DbConfig dbConfig) throws Exception {
+    void shouldCrudWithGaussdb(DbConfig dbConfig) throws Exception {
         DataSource dataSource = dbConfig.getDataSource();
         new SqlRunner(dataSource.getConnection()).run(CREATE_TABLE);
         try (SqlSession sqlSession = sqlSessionFactory(dataSource).openSession(true)) {

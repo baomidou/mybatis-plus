@@ -19,10 +19,6 @@ public class H2TestSupport {
 
     protected static final String NQQ = "聂秋秋";
 
-    protected void log(Object object) {
-        System.out.println(object);
-    }
-
     protected List<H2User> queryByName(String name) {
         String sql = "select TEST_ID, NAME, AGE,LAST_UPDATED_DT from h2user ";
         if (name != null) {

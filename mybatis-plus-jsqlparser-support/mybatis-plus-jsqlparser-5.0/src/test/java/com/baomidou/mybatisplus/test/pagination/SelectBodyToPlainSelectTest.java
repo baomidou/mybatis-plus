@@ -33,7 +33,7 @@ class SelectBodyToPlainSelectTest {
      * 报错的测试
      */
     @Test
-    void testSelectBodyToPlainSelectThrowException() throws JSQLParserException {
+    void shouldThrowWhenCastingUnionSelectToPlainSelect() throws JSQLParserException {
         String originalUnionSql = "select * from test union select * from test";
         Select selectStatement = (Select) CCJSqlParserUtil.parse(originalUnionSql);
         assertThatThrownBy(() -> {
@@ -55,7 +55,7 @@ class SelectBodyToPlainSelectTest {
     }
 
     @Test
-    void testPaginationInterceptorConcatOrderByBefore() {
+    void shouldConcatOrderByBeforeWhere() {
         String actualSql = new PaginationInnerInterceptor().concatOrderBy("select * from test", ITEMS);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");
@@ -66,7 +66,7 @@ class SelectBodyToPlainSelectTest {
     }
 
     @Test
-    void testPaginationInterceptorConcatOrderByFix() {
+    void shouldConcatOrderByWithSqlInjectionAttempt() {
         List<OrderItem> orderList = new ArrayList<>();
         // 测试可能的 sql 注入 https://github.com/baomidou/mybatis-plus/issues/5745
         orderList.add(OrderItem.asc("col umn"));
@@ -80,7 +80,7 @@ class SelectBodyToPlainSelectTest {
     }
 
     @Test
-    void testPaginationInterceptorConcatOrderByFixWithWhere() {
+    void shouldConcatOrderByWithWhereAndUnion() {
         String actualSqlWhere = new PaginationInnerInterceptor()
                 .concatOrderBy("select * from test where 1 = 1 union select * from test2 where 1 = 1", ITEMS);
         assertThat(actualSqlWhere)
@@ -93,7 +93,7 @@ class SelectBodyToPlainSelectTest {
     }
 
     @Test
-    void testPaginationInterceptorOrderByEmptyColumnFix() {
+    void shouldHandleEmptyColumnInOrderBy() {
         String actualSql = new PaginationInnerInterceptor().concatOrderBy("select * from test", ITEMS);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");

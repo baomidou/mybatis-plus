@@ -2,10 +2,8 @@ package com.baomidou.mybatisplus.test.h2.idgenerator;
 
 import com.baomidou.mybatisplus.test.h2.idgenerator.mapper.*;
 import com.baomidou.mybatisplus.test.h2.idgenerator.model.*;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-id-generator-h2.xml"})
 @Tag("integration")
@@ -41,7 +38,7 @@ class IdentifierGeneratorTest {
     private BigIntegerIdGeneratorMapper bigIntegerIdGeneratorMapper;
 
     @Test
-    void test() {
+    void shouldGenerateCustomIdsForAllTypes() {
         LongIdGeneratorModel longIdGeneratorModel1 = new LongIdGeneratorModel("旺仔");
         longIdGeneratorMapper.insert(longIdGeneratorModel1);
         assertThat(longIdGeneratorModel1.getId()).isEqualTo(666L);

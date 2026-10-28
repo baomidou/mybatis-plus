@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,12 +8,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class SQLServer2005DialectTest {
 
     private final SQLServer2005Dialect sqlServer2005Dialect = new SQLServer2005Dialect();
 
     @Test
-    void test() {
+    void shouldBuildPaginationSqlWithDistinctAndLeadingSpaces() {
         assertThat(
                 sqlServer2005Dialect.buildPaginationSql("select distinct *,(select 1) from test", 1, 10)
                         .getDialectSql())

@@ -54,11 +54,6 @@ class FuryFactoryTest {
 
         // Generate registrations in scan order; the assertion checks only class
         // membership.
-        if (!expected.equals(actual)) {
-            String registrations = expected.stream().map(name -> "FURY.register(" + name.replace('$', '.') + ".class);")
-                    .collect(Collectors.joining("\n"));
-            System.out.println("Complete constructor registrations:\n" + registrations);
-        }
         assertThat(actual).overridingErrorMessage(
                 () -> "FuryFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
                         + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())

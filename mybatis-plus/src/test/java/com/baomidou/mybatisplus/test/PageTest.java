@@ -81,7 +81,7 @@ class PageTest {
     }
 
     @Test
-    void testPageToJson() throws JsonProcessingException {
+    void shouldSerializePageToJson() throws JsonProcessingException {
         var page = new Page<>(1, 10, 2000);
         page.setOrders(List.of(OrderItem.asc("a")));
         //page无法序列化排序等其他属性 {"records":[],"total":2000,"size":10,"current":1,"pages":200}
@@ -89,7 +89,7 @@ class PageTest {
     }
 
     @Test
-    void testPageDtoToJson() throws JsonProcessingException {
+    void shouldSerializePageDtoToJson() throws JsonProcessingException {
         var page = new PageDTO<>(1, 10, 100);
         assertPageDto(page);
 

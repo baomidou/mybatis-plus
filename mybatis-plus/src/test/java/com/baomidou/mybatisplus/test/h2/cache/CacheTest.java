@@ -9,13 +9,13 @@ import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -24,7 +24,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-cache-h2.xml"})
 @Tag("integration")
@@ -36,9 +35,28 @@ class CacheTest {
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @BeforeEach
+    void setUp() {
+        jdbcTemplate.execute("DELETE FROM t_cache");
+        jdbcTemplate.execute("insert into t_cache values (1,'a')");
+        jdbcTemplate.execute("insert into t_cache values (2,'b')");
+        jdbcTemplate.execute("insert into t_cache values (3,'c')");
+        jdbcTemplate.execute("insert into t_cache values (4,'d')");
+        jdbcTemplate.execute("insert into t_cache values (5,'e')");
+        getCache().clear();
+    }
+
+    @AfterEach
+    void tearDown() {
+        jdbcTemplate.update("DELETE FROM t_cache WHERE id > 5");
+        getCache().clear();
+    }
+
     @Test
-    @Order(1)
-    void testPageCache() {
+    void shouldCachePageResults() {
         Cache cache = getCache();
         IPage<CacheModel> cacheModelIPage1 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
         IPage<CacheModel> cacheModelIPage2 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
@@ -81,8 +99,7 @@ class CacheTest {
     }
 
     @Test
-    @Order(2)
-    void testCleanBatchCache() {
+    void shouldClearCacheOnBatchUpdate() {
         CacheModel model = new CacheModel("靓仔");
         cacheService.save(model);
         Cache cache = getCache();
@@ -96,10 +113,9 @@ class CacheTest {
     }
 
     @Test
-    @Order(3)
-    void testBatchTransactionalClear1() {
+    void shouldClearCacheOnBatchTransactionalClear1() {
         Cache cache = getCache();
-        long id = cacheService.testBatchTransactionalClear1();
+        long id = cacheService.batchTransactionalClear1();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
         assertThat(cache.getSize()).isEqualTo(1);
@@ -107,9 +123,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(4)
-    void testBatchTransactionalClear2() {
-        long id = cacheService.testBatchTransactionalClear2();
+    void shouldClearCacheOnBatchTransactionalClear2() {
+        long id = cacheService.batchTransactionalClear2();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
@@ -118,9 +133,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(5)
-    void testBatchTransactionalClear3() {
-        long id = cacheService.testBatchTransactionalClear3();
+    void shouldRetainCacheOnBatchTransactionalClear3() {
+        long id = cacheService.batchTransactionalClear3();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(1);
         CacheModel cacheModel = cacheService.getById(id);
@@ -129,9 +143,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(6)
-    void testBatchTransactionalClear4() {
-        long id = cacheService.testBatchTransactionalClear4();
+    void shouldClearCacheOnBatchTransactionalClear4() {
+        long id = cacheService.batchTransactionalClear4();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
@@ -140,9 +153,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(7)
-    void testBatchTransactionalClear5() {
-        long id = cacheService.testBatchTransactionalClear5();
+    void shouldNotFindResultAfterBatchTransactionalClear5() {
+        long id = cacheService.batchTransactionalClear5();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
@@ -151,9 +163,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(8)
-    void testBatchTransactionalClear6() {
-        long id = cacheService.testBatchTransactionalClear6();
+    void shouldNotFindResultAfterBatchTransactionalClear6() {
+        long id = cacheService.batchTransactionalClear6();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
@@ -162,9 +173,8 @@ class CacheTest {
     }
 
     @Test
-    @Order(9)
-    void testBatchTransactionalClear7() {
-        long id = cacheService.testBatchTransactionalClear7();
+    void shouldNotFindResultAfterBatchTransactionalClear7() {
+        long id = cacheService.batchTransactionalClear7();
         Cache cache = getCache();
         assertThat(cache.getSize()).isEqualTo(0);
         CacheModel cacheModel = cacheService.getById(id);
@@ -173,7 +183,7 @@ class CacheTest {
     }
 
     @Test
-    void testOrder() {
+    void shouldCacheDifferentOrderCombinations() {
         Cache cache = getCache();
         cache.clear();
         Page<CacheModel> page = new Page<>(1, 10, false);
@@ -205,7 +215,7 @@ class CacheTest {
     }
 
     @Test
-    void testCustomOffset() {
+    void shouldCacheWithCustomPageOffset() {
         Cache cache = getCache();
         cache.clear();
         CustomPage<CacheModel> page1 = new CustomPage<>(2, 10, false);

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -20,10 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-07-04
  */
 @Slf4j
+@Tag("integration")
 public class VersionTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void testWrapperMode() {
+    void shouldUpdateVersionViaWrapper() {
         log.info("[wrapper mode] test");
 
         doTestAutoCommit(i -> {
@@ -47,7 +49,7 @@ public class VersionTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
-    void test() {
+    void shouldUpdateWithOptimisticLocking() {
         doTestAutoCommit(i -> {
             int result = i.updateById(new Entity().setId(1L).setName("老张"));
             assertThat(result).as("没放入version值更新成功").isEqualTo(1);

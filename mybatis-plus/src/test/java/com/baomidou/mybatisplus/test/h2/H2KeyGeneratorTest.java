@@ -2,10 +2,8 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.*;
 import com.baomidou.mybatisplus.test.h2.keygenerator.model.*;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -13,7 +11,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-keygenerator-h2.xml"})
 @Tag("integration")
@@ -35,7 +32,7 @@ class H2KeyGeneratorTest {
     private IntegerKeyGeneratorMapper integerKeyGeneratorMapper;
 
     @Test
-    void test() {
+    void shouldGenerateKeysAcrossAllIdTypes() {
         KeyGeneratorModel keyGeneratorModel = new KeyGeneratorModel();
         keyGeneratorModel.setName("我举起了咩咩");
         keyGeneratorMapper.insert(keyGeneratorModel);

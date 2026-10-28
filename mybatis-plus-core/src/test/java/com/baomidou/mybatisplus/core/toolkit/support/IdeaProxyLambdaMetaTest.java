@@ -1,8 +1,9 @@
 package com.baomidou.mybatisplus.core.toolkit.support;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandleProxies;
@@ -23,8 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class IdeaProxyLambdaMetaTest {
 
     @Test
-    @Disabled("JDK 25 CI 环境 ClassCastException，本地通过；MethodHandleProxies 行为变化，非回归")
-    void test() throws NoSuchMethodException, IllegalAccessException {
+    @EnabledOnJre({JRE.JAVA_17, JRE.JAVA_21})
+    void shouldResolveIdeaProxyLambdaMeta() throws NoSuchMethodException, IllegalAccessException {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         MethodHandle handle = lookup.findStatic(IdeaProxyLambdaMetaTest.class, "s", MethodType.methodType(int.class));
 

@@ -8,3 +8,12 @@ dependencies {
     api "org.springframework:spring-tx"
     testImplementation "${lib.h2}"
 }
+
+// 共享测试源：boot/boot3/boot4 三个 starter-test 的相同测试放这里，避免复制
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test-shared/java'
+        }
+    }
+}

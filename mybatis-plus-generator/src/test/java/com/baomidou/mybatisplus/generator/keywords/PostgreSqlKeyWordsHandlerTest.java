@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PostgreSqlKeyWordsHandlerTest {
 
     @Test
-    void test() {
+    void shouldDetectKeywordsAndFormatColumnsForPostgresql() {
         PostgreSqlKeyWordsHandler keyWordsHandler = new PostgreSqlKeyWordsHandler();
         assertThat(keyWordsHandler.isKeyWords("with")).isTrue();
         assertThat(keyWordsHandler.isKeyWords("WITH")).isTrue();

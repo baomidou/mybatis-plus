@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class StrategyConfigTest {
 
     @Test
-    void test() {
+    void shouldToggleGenerationOfControllerEntityServiceAndMapper() {
         StrategyConfig strategyConfig;
         // 默认全开
         strategyConfig = new StrategyConfig.Builder().build();
@@ -102,7 +102,7 @@ class StrategyConfigTest {
     }
 
     @Test
-    void testSuperAnnotation() {
+    void shouldMergeSuperEntityColumns() {
         StrategyConfig strategyConfig;
 
         strategyConfig = GeneratorBuilder.strategyConfig();

@@ -49,7 +49,7 @@ class CollectionUtilsTest {
     }
 
     @Test
-    void testSplit() {
+    void shouldSplitListIntoChunksOfGivenSize() {
         List<Integer> list = asList(1, 2, 3, 4, 5);
         List<List<Integer>> lists = CollectionUtils.split(list, 2);
         assertThat(lists).isEqualTo(asList(asList(1, 2), asList(3, 4), singletonList(5)));

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class PgtableServiceImpl extends ServiceImpl<PgtableMappper, Pgtable> implements IPgtableService {
 
     @Override
-    public void testTask() {
+    public void shouldRunTask() {
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1);
         executorService.schedule(() -> {
             try {

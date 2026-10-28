@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.test.DbTestSupport;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -23,10 +24,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-24
  */
+@Tag("integration")
 public class TenantTest extends DbTestSupport<EntityMapper> {
 
     @Test
-    void test() {
+    void shouldIsolateTenantsAndSupportIgnore() {
         Cache cache = sqlSessionFactory.getConfiguration().getCache(EntityMapper.class.getName());
         assertThat(cache).as("使用 @CacheNamespace 指定了使用缓存").isNotNull();
 

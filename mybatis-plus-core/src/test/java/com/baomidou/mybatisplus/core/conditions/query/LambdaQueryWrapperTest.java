@@ -33,7 +33,7 @@ class LambdaQueryWrapperTest extends WrapperTestSupport {
     }
 
     @Test
-    void testLambdaOrderBySqlSegment() {
+    void shouldBuildLambdaOrderBySqlSegment() {
         LambdaQueryWrapper<?> lqw = Wrappers.<Table>lambdaQuery().orderByDesc(Table::getId);
         assertThat(lqw.getSqlSegment()).isEqualTo(" ORDER BY `id` DESC");
         lqw.clear();

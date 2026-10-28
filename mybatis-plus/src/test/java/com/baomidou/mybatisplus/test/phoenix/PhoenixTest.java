@@ -7,9 +7,8 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.phoenix.entity.PhoenixTestInfo;
 import com.baomidou.mybatisplus.test.phoenix.mapper.PhoenixTestInfoMapper;
 import org.apache.ibatis.session.SqlSession;
-import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -24,9 +23,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  *          Created date: 2019/12/21 16:35
  */
 @DirtiesContext
-@TestMethodOrder(MethodOrderer.MethodName.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:phoenix/spring-test-phoenix.xml"})
+@Tag("external-db")
 public class PhoenixTest {
 
     @Autowired

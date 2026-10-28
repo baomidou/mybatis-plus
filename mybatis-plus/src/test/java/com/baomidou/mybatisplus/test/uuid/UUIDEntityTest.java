@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.session.Configuration;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -15,10 +16,11 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
+@Tag("integration")
 public class UUIDEntityTest extends DbTestSupport<UUIDEntityMapper> {
 
     @Test
-    void test() {
+    void shouldCrudWithUuidPrimaryKey() {
         doTest(m -> {
             var uuidEntity = new UUIDEntity();
             uuidEntity.setId(UUID.randomUUID());

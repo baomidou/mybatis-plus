@@ -10,10 +10,8 @@ import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiurong 2019/4/12.
  */
 @ExtendWith(SpringExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @MapperScan(value = "com.baomidou.mybatisplus.test.h2")
 @ContextConfiguration(classes = {MybatisMapperRegistryTest.class, DBConfig.class})
 @Tag("integration")
@@ -64,7 +61,7 @@ class MybatisMapperRegistryTest extends H2TestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    void test() throws ReflectiveOperationException {
+    void shouldRegisterAndResolveMappers() throws ReflectiveOperationException {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             Configuration configuration = sqlSessionFactory.getConfiguration();
             MybatisMapperRegistry mapperRegistry = (MybatisMapperRegistry) sqlSessionFactory.getConfiguration()

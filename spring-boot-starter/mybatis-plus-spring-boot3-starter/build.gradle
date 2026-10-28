@@ -23,3 +23,12 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+// 引入共享测试源
+sourceSets {
+    test {
+        java {
+            srcDir "${project(':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure').projectDir}/src/test-shared/java"
+        }
+    }
+}

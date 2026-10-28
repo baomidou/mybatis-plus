@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.test.multisqlsessionfactory.a.service.AEntitySer
 import com.baomidou.mybatisplus.test.multisqlsessionfactory.b.entity.BEntity;
 import com.baomidou.mybatisplus.test.multisqlsessionfactory.b.service.BEntityService;
 import org.apache.ibatis.jdbc.SqlRunner;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AppConfig.class})
+@Tag("integration")
 public class MultiSqlSessionFactoryTest {
 
     @Autowired
@@ -36,7 +38,7 @@ public class MultiSqlSessionFactoryTest {
     private DataSource dataSourceB;
 
     @Test
-    void test() throws Exception {
+    void shouldOperateWithMultipleDataSources() throws Exception {
         new SqlRunner(dataSourceA.getConnection()).run("""
                    CREATE TABLE IF NOT EXISTS  t_entity_a (
                                            	id BIGINT NOT NULL AUTO_INCREMENT,
@@ -54,9 +56,9 @@ public class MultiSqlSessionFactoryTest {
                 """);
         assertThat(aEntityService.count()).isEqualTo(0L);
         assertThat(bEntityService.count()).isEqualTo(0L);
-        aEntityService.testSaveBath(List.of(new AEntity("test1"), new AEntity("test2")));
+        aEntityService.shouldSaveBatch(List.of(new AEntity("test1"), new AEntity("test2")));
         assertThat(aEntityService.count()).isEqualTo(2L);
-        bEntityService.testSaveBath(List.of(new BEntity("test1"), new BEntity("test2"), new BEntity("test3")));
+        bEntityService.shouldSaveBatch(List.of(new BEntity("test1"), new BEntity("test2"), new BEntity("test3")));
         assertThat(bEntityService.count()).isEqualTo(3L);
 
     }

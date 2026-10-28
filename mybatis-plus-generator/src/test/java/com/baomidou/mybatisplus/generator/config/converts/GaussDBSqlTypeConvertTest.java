@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.generator.config.converts;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
@@ -22,10 +23,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class GaussDBSqlTypeConvertTest {
 
     @Test
-    void test() {
+    void shouldConvertGaussDbSqlTypesToFieldTypes() {
         GlobalConfig globalConfig = GeneratorBuilder.globalConfig();
         GaussDBSqlTypeConvert convert = GaussDBSqlTypeConvert.INSTANCE;
         assertThat(convert.processTypeConvert(globalConfig, "char")).isEqualTo(STRING);

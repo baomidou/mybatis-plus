@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.json;
 
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2024年3月4日
  */
+@Tag("integration")
 public class Fastjson2Test extends DbTestSupport<FastJson2EntityMapper> {
 
     @Override
@@ -27,7 +29,7 @@ public class Fastjson2Test extends DbTestSupport<FastJson2EntityMapper> {
     }
 
     @Test
-    void test() {
+    void shouldSerializeAndDeserializeWithFastjson2() {
         doTest(mapper -> {
             var entity = new FastJson2Entity("123", "秋秋", new FastJson2Entity.Card("1", "1111"),
                     Arrays.asList(new FastJson2Entity.Attr("age", "18"), new FastJson2Entity.Attr("sex", "女")),

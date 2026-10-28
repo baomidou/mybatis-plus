@@ -5,19 +5,19 @@ import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 
 public interface ICacheService extends IService<CacheModel> {
 
-    long testBatchTransactionalClear1();
+    long batchTransactionalClear1();
 
-    long testBatchTransactionalClear2();
+    long batchTransactionalClear2();
 
-    long testBatchTransactionalClear3();
+    long batchTransactionalClear3();
 
-    long testBatchTransactionalClear4();
+    long batchTransactionalClear4();
 
-    long testBatchTransactionalClear5();
+    long batchTransactionalClear5();
 
-    long testBatchTransactionalClear6();
+    long batchTransactionalClear6();
 
-    long testBatchTransactionalClear7();
+    long batchTransactionalClear7();
 
     //    boolean testCustomSaveOrUpdateBatch();
 }

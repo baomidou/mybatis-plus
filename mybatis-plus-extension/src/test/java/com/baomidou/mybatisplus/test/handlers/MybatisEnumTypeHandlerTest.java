@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class MybatisEnumTypeHandlerTest extends TypeHandlerTestSupport {
 
@@ -115,7 +117,7 @@ public class MybatisEnumTypeHandlerTest extends TypeHandlerTestSupport {
     }
 
     @Test
-    public void testNullButReturnZero() throws Exception {
+    public void shouldReturnNullWhenValueIsZeroButWasNull() throws Exception {
         when(callableStatement.getObject(1, Integer.class)).thenReturn(0);
         when(callableStatement.wasNull()).thenReturn(true);
         assertThat(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1)).isNull();

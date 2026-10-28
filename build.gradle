@@ -277,12 +277,6 @@ subprojects {
         }
     }
 
-    test {
-        exclude("**/phoenix/**")
-        exclude("**/postgresql/**")
-        exclude("**/gaussdb/**")
-    }
-
     // 字节码版本校验任务：确保编译产物的 class 版本与承诺的 release 一致
     tasks.register('verifyBytecodeVersion') {
         group = 'verification'

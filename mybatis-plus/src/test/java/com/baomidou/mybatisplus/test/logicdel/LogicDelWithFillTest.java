@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.reflection.MetaObject;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <em>and</em> {@code @TableLogic}, the fill handler can inject the correct value at <br>
  * runtime.
  */
+@Tag("integration")
 public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillMapper> {
 
     /**

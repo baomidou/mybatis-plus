@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-xml-h2.xml"})
+@Tag("integration")
 class TestXmlConfig {
 
     @Autowired
     protected IH2UserService userService;
 
     @Test
-    void test() {
+    void shouldLoadUserFromXmlConfig() {
         H2User user = userService.getById(101L);
         assertThat(user).isNotNull();
     }

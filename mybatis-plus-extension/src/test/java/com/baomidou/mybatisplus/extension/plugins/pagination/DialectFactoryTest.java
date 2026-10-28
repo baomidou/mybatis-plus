@@ -16,6 +16,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SybaseDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.TrinoDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XCloudDialect;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * @author nieqiurong
  */
+@Tag("unit")
 public class DialectFactoryTest {
 
     /**

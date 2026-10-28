@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.builder.CustomFile;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -12,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author nieqiurong 2020/10/6.
  */
+@Tag("unit")
 public class PackageConfigTest {
 
     @Test
@@ -50,7 +52,7 @@ public class PackageConfigTest {
     }
 
     @Test
-    void testCustomFile() {
+    void shouldBuildCustomFileInfo() {
         var packageConfig = GeneratorBuilder.packageConfigBuilder().build();
         var injectionConfig = GeneratorBuilder.injectionConfigBuilder()
                 .customFile(
