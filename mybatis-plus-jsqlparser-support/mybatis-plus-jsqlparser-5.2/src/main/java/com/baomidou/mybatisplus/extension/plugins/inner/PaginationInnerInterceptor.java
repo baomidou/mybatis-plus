@@ -69,7 +69,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections
             .singletonList(new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total")));
-    protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
+    protected final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
