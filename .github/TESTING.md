@@ -53,12 +53,12 @@
 
 GitHub Actions 工作流（`.github/workflows/gradle.yml`）采用多 JDK 并行矩阵策略：
 
-- **JDK 版本**：17、21、25 三个版本并行执行
+- **JDK 版本**：21、25 两个版本并行执行（`mybatis-plus-up` 模块需要 JDK 21+，故不含 JDK 17）
 - **并行策略**：`fail-fast: false`，某个 JDK 版本失败不影响其他版本继续运行
 - **缓存优化**：按 JDK 版本缓存 `~/.gradle/caches` 和 `~/.gradle/wrapper`
 - **Gradle 并行**：`org.gradle.parallel=true` 启用模块级并行构建
 
-预期效果：三个 JDK 版本的测试同时运行，总耗时与单版本相当（~7 分钟），而非三倍（~21 分钟）。
+预期效果：两个 JDK 版本的测试同时运行，总耗时与单版本相当（~7 分钟），而非两倍（~14 分钟）。
 
 本地开发时，`gradle.properties` 已启用 `org.gradle.parallel=true`，模块级构建并行执行。
 

@@ -20,7 +20,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        java-version: ['17', '21', '25']
+        java-version: ['21', '25']
       fail-fast: false
 
     steps:
