@@ -21,7 +21,7 @@ buildscript {
             mybatisSpringBootStarterVersion = '2.3.2',
             mybatisSpringBoot3StarterVersion = '3.0.5',
             mybatisSpringBoot4StarterVersion = '4.1.0',
-            springVersion = '5.3.39',
+            springVersion = '7.0.10',
             springBootVersion = '2.7.18',
             springBoot3Version = '3.5.9',
             springBoot4Version = '4.1.0',
