@@ -51,7 +51,7 @@ buildscript {
             "spring-test"                : "org.springframework:spring-test:${springVersion}",
             "assertj-core"               : "org.assertj:assertj-core:3.27.7",
             "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-            "fastjson"                   : "com.alibaba:fastjson:2.0.62",
+            "fastjson"                   : "com.alibaba:fastjson:2.0.66",
             "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.20.1",
             "jackson3"                   : "tools.jackson.core:jackson-databind:3.0.3",
             "gson"                       : "com.google.code.gson:gson:2.13.2",
