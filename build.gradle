@@ -71,7 +71,7 @@ buildscript {
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
             //code generator
             "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
-            "freemarker"          : "org.freemarker:freemarker:2.3.34",
+            "freemarker"          : "org.freemarker:freemarker:2.3.35",
             "beetl"               : "com.ibeetl:beetl:3.17.0.RELEASE",
             "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
             "enjoy"               : "com.jfinal:enjoy:5.2.2",
