@@ -410,7 +410,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         // 如果有多表，则用 and 连接
         if (expressions.size() > 1) {
             for (int i = 1; i < expressions.size(); i++) {
-                injectExpression = new AndExpression(injectExpression, expressions.get(i));
+                injectExpression = new AndExpression(groupForAnd(injectExpression), groupForAnd(expressions.get(i)));
             }
         }
 
@@ -446,11 +446,17 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * @since 3.5.11
      */
     protected Expression appendExpression(Expression currentExpression, Expression injectExpression) {
+        currentExpression = groupForAnd(currentExpression);
+        injectExpression = groupForAnd(injectExpression);
         if (ExpressionAppendMode.LAST == expressionAppendMode || expressionAppendMode == null) {
             return new AndExpression(currentExpression, injectExpression);
         } else {
             return new AndExpression(injectExpression, currentExpression);
         }
+    }
+
+    private Expression groupForAnd(Expression expression) {
+        return isLowPrecedence(expression) ? new ParenthesedExpressionList<>(expression) : expression;
     }
 
     /**
