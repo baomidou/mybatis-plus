@@ -120,7 +120,8 @@ public class DatabaseMetaDataWrapper {
             }
         }
         Map<String, Column> columnsInfoMap = new LinkedHashMap<>();
-        try (ResultSet resultSet = databaseMetaData.getColumns(catalog, schema, tableName, "%")) {
+        try (ResultSet resultSet = databaseMetaData
+                .getColumns(catalog, escapePattern(schema), escapePattern(tableName), "%")) {
             while (resultSet.next()) {
                 Column column = new Column();
                 String name = resultSet.getString("COLUMN_NAME");
@@ -147,6 +148,17 @@ public class DatabaseMetaDataWrapper {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String escapePattern(String name) throws SQLException {
+        if (name == null) {
+            return null;
+        }
+        String escape = databaseMetaData.getSearchStringEscape();
+        if (StringUtils.isBlank(escape)) {
+            return name;
+        }
+        return name.replace(escape, escape + escape).replace("_", escape + "_").replace("%", escape + "%");
     }
 
     private boolean isGeneratedOrAutoIncrementColumn(ResultSet resultSet, String columnLabel) {
