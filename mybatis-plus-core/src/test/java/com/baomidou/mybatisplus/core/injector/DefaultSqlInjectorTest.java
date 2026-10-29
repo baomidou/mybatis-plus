@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -188,6 +189,7 @@ class DefaultSqlInjectorTest {
     private static MapperBuilderAssistant assistant(MybatisConfiguration configuration, Class<?> mapperClass) {
         MapperBuilderAssistant assistant = new MapperBuilderAssistant(configuration, "");
         assistant.setCurrentNamespace(mapperClass.getName());
+        TableInfoHelper.initMapperTableInfo(assistant, mapperClass);
         return assistant;
     }
 
