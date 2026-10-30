@@ -26,7 +26,6 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
@@ -207,15 +206,36 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     }
 
     protected void processSelectItem(SelectItem selectItem, final String whereSegment) {
-        Expression expression = selectItem.getExpression();
-        if (expression instanceof Select) {
-            processSelectBody(((Select) expression), whereSegment);
-        } else if (expression instanceof Function) {
-            processFunction((Function) expression, whereSegment);
-        } else if (expression instanceof ExistsExpression) {
-            ExistsExpression existsExpression = (ExistsExpression) expression;
-            processSelectBody((Select) existsExpression.getRightExpression(), whereSegment);
+        processSelectExpression(selectItem.getExpression(), whereSegment);
+    }
+
+    /**
+     * Traverse expression wrappers without crossing a SELECT boundary twice.
+     */
+    protected void processSelectExpression(Expression expression, final String whereSegment) {
+        if (expression == null) {
+            return;
         }
+        expression.accept(new ExpressionVisitorAdapter<Void>() {
+
+            @Override
+            public <S> Void visit(ParenthesedSelect select, S context) {
+                processSelectBody(select, whereSegment);
+                return null;
+            }
+
+            @Override
+            public <S> Void visit(Select select, S context) {
+                processSelectBody(select, whereSegment);
+                return null;
+            }
+
+            @Override
+            public <S> Void visit(Function function, S context) {
+                processFunction(function, whereSegment);
+                return null;
+            }
+        }, null);
     }
 
     /**
@@ -232,20 +252,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     protected void processFunction(Function function, final String whereSegment) {
         ExpressionList<?> parameters = function.getParameters();
         if (parameters != null) {
-            parameters.forEach(expression -> {
-                if (expression instanceof Select) {
-                    processSelectBody(((Select) expression), whereSegment);
-                } else if (expression instanceof Function) {
-                    processFunction((Function) expression, whereSegment);
-                } else if (expression instanceof EqualsTo) {
-                    if (((EqualsTo) expression).getLeftExpression() instanceof Select) {
-                        processSelectBody(((Select) ((EqualsTo) expression).getLeftExpression()), whereSegment);
-                    }
-                    if (((EqualsTo) expression).getRightExpression() instanceof Select) {
-                        processSelectBody(((Select) ((EqualsTo) expression).getRightExpression()), whereSegment);
-                    }
-                }
-            });
+            parameters.forEach(expression -> processSelectExpression(expression, whereSegment));
         }
     }
 
