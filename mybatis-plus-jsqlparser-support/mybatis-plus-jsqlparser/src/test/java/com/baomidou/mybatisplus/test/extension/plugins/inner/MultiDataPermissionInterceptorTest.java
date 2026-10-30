@@ -151,7 +151,7 @@ public class MultiDataPermissionInterceptorTest {
         assertSql(TEST_8_3, "select * from fund where id=3", "SELECT * FROM fund WHERE id = 3 AND dept_id = 1");
         assertSql(
                 TEST_8_4, "select * from fund where id=3",
-                "SELECT * FROM fund WHERE id = 3 AND user_id = 1 OR dept_id = 1");
+                "SELECT * FROM fund WHERE id = 3 AND (user_id = 1 OR dept_id = 1)");
         // 修改之前旧版的多表数据权限对这个SQL的表现形式：
         // 输入 "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 on t1.uid = t2.uid) SELECT * FROM temp"
         // 输出 "WITH temp AS (SELECT t1.field1, t2.field2 FROM table1 t1 LEFT JOIN table2 t2 ON t1.uid = t2.uid) SELECT * FROM temp"
