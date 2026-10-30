@@ -63,6 +63,46 @@ class InterceptorIgnoreHelperTest {
 
     }
 
+    @Test
+    void shouldPreserveMapperOnlyCustomStrategiesWhenMethodOverridesAnotherKey() {
+        init(CustomStrategyMapper.class);
+        String id = CustomStrategyMapper.class.getName() + ".override";
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(id, "audit")).isTrue();
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(id, "archive")).isFalse();
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(id, "trace")).isTrue();
+        assertThat(InterceptorIgnoreHelper.getIgnoreStrategy(id).getOthers())
+                .containsOnlyKeys("audit", "archive", "trace");
+    }
+
+    @Test
+    void shouldInheritUnspecifiedCustomStrategyValues() {
+        init(CustomStrategyMapper.class);
+        String id = CustomStrategyMapper.class.getName() + ".inherit";
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(id, "audit")).isTrue();
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(id, "archive")).isTrue();
+    }
+
+    @Test
+    void shouldKeepMapperAndSiblingMethodStrategiesUnchanged() {
+        init(CustomStrategyMapper.class);
+        String namespace = CustomStrategyMapper.class.getName();
+        assertThat(InterceptorIgnoreHelper.getIgnoreStrategy(namespace).getOthers()).containsEntry("audit", true)
+                .containsEntry("archive", true).doesNotContainKey("trace");
+        assertThat(InterceptorIgnoreHelper.willIgnoreOthersByKey(namespace + ".plain", "archive")).isTrue();
+    }
+
+    @InterceptorIgnore(others = {"audit@true", "archive@true"})
+    interface CustomStrategyMapper {
+
+        @InterceptorIgnore(others = {"archive@false", "trace@true"})
+        void override();
+
+        @InterceptorIgnore(others = "archive@")
+        void inherit();
+
+        void plain();
+    }
+
     private void init(Class<?> clazz) {
         IgnoreStrategy ignoreStrategy = InterceptorIgnoreHelper.initSqlParserInfoCache(clazz);
         for (Method method : clazz.getMethods()) {
