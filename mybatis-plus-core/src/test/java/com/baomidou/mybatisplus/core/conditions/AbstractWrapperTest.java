@@ -100,8 +100,8 @@ class AbstractWrapperTest {
 
     @Test
     void changingParamAliasReachesUnrenderedNestedConditions() {
-        QueryWrapper<Object> wrapper = new QueryWrapper<>()
-                .eq("status", 1).and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().eq("status", 1)
+                .and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
         wrapper.setParamAlias("filter");
 
         assertThat(wrapper.getSqlSegment()).isEqualTo(
@@ -117,14 +117,12 @@ class AbstractWrapperTest {
         wrapper.setParamAlias("filter");
         wrapper.eq("status", 3);
 
-        assertThat(wrapper.getSqlSegment())
-                .doesNotContain("#{original.", "#{ew.")
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{original.", "#{ew.")
                 .contains("#{filter.paramNameValuePairs.");
         assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ?)");
         wrapper.setParamAlias("second");
         wrapper.eq("enabled", 4);
-        assertThat(wrapper.getSqlSegment())
-                .doesNotContain("#{filter.", "#{original.", "#{ew.")
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{filter.", "#{original.", "#{ew.")
                 .contains("#{second.paramNameValuePairs.");
         assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ? AND enabled = ?)");
     }
