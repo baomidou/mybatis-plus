@@ -18,12 +18,14 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 import com.baomidou.mybatisplus.extension.plugins.datasource.DefaultShardingProcessor;
 import com.baomidou.mybatisplus.extension.plugins.datasource.IShardingProcessor;
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingHelper;
+import com.baomidou.mybatisplus.extension.plugins.datasource.StatementRoutingTransaction;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.transaction.Transaction;
 
 import java.sql.SQLException;
 
@@ -48,15 +50,15 @@ public class ShardingInnerInterceptor implements InnerInterceptor {
     @Override
     public void beforeQuery(Executor executor, MappedStatement statement, Object parameter, RowBounds rowBounds,
             ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
-        changeDatasource(statement, parameter);
+        changeDatasource(executor, statement, parameter);
     }
 
     @Override
     public void beforeUpdate(Executor executor, MappedStatement statement, Object parameter) throws SQLException {
-        changeDatasource(statement, parameter);
+        changeDatasource(executor, statement, parameter);
     }
 
-    private void changeDatasource(MappedStatement statement, Object parameter) {
+    private void changeDatasource(Executor executor, MappedStatement statement, Object parameter) throws SQLException {
         SqlCommandType commandType = statement.getSqlCommandType();
         if (commandType == SqlCommandType.UNKNOWN || commandType == SqlCommandType.FLUSH) {
             return;
@@ -65,6 +67,10 @@ public class ShardingInnerInterceptor implements InnerInterceptor {
                 && processor.changeDatasource(statement, parameter, ShardingHelper.getDatabaseKey());
         if (!changed) {
             ShardingHelper.changeDatasource(statement.getId(), parameter, commandType);
+        }
+        Transaction transaction = executor.getTransaction();
+        if (transaction instanceof StatementRoutingTransaction) {
+            ((StatementRoutingTransaction) transaction).prepareStatement(executor);
         }
     }
 }
