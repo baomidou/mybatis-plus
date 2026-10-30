@@ -228,15 +228,15 @@ class MybatisMapperMethodTest {
     void customWrapperAliasBindsNestedConditionParameters() throws Exception {
         Configuration configuration = configuration();
         RecordingSession session = new RecordingSession(configuration);
-        QueryWrapper<String> wrapper = new QueryWrapper<String>()
-                .eq("status", 1).and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
+        QueryWrapper<String> wrapper = new QueryWrapper<String>().eq("status", 1)
+                .and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
         execute("selectByCustomWrapper", session, wrapper);
         Object parameters = session.last("selectList").args().get(1);
         SqlSource sqlSource = new XMLLanguageDriver().createSqlSource(
                 configuration, "<script>SELECT id FROM records ${filter.customSqlSegment}</script>", Map.class);
         BoundSql boundSql = sqlSource.getBoundSql(parameters);
-        MappedStatement statement = new MappedStatement.Builder(
-                configuration, "nestedAlias", sqlSource, SqlCommandType.SELECT).build();
+        MappedStatement statement = new MappedStatement.Builder(configuration, "nestedAlias", sqlSource,
+                SqlCommandType.SELECT).build();
         Map<Integer, Object> bindings = new HashMap<>();
         PreparedStatement preparedStatement = (PreparedStatement) Proxy.newProxyInstance(
                 PreparedStatement.class.getClassLoader(), new Class<?>[]{PreparedStatement.class},
