@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.spring.transaction;
 
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingContext;
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingDatasource;
+import com.baomidou.mybatisplus.extension.plugins.datasource.StatementRoutingTransaction;
+import org.apache.ibatis.executor.Executor;
 import org.mybatis.spring.transaction.SpringManagedTransaction;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -34,16 +36,47 @@ import javax.sql.DataSource;
  * @author hubin
  * @since 3.5.18
  */
-public class ShardingManagedTransaction extends SpringManagedTransaction {
+public class ShardingManagedTransaction extends SpringManagedTransaction implements StatementRoutingTransaction {
 
     private final DataSource routingDataSource;
     private final Map<String, Connection> connections = new ConcurrentHashMap<>();
     private final Map<String, String> writeRoutes = new ConcurrentHashMap<>();
     private volatile Boolean springManaged;
+    private String statementRoute;
 
     public ShardingManagedTransaction(DataSource dataSource) {
         super(dataSource);
         this.routingDataSource = dataSource;
+    }
+
+    @Override
+    public void prepareStatement(Executor executor) throws SQLException {
+        if (!(routingDataSource instanceof ShardingDatasource)) {
+            return;
+        }
+        String route = ShardingContext.stripWriteFlag(ShardingContext.currentOrPrimary());
+        if (route != null) {
+            int separator = route.indexOf('#');
+            String group = separator < 0 ? null : route.substring(0, separator);
+            String writeRoute = group == null ? null : writeRoutes.get(group);
+            Connection writeConnection = writeRoute == null ? null : connections.get(writeRoute);
+            if (writeConnection != null && !writeConnection.isClosed()) {
+                route = writeRoute;
+            }
+        }
+        if (statementRoute != null && !statementRoute.equals(route)) {
+            // Like a BATCH query, switching connections executes pending batches
+            // without committing them. REUSE releases statements on the old connection.
+            String requestedRoute = ShardingContext.get();
+            try {
+                ShardingContext.set(statementRoute);
+                executor.flushStatements();
+            } finally {
+                ShardingContext.set(requestedRoute);
+            }
+            executor.clearLocalCache();
+        }
+        statementRoute = route;
     }
 
     @Override
@@ -121,6 +154,7 @@ public class ShardingManagedTransaction extends SpringManagedTransaction {
             }
             connections.clear();
             writeRoutes.clear();
+            statementRoute = null;
         } else {
             super.close();
         }
