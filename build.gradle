@@ -92,7 +92,7 @@ buildscript {
     dependencies {
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21"
-        classpath "io.freefair.gradle:lombok-plugin:8.10"
+        classpath "io.freefair.gradle:lombok-plugin:9.8.2"
         classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.3"
         classpath "com.github.jakemarsden.git-hooks:com.github.jakemarsden.git-hooks.gradle.plugin:0.0.2"
     }
