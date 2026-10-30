@@ -277,27 +277,31 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
         }
 
         private boolean find(Wrapper<?> wrapper) {
-            Matcher matcher;
             final NormalSegmentList segments = wrapper.getExpression().getNormal();
             for (ISqlSegment segment : segments) {
-                // 如果字段已找到并且当前segment为EQ
-                if (state == State.FIELD_FOUND && segment == SqlKeyword.EQ) {
-                    this.state = State.EQ_FOUND;
-                    // 如果EQ找到并且value已找到
-                } else if (state == State.EQ_FOUND
-                        && (matcher = PARAM_PAIRS_RE.matcher(segment.getSqlSegment())).matches()) {
-                    this.valueKey = matcher.group(1);
-                    this.state = State.VERSION_VALUE_PRESENT;
-                    return true;
-                    // 处理嵌套
-                } else if (segment instanceof Wrapper) {
+                if (segment instanceof Wrapper) {
+                    // A predicate cannot span the boundary of a nested wrapper.
+                    this.state = State.INIT;
                     if (find((Wrapper<?>) segment)) {
                         return true;
                     }
-                    // 判断字段是否是要查找字段
-                } else if (segment.getSqlSegment().equals(this.fieldName)) {
-                    this.state = State.FIELD_FOUND;
+                    this.state = State.INIT;
+                    continue;
                 }
+                if (state == State.FIELD_FOUND && segment == SqlKeyword.EQ) {
+                    this.state = State.EQ_FOUND;
+                    continue;
+                }
+                String sqlSegment = segment.getSqlSegment();
+                if (state == State.EQ_FOUND) {
+                    Matcher matcher = PARAM_PAIRS_RE.matcher(sqlSegment);
+                    if (matcher.matches()) {
+                        this.valueKey = matcher.group(1);
+                        this.state = State.VERSION_VALUE_PRESENT;
+                        return true;
+                    }
+                }
+                this.state = sqlSegment.equals(this.fieldName) ? State.FIELD_FOUND : State.INIT;
             }
             return false;
         }
