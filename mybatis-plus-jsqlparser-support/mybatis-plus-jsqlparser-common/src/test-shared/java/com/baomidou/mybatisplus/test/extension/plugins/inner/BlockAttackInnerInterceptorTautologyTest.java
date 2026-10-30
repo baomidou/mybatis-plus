@@ -108,6 +108,45 @@ class BlockAttackInnerInterceptorTautologyTest {
     }
 
     @Test
+    void andWithUnknownAndConstant() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            for (String predicate : new String[]{"id in (?)", "id > ?", "rfid is null", "name like 'a%'"}) {
+                checkNotEx(statement + " where " + predicate + " and 1 = 1");
+                checkNotEx(statement + " where 1 = 1 and " + predicate);
+                checkNotEx(statement + " where not (" + predicate + " and 1 = 1)");
+                checkNotEx(statement + " where not (1 = 1 and " + predicate + ")");
+                checkNotEx(statement + " where " + predicate + " and 1 = 0");
+                checkNotEx(statement + " where 1 = 0 and " + predicate);
+                checkEx(statement + " where not (" + predicate + " and 1 = 0)");
+                checkEx(statement + " where not (1 = 0 and " + predicate + ")");
+            }
+            checkEx(statement + " where (id in (?) and 1 = 1) or 1 = 1");
+        }
+    }
+
+    @Test
+    void andWithLogicDelete() {
+        // https://github.com/baomidou/mybatis-plus/issues/7218
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LogicRecord.class);
+        try {
+            for (String statement : new String[]{"update block_attack_or_logic set del_flag = '1'",
+                    "delete from block_attack_or_logic"}) {
+                for (String predicate : new String[]{"id in (?)", "id = ?", "id > ?", "rfid is null",
+                        "rfid like 'a%'"}) {
+                    checkNotEx(statement + " where " + predicate + " and del_flag = '0'");
+                    checkNotEx(statement + " where del_flag = '0' and " + predicate);
+                    checkNotEx(statement + " where (" + predicate + " and del_flag = '0') and 1 = 1");
+                }
+                checkEx(statement + " where del_flag = '0'");
+                checkEx(statement + " where del_flag = '0' and 1 = 1");
+                checkEx(statement + " where 1 = 1 and del_flag = '0'");
+            }
+        } finally {
+            TableInfoHelper.remove(LogicRecord.class);
+        }
+    }
+
+    @Test
     void orWithLogicDelete() {
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LogicRecord.class);
         try {
