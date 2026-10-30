@@ -15,6 +15,8 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -222,6 +225,33 @@ class MybatisMapperMethodTest {
     }
 
     @Test
+    void customWrapperAliasBindsNestedConditionParameters() throws Exception {
+        Configuration configuration = configuration();
+        RecordingSession session = new RecordingSession(configuration);
+        QueryWrapper<String> wrapper = new QueryWrapper<String>().eq("status", 1)
+                .and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
+        execute("selectByCustomWrapper", session, wrapper);
+        Object parameters = session.last("selectList").args().get(1);
+        SqlSource sqlSource = new XMLLanguageDriver().createSqlSource(
+                configuration, "<script>SELECT id FROM records ${filter.customSqlSegment}</script>", Map.class);
+        BoundSql boundSql = sqlSource.getBoundSql(parameters);
+        MappedStatement statement = new MappedStatement.Builder(configuration, "nestedAlias", sqlSource,
+                SqlCommandType.SELECT).build();
+        Map<Integer, Object> bindings = new HashMap<>();
+        PreparedStatement preparedStatement = (PreparedStatement) Proxy.newProxyInstance(
+                PreparedStatement.class.getClassLoader(), new Class<?>[]{PreparedStatement.class},
+                (proxy, method, args) -> {
+                    bindings.put((Integer) args[0], args[1]);
+                    return null;
+                });
+
+        new DefaultParameterHandler(statement, parameters, boundSql).setParameters(preparedStatement);
+
+        assertThat(boundSql.getSql()).isEqualTo("SELECT id FROM records WHERE (status = ? AND (id = ? OR (id = ?)))");
+        assertThat(bindings).containsExactlyInAnyOrderEntriesOf(Map.of(1, 1, 2, 2, 3, 3));
+    }
+
+    @Test
     void primitiveReturnTypeCannotBeNull() {
         RecordingSession session = new RecordingSession(configuration());
         assertThatThrownBy(() -> execute("selectCount", session)).isInstanceOf(BindingException.class)
@@ -395,6 +425,8 @@ class MybatisMapperMethodTest {
     }
 
     interface Mapper {
+
+        List<String> selectByCustomWrapper(@Param("filter") QueryWrapper<String> wrapper);
 
         List<String> selectNames();
 

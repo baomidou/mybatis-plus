@@ -98,4 +98,33 @@ class AbstractWrapperTest {
         assertThat(wrapper.getParamNameValuePairs()).containsOnlyKeys("MPGENVAL1");
     }
 
+    @Test
+    void changingParamAliasReachesUnrenderedNestedConditions() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().eq("status", 1)
+                .and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
+        wrapper.setParamAlias("filter");
+
+        assertThat(wrapper.getSqlSegment()).isEqualTo(
+                "(status = #{filter.paramNameValuePairs.MPGENVAL1} AND (id = #{filter.paramNameValuePairs.MPGENVAL2} "
+                        + "OR (id = #{filter.paramNameValuePairs.MPGENVAL3})))");
+    }
+
+    @Test
+    void changingParamAliasSurvivesRenderingAndAppendingConditions() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().setParamAlias("original")
+                .and(nested -> nested.eq("id", 1).or(deeper -> deeper.eq("id", 2)));
+        assertThat(wrapper.getSqlSegment()).contains("#{original.paramNameValuePairs.");
+        wrapper.setParamAlias("filter");
+        wrapper.eq("status", 3);
+
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{original.", "#{ew.")
+                .contains("#{filter.paramNameValuePairs.");
+        assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ?)");
+        wrapper.setParamAlias("second");
+        wrapper.eq("enabled", 4);
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{filter.", "#{original.", "#{ew.")
+                .contains("#{second.paramNameValuePairs.");
+        assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ? AND enabled = ?)");
+    }
+
 }
