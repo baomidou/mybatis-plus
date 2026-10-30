@@ -15,10 +15,15 @@
  */
 package com.baomidou.mybatisplus.spring.transaction;
 
+import com.baomidou.mybatisplus.core.executor.CacheKeyCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingContext;
 import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingDatasource;
+import com.baomidou.mybatisplus.extension.plugins.datasource.ShardingGroupProperty;
+import org.apache.ibatis.cache.CacheKey;
 import org.mybatis.spring.transaction.SpringManagedTransaction;
+import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,45 +34,90 @@ import javax.sql.DataSource;
 /**
  * 分库事务管理
  * <p>
- * 同一事务内按路由 KEY 维护多个物理连接：同组写后读会绑定到写连接以保证读己之写； 提交/回滚时对各连接逐个执行，任一失败不会回滚已提交的其他连接， 跨库场景为最终一致性的 best-effort 语义，并非分布式事务。
+ * Spring 本地事务复用路由数据源绑定的连接，不允许切换到其他分库。 非 Spring 事务按路由 KEY 维护多个物理连接，同组写后读绑定到写连接。 跨库提交为 best-effort 语义，并非分布式事务。
  *
  * @author hubin
  * @since 3.5.18
  */
-public class ShardingManagedTransaction extends SpringManagedTransaction {
+public class ShardingManagedTransaction extends SpringManagedTransaction implements CacheKeyCustomizer {
 
     private final DataSource routingDataSource;
     private final Map<String, Connection> connections = new ConcurrentHashMap<>();
+    private final Map<String, DataSource> connectionDataSources = new ConcurrentHashMap<>();
     private final Map<String, String> writeRoutes = new ConcurrentHashMap<>();
-    private volatile Boolean springManaged;
 
     public ShardingManagedTransaction(DataSource dataSource) {
         super(dataSource);
         this.routingDataSource = dataSource;
     }
 
+    private String effectiveDatabaseKey() {
+        String routeKey = ShardingContext.currentOrPrimary();
+        if (routeKey == null) {
+            throw new IllegalStateException("No datasource route is available");
+        }
+        String databaseKey = ShardingContext.stripWriteFlag(routeKey);
+        Object resource = TransactionSynchronizationManager.getResource(routingDataSource);
+        if (resource instanceof ConnectionHolder) {
+            String boundKey = ((ShardingDatasource) routingDataSource)
+                    .getDatabaseKey(((ConnectionHolder) resource).getConnection());
+            if (!databaseKey.equals(boundKey) && !isReplicaRead(routeKey, boundKey)) {
+                throw new IllegalStateException("Cannot switch datasource from " + boundKey + " to " + databaseKey
+                        + " within a Spring-managed transaction");
+            }
+            return boundKey;
+        }
+        String group = group(databaseKey);
+        String writeKey = group == null ? null : writeRoutes.get(group);
+        if (writeKey != null) {
+            Connection connection = connections.get(writeKey);
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    return writeKey;
+                }
+            } catch (SQLException e) {
+                throw new IllegalStateException("Cannot inspect write connection for " + writeKey, e);
+            }
+            writeRoutes.remove(group, writeKey);
+        }
+        return databaseKey;
+    }
+
+    private static String group(String databaseKey) {
+        int separator = databaseKey.indexOf('#');
+        return separator < 0 ? null : databaseKey.substring(0, separator);
+    }
+
+    private static boolean isReplicaRead(String routeKey, String boundKey) {
+        if (boundKey == null || ShardingContext.isWriteKey(routeKey)) {
+            return false;
+        }
+        String group = group(boundKey);
+        if (group == null || !group.equals(group(routeKey))) {
+            return false;
+        }
+        ShardingGroupProperty property = ShardingContext.group(group);
+        return property != null && property.getSlaveKeys() != null
+                && property.getMasterKeys().contains(boundKey.substring(group.length() + 1))
+                && property.getSlaveKeys().contains(routeKey.substring(group.length() + 1));
+    }
+
+    @Override
+    public void customizeCacheKey(CacheKey cacheKey) {
+        if (routingDataSource instanceof ShardingDatasource) {
+            cacheKey.update(ShardingManagedTransaction.class.getName());
+            cacheKey.update(effectiveDatabaseKey());
+        }
+    }
+
     @Override
     public Connection getConnection() throws SQLException {
-        String routeKey = ShardingContext.currentOrPrimary();
         if (!(routingDataSource instanceof ShardingDatasource)) {
             return super.getConnection();
         }
-        if (routeKey == null) {
-            throw new SQLException("No datasource route is available");
-        }
-        String datasourceKey = ShardingContext.stripWriteFlag(routeKey);
-        int separator = datasourceKey.indexOf('#');
-        String group = separator < 0 ? null : datasourceKey.substring(0, separator);
-        boolean writeRoute = ShardingContext.isWriteKey(routeKey);
-        if (group != null) {
-            String writeRouteKey = writeRoutes.get(group);
-            if (writeRouteKey != null) {
-                Connection writeConnection = connections.get(writeRouteKey);
-                if (writeConnection != null && !writeConnection.isClosed()) {
-                    return writeConnection;
-                }
-                writeRoutes.remove(group, writeRouteKey);
-            }
+        String datasourceKey = effectiveDatabaseKey();
+        if (TransactionSynchronizationManager.hasResource(routingDataSource)) {
+            return super.getConnection();
         }
         Connection connection = connections.get(datasourceKey);
         if (connection == null || connection.isClosed()) {
@@ -77,11 +127,10 @@ public class ShardingManagedTransaction extends SpringManagedTransaction {
             }
             connection = DataSourceUtils.getConnection(physical);
             connections.put(datasourceKey, connection);
-            if (springManaged == null) {
-                springManaged = DataSourceUtils.isConnectionTransactional(connection, physical);
-            }
+            connectionDataSources.put(datasourceKey, physical);
         }
-        if (writeRoute && group != null) {
+        String group = group(datasourceKey);
+        if (ShardingContext.isWriteKey(ShardingContext.currentOrPrimary()) && group != null) {
             writeRoutes.put(group, datasourceKey);
         }
         return connection;
@@ -89,45 +138,42 @@ public class ShardingManagedTransaction extends SpringManagedTransaction {
 
     @Override
     public void commit() throws SQLException {
-        if (!Boolean.TRUE.equals(springManaged)) {
-            for (Connection connection : connections.values()) {
-                if (!connection.getAutoCommit()) {
-                    connection.commit();
-                }
+        super.commit();
+        for (Map.Entry<String, Connection> entry : connections.entrySet()) {
+            Connection connection = entry.getValue();
+            if (!DataSourceUtils.isConnectionTransactional(connection, connectionDataSources.get(entry.getKey()))
+                    && !connection.getAutoCommit()) {
+                connection.commit();
             }
         }
     }
 
     @Override
     public void rollback() throws SQLException {
-        if (!Boolean.TRUE.equals(springManaged)) {
-            for (Connection connection : connections.values()) {
-                if (!connection.getAutoCommit()) {
-                    connection.rollback();
-                }
+        super.rollback();
+        for (Map.Entry<String, Connection> entry : connections.entrySet()) {
+            Connection connection = entry.getValue();
+            if (!DataSourceUtils.isConnectionTransactional(connection, connectionDataSources.get(entry.getKey()))
+                    && !connection.getAutoCommit()) {
+                connection.rollback();
             }
         }
     }
 
     @Override
     public void close() throws SQLException {
-        if (routingDataSource instanceof ShardingDatasource) {
-            ShardingDatasource router = (ShardingDatasource) routingDataSource;
-            for (Map.Entry<String, Connection> entry : connections.entrySet()) {
-                DataSource physical = router.getDataSources().get(entry.getKey());
-                if (physical != null) {
-                    DataSourceUtils.releaseConnection(entry.getValue(), physical);
-                }
-            }
-            connections.clear();
-            writeRoutes.clear();
-        } else {
-            super.close();
+        super.close();
+        for (Map.Entry<String, Connection> entry : connections.entrySet()) {
+            DataSourceUtils.releaseConnection(entry.getValue(), connectionDataSources.get(entry.getKey()));
         }
+        connections.clear();
+        connectionDataSources.clear();
+        writeRoutes.clear();
     }
 
     @Override
     public Integer getTimeout() {
-        return null;
+        ConnectionHolder holder = (ConnectionHolder) TransactionSynchronizationManager.getResource(routingDataSource);
+        return holder != null && holder.hasTimeout() ? holder.getTimeToLiveInSeconds() : null;
     }
 }
