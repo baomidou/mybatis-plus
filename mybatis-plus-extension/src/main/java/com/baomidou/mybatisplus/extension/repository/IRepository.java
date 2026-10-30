@@ -500,9 +500,6 @@ public interface IRepository<T> {
 
     /**
      * 链式查询 lambda 式
-     * <p>
-     * 注意：不支持 Kotlin
-     * </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -512,9 +509,6 @@ public interface IRepository<T> {
 
     /**
      * 链式查询 lambda 式
-     * <p>
-     * 注意：不支持 Kotlin
-     * </p>
      *
      * @param entity 实体对象
      * @return LambdaQueryWrapper 的包装类
@@ -528,7 +522,9 @@ public interface IRepository<T> {
      * kotlin 使用
      *
      * @return KtQueryWrapper 的包装类
+     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaQuery()}。
      */
+    @Deprecated
     default KtQueryChainWrapper<T> ktQuery() {
         return ChainWrappers.ktQueryChain(getBaseMapper(), getEntityClass());
     }
@@ -537,8 +533,10 @@ public interface IRepository<T> {
      * 链式查询 lambda 式 <br>
      * kotlin 使用
      *
-     * @return KtQueryWrapper 的包装类
+     * @return KtUpdateWrapper 的包装类
+     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaUpdate()}。
      */
+    @Deprecated
     default KtUpdateChainWrapper<T> ktUpdate() {
         return ChainWrappers.ktUpdateChain(getBaseMapper(), getEntityClass());
     }
@@ -554,9 +552,6 @@ public interface IRepository<T> {
 
     /**
      * 链式更改 lambda 式
-     * <p>
-     * 注意：不支持 Kotlin
-     * </p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */

@@ -33,7 +33,9 @@ import kotlin.reflect.KProperty1
  *
  * @author yangyuhan
  * @since 2018-11-02
+ * @deprecated 将在未来版本中移除，请改用 [com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper]。
  */
+@Deprecated("将在未来版本中移除，请改用 com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper")
 @Suppress("serial")
 open class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty1<in T, *>> {
 

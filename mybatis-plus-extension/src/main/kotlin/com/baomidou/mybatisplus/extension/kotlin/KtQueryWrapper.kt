@@ -31,7 +31,9 @@ import kotlin.reflect.KProperty1
  *
  * @author yangyuhan
  * @since 2018-11-02
+ * @deprecated 将在未来版本中移除，请改用 [com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper]。
  */
+@Deprecated("将在未来版本中移除，请改用 com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper")
 @Suppress("serial")
 open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KProperty1<in T, *>> {
 
