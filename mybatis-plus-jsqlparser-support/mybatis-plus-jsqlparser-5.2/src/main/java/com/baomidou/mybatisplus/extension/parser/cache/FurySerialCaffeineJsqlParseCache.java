@@ -24,10 +24,10 @@ import java.util.function.Consumer;
  * jsqlparser 缓存 fury 序列化 Caffeine 缓存实现.
  *
  * @author laokou
- * @deprecated Apache Fury 已更名为 Apache Fory，将在未来版本中移除，请改用 {@link ForySerialCaffeineJsqlParseCache}。
+ * @deprecated Apache Fury 已更名为 Apache Fory，将在未来版本中移除，请迁移至 {@link ForySerialCaffeineJsqlParseCache}。
  */
 @Deprecated
-public class FurySerialCaffeineJsqlParseCache extends ForySerialCaffeineJsqlParseCache {
+public class FurySerialCaffeineJsqlParseCache extends AbstractCaffeineJsqlParseCache {
 
     public FurySerialCaffeineJsqlParseCache(Cache<String, byte[]> cache) {
         super(cache);
@@ -35,6 +35,16 @@ public class FurySerialCaffeineJsqlParseCache extends ForySerialCaffeineJsqlPars
 
     public FurySerialCaffeineJsqlParseCache(Consumer<Caffeine<Object, Object>> consumer) {
         super(consumer);
+    }
+
+    @Override
+    public byte[] serialize(Object obj) {
+        return FuryFactory.getFuryFactory().serialize(obj);
+    }
+
+    @Override
+    public Object deserialize(String sql, byte[] bytes) {
+        return FuryFactory.getFuryFactory().deserialize(bytes);
     }
 
 }

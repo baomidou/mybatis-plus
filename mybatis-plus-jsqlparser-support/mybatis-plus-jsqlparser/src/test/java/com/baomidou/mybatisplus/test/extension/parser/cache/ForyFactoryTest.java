@@ -74,4 +74,5 @@ class ForyFactoryTest {
         assertThat(restored.getClass()).isEqualTo(statement.getClass());
         assertThat(restored.toString()).isEqualTo(statement.toString());
     }
+
 }
