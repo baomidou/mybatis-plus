@@ -1,11 +1,11 @@
 package com.baomidou.mybatisplus.test.extension.parser;
 
+import com.baomidou.mybatisplus.extension.parser.cache.ForyFactory;
 import com.baomidou.mybatisplus.extension.parser.cache.FstFactory;
-import com.baomidou.mybatisplus.extension.parser.cache.FuryFactory;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import org.apache.fury.logging.LoggerFactory;
+import org.apache.fory.logging.LoggerFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.SerializationUtils;
@@ -24,11 +24,11 @@ class JsqlParserSimpleSerialTest {
             + "LEFT JOIN entity2 e2 ON e2.id = e1.id " + "ON e1.id = e.id " + "WHERE (e.id = ? OR e.NAME = ?)";
 
     @Test
-    void shouldSerializeAndDeserializeSqlStatementWithJdkFstAndFury() throws JSQLParserException {
+    void shouldSerializeAndDeserializeSqlStatementWithJdkFstAndFory() throws JSQLParserException {
         noSerial();
         jdkSerial();
         fstSerial();
-        furySerial();
+        forySerial();
     }
 
     void noSerial() throws JSQLParserException {
@@ -86,11 +86,11 @@ class JsqlParserSimpleSerialTest {
         assertThat(statement.toString()).isEqualTo(target);
     }
 
-    void furySerial() throws JSQLParserException {
+    void forySerial() throws JSQLParserException {
         LoggerFactory.disableLogging();
         Statement statement = CCJSqlParserUtil.parse(sql);
         String target = statement.toString();
-        FuryFactory factory = FuryFactory.getFuryFactory();
+        ForyFactory factory = ForyFactory.getForyFactory();
         byte[] serial = null;
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < len; i++) {
