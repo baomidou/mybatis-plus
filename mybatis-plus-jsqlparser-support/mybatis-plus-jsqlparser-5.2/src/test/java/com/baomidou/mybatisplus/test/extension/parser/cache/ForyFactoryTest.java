@@ -1,13 +1,14 @@
 package com.baomidou.mybatisplus.test.extension.parser.cache;
 
-import com.baomidou.mybatisplus.extension.parser.cache.FuryFactory;
+import com.baomidou.mybatisplus.extension.parser.cache.ForyFactory;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
-import org.apache.fury.ThreadSafeFury;
+import org.apache.fory.ThreadSafeFory;
+import org.apache.fory.resolver.ClassResolver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2026-10-09
  */
 @Tag("unit")
-class FuryFactoryTest {
+class ForyFactoryTest {
 
     @Test
     void shouldRegisterAllSerializableClassesAndEnums() throws ReflectiveOperationException {
@@ -44,18 +45,17 @@ class FuryFactoryTest {
 
         // Inspect a fresh factory without exposing its serializer in the production
         // API.
-        Field field = FuryFactory.class.getDeclaredField("FURY");
+        Field field = ForyFactory.class.getDeclaredField("FORY");
         field.setAccessible(true);
-        ThreadSafeFury fury = (ThreadSafeFury) field.get(new FuryFactory());
-        Set<String> actual = fury.execute(
-                instance -> instance.getClassResolver().getRegisteredClasses().stream().map(Class::getName)
-                        // Fury also registers built-in classes; only compare JSqlParser classes.
+        ThreadSafeFory fory = (ThreadSafeFory) field.get(new ForyFactory());
+        Set<String> actual = fory.execute(
+                instance -> ((ClassResolver) instance.getTypeResolver()).getRegisteredClasses().stream()
+                        .map(Class::getName)
+                        // Fory also registers built-in classes; only compare JSqlParser classes.
                         .filter(name -> name.startsWith("net.sf.jsqlparser.")).collect(Collectors.toSet()));
 
-        // Generate registrations in scan order; the assertion checks only class
-        // membership.
         assertThat(actual).overridingErrorMessage(
-                () -> "FuryFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
+                () -> "ForyFactory registrations differ from the JSqlParser dependency" + "\nMissing: "
                         + expected.stream().filter(name -> !actual.contains(name)).collect(Collectors.toList())
                         + "\nUnexpected: " + actual.stream().filter(name -> !expected.contains(name)).sorted()
                                 .collect(Collectors.toList()))
@@ -67,7 +67,7 @@ class FuryFactoryTest {
             "DELETE FROM t WHERE id = 1", "FROM t |> SELECT id"})
     void shouldRoundTripStatements(String sql) throws JSQLParserException {
         Statement statement = CCJSqlParserUtil.parse(sql);
-        FuryFactory factory = new FuryFactory();
+        ForyFactory factory = new ForyFactory();
         Object restored = factory.deserialize(factory.serialize(statement));
         assertThat(restored.getClass()).isEqualTo(statement.getClass());
         assertThat(restored.toString()).isEqualTo(statement.toString());
