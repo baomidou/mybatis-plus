@@ -33,7 +33,10 @@ import kotlin.reflect.KProperty1
  */
 @Deprecated("将在未来版本中移除，请改用 com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper")
 @Suppress("serial")
-abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty1<in T, *>, Children>() {
+abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
+    AbstractWrapper<T, KProperty1<in T, *>, Children>(),
+    CompareDsl<Children, T>,
+    FuncDsl<Children, T> {
 
     /**
      * 列 Map

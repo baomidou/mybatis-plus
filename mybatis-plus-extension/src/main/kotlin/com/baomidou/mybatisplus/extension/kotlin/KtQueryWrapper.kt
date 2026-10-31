@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 /**
@@ -41,6 +42,11 @@ open class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Qu
      * 查询字段
      */
     private var sqlSelect: SharedString = SharedString()
+
+    constructor(entity: KClass<T>) {
+        this.entityClass = entity.java
+        super.initNeed()
+    }
 
     constructor(entity: T) {
         this.entity = entity
