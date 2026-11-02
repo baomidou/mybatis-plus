@@ -224,7 +224,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private Boolean compareConstant(String operator, Object left, Object right) {
         int result;
-        if (left instanceof Number && right instanceof Number) {
+        if (left instanceof Long && right instanceof Long) {
+            result = Long.compare((Long) left, (Long) right);
+        } else if (left instanceof Number && right instanceof Number) {
             result = Double.compare(((Number) left).doubleValue(), ((Number) right).doubleValue());
         } else if (left instanceof String && right instanceof String) {
             result = ((String) left).compareTo((String) right);
