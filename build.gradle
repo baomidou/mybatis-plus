@@ -164,7 +164,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:5.23.0"
+        testImplementation "org.mockito:mockito-junit-jupiter:5.24.0"
         testImplementation "${lib["lagarto"]}"
         testImplementation("org.junit.platform:junit-platform-engine:${junitVersion}")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
