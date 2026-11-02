@@ -86,6 +86,19 @@ class PaginationInnerInterceptorTest {
                 "WITH A AS (SELECT * FROM class) SELECT * FROM A ORDER BY column ASC", OrderItem.asc("column"));
     }
 
+    /**
+     * ClickHouse 表别名后的 FINAL 修饰符（#5831）
+     */
+    @Test
+    void clickHouseFinalWithAlias() {
+        assertsConcatOrderBy(
+                "SELECT e.id FROM events AS e FINAL WHERE e.status = ?",
+                "SELECT e.id FROM events AS e FINAL WHERE e.status = ? ORDER BY e.id DESC", OrderItem.desc("e.id"));
+        assertsCountSql(
+                "SELECT e.id FROM events AS e FINAL WHERE e.status = ?",
+                "SELECT COUNT(*) AS total FROM events AS e FINAL WHERE e.status = ?");
+    }
+
     @Test
     void groupByCount() {
         assertsCountSql(
