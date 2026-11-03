@@ -166,11 +166,10 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         List<UpdateSet> sets = update.getUpdateSets();
         if (!CollectionUtils.isEmpty(sets)) {
             sets.forEach(us -> us.getValues().forEach(ex -> {
-                if (ex instanceof Select) {
-                    processSelectBody(((Select) ex), (String) obj);
-                }
+                processSelectExpression(ex, (String) obj);
             }));
         }
+        processSelectExpression(update.getWhere(), (String) obj);
         update.setWhere(this.andExpression(table, update.getWhere(), (String) obj));
     }
 
@@ -183,6 +182,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             // 过滤退出执行
             return;
         }
+        processSelectExpression(delete.getWhere(), (String) obj);
         delete.setWhere(this.andExpression(delete.getTable(), delete.getWhere(), (String) obj));
     }
 
