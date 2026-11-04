@@ -1,0 +1,71 @@
+{
+  "reflection": [
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver"},
+      "type": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
+      "methods": [{"name": "<init>", "parameterTypes": []}]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.override.MybatisMapperProxy"},
+      "type": "com.baomidou.mybatisplus.core.override.MybatisMapperProxy",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "org.apache.ibatis.session.SqlSession",
+            "java.lang.Class",
+            "java.util.Map"
+          ]
+        }
+      ]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper"},
+      "type": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper",
+      "methods": [
+        {"name": "<init>", "parameterTypes": []},
+        {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
+        {"name": "<init>", "parameterTypes": ["java.lang.Class"]},
+        {"name": "<init>", "parameterTypes": ["java.lang.Object", "java.lang.String[]"]}
+      ]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper"},
+      "type": "com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper",
+      "methods": [
+        {"name": "<init>", "parameterTypes": []},
+        {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
+        {"name": "<init>", "parameterTypes": ["java.lang.Class"]}
+      ]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper"},
+      "type": "com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper",
+      "methods": [
+        {"name": "<init>", "parameterTypes": []},
+        {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
+        {"name": "getSqlSet", "parameterTypes": []}
+      ]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper"},
+      "type": "com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper",
+      "methods": [
+        {"name": "<init>", "parameterTypes": []},
+        {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
+        {"name": "<init>", "parameterTypes": ["java.lang.Class"]},
+        {"name": "getSqlSet", "parameterTypes": []}
+      ]
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper"},
+      "type": "java.lang.invoke.SerializedLambda",
+      "serializable": true
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper"},
+      "type": "com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda",
+      "serializable": true
+    }
+  ]
+}

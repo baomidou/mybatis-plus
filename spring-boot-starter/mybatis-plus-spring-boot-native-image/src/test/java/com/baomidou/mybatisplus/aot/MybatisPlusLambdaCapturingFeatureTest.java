@@ -20,13 +20,16 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author xiaochen
@@ -48,6 +51,12 @@ class MybatisPlusLambdaCapturingFeatureTest {
     static class WithSerializableLambda {
 
         static final SerializableSupplier SUPPLIER = () -> "x";
+    }
+
+    static class ApplicationMain {
+
+        public static void main(String[] args) {
+        }
     }
 
     /**
@@ -96,6 +105,19 @@ class MybatisPlusLambdaCapturingFeatureTest {
                 .containsExactly("com.baomidou.mybatisplus.aot." + LAMBDA_CLASS);
     }
 
+    @Test
+    void jarManifestMainClassIsAvailableForApplicationPackageFiltering() throws IOException {
+        Path jar = Files.createTempFile("aot-main-classes", ".jar");
+        java.util.jar.Manifest manifest = new java.util.jar.Manifest();
+        manifest.getMainAttributes().put(java.util.jar.Attributes.Name.MANIFEST_VERSION, "1.0");
+        manifest.getMainAttributes().putValue("Start-Class", "com.example.application.Main");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar), manifest)) {
+            writeJarEntry(out, LAMBDA_CLASS);
+        }
+        assertThat(MybatisPlusLambdaCapturingFeature.collectMainClassCandidates(jar))
+                .containsExactly("com.example.application.Main");
+    }
+
     /**
      * 多版本 jar：基础版无 lambda、版本化实现有 lambda 时，运行版本视图下该类仍要被扫出来。
      */
@@ -109,13 +131,23 @@ class MybatisPlusLambdaCapturingFeatureTest {
             out.putNextEntry(new ZipEntry(PACKAGE_PATH + "Impl.class"));
             out.write(classBytes(PLAIN_CLASS));
             out.closeEntry();
-            out.putNextEntry(new ZipEntry("META-INF/versions/" + Runtime.version().feature() + "/" + PACKAGE_PATH
-                    + "Impl.class"));
+            out.putNextEntry(
+                    new ZipEntry(
+                            "META-INF/versions/" + Runtime.version().feature() + "/" + PACKAGE_PATH + "Impl.class"));
             out.write(classBytes(LAMBDA_CLASS));
             out.closeEntry();
         }
         assertThat(MybatisPlusLambdaCapturingFeature.collectCandidateClassNames(jar))
                 .containsExactly("com.baomidou.mybatisplus.aot.Impl");
+    }
+
+    @Test
+    void invalidJarFailsInsteadOfSilentlySkippingLambdaCandidates() throws IOException {
+        Path jar = Files.createTempFile("invalid-aot-classes", ".jar");
+        Files.writeString(jar, "not a jar");
+        assertThatThrownBy(() -> MybatisPlusLambdaCapturingFeature.collectCandidateClassNames(jar))
+                .isInstanceOf(UncheckedIOException.class)
+                .hasMessageContaining("Failed to scan lambda capturing classes");
     }
 
     /**
@@ -125,6 +157,28 @@ class MybatisPlusLambdaCapturingFeatureTest {
     void onlyClassesWithSerializableLambdasPassTheFilter() {
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(WithSerializableLambda.class)).isTrue();
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(Object.class)).isFalse();
+    }
+
+    @Test
+    void mainMethodCandidatesAreFoundForApplicationPackageFiltering() throws IOException {
+        Path dir = Files.createTempDirectory("aot-main-classes");
+        String className = "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain";
+        writeClassFile(dir, className);
+        assertThat(MybatisPlusLambdaCapturingFeature.collectMainClassCandidates(dir))
+                .containsExactly("com.baomidou.mybatisplus.aot." + className);
+    }
+
+    @Test
+    void applicationPackageFilterIncludesDescendantsAndKeepsFallback() {
+        assertThat(
+                MybatisPlusLambdaCapturingFeature
+                        .isInApplicationPackage("com.example.app.domain.User", Set.of("com.example.app")))
+                .isTrue();
+        assertThat(
+                MybatisPlusLambdaCapturingFeature
+                        .isInApplicationPackage("com.example.application.User", Set.of("com.example.app")))
+                .isFalse();
+        assertThat(MybatisPlusLambdaCapturingFeature.isInApplicationPackage("org.example.Library", Set.of())).isTrue();
     }
 
     private void writeClassFile(Path root, String className) throws IOException {
