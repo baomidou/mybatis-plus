@@ -97,6 +97,28 @@ class MybatisPlusLambdaCapturingFeatureTest {
     }
 
     /**
+     * 多版本 jar：基础版无 lambda、版本化实现有 lambda 时，运行版本视图下该类仍要被扫出来。
+     */
+    @Test
+    void multiReleaseJarUsesVersionedEntries() throws IOException {
+        Path jar = Files.createTempFile("aot-mr", ".jar");
+        java.util.jar.Manifest manifest = new java.util.jar.Manifest();
+        manifest.getMainAttributes().put(java.util.jar.Attributes.Name.MANIFEST_VERSION, "1.0");
+        manifest.getMainAttributes().putValue("Multi-Release", "true");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar), manifest)) {
+            out.putNextEntry(new ZipEntry(PACKAGE_PATH + "Impl.class"));
+            out.write(classBytes(PLAIN_CLASS));
+            out.closeEntry();
+            out.putNextEntry(new ZipEntry("META-INF/versions/" + Runtime.version().feature() + "/" + PACKAGE_PATH
+                    + "Impl.class"));
+            out.write(classBytes(LAMBDA_CLASS));
+            out.closeEntry();
+        }
+        assertThat(MybatisPlusLambdaCapturingFeature.collectCandidateClassNames(jar))
+                .containsExactly("com.baomidou.mybatisplus.aot.Impl");
+    }
+
+    /**
      * javac 只给含可序列化 lambda 的类生成 $deserializeLambda$ 合成方法，据此把注册范围收敛到真正需要放行的类。
      */
     @Test

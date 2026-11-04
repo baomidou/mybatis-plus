@@ -142,6 +142,7 @@ public final class MyBatisPlusNativeImageConfiguration {
                             hints.proxies()
                                     .registerJdkProxy(AopProxyUtils.completeJdkProxyInterfaces(mapperInterfaceType));
                             registerMapperRelationships(mapperInterfaceType, hints);
+                            registerSamePathMapperXml(mapperInterfaceType, hints);
                         }
                     }
                 }
@@ -162,6 +163,13 @@ public final class MyBatisPlusNativeImageConfiguration {
                     hints.resources().registerPattern(pattern);
                 }
             }
+        }
+
+        /**
+         * MybatisMapperAnnotationBuilder#loadXmlResource 会自动加载与 Mapper 接口同路径的 xml，与 mapper-locations 无关，需精确登记。
+         */
+        static void registerSamePathMapperXml(Class<?> mapperInterfaceType, RuntimeHints hints) {
+            hints.resources().registerPattern(mapperInterfaceType.getName().replace('.', '/') + ".xml");
         }
 
         static List<String> resolveMapperLocations(Environment environment) {
@@ -196,24 +204,34 @@ public final class MyBatisPlusNativeImageConfiguration {
             }
             Set<String> patterns = new LinkedHashSet<>();
             patterns.add(pattern);
-            String flat = flattenWildcards(pattern);
-            if (!flat.equals(pattern)) {
-                patterns.add(flat);
-            }
+            patterns.addAll(flattenWildcards(pattern));
             return new ArrayList<>(patterns);
         }
 
         /**
-         * 去掉双星段： Boot3 把单星转成跨目录的 .* 而双星后面的斜杠是字面量， 会漏掉单层布局； Boot4 的 glob 里单星只匹配单层。 两者各缺一半， 成对注册才覆盖所有深度。
+         * 每个双星段独立“保留/去掉”，生成全部组合： Boot3 把单星转成跨目录的 .* 而双星后面的斜杠是字面量，
+         * 多个双星时只有逐段组合才能覆盖混合深度的目录层级。
          */
-        static String flattenWildcards(String pattern) {
-            List<String> segments = new ArrayList<>();
+        static List<String> flattenWildcards(String pattern) {
+            List<List<String>> variants = new ArrayList<>();
+            variants.add(new ArrayList<>());
             for (String segment : pattern.split("/")) {
-                if (!"**".equals(segment)) {
-                    segments.add(segment);
+                List<List<String>> next = new ArrayList<>();
+                for (List<String> variant : variants) {
+                    List<String> kept = new ArrayList<>(variant);
+                    kept.add(segment);
+                    next.add(kept);
+                    if ("**".equals(segment)) {
+                        next.add(variant);
+                    }
                 }
+                variants = next;
             }
-            return String.join("/", segments);
+            List<String> results = new ArrayList<>();
+            for (List<String> variant : variants) {
+                results.add(String.join("/", variant));
+            }
+            return results;
         }
 
         /**
@@ -234,6 +252,8 @@ public final class MyBatisPlusNativeImageConfiguration {
             while (value.startsWith("/")) {
                 value = value.substring(1);
             }
+            // Spring 6.2 的资源提示转换把 ? 当字面量，放宽成 * 以覆盖运行时 Ant 语义下 ? 匹配的资源
+            value = value.replace('?', '*');
             return value.isEmpty() ? null : value;
         }
 

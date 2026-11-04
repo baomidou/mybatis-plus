@@ -27,11 +27,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * lambda 条件构造器在 native 下的唯一兜底注册点。MP 提取 lambda 依赖 ObjectInputStream 反序列化， 流里的 lambda 类名（如
@@ -48,6 +51,8 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
      * javac 给含可序列化 lambda 的类生成的合成方法名， 它的常量池条目是纯 ASCII， 可直接在 class 字节里搜到
      */
     private static final byte[] DESERIALIZE_LAMBDA_MARKER = "$deserializeLambda$".getBytes(StandardCharsets.US_ASCII);
+
+    private static final String VERSIONS_PREFIX = "META-INF/versions/";
 
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
@@ -110,16 +115,31 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
 
     private static List<String> collectFromJar(Path jar) {
         List<String> candidates = new ArrayList<>();
-        try (JarFile jarFile = new JarFile(jar.toFile())) {
+        try (JarFile jarFile = new JarFile(jar.toFile(), false, ZipFile.OPEN_READ, Runtime.version())) {
+            // 按当前运行版本的视图取条目：多版本 jar 里 META-INF/versions/N/ 下的实现会替换基础版同名类，
+            // 预筛的字节必须与实际加载的类一致
+            Set<String> names = new LinkedHashSet<>();
             var entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String name = entry.getName();
-                if (entry.isDirectory() || !name.endsWith(".class") || name.startsWith("META-INF/")) {
-                    // META-INF 下的是多版本 jar 的副本与签名，类名不可用
+                if (entry.isDirectory()) {
                     continue;
                 }
-                if (containsMarker(jarFile, entry)) {
+                if (name.startsWith(VERSIONS_PREFIX)) {
+                    int slash = name.indexOf('/', VERSIONS_PREFIX.length());
+                    if (!jarFile.isMultiRelease() || slash < 0) {
+                        continue;
+                    }
+                    name = name.substring(slash + 1);
+                }
+                if (name.endsWith(".class") && !name.startsWith("META-INF/") && !name.endsWith("module-info.class")) {
+                    names.add(name);
+                }
+            }
+            for (String name : names) {
+                ZipEntry entry = jarFile.getEntry(name);
+                if (entry != null && containsMarker(jarFile, entry)) {
                     candidates.add(toClassName(name));
                 }
             }

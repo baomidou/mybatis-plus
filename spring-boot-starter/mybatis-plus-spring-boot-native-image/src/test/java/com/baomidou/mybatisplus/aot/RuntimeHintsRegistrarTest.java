@@ -111,6 +111,32 @@ class RuntimeHintsRegistrarTest {
         assertCoveredBySemantics(hints, "mapper/sub/deep/UserMapper.xml");
     }
 
+    @Test
+    void questionMarkWildcardIsCovered() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations", "classpath*:/mapper/User?.xml");
+        assertCoveredBySemantics(registeredHints(environment), "mapper/User1.xml");
+    }
+
+    @Test
+    void multipleDoubleStarSegmentsCoverMixedDepths() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations", "classpath*:/sql/**/mapper/**/*.xml");
+        List<ResourcePatternHint> hints = registeredHints(environment);
+        assertCoveredBySemantics(hints, "sql/sub/mapper/UserMapper.xml");
+        assertCoveredBySemantics(hints, "sql/mapper/UserMapper.xml");
+        assertCoveredBySemantics(hints, "sql/a/mapper/b/UserMapper.xml");
+    }
+
+    @Test
+    void samePathMapperXmlIsRegistered() {
+        RuntimeHints hints = new RuntimeHints();
+        MyBatisPlusNativeImageConfiguration.MyBatisBeanFactoryInitializationAotProcessor
+                .registerSamePathMapperXml(RuntimeHintsRegistrarTest.class, hints);
+        assertThat(hints.resources().resourcePatternHints().anyMatch(
+                hint -> hint.matches("com/baomidou/mybatisplus/aot/RuntimeHintsRegistrarTest.xml"))).isTrue();
+    }
+
     private void assertCoveredBySemantics(List<ResourcePatternHint> hints, String path) {
         assertThat(hints.stream().anyMatch(hint -> hint.matches(path))).as("Spring 7 glob 语义下 %s 必须被命中", path).isTrue();
         assertThat(
