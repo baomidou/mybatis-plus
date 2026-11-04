@@ -14,7 +14,7 @@ buildscript {
         ]
 
         libraries = [
-            mybatisVersion = '3.5.19',
+            mybatisVersion = '3.6.0',
             mybatisSpringVersion = '2.1.2',
             mybatisSpring3Version = '3.0.6',
             mybatisSpring4Version = '4.1.0',
