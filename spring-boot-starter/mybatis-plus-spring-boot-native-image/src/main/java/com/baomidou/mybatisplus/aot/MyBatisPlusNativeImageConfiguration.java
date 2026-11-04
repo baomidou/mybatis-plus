@@ -50,7 +50,6 @@ import org.springframework.core.ResolvableType;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -61,7 +60,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * 解决mybatis-spring-boot-starter的native-image编译运行问题（同时支持mybatis-plus）
+ * mybatis-plus 的 native-image 支持：静态元数据（META-INF/native-image 下的 *-config.json）负责 MyBatis/MyBatis-Plus
+ * 基础设施，本配置类只负责随项目变化的用户 Mapper 接口与 Mapper XML。
  *
  * @author xiaochen
  * @since 2025-08-20
@@ -71,6 +71,11 @@ import java.util.function.Function;
 @ConditionalOnClass(MapperFactoryBean.class)
 @Configuration(proxyBeanMethods = false)
 public final class MyBatisPlusNativeImageConfiguration {
+
+    /**
+     * 开启后注册 classpath 下全部 xml（历史上默认即全量，现默认只收 mapper/mappers 目录，误放其他目录时用该开关兜底）
+     */
+    public static final String REGISTER_ALL_XML_PROPERTY = "mybatis-plus.native.register-all-xml";
 
     @Bean
     MyBatisBeanFactoryInitializationAotProcessor myBatisBeanFactoryInitializationAotProcessor() {
@@ -86,17 +91,22 @@ public final class MyBatisPlusNativeImageConfiguration {
 
         @Override
         public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-            AotUtils aotUtils = new AotUtils(hints, classLoader);
-            registerXml(aotUtils);
-        }
-
-        private void registerXml(AotUtils aotUtils) {
-            try {
-                aotUtils.registerPattern(
-                        aotUtils.findResources("", CollectUtils::isMapperXmlResource)
-                                .toArray(AotUtils.EMPTY_STRING_ARRAY));
-            } catch (IOException e) {
-                throw new RuntimeException("注册用户目录的xml文件失败", e);
+            // Boot3 的 Spring 6.2 写 resource-config.json 时把单星双星都转成 .* 且保留字面斜杠，
+            // 双星接斜杠的写法（mapper 下双星收 xml）会漏掉 mapper/UserMapper.xml 这种单层布局；
+            // Boot4 的 Spring 7 原样透传 glob，单星反而只匹配单层。两版语义相反，
+            // 只能成对注册单星与双星，保证任意深度在两个版本下都被命中。
+            if (Boolean.getBoolean(REGISTER_ALL_XML_PROPERTY)) {
+                hints.resources().registerPattern("**/*.xml");
+                hints.resources().registerPattern("*.xml");
+            } else {
+                hints.resources().registerPattern("mapper/*.xml");
+                hints.resources().registerPattern("mapper/**/*.xml");
+                hints.resources().registerPattern("mappers/*.xml");
+                hints.resources().registerPattern("mappers/**/*.xml");
+                hints.resources().registerPattern("**/mapper/*.xml");
+                hints.resources().registerPattern("**/mapper/**/*.xml");
+                hints.resources().registerPattern("**/mappers/*.xml");
+                hints.resources().registerPattern("**/mappers/**/*.xml");
             }
         }
 

@@ -1,0 +1,230 @@
+[
+ {
+  "name": "org.apache.ibatis.scripting.defaults.RawLanguageDriver",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.scripting.xmltags.XMLLanguageDriver",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.javassist.util.proxy.RuntimeSupport",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.javassist.util.proxy.ProxyFactory",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.Log",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.slf4j.Slf4jImpl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.commons.JakartaCommonsLoggingImpl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.log4j2.Log4j2Impl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.stdout.StdOutImpl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.logging.nologging.NoLoggingImpl",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.session.SqlSessionFactory",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.mybatis.spring.SqlSessionFactoryBean",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.cache.impl.PerpetualCache",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.cache.decorators.FifoCache",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.cache.decorators.LruCache",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.cache.decorators.SoftCache",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.cache.decorators.WeakCache",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.mapping.BoundSql",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.executor.statement.BaseStatementHandler",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.executor.statement.RoutingStatementHandler",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.executor.statement.SimpleStatementHandler",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.executor.statement.PreparedStatementHandler",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "org.apache.ibatis.executor.statement.CallableStatementHandler",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "java.util.ArrayList",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "java.util.HashMap",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "java.util.TreeSet",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "java.util.HashSet",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.ISqlSegment",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.override.MybatisMapperProxy",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.Wrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.AbstractWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name": "com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ }
+]

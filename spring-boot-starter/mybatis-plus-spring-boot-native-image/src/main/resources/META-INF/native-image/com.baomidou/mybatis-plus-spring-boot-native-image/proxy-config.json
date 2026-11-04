@@ -1,0 +1,12 @@
+[
+ {
+  "interfaces": [
+   "org.apache.ibatis.executor.Executor"
+  ]
+ },
+ {
+  "interfaces": [
+   "org.apache.ibatis.executor.statement.StatementHandler"
+  ]
+ }
+]

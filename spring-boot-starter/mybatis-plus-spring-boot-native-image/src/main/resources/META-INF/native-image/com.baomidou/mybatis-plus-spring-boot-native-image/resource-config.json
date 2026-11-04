@@ -1,0 +1,9 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern": "org/apache/ibatis/builder/xml/.*\\.(dtd|xsd)", "regex": true}
+    ],
+    "excludes": []
+  },
+  "bundles": []
+}
