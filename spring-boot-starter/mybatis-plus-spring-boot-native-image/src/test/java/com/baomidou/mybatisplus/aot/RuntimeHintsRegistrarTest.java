@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.ResourcePatternHint;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.context.annotation.ImportRuntimeHints;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -47,28 +47,56 @@ class RuntimeHintsRegistrarTest {
             .of("src/main/resources/META-INF/native-image/com.baomidou/mybatis-plus-spring-boot-native-image");
 
     /**
-     * 特征化装配入口：native-image 的资源提示全靠配置类上的 @ImportRuntimeHints 挂进来，注解被摘掉就静默失效。
+     * Mapper XML 的资源提示必须跟随 mybatis-plus.mapper-locations：用户把 XML 放在哪个目录，注册就覆盖哪个目录， 不能靠固定目录名（mapper/mappers）猜，否则用户改目录后
+     * native 下 XML 直接不加载。
      */
     @Test
-    void configurationImportsItsOwnRegistrar() {
-        ImportRuntimeHints imported = MyBatisPlusNativeImageConfiguration.class.getAnnotation(ImportRuntimeHints.class);
-        assertThat(imported).as("@ImportRuntimeHints 是 runtime 保留注解，没了它 AOT 不会注册任何提示").isNotNull();
-        assertThat(imported.value()).as("挂进来的必须是 MP 自己的 registrar，不能悄悄换成别人的")
-                .containsExactly(MyBatisPlusNativeImageConfiguration.MyBatisRuntimeHintsRegistrar.class);
+    void mapperXmlPatternsFollowConfiguredMapperLocations() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations", "classpath*:/sql/**/*.xml");
+        assertThat(registeredPatterns(environment)).contains("sql/**/*.xml", "sql/*.xml")
+                .doesNotContain("mapper/*.xml", "mapper/**/*.xml");
     }
 
     /**
-     * registrar 的产出：默认把 mapper/mappers 目录登记成 resource pattern（单星双星成对， 兼容 Boot3 的 regex 转换与 Boot4 的 glob
-     * 透传两种语义）；开关打开时收全部 xml。
+     * 未配置 mapper-locations 时回退到 MP 自身的默认值（mapper 目录下的全部 xml），与 MybatisPlusProperties 保持一致。
      */
     @Test
-    void registrarRegistersMapperXmlPatterns() {
-        assertThat(registeredPatterns(false))
-                .contains(
-                        "mapper/*.xml", "mapper/**/*.xml", "mappers/*.xml", "mappers/**/*.xml", "**/mapper/*.xml",
-                        "**/mapper/**/*.xml", "**/mappers/*.xml", "**/mappers/**/*.xml")
-                .doesNotContain("**/*.xml", "*.xml");
-        assertThat(registeredPatterns(true)).contains("**/*.xml", "*.xml");
+    void defaultMapperLocationUsedWhenUnconfigured() {
+        assertThat(registeredPatterns(new MockEnvironment())).contains("mapper/**/*.xml", "mapper/*.xml")
+                .doesNotContain("**/*.xml");
+    }
+
+    /**
+     * yaml 里的列表写法（mybatis-plus.mapper-locations[0]）也要能绑定上，否则数组形式的配置会静默失效。
+     */
+    @Test
+    void indexedMapperLocationsAreBound() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations[0]", "classpath*:/sql/**/*.xml")
+                .withProperty("mybatis-plus.mapper-locations[1]", "classpath*:/mapper/*.xml");
+        assertThat(registeredPatterns(environment)).contains("sql/**/*.xml", "sql/*.xml", "mapper/*.xml");
+    }
+
+    /**
+     * 开关打开时兜底注册 classpath 下全部 xml（历史上默认即全量）。
+     */
+    @Test
+    void registerAllXmlSwitchRegistersEveryXml() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY, "true");
+        assertThat(registeredPatterns(environment)).contains("**/*.xml", "*.xml")
+                .doesNotContain("mapper/*.xml", "mapper/**/*.xml");
+    }
+
+    /**
+     * 非 classpath 前缀（file:、http: 等）不是 classpath 资源，转不出资源 pattern，只能跳过。
+     */
+    @Test
+    void nonClasspathLocationsAreSkipped() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations", "file:/opt/sql/*.xml");
+        assertThat(registeredPatterns(environment)).isEmpty();
     }
 
     /**
@@ -77,12 +105,10 @@ class RuntimeHintsRegistrarTest {
      */
     @Test
     void mapperPatternsCoverLayoutsUnderBothSpringSemantics() {
-        List<ResourcePatternHint> hints = registeredHints(false);
+        List<ResourcePatternHint> hints = registeredHints(new MockEnvironment());
         assertCoveredBySemantics(hints, "mapper/UserMapper.xml");
-        assertCoveredBySemantics(hints, "mappers/UserMapper.xml");
         assertCoveredBySemantics(hints, "mapper/sub/UserMapper.xml");
-        assertCoveredBySemantics(hints, "org/demo/mapper/UserMapper.xml");
-        assertCoveredBySemantics(hints, "org/demo/mappers/UserMapper.xml");
+        assertCoveredBySemantics(hints, "mapper/sub/deep/UserMapper.xml");
     }
 
     private void assertCoveredBySemantics(List<ResourcePatternHint> hints, String path) {
@@ -168,31 +194,16 @@ class RuntimeHintsRegistrarTest {
                 .matches();
     }
 
-    private List<String> registeredPatterns(boolean registerAllXml) {
-        return registeredHints(registerAllXml).stream().map(ResourcePatternHint::getPattern)
-                .collect(Collectors.toList());
+    private List<String> registeredPatterns(MockEnvironment environment) {
+        return registeredHints(environment).stream().map(ResourcePatternHint::getPattern).collect(Collectors.toList());
     }
 
-    private List<ResourcePatternHint> registeredHints(boolean registerAllXml) {
-        String previous = System.getProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY);
-        try {
-            if (registerAllXml) {
-                System.setProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY, "true");
-            } else {
-                System.clearProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY);
-            }
-            RuntimeHints hints = new RuntimeHints();
-            new MyBatisPlusNativeImageConfiguration.MyBatisRuntimeHintsRegistrar()
-                    .registerHints(hints, getClass().getClassLoader());
-            return hints.resources().resourcePatternHints().flatMap(group -> group.getIncludes().stream()).distinct()
-                    .collect(Collectors.toList());
-        } finally {
-            if (previous == null) {
-                System.clearProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY);
-            } else {
-                System.setProperty(MyBatisPlusNativeImageConfiguration.REGISTER_ALL_XML_PROPERTY, previous);
-            }
-        }
+    private List<ResourcePatternHint> registeredHints(MockEnvironment environment) {
+        RuntimeHints hints = new RuntimeHints();
+        MyBatisPlusNativeImageConfiguration.MyBatisBeanFactoryInitializationAotProcessor
+                .registerMapperXmlResources(hints, environment);
+        return hints.resources().resourcePatternHints().flatMap(group -> group.getIncludes().stream()).distinct()
+                .collect(Collectors.toList());
     }
 
     private List<Map<String, Object>> readList(ObjectMapper mapper, String fileName) {

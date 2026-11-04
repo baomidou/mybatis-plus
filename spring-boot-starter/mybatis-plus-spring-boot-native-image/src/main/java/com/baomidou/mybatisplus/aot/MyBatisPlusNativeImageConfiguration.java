@@ -26,7 +26,6 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -42,11 +41,13 @@ import org.springframework.beans.factory.support.RegisteredBean;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.context.aot.AbstractAotProcessor;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
@@ -54,7 +55,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -66,16 +71,25 @@ import java.util.function.Function;
  * @author xiaochen
  * @since 2025-08-20
  */
-@ImportRuntimeHints(MyBatisPlusNativeImageConfiguration.MyBatisRuntimeHintsRegistrar.class)
 @ConditionalOnProperty(value = AbstractAotProcessor.AOT_PROCESSING, havingValue = "true")
 @ConditionalOnClass(MapperFactoryBean.class)
 @Configuration(proxyBeanMethods = false)
 public final class MyBatisPlusNativeImageConfiguration {
 
     /**
-     * 开启后注册 classpath 下全部 xml（历史上默认即全量，现默认只收 mapper/mappers 目录，误放其他目录时用该开关兜底）
+     * 开启后注册 classpath 下全部 xml，默认只注册 mybatis-plus.mapper-locations 命中的 xml
      */
     public static final String REGISTER_ALL_XML_PROPERTY = "mybatis-plus.native.register-all-xml";
+
+    /**
+     * Mapper XML 位置，前缀与 MybatisPlusProperties 一致（Constants.MYBATIS_PLUS）
+     */
+    private static final String MAPPER_LOCATIONS_PROPERTY = "mybatis-plus.mapper-locations";
+
+    /**
+     * 未配置 mapper-locations 时的默认值，与 MybatisPlusProperties#mapperLocations 的默认值保持一致
+     */
+    private static final String DEFAULT_MAPPER_LOCATION = "classpath*:/mapper/**/*.xml";
 
     @Bean
     MyBatisBeanFactoryInitializationAotProcessor myBatisBeanFactoryInitializationAotProcessor() {
@@ -87,38 +101,20 @@ public final class MyBatisPlusNativeImageConfiguration {
         return new MyBatisMapperFactoryBeanPostProcessor();
     }
 
-    static class MyBatisRuntimeHintsRegistrar implements RuntimeHintsRegistrar {
-
-        @Override
-        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-            // Boot3 的 Spring 6.2 写 resource-config.json 时把单星双星都转成 .* 且保留字面斜杠，
-            // 双星接斜杠的写法（mapper 下双星收 xml）会漏掉 mapper/UserMapper.xml 这种单层布局；
-            // Boot4 的 Spring 7 原样透传 glob，单星反而只匹配单层。两版语义相反，
-            // 只能成对注册单星与双星，保证任意深度在两个版本下都被命中。
-            if (Boolean.getBoolean(REGISTER_ALL_XML_PROPERTY)) {
-                hints.resources().registerPattern("**/*.xml");
-                hints.resources().registerPattern("*.xml");
-            } else {
-                hints.resources().registerPattern("mapper/*.xml");
-                hints.resources().registerPattern("mapper/**/*.xml");
-                hints.resources().registerPattern("mappers/*.xml");
-                hints.resources().registerPattern("mappers/**/*.xml");
-                hints.resources().registerPattern("**/mapper/*.xml");
-                hints.resources().registerPattern("**/mapper/**/*.xml");
-                hints.resources().registerPattern("**/mappers/*.xml");
-                hints.resources().registerPattern("**/mappers/**/*.xml");
-            }
-        }
-
-    }
-
     static class MyBatisBeanFactoryInitializationAotProcessor
-            implements BeanFactoryInitializationAotProcessor, BeanRegistrationExcludeFilter {
+            implements BeanFactoryInitializationAotProcessor, BeanRegistrationExcludeFilter, EnvironmentAware {
 
         private final Set<Class<?>> excludeClasses = new HashSet<>();
 
+        private Environment environment;
+
         MyBatisBeanFactoryInitializationAotProcessor() {
             excludeClasses.add(MapperScannerConfigurer.class);
+        }
+
+        @Override
+        public void setEnvironment(Environment environment) {
+            this.environment = environment;
         }
 
         @Override
@@ -130,10 +126,9 @@ public final class MyBatisPlusNativeImageConfiguration {
         public BeanFactoryInitializationAotContribution processAheadOfTime(
                 ConfigurableListableBeanFactory beanFactory) {
             String[] beanNames = beanFactory.getBeanNamesForType(MapperFactoryBean.class);
-            if (beanNames.length == 0)
-                return null;
             return (context, code) -> {
                 RuntimeHints hints = context.getRuntimeHints();
+                registerMapperXmlResources(hints, environment);
                 for (String beanName : beanNames) {
                     String beanDefinitionName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
                     BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanDefinitionName);
@@ -151,6 +146,95 @@ public final class MyBatisPlusNativeImageConfiguration {
                     }
                 }
             };
+        }
+
+        /**
+         * Mapper XML 的资源提示跟随 mybatis-plus.mapper-locations：用户把 XML 放在哪，注册就覆盖哪， 不再靠固定目录名猜。
+         */
+        static void registerMapperXmlResources(RuntimeHints hints, Environment environment) {
+            if (isRegisterAllXml(environment)) {
+                hints.resources().registerPattern("**/*.xml");
+                hints.resources().registerPattern("*.xml");
+                return;
+            }
+            for (String location : resolveMapperLocations(environment)) {
+                for (String pattern : toResourcePatterns(location)) {
+                    hints.resources().registerPattern(pattern);
+                }
+            }
+        }
+
+        static List<String> resolveMapperLocations(Environment environment) {
+            if (environment == null) {
+                return List.of(DEFAULT_MAPPER_LOCATION);
+            }
+            List<String> locations = Binder.get(environment).bind(MAPPER_LOCATIONS_PROPERTY, String[].class)
+                    .map(Arrays::asList).orElse(null);
+            return locations == null ? List.of(DEFAULT_MAPPER_LOCATION) : locations;
+        }
+
+        static boolean isRegisterAllXml(Environment environment) {
+            if (Boolean.getBoolean(REGISTER_ALL_XML_PROPERTY)) {
+                return true;
+            }
+            if (environment == null) {
+                return false;
+            }
+            String value = environment.getProperty(REGISTER_ALL_XML_PROPERTY);
+            return value != null && Boolean.parseBoolean(value.trim());
+        }
+
+        /**
+         * 把 Spring 的 mapper-locations 转成 classpath 相对的资源 pattern。 Boot3 的 Spring 6.2 写 resource-config.json 时把 单星双星都转成
+         * .* 且保留字面斜杠， 双星接斜杠的写法会漏掉 mapper/UserMapper.xml 这种单层布局；Boot4 的 Spring 7 原样透传 glob， 单星反而只匹配单层。两版语义相反，
+         * 只能成对注册单星与双星，保证任意深度在两个版本下都被命中。
+         */
+        static List<String> toResourcePatterns(String location) {
+            String pattern = toClasspathPattern(location);
+            if (pattern == null) {
+                return List.of();
+            }
+            Set<String> patterns = new LinkedHashSet<>();
+            patterns.add(pattern);
+            String flat = flattenWildcards(pattern);
+            if (!flat.equals(pattern)) {
+                patterns.add(flat);
+            }
+            return new ArrayList<>(patterns);
+        }
+
+        /**
+         * 去掉双星段： Boot3 把单星转成跨目录的 .* 而双星后面的斜杠是字面量， 会漏掉单层布局； Boot4 的 glob 里单星只匹配单层。 两者各缺一半， 成对注册才覆盖所有深度。
+         */
+        static String flattenWildcards(String pattern) {
+            List<String> segments = new ArrayList<>();
+            for (String segment : pattern.split("/")) {
+                if (!"**".equals(segment)) {
+                    segments.add(segment);
+                }
+            }
+            return String.join("/", segments);
+        }
+
+        /**
+         * 只认 classpath 前缀， 其它协议（file:、http: 等）不是 classpath 资源， 无法转成 native-image 的资源 pattern。
+         */
+        static String toClasspathPattern(String location) {
+            if (location == null) {
+                return null;
+            }
+            String value = location.trim();
+            if (value.startsWith("classpath*:")) {
+                value = value.substring("classpath*:".length());
+            } else if (value.startsWith("classpath:")) {
+                value = value.substring("classpath:".length());
+            } else if (value.contains(":")) {
+                return null;
+            }
+            while (value.startsWith("/")) {
+                value = value.substring(1);
+            }
+            return value.isEmpty() ? null : value;
         }
 
         private void registerMapperRelationships(Class<?> mapperInterfaceType, RuntimeHints hints) {

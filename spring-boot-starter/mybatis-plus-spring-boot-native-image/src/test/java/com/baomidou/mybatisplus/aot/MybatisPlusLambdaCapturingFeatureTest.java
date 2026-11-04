@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +33,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2026-11-04
  */
 class MybatisPlusLambdaCapturingFeatureTest {
+
+    private static final String PACKAGE_PATH = "com/baomidou/mybatisplus/aot/";
+
+    private static final String LAMBDA_CLASS = "MybatisPlusLambdaCapturingFeatureTest$WithSerializableLambda";
+
+    private static final String PLAIN_CLASS = "MybatisPlusLambdaCapturingFeatureTest$SerializableSupplier";
 
     interface SerializableSupplier extends Serializable {
 
@@ -59,18 +67,33 @@ class MybatisPlusLambdaCapturingFeatureTest {
     }
 
     /**
-     * 捕获类只从目录型 classpath 元素收集（依赖走 jar），子包展开、非 class 文件与 module-info 跳过。
+     * 目录型 classpath 元素：按 class 字节里的方法名标记粗筛，含可序列化 lambda 的类被留下，其余类不加载。
      */
     @Test
-    void collectClassNamesWalksNestedPackagesAndSkipsNonClassFiles() throws IOException {
+    void directoryScanKeepsOnlyClassesWithSerializableLambdas() throws IOException {
         Path dir = Files.createTempDirectory("aot-classes");
-        Files.createDirectories(dir.resolve("com/demo"));
-        Files.write(dir.resolve("com/demo/App.class"), new byte[0]);
-        Files.write(dir.resolve("com/demo/App$Inner.class"), new byte[0]);
+        writeClassFile(dir, LAMBDA_CLASS);
+        writeClassFile(dir, PLAIN_CLASS);
         Files.write(dir.resolve("module-info.class"), new byte[0]);
-        Files.write(dir.resolve("com/demo/note.txt"), new byte[0]);
-        assertThat(MybatisPlusLambdaCapturingFeature.collectClassNames(dir))
-                .containsExactlyInAnyOrder("com.demo.App", "com.demo.App$Inner");
+        Files.write(dir.resolve(PACKAGE_PATH + "note.txt"), new byte[0]);
+        assertThat(MybatisPlusLambdaCapturingFeature.collectCandidateClassNames(dir))
+                .containsExactly("com.baomidou.mybatisplus.aot." + LAMBDA_CLASS);
+    }
+
+    /**
+     * jar 型 classpath 元素：应用打成 jar 再构建 native 镜像时，捕获类在 jar 里，同样要能被扫出来。
+     */
+    @Test
+    void jarScanKeepsOnlyClassesWithSerializableLambdas() throws IOException {
+        Path jar = Files.createTempFile("aot-classes", ".jar");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar))) {
+            writeJarEntry(out, LAMBDA_CLASS);
+            writeJarEntry(out, PLAIN_CLASS);
+            out.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
+            out.closeEntry();
+        }
+        assertThat(MybatisPlusLambdaCapturingFeature.collectCandidateClassNames(jar))
+                .containsExactly("com.baomidou.mybatisplus.aot." + LAMBDA_CLASS);
     }
 
     /**
@@ -80,5 +103,24 @@ class MybatisPlusLambdaCapturingFeatureTest {
     void onlyClassesWithSerializableLambdasPassTheFilter() {
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(WithSerializableLambda.class)).isTrue();
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(Object.class)).isFalse();
+    }
+
+    private void writeClassFile(Path root, String className) throws IOException {
+        Path target = root.resolve(PACKAGE_PATH + className + ".class");
+        Files.createDirectories(target.getParent());
+        Files.write(target, classBytes(className));
+    }
+
+    private void writeJarEntry(JarOutputStream out, String className) throws IOException {
+        out.putNextEntry(new ZipEntry(PACKAGE_PATH + className + ".class"));
+        out.write(classBytes(className));
+        out.closeEntry();
+    }
+
+    private byte[] classBytes(String className) throws IOException {
+        try (InputStream in = getClass().getResourceAsStream(className + ".class")) {
+            assertThat(in).as("测试自身的 class 文件必须在 classpath 上: %s", className).isNotNull();
+            return in.readAllBytes();
+        }
     }
 }
