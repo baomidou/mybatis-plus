@@ -3,15 +3,22 @@ package com.baomidou.mybatisplus.test.extension.plugins.inner;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.DataPermissionInterceptor;
+import com.baomidou.mybatisplus.jsqlparser.enums.ExpressionAppendMode;
 import com.google.common.collect.HashBasedTable;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -164,5 +171,139 @@ public class MultiDataPermissionInterceptorTest {
 
     void assertSql(String mappedStatementId, String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
+    }
+
+    @Test
+    void innerJoinUsing() {
+        List<String> tables = new ArrayList<>();
+        DataPermissionInterceptor usingInterceptor = new DataPermissionInterceptor(
+                (MultiDataPermissionHandler) (table, where, id) -> {
+                    assertThat(id).isEqualTo("mapper.query");
+                    tables.add(table.getName());
+                    if (table.getName().startsWith("with_as")) {
+                        return null;
+                    }
+                    return new EqualsTo(new Column(table.getAlias().getName() + ".tenant_id"), new LongValue(1));
+                });
+        usingInterceptor.setExpressionAppendMode(ExpressionAppendMode.LAST);
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id, tenant_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id, tenant_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a JOIN details b USING (link_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a JOIN details b USING (link_id, tenant_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a JOIN details b USING (link_id, tenant_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c USING (link_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c ON b.link_id = c.link_id WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) LEFT JOIN secrets c ON b.link_id = c.link_id AND c.id = 23 WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) LEFT JOIN secrets c ON b.link_id = c.link_id AND c.id = 23 AND c.tenant_id = 1 WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) RIGHT JOIN secrets c ON b.link_id = c.link_id ORDER BY c.id",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) RIGHT JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 WHERE c.tenant_id = 1 ORDER BY c.id");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM (accounts a INNER JOIN details b USING (link_id)) INNER JOIN secrets c ON b.link_id = c.link_id WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM (accounts a INNER JOIN details b USING (link_id)) INNER JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM accounts a LEFT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM accounts a LEFT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1 AND a.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT c.amount FROM accounts a RIGHT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id ORDER BY c.id",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT c.amount FROM accounts a RIGHT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id AND a.tenant_id = 1 WHERE b.tenant_id = 1 AND c.tenant_id = 1 ORDER BY c.id");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b ON a.link_id = b.link_id WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM accounts a INNER JOIN details b ON a.link_id = b.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 WHERE a.id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT * FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1", "mapper.query"))
+                .isEqualTo(
+                        "SELECT * FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT link_id FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT link_id FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
+        tables.clear();
+        assertThat(
+                usingInterceptor.parserSingle(
+                        "SELECT b.amount FROM with_as_accounts a INNER JOIN details b USING (link_id) WHERE a.id = 3",
+                        "mapper.query"))
+                .isEqualTo(
+                        "SELECT b.amount FROM with_as_accounts a INNER JOIN details b USING (link_id) WHERE a.id = 3 AND b.tenant_id = 1");
+        assertThat(tables).doesNotHaveDuplicates();
     }
 }
