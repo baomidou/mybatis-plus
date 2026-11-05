@@ -1,7 +1,7 @@
 {
   "reflection": [
     {
-      "condition": {"typeReached": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver"},
+      "condition": {"typeReached": "org.apache.ibatis.scripting.LanguageDriverRegistry"},
       "type": "com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver",
       "methods": [{"name": "<init>", "parameterTypes": []}]
     },
@@ -22,6 +22,7 @@
     {
       "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper"},
       "type": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper",
+      "allPublicMethods": true,
       "methods": [
         {"name": "<init>", "parameterTypes": []},
         {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
@@ -32,6 +33,7 @@
     {
       "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper"},
       "type": "com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper",
+      "allPublicMethods": true,
       "methods": [
         {"name": "<init>", "parameterTypes": []},
         {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
@@ -41,6 +43,7 @@
     {
       "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper"},
       "type": "com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper",
+      "allPublicMethods": true,
       "methods": [
         {"name": "<init>", "parameterTypes": []},
         {"name": "<init>", "parameterTypes": ["java.lang.Object"]},
@@ -50,6 +53,7 @@
     {
       "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper"},
       "type": "com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper",
+      "allPublicMethods": true,
       "methods": [
         {"name": "<init>", "parameterTypes": []},
         {"name": "<init>", "parameterTypes": ["java.lang.Object"]},

@@ -1,69 +1,97 @@
 {
   "reflection": [
     {
-      "condition": {"typeReached": "org.apache.ibatis.scripting.defaults.RawLanguageDriver"},
+      "condition": {"typeReached": "org.apache.ibatis.scripting.LanguageDriverRegistry"},
       "type": "org.apache.ibatis.scripting.defaults.RawLanguageDriver",
       "methods": [{"name": "<init>", "parameterTypes": []}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.scripting.xmltags.XMLLanguageDriver"},
+      "condition": {"typeReached": "org.apache.ibatis.scripting.LanguageDriverRegistry"},
       "type": "org.apache.ibatis.scripting.xmltags.XMLLanguageDriver",
       "methods": [{"name": "<init>", "parameterTypes": []}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.slf4j.Slf4jImpl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.slf4j.Slf4jImpl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.commons.JakartaCommonsLoggingImpl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.commons.JakartaCommonsLoggingImpl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.log4j2.Log4j2Impl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.log4j2.Log4j2Impl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.stdout.StdOutImpl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.stdout.StdOutImpl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.logging.nologging.NoLoggingImpl"},
+      "condition": {"typeReached": "org.apache.ibatis.logging.LogFactory"},
       "type": "org.apache.ibatis.logging.nologging.NoLoggingImpl",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.cache.impl.PerpetualCache"},
+      "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.impl.PerpetualCache",
       "methods": [{"name": "<init>", "parameterTypes": ["java.lang.String"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.cache.decorators.FifoCache"},
+      "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.FifoCache",
       "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.cache.decorators.LruCache"},
+      "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.LruCache",
       "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.cache.decorators.SoftCache"},
+      "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.SoftCache",
       "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.cache.decorators.WeakCache"},
+      "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.WeakCache",
       "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.reflection.factory.DefaultObjectFactory"},
+      "type": "java.util.ArrayList",
+      "methods": [{"name": "<init>", "parameterTypes": []}]
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory"},
+      "type": "org.apache.ibatis.javassist.util.proxy.ProxyFactory"
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.executor.loader.javassist.JavassistProxyFactory"},
+      "type": "org.apache.ibatis.javassist.util.proxy.RuntimeSupport"
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.reflection.factory.DefaultObjectFactory"},
+      "type": "java.util.HashMap",
+      "methods": [{"name": "<init>", "parameterTypes": []}]
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.reflection.factory.DefaultObjectFactory"},
+      "type": "java.util.HashSet",
+      "methods": [{"name": "<init>", "parameterTypes": []}]
+    },
+    {
+      "condition": {"typeReached": "org.apache.ibatis.reflection.factory.DefaultObjectFactory"},
+      "type": "java.util.TreeSet",
+      "methods": [{"name": "<init>", "parameterTypes": []}]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.BoundSql"},
@@ -93,11 +121,11 @@
   ],
   "resources": [
     {
-      "condition": {"typeReached": "org.apache.ibatis.builder.xml.XMLMapperBuilder"},
+      "condition": {"typeReached": "org.apache.ibatis.builder.xml.XMLMapperEntityResolver"},
       "glob": "org/apache/ibatis/builder/xml/*.dtd"
     },
     {
-      "condition": {"typeReached": "org.apache.ibatis.builder.xml.XMLMapperBuilder"},
+      "condition": {"typeReached": "org.apache.ibatis.builder.xml.XMLMapperEntityResolver"},
       "glob": "org/apache/ibatis/builder/xml/*.xsd"
     }
   ]

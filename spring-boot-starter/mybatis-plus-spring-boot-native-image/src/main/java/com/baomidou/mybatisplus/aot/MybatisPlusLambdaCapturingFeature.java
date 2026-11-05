@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
@@ -58,14 +57,18 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
 
     private static final byte[] MAIN_METHOD_MARKER = "main".getBytes(StandardCharsets.US_ASCII);
 
+    private static final byte[] MAIN_DESCRIPTOR_MARKER = "([Ljava/lang/String;)V".getBytes(StandardCharsets.US_ASCII);
+
     private static final String VERSIONS_PREFIX = "META-INF/versions/";
 
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
-        // MP 提取 lambda 必经 JDK 序列化机制（writeReplace 产生 SerializedLambda 流），
-        // 该机制可达才说明项目用到了 lambda 条件构造器，此时才扫描注册，其余项目零开销
-        access.registerReachabilityHandler(
-                MybatisPlusLambdaCapturingFeature::registerCapturingClasses, SerializedLambda.class);
+        // MP 提取 lambda 依赖其自带的 SerializedLambda，该类可达才说明项目用到了 lambda 条件构造器，此时才扫描注册，其余项目零开销；
+        // 不能以 java.lang.invoke.SerializedLambda 作触发类，它在分析期未必可达
+        Class<?> trigger = access.findClassByName("com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda");
+        if (trigger != null) {
+            access.registerReachabilityHandler(MybatisPlusLambdaCapturingFeature::registerCapturingClasses, trigger);
+        }
     }
 
     private static void registerCapturingClasses(DuringAnalysisAccess access) {
@@ -83,8 +86,7 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
                             applicationPackages.add(type.getPackageName());
                         }
                     } catch (LinkageError e) {
-                        throw new IllegalStateException(
-                                "Failed to inspect application main class candidate " + candidate.className, e);
+                        // 库 jar 里的类可能缺可选依赖，main 探测只是尽力而为
                     }
                 }
             }
@@ -238,14 +240,13 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
     private static ClassCandidate scanLambdaClassFile(JarFile jarFile, ZipEntry entry, String className)
             throws IOException {
         try (InputStream input = jarFile.getInputStream(entry)) {
-            return new ClassCandidate(className, containsMarker(input.readAllBytes(), DESERIALIZE_LAMBDA_MARKER),
-                    false);
+            return scanClass(className, input.readAllBytes());
         }
     }
 
     private static ClassCandidate scanClass(String className, byte[] content) {
         return new ClassCandidate(className, containsMarker(content, DESERIALIZE_LAMBDA_MARKER),
-                containsMarker(content, MAIN_METHOD_MARKER));
+                containsMarker(content, MAIN_METHOD_MARKER) && containsMarker(content, MAIN_DESCRIPTOR_MARKER));
     }
 
     private static boolean containsMarker(byte[] content, byte[] marker) {
