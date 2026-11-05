@@ -49,6 +49,8 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -99,6 +101,20 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * @since 3.4.2
      */
     protected boolean optimizeJoin = true;
+
+    /**
+     * 匹配 SQL 末尾的锁定子句,如
+     * {@code FOR UPDATE [OF tbl][NOWAIT|SKIP LOCKED|WAIT n]}、{@code FOR SHARE}、{@code LOCK IN SHARE MODE}
+     * <p>
+     * MySQL/PostgreSQL 等方言的分页子句是直接追加到原 SQL 末尾的,而标准语法要求锁定子句位于 LIMIT 之后, 不做处理会生成 {@code ... FOR UPDATE LIMIT ?,?} 这类非法
+     * SQL,因此分页改写前先剥离、改写后重新追加
+     *
+     * @since 3.5.18.1
+     */
+    protected static final Pattern TRAILING_LOCKING_CLAUSE = Pattern.compile(
+            "\\s+(FOR\\s+UPDATE(?:\\s+OF\\s+[\\w.$]+(?:\\s*,\\s*[\\w.$]+)*)?(?:\\s+(?:NOWAIT|SKIP\\s+LOCKED|WAIT\\s+\\d+))?"
+                    + "|FOR\\s+SHARE(?:\\s+(?:NOWAIT|SKIP\\s+LOCKED))?" + "|LOCK\\s+IN\\s+SHARE\\s+MODE)\\s*$",
+            Pattern.CASE_INSENSITIVE);
 
     public PaginationInnerInterceptor(DbType dbType) {
         this.dbType = dbType;
@@ -174,14 +190,23 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
         handlerLimit(page, _limit);
         IDialect dialect = findIDialect(executor);
 
+        // 剥离 SQL 末尾的锁定子句(FOR UPDATE 等),分页改写后再重新追加到末尾,避免生成非法 SQL,见 issue#4536
+        String lockingClause = null;
+        String paginationSql = buildSql;
+        Matcher lockingMatcher = TRAILING_LOCKING_CLAUSE.matcher(buildSql);
+        if (lockingMatcher.find()) {
+            lockingClause = lockingMatcher.group(1).trim();
+            paginationSql = buildSql.substring(0, lockingMatcher.start());
+        }
+
         final Configuration configuration = ms.getConfiguration();
-        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
+        DialectModel model = dialect.buildPaginationSql(paginationSql, page.offset(), page.getSize());
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
 
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
         Map<String, Object> additionalParameter = mpBoundSql.additionalParameters();
         model.consumers(mappings, configuration, additionalParameter);
-        mpBoundSql.sql(model.getDialectSql());
+        mpBoundSql.sql(lockingClause == null ? model.getDialectSql() : model.getDialectSql() + " " + lockingClause);
         mpBoundSql.parameterMappings(mappings);
     }
 
