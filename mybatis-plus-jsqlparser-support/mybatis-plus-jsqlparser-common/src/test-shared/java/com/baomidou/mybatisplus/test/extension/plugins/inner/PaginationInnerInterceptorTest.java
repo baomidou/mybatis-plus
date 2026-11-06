@@ -1,12 +1,22 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -132,5 +142,74 @@ class PaginationInnerInterceptorTest {
 
     void assertsConcatOrderBy(String sql, String targetSql, OrderItem... orderItems) {
         assertThat(interceptor.concatOrderBy(sql, Arrays.asList(orderItems))).isEqualTo(targetSql);
+    }
+
+    /**
+     * SQL 末尾锁定子句(FOR UPDATE 等)与分页改写的组合行为,见 issue#4536。
+     * <p>
+     * MySQL/PostgreSQL 方言把分页子句追加到原 SQL 末尾,而标准语法要求锁定子句位于 LIMIT 之后, 分页改写必须先剥离再重新追加,否则生成 {@code ... FOR UPDATE LIMIT ?,?}
+     * 这类非法 SQL
+     */
+    @Test
+    void paginationSqlWithoutLockingClauseStaysUnchanged() {
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ?", 1, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?");
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ?", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,?");
+    }
+
+    @Test
+    void paginationSqlKeepsTrailingForUpdateAfterLimit() {
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? FOR UPDATE", 1, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ? FOR UPDATE");
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? FOR UPDATE", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? FOR UPDATE");
+        /* 锁定子句保持原大小写 */
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? for update", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? for update");
+    }
+
+    @Test
+    void paginationSqlKeepsTrailingLockingClauseVariants() {
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? FOR UPDATE SKIP LOCKED", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? FOR UPDATE SKIP LOCKED");
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? FOR UPDATE OF t NOWAIT", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? FOR UPDATE OF t NOWAIT");
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? FOR SHARE", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? FOR SHARE");
+        assertThat(paginated(DbType.MYSQL, "SELECT * FROM t WHERE c = ? LOCK IN SHARE MODE", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ?,? LOCK IN SHARE MODE");
+    }
+
+    @Test
+    void paginationSqlKeepsTrailingLockingClauseOnPostgreSql() {
+        assertThat(paginated(DbType.POSTGRE_SQL, "SELECT * FROM t WHERE c = ? FOR UPDATE SKIP LOCKED", 2, 10))
+                .isEqualTo("SELECT * FROM t WHERE c = ? LIMIT ? OFFSET ? FOR UPDATE SKIP LOCKED");
+    }
+
+    @Test
+    void nonTrailingLockingClauseInsideSubqueryStaysUntouched() {
+        /* 锁定子句位于子查询内部(非 SQL 末尾)时,外层追加 LIMIT 本身合法,不应被移动 */
+        assertThat(
+                paginated(DbType.MYSQL, "SELECT * FROM t WHERE id IN (SELECT id FROM u WHERE x = ? FOR UPDATE)", 1, 10))
+                .isEqualTo("SELECT * FROM t WHERE id IN (SELECT id FROM u WHERE x = ? FOR UPDATE) LIMIT ?");
+    }
+
+    @Test
+    void forUpdateCountSql() {
+        /* count 改写不追加分页子句,锁定子句位置天然合法 */
+        assertsCountSql(
+                "SELECT * FROM t WHERE c = ? FOR UPDATE", "SELECT COUNT(*) AS total FROM t WHERE c = ? FOR UPDATE");
+    }
+
+    private String paginated(DbType dbType, String sql, long current, long size) {
+        Configuration configuration = new Configuration();
+        MappedStatement ms = new MappedStatement.Builder(configuration, "testMapper.selectPage",
+                new StaticSqlSource(configuration, sql), SqlCommandType.SELECT).build();
+        IPage<?> page = new Page<>(current, size);
+        BoundSql boundSql = new BoundSql(configuration, sql, Collections.emptyList(), page);
+        PaginationInnerInterceptor dbTypeInterceptor = new PaginationInnerInterceptor(dbType);
+        dbTypeInterceptor.beforeQuery(null, ms, page, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, boundSql);
+        return boundSql.getSql();
     }
 }
