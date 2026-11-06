@@ -315,7 +315,9 @@ subprojects {
     if (!skipPublishingProjects.contains(project.path)) {
         mavenPublishing {
             publishToMavenCentral()
-            signAllPublications()
+            if (!project.hasProperty('skipSigning')) {
+                signAllPublications()
+            }
             coordinates(
                 project.group.toString(),
                 project.name,
