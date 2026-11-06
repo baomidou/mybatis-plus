@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.executor.CacheKeyCustomizer;
 import com.baomidou.mybatisplus.core.handlers.CompositeEnumTypeHandler;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -25,10 +26,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.executor.BatchExecutor;
+import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.ReuseExecutor;
+import org.apache.ibatis.executor.SimpleExecutor;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMap;
@@ -37,10 +44,12 @@ import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandler;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -385,7 +394,64 @@ public class MybatisConfiguration extends Configuration {
 
     @Override
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
-        return super.newExecutor(transaction, executorType);
+        if (!(transaction instanceof CacheKeyCustomizer)) {
+            return super.newExecutor(transaction, executorType);
+        }
+        CacheKeyCustomizer customizer = (CacheKeyCustomizer) transaction;
+        ExecutorType type = executorType == null ? defaultExecutorType : executorType;
+        Executor executor;
+        if (type == ExecutorType.BATCH) {
+            executor = new BatchExecutor(this, transaction) {
+
+                @Override
+                public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
+                    // Reused statements must still validate the transaction's current connection route.
+                    transaction.getConnection();
+                    return super.doUpdate(ms, parameter);
+                }
+
+                @Override
+                public CacheKey createCacheKey(MappedStatement ms, Object parameter, RowBounds rowBounds,
+                        BoundSql boundSql) {
+                    CacheKey key = super.createCacheKey(ms, parameter, rowBounds, boundSql);
+                    customizer.customizeCacheKey(key);
+                    return key;
+                }
+            };
+        } else if (type == ExecutorType.REUSE) {
+            executor = new ReuseExecutor(this, transaction) {
+
+                @Override
+                public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
+                    // Reused statements must still validate the transaction's current connection route.
+                    transaction.getConnection();
+                    return super.doUpdate(ms, parameter);
+                }
+
+                @Override
+                public CacheKey createCacheKey(MappedStatement ms, Object parameter, RowBounds rowBounds,
+                        BoundSql boundSql) {
+                    CacheKey key = super.createCacheKey(ms, parameter, rowBounds, boundSql);
+                    customizer.customizeCacheKey(key);
+                    return key;
+                }
+            };
+        } else {
+            executor = new SimpleExecutor(this, transaction) {
+
+                @Override
+                public CacheKey createCacheKey(MappedStatement ms, Object parameter, RowBounds rowBounds,
+                        BoundSql boundSql) {
+                    CacheKey key = super.createCacheKey(ms, parameter, rowBounds, boundSql);
+                    customizer.customizeCacheKey(key);
+                    return key;
+                }
+            };
+        }
+        if (cacheEnabled) {
+            executor = new CachingExecutor(executor);
+        }
+        return (Executor) interceptorChain.pluginAll(executor);
     }
 
     // Slow but a one time cost. A better solution is welcome.
