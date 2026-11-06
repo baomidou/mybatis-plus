@@ -7,10 +7,13 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.PlainSelect;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -107,5 +110,59 @@ public class DataPermissionInterceptorTest {
 
     void assertSql(String mappedStatementId, String sql, String targetSql) {
         assertThat(INTERCEPTOR.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
+    }
+
+    @Test
+    void parenthesizedSelectAndUnion() {
+        assertSql(TEST_3, "SELECT id FROM sys_role", "SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)");
+        assertSql(TEST_3, "(SELECT id FROM sys_role)", "(SELECT id FROM sys_role WHERE companyId IN (1, 2, 3))");
+        assertSql(
+                TEST_3, "(((SELECT id FROM sys_role)))", "(((SELECT id FROM sys_role WHERE companyId IN (1, 2, 3))))");
+        assertSql(
+                TEST_3, "(SELECT id FROM sys_role) UNION ALL (SELECT id FROM sys_role)",
+                "(SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)) UNION ALL (SELECT id FROM sys_role WHERE companyId IN (1, 2, 3))");
+        assertSql(
+                TEST_3, "((SELECT id FROM sys_role) UNION (SELECT id FROM sys_role))",
+                "((SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)) UNION (SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)))");
+        assertSql(
+                TEST_3,
+                "(SELECT id FROM sys_role) UNION ALL ((SELECT id FROM sys_role) UNION ALL (SELECT id FROM sys_role))",
+                "(SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)) UNION ALL ((SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)) UNION ALL (SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)))");
+        assertSql(
+                TEST_3, "(SELECT id FROM sys_role WHERE id = 2)",
+                "(SELECT id FROM sys_role WHERE id = 2 AND companyId IN (1, 2, 3))");
+        assertSql(
+                TEST_3,
+                "((SELECT id FROM sys_role WHERE id = 1) UNION ALL (SELECT id FROM sys_role WHERE id = 2)) ORDER BY id",
+                "((SELECT id FROM sys_role WHERE id = 1 AND companyId IN (1, 2, 3)) UNION ALL (SELECT id FROM sys_role WHERE id = 2 AND companyId IN (1, 2, 3))) ORDER BY id");
+    }
+
+    @Test
+    void parenthesizedSelectWithoutPermission() {
+        String sql = "((SELECT id FROM sys_role WHERE id = 2))";
+        assertThat(new DataPermissionInterceptor().parserSingle(sql, TEST_3)).isEqualTo(sql);
+        DataPermissionInterceptor interceptor = new DataPermissionInterceptor((where, id) -> null);
+        assertThat(interceptor.parserSingle(sql, TEST_3)).isEqualTo(sql);
+    }
+
+    @Test
+    void parenthesizedSelectKeepsSetWhereHookAndStatementId() {
+        List<String> ids = new ArrayList<>();
+        DataPermissionInterceptor interceptor = new DataPermissionInterceptor(INTERCEPTOR.getDataPermissionHandler()) {
+
+            @Override
+            protected void setWhere(PlainSelect select, String id) {
+                ids.add(id);
+                super.setWhere(select, id);
+            }
+        };
+        assertThat(interceptor.parserSingle("(SELECT id FROM sys_role) UNION ALL (SELECT id FROM sys_role)", TEST_3))
+                .isEqualTo(
+                        "(SELECT id FROM sys_role WHERE companyId IN (1, 2, 3)) UNION ALL (SELECT id FROM sys_role WHERE companyId IN (1, 2, 3))");
+        assertThat(ids).containsExactly(TEST_3, TEST_3);
+        ids.clear();
+        assertThat(interceptor.parserSingle("(SELECT id FROM (SELECT id, companyId FROM sys_role) nested)", TEST_3))
+                .isEqualTo("(SELECT id FROM (SELECT id, companyId FROM sys_role) nested WHERE companyId IN (1, 2, 3))");
+        assertThat(ids).containsExactly(TEST_3);
     }
 }
