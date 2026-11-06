@@ -38,8 +38,17 @@ class BlockAttackInnerInterceptorTest {
         checkEx("update user set name = null where 1 between 1 and 2", "1 between 1 and 2");
         checkEx("update user set name = null where 1 in (1, 2)", "1 in (1, 2)");
         checkEx("update user set name = null where 'a' like '%'", "'a' like '%'");
+        checkEx(
+                "update user set name = null where 9007199254740992 not in (9007199254740993)",
+                "large integer NOT IN precision");
+        checkEx("update user set name = null where 'a\nb' like '%'", "LIKE matches newline");
+        checkEx("update user set name = null where 'it''s' like 'it_s'", "LIKE unescapes doubled quote");
 
         checkNotEx("update user set name = null where 1=?", "1=?");
+        checkNotEx("update user set name = null where 'abc' regexp 'a.*'", "REGEXP is not LIKE");
+        checkNotEx(
+                "update user set name = null where not (id in (1) and 'it''s' like 'it_s')",
+                "valid filter must not be blocked");
     }
 
     @Test
@@ -50,6 +59,9 @@ class BlockAttackInnerInterceptorTest {
         checkEx("delete from user where 1!=2", "1!=2");
         checkEx("delete from user where 1=1 and 2=2", "1=1 and 2=2");
         checkEx("delete from user where 1=1 and 2=3 or 1=1", "1=1 and 2=3 or 1=1");
+        checkEx("delete from user where 9007199254740992 not in (9007199254740993)", "large integer NOT IN precision");
+        checkNotEx(
+                "delete from user where not (id in (1) and 'it''s' like 'it_s')", "valid filter must not be blocked");
     }
 
     @Test

@@ -323,7 +323,8 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      * @return 条件恒为真返回 {@code true},恒为假返回 {@code false},无法判断返回 {@code null}
      */
     private Boolean matchConstantLike(LikeExpression like) {
-        if (like.getEscape() != null || like.isCaseInsensitive()) {
+        if (like.getEscape() != null || like.isCaseInsensitive()
+                || like.getLikeKeyWord() != LikeExpression.KeyWord.LIKE) {
             return null;
         }
         String value = toText(like.getLeftExpression());
@@ -353,7 +354,7 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
                 regex.append(Pattern.quote(String.valueOf(c)));
             }
         }
-        return Pattern.compile(regex.append('$').toString());
+        return Pattern.compile(regex.append('$').toString(), Pattern.DOTALL);
     }
 
     /**
@@ -375,6 +376,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      * @return 比较结果,类型不兼容返回 {@code null}
      */
     private Integer compareConstantValues(Object left, Object right) {
+        if (left instanceof Long && right instanceof Long) {
+            return Long.compare((Long) left, (Long) right);
+        }
         if (left instanceof Number && right instanceof Number) {
             return Double.compare(((Number) left).doubleValue(), ((Number) right).doubleValue());
         }
@@ -408,7 +412,7 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private String toText(Expression expression) {
         if (expression instanceof StringValue) {
-            return ((StringValue) expression).getValue();
+            return ((StringValue) expression).getNotExcapedValue();
         }
         return null;
     }
