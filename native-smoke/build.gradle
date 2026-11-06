@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${bootVersion}"
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.graalvm.buildtools.native' version '0.11.5'
+}
+
+// 用法: ../gradlew -p native-smoke -PbootVersion=3.5.9 -Pstarter=mybatis-plus-spring-boot3-starter -PmpVersion=<已发布到 mavenLocal 的版本> nativeCompile
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.baomidou:${starter}:${mpVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.h2database:h2'
+}
+
+graalvmNative {
+    binaries.main {
+        imageName = 'native-smoke'
+        buildArgs.add('--no-fallback')
+    }
+}
