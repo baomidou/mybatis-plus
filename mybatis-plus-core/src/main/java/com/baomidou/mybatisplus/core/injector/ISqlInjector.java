@@ -27,6 +27,9 @@ public interface ISqlInjector {
 
     /**
      * 检查SQL是否注入(已经注入过不再注入)
+     * <p>
+     * 调用前应已完成 Mapper 对应的表信息初始化。
+     * </p>
      *
      * @param builderAssistant mapper 信息
      * @param mapperClass mapper 接口的 class 对象

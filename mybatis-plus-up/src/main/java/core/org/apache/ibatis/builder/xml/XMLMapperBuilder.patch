@@ -1,8 +1,8 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
-index 1844fd61b85913867d586c83e03fe42ccccf0f11..aea10c822595b5178fcc5f3253493e67f2e08a5b 100644
+index 1844fd61b85913867d586c83e03fe42ccccf0f11..ae0be87fe5865800ac36f6dd1b9647fa74462093 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisXMLMapperBuilder.java
-@@ -1,19 +1,19 @@
+@@ -1,26 +1,29 @@
  /*
 - *    Copyright 2009-2024 the original author or authors.
 + * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
@@ -31,9 +31,10 @@ index 1844fd61b85913867d586c83e03fe42ccccf0f11..aea10c822595b5178fcc5f3253493e67
 -package org.apache.ibatis.builder.xml;
 +package com.baomidou.mybatisplus.core;
  
++import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
  import org.apache.ibatis.builder.BaseBuilder;
  import org.apache.ibatis.builder.BuilderException;
-@@ -21,6 +21,8 @@ import org.apache.ibatis.builder.CacheRefResolver;
+ import org.apache.ibatis.builder.CacheRefResolver;
  import org.apache.ibatis.builder.IncompleteElementException;
  import org.apache.ibatis.builder.MapperBuilderAssistant;
  import org.apache.ibatis.builder.ResultMapResolver;
@@ -42,7 +43,7 @@ index 1844fd61b85913867d586c83e03fe42ccccf0f11..aea10c822595b5178fcc5f3253493e67
  import org.apache.ibatis.cache.Cache;
  import org.apache.ibatis.executor.ErrorContext;
  import org.apache.ibatis.io.Resources;
-@@ -48,10 +50,13 @@ import java.util.Map;
+@@ -48,10 +51,13 @@ import java.util.Map;
  import java.util.Properties;
  
  /**
@@ -59,7 +60,7 @@ index 1844fd61b85913867d586c83e03fe42ccccf0f11..aea10c822595b5178fcc5f3253493e67
  
      private final XPathParser parser;
      private final MapperBuilderAssistant builderAssistant;
-@@ -59,35 +64,35 @@ public class XMLMapperBuilder extends BaseBuilder {
+@@ -59,35 +65,35 @@ public class XMLMapperBuilder extends BaseBuilder {
      private final String resource;
  
      @Deprecated
@@ -101,7 +102,19 @@ index 1844fd61b85913867d586c83e03fe42ccccf0f11..aea10c822595b5178fcc5f3253493e67
          this.parser = parser;
          this.sqlFragments = sqlFragments;
          this.resource = resource;
-@@ -404,5 +409,4 @@ public class XMLMapperBuilder extends BaseBuilder {
+@@ -115,6 +121,11 @@ public class XMLMapperBuilder extends BaseBuilder {
+                 throw new BuilderException("Mapper's namespace cannot be empty");
+             }
+             builderAssistant.setCurrentNamespace(namespace);
++            try {
++                TableInfoHelper.initMapperTableInfo(builderAssistant, Resources.classForName(namespace));
++            } catch (ClassNotFoundException e) {
++                // XML namespace 不一定对应 Mapper 类。
++            }
+             cacheRefElement(context.evalNode("cache-ref"));
+             cacheElement(context.evalNode("cache"));
+             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+@@ -404,5 +415,4 @@ public class XMLMapperBuilder extends BaseBuilder {
              }
          }
      }

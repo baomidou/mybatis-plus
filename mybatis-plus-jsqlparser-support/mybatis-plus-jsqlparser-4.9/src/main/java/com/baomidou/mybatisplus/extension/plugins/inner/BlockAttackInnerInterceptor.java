@@ -146,9 +146,14 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
 
             AndExpression andExpression = (AndExpression) where;
             Boolean left = fullMatch(andExpression.getLeftExpression(), logicField);
-            return Boolean.FALSE.equals(left)
-                    ? Boolean.FALSE
-                    : fullMatch(andExpression.getRightExpression(), logicField);
+            if (Boolean.FALSE.equals(left)) {
+                return Boolean.FALSE;
+            }
+            Boolean right = fullMatch(andExpression.getRightExpression(), logicField);
+            if (Boolean.FALSE.equals(right)) {
+                return Boolean.FALSE;
+            }
+            return left == null || right == null ? null : Boolean.TRUE;
         } else if (where instanceof Parenthesis) {
             // example: (1 = 1)
             Parenthesis parenthesis = (Parenthesis) where;
@@ -213,7 +218,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private Boolean compareConstant(String operator, Object left, Object right) {
         int result;
-        if (left instanceof Number && right instanceof Number) {
+        if (left instanceof Long && right instanceof Long) {
+            result = Long.compare((Long) left, (Long) right);
+        } else if (left instanceof Number && right instanceof Number) {
             result = Double.compare(((Number) left).doubleValue(), ((Number) right).doubleValue());
         } else if (left instanceof String && right instanceof String) {
             result = ((String) left).compareTo((String) right);

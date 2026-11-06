@@ -60,6 +60,34 @@ class BlockAttackInnerInterceptorTautologyTest {
     }
 
     @Test
+    void longComparisonPreservesPrecision() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            for (String predicate : new String[]{"9007199254740992 <> 9007199254740993",
+                    "9007199254740992 != 9007199254740993", "9007199254740992 < 9007199254740993",
+                    "9007199254740993 > 9007199254740992", "9223372036854775806 < 9223372036854775807",
+                    "9223372036854775806 <> 9223372036854775807", "9223372036854775807 = 9223372036854775807",
+                    "9223372036854775807 >= 9223372036854775807", "9223372036854775807 <= 9223372036854775807"}) {
+                checkEx(statement + " where " + predicate);
+                checkEx(statement + " where id = ? or (" + predicate + ")");
+                checkNotEx(statement + " where id = ? and (" + predicate + ")");
+            }
+        }
+    }
+
+    @Test
+    void falseLongComparisonPreservesPrecision() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            for (String predicate : new String[]{"9007199254740992 = 9007199254740993",
+                    "9007199254740992 >= 9007199254740993", "9007199254740993 <= 9007199254740992",
+                    "9223372036854775806 = 9223372036854775807", "9223372036854775806 > 9223372036854775807",
+                    "9223372036854775807 < 9223372036854775806"}) {
+                checkNotEx(statement + " where " + predicate);
+                checkEx(statement + " where not (" + predicate + ")");
+            }
+        }
+    }
+
+    @Test
     void constant() {
         checkEx("update records set status = 2 where 1");
         checkEx("update records set status = 2 where 1 and 1 = 1");
@@ -104,6 +132,45 @@ class BlockAttackInnerInterceptorTautologyTest {
             checkNotEx(statement + " where 1 = 0 or 2 = 0");
             checkEx(statement + " where not (1 = 0 or 2 = 0)");
             checkEx(statement + " where (rfid is null or rfid = '') or 1 = 1");
+        }
+    }
+
+    @Test
+    void andWithUnknownAndConstant() {
+        for (String statement : new String[]{"update records set status = 2", "delete from records"}) {
+            for (String predicate : new String[]{"id in (?)", "id > ?", "rfid is null", "name like 'a%'"}) {
+                checkNotEx(statement + " where " + predicate + " and 1 = 1");
+                checkNotEx(statement + " where 1 = 1 and " + predicate);
+                checkNotEx(statement + " where not (" + predicate + " and 1 = 1)");
+                checkNotEx(statement + " where not (1 = 1 and " + predicate + ")");
+                checkNotEx(statement + " where " + predicate + " and 1 = 0");
+                checkNotEx(statement + " where 1 = 0 and " + predicate);
+                checkEx(statement + " where not (" + predicate + " and 1 = 0)");
+                checkEx(statement + " where not (1 = 0 and " + predicate + ")");
+            }
+            checkEx(statement + " where (id in (?) and 1 = 1) or 1 = 1");
+        }
+    }
+
+    @Test
+    void andWithLogicDelete() {
+        // https://github.com/baomidou/mybatis-plus/issues/7218
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LogicRecord.class);
+        try {
+            for (String statement : new String[]{"update block_attack_or_logic set del_flag = '1'",
+                    "delete from block_attack_or_logic"}) {
+                for (String predicate : new String[]{"id in (?)", "id = ?", "id > ?", "rfid is null",
+                        "rfid like 'a%'"}) {
+                    checkNotEx(statement + " where " + predicate + " and del_flag = '0'");
+                    checkNotEx(statement + " where del_flag = '0' and " + predicate);
+                    checkNotEx(statement + " where (" + predicate + " and del_flag = '0') and 1 = 1");
+                }
+                checkEx(statement + " where del_flag = '0'");
+                checkEx(statement + " where del_flag = '0' and 1 = 1");
+                checkEx(statement + " where 1 = 1 and del_flag = '0'");
+            }
+        } finally {
+            TableInfoHelper.remove(LogicRecord.class);
         }
     }
 

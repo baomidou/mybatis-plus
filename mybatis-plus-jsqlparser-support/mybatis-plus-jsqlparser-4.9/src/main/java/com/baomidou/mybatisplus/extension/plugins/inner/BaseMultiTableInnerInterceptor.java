@@ -26,7 +26,6 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
@@ -102,6 +101,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      * @since 3.5.11
      */
     protected Expression appendExpression(Expression currentExpression, Expression injectExpression) {
+        currentExpression = groupForAnd(currentExpression);
+        injectExpression = groupForAnd(injectExpression);
         if (ExpressionAppendMode.LAST == expressionAppendMode || expressionAppendMode == null) {
             return new AndExpression(currentExpression, injectExpression);
         } else {
@@ -221,15 +222,33 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     }
 
     protected void processSelectItem(SelectItem selectItem, final String whereSegment) {
-        Expression expression = selectItem.getExpression();
-        if (expression instanceof Select) {
-            processSelectBody(((Select) expression), whereSegment);
-        } else if (expression instanceof Function) {
-            processFunction((Function) expression, whereSegment);
-        } else if (expression instanceof ExistsExpression) {
-            ExistsExpression existsExpression = (ExistsExpression) expression;
-            processSelectBody((Select) existsExpression.getRightExpression(), whereSegment);
+        processSelectExpression(selectItem.getExpression(), whereSegment);
+    }
+
+    /**
+     * Traverse expression wrappers without crossing a SELECT boundary twice.
+     */
+    protected void processSelectExpression(Expression expression, final String whereSegment) {
+        if (expression == null) {
+            return;
         }
+        expression.accept(new ExpressionVisitorAdapter() {
+
+            @Override
+            public void visit(ParenthesedSelect select) {
+                processSelectBody(select, whereSegment);
+            }
+
+            @Override
+            public void visit(Select select) {
+                processSelectBody(select, whereSegment);
+            }
+
+            @Override
+            public void visit(Function function) {
+                processFunction(function, whereSegment);
+            }
+        });
     }
 
     /**
@@ -246,20 +265,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     protected void processFunction(Function function, final String whereSegment) {
         ExpressionList<?> parameters = function.getParameters();
         if (parameters != null) {
-            parameters.forEach(expression -> {
-                if (expression instanceof Select) {
-                    processSelectBody(((Select) expression), whereSegment);
-                } else if (expression instanceof Function) {
-                    processFunction((Function) expression, whereSegment);
-                } else if (expression instanceof EqualsTo) {
-                    if (((EqualsTo) expression).getLeftExpression() instanceof Select) {
-                        processSelectBody(((Select) ((EqualsTo) expression).getLeftExpression()), whereSegment);
-                    }
-                    if (((EqualsTo) expression).getRightExpression() instanceof Select) {
-                        processSelectBody(((Select) ((EqualsTo) expression).getRightExpression()), whereSegment);
-                    }
-                }
-            });
+            parameters.forEach(expression -> processSelectExpression(expression, whereSegment));
         }
     }
 
@@ -425,7 +431,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         // 如果有多表，则用 and 连接
         if (expressions.size() > 1) {
             for (int i = 1; i < expressions.size(); i++) {
-                injectExpression = new AndExpression(injectExpression, expressions.get(i));
+                injectExpression = new AndExpression(groupForAnd(injectExpression), groupForAnd(expressions.get(i)));
             }
         }
 
@@ -450,6 +456,10 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
      */
     protected boolean isLowPrecedence(Expression expression) {
         return expression instanceof OrExpression || expression instanceof XorExpression;
+    }
+
+    private Expression groupForAnd(Expression expression) {
+        return isLowPrecedence(expression) ? new Parenthesis(expression) : expression;
     }
 
     /**

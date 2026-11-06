@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.CacheRefResolver;
@@ -120,6 +121,11 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
             builderAssistant.setCurrentNamespace(namespace);
+            try {
+                TableInfoHelper.initMapperTableInfo(builderAssistant, Resources.classForName(namespace));
+            } catch (ClassNotFoundException e) {
+                // XML namespace 不一定对应 Mapper 类。
+            }
             cacheRefElement(context.evalNode("cache-ref"));
             cacheElement(context.evalNode("cache"));
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));

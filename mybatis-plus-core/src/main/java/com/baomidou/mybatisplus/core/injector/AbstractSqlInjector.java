@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.injector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
@@ -48,7 +49,9 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             Set<String> mapperRegistryCache = GlobalConfigUtils
                     .getMapperRegistryCache(builderAssistant.getConfiguration());
             if (!mapperRegistryCache.contains(className)) {
-                TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+                TableInfo tableInfo = TableInfoHelper.getTableInfo(modelClass);
+                Assert.notNull(
+                        tableInfo, "TableInfo must be initialized before SQL injection: %s", modelClass.getName());
                 List<AbstractMethod> methodList = this.getMethodList(mapperClass, tableInfo);
                 // 兼容旧代码
                 if (CollectionUtils.isEmpty(methodList)) {

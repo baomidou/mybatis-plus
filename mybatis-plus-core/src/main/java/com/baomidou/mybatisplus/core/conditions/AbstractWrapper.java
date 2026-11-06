@@ -622,6 +622,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 必要的初始化
      */
     protected void initNeed() {
+        paramAlias = new SharedString(Constants.WRAPPER);
         paramNameSeq = new AtomicInteger(0);
         paramNameValuePairs = new HashMap<>(16);
         expression = new MergeSegments();
@@ -703,12 +704,27 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public Children setParamAlias(String paramAlias) {
         Assert.notEmpty(paramAlias, "paramAlias can not be empty!");
         String oldParamAlias = getParamAlias();
-        this.paramAlias = new SharedString(paramAlias);
-        if (this.expression != null && !oldParamAlias.equals(paramAlias)) {
-            expression.changeParamAlias(oldParamAlias, paramAlias);
-            onParamAliasChanged(oldParamAlias, paramAlias);
+        if (!oldParamAlias.equals(paramAlias)) {
+            changeParamAlias(oldParamAlias, paramAlias);
         }
         return typedThis;
+    }
+
+    private void changeParamAlias(String oldParamAlias, String paramAlias) {
+        if (this.paramAlias == null) {
+            this.paramAlias = new SharedString(paramAlias);
+        } else {
+            this.paramAlias.setStringValue(paramAlias);
+        }
+        if (expression != null) {
+            expression.changeParamAlias(oldParamAlias, paramAlias);
+            for (ISqlSegment segment : expression.getNormal()) {
+                if (segment instanceof AbstractWrapper) {
+                    ((AbstractWrapper<?, ?, ?>) segment).changeParamAlias(oldParamAlias, paramAlias);
+                }
+            }
+        }
+        onParamAliasChanged(oldParamAlias, paramAlias);
     }
 
     /**

@@ -111,7 +111,7 @@ public class TypeRegistry {
     }
 
     private IColumnType getNumber(TableField.MetaInfo metaInfo) {
-        if (metaInfo.getScale() > 0 || metaInfo.getLength() > 18) {
+        if (metaInfo.getScale() != 0 || metaInfo.getLength() <= 0 || metaInfo.getLength() > 18) {
             return typeMap.get(metaInfo.getJdbcType().TYPE_CODE);
         } else if (metaInfo.getLength() > 9) {
             return DbColumnType.LONG;

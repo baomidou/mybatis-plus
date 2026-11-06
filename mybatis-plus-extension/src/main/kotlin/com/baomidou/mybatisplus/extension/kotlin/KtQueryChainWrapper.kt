@@ -26,7 +26,9 @@ import kotlin.reflect.KProperty1
 /**
  * @author FlyInWind
  * @since 2020-10-18
+ * @deprecated 将在未来版本中移除，请改用 [com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper]。
  */
+@Deprecated("将在未来版本中移除，请改用 com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper")
 @Suppress("serial")
 open class KtQueryChainWrapper<T : Any>(
     internal val baseMapper: BaseMapper<T>?

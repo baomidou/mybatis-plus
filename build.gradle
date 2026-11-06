@@ -26,7 +26,7 @@ buildscript {
             springBoot3Version = '3.5.9',
             springBoot4Version = '4.1.0',
             springCloudVersion = '3.1.8',
-            junitVersion = '6.1.1',
+            junitVersion = '6.1.3',
         ]
 
         lib = [
@@ -51,9 +51,9 @@ buildscript {
             "spring-test"                : "org.springframework:spring-test:${springVersion}",
             "assertj-core"               : "org.assertj:assertj-core:3.27.7",
             "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-            "fastjson"                   : "com.alibaba:fastjson:2.0.62",
+            "fastjson"                   : "com.alibaba:fastjson:2.0.66",
             "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.20.1",
-            "jackson3"                   : "tools.jackson.core:jackson-databind:3.0.3",
+            "jackson3"                   : "tools.jackson.core:jackson-databind:3.2.4",
             "gson"                       : "com.google.code.gson:gson:2.13.2",
             "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
             // 2.x support jdk8+
@@ -66,7 +66,7 @@ buildscript {
             "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
             "h2"                         : "com.h2database:h2:2.4.240",
             "mysql"                      : "com.mysql:mysql-connector-j:9.5.0",
-            "sqlite"                     : "org.xerial:sqlite-jdbc:3.53.2.0",
+            "sqlite"                     : "org.xerial:sqlite-jdbc:3.54.1.0",
             "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.10.java8",
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
             //code generator
@@ -92,8 +92,8 @@ buildscript {
     dependencies {
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21"
-        classpath "io.freefair.gradle:lombok-plugin:8.10"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.3"
+        classpath "io.freefair.gradle:lombok-plugin:9.8.3"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.4"
         classpath "com.github.jakemarsden.git-hooks:com.github.jakemarsden.git-hooks.gradle.plugin:0.0.2"
     }
 }
@@ -164,7 +164,7 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:5.23.0"
+        testImplementation "org.mockito:mockito-junit-jupiter:5.24.0"
         testImplementation "${lib["lagarto"]}"
         testImplementation("org.junit.platform:junit-platform-engine:${junitVersion}")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
@@ -315,7 +315,9 @@ subprojects {
     if (!skipPublishingProjects.contains(project.path)) {
         mavenPublishing {
             publishToMavenCentral()
-            signAllPublications()
+            if (!project.hasProperty('skipSigning')) {
+                signAllPublications()
+            }
             coordinates(
                 project.group.toString(),
                 project.name,

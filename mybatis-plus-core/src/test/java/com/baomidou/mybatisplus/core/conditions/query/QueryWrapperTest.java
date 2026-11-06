@@ -22,6 +22,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class QueryWrapperTest extends WrapperTestSupport {
 
     @Test
+    void parameterAliasReachesNestedLambdaViews() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
+        QueryWrapper<Entity> wrapper = new QueryWrapper<>(Entity.class);
+        wrapper.and(nested -> nested.lambda().eq(Entity::getId, 1));
+        wrapper.setParamAlias("filter");
+
+        assertThat(wrapper.getSqlSegment()).isEqualTo("((id = #{filter.paramNameValuePairs.MPGENVAL1}))");
+    }
+
+    @Test
     void shouldCacheSqlSegmentAcrossMutations() {
         QueryWrapper<Entity> ew = new QueryWrapper<Entity>().eq("xxx", 123)
                 .and(i -> i.eq("andx", 65444).le("ande", 66666)).ne("xxx", 222);
