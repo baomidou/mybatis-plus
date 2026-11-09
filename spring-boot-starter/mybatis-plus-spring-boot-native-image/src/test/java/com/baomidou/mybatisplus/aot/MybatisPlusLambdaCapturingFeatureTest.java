@@ -166,7 +166,7 @@ class MybatisPlusLambdaCapturingFeatureTest {
         try {
             return Class.forName(className, false, getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
-            return null;
+            throw new IllegalStateException("Test fixture class is missing from the test classpath: " + className, e);
         }
     }
 
