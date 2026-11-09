@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
@@ -57,6 +58,9 @@ class MybatisPlusLambdaCapturingFeatureTest {
 
         public static void main(String[] args) {
         }
+    }
+
+    static class InheritedApplicationMain extends ApplicationMain {
     }
 
     /**
@@ -106,16 +110,65 @@ class MybatisPlusLambdaCapturingFeatureTest {
     }
 
     @Test
-    void jarManifestMainClassIsAvailableForApplicationPackageFiltering() throws IOException {
-        Path jar = Files.createTempFile("aot-main-classes", ".jar");
+    void startClassFromManifestIsAvailableForApplicationPackageFiltering() throws IOException {
+        Path jar = createJar("aot-start-classes", "com.example.application.Main", null);
+        assertThat(MybatisPlusLambdaCapturingFeature.readStartClassName(jar)).isEqualTo("com.example.application.Main");
+    }
+
+    /**
+     * 回归：依赖 jar 里带 public static main 的类（byte-buddy、JNA 等真实依赖就是这种形态）不能被当成应用入口。 否则应用包被替换成依赖包的集合，业务类里的捕获类会被全部过滤掉，native 下
+     * lambda 反序列化失败。
+     */
+    @Test
+    void dependencyJarWithMainMethodButNoStartClassDoesNotNarrowApplicationPackages() throws IOException {
+        Path jar = createJar("aot-dependency-main", null, "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain");
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(jar), this::loadClass))
+                .isEmpty();
+    }
+
+    /**
+     * 目录型 classpath（target/classes、build/classes）没有 manifest，不能凭类里的 main 方法猜应用入口。
+     */
+    @Test
+    void directoryWithMainMethodDoesNotNarrowApplicationPackages() throws IOException {
+        Path dir = Files.createTempDirectory("aot-main-classes");
+        writeClassFile(dir, "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain");
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(dir), this::loadClass))
+                .isEmpty();
+    }
+
+    /**
+     * manifest 的 Start-Class 指向的类把 main 定义在父类时同样是合法入口，必须能识别（getMethod 而非 getDeclaredMethod）。
+     */
+    @Test
+    void startClassWithInheritedMainContributesApplicationPackage() throws IOException {
+        String className = "com.baomidou.mybatisplus.aot.MybatisPlusLambdaCapturingFeatureTest$InheritedApplicationMain";
+        Path jar = createJar("aot-inherited-main", className, null);
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(jar), this::loadClass))
+                .containsExactly("com.baomidou.mybatisplus.aot");
+    }
+
+    private Path createJar(String prefix, String startClass, String nestedClassName) throws IOException {
+        Path jar = Files.createTempFile(prefix, ".jar");
         java.util.jar.Manifest manifest = new java.util.jar.Manifest();
         manifest.getMainAttributes().put(java.util.jar.Attributes.Name.MANIFEST_VERSION, "1.0");
-        manifest.getMainAttributes().putValue("Start-Class", "com.example.application.Main");
-        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar), manifest)) {
-            writeJarEntry(out, LAMBDA_CLASS);
+        if (startClass != null) {
+            manifest.getMainAttributes().putValue("Start-Class", startClass);
         }
-        assertThat(MybatisPlusLambdaCapturingFeature.collectMainClassCandidates(jar))
-                .containsExactly("com.example.application.Main");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar), manifest)) {
+            if (nestedClassName != null) {
+                writeJarEntry(out, nestedClassName);
+            }
+        }
+        return jar;
+    }
+
+    private Class<?> loadClass(String className) {
+        try {
+            return Class.forName(className, false, getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 
     /**
@@ -157,15 +210,6 @@ class MybatisPlusLambdaCapturingFeatureTest {
     void onlyClassesWithSerializableLambdasPassTheFilter() {
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(WithSerializableLambda.class)).isTrue();
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(Object.class)).isFalse();
-    }
-
-    @Test
-    void mainMethodCandidatesAreFoundForApplicationPackageFiltering() throws IOException {
-        Path dir = Files.createTempDirectory("aot-main-classes");
-        String className = "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain";
-        writeClassFile(dir, className);
-        assertThat(MybatisPlusLambdaCapturingFeature.collectMainClassCandidates(dir))
-                .containsExactly("com.baomidou.mybatisplus.aot." + className);
     }
 
     @Test

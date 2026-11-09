@@ -102,6 +102,17 @@ class RuntimeHintsRegistrarTest {
         assertThat(registeredResourcePaths(environment)).isEmpty();
     }
 
+    /**
+     * 与运行期 MybatisPlusProperties#getResources 一致：配置的位置不存在时视为无匹配，不能把 FileNotFoundException 升级成构建失败。
+     */
+    @Test
+    void missingMapperLocationDirectoryIsSkipped() {
+        MockEnvironment environment = new MockEnvironment()
+                .withProperty("mybatis-plus.mapper-locations", "classpath:mapper/nonexistent/*.xml");
+        assertThatCode(() -> registeredResourcePaths(environment)).doesNotThrowAnyException();
+        assertThat(registeredResourcePaths(environment)).isEmpty();
+    }
+
     @Test
     void questionMarkWildcardRegistersOnlyResourcesMatchingOneCharacter() {
         MockEnvironment environment = new MockEnvironment()

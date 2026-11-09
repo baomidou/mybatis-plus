@@ -54,6 +54,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -179,6 +180,9 @@ public final class MyBatisPlusNativeImageConfiguration {
                         }
                         hints.resources().registerPattern(toClasspathResourcePath(resource, resolver.getClassLoader()));
                     }
+                } catch (FileNotFoundException e) {
+                    // 与运行期 MybatisPlusProperties#getResources 一致：位置不存在视为无匹配，不阻断构建
+                    continue;
                 } catch (IOException e) {
                     throw new IllegalStateException(
                             "Failed to resolve MyBatis mapper resources for location '" + location + "' during AOT", e);

@@ -20,6 +20,14 @@
       ]
     },
     {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata"},
+      "type": "com.baomidou.mybatisplus.core.override.MybatisMapperProxy",
+      "methods": [
+        {"name": "getMapperInterface", "parameterTypes": []},
+        {"name": "getSqlSession", "parameterTypes": []}
+      ]
+    },
+    {
       "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper"},
       "type": "com.baomidou.mybatisplus.core.conditions.query.QueryWrapper",
       "allPublicMethods": true,
@@ -62,12 +70,17 @@
       ]
     },
     {
-      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper"},
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.AbstractWrapper"},
+      "type": "com.baomidou.mybatisplus.core.conditions.AbstractWrapper",
+      "allPublicMethods": true
+    },
+    {
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda"},
       "type": "java.lang.invoke.SerializedLambda",
       "serializable": true
     },
     {
-      "condition": {"typeReached": "com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper"},
+      "condition": {"typeReached": "com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda"},
       "type": "com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda",
       "serializable": true
     }

@@ -48,22 +48,34 @@
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.FifoCache",
-      "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
+      "methods": [
+        {"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]},
+        {"name": "setSize", "parameterTypes": ["int"]}
+      ]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.LruCache",
-      "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
+      "methods": [
+        {"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]},
+        {"name": "setSize", "parameterTypes": ["int"]}
+      ]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.SoftCache",
-      "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
+      "methods": [
+        {"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]},
+        {"name": "setSize", "parameterTypes": ["int"]}
+      ]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.CacheBuilder"},
       "type": "org.apache.ibatis.cache.decorators.WeakCache",
-      "methods": [{"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]}]
+      "methods": [
+        {"name": "<init>", "parameterTypes": ["org.apache.ibatis.cache.Cache"]},
+        {"name": "setSize", "parameterTypes": ["int"]}
+      ]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.reflection.factory.DefaultObjectFactory"},
@@ -96,14 +108,26 @@
     {
       "condition": {"typeReached": "org.apache.ibatis.mapping.BoundSql"},
       "type": "org.apache.ibatis.mapping.BoundSql",
-      "methods": [{"name": "getAdditionalParameters", "parameterTypes": []}],
+      "methods": [
+        {"name": "getAdditionalParameters", "parameterTypes": []},
+        {"name": "getParameterObject", "parameterTypes": []}
+      ],
       "fields": [{"name": "sql"}, {"name": "parameterMappings"}]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.executor.statement.BaseStatementHandler"},
       "type": "org.apache.ibatis.executor.statement.BaseStatementHandler",
-      "methods": [{"name": "getBoundSql", "parameterTypes": []}],
-      "fields": [{"name": "mappedStatement"}]
+      "methods": [
+        {"name": "getBoundSql", "parameterTypes": []},
+        {"name": "getParameterHandler", "parameterTypes": []}
+      ],
+      "fields": [
+        {"name": "mappedStatement"},
+        {"name": "configuration"},
+        {"name": "executor"},
+        {"name": "parameterHandler"},
+        {"name": "boundSql"}
+      ]
     },
     {
       "condition": {"typeReached": "org.apache.ibatis.executor.statement.RoutingStatementHandler"},

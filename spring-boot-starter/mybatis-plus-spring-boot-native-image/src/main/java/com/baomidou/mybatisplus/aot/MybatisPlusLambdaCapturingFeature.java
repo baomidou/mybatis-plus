@@ -28,10 +28,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,8 +44,8 @@ import java.util.zip.ZipFile;
  * lambda 条件构造器在 native 下的唯一兜底注册点。MP 提取 lambda 依赖 ObjectInputStream 反序列化， 流里的 lambda 类名（如
  * TeController$$Lambda/0x...）带运行期哈希，无法在构建期静态登记，只能登记捕获类（定义 lambda 的用户业务类）放行运行期合成。 GraalVM reachability metadata 能描述具体
  * lambda，但捕获类集合只有应用构建时才确定，不能随 MP 库发布；Spring AOT 的公开 SerializationHints 也没有 lambda capturing-class 注册 API，因此保留此 Feature
- * 在 Native Image 分析期发现应用中的捕获类。 通过 jar 内 native-image.properties 声明 --features= 自动发现，只做 lambda
- * 捕获类注册，与静态元数据零重叠。能识别应用启动类时，仅注册其包及子包中的 捕获类；没有可识别的启动类时保留全 classpath 候选扫描，兼容非标准 native-image 启动配置。
+ * 在 Native Image 分析期发现应用中的捕获类。 通过 jar 内 native-image.properties 声明 --features= 自动发现，只做 lambda 捕获类注册，与静态元数据零重叠。只有
+ * manifest 明确声明 Start-Class 时才用其包及子包收窄捕获类范围； 没有可信入口时保留全 classpath 候选扫描，兼容非标准 native-image 启动配置。
  *
  * @author xiaochen
  * @since 2026-11-04
@@ -54,10 +56,6 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
      * javac 给含可序列化 lambda 的类生成的合成方法名， 它的常量池条目是纯 ASCII， 可直接在 class 字节里搜到
      */
     private static final byte[] DESERIALIZE_LAMBDA_MARKER = "$deserializeLambda$".getBytes(StandardCharsets.US_ASCII);
-
-    private static final byte[] MAIN_METHOD_MARKER = "main".getBytes(StandardCharsets.US_ASCII);
-
-    private static final byte[] MAIN_DESCRIPTOR_MARKER = "([Ljava/lang/String;)V".getBytes(StandardCharsets.US_ASCII);
 
     private static final String VERSIONS_PREFIX = "META-INF/versions/";
 
@@ -72,45 +70,66 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
     }
 
     private static void registerCapturingClasses(DuringAnalysisAccess access) {
-        Set<String> applicationPackages = new HashSet<>();
-        List<String> candidateClassNames = new ArrayList<>();
-        for (Path entry : access.getApplicationClassPath()) {
-            for (ClassCandidate candidate : collectClassCandidates(entry)) {
-                if (candidate.lambdaCandidate) {
-                    candidateClassNames.add(candidate.className);
+        Collection<Path> applicationClassPath = access.getApplicationClassPath();
+        Set<String> applicationPackages = resolveApplicationPackages(applicationClassPath, access::findClassByName);
+        for (Path entry : applicationClassPath) {
+            for (String className : collectCandidateClassNames(entry)) {
+                if (!isInApplicationPackage(className, applicationPackages)) {
+                    continue;
                 }
-                if (candidate.mainMethodCandidate) {
-                    try {
-                        Class<?> type = access.findClassByName(candidate.className);
-                        if (type != null && isMainClass(type)) {
-                            applicationPackages.add(type.getPackageName());
-                        }
-                    } catch (LinkageError e) {
-                        // 库 jar 里的类可能缺可选依赖，main 探测只是尽力而为
+                try {
+                    Class<?> type = access.findClassByName(className);
+                    if (type != null && hasDeserializeLambdaMethod(type)) {
+                        RuntimeSerialization.registerLambdaCapturingClass(type);
                     }
+                } catch (LinkageError e) {
+                    throw new IllegalStateException("Failed to inspect lambda capturing class " + className, e);
                 }
             }
         }
-        for (String className : candidateClassNames) {
-            if (!applicationPackages.isEmpty() && !isInApplicationPackage(className, applicationPackages)) {
+    }
+
+    /**
+     * 只用可信的应用入口收窄包范围：Spring Boot 的 Start-Class 是明确的"这是应用"标记； Main-Class 不能作数（byte-buddy、JNA 这类依赖 jar
+     * 也声明它），用它收窄会把不相干的包当成应用包，过滤掉真正的捕获类。 找不到可信入口时返回空集合，调用方退回全量扫描。
+     */
+    static Set<String> resolveApplicationPackages(Collection<Path> classPathEntries,
+            Function<String, Class<?>> classLookup) {
+        Set<String> applicationPackages = new HashSet<>();
+        for (Path entry : classPathEntries) {
+            String startClassName = readStartClassName(entry);
+            if (startClassName == null) {
                 continue;
             }
             try {
-                Class<?> type = access.findClassByName(className);
-                if (type != null && hasDeserializeLambdaMethod(type)) {
-                    RuntimeSerialization.registerLambdaCapturingClass(type);
+                Class<?> type = classLookup.apply(startClassName);
+                if (type != null && isMainClass(type)) {
+                    applicationPackages.add(type.getPackageName());
                 }
             } catch (LinkageError e) {
-                throw new IllegalStateException("Failed to inspect lambda capturing class " + className, e);
+                // 启动类加载失败时无法确认应用包，退回全量扫描
             }
+        }
+        return applicationPackages;
+    }
+
+    static String readStartClassName(Path classPathEntry) {
+        if (!Files.isRegularFile(classPathEntry)) {
+            return null;
+        }
+        try (JarFile jarFile = new JarFile(classPathEntry.toFile(), false, ZipFile.OPEN_READ, Runtime.version())) {
+            var manifest = jarFile.getManifest();
+            return manifest == null ? null : manifest.getMainAttributes().getValue("Start-Class");
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to read manifest of " + classPathEntry, e);
         }
     }
 
     private static boolean isMainClass(Class<?> type) {
         try {
-            Method main = type.getDeclaredMethod("main", String[].class);
-            return Modifier.isPublic(main.getModifiers()) && Modifier.isStatic(main.getModifiers())
-                    && main.getReturnType() == void.class;
+            // getMethod 会返回继承来的 public main，入口类把 main 定义在父类时也能识别
+            Method main = type.getMethod("main", String[].class);
+            return Modifier.isStatic(main.getModifiers()) && main.getReturnType() == void.class;
         } catch (NoSuchMethodException e) {
             return false;
         }
@@ -142,19 +161,9 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
     }
 
     /**
-     * 收集 classpath 条目里可能含可序列化 lambda 或 main 方法的类：先按 class 字节里的方法名标记粗筛，再由调用方加载类做精确判断。
+     * 收集 classpath 条目里可能含可序列化 lambda 的类：先按 class 字节里的方法名标记粗筛，再由调用方加载类做精确判断。
      */
     static List<String> collectCandidateClassNames(Path entry) {
-        return collectClassCandidates(entry).stream().filter(ClassCandidate::lambdaCandidate)
-                .map(ClassCandidate::className).collect(Collectors.toList());
-    }
-
-    static List<String> collectMainClassCandidates(Path entry) {
-        return collectClassCandidates(entry).stream().filter(ClassCandidate::mainMethodCandidate)
-                .map(ClassCandidate::className).collect(Collectors.toList());
-    }
-
-    private static List<ClassCandidate> collectClassCandidates(Path entry) {
         if (Files.isDirectory(entry)) {
             return collectFromDirectory(entry);
         }
@@ -164,12 +173,12 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
         throw new IllegalArgumentException("Application classpath entry is neither a directory nor a JAR: " + entry);
     }
 
-    private static List<ClassCandidate> collectFromDirectory(Path directory) {
+    private static List<String> collectFromDirectory(Path directory) {
         try (Stream<Path> stream = Files.walk(directory)) {
             return stream.map(directory::relativize).map(Path::toString)
                     .filter(name -> name.endsWith(".class") && !name.endsWith("module-info.class"))
-                    .map(name -> scanClassFile(directory.resolve(name), toClassName(name)))
-                    .filter(ClassCandidate::isCandidate).collect(Collectors.toList());
+                    .filter(name -> containsDeserializeLambdaMarker(directory.resolve(name)))
+                    .map(MybatisPlusLambdaCapturingFeature::toClassName).collect(Collectors.toList());
         } catch (UncheckedIOException e) {
             throw e;
         } catch (IOException e) {
@@ -177,13 +186,9 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
         }
     }
 
-    private static List<ClassCandidate> collectFromJar(Path jar) {
-        List<ClassCandidate> candidates = new ArrayList<>();
+    private static List<String> collectFromJar(Path jar) {
+        List<String> candidates = new ArrayList<>();
         try (JarFile jarFile = new JarFile(jar.toFile(), false, ZipFile.OPEN_READ, Runtime.version())) {
-            String mainClassName = getMainClassName(jarFile);
-            if (mainClassName != null) {
-                candidates.add(new ClassCandidate(mainClassName, false, true));
-            }
             // 按当前运行版本的视图取条目：多版本 jar 里 META-INF/versions/N/ 下的实现会替换基础版同名类，
             // 预筛的字节必须与实际加载的类一致
             Set<String> names = new LinkedHashSet<>();
@@ -207,11 +212,8 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
             }
             for (String name : names) {
                 ZipEntry entry = jarFile.getEntry(name);
-                if (entry != null) {
-                    ClassCandidate candidate = scanLambdaClassFile(jarFile, entry, toClassName(name));
-                    if (candidate.isCandidate()) {
-                        candidates.add(candidate);
-                    }
+                if (entry != null && containsDeserializeLambdaMarker(jarFile, entry)) {
+                    candidates.add(toClassName(name));
                 }
             }
         } catch (IOException e) {
@@ -220,33 +222,18 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
         return candidates;
     }
 
-    private static String getMainClassName(JarFile jarFile) throws IOException {
-        var manifest = jarFile.getManifest();
-        if (manifest == null) {
-            return null;
-        }
-        String startClass = manifest.getMainAttributes().getValue("Start-Class");
-        return startClass != null ? startClass : manifest.getMainAttributes().getValue("Main-Class");
-    }
-
-    private static ClassCandidate scanClassFile(Path classFile, String className) {
+    private static boolean containsDeserializeLambdaMarker(Path classFile) {
         try {
-            return scanClass(className, Files.readAllBytes(classFile));
+            return containsMarker(Files.readAllBytes(classFile), DESERIALIZE_LAMBDA_MARKER);
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to read candidate class file " + classFile, e);
         }
     }
 
-    private static ClassCandidate scanLambdaClassFile(JarFile jarFile, ZipEntry entry, String className)
-            throws IOException {
+    private static boolean containsDeserializeLambdaMarker(JarFile jarFile, ZipEntry entry) throws IOException {
         try (InputStream input = jarFile.getInputStream(entry)) {
-            return scanClass(className, input.readAllBytes());
+            return containsMarker(input.readAllBytes(), DESERIALIZE_LAMBDA_MARKER);
         }
-    }
-
-    private static ClassCandidate scanClass(String className, byte[] content) {
-        return new ClassCandidate(className, containsMarker(content, DESERIALIZE_LAMBDA_MARKER),
-                containsMarker(content, MAIN_METHOD_MARKER) && containsMarker(content, MAIN_DESCRIPTOR_MARKER));
     }
 
     private static boolean containsMarker(byte[] content, byte[] marker) {
@@ -260,13 +247,6 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
             }
         }
         return false;
-    }
-
-    private record ClassCandidate(String className, boolean lambdaCandidate, boolean mainMethodCandidate) {
-
-        private boolean isCandidate() {
-            return lambdaCandidate || mainMethodCandidate;
-        }
     }
 
     private static String toClassName(String classFilePath) {
