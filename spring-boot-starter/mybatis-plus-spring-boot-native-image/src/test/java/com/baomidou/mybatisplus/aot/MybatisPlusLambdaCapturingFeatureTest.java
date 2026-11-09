@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
@@ -122,7 +121,7 @@ class MybatisPlusLambdaCapturingFeatureTest {
     @Test
     void dependencyJarWithMainMethodButNoStartClassDoesNotNarrowApplicationPackages() throws IOException {
         Path jar = createJar("aot-dependency-main", null, "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain");
-        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(jar), this::loadClass))
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationEntries(List.of(jar), this::loadClass))
                 .isEmpty();
     }
 
@@ -130,10 +129,10 @@ class MybatisPlusLambdaCapturingFeatureTest {
      * 目录型 classpath（target/classes、build/classes）没有 manifest，不能凭类里的 main 方法猜应用入口。
      */
     @Test
-    void directoryWithMainMethodDoesNotNarrowApplicationPackages() throws IOException {
+    void directoryWithMainMethodDoesNotNarrowApplicationEntries() throws IOException {
         Path dir = Files.createTempDirectory("aot-main-classes");
         writeClassFile(dir, "MybatisPlusLambdaCapturingFeatureTest$ApplicationMain");
-        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(dir), this::loadClass))
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationEntries(List.of(dir), this::loadClass))
                 .isEmpty();
     }
 
@@ -141,11 +140,11 @@ class MybatisPlusLambdaCapturingFeatureTest {
      * manifest 的 Start-Class 指向的类把 main 定义在父类时同样是合法入口，必须能识别（getMethod 而非 getDeclaredMethod）。
      */
     @Test
-    void startClassWithInheritedMainContributesApplicationPackage() throws IOException {
+    void startClassWithInheritedMainContributesApplicationEntry() throws IOException {
         String className = "com.baomidou.mybatisplus.aot.MybatisPlusLambdaCapturingFeatureTest$InheritedApplicationMain";
         Path jar = createJar("aot-inherited-main", className, null);
-        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationPackages(List.of(jar), this::loadClass))
-                .containsExactly("com.baomidou.mybatisplus.aot");
+        assertThat(MybatisPlusLambdaCapturingFeature.resolveApplicationEntries(List.of(jar), this::loadClass))
+                .containsExactly(jar);
     }
 
     private Path createJar(String prefix, String startClass, String nestedClassName) throws IOException {
@@ -210,19 +209,6 @@ class MybatisPlusLambdaCapturingFeatureTest {
     void onlyClassesWithSerializableLambdasPassTheFilter() {
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(WithSerializableLambda.class)).isTrue();
         assertThat(MybatisPlusLambdaCapturingFeature.hasDeserializeLambdaMethod(Object.class)).isFalse();
-    }
-
-    @Test
-    void applicationPackageFilterIncludesDescendantsAndKeepsFallback() {
-        assertThat(
-                MybatisPlusLambdaCapturingFeature
-                        .isInApplicationPackage("com.example.app.domain.User", Set.of("com.example.app")))
-                .isTrue();
-        assertThat(
-                MybatisPlusLambdaCapturingFeature
-                        .isInApplicationPackage("com.example.application.User", Set.of("com.example.app")))
-                .isFalse();
-        assertThat(MybatisPlusLambdaCapturingFeature.isInApplicationPackage("org.example.Library", Set.of())).isTrue();
     }
 
     private void writeClassFile(Path root, String className) throws IOException {

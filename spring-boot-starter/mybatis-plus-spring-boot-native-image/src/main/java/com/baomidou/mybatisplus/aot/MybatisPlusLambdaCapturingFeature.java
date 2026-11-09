@@ -45,7 +45,7 @@ import java.util.zip.ZipFile;
  * TeController$$Lambda/0x...）带运行期哈希，无法在构建期静态登记，只能登记捕获类（定义 lambda 的用户业务类）放行运行期合成。 GraalVM reachability metadata 能描述具体
  * lambda，但捕获类集合只有应用构建时才确定，不能随 MP 库发布；Spring AOT 的公开 SerializationHints 也没有 lambda capturing-class 注册 API，因此保留此 Feature
  * 在 Native Image 分析期发现应用中的捕获类。 通过 jar 内 native-image.properties 声明 --features= 自动发现，只做 lambda 捕获类注册，与静态元数据零重叠。只有
- * manifest 明确声明 Start-Class 时才用其包及子包收窄捕获类范围； 没有可信入口时保留全 classpath 候选扫描，兼容非标准 native-image 启动配置。
+ * manifest 明确声明 Start-Class 时才把该 classpath 条目当作应用产物收窄扫描范围； 没有可信入口时保留全 classpath 候选扫描，兼容非标准 native-image 启动配置。
  *
  * @author xiaochen
  * @since 2026-11-04
@@ -71,12 +71,10 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
 
     private static void registerCapturingClasses(DuringAnalysisAccess access) {
         Collection<Path> applicationClassPath = access.getApplicationClassPath();
-        Set<String> applicationPackages = resolveApplicationPackages(applicationClassPath, access::findClassByName);
-        for (Path entry : applicationClassPath) {
+        Set<Path> applicationEntries = resolveApplicationEntries(applicationClassPath, access::findClassByName);
+        Collection<Path> entriesToScan = applicationEntries.isEmpty() ? applicationClassPath : applicationEntries;
+        for (Path entry : entriesToScan) {
             for (String className : collectCandidateClassNames(entry)) {
-                if (!isInApplicationPackage(className, applicationPackages)) {
-                    continue;
-                }
                 try {
                     Class<?> type = access.findClassByName(className);
                     if (type != null && hasDeserializeLambdaMethod(type)) {
@@ -90,12 +88,12 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
     }
 
     /**
-     * 只用可信的应用入口收窄包范围：Spring Boot 的 Start-Class 是明确的"这是应用"标记； Main-Class 不能作数（byte-buddy、JNA 这类依赖 jar
-     * 也声明它），用它收窄会把不相干的包当成应用包，过滤掉真正的捕获类。 找不到可信入口时返回空集合，调用方退回全量扫描。
+     * 只用可信的应用入口收窄扫描范围：Spring Boot 的 Start-Class 是明确的"这是应用"标记，声明它的 classpath 条目整体视为应用产物； Main-Class 不能作数（byte-buddy、JNA
+     * 这类依赖 jar 也声明它），也不能只按包名收窄（多模块应用的业务类常在启动类包之外）。 找不到可信入口时返回空集合，调用方退回全量扫描。
      */
-    static Set<String> resolveApplicationPackages(Collection<Path> classPathEntries,
+    static Set<Path> resolveApplicationEntries(Collection<Path> classPathEntries,
             Function<String, Class<?>> classLookup) {
-        Set<String> applicationPackages = new HashSet<>();
+        Set<Path> applicationEntries = new HashSet<>();
         for (Path entry : classPathEntries) {
             String startClassName = readStartClassName(entry);
             if (startClassName == null) {
@@ -104,13 +102,13 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
             try {
                 Class<?> type = classLookup.apply(startClassName);
                 if (type != null && isMainClass(type)) {
-                    applicationPackages.add(type.getPackageName());
+                    applicationEntries.add(entry);
                 }
             } catch (LinkageError e) {
-                // 启动类加载失败时无法确认应用包，退回全量扫描
+                // 启动类加载失败时无法确认应用产物，退回全量扫描
             }
         }
-        return applicationPackages;
+        return applicationEntries;
     }
 
     static String readStartClassName(Path classPathEntry) {
@@ -133,21 +131,6 @@ public class MybatisPlusLambdaCapturingFeature implements Feature {
         } catch (NoSuchMethodException e) {
             return false;
         }
-    }
-
-    static boolean isInApplicationPackage(String className, Set<String> applicationPackages) {
-        if (applicationPackages.isEmpty()) {
-            return true;
-        }
-        int separator = className.lastIndexOf('.');
-        String packageName = separator < 0 ? "" : className.substring(0, separator);
-        for (String applicationPackage : applicationPackages) {
-            if (applicationPackage.isEmpty() || packageName.equals(applicationPackage)
-                    || packageName.startsWith(applicationPackage + ".")) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static boolean hasDeserializeLambdaMethod(Class<?> type) {
