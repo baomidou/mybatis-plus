@@ -3,6 +3,8 @@ package smoke;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,7 +22,12 @@ public class App {
     }
 
     @Bean
-    CommandLineRunner smoke(UserMapper mapper) {
+    SmokeInterceptor smokeInterceptor() {
+        return new SmokeInterceptor();
+    }
+
+    @Bean
+    CommandLineRunner smoke(UserMapper mapper, SqlSessionFactory sqlSessionFactory) {
         return args -> {
             check(mapper.selectById(1L).getName().equals("tom"), "selectById");
             List<User> lambda = mapper.selectList(new LambdaQueryWrapper<User>().ge(User::getAge, 20));
@@ -35,8 +42,21 @@ public class App {
             check(map != null && !map.isEmpty(), "xml map");
             Set<String> names = mapper.names();
             check(names.size() == 3, "xml set");
+            mapper.insert(List.of(user(4L, "neo", 40), user(5L, "trinity", 41)));
+            check(mapper.selectById(4L) != null && mapper.selectById(5L) != null, "batch insert");
+            check(SmokeInterceptor.INVOCATIONS.get() > 0, "interceptor plugin invoked");
+            Cache cache = sqlSessionFactory.getConfiguration().getCache("smoke.UserMapper");
+            check(cache != null && cache.getSize() == 1, "cache size property");
             System.out.println("SMOKE OK");
         };
+    }
+
+    private static User user(long id, String name, int age) {
+        User user = new User();
+        user.setId(id);
+        user.setName(name);
+        user.setAge(age);
+        return user;
     }
 
     private static void check(boolean ok, String what) {

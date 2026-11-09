@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="smoke.UserMapper">
+    <cache size="1" readOnly="true"/>
     <select id="byAge" resultType="smoke.User">select * from users where age = #{age}</select>
     <select id="asMap" resultType="java.util.HashMap">select * from users where id = #{id}</select>
     <select id="names" resultType="string">select name from users</select>
