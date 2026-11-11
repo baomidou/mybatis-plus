@@ -1,12 +1,24 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-28
  */
-@Tag("unit")
+@Tag("integration")
 class PaginationInnerInterceptorTest {
 
     private final PaginationInnerInterceptor interceptor = new PaginationInnerInterceptor();
@@ -69,7 +81,47 @@ class PaginationInnerInterceptorTest {
         /* order by 里带参数,不去除order by */
         assertsCountSql(
                 "SELECT * FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)",
-                "SELECT COUNT(*) AS total FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)");
+                "SELECT COUNT(*) FROM (SELECT * FROM comment ORDER BY (CASE WHEN creator = ? THEN 0 ELSE 1 END)) TOTAL");
+    }
+
+    @Test
+    void parameterizedOrderByKeepsReferencedColumnsAndJoins() {
+        assertsCountSql(
+                "SELECT u.id, r.name AS role_name FROM app_user u LEFT JOIN app_role r ON r.id = u.role_id "
+                        + "WHERE u.active = ? ORDER BY CASE WHEN r.name = ? THEN 0 ELSE 1 END, role_name",
+                "SELECT COUNT(*) FROM (SELECT u.id, r.name AS role_name FROM app_user u LEFT JOIN app_role r ON r.id = u.role_id "
+                        + "WHERE u.active = ? ORDER BY CASE WHEN r.name = ? THEN 0 ELSE 1 END, role_name) TOTAL");
+    }
+
+    @Test
+    void paginatesParameterizedOrderByWithAutomaticCount() {
+        Configuration configuration = new Configuration(new Environment("parameterized-order",
+                new JdbcTransactionFactory(),
+                new UnpooledDataSource("org.h2.Driver", "jdbc:h2:mem:pagination_parameterized_order", "sa", "")));
+        MybatisPlusInterceptor plugin = new MybatisPlusInterceptor();
+        plugin.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+        configuration.addInterceptor(plugin);
+        configuration.addMapper(ParameterizedOrderMapper.class);
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(configuration);
+        try (SqlSession session = factory.openSession()) {
+            ParameterizedOrderMapper mapper = session.getMapper(ParameterizedOrderMapper.class);
+            Page<Integer> withoutCount = new Page<>(1, 2, false);
+            assertThat(mapper.selectPrioritized(withoutCount, 1, 4)).containsExactly(4, 2);
+            Page<Integer> firstPage = new Page<>(1, 2);
+            assertThat(mapper.selectPrioritized(firstPage, 1, 4)).containsExactly(4, 2);
+            assertThat(firstPage.getTotal()).isEqualTo(4);
+            Page<Integer> secondPage = new Page<>(2, 2);
+            assertThat(mapper.selectPrioritized(secondPage, 1, 4)).containsExactly(3, 5);
+            assertThat(secondPage.getTotal()).isEqualTo(4);
+        }
+    }
+
+    interface ParameterizedOrderMapper {
+
+        @Select("SELECT x FROM SYSTEM_RANGE(1, 5) WHERE x > #{minimum} "
+                + "ORDER BY CASE WHEN x = #{priority} THEN 0 ELSE 1 END, x")
+        List<Integer> selectPrioritized(Page<Integer> page, @Param("minimum") int minimum,
+                @Param("priority") int priority);
     }
 
     @Test

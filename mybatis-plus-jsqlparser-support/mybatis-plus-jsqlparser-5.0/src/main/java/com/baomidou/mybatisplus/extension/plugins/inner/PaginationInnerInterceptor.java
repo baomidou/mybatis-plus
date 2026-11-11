@@ -288,6 +288,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 }
                 if (canClean) {
                     plainSelect.setOrderByElements(null);
+                } else {
+                    return lowLevelCountSql(select.toString());
                 }
             }
             Distinct distinct = plainSelect.getDistinct();
