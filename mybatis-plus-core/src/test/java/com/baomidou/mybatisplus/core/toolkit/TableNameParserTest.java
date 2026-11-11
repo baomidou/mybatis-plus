@@ -106,6 +106,41 @@ public class TableNameParserTest {
     }
 
     @Test
+    void ignoresTableKeywordsInsideStringLiterals() {
+        assertThat(
+                new TableNameParser("UPDATE audit_log SET message = 'moved from orders to archive' WHERE id = 1")
+                        .tables())
+                .containsExactly("audit_log");
+        assertThat(new TableNameParser("SELECT 'it''s from orders, join accounts' AS note FROM audit_log").tables())
+                .containsExactly("audit_log");
+        assertThat(new TableNameParser("SELECT '-- diagnostic' AS note FROM audit_log").tables())
+                .containsExactly("audit_log");
+        assertThat(new TableNameParser("SELECT '/*' AS note FROM audit_log WHERE message = '*/'").tables())
+                .containsExactly("audit_log");
+    }
+
+    @Test
+    void preservesQuotedIdentifiersAndTokenOffsets() {
+        String sql = "SELECT 'from fake_table' FROM \"audit schema\".\"event log\", `order archive`";
+        assertThat(new TableNameParser(sql).tables())
+                .containsExactlyInAnyOrder("\"audit schema\".\"event log\"", "`order archive`");
+        new TableNameParser(sql).accept(
+                token -> assertThat(sql.substring(token.getStart(), token.getEnd())).isEqualTo(token.getValue()));
+        assertThat(new TableNameParser("SELECT \"from orders\", `join accounts` FROM audit_log").tables())
+                .containsExactly("audit_log");
+        assertThat(new TableNameParser("SELECT * FROM \"audit \"\"log\"\"\", `audit ``log```").tables())
+                .containsExactlyInAnyOrder("\"audit \"\"log\"\"\"", "`audit ``log```");
+    }
+
+    @Test
+    void handlesQuotesNextToPunctuationAndInsideComments() {
+        String sql = "SELECT concat('from orders', 'it''s /* text */'), 'x' FROM audit_log "
+                + "/* don't parse FROM ignored */ WHERE message IN ('join accounts','-- text') "
+                + "AND id IN (SELECT id FROM audit_detail) -- don't parse JOIN ignored\n";
+        assertThat(new TableNameParser(sql).tables()).containsExactlyInAnyOrder("audit_log", "audit_detail");
+    }
+
+    @Test
     public void shouldParseTwoTablesFromSelect() {
         String sql = "SELECT name, age FROM table1,table2";
         assertThat(new TableNameParser(sql).tables()).isEqualTo(asSet("table1", "table2"));

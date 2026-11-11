@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * SQL 表名解析
@@ -68,19 +66,6 @@ public final class TableNameParser {
      */
     private static final Set<String> INDEX_TYPES = new HashSet<>(
             Arrays.asList("UNIQUE", "FULLTEXT", "SPATIAL", "CLUSTERED", "NONCLUSTERED"));
-
-    /**
-     * 该表达式会匹配 SQL 中不是 SQL TOKEN 的部分，比如换行符，注释信息，结尾的 {@code ;} 等。
-     * <p>
-     * 排除的项目包括： <br>
-     * 1、以 -- 开头的注释信息 <br>
-     * 2、; <br>
-     * 3、空白字符 <br>
-     * 4、使用 /* * / 注释的信息 <br>
-     * 5、把 ,() 也要分出来
-     */
-    private static final Pattern NON_SQL_TOKEN_PATTERN = Pattern
-            .compile("(--[^\\v]+)|;|(\\s+)|((?s)/[*].*?[*]/)" + "|(((\\b|\\B)(?=[,()]))|((?<=[,()])(\\b|\\B)))");
 
     private final List<SqlToken> tokens;
 
@@ -165,19 +150,58 @@ public final class TableNameParser {
      */
     private List<SqlToken> fetchAllTokens(String sql) {
         List<SqlToken> tokens = new ArrayList<>();
-        Matcher matcher = NON_SQL_TOKEN_PATTERN.matcher(sql);
-        int last = 0;
-        while (matcher.find()) {
-            int start = matcher.start();
-            if (start != last) {
-                tokens.add(new SqlToken(last, start, sql.substring(last, start)));
+        int start = 0;
+        int index = 0;
+        while (index < sql.length()) {
+            char current = sql.charAt(index);
+            if (current == '\'' || current == '"' || current == '`') {
+                // 引号内的空白、关键字和注释符属于同一个 token；连续的两个引号表示转义。
+                index = skipQuotedText(sql, index, current);
+            } else if (sql.startsWith("--", index)) {
+                addToken(tokens, sql, start, index);
+                index += 2;
+                while (index < sql.length() && "\n\r\f\u000B\u0085\u2028\u2029".indexOf(sql.charAt(index)) < 0) {
+                    index++;
+                }
+                start = index;
+            } else if (sql.startsWith("/*", index)) {
+                addToken(tokens, sql, start, index);
+                int end = sql.indexOf("*/", index + 2);
+                index = end < 0 ? sql.length() : end + 2;
+                start = index;
+            } else if (Character.isWhitespace(current) || current == ';') {
+                addToken(tokens, sql, start, index);
+                start = ++index;
+            } else if (current == ',' || current == '(' || current == ')') {
+                addToken(tokens, sql, start, index);
+                addToken(tokens, sql, index, index + 1);
+                start = ++index;
+            } else {
+                index++;
             }
-            last = matcher.end();
         }
-        if (last != sql.length()) {
-            tokens.add(new SqlToken(last, sql.length(), sql.substring(last)));
-        }
+        addToken(tokens, sql, start, index);
         return tokens;
+    }
+
+    private static int skipQuotedText(String sql, int index, char quote) {
+        index++;
+        while (index < sql.length()) {
+            if (sql.charAt(index++) == quote) {
+                if (index < sql.length() && sql.charAt(index) == quote) {
+                    index++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return index;
+    }
+
+    private static void addToken(List<SqlToken> tokens, String sql, int start, int end) {
+        if (start < end) {
+            tokens.add(new SqlToken(start, end, sql.substring(start, end)));
+        }
     }
 
     /**
