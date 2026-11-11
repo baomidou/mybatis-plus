@@ -24,11 +24,12 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-// 引入共享测试源
+// 引入共享测试源：autoconfigure 的 starter 共用测试 + core 的 pom 解析夹具 GeneratedPom
 sourceSets {
     test {
         java {
             srcDir "${project(':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure').projectDir}/src/test-shared/java"
+            srcDir "${project(':mybatis-plus-core').projectDir}/src/test-shared/java"
         }
     }
 }

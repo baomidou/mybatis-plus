@@ -136,6 +136,24 @@ class MybatisEnumTypeHandlerTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    /**
+     * 按序号与存储过程取回非空值、以及空值实参走 {@code setNull}：这三条自 extension 的 {@code test.handlers.MybatisEnumTypeHandlerTest} 并入，那份副本用
+     * Mockito 基类重复覆盖了本文件的其他用例， 只有这里没覆盖到。
+     */
+    @Test
+    void shouldReadByIndexAndBindNullParameter() throws Exception {
+        MybatisEnumTypeHandler<GradeEnum> handler = new MybatisEnumTypeHandler<>(GradeEnum.class);
+
+        when(resultSet.getObject(1, Integer.class)).thenReturn(2);
+        assertThat(handler.getResult(resultSet, 1)).isEqualTo(GradeEnum.SECONDARY);
+
+        when(callableStatement.getObject(2, Integer.class)).thenReturn(3);
+        assertThat(handler.getResult(callableStatement, 2)).isEqualTo(GradeEnum.HIGH);
+
+        handler.setParameter(preparedStatement, 1, null, JdbcType.INTEGER);
+        verify(preparedStatement).setNull(1, JdbcType.INTEGER.TYPE_CODE);
+    }
+
     @Test
     void shouldDetectMpEnums() {
         assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isEmpty();

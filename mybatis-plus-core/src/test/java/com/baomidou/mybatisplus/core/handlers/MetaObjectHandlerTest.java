@@ -142,6 +142,58 @@ class MetaObjectHandlerTest {
         assertThat(xt.getOjbk()).isNotNull();
     }
 
+    /**
+     * 以下两例自聚合模块 Kotlin 版 {@code test.h2.MetaObjectHandlerTest} 并入：同一个 MetaObjectHandler 不该有两处测试，而那两条行为（原始类型 Class
+     * 的静默跳过、已有值不覆盖）这里都没覆盖。
+     */
+    @Test
+    void shouldNotFillWhenFieldTypeIsPrimitiveClass() {
+        assertThat(long.class).as("原始 long.class 和实体属性的 java.lang.Long 是两个不同的 Class").isNotEqualTo(Long.class);
+
+        final MetaObjectHandler handler = new MetaObjectHandler() {
+
+            @Override
+            public void insertFill(MetaObject metaObject) {
+                // 故意用原始类型 long.class，用例要靠它演示填充被静默跳过
+                strictInsertFill(metaObject, "count", long.class, 123456L);
+                strictInsertFill(metaObject, "age", Integer.class, 222);
+            }
+
+            @Override
+            public void updateFill(MetaObject metaObject) {
+            }
+        };
+
+        Xt xt = new Xt();
+        handler.insertFill(configuration.newMetaObject(xt));
+        assertThat(xt.getCount()).as("按原始类型 Class 匹配不到属性，既不报错也不填").isNull();
+        assertThat(xt.getAge()).as("换成包装类型就填得上").isEqualTo(222);
+    }
+
+    @Test
+    void shouldKeepValueAlreadySetOnEntity() {
+        final MetaObjectHandler handler = new MetaObjectHandler() {
+
+            @Override
+            public void insertFill(MetaObject metaObject) {
+                strictInsertFill(metaObject, "name", String.class, "2222");
+                strictInsertFill(metaObject, "age", Integer.class, 222);
+                strictInsertFill(metaObject, "birthday", LocalDate.class, LocalDate.now());
+            }
+
+            @Override
+            public void updateFill(MetaObject metaObject) {
+            }
+        };
+
+        Xt xt = new Xt();
+        xt.setName("原有值");
+        handler.insertFill(configuration.newMetaObject(xt));
+        assertThat(xt.getName()).as("有值不覆盖").isEqualTo("原有值");
+        assertThat(xt.getAge()).isNotNull();
+        assertThat(xt.getBirthday()).isNotNull();
+    }
+
     @Data
     static class Xt {
 
@@ -151,6 +203,8 @@ class MetaObjectHandlerTest {
         private String name;
         @TableField(fill = FieldFill.INSERT_UPDATE)
         private Integer age;
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private Long count;
         @TableField(fill = FieldFill.INSERT_UPDATE)
         private LocalDate birthday;
         @TableField(fill = FieldFill.INSERT_UPDATE)

@@ -18,11 +18,12 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-// 引入共享测试源
+// 引入共享测试源；test-shared-fury 仅进有 fury-core 的两个版本模块
 sourceSets {
     test {
         java {
             srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared-fury/java"
         }
     }
 }

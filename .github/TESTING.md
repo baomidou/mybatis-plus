@@ -1,6 +1,6 @@
 # 测试规范
 
-适用于 `src/test` 下的全部 Java/Kotlin 测试。条目编号 T1..T10，与闸门文件
+适用于 `src/test` 与所有 `src/test-*` 共享源下的全部 Java/Kotlin 测试（含夹具、辅助类）。条目编号 T1..T11，与闸门文件
 [mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/test/convention/TestConventionTest.java](../mybatis-plus-core/src/test/java/com/baomidou/mybatisplus/test/convention/TestConventionTest.java)
 里各用例的断言消息一一对应：红了就按消息里的编号回本文档查。消息里的 T0 是扫描自检
 （定位不到仓库根、或一个测试文件都没扫到就直接失败），不是规范条目。
@@ -15,18 +15,19 @@
 
 状态含义：**机器** = 违规即红；**冻结** = 存量已登记，只准降不准升；**未执行** = 目前只是本文档的约定，靠人工评审。
 
-| 编号 | 条目 | 状态 | 基线（2026-10-21 实测） |
+| 编号 | 条目 | 状态 | 基线（2026-10-21 实测；T1/T2/T5/T11 于 2026-11-11 复测） |
 |---|---|---|---|
-| T1 | 测试与被测类同模块、包镜像 | 冻结 | 34 处缺口，全部是 4 个 JSqlParser 版本模块的整文件复制（其余模块已零缺口） |
-| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 + 冻结 | 后缀零违规；历史同名 20 组（JSqlParser 8 个共享测试已去重） |
+| T1 | 测试与被测类同模块、包镜像 | 机器 | 零缺口（JSqlParser 四版本模块的整文件复制已迁入共享源，本条从冻结转为机器强制） |
+| T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 | 后缀零违规；同名副本清零（JSqlParser 17 个 + starter 副本 + 4 组跨模块副本已去重，Kotlin 双写改名），只剩 `TableInfoTest` 一组各镜像本模块的同名被测类 |
 | T3 | 每个测试类属于一个层 | 机制就位，待补标签 | 5 个层任务入口已注册；默认 `test` 排除 external-db/stress/build-metadata |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
-| T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍）、sleep 1；`assertThat` 不链断言方法零违规 |
+| T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍，检查范围含共享夹具）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 8 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单与 `SqlMethod` 模板、wrapper 关键字表、WHERE 片段装配 |
 | T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 共用表名 6 处已登记（`h2user`、`key_generator_model`、`sys_user`、`t_simple`、`xxx`、`entity`），新增即红 |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
+| T11 | 共享测试源必须被 sourceSets 接线 | 机器 | 5 个 `src/test-*` 目录全部有引用方；`test-shared-fury` 恰好只进带 `fury-core` 的两个版本模块；四个 JSqlParser 版本模块都接了公共共享源 |
 
 ## 字节码兼容矩阵
 
@@ -71,15 +72,30 @@ GitHub Actions 工作流（`.github/workflows/build.yml`）采用多 JDK 并行�
 `mybatis-plus`（它没有 `src/main`，专职组装别的模块）。理由：改一个类时能靠包名找到它的测试，
 模块级 `./gradlew :xxx:test` 才会真正覆盖到该模块。
 
+共享源（`src/test-shared*`，由多个模块的 `sourceSets` 复用）同样纳入扫描：被测类不在共享源所在模块时
+按"跨模块复用"跳过，但只要本模块 main 里有同名被测类，测试包就必须镜像——三份 starter 共用的
+`MybatisPlusPropertiesTest` 因此从 `test` 包移到了 `autoconfigure` 包，不再靠"迁入共享源就没人扫"绕开检查。
+
 ## T2 一个被测类只有一处测试
 
 类名 `<被测类>Test`，简单名在全仓唯一。新增测试类不允许用 `*Tests`、`*TestCase`、`*IT` 后缀。
-多版本（JSqlParser 4.9/5.0/5.2、Boot 2/3/4）的支持靠共享源——公共基类或 `sourceSets` 复用同一份
-测试代码，**不要复制文件**。现存 28 组同名类多数是 starter 与 JSqlParser 版本支持模块的整文件复制
-（上游安全修复新增的 `BlockAttackInnerInterceptorTautologyTest`、`MultiTableXorExpressionTest` 也是四副本，
-已一并登记），
-去重一组就从 `REGISTERED_DUPLICATE_NAMES` 里删掉对应项；两份内容互补的就合成一份
-（core 的 `ReflectionKitTest` 已经这样并掉 `test.pom` 下那份）。
+多版本（JSqlParser 4.9/5.0/5.2/5.4、Boot 2/3/4）的支持靠共享源——`mybatis-plus-jsqlparser-common/src/test-shared`
+里那份源码随各版本类路径重复编译，版本差异（解析能力、关键字渲染）在
+`JSqlParserRenderings` 里按 JSqlParser 版本**显式登记**成画像，未登记的版本直接构建失败；
+`JSqlParserRenderingsTest` 在每个版本模块里逐项校验画像与依赖实际行为一致，不允许拿解析器自己的输出
+当期望值（那样升级时期望值会跟着变，等于没断言）。**不要复制文件**。三个 Boot 版本的 starter 同理：公共测试放
+`mybatis-plus-spring-boot-autoconfigure/src/test-shared`，只把版本差异留在各自子类。
+跨模块共用的夹具走 `mybatis-plus-core/src/test-shared`，目前那里只有 `GeneratedPom`（把
+`build/publications/maven/pom-default.xml` 读成 artifactId 到作用域/版本/optional 的表），
+六个 pom 契约测试只剩各自要钉的那几条依赖，三个 starter 的公共形状再由 `StarterPomSupport` 收一层。
+
+同名唯一正当的理由是两个模块的 main 里真各有一个同名被测类，测试各自镜像它——`TableInfoTest`
+（`core.metadata.TableInfo` 与 `generator.config.po.TableInfo`）就是这个形状，强行改名反而破坏
+`<被测类>Test`。这种由 `duplicatedTestNamesStayRegistered` 逐个核对包镜像，登记在
+`REGISTERED_MIRRORED_NAMES`；剩下的同名一律视为复制，`REGISTERED_DUPLICATE_NAMES` 现在必须是空集。
+内容互补的两份（Java 与 Kotlin 各测一套语法面）按 `Kt` 前缀改名消歧，不合并；
+同一被测类的两半则合成一份（core 的 `ReflectionKitTest` 并掉了 `test.pom` 下那份，
+`ChainWrapperTest` 并掉了聚合模块 `chainwrapper/ChainWrappersTest` 里只调用不断言的那半）。
 
 ## T3 分层
 
@@ -217,16 +233,26 @@ wrapper 那一侧同理：
 
 ## 尚未机器执行
 
-T3 的"每类必带层标签"、T5 的 warn-only 检查（catch 吞异常已经由机器盯住，剩下的"发现问题只打日志"
-还散在用例正文里没法机械化判）、T6 的"必须带 issue 号"、T7、T10 目前只靠评审。
+T3 的"每类必带层标签"、T5 的 warn-only 检查（catch 吞异常已经由机器盯住，检查范围含共享夹具；
+剩下的"发现问题只打日志"还散在用例正文里没法机械化判）、T6 的"必须带 issue 号"、T7、T10 目前只靠评审。
 这些条目还在建设中，落成检查之前不要拿它们当阻塞合并的理由。
+
+## T11 共享测试源必须接线
+
+共享源只存一份，靠各模块 `build.gradle` 的 `sourceSets.test.java.srcDir` 才能编译运行；漏接一条，
+整批用例不会编译、也不会报"测试变少"，是静默失效。闸门逐个核对：每个 `src/test-*` 目录至少有一个引用方、
+四个 JSqlParser 版本模块都接了 `jsqlparser-common/src/test-shared`、
+`test-shared-fury` 的引用方集合恰好等于带 `fury-core` 依赖的版本模块集合（多接会在没有该依赖的模块编译失败，
+少接会让 Fury 用例静默不跑）。新增版本模块或新增共享源时，这条会先红。
 
 ## 例外怎么登记
 
 例外只有两类落点，都在闸门文件顶部：`MAX_ASSERTION_FREE_CASES`、`MAX_DISABLED_CASES`、
-`MAX_PACKAGE_MISMATCHES` 三个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、`REGISTERED_THREAD_SLEEP_FILES`、
-`REGISTERED_SHARED_TABLE_NAMES` 三个登记表。只准降不准升；要放宽必须在评审里写清为什么。
-清零的欠账不留登记表：可转换 JUnit 断言已经是 `MAX_JUNIT_ASSERTION_FILES = 0`，
+`MAX_PACKAGE_MISMATCHES` 三个数量常量，和 `REGISTERED_DUPLICATE_NAMES`、`REGISTERED_MIRRORED_NAMES`、
+`REGISTERED_THREAD_SLEEP_FILES`、`REGISTERED_SHARED_TABLE_NAMES` 四个登记表。只准降不准升；要放宽必须在评审里写清为什么。
+T11 不设登记表：接线必须全量正确，漏一个就红。
+清零的欠账不留登记表：可转换 JUnit 断言已经是 `MAX_JUNIT_ASSERTION_FILES = 0`，同名副本已经是
+`REGISTERED_DUPLICATE_NAMES = Set.of()`，
 名为 `*Test` 却不含用例的基类与夹具已经全部改名 `*Support`/`*Fixture`/`*Sample`，改成零容忍。
 不引入 ArchUnit/Checkstyle：这些规则都是纯文本级别的写法检查，自研一个文件、零新依赖，
 失败信息还能直接指到具体路径。

@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,6 +248,57 @@ class SqlRunnerTest {
         assertThat(resultMap.get("NAME")).isEqualTo(studentDto.name);
         assertThat(resultMap.get("AGE")).isEqualTo(studentDto.age.getValue());
         assertThat(resultMap.get("ID")).isEqualTo(studentDto.id);
+    }
+
+    @Test
+    void shouldRunFullCrudWithSqlRunner() {
+        assertThat(SqlRunner.db().insert("insert into h2student(id,name,age) values({0},{1},{2})", 100, "100", 1))
+                .isTrue();
+        assertThat(SqlRunner.db().update("update h2student set name = {0} where id = {1}", "老王", 100)).isTrue();
+        assertThat(SqlRunner.db().selectObj("select name from h2student where id = {0}", 100)).isEqualTo("老王");
+        assertThat(SqlRunner.db().delete("delete from h2student where id = {0}", 100)).isTrue();
+        assertThat(SqlRunner.db().selectCount("select count(1) from h2student where id = {0}", 100)).isZero();
+    }
+
+    /**
+     * 以下四例自 {@code test.sqlrunner.SqlRunnerTest} 并入：同一个 SqlRunner 不该有两处测试， 它测的是单个 null 实参的绑定，与用哪套夹具无关。
+     */
+    @Test
+    void shouldInsertWithSingleNullParameter() {
+        assertThat(SqlRunner.db().insert("insert into h2student(id,name) values(101,{0})", (Object) null)).isTrue();
+        assertThat(SqlRunner.db().selectCount("select count(1) from h2student where id = 101 and name is null"))
+                .isEqualTo(1);
+    }
+
+    @Test
+    void shouldUpdateWithSingleNullParameter() {
+        assertThat(SqlRunner.db().update("update h2student set name = {0} where id = 1", (Object) null)).isTrue();
+        assertThat(SqlRunner.db().selectCount("select count(1) from h2student where id = 1 and name is null"))
+                .isEqualTo(1);
+    }
+
+    @Test
+    void shouldSelectPageWithSingleNullParameter() {
+        // {@code ? is null} 恒真，六行全部命中；分页窗口按 3 条切
+        Page<Map<String, Object>> page = SqlRunner.db()
+                .selectPage(new Page<>(1, 3), "select * from h2student where {0} is null order by id", (Object) null);
+        assertThat(page.getTotal()).isEqualTo(6);
+        assertThat(page.getRecords()).hasSize(3);
+    }
+
+    @Test
+    void singleContainerParametersStillResolveNullElements() {
+        assertThat(
+                SqlRunner.db()
+                        .insert("insert into h2student(id,name) values({0},{1})", (Object) new Object[]{101, null}))
+                .isTrue();
+        assertThat(SqlRunner.db().insert("insert into h2student(id,name) values({0},{1})", Arrays.asList(102, null)))
+                .isTrue();
+        Map<String, Object> values = new HashMap<>();
+        values.put("id", 103);
+        values.put("name", null);
+        assertThat(SqlRunner.db().insert("insert into h2student(id,name) values({id},{name})", values)).isTrue();
+        assertThat(SqlRunner.db().selectCount("select count(1) from h2student where name is null")).isEqualTo(3);
     }
 
 }

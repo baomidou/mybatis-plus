@@ -101,11 +101,15 @@ buildscript {
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
 apply plugin: 'com.diffplug.spotless'
-apply plugin: 'com.github.jakemarsden.git-hooks'
 
-gitHooks {
-    gradleCommand = 'bash ./gradlew'
-    hooks = ['pre-commit': 'spotlessCheck || { bash ./gradlew spotlessApply; echo "Review formatting changes, stage them, and commit again."; exit 1; }']
+// git worktree 下 .git 是文件而非目录，装不了 hook；worktree 提交时 git 自会取主仓库的 hooks
+if (rootProject.file('.git').isDirectory()) {
+    apply plugin: 'com.github.jakemarsden.git-hooks'
+
+    gitHooks {
+        gradleCommand = 'bash ./gradlew'
+        hooks = ['pre-commit': 'spotlessCheck || { bash ./gradlew spotlessApply; echo "Review formatting changes, stage them, and commit again."; exit 1; }']
+    }
 }
 
 repositories {

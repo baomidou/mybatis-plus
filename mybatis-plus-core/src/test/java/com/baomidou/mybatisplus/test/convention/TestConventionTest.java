@@ -127,6 +127,14 @@ class TestConventionTest {
             "@TableName\\s*\\(\\s*(?:value\\s*=\\s*)?\"([^\"]+)\"[^;{}]*?\\b(?:class|record|enum)\\s+(\\w+)",
             Pattern.DOTALL);
 
+    /**
+     * build.gradle 里 {@code srcDir 'src/test-shared/java'} 或
+     * {@code srcDir "${project(':x').projectDir}/src/test-shared/java"} 两种写法，第二组是共享源目录名。
+     */
+    private static final Pattern SHARED_SRC_DIR = Pattern.compile("srcDir\\s+[\"'](.*?)/(test-[\\w-]+)/java[\"']");
+
+    private static final Pattern PROJECT_DIR = Pattern.compile("project\\('\\s*:?([\\w:-]+)'\\)");
+
     private static final Path ROOT = locateRoot();
 
     private static final List<Source> TEST_SOURCES = scanTestSources();
@@ -154,7 +162,7 @@ class TestConventionTest {
     private static final int MAX_DISABLED_CASES = 6;
 
     /**
-     * T1 被测类在同模块但测试包没镜像的存量数量（S6 逐模块治理时下调）。<br>
+     * T1 被测类在同模块但测试包没镜像的存量数量。<br>
      * 2026-10-21 归位 core 的两批：{@code test.toolkit} 12 个类迁到 {@code core.toolkit} 并合掉 {@code test.pom} 下重复的
      * {@code ReflectionKitTest}（66 → 53）；再把
      * {@code test/MybatisConfigurationTest}、{@code test/MybatisParameterHandlerTest}、
@@ -162,11 +170,13 @@ class TestConventionTest {
      * extension 的 ddl、handlers、 pagination、toolkit 共 10 个类同批归位（49 → 39）； generator 的 {@code DbQueryRegistryTest} 与
      * autoconfigure 的 {@code MybatisPlusPropertiesTest} 各 1 个（39 → 37）；core 的 3 个 wrapper 测试进
      * {@code conditions.query}/{@code conditions.update}，为此把 {@code WrapperTestSupport} 放开成 public（37 → 34）。<br>
-     * spring-boot-starter 的 {@code MybatisPlusPropertiesTest} 迁入 test-shared 后不再被扫描，去掉 3 处（34 → 31）。<br>
-     * 剩下的 31 处全部落在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets}
-     * 复用一份源头的办法一次解决，单独搬文件只会把副本再搬一遍；core、extension、spring、generator、autoconfigure、starter 已经零缺口。
+     * spring-boot-starter 的 {@code MybatisPlusPropertiesTest} 迁入 test-shared 后一度不再被扫描（34 → 31）； 2026-11-11
+     * 起共享源也纳入扫描，该项已改回镜像包 {@code autoconfigure}，不再是豁免。<br>
+     * 2026-11-09 JSqlParser 四版本模块（base/4.9/5.0/5.2）的整文件复制测试全部迁入
+     * {@code mybatis-plus-jsqlparser-common/src/test-shared}，模块内不再有 {@code src/test}，31 处欠账一次清零。<br>
+     * <b>本常量只能是 0</b>：新测试类必须与被测类同包，或者被测类不在同模块（跨模块复用不算缺口）。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 31;
+    private static final int MAX_PACKAGE_MISMATCHES = 0;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
@@ -184,16 +194,20 @@ class TestConventionTest {
             .of("entity", "h2user", "key_generator_model", "t_simple", "xxx");
 
     /**
-     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。 JSqlParser 8
-     * 个共享测试已落地（BlockAttack/DataChange/Dynamic/MultiTable/MybatisPlus/Pagination/TenantLine）， spring-boot-starter 的
-     * MybatisPlusPropertiesTest 与 MybatisPlusSampleTest 已迁入 test-shared， 剩余同名仍是版本模块或 starter 的整文件复制。
+     * T2 整文件复制出来的同名测试类，去重前不允许新增。 2026-11-11 收完最后一批：JSqlParser 四版本模块的 17 个共享测试、spring-boot-starter 按 Boot 版本复制的
+     * {@code MetadataTest}，以及 {@code SqlRunnerTest}、{@code StringUtilsTest}、
+     * {@code MybatisEnumTypeHandlerTest}、{@code MetaObjectHandlerTest} 这几份跨模块/聚合模块的副本， 分别改成共享源、并入被测类所在模块或用探针挑分支； Kotlin
+     * 侧的 {@code ChainWrappersTest}、{@code DbTest} 与 Java 侧内容互补，按 {@code Kt} 前缀改名消歧； 六个 {@code GeneratePomTest} 合并成 core
+     * 共享源里的 {@code GeneratedPom} 夹具加六个各钉自己依赖的类。 <b>本常量只能是空集</b>：同名只有一种正当理由，见 {@link #REGISTERED_MIRRORED_NAMES}。
      */
-    private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "ChainWrappersTest", "DataPermissionInterceptorTest", "DbTest",
-            "DynamicTableNameJsqlParserInnerInterceptorTest", "ForyFactoryTest", "FstFactoryTest", "FuryFactoryTest",
-            "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest",
-            "MetaObjectHandlerTest", "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
-            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
+    private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of();
+
+    /**
+     * T2 允许同名的唯一情形：每个模块的 main 里都真有一个同名被测类，测试各自镜像它。 {@code TableInfoTest} 就是这个形状——{@code core.metadata.TableInfo} 与
+     * {@code generator.config.po.TableInfo} 是两个不相干的类，强行改名反而破坏 {@code <被测类>Test}。 判定由机器做（见
+     * {@link #mirrorsMainClass}），登记只是给新增这种同名留一道评审关口。
+     */
+    private static final Set<String> REGISTERED_MIRRORED_NAMES = Set.of("TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。
@@ -366,20 +380,32 @@ class TestConventionTest {
 
     @Test
     void duplicatedTestNamesStayRegistered() {
-        Map<String, List<String>> byName = new TreeMap<>();
+        Map<String, List<Source>> byName = new TreeMap<>();
         for (Source source : testClasses()) {
             if (!CASE_ANNOTATION.matcher(source.code()).find()) {
                 continue;
             }
-            byName.computeIfAbsent(fileName(source), key -> new ArrayList<>()).add(source.path());
+            byName.computeIfAbsent(fileName(source), key -> new ArrayList<>()).add(source);
         }
-        Set<String> found = new TreeSet<>();
-        byName.forEach((name, paths) -> {
-            if (paths.size() > 1) {
-                found.add(name);
+        Set<String> copied = new TreeSet<>();
+        Set<String> mirrored = new TreeSet<>();
+        byName.forEach((name, sources) -> {
+            if (sources.size() > 1) {
+                (mirrorsMainClass(name, sources) ? mirrored : copied).add(name);
             }
         });
-        assertThat(found).as("T2 同名测试类是复制出来的，去重只准减不准加，登记表也要同步收窄").isEqualTo(REGISTERED_DUPLICATE_NAMES);
+        assertThat(copied).as("T2 同名测试类是复制出来的，去重只准减不准加，登记表也要同步收窄").isEqualTo(REGISTERED_DUPLICATE_NAMES);
+        assertThat(mirrored).as("T2 同名只有在每个模块都各自镜像一个同名被测类时才成立，下面是名单").isEqualTo(REGISTERED_MIRRORED_NAMES);
+    }
+
+    /**
+     * 同名是不是正当理由：每个模块的 main 里都有一个同名去掉 {@code Test} 的被测类，且测试包和它的包一致。 两个模块共用一个名字但只有一边有被测类，就是复制而不是重名。
+     */
+    private static boolean mirrorsMainClass(String name, List<Source> sources) {
+        String tested = name.substring(0, name.length() - "Test".length());
+        return sources.stream().allMatch(
+                source -> MAIN.getOrDefault(moduleOf(source.path()), Map.of()).getOrDefault(tested, Set.of())
+                        .contains(packageOf(source.code())));
     }
 
     @Test
@@ -394,13 +420,13 @@ class TestConventionTest {
     }
 
     /**
-     * 测试类里的 catch 块。异常在用例里被吃掉是最贵的一种假绿：被测代码真的坏了，测试结果照样绿。<br>
+     * 所有测试源里的 catch 块，包含共享夹具与辅助类：异常在用例里被吃掉是最贵的一种假绿，夹具里吞掉也一样。<br>
      * 处理办法只有三种——让它失败（{@code throw} 重新抛或 {@code fail()}）、当场断言， 或者把异常收到变量/集合里，再由后面的断言验一次。
      */
     @Test
     void catchBlocksEitherFailTheCaseOrKeepTheException() {
         List<String> offenders = new ArrayList<>();
-        for (Source source : testClasses()) {
+        for (Source source : TEST_SOURCES) {
             Matcher matcher = CATCH.matcher(source.blanks());
             while (matcher.find()) {
                 String body = bodyOf(source.blanks(), matcher.end() - 1);
@@ -431,6 +457,73 @@ class TestConventionTest {
         }));
         assertThat(found).as("T8 同一测试模块内实体共用表名（TableInfoHelper 按表名缓存，后写覆盖前写）只准减不准加")
                 .isEqualTo(REGISTERED_SHARED_TABLE_NAMES);
+    }
+
+    /**
+     * 共享源只存一份，却要靠各模块 build.gradle 的 srcDir 接线才会编译运行；漏接等于把整批用例静默关掉。 T11：每个 src/test-* 都有引用方、fury 专用源只进带 fury-core
+     * 的版本模块、四个 JSqlParser 版本模块都接了公共源。
+     */
+    @Test
+    void sharedTestSourcesStayWired() {
+        Map<String, Set<String>> wired = new TreeMap<>();
+        Set<String> furyModules = new TreeSet<>();
+        Set<String> versionModules = new TreeSet<>();
+        for (Path module : modules()) {
+            String name = moduleName(module);
+            Path script = module.resolve("build.gradle");
+            if (!Files.isRegularFile(script)) {
+                continue;
+            }
+            boolean versionModule = name.startsWith("mybatis-plus-jsqlparser-support/mybatis-plus-jsqlparser")
+                    && !name.endsWith("common");
+            String text = read(script);
+            if (versionModule) {
+                versionModules.add(name);
+                if (text.contains("fury-core")) {
+                    furyModules.add(name);
+                }
+            }
+            Matcher matcher = SHARED_SRC_DIR.matcher(text);
+            while (matcher.find()) {
+                wired.computeIfAbsent(
+                        sharedModule(matcher.group(1), name) + "/src/" + matcher.group(2), key -> new TreeSet<>())
+                        .add(name);
+            }
+        }
+        for (Path dir : sharedDirs()) {
+            String key = moduleName(dir);
+            assertThat(wired.getOrDefault(key, Set.of())).as("T11 共享测试源 %s 没有被任何模块 sourceSets 引用", key).isNotEmpty();
+        }
+        String common = "mybatis-plus-jsqlparser-support/mybatis-plus-jsqlparser-common";
+        assertThat(wired.getOrDefault(common + "/src/test-shared-fury", Set.of()))
+                .as("T11 fury 专用共享源必须且只能进带 fury-core 的版本模块").isEqualTo(furyModules);
+        assertThat(wired.getOrDefault(common + "/src/test-shared", Set.of())).as("T11 四个 JSqlParser 版本模块都要接公共共享源")
+                .containsAll(versionModules);
+    }
+
+    private static String sharedModule(String prefix, String current) {
+        Matcher matcher = PROJECT_DIR.matcher(prefix);
+        return matcher.find() ? matcher.group(1).replace(':', '/') : current;
+    }
+
+    private static List<Path> sharedDirs() {
+        List<Path> dirs = new ArrayList<>();
+        for (Path module : modules()) {
+            Path src = module.resolve("src");
+            if (!Files.isDirectory(src)) {
+                continue;
+            }
+            try (Stream<Path> stream = Files.list(src)) {
+                stream.filter(Files::isDirectory).filter(path -> lastName(path).startsWith("test-")).forEach(dirs::add);
+            } catch (IOException e) {
+                throw new UncheckedIOException("遍历 " + src + " 失败", e);
+            }
+        }
+        return dirs;
+    }
+
+    private static String moduleName(Path path) {
+        return ROOT.relativize(path).toString().replace('\\', '/');
     }
 
     @Test
@@ -702,18 +795,29 @@ class TestConventionTest {
         return false;
     }
 
+    /**
+     * 扫描 src/test 以及所有 src/test-*（test-shared、test-shared-fury …）。共享源只存一份，却随多个模块的 sourceSets
+     * 重复编译运行，漏扫等于给它们开了一整片规范豁免；目录名以 test 开头即纳入，以后新增 test-* 不必回头改这里。
+     */
     private static List<Source> scanTestSources() {
         List<Source> sources = new ArrayList<>();
         for (Path module : modules()) {
-            Path test = module.resolve("src").resolve("test");
-            if (!Files.isDirectory(test)) {
+            Path src = module.resolve("src");
+            if (!Files.isDirectory(src)) {
                 continue;
             }
-            for (Path file : sources(test)) {
-                String raw = read(file);
-                sources.add(
-                        new Source(ROOT.relativize(file).toString().replace('\\', '/'), mask(raw, true),
-                                mask(raw, false)));
+            try (Stream<Path> dirs = Files.list(src)) {
+                dirs.filter(Files::isDirectory).filter(path -> lastName(path).startsWith("test")).sorted()
+                        .forEach(dir -> {
+                            for (Path file : sources(dir)) {
+                                String raw = read(file);
+                                sources.add(
+                                        new Source(ROOT.relativize(file).toString().replace('\\', '/'), mask(raw, true),
+                                                mask(raw, false)));
+                            }
+                        });
+            } catch (IOException e) {
+                throw new UncheckedIOException("遍历 " + src + " 失败", e);
             }
         }
         return sources;
