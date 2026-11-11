@@ -15,16 +15,16 @@
 
 状态含义：**机器** = 违规即红；**冻结** = 存量已登记，只准降不准升；**未执行** = 目前只是本文档的约定，靠人工评审。
 
-| 编号 | 条目 | 状态 | 基线（2026-10-21 实测；T1/T2/T5/T11 于 2026-11-11 复测） |
+| 编号 | 条目 | 状态 | 基线（2026-10-21 实测；T1/T2/T3/T5/T8/T11 于 2026-11-11 复测） |
 |---|---|---|---|
 | T1 | 测试与被测类同模块、包镜像 | 机器 | 零缺口（JSqlParser 四版本模块的整文件复制已迁入共享源，本条从冻结转为机器强制） |
 | T2 | 命名：`<被测类>Test`、简单名全仓唯一、只用 `Test` 后缀 | 机器 | 后缀零违规；同名副本清零（JSqlParser 17 个 + starter 副本 + 4 组跨模块副本已去重，Kotlin 双写改名），只剩 `TableInfoTest` 一组各镜像本模块的同名被测类 |
-| T3 | 每个测试类属于一个层 | 机制就位，待补标签 | 5 个层任务入口已注册；默认 `test` 排除 external-db/stress/build-metadata |
+| T3 | 每个测试类属于一个层 | 机器 | 5 个层任务入口已注册，且与 `test` 共用 `--add-opens`（`tasks.withType(Test)`）；默认 `test` 排除 external-db/stress/build-metadata；2026-11-11 起含用例的 225 个测试源全部带层标签，漏标即红（按有没有用例筛，不按 `*Test` 文件名） |
 | T4 | 只用 AssertJ，禁裸 `assert`、禁 JUnit 4、禁通配导入 Jupiter | 机器 + 冻结 | 裸 `assert`/JUnit 4/Jupiter 通配导入零违规；可转换 JUnit 断言存量 0（已清零） |
-| T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个整包不执行）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍，检查范围含共享夹具）、sleep 1；`assertThat` 不链断言方法零违规 |
+| T5 | 每个用例必须有断言；catch 不许吞异常；禁 `Thread.sleep` 当同步 | 机器 + 冻结 | 零断言 7（6 个禁用 + 1 个属 external-db 层，默认不跑）、无用例 `*Test` 0（已清零，改成零容忍）、吞异常 catch 0（零容忍，检查范围含共享夹具）、sleep 1；`assertThat` 不链断言方法零违规 |
 | T6 | `@Disabled` 必须写清原因 | 机器 + 冻结 | 无理由零违规；禁用 6 |
 | T7 | 枚举型公共契约必须配漂移闸门 | 未执行 | 已有闸门 8 处：URL→`DbType`、方言全量、`IdType`、`FieldStrategy`、SQL 注入清单与 `SqlMethod` 模板、wrapper 关键字表、WHERE 片段装配 |
-| T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 共用表名 6 处已登记（`h2user`、`key_generator_model`、`sys_user`、`t_simple`、`xxx`、`entity`），新增即红 |
+| T8 | 测试实体类名/表名全局唯一 | 机器 + 冻结 | 同模块共用表名 5 个已登记（`h2user`、`key_generator_model`、`t_simple`、`xxx`、`entity`），新增即红 |
 | T9 | 禁 `@EnabledOnJre` 式永久跳过 | 机器 | 零违规 |
 | T10 | 生产缺陷走 issue + 特征化测试 | 未执行 | — |
 | T11 | 共享测试源必须被 sourceSets 接线 | 机器 | 5 个 `src/test-*` 目录全部有引用方；`test-shared-fury` 恰好只进带 `fury-core` 的两个版本模块；四个 JSqlParser 版本模块都接了公共共享源 |
@@ -112,10 +112,23 @@ GitHub Actions 工作流（`.github/workflows/build.yml`）采用多 JDK 并行�
 ./gradlew test -PincludeTags=unit,integration  # 自定义标签组合
 ```
 
-新增测试必须带一个层标签。"每个类恰好一个层标签"的强制检查待 S4 步骤逐模块补标签后启用。
+新增测试必须带一个层标签，这条已经由 `everyTestClassCarriesATierTag` 机器盯住：
+含用例的测试类里没有层标签就红。漏标的代价不是跑不到，而是谁都看不到它——
+它不进任何按层入口，只在整仓 `test` 里被顺带扫一次，分层报表和按层过滤都是空的。
+闸门只判"有没有"：类整体归一层、个别方法另标一层（比如那几条要连库的用例标 `external-db`）是合法写法。
+扫描按**有没有用例**筛，不按 `*Test` 文件名——`FixIssue1986`、`TestXmlConfig` 这种历史命名一样要标，
+按文件名筛等于给它们开永久豁免。
 
-需要真实数据库、本机中间件（ZooKeeper、Redis）的用例属于 `external-db`，当前一律
-`@Disabled` + 原因，等补标签后换成 `@Tag("external-db")` + `Assumptions.assumeTrue(可达)`。
+分层任务是根 `build.gradle` 另注册的 `Test`，不读模块里 `test {}` 块的配置，所以 `--add-opens`
+这类 JVM 参数一律写成 `tasks.withType(Test).configureEach { }`（core 和 4 个 JSqlParser 版本模块都这样），
+只挂 `test` 的后果是 `build` 绿、`testUnit` 在 JDK 21 直接红 7 条 `InaccessibleObjectException`。
+另有一条只能靠人盯：标签过滤发生在 JUnit 平台内部，Gradle 看不见，**某一层的用例数为 0 时任务照样成功**
+（例如 `core` 现在没有 `integration` 层，`testIntegration` 空跑也绿），改了标签就在目标 JDK 上真跑一遍那层。
+
+需要真实数据库、本机中间件（ZooKeeper）的用例属于 `external-db`：`PostgresqlTest`、`GaussdbTest`、
+`PhoenixTest`、`ImadcnIdentifierGeneratorTest` 四个类已经打上这个标签，默认 `test` 按标签排除它们，
+只有 `./gradlew testExternalDb`（或 `test -PincludeTags=external-db`，得连着可用的库）才会跑到；
+`ImadcnIdentifierGeneratorTest` 在此之上还额外挂着 `@Disabled`，原因写在注解里。
 
 ## T4 断言只用 AssertJ
 
@@ -163,12 +176,11 @@ GitHub Actions 工作流（`.github/workflows/build.yml`）采用多 JDK 并行�
 
 `MAX_ASSERTION_FREE_CASES` 与 sleep 登记停在 7 和 1，是因为剩下的都补不动：
 6 个要连真实外部库（MySQL、PostgreSQL、Oracle、达梦）或本机 ZooKeeper，用例本身已经 `@Disabled` 并写明依赖；
-最后 1 个 `PostgresqlTest#testTask` 连执行机会都没有——根 `build.gradle` 的 Test 任务用
-`exclude("**/postgresql/**")`、`exclude("**/gaussdb/**")`、`exclude("**/phoenix/**")` 整包排除，
-共 18 个测试源文件（`PhoenixTest`、`PostgresqlTest`、`GaussdbTest` 三个测试类加各自的实体、Mapper 与配置）
-编译但不运行，既不进用例计数，也不走 T6 的理由登记。
-要治它得改主干构建脚本：改成 `@Tag("external-db")` + 按标签过滤，让"跳过"在测试源码里看得见。
-在那之前，规范扫描仍会把这些文件扫进来，所以它们的欠账记在基线里，别当成已经解决。
+最后 1 个 `PostgresqlTest#shouldExecuteServiceTask` 属于 `external-db` 层——`PostgresqlTest`、`GaussdbTest`、
+`PhoenixTest` 三个类（连同各自的实体、Mapper 与配置共 15 个测试源文件）已经打上 `@Tag("external-db")`，
+由根 `build.gradle` 的 `excludeTags 'external-db'` 排除在默认 `test` 之外，编译但不运行；
+主干不再有 `exclude("**/postgresql/**")` 那种按包整排的写法，"跳过"在测试源码里看得见。
+规范扫描按文件扫、不看标签，所以这条欠账仍记在基线里，别当成已经解决：真要清它得连着库跑一轮补断言。
 
 ## T6 `@Disabled` 必须说清依赖谁
 
@@ -214,9 +226,10 @@ wrapper 那一侧同理：
 框架有按类名/表名缓存的静态状态（`TableInfoHelper` 的 `TABLE_INFO_CACHE` 与按表名后写覆盖前写的
 `TABLE_NAME_INFO_CACHE`、`LambdaUtils` 的 `CACHE`）且没有 `clearAll()`，同名实体会跨用例串状态。
 新增测试实体类和表名带主题前缀，约定 `zz_<主题>_user` 这种形式，保证全仓不撞。
-表名这一半已经由 `sharedFixtureTableNamesStayRegistered` 机器盯住：两个以上测试实体共用一个
-`@TableName` 就红，存量的 6 处（同一张表测不同注解/主键类型、kotlin 与多模板的平行夹具、占位表名）
-登记在 `REGISTERED_SHARED_TABLE_NAMES`，只准减不准加。
+表名这一半已经由 `sharedFixtureTableNamesStayRegistered` 机器盯住：同一模块内两个以上测试实体共用一个
+`@TableName` 就红，存量的 5 个（同一张表测不同注解/主键类型、kotlin 与多模板的平行夹具、占位表名）
+登记在 `REGISTERED_SHARED_TABLE_NAMES`，只准减不准加。按模块统计是因为每个模块的测试各起一个 JVM，
+跨模块重名（`sys_user` 在 core、spring、extension 各有一份实体）碰不到同一份缓存，不算违规。
 
 ## T9 不许按 JRE 版本门禁
 
@@ -233,8 +246,9 @@ wrapper 那一侧同理：
 
 ## 尚未机器执行
 
-T3 的"每类必带层标签"、T5 的 warn-only 检查（catch 吞异常已经由机器盯住，检查范围含共享夹具；
+T5 的 warn-only 检查（catch 吞异常已经由机器盯住，检查范围含共享夹具；
 剩下的"发现问题只打日志"还散在用例正文里没法机械化判）、T6 的"必须带 issue 号"、T7、T10 目前只靠评审。
+T3 的"每类必带层标签"已经在 2026-11-11 落成机器检查，从这份名单里出去。
 这些条目还在建设中，落成检查之前不要拿它们当阻塞合并的理由。
 
 ## T11 共享测试源必须接线
@@ -244,6 +258,10 @@ T3 的"每类必带层标签"、T5 的 warn-only 检查（catch 吞异常已经�
 四个 JSqlParser 版本模块都接了 `jsqlparser-common/src/test-shared`、
 `test-shared-fury` 的引用方集合恰好等于带 `fury-core` 依赖的版本模块集合（多接会在没有该依赖的模块编译失败，
 少接会让 Fury 用例静默不跑）。新增版本模块或新增共享源时，这条会先红。
+共享源所在模块不必都接自己：`jsqlparser-common` 的类路径上没有 jsqlparser 实现，接进本模块 `test` 反而编译不过，
+那份共享源只由 4 个版本模块引用；`mybatis-plus-core/src/test-shared` 的 `GeneratedPom` 本模块自己要用，就必须接。
+不要为了"看起来接上了"开一个既不编译也不运行的自定义 sourceSet（如 `testShared`）——它躲得过目录引用检查，
+`compileTestSharedJava` 一跑就是几百个"找不到符号"，闸门认的是真正进 `test` 的 `srcDir`。
 
 ## 例外怎么登记
 

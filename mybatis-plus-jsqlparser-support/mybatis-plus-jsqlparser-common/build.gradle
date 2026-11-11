@@ -5,11 +5,6 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-// 共享测试源：4 个版本模块的相同测试放这里，避免复制
-sourceSets {
-    testShared {
-        java {
-            srcDir 'src/test-shared/java'
-        }
-    }
-}
+// 共享测试源（src/test-shared、src/test-shared-fury）只存文件，本模块不接进自己的 sourceSets：
+// 本模块类路径上没有 jsqlparser 版本实现，接过来编译不出；由 4.9/5.0/5.2/base 四个版本模块各自 srcDir 引用，
+// 接线漏一条由 TestConventionTest 的 T11 判红。

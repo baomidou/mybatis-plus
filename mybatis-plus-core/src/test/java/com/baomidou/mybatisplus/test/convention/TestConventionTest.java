@@ -145,14 +145,15 @@ class TestConventionTest {
     private static final Map<String, Map<String, Set<String>>> MAIN = scanMainPackages();
 
     /**
-     * T3 分层标签词表；仓库里目前还没有 {@code @Tag}，S2 开始打标签这条闸门才真正起作用。
+     * T3 分层标签词表。2026-11-11 全仓含用例的测试类已逐个打上标签，漏标由 {@link #everyTestClassCarriesATierTag()} 直接判红。
      */
     private static final Set<String> TIERS = Set.of("unit", "integration", "external-db", "build-metadata", "stress");
 
     /**
      * T5 零断言用例数量（含 @Disabled 的用例，通过本文件或基类的辅助方法间接断言的不计入，2026-10-21 实测）。<br>
-     * 剩下 7 个都有明确落点，补不了不是漏了：6 个挂在真实外部库上（达梦、Oracle、PostgreSQL、MySQL 与 ZooKeeper）， 1 个在 {@code postgresql} 包里被根
-     * {@code build.gradle} 的 Test 任务整包排除、根本不执行。 前者等 external-db 分层，后者等执行方式改造，两者都需要改动主干构建脚本。
+     * 剩下 7 个都有明确落点，补不了不是漏了：6 个挂在真实外部库上（达梦、Oracle、PostgreSQL、MySQL 与 ZooKeeper）， 1 个在 {@code PostgresqlTest}——它和
+     * {@code GaussdbTest}、{@code PhoenixTest} 都标了 {@code @Tag("external-db")}， 默认 {@code test} 按 {@code excludeTags}
+     * 把它们排除，编译但不执行（主干不再有按包整排的 exclude）。 前者等连库补断言，后者等 external-db 分层真跑一轮，都不该由默认执行集负责。
      */
     private static final int MAX_ASSERTION_FREE_CASES = 7;
 
@@ -365,6 +366,29 @@ class TestConventionTest {
             }
         }
         assertThat(unknown).as("T3 分层标签只能用登记的层名").isEmpty();
+    }
+
+    /**
+     * 漏标不等于跑不到，是谁都看不到它：没有层标签的类不进 {@code testUnit}/{@code testIntegration} 这些按层入口， 只有整个 {@code test}
+     * 顺带扫到，分层过滤和报表里都是空的。<br>
+     * 只判"有没有"，不判"恰好一个"：类整体是一层，个别方法另属一层（如 integration 类里那几个要连库的用例标 {@code external-db}）是合法写法，按文件收紧会把这条正路堵死。<br>
+     * 扫描按"有没有用例"筛而不是按 {@code *Test} 文件名：历史上 {@code FixIssue1986} 这类以 issue 号命名的用例真实执行， 却因为没有层标签在五个按层入口里全是空的，只扫
+     * {@code *Test} 等于给这类命名开永久豁免。
+     */
+    @Test
+    void everyTestClassCarriesATierTag() {
+        List<String> offenders = new ArrayList<>();
+        for (Source source : caseBearingSources()) {
+            boolean tagged = false;
+            Matcher matcher = TAG.matcher(source.code());
+            while (matcher.find()) {
+                tagged |= TIERS.contains(matcher.group(1));
+            }
+            if (!tagged) {
+                offenders.add(source.path());
+            }
+        }
+        assertThat(offenders).as("T3 每个含用例的测试类必须带层标签（五个层名之一），否则按层入口看不见它").isEmpty();
     }
 
     @Test
@@ -586,7 +610,7 @@ class TestConventionTest {
      */
     private static List<String> assertionFreeCases() {
         List<String> offenders = new ArrayList<>();
-        for (Source source : testClasses()) {
+        for (Source source : caseBearingSources()) {
             Set<String> helpers = assertingHelpers(source);
             Matcher matcher = CASE_ANNOTATION.matcher(source.code());
             while (matcher.find()) {
@@ -674,6 +698,13 @@ class TestConventionTest {
     private static List<Source> testClasses() {
         return TEST_SOURCES.stream()
                 .filter(source -> fileName(source).endsWith("Test") || fileName(source).endsWith("Tests")).toList();
+    }
+
+    /**
+     * 真的有用例的测试源，按注解判定、不看文件名：{@code *Support} 基类的用例只出现在注释里，遮掉注释自然不入选。
+     */
+    private static List<Source> caseBearingSources() {
+        return TEST_SOURCES.stream().filter(source -> CASE_ANNOTATION.matcher(source.code()).find()).toList();
     }
 
     private static String fileName(Source source) {
