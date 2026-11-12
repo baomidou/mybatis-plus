@@ -43,8 +43,26 @@ class BlockAttackInnerInterceptorTest {
                 "large integer NOT IN precision");
         checkEx("update user set name = null where 'a\nb' like '%'", "LIKE matches newline");
         checkEx("update user set name = null where 'it''s' like 'it_s'", "LIKE unescapes doubled quote");
+        checkEx("update user set name = null where 2 in (null, 2)", "NULL must not hide a matching candidate");
+        checkNotEx(
+                "update user set name = null where 9007199254740993 = 9.007199254740992E15",
+                "mixed integer and double comparison must not lose precision");
+        checkNotEx(
+                "update user set name = null where 9007199254740993 in (9.007199254740992E15)",
+                "mixed integer and double IN must not lose precision");
+        checkNotEx(
+                "update user set name = null where 9007199254740993 between 1 and 9.007199254740992E15",
+                "mixed integer and double BETWEEN must not lose precision");
+        checkNotEx("update user set name = null where 'a\\b' like 'a\\%'", "default LIKE escape is database specific");
+        checkEx("update user set name = null where -1 in (-1)", "negative constant IN");
+        checkEx("update user set name = null where -1 between -2 and 0", "negative constant BETWEEN");
+        checkEx("update user set name = null where -1 < 1", "negative constant comparison");
+        checkNotEx("update user set name = null where -1 in (1)", "negative constant IN mismatch");
+        checkNotEx("update user set name = null where -1 between 0 and 2", "negative constant BETWEEN mismatch");
+        checkNotEx("update user set name = null where -1 < -2", "negative constant comparison mismatch");
 
         checkNotEx("update user set name = null where 1=?", "1=?");
+        checkNotEx("update user set name = null where 1 not in (null, 2)", "NULL makes a non-matching NOT IN unknown");
         checkNotEx("update user set name = null where 'abc' regexp 'a.*'", "REGEXP is not LIKE");
         checkNotEx(
                 "update user set name = null where not (id in (1) and 'it''s' like 'it_s')",
@@ -60,6 +78,7 @@ class BlockAttackInnerInterceptorTest {
         checkEx("delete from user where 1=1 and 2=2", "1=1 and 2=2");
         checkEx("delete from user where 1=1 and 2=3 or 1=1", "1=1 and 2=3 or 1=1");
         checkEx("delete from user where 9007199254740992 not in (9007199254740993)", "large integer NOT IN precision");
+        checkEx("delete from user where 2 in (null, 2)", "NULL must not hide a matching candidate");
         checkNotEx(
                 "delete from user where not (id in (1) and 'it''s' like 'it_s')", "valid filter must not be blocked");
     }
@@ -74,9 +93,17 @@ class BlockAttackInnerInterceptorTest {
         assertThat(tableInfo.getLogicDeleteFieldInfo().getColumn()).isEqualTo("del_flag");
 
         checkEx("update logic_delete_user set name = null where del_flag = '0'", "logic delete only");
+        checkEx("update logic_delete_user set name = null where del_flag in ('0')", "logic delete only via IN");
+        checkEx(
+                "update logic_delete_user set name = null where del_flag between '0' and '0'",
+                "logic delete only via BETWEEN");
+        checkEx("update logic_delete_user set name = null where del_flag like '0'", "logic delete only via LIKE");
         checkNotEx(
                 "update logic_delete_user set name = null where id in (?) and del_flag = '0'",
                 "logic delete and id filter");
+        checkNotEx(
+                "update logic_delete_user set name = null where id in (?) and del_flag in ('0')",
+                "logic delete via IN and id filter");
     }
 
     @TableName("logic_delete_user")

@@ -28,6 +28,8 @@ import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.NotExpression;
+import net.sf.jsqlparser.expression.NullValue;
+import net.sf.jsqlparser.expression.SignedExpression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -49,6 +51,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.regex.Pattern;
 
@@ -116,11 +119,19 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         }
 
         if (where instanceof Between) {
-            return matchConstantBetween((Between) where);
+            Between between = (Between) where;
+            if (isLogicField(logicField, between.getLeftExpression())) {
+                return Boolean.TRUE;
+            }
+            return matchConstantBetween(between);
         }
 
         if (where instanceof InExpression) {
-            return matchConstantIn((InExpression) where);
+            InExpression in = (InExpression) where;
+            if (isLogicField(logicField, in.getLeftExpression())) {
+                return Boolean.TRUE;
+            }
+            return matchConstantIn(in);
         }
 
         if (where instanceof LikeExpression) {
@@ -241,7 +252,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private Boolean compareConstant(String operator, Object left, Object right) {
         int result;
-        if (left instanceof Long && right instanceof Long) {
+        if (left instanceof BigDecimal && right instanceof BigDecimal) {
+            result = ((BigDecimal) left).compareTo((BigDecimal) right);
+        } else if (left instanceof Long && right instanceof Long) {
             result = Long.compare((Long) left, (Long) right);
         } else if (left instanceof Number && right instanceof Number) {
             result = Double.compare(((Number) left).doubleValue(), ((Number) right).doubleValue());
@@ -303,12 +316,19 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             return null;
         }
         ExpressionList<?> values = (ExpressionList<?>) in.getRightExpression();
+        boolean sawNull = false;
         for (Object item : values) {
             if (!(item instanceof Expression)) {
                 return null;
             }
-            Object candidate = toConstantValue((Expression) item);
+            Expression candidateExpression = (Expression) item;
+            Object candidate = toConstantValue(candidateExpression);
             if (candidate == null) {
+                if (candidateExpression instanceof NullValue) {
+                    // SQL 三值逻辑:列表中的 NULL 只会把“未命中”变成未知,不能推翻已经命中的结果
+                    sawNull = true;
+                    continue;
+                }
                 return null;
             }
             Integer comparison = compareConstantValues(value, candidate);
@@ -319,7 +339,7 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
                 return !in.isNot();
             }
         }
-        return in.isNot();
+        return sawNull ? null : in.isNot();
     }
 
     /**
@@ -336,6 +356,11 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         String value = toText(like.getLeftExpression());
         String pattern = toText(like.getRightExpression());
         if (value == null || pattern == null) {
+            return null;
+        }
+        if (pattern.indexOf('\\') >= 0) {
+            // 反斜杠是否为 LIKE 的默认转义符因数据库而异(H2、MySQL、PostgreSQL 是,Oracle、SQL Server 不是),
+            // 按任意一种语义求值都可能在另一种数据库上误判
             return null;
         }
         boolean result = likePattern(pattern).matcher(value).matches();
@@ -382,6 +407,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      * @return 比较结果,类型不兼容返回 {@code null}
      */
     private Integer compareConstantValues(Object left, Object right) {
+        if (left instanceof BigDecimal && right instanceof BigDecimal) {
+            return ((BigDecimal) left).compareTo((BigDecimal) right);
+        }
         if (left instanceof Long && right instanceof Long) {
             return Long.compare((Long) left, (Long) right);
         }
@@ -402,10 +430,24 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      */
     private Number toNumber(Expression expression) {
         if (expression instanceof LongValue) {
-            return ((LongValue) expression).getValue();
+            return BigDecimal.valueOf(((LongValue) expression).getValue());
         }
         if (expression instanceof DoubleValue) {
-            return ((DoubleValue) expression).getValue();
+            // DoubleValue 保留了原始字面量,先按字面量构造精确小数,避免大整数与浮点字面量比较时丢失精度
+            try {
+                return new BigDecimal(expression.toString());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        if (expression instanceof SignedExpression) {
+            SignedExpression signed = (SignedExpression) expression;
+            Number value = toNumber(signed.getExpression());
+            if (!(value instanceof BigDecimal)) {
+                return null;
+            }
+            BigDecimal decimal = (BigDecimal) value;
+            return signed.getSign() == '-' ? decimal.negate() : decimal;
         }
         return null;
     }
@@ -421,6 +463,18 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             return ((StringValue) expression).getNotExcapedValue();
         }
         return null;
+    }
+
+    /**
+     * 判断表达式是否引用了逻辑删除字段
+     *
+     * @param logicField 逻辑删除字段
+     * @param expression 表达式
+     * @return 引用了逻辑删除字段返回 {@code true}
+     */
+    private boolean isLogicField(String logicField, Expression expression) {
+        return StringUtils.isNotBlank(logicField) && expression != null
+                && StringUtils.equals(expression.toString(), logicField);
     }
 
     /**
