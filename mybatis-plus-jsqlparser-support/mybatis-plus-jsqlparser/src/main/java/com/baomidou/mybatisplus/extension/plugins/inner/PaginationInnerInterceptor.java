@@ -142,6 +142,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
         }
         page.setTotal(total);
+        handlerLimit(page, page.maxLimit() != null ? page.maxLimit() : maxLimit);
         return continuePage(page);
     }
 
