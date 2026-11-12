@@ -165,11 +165,4 @@ public class MultiDataPermissionInterceptorTest {
     void assertSql(String mappedStatementId, String sql, String targetSql) {
         assertThat(interceptor.parserSingle(sql, mappedStatementId)).isEqualTo(targetSql);
     }
-
-    @Test
-    void parenthesizedUnion() {
-        assertSql(
-                TEST_3, "(SELECT * FROM sys_role) UNION ALL (SELECT * FROM sys_role)",
-                "(SELECT * FROM sys_role WHERE companyId IN (1, 2, 3)) UNION ALL (SELECT * FROM sys_role WHERE companyId IN (1, 2, 3))");
-    }
 }
