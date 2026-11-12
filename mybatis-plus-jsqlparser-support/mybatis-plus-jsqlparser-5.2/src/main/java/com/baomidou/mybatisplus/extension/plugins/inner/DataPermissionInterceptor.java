@@ -28,6 +28,7 @@ import lombok.ToString;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.select.ParenthesedSelect;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SetOperationList;
@@ -100,13 +101,19 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
                 withItemsList.forEach(withItem -> processSelectBody(withItem.getSelect(), whereSegment));
             }
         } else {
-            // 兼容原来的旧版 DataPermissionHandler 场景
-            if (select instanceof PlainSelect) {
-                this.setWhere((PlainSelect) select, (String) obj);
-            } else if (select instanceof SetOperationList) {
-                SetOperationList setOperationList = (SetOperationList) select;
-                List<Select> selectBodyList = setOperationList.getSelects();
-                selectBodyList.forEach(s -> this.setWhere((PlainSelect) s, (String) obj));
+            // Keep the legacy handler's per-query contract and setWhere extension hook.
+            processLegacySelect(select, (String) obj);
+        }
+    }
+
+    protected void processLegacySelect(Select select, String whereSegment) {
+        if (select instanceof PlainSelect) {
+            setWhere((PlainSelect) select, whereSegment);
+        } else if (select instanceof ParenthesedSelect) {
+            processLegacySelect(((ParenthesedSelect) select).getSelect(), whereSegment);
+        } else if (select instanceof SetOperationList) {
+            for (Select branch : ((SetOperationList) select).getSelects()) {
+                processLegacySelect(branch, whereSegment);
             }
         }
     }
