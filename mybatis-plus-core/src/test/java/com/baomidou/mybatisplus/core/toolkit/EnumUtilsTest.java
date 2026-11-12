@@ -55,6 +55,27 @@ class EnumUtilsTest {
     }
 
     @Test
+    void shouldResolvePaddedStringValuesWithoutChangingStoredValues() {
+        assertThat(EnumUtils.valueOf(PaddedCodeEnum.class, "ON      ")).isEqualTo(PaddedCodeEnum.ON);
+        assertThat(EnumUtils.valueOf(PaddedCodeEnum.class, "\tON\r\n")).isEqualTo(PaddedCodeEnum.ON);
+        assertThat(EnumUtils.valueOf(PaddedCodeEnum.class, "OFF")).isEqualTo(PaddedCodeEnum.OFF);
+        assertThat(EnumUtils.valueOf(PaddedCodeEnum.class, "UNKNOWN ")).isNull();
+        assertThat(EnumUtils.valueOf(PaddedCodeEnum.class, null)).isNull();
+        assertThat(EnumUtils.valueOf(SexEnum.class, " 2 ")).isEqualTo(SexEnum.WO_MAN);
+        assertThat(EnumUtils.getValue(PaddedCodeEnum.OFF)).isEqualTo(" OFF ");
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum PaddedCodeEnum {
+
+        ON("ON"),
+        OFF(" OFF ");
+        @EnumValue
+        private final String code;
+    }
+
+    @Test
     void shouldResolvePersistentValue() {
         assertThat(EnumUtils.getValue(SexEnum.MAN)).isEqualTo(1);
         assertThat(EnumUtils.getValue(GradeEnum.HIGH)).isEqualTo(3);

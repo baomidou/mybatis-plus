@@ -100,6 +100,9 @@ public final class EnumUtils {
         if (value == null) {
             return null;
         }
+        if (value instanceof String) {
+            return ((String) value).trim();
+        }
         if (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Byte) {
             return ((Number) value).longValue();
         }
@@ -151,7 +154,7 @@ public final class EnumUtils {
             return;
         }
         if (value instanceof String) {
-            putStringAliases(valueToEnum, (String) value, enumConstant);
+            putStringAliases(valueToEnum, ((String) value).trim(), enumConstant);
             return;
         }
         if (value instanceof Character) {
