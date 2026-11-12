@@ -34,17 +34,17 @@ class TenantLineInnerInterceptorTest {
 
         // UPDATE/DELETE WHERE subqueries must also be tenant scoped.
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT account_id FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id IN (SELECT account_id FROM secrets WHERE tenant_id = 1)");
+                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id IN (SELECT account_id FROM secrets)",
-                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id IN (SELECT account_id FROM secrets WHERE tenant_id = 1)");
+                "DELETE FROM accounts a WHERE a.id IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT account_id FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id NOT IN (SELECT account_id FROM secrets WHERE tenant_id = 1)");
+                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id NOT IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT account_id FROM secrets)",
-                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id NOT IN (SELECT account_id FROM secrets WHERE tenant_id = 1)");
+                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id NOT IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
                 "UPDATE accounts a SET balance = 77 WHERE EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id)",
                 "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND EXISTS (SELECT 1 FROM secrets s WHERE s.tenant_id = 1 AND s.account_id = a.id)");
@@ -58,11 +58,11 @@ class TenantLineInnerInterceptorTest {
                 "DELETE FROM accounts a WHERE NOT EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id)",
                 "DELETE FROM accounts a WHERE a.tenant_id = 1 AND NOT EXISTS (SELECT 1 FROM secrets s WHERE s.tenant_id = 1 AND s.account_id = a.id)");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(account_id) FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id = (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1)");
+                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND a.id = (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(account_id) FROM secrets)",
-                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id = (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1)");
+                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND a.id = (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1)");
         FIRS_RESULT_TMAP.put(
                 "UPDATE accounts a SET balance = 77 WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id) THEN 1 ELSE 0 END = 1",
                 "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.tenant_id = 1 AND s.account_id = a.id) THEN 1 ELSE 0 END = 1");
@@ -70,44 +70,44 @@ class TenantLineInnerInterceptorTest {
                 "DELETE FROM accounts a WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id) THEN 1 ELSE 0 END = 1",
                 "DELETE FROM accounts a WHERE a.tenant_id = 1 AND CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.tenant_id = 1 AND s.account_id = a.id) THEN 1 ELSE 0 END = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(account_id) FROM secrets), 0) = a.id",
-                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND COALESCE((SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1), 0) = a.id");
+                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s), 0) = a.id",
+                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND COALESCE((SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1), 0) = a.id");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(account_id) FROM secrets), 0) = a.id",
-                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND COALESCE((SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1), 0) = a.id");
+                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s), 0) = a.id",
+                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND COALESCE((SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1), 0) = a.id");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(account_id) FROM secrets) + 0 = a.id",
-                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) + 0 = a.id");
+                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(s.account_id) FROM secrets s) + 0 = a.id",
+                "UPDATE accounts a SET balance = 77 WHERE a.tenant_id = 1 AND (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) + 0 = a.id");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE (SELECT MIN(account_id) FROM secrets) + 0 = a.id",
-                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) + 0 = a.id");
+                "DELETE FROM accounts a WHERE (SELECT MIN(s.account_id) FROM secrets s) + 0 = a.id",
+                "DELETE FROM accounts a WHERE a.tenant_id = 1 AND (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) + 0 = a.id");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets) WHERE id = 1",
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) WHERE tenant_id = 1 AND id = 1");
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s) WHERE id = 1",
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) WHERE tenant_id = 1 AND id = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets) + 0 WHERE id = 1",
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) + 0 WHERE tenant_id = 1 AND id = 1");
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s) + 0 WHERE id = 1",
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) + 0 WHERE tenant_id = 1 AND id = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(secret) FROM secrets) ELSE 0 END WHERE id = 1",
-                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) ELSE 0 END WHERE tenant_id = 1 AND id = 1");
+                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(s.secret) FROM secrets s) ELSE 0 END WHERE id = 1",
+                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) ELSE 0 END WHERE tenant_id = 1 AND id = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = CAST((SELECT MAX(secret) FROM secrets) AS INTEGER) WHERE id = 1",
-                "UPDATE accounts SET balance = CAST((SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) AS INTEGER) WHERE tenant_id = 1 AND id = 1");
+                "UPDATE accounts SET balance = CAST((SELECT MAX(s.secret) FROM secrets s) AS INTEGER) WHERE id = 1",
+                "UPDATE accounts SET balance = CAST((SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) AS INTEGER) WHERE tenant_id = 1 AND id = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = COALESCE((SELECT MAX(secret) FROM secrets) + 0, 0) WHERE id = 1",
-                "UPDATE accounts SET balance = COALESCE((SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) + 0, 0) WHERE tenant_id = 1 AND id = 1");
+                "UPDATE accounts SET balance = COALESCE((SELECT MAX(s.secret) FROM secrets s) + 0, 0) WHERE id = 1",
+                "UPDATE accounts SET balance = COALESCE((SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) + 0, 0) WHERE tenant_id = 1 AND id = 1");
         FIRS_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT account_id FROM with_as_secrets)",
-                "UPDATE accounts SET balance = 77 WHERE tenant_id = 1 AND id IN (SELECT account_id FROM with_as_secrets)");
+                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM with_as_secrets s)",
+                "UPDATE accounts SET balance = 77 WHERE tenant_id = 1 AND id IN (SELECT s.account_id FROM with_as_secrets s)");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM accounts WHERE id IN (SELECT account_id FROM with_as_secrets)",
-                "DELETE FROM accounts WHERE tenant_id = 1 AND id IN (SELECT account_id FROM with_as_secrets)");
+                "DELETE FROM accounts WHERE id IN (SELECT s.account_id FROM with_as_secrets s)",
+                "DELETE FROM accounts WHERE tenant_id = 1 AND id IN (SELECT s.account_id FROM with_as_secrets s)");
         FIRS_RESULT_TMAP.put(
-                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT account_id FROM secrets)",
-                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT account_id FROM secrets)");
+                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM secrets s)");
         FIRS_RESULT_TMAP.put(
-                "DELETE FROM with_as_accounts WHERE id IN (SELECT account_id FROM secrets)",
-                "DELETE FROM with_as_accounts WHERE id IN (SELECT account_id FROM secrets)");
+                "DELETE FROM with_as_accounts WHERE id IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM with_as_accounts WHERE id IN (SELECT s.account_id FROM secrets s)");
 
         FIRS_RESULT_TMAP.put("insert into entity (id) values (?)", "INSERT INTO entity (id, tenant_id) VALUES (?, 1)");
         FIRS_RESULT_TMAP.put(
@@ -417,17 +417,17 @@ class TenantLineInnerInterceptorTest {
 
         // UPDATE/DELETE WHERE subqueries must also be tenant scoped.
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT account_id FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT account_id FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.id IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id IN (SELECT account_id FROM secrets)",
-                "DELETE FROM accounts a WHERE a.id IN (SELECT account_id FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "DELETE FROM accounts a WHERE a.id IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.id IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT account_id FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT account_id FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.id NOT IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT account_id FROM secrets)",
-                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT account_id FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.id NOT IN (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
                 "UPDATE accounts a SET balance = 77 WHERE EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id)",
                 "UPDATE accounts a SET balance = 77 WHERE EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id AND s.tenant_id = 1) AND a.tenant_id = 1");
@@ -441,11 +441,11 @@ class TenantLineInnerInterceptorTest {
                 "DELETE FROM accounts a WHERE NOT EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id)",
                 "DELETE FROM accounts a WHERE NOT EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id AND s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(account_id) FROM secrets)",
-                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s)",
+                "UPDATE accounts a SET balance = 77 WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(account_id) FROM secrets)",
-                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) AND a.tenant_id = 1");
+                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s)",
+                "DELETE FROM accounts a WHERE a.id = (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
                 "UPDATE accounts a SET balance = 77 WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id) THEN 1 ELSE 0 END = 1",
                 "UPDATE accounts a SET balance = 77 WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id AND s.tenant_id = 1) THEN 1 ELSE 0 END = 1 AND a.tenant_id = 1");
@@ -453,44 +453,44 @@ class TenantLineInnerInterceptorTest {
                 "DELETE FROM accounts a WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id) THEN 1 ELSE 0 END = 1",
                 "DELETE FROM accounts a WHERE CASE WHEN EXISTS (SELECT 1 FROM secrets s WHERE s.account_id = a.id AND s.tenant_id = 1) THEN 1 ELSE 0 END = 1 AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(account_id) FROM secrets), 0) = a.id",
-                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1), 0) = a.id AND a.tenant_id = 1");
+                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s), 0) = a.id",
+                "UPDATE accounts a SET balance = 77 WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1), 0) = a.id AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(account_id) FROM secrets), 0) = a.id",
-                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1), 0) = a.id AND a.tenant_id = 1");
+                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s), 0) = a.id",
+                "DELETE FROM accounts a WHERE COALESCE((SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1), 0) = a.id AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(account_id) FROM secrets) + 0 = a.id",
-                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) + 0 = a.id AND a.tenant_id = 1");
+                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(s.account_id) FROM secrets s) + 0 = a.id",
+                "UPDATE accounts a SET balance = 77 WHERE (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) + 0 = a.id AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts a WHERE (SELECT MIN(account_id) FROM secrets) + 0 = a.id",
-                "DELETE FROM accounts a WHERE (SELECT MIN(account_id) FROM secrets WHERE tenant_id = 1) + 0 = a.id AND a.tenant_id = 1");
+                "DELETE FROM accounts a WHERE (SELECT MIN(s.account_id) FROM secrets s) + 0 = a.id",
+                "DELETE FROM accounts a WHERE (SELECT MIN(s.account_id) FROM secrets s WHERE s.tenant_id = 1) + 0 = a.id AND a.tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets) WHERE id = 1",
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) WHERE id = 1 AND tenant_id = 1");
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s) WHERE id = 1",
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) WHERE id = 1 AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets) + 0 WHERE id = 1",
-                "UPDATE accounts SET balance = (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) + 0 WHERE id = 1 AND tenant_id = 1");
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s) + 0 WHERE id = 1",
+                "UPDATE accounts SET balance = (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) + 0 WHERE id = 1 AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(secret) FROM secrets) ELSE 0 END WHERE id = 1",
-                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) ELSE 0 END WHERE id = 1 AND tenant_id = 1");
+                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(s.secret) FROM secrets s) ELSE 0 END WHERE id = 1",
+                "UPDATE accounts SET balance = CASE WHEN id = 1 THEN (SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) ELSE 0 END WHERE id = 1 AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = CAST((SELECT MAX(secret) FROM secrets) AS INTEGER) WHERE id = 1",
-                "UPDATE accounts SET balance = CAST((SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) AS INTEGER) WHERE id = 1 AND tenant_id = 1");
+                "UPDATE accounts SET balance = CAST((SELECT MAX(s.secret) FROM secrets s) AS INTEGER) WHERE id = 1",
+                "UPDATE accounts SET balance = CAST((SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) AS INTEGER) WHERE id = 1 AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = COALESCE((SELECT MAX(secret) FROM secrets) + 0, 0) WHERE id = 1",
-                "UPDATE accounts SET balance = COALESCE((SELECT MAX(secret) FROM secrets WHERE tenant_id = 1) + 0, 0) WHERE id = 1 AND tenant_id = 1");
+                "UPDATE accounts SET balance = COALESCE((SELECT MAX(s.secret) FROM secrets s) + 0, 0) WHERE id = 1",
+                "UPDATE accounts SET balance = COALESCE((SELECT MAX(s.secret) FROM secrets s WHERE s.tenant_id = 1) + 0, 0) WHERE id = 1 AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT account_id FROM with_as_secrets)",
-                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT account_id FROM with_as_secrets) AND tenant_id = 1");
+                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM with_as_secrets s)",
+                "UPDATE accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM with_as_secrets s) AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM accounts WHERE id IN (SELECT account_id FROM with_as_secrets)",
-                "DELETE FROM accounts WHERE id IN (SELECT account_id FROM with_as_secrets) AND tenant_id = 1");
+                "DELETE FROM accounts WHERE id IN (SELECT s.account_id FROM with_as_secrets s)",
+                "DELETE FROM accounts WHERE id IN (SELECT s.account_id FROM with_as_secrets s) AND tenant_id = 1");
         LAST_RESULT_TMAP.put(
-                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT account_id FROM secrets)",
-                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT account_id FROM secrets)");
+                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM secrets s)",
+                "UPDATE with_as_accounts SET balance = 77 WHERE id IN (SELECT s.account_id FROM secrets s)");
         LAST_RESULT_TMAP.put(
-                "DELETE FROM with_as_accounts WHERE id IN (SELECT account_id FROM secrets)",
-                "DELETE FROM with_as_accounts WHERE id IN (SELECT account_id FROM secrets)");
+                "DELETE FROM with_as_accounts WHERE id IN (SELECT s.account_id FROM secrets s)",
+                "DELETE FROM with_as_accounts WHERE id IN (SELECT s.account_id FROM secrets s)");
 
         LAST_RESULT_TMAP.put("insert into entity (id) values (?)", "INSERT INTO entity (id, tenant_id) VALUES (?, 1)");
         LAST_RESULT_TMAP.put(
