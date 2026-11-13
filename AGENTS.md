@@ -19,10 +19,6 @@
 - 优先运行受影响模块的测试，例如 `./gradlew :mybatis-plus-core:test`。跨模块改动按影响扩大范围，构建命令见 [Gradle CI](.github/workflows/build.yml)。
 - 交付前审阅 diff，运行 `git diff --check`。最终回复使用简体中文，说明改动、实际验证结果和相关的验证缺口。
 
-## 上游源码与补丁
-
-- 修改已登记的增强实现后，运行 `./gradlew :mybatis-plus-up:patch` 和 `./gradlew :mybatis-plus-up:verify`。更新上游基线时先运行 `up` 并审阅差异。详细流程见 [`mybatis-plus-up/README.md`](mybatis-plus-up/README.md) 和 [`mybatis-upstream-maintenance` skill](.agents/skills/mybatis-upstream-maintenance/SKILL.md)。
-
 ## Git 与 Pull Request
 
 - 常规 PR 以 `3.0` 为目标分支。提交或 PR 说明变更动机、影响范围、兼容性风险和验证结果，按需关联 Issue。
