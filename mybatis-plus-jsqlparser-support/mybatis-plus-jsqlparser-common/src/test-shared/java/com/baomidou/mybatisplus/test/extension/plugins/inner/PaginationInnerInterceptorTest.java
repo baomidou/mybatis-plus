@@ -1,12 +1,33 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
+import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,10 +35,117 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-28
  */
-@Tag("unit")
+@Tag("integration")
 class PaginationInnerInterceptorTest {
 
     private final PaginationInnerInterceptor interceptor = new PaginationInnerInterceptor();
+
+    @ParameterizedTest
+    @CsvSource({"false,false", "false,true", "true,false", "true,true"})
+    void appliesMaxLimitBeforeCheckingPageOverflow(boolean pageLimit, boolean overflow) {
+        PaginationInnerInterceptor pagination = new PaginationInnerInterceptor(DbType.H2);
+        pagination.setMaxLimit(pageLimit ? 5L : 10L);
+        pagination.setOverflow(overflow);
+        Page<Integer> page = new Page<>(2, 100);
+        if (pageLimit) {
+            page.setMaxLimit(10L);
+        }
+        try (SqlSession session = limitSessionFactory(pagination).openSession()) {
+            assertThat(session.<Integer>selectList("limit.selectPage", page))
+                    .containsExactly(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+            assertThat(page.getCurrent()).isEqualTo(2);
+            assertThat(page.getSize()).isEqualTo(10);
+            assertThat(page.getTotal()).isEqualTo(20);
+            assertThat(page.getPages()).isEqualTo(2);
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false", "true"})
+    void stillHandlesOverflowAfterApplyingMaxLimit(boolean overflow) {
+        PaginationInnerInterceptor pagination = new PaginationInnerInterceptor(DbType.H2);
+        pagination.setMaxLimit(10L);
+        pagination.setOverflow(overflow);
+        Page<Integer> page = new Page<>(3, 100);
+        try (SqlSession session = limitSessionFactory(pagination).openSession()) {
+            assertThat(session.<Integer>selectList("limit.selectPage", page)).containsExactlyElementsOf(
+                    overflow ? Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) : Collections.emptyList());
+            assertThat(page.getCurrent()).isEqualTo(overflow ? 1 : 3);
+            assertThat(page.getSize()).isEqualTo(10);
+            assertThat(page.getTotal()).isEqualTo(20);
+        }
+    }
+
+    @Test
+    void keepsCountDisabledAndNegativeSizeBehavior() {
+        PaginationInnerInterceptor pagination = new PaginationInnerInterceptor(DbType.H2);
+        pagination.setMaxLimit(10L);
+        try (SqlSession session = limitSessionFactory(pagination).openSession()) {
+            Page<Integer> noCount = new Page<>(2, 100, false);
+            assertThat(session.<Integer>selectList("limit.selectPage", noCount))
+                    .containsExactly(11, 12, 13, 14, 15, 16, 17, 18, 19, 20);
+            assertThat(noCount.getTotal()).isZero();
+            Page<Integer> negativeSize = new Page<>(1, -1);
+            assertThat(session.<Integer>selectList("limit.selectPage", negativeSize))
+                    .containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            assertThat(negativeSize.getTotal()).isZero();
+        }
+    }
+
+    private SqlSessionFactory limitSessionFactory(PaginationInnerInterceptor pagination) {
+        return limitSessionFactory(pagination, "SELECT x FROM SYSTEM_RANGE(1, 20) ORDER BY x");
+    }
+
+    private SqlSessionFactory limitSessionFactory(PaginationInnerInterceptor pagination, String sql,
+            String... parameterNames) {
+        Configuration configuration = new Configuration(new Environment("limit", new JdbcTransactionFactory(),
+                new UnpooledDataSource("org.h2.Driver", "jdbc:h2:mem:pagination_limit", "sa", "")));
+        MybatisPlusInterceptor plugin = new MybatisPlusInterceptor();
+        plugin.addInnerInterceptor(pagination);
+        configuration.addInterceptor(plugin);
+        List<ParameterMapping> mappings = Arrays.stream(parameterNames)
+                .map(name -> new ParameterMapping.Builder(configuration, name, Integer.class).build())
+                .collect(Collectors.toList());
+        configuration.addMappedStatement(
+                new MappedStatement.Builder(configuration, "limit.selectPage",
+                        new StaticSqlSource(configuration, sql, mappings), SqlCommandType.SELECT)
+                        .resultMaps(
+                                Collections.singletonList(
+                                        new ResultMap.Builder(configuration, "limit.result", Integer.class,
+                                                Collections.emptyList()).build()))
+                        .build());
+        return new SqlSessionFactoryBuilder().build(configuration);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"false,10,1", "false,20,0", "true,10,1", "true,20,0"})
+    void countsRowsAfterHavingWithoutGroupBy(boolean useAlias, int minimum, long expectedTotal) {
+        String sql = "SELECT SUM(x) AS amount FROM SYSTEM_RANGE(1, 5) WHERE x > ? HAVING "
+                + (useAlias ? "amount" : "SUM(x)") + " > ?";
+        PaginationInnerInterceptor pagination = new PaginationInnerInterceptor(DbType.H2);
+        try (SqlSession session = limitSessionFactory(pagination, sql, "start", "minimum").openSession()) {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("start", 1);
+            parameters.put("minimum", minimum);
+            for (boolean optimize : new boolean[]{false, true}) {
+                Page<Integer> page = new Page<Integer>(1, 1).setOptimizeCountSql(optimize);
+                parameters.put("page", page);
+                assertThat(session.<Integer>selectList("limit.selectPage", parameters)).containsExactlyElementsOf(
+                        expectedTotal == 1 ? Collections.singletonList(14) : Collections.emptyList());
+                assertThat(page.getTotal()).isEqualTo(expectedTotal);
+            }
+        }
+    }
+
+    @Test
+    void retainsSelectAliasesAndJoinsNeededByHaving() {
+        assertsCountSql(
+                "SELECT SUM(amount) AS amount_total FROM payment HAVING amount_total > ? ORDER BY amount_total",
+                "SELECT COUNT(*) FROM (SELECT SUM(amount) AS amount_total FROM payment HAVING amount_total > ?) TOTAL");
+        assertsCountSql(
+                "SELECT SUM(p.amount) FROM account a LEFT JOIN payment p ON a.id = p.account_id HAVING SUM(p.amount) > ?",
+                "SELECT COUNT(*) FROM (SELECT SUM(p.amount) FROM account a LEFT JOIN payment p ON a.id = p.account_id HAVING SUM(p.amount) > ?) TOTAL");
+    }
 
     @Test
     void optimizeCount() {
