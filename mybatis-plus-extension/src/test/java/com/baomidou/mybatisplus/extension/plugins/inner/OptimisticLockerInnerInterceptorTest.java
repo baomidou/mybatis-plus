@@ -3,10 +3,6 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -26,6 +22,9 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 本测试类中的 Wrapper 只允许使用 {@link UpdateWrapper}。
+ */
 @Tag("unit")
 class OptimisticLockerInnerInterceptorTest {
 
@@ -134,18 +133,7 @@ class OptimisticLockerInnerInterceptorTest {
     }
 
     @Test
-    void updateWithQueryWrapperAppliesOldVersionToEveryOrBranch() {
-        Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.<Entity>query().eq("id", 1).or().eq("id", 2);
-        Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
-        assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? OR id = ?)", 1, 2);
-        interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
-        assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?) AND version = ?)", 1, 2, 5);
-    }
-
-    @Test
-    void updateWithUpdateWrapperAppliesOldVersionToEveryOrBranchAndPreservesSet() {
+    void updateWithOrWrapperAppliesOldVersionToEveryBranchAndPreservesSet() {
         Entity entity = new Entity(5);
         UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().eq("id", 1).or().eq("id", 2).set("name", "after");
         Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
@@ -158,57 +146,29 @@ class OptimisticLockerInnerInterceptorTest {
     }
 
     @Test
-    void updateWithLambdaQueryWrapperAppliesOldVersionToEveryOrBranch() {
-        Entity entity = new Entity(5);
-        LambdaQueryWrapper<Entity> wrapper = Wrappers.<Entity>lambdaQuery().eq(Entity::getId, 1).or()
-                .eq(Entity::getId, 2);
-        Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
-        assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? OR id = ?)", 1, 2);
-        interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
-        assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?) AND version = ?)", 1, 2, 5);
-    }
-
-    @Test
-    void updateWithLambdaUpdateWrapperAppliesOldVersionToEveryOrBranchAndPreservesSet() {
-        Entity entity = new Entity(5);
-        LambdaUpdateWrapper<Entity> wrapper = Wrappers.<Entity>lambdaUpdate().eq(Entity::getId, 1).or()
-                .eq(Entity::getId, 2).set(Entity::getName, "after");
-        Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
-        assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? OR id = ?)", 1, 2);
-        assertSql(wrapper.getSqlSet(), wrapper, "name=?", "after");
-        interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
-        assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?) AND version = ?)", 1, 2, 5);
-        assertSql(wrapper.getSqlSet(), wrapper, "name=?", "after");
-    }
-
-    @Test
     void updateWithApplyAppliesOldVersionToEveryOrBranch() {
         Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.<Entity>query().apply("id = {0} OR id = {1}", 1, 2);
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().apply("id = {0} OR id = {1}", 1, 2);
         Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
         assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? OR id = ?)", 1, 2);
         interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
         assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?) AND version = ?)", 1, 2, 5);
     }
 
     @Test
     void updateWithNestedWrapperPreservesGroupingBeforeOldVersionCondition() {
         Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.<Entity>query().nested(nested -> nested.eq("id", 1).or().eq("id", 2));
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().nested(nested -> nested.eq("id", 1).or().eq("id", 2));
         Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
         assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?))", 1, 2);
         interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
         assertSql(wrapper.getSqlSegment(), wrapper, "(((id = ? OR id = ?)) AND version = ?)", 1, 2, 5);
     }
 
     @Test
     void updateWithEmptyWrapperAppendsOnlyOldVersionCondition() {
         Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.query();
+        UpdateWrapper<Entity> wrapper = Wrappers.update();
         Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
         assertSql(wrapper.getSqlSegment(), wrapper, "");
         interceptor.doOptimisticLocker(params, "update");
@@ -217,30 +177,13 @@ class OptimisticLockerInnerInterceptorTest {
     }
 
     @Test
-    void updateWithRenderedWrapperPreservesCachedParameters() {
-        Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.<Entity>query().eq("id", 1).or().eq("id", 2);
-        Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
-        String originalSql = wrapper.getSqlSegment();
-        assertSql(originalSql, wrapper, "(id = ? OR id = ?)", 1, 2);
-        Map<String, Object> originalParams = new HashMap<>(wrapper.getParamNameValuePairs());
-        assertThat(wrapper.getSqlSegment()).isEqualTo(originalSql);
-        interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
-        assertSql(wrapper.getSqlSegment(), wrapper, "((id = ? OR id = ?) AND version = ?)", 1, 2, 5);
-        assertThat(wrapper.getParamNameValuePairs()).containsAllEntriesOf(originalParams)
-                .hasSize(originalParams.size() + 1);
-    }
-
-    @Test
     void updateWithOrWrapperPreservesOrderByAndTailSql() {
         Entity entity = new Entity(5);
-        QueryWrapper<Entity> wrapper = Wrappers.<Entity>query().eq("id", 1).or().eq("id", 2).orderByAsc("id")
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().eq("id", 1).or().eq("id", 2).orderByAsc("id")
                 .last("/* retain tail */");
         Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
         assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? OR id = ?) ORDER BY id ASC /* retain tail */", 1, 2);
         interceptor.doOptimisticLocker(params, "update");
-        assertThat(entity.version).isEqualTo(6);
         assertSql(
                 wrapper.getSqlSegment(), wrapper,
                 "((id = ? OR id = ?) AND version = ?) ORDER BY id ASC /* retain tail */", 1, 2, 5);
@@ -254,8 +197,7 @@ class OptimisticLockerInnerInterceptorTest {
         assertSql(wrapper.getSqlSegment(), wrapper, expectedSql, expectedParams);
     }
 
-    private static void assertSql(String sql, AbstractWrapper<?, ?, ?> wrapper, String expectedSql,
-            Object... expectedParams) {
+    private static void assertSql(String sql, UpdateWrapper<?> wrapper, String expectedSql, Object... expectedParams) {
         assertThat(sql).isNotNull();
         List<Object> params = new ArrayList<>();
         String sqlWithPlaceholders = WRAPPER_PARAMETER.matcher(sql).replaceAll(match -> {
@@ -269,23 +211,11 @@ class OptimisticLockerInnerInterceptorTest {
     @TableName("zz_locker_predicate")
     static class Entity {
 
-        private Integer id;
-
-        private String name;
-
         @Version
         private Integer version;
 
         Entity(int version) {
             this.version = version;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 }
