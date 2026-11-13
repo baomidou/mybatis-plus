@@ -16,6 +16,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.TypeReference;
 import org.h2.Driver;
@@ -66,7 +67,7 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
             jdbcTemplate.execute(tableDataSql);
         }
         MybatisSqlSessionFactoryBuilder builder = new MybatisSqlSessionFactoryBuilder();
-        Environment environment = new Environment("test", new ManagedTransactionFactory(), ds);
+        Environment environment = new Environment("test", transactionFactory(), ds);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
         if (consumer != null) {
             consumer.accept(configuration);
@@ -145,6 +146,10 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
 
     protected String mapperXml() {
         return null;
+    }
+
+    protected TransactionFactory transactionFactory() {
+        return new ManagedTransactionFactory();
     }
 
     protected List<Interceptor> interceptors() {

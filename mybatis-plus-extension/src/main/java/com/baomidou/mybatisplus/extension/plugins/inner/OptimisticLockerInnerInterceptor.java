@@ -174,6 +174,13 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                         uw.eq(versionColumn, originalVersionVal);
                         map.put(Constants.WRAPPER, uw);
                     } else {
+                        NormalSegmentList normal = aw.getExpression().getNormal();
+                        if (!normal.isEmpty()) {
+                            // Apply the version check to the whole predicate, including every OR branch.
+                            String originalSql = normal.getSqlSegment();
+                            normal.clear();
+                            aw.apply(originalSql);
+                        }
                         aw.apply(versionColumn + " = {0}", originalVersionVal);
                     }
                 } else {
