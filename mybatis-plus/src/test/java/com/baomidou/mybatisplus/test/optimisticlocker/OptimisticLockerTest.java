@@ -81,16 +81,22 @@ public class OptimisticLockerTest extends DbTestSupport<OptimisticLockerTest.Ent
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity (id,name) values (1,'1'),(2,'2'),(3,'3')";
+        return """
+                insert into entity (id,name) values
+                    (1,'1'), (2,'2'), (3,'3')
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer not NULL default 0,\n"
-                        + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    version integer not NULL default 0,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {

@@ -117,9 +117,12 @@ class MybatisBatchSaveOrUpdateTest extends DbTestSupport<MybatisBatchSaveOrUpdat
 
     @Override
     protected List<String> tableSql() {
-        return List.of(
-                "DROP TABLE IF EXISTS zz_save_or_update_batch_size",
-                "CREATE TABLE zz_save_or_update_batch_size (id BIGINT PRIMARY KEY, name VARCHAR(30))");
+        return List.of("DROP TABLE IF EXISTS zz_save_or_update_batch_size", """
+                CREATE TABLE zz_save_or_update_batch_size (
+                    id BIGINT PRIMARY KEY,
+                    name VARCHAR(30)
+                )
+                """);
     }
 
     interface BatchSizeMapper extends BaseMapper<BatchSizeRecord> {

@@ -98,16 +98,22 @@ public class VersionTest extends DbTestSupport<VersionTest.EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'老王'),(2,'老李'),(3,'老赵')";
+        return """
+                insert into entity(id,name) values
+                    (1,'老王'), (2,'老李'), (3,'老赵')
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer NOT NULL DEFAULT 0,\n"
-                        + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    version integer NOT NULL DEFAULT 0,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {

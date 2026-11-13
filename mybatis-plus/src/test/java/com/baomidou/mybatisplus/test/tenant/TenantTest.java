@@ -199,16 +199,22 @@ public class TenantTest extends DbTestSupport<TenantTest.EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity values(1111,'娇妹',3)";
+        return """
+                insert into entity values
+                    (1111,'娇妹',3)
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "tenant_id integer not NULL,\n" + "PRIMARY KEY (id)"
-                        + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    tenant_id integer not NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @CacheNamespace

@@ -98,16 +98,23 @@ public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityTest.UUIDL
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity values('0824eb71-e124-5ba1-56b9-87185d91f309','test',null, false)";
+        return """
+                insert into entity values
+                    ('0824eb71-e124-5ba1-56b9-87185d91f309','test',null, false)
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id VARCHAR(50) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "delete_by VARCHAR(30) NULL DEFAULT NULL,"
-                        + "deleted BOOLEAN NOT NULL DEFAULT false," + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id VARCHAR(50) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    delete_by VARCHAR(30) NULL DEFAULT NULL,
+                    deleted BOOLEAN NOT NULL DEFAULT false,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface UUIDLogicEntityMapper extends BaseMapper<UUIDLogicEntity> {

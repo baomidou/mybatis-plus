@@ -116,14 +116,21 @@ class PageCacheTest extends DbTestSupport<PageCacheTest.PageCacheMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into page_cache(id,name) values(1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5');";
+        return """
+                insert into page_cache(id,name) values
+                    (1,'1'), (2,'2'), (3,'3'), (4,'4'), (5,'5');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists page_cache", "CREATE TABLE IF NOT EXISTS page_cache (" + "id BIGINT NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists page_cache", """
+                CREATE TABLE IF NOT EXISTS page_cache (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Data

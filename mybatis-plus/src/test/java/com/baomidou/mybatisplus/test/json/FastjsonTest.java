@@ -28,13 +28,18 @@ public class FastjsonTest extends DbTestSupport<FastjsonTest.FastJsonEntityMappe
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_fastjson_entity",
-                "CREATE TABLE IF NOT EXISTS t_fastjson_entity (" + "id VARCHAR(32) NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "card VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr VARCHAR(255) NULL DEFAULT NULL," + "attr2 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr3 VARCHAR(255) NULL DEFAULT NULL," + "attr4 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_fastjson_entity", """
+                CREATE TABLE IF NOT EXISTS t_fastjson_entity (
+                    id VARCHAR(32) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    card VARCHAR(255) NULL DEFAULT NULL,
+                    attr VARCHAR(255) NULL DEFAULT NULL,
+                    attr2 VARCHAR(255) NULL DEFAULT NULL,
+                    attr3 VARCHAR(255) NULL DEFAULT NULL,
+                    attr4 VARCHAR(255) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Test

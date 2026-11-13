@@ -54,15 +54,22 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityTest.RecordEntit
 
     @Override
     protected String tableDataSql() {
-        return "insert into t_record(id,name,tel) values(1,'demo1','13311111111'),(2,'demo2','13322222222'),(3,'demo3','13333333333');";
+        return """
+                insert into t_record(id,name,tel) values
+                    (1,'demo1','13311111111'), (2,'demo2','13322222222'), (3,'demo3','13333333333');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_record",
-                "CREATE TABLE IF NOT EXISTS t_record (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
-                        + "tel VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_record", """
+                CREATE TABLE IF NOT EXISTS t_record (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    tel VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface RecordEntityMapper extends BaseMapper<RecordEntity> {

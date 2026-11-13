@@ -103,19 +103,30 @@ public class PluginSomeTest extends DbTestSupport<PluginSomeTest.AMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into a (id,name) values (1,'1'),(2,'2');"
-                + "insert into b (id,a_id,name) values (1,'1','1-1'),(2,'2','2-2')";
+        return """
+                insert into a (id,name) values
+                    (1,'1'), (2,'2');
+                insert into b (id,a_id,name) values
+                    (1,'1','1-1'), (2,'2','2-2')
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists a",
-                "CREATE TABLE IF NOT EXISTS a (\n" + "id integer NOT NULL,\n" + "name VARCHAR(30) NULL DEFAULT NULL,\n"
-                        + "PRIMARY KEY (id)" + ")",
-                "drop table if exists b",
-                "CREATE TABLE IF NOT EXISTS b (\n" + "id integer NOT NULL,\n" + "a_id integer NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists a", """
+                CREATE TABLE IF NOT EXISTS a (
+                    id integer NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """, "drop table if exists b", """
+                CREATE TABLE IF NOT EXISTS b (
+                    id integer NOT NULL,
+                    a_id integer NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface AMapper extends BaseMapper<A> {

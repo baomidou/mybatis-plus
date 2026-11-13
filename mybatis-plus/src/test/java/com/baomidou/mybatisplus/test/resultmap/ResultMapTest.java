@@ -60,12 +60,17 @@ public class ResultMapTest extends DbTestSupport<ResultMapTest.EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "gg1 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg2 VARCHAR(255) NULL DEFAULT NULL,\n"
-                        + "gg3 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg4 VARCHAR(255) NULL DEFAULT NULL,\n"
-                        + "str VARCHAR(255) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    gg1 VARCHAR(255) NULL DEFAULT NULL,
+                    gg2 VARCHAR(255) NULL DEFAULT NULL,
+                    gg3 VARCHAR(255) NULL DEFAULT NULL,
+                    gg4 VARCHAR(255) NULL DEFAULT NULL,
+                    str VARCHAR(255) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {

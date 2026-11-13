@@ -28,13 +28,18 @@ public class GsonTest extends DbTestSupport<GsonTest.GsonEntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_gson_entity",
-                "CREATE TABLE IF NOT EXISTS t_gson_entity (" + "id VARCHAR(32) NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "card VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr VARCHAR(255) NULL DEFAULT NULL," + "attr2 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr3 VARCHAR(255) NULL DEFAULT NULL," + "attr4 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_gson_entity", """
+                CREATE TABLE IF NOT EXISTS t_gson_entity (
+                    id VARCHAR(32) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    card VARCHAR(255) NULL DEFAULT NULL,
+                    attr VARCHAR(255) NULL DEFAULT NULL,
+                    attr2 VARCHAR(255) NULL DEFAULT NULL,
+                    attr3 VARCHAR(255) NULL DEFAULT NULL,
+                    attr4 VARCHAR(255) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Test

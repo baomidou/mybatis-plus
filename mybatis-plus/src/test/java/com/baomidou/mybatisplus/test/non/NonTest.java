@@ -37,14 +37,21 @@ public class NonTest extends DbTestSupport<NonTest.EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(t_id,t_name) values(1,'1'),(2,'2');";
+        return """
+                insert into entity(t_id,t_name) values
+                    (1,'1'), (2,'2');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "t_id BIGINT NOT NULL,"
-                        + "t_name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (t_id))");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    t_id BIGINT NOT NULL,
+                    t_name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (t_id)
+                )
+                """);
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {

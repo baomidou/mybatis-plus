@@ -120,9 +120,13 @@ public class FillTest extends DbTestSupport<FillTest.FillMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_fill", "CREATE TABLE IF NOT EXISTS t_fill (" + "id BIGINT NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_fill", """
+                CREATE TABLE IF NOT EXISTS t_fill (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface FillMapper extends BaseMapper<FillEntity> {

@@ -83,14 +83,21 @@ public class UUIDEntityTest extends DbTestSupport<UUIDEntityTest.UUIDEntityMappe
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity values('0824eb71-e124-5ba1-56b9-87185d91f309','test')";
+        return """
+                insert into entity values
+                    ('0824eb71-e124-5ba1-56b9-87185d91f309','test')
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (\n" + "id VARCHAR(50) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id VARCHAR(50) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Override

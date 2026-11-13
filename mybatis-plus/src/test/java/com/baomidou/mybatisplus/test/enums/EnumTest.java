@@ -62,11 +62,15 @@ class EnumTest extends DbTestSupport<EnumTest.EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "enum_int integer NULL DEFAULT NULL,\n" + "enum_str VARCHAR(30) NULL DEFAULT NULL,\n"
-                        + "enum_ordinal integer NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    enum_int integer NULL DEFAULT NULL,
+                    enum_str VARCHAR(30) NULL DEFAULT NULL,
+                    enum_ordinal integer NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {

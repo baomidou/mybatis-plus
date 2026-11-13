@@ -108,16 +108,23 @@ public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');";
+        return """
+                insert into entity(id,name) values
+                    (1,'1'), (2,'2');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
-                        + "delete_by VARCHAR(30) NULL DEFAULT NULL," + "deleted BOOLEAN NOT NULL DEFAULT false,"
-                        + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    delete_by VARCHAR(30) NULL DEFAULT NULL,
+                    deleted BOOLEAN NOT NULL DEFAULT false,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Override

@@ -115,12 +115,21 @@ public class TenantManyTest extends DbTestSupport<TenantManyTest.OrderMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "DROP TABLE IF EXISTS t_order",
-                "CREATE TABLE t_order (" + "id BIGINT NOT NULL, " + "name VARCHAR(50), "
-                        + "tenant_id INTEGER NOT NULL, " + "PRIMARY KEY (id)" + ")",
-                "DROP TABLE IF EXISTS order_item",
-                "CREATE TABLE order_item (" + "id BIGINT NOT NULL, " + "order_id BIGINT NOT NULL, "
-                        + "product VARCHAR(50), " + "tenant_id INTEGER NOT NULL, " + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("DROP TABLE IF EXISTS t_order", """
+                CREATE TABLE t_order (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(50),
+                    tenant_id INTEGER NOT NULL,
+                    PRIMARY KEY (id)
+                )
+                """, "DROP TABLE IF EXISTS order_item", """
+                CREATE TABLE order_item (
+                    id BIGINT NOT NULL,
+                    order_id BIGINT NOT NULL,
+                    product VARCHAR(50),
+                    tenant_id INTEGER NOT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 }

@@ -180,11 +180,14 @@ public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillTest.Log
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "DROP TABLE IF EXISTS logic_del_fill_entity",
-                "CREATE TABLE logic_del_fill_entity (" + "id      BIGINT       NOT NULL,"
-                        + "name    VARCHAR(30)  NULL DEFAULT NULL," + "deleted_at TIMESTAMP NULL DEFAULT NULL,"
-                        + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("DROP TABLE IF EXISTS logic_del_fill_entity", """
+                CREATE TABLE logic_del_fill_entity (
+                    id      BIGINT       NOT NULL,
+                    name    VARCHAR(30)  NULL DEFAULT NULL,
+                    deleted_at TIMESTAMP NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     public interface LogicDelWithFillMapper extends BaseMapper<LogicDelWithFillEntity> {
