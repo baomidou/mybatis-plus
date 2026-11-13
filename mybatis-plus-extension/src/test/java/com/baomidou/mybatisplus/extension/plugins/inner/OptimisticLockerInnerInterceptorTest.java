@@ -3,99 +3,159 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import lombok.Data;
-import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Tag("integration")
+@Tag("unit")
 class OptimisticLockerInnerInterceptorTest {
 
-    @Test
-    void shouldNotUseAnotherColumnsEqualityAfterVersionInequality() throws Exception {
-        assertUpdatedVersion(new UpdateWrapper<LockerPredicateEntity>().ne("version", 0).eq("id", 7), 5);
+    private static final Pattern WRAPPER_PARAMETER = Pattern.compile("#\\{ew\\.paramNameValuePairs\\.([^}]+)}");
+
+    private final OptimisticLockerInnerInterceptor interceptor = new OptimisticLockerInnerInterceptor(true);
+
+    @BeforeAll
+    static void setUp() throws ReflectiveOperationException {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
+        entityClassCache().put("optimisticLockerWrapperTest", Entity.class);
+    }
+
+    @AfterAll
+    static void tearDown() throws ReflectiveOperationException {
+        entityClassCache().remove("optimisticLockerWrapperTest");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Class<?>> entityClassCache() throws ReflectiveOperationException {
+        Field field = OptimisticLockerInnerInterceptor.class.getDeclaredField("ENTITY_CLASS_CACHE");
+        field.setAccessible(true);
+        return (Map<String, Class<?>>) field.get(null);
     }
 
     @Test
-    void shouldNotUseAnotherColumnsEqualityAfterVersionRange() throws Exception {
-        assertUpdatedVersion(new UpdateWrapper<LockerPredicateEntity>().gt("version", 0).eq("age", 40), 5);
+    void shouldNotUseAnotherColumnsEqualityAfterVersionInequality() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().ne("version", 0).eq("id", 7);
+        assertSql(wrapper, false, "(version <> ? AND id = ?)", 0, 7);
+        assertSql(wrapper, true, "(version <> ? AND id = ?)", 0, 7);
+        assertThat(wrapper.getSqlSet()).isNull();
     }
 
     @Test
-    void shouldNotCarryVersionMatchIntoNestedCondition() throws Exception {
-        assertUpdatedVersion(
-                new UpdateWrapper<LockerPredicateEntity>().ge("version", 0).and(nested -> nested.eq("id", 7)), 5);
+    void shouldNotUseAnotherColumnsEqualityAfterVersionRange() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().gt("version", 0).eq("age", 40);
+        assertSql(wrapper, false, "(version > ? AND age = ?)", 0, 40);
+        assertSql(wrapper, true, "(version > ? AND age = ?)", 0, 40);
+        assertThat(wrapper.getSqlSet()).isNull();
     }
 
     @Test
-    void shouldStillFindVersionEqualityAfterOtherPredicates() throws Exception {
-        assertUpdatedVersion(
-                new UpdateWrapper<LockerPredicateEntity>().ne("version", 0).eq("age", 40).eq("version", 5), 6);
+    void shouldNotCarryVersionMatchIntoNestedCondition() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().ge("version", 0).and(nested -> nested.eq("id", 7));
+        assertSql(wrapper, false, "(version >= ? AND (id = ?))", 0, 7);
+        assertSql(wrapper, true, "(version >= ? AND (id = ?))", 0, 7);
+        assertThat(wrapper.getSqlSet()).isNull();
     }
 
     @Test
-    void shouldStillFindNestedVersionEquality() throws Exception {
-        assertUpdatedVersion(
-                new UpdateWrapper<LockerPredicateEntity>().eq("id", 7).and(nested -> nested.eq("version", 5)), 6);
+    void shouldStillFindVersionEqualityAfterOtherPredicates() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().ne("version", 0).eq("age", 40).eq("version", 5);
+        assertSql(wrapper, false, "(version <> ? AND age = ? AND version = ?)", 0, 40, 5);
+        assertSql(wrapper, true, "(version <> ? AND age = ? AND version = ?)", 0, 40, 5);
+        assertSql(wrapper.getSqlSet(), wrapper, "version = ?", 6);
     }
 
     @Test
-    void shouldRejectStaleVersionEquality() throws Exception {
-        assertUpdatedVersion(new UpdateWrapper<LockerPredicateEntity>().eq("id", 7).eq("version", 4), 5, 0);
+    void shouldStillFindNestedVersionEquality() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().eq("id", 7).and(nested -> nested.eq("version", 5));
+        assertSql(wrapper, false, "(id = ? AND (version = ?))", 7, 5);
+        assertSql(wrapper, true, "(id = ? AND (version = ?))", 7, 5);
+        assertSql(wrapper.getSqlSet(), wrapper, "version = ?", 6);
     }
 
-    private void assertUpdatedVersion(UpdateWrapper<LockerPredicateEntity> wrapper, int expected) throws Exception {
-        assertUpdatedVersion(wrapper, expected, 1);
+    @Test
+    void shouldIncrementVersionFromWrapperPredicate() {
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().eq("id", 7).eq("version", 4);
+        assertSql(wrapper, false, "(id = ? AND version = ?)", 7, 4);
+        assertSql(wrapper, true, "(id = ? AND version = ?)", 7, 4);
+        assertSql(wrapper.getSqlSet(), wrapper, "version = ?", 5);
     }
 
-    private void assertUpdatedVersion(UpdateWrapper<LockerPredicateEntity> wrapper, int expected, int updatedRows)
-            throws Exception {
-        UnpooledDataSource dataSource = new UnpooledDataSource("org.h2.Driver", "jdbc:h2:mem:" + UUID.randomUUID(),
-                "sa", "");
-        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
-            statement.execute(
-                    "CREATE TABLE zz_locker_predicate (id BIGINT PRIMARY KEY, age INT, name VARCHAR(30), version INT)");
-            statement.execute("INSERT INTO zz_locker_predicate VALUES (7, 40, 'before', 5)");
-            MybatisConfiguration configuration = new MybatisConfiguration();
-            configuration.setEnvironment(new Environment("test", new JdbcTransactionFactory(), dataSource));
-            MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-            interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor(true));
-            configuration.addInterceptor(interceptor);
-            configuration.addMapper(LockerPredicateMapper.class);
-            try (SqlSession session = new MybatisSqlSessionFactoryBuilder().build(configuration).openSession(true)) {
-                LockerPredicateMapper mapper = session.getMapper(LockerPredicateMapper.class);
-                assertThat(mapper.update(wrapper.set("name", "after"))).isEqualTo(updatedRows);
-                LockerPredicateEntity result = mapper.selectById(7);
-                assertThat(result.getName()).isEqualTo(updatedRows == 1 ? "after" : "before");
-                assertThat(result.getVersion()).isEqualTo(expected);
-            }
+    @Test
+    void updateByIdSavesOldVersionInParams() {
+        Entity entity = new Entity(5);
+        Map<String, Object> params = new HashMap<>(Map.of(Constants.ENTITY, entity));
+        interceptor.doOptimisticLocker(params, "updateById");
+        assertThat(entity.version).isEqualTo(6);
+        assertThat(params).containsEntry(Constants.MP_OPTLOCK_VERSION_ORIGINAL, 5).doesNotContainKey(Constants.WRAPPER);
+    }
+
+    @Test
+    void updateWithNullWrapperCreatesOldVersionCondition() {
+        Entity entity = new Entity(5);
+        Map<String, Object> params = new HashMap<>(Map.of(Constants.ENTITY, entity));
+        params.put(Constants.WRAPPER, null);
+        interceptor.doOptimisticLocker(params, "update");
+        assertThat(entity.version).isEqualTo(6);
+        assertThat(params.get(Constants.WRAPPER)).isInstanceOfSatisfying(UpdateWrapper.class, wrapper -> {
+            assertSql(wrapper.getSqlSegment(), wrapper, "(version = ?)", 5);
+            assertThat(wrapper.getSqlSet()).isNull();
+        });
+    }
+
+    @Test
+    void updateWithWrapperAppendsOldVersionCondition() {
+        Entity entity = new Entity(5);
+        UpdateWrapper<Entity> wrapper = Wrappers.<Entity>update().eq("id", 7);
+        Map<String, Object> params = Map.of(Constants.ENTITY, entity, Constants.WRAPPER, wrapper);
+        assertSql(wrapper.getSqlSegment(), wrapper, "(id = ?)", 7);
+        interceptor.doOptimisticLocker(params, "update");
+        assertThat(entity.version).isEqualTo(6);
+        assertSql(wrapper.getSqlSegment(), wrapper, "(id = ? AND version = ?)", 7, 5);
+        assertThat(wrapper.getSqlSet()).isNull();
+    }
+
+    private void assertSql(UpdateWrapper<Entity> wrapper, boolean applyOptimisticLocker, String expectedSql,
+            Object... expectedParams) {
+        if (applyOptimisticLocker) {
+            interceptor.doOptimisticLocker(Map.of(Constants.WRAPPER, wrapper), "optimisticLockerWrapperTest");
         }
+        assertSql(wrapper.getSqlSegment(), wrapper, expectedSql, expectedParams);
     }
 
-    interface LockerPredicateMapper extends BaseMapper<LockerPredicateEntity> {
+    private static void assertSql(String sql, UpdateWrapper<?> wrapper, String expectedSql, Object... expectedParams) {
+        assertThat(sql).isNotNull();
+        List<Object> params = new ArrayList<>();
+        String sqlWithPlaceholders = WRAPPER_PARAMETER.matcher(sql).replaceAll(match -> {
+            params.add(wrapper.getParamNameValuePairs().get(match.group(1)));
+            return "?";
+        });
+        assertThat(sqlWithPlaceholders).isEqualTo(expectedSql);
+        assertThat(params).containsExactly(expectedParams);
     }
 
-    @Data
     @TableName("zz_locker_predicate")
-    static class LockerPredicateEntity {
+    static class Entity {
 
-        private Long id;
-        private Integer age;
-        private String name;
         @Version
         private Integer version;
+
+        Entity(int version) {
+            this.version = version;
+        }
     }
 }
