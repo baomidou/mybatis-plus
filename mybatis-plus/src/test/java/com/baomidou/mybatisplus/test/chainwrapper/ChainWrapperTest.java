@@ -1,7 +1,10 @@
 package com.baomidou.mybatisplus.test.chainwrapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class ChainWrapperTest extends DbTestSupport<EntityMapper> {
+public class ChainWrapperTest extends DbTestSupport<ChainWrapperTest.EntityMapper> {
 
     /**
      * 链式包装：func 的条件为 false 时既不 npe 也不留参数，groupBy 传单个值和传集合拼出的片段一致。
@@ -97,6 +100,16 @@ public class ChainWrapperTest extends DbTestSupport<EntityMapper> {
         });
     }
 
+    @Test
+    void shouldBuildChainQueryViaChainWrappers() {
+        final String id = "id";
+        Entity entity = new Entity();
+        var chain = ChainWrappers.queryChain(Entity.class).func(j -> j.isNotNull(id))
+                .func(entity.getId() != null, j -> j.eq(id, entity.getId())).and(j -> j.isNotNull(id))
+                .or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id)).not(j -> j.isNull(id));
+        assertThat(chain.list()).hasSize(2);
+    }
+
     @Override
     protected String tableDataSql() {
         return "insert into entity(id,name) values(1,'1'),(2,'2');";
@@ -107,5 +120,19 @@ public class ChainWrapperTest extends DbTestSupport<EntityMapper> {
         return Arrays.asList(
                 "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
                         + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+
+        default QueryChainWrapper<Entity> queryChain() {
+            return ChainWrappers.queryChain(this);
+        }
+    }
+
+    @Data
+    public static class Entity {
+
+        private Long id;
+        private String name;
     }
 }

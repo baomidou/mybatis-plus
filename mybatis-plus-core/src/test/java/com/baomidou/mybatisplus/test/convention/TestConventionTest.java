@@ -189,11 +189,11 @@ class TestConventionTest {
      * MybatisPlusPropertiesTest 与 MybatisPlusSampleTest 已迁入 test-shared， 剩余同名仍是版本模块或 starter 的整文件复制。
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "ChainWrappersTest", "DataPermissionInterceptorTest", "DbTest",
-            "DynamicTableNameJsqlParserInnerInterceptorTest", "ForyFactoryTest", "FstFactoryTest", "FuryFactoryTest",
-            "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "JsqlParserSimpleSerialTest",
-            "MetaObjectHandlerTest", "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
-            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
+            "DataPermissionInterceptorTest", "DbTest", "DynamicTableNameJsqlParserInnerInterceptorTest",
+            "ForyFactoryTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest", "IllegalSQLInnerInterceptorTest",
+            "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest", "MetadataTest",
+            "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest", "SelectBodyToPlainSelectTest",
+            "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。
