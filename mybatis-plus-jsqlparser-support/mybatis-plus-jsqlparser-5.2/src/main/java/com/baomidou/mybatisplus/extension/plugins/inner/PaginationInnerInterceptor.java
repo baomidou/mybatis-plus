@@ -293,8 +293,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             Distinct distinct = plainSelect.getDistinct();
             GroupByElement groupBy = plainSelect.getGroupBy();
-            // 包含 distinct、groupBy 不优化
-            if (null != distinct || null != groupBy) {
+            // 包含 distinct、groupBy、having 不优化
+            if (null != distinct || null != groupBy || null != plainSelect.getHaving()) {
                 return lowLevelCountSql(select.toString());
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
