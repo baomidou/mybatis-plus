@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Collection工具类
@@ -254,11 +252,11 @@ public class CollectionUtils {
         final Iterator<T> iterator = entityList.iterator();
         final List<List<T>> results = new ArrayList<>(entityList.size() / batchSize);
         while (iterator.hasNext()) {
-            final List<T> list = IntStream.range(0, batchSize).filter(x -> iterator.hasNext())
-                    .mapToObj(i -> iterator.next()).collect(Collectors.toList());
-            if (!list.isEmpty()) {
-                results.add(list);
+            final List<T> list = new ArrayList<>();
+            for (int i = 0; i < batchSize && iterator.hasNext(); i++) {
+                list.add(iterator.next());
             }
+            results.add(list);
         }
         return results;
     }

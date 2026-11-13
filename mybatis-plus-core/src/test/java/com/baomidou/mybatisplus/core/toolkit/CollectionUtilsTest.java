@@ -1,20 +1,30 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author nieqiuqiu 2020/7/2
@@ -53,6 +63,49 @@ class CollectionUtilsTest {
         List<Integer> list = asList(1, 2, 3, 4, 5);
         List<List<Integer>> lists = CollectionUtils.split(list, 2);
         assertThat(lists).isEqualTo(asList(asList(1, 2), asList(3, 4), singletonList(5)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {10_000, 1_000_000})
+    void shouldStopSplittingWhenIteratorIsExhausted(int batchSize) {
+        LinkedHashSet<Integer> collection = spy(new LinkedHashSet<>(singletonList(42)));
+        Iterator<Integer> iterator = spy(collection.iterator());
+        doReturn(iterator).when(collection).iterator();
+
+        assertThat(CollectionUtils.split(collection, batchSize)).isEqualTo(singletonList(singletonList(42)));
+        verify(iterator, atMost(5)).hasNext();
+    }
+
+    @Test
+    void shouldSplitSetInIterationOrder() {
+        LinkedHashSet<Integer> collection = new LinkedHashSet<>(asList(3, 1, 2, 4));
+
+        assertThat(CollectionUtils.split(collection, 2)).isEqualTo(asList(asList(3, 1), asList(2, 4)));
+    }
+
+    @Test
+    void shouldKeepSplitResultsMutableAndPreserveNullElements() {
+        List<Integer> source = asList(1, null, 3);
+        List<List<Integer>> batches = CollectionUtils.split(source, 2);
+
+        assertThat(batches).isEqualTo(asList(asList(1, null), singletonList(3)));
+        batches.get(0).add(4);
+        batches.add(singletonList(5));
+        assertThat(batches).isEqualTo(asList(asList(1, null, 4), singletonList(3), singletonList(5)));
+        assertThat(source).containsExactly(1, null, 3);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1})
+    void shouldRejectNonPositiveBatchSizeForNonEmptyCollection(int batchSize) {
+        assertThatThrownBy(() -> CollectionUtils.split(singletonList(1), batchSize))
+                .isInstanceOf(MybatisPlusException.class).hasMessage("batchSize must not be less than one");
+    }
+
+    @Test
+    void shouldReturnEmptyResultBeforeValidatingBatchSize() {
+        assertThat(CollectionUtils.split(null, 0)).isEmpty();
+        assertThat(CollectionUtils.split(emptyList(), 0)).isEmpty();
     }
 
     /**

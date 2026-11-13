@@ -8,6 +8,13 @@ dependencies {
     compileOnly "org.springframework.boot:spring-boot-autoconfigure:${springBoot4Version}"
     compileOnly "org.springframework.boot:spring-boot-starter-jdbc:${springBoot4Version}"
     compileOnly "org.graalvm.sdk:nativeimage:25.0.1"
+    testImplementation project(":mybatis-plus-core")
+    testImplementation "org.graalvm.sdk:nativeimage:25.0.1"
+    testImplementation "${lib.mybatis}"
+    testImplementation "org.mybatis:mybatis-spring:${mybatisSpring4Version}"
+    testImplementation "org.springframework.boot:spring-boot-autoconfigure:${springBoot4Version}"
+    testImplementation "org.springframework.boot:spring-boot-starter-jdbc:${springBoot4Version}"
+    testImplementation "${lib.jackson}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBoot4Version}"
 }
 
