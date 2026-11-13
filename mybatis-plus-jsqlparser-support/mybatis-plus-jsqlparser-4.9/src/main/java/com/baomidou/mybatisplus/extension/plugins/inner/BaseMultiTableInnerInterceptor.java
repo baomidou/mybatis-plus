@@ -340,8 +340,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             if (joinTables != null && !joinTables.isEmpty()) {
 
                 // 如果是隐式内连接
-                if (join.isSimple()) {
+                if (join.isSimple() || isInnerUsingJoin(join)) {
                     mainTables.addAll(joinTables);
+                    leftTable = joinTables.get(0);
                     continue;
                 }
 
@@ -351,21 +352,19 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 List<Table> onTables = null;
                 // 如果不要忽略，且是右连接，则记录下当前表
                 if (join.isRight()) {
+                    onTables = mainTables.isEmpty()
+                            ? (leftTable == null ? null : Collections.singletonList(leftTable))
+                            : new ArrayList<>(mainTables);
                     mainTable = joinTable;
                     mainTables.clear();
-                    if (leftTable != null) {
-                        onTables = Collections.singletonList(leftTable);
-                    }
+                    mainTables.addAll(joinTables);
                 } else if (join.isInner()) {
-                    if (mainTable == null) {
-                        onTables = Collections.singletonList(joinTable);
-                    } else {
-                        onTables = Arrays.asList(mainTable, joinTable);
-                    }
+                    onTables = new ArrayList<>(mainTables);
+                    onTables.addAll(joinTables);
                     mainTable = null;
                     mainTables.clear();
                 } else {
-                    onTables = Collections.singletonList(joinTable);
+                    onTables = new ArrayList<>(joinTables);
                 }
 
                 if (mainTable != null && !mainTables.contains(mainTable)) {
@@ -405,6 +404,15 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
 
         return mainTables;
+    }
+
+    /**
+     * USING has no ON expression to extend. Retain its inner-join tables for the next ON clause or the final WHERE,
+     * preserving USING's merged result columns.
+     */
+    private boolean isInnerUsingJoin(Join join) {
+        return CollectionUtils.isNotEmpty(join.getUsingColumns()) && !join.isLeft() && !join.isRight() && !join.isFull()
+                && !join.isOuter() && !join.isCross() && !join.isNatural();
     }
 
     /**

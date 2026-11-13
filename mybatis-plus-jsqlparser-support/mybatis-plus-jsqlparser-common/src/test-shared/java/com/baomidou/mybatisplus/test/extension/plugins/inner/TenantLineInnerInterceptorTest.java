@@ -414,6 +414,51 @@ class TenantLineInnerInterceptorTest {
     }
 
     static void lastResultMap() {
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1",
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id, tenant_id) WHERE a.id = 1",
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id, tenant_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a JOIN details b USING (link_id) WHERE a.id = 1",
+                "SELECT b.amount FROM accounts a JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a JOIN details b USING (link_id, tenant_id) WHERE a.id = 1",
+                "SELECT b.amount FROM accounts a JOIN details b USING (link_id, tenant_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c USING (link_id) WHERE a.id = 1",
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c ON b.link_id = c.link_id WHERE a.id = 1",
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) INNER JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) LEFT JOIN secrets c ON b.link_id = c.link_id AND c.id = 23 WHERE a.id = 1",
+                "SELECT c.amount FROM accounts a INNER JOIN details b USING (link_id) LEFT JOIN secrets c ON b.link_id = c.link_id AND c.id = 23 AND c.tenant_id = 1 WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) RIGHT JOIN secrets c ON b.link_id = c.link_id ORDER BY c.id",
+                "SELECT b.amount FROM accounts a INNER JOIN details b USING (link_id) RIGHT JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 WHERE c.tenant_id = 1 ORDER BY c.id");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM (accounts a INNER JOIN details b USING (link_id)) INNER JOIN secrets c ON b.link_id = c.link_id WHERE a.id = 1",
+                "SELECT c.amount FROM (accounts a INNER JOIN details b USING (link_id)) INNER JOIN secrets c ON b.link_id = c.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM accounts a LEFT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id WHERE a.id = 1",
+                "SELECT c.amount FROM accounts a LEFT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id AND b.tenant_id = 1 AND c.tenant_id = 1 WHERE a.id = 1 AND a.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT c.amount FROM accounts a RIGHT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id ORDER BY c.id",
+                "SELECT c.amount FROM accounts a RIGHT JOIN (details b INNER JOIN secrets c USING (link_id)) ON a.link_id = b.link_id AND a.tenant_id = 1 WHERE b.tenant_id = 1 AND c.tenant_id = 1 ORDER BY c.id");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM accounts a INNER JOIN details b ON a.link_id = b.link_id WHERE a.id = 1",
+                "SELECT b.amount FROM accounts a INNER JOIN details b ON a.link_id = b.link_id AND a.tenant_id = 1 AND b.tenant_id = 1 WHERE a.id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT * FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1",
+                "SELECT * FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT link_id FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1",
+                "SELECT link_id FROM accounts a INNER JOIN details b USING (link_id) WHERE a.id = 1 AND a.tenant_id = 1 AND b.tenant_id = 1");
+        LAST_RESULT_TMAP.put(
+                "SELECT b.amount FROM with_as_accounts a INNER JOIN details b USING (link_id) WHERE a.id = 3",
+                "SELECT b.amount FROM with_as_accounts a INNER JOIN details b USING (link_id) WHERE a.id = 3 AND b.tenant_id = 1");
 
         // UPDATE/DELETE WHERE subqueries must also be tenant scoped.
         LAST_RESULT_TMAP.put(
