@@ -67,7 +67,7 @@ buildscript {
             "h2"                         : "com.h2database:h2:2.4.240",
             "mysql"                      : "com.mysql:mysql-connector-j:9.5.0",
             "sqlite"                     : "org.xerial:sqlite-jdbc:3.54.1.0",
-            "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.10.java8",
+            "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.13.java8",
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
             //code generator
             "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
