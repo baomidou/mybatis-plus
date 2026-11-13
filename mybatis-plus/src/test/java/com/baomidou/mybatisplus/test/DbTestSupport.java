@@ -113,7 +113,14 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
     }
 
     protected void doTestAutoCommit(Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSession(null)) {
+        doTestAutoCommitWithExecutor(null, consumer);
+    }
+
+    /**
+     * 使用指定执行器运行 Mapper 操作，成功后提交，并关闭会话。
+     */
+    protected void doTestAutoCommitWithExecutor(ExecutorType type, Consumer<T> consumer) {
+        try (SqlSession sqlSession = sqlSession(type)) {
             doTestAutoCommit(sqlSession, consumer);
         }
     }
