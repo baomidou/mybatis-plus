@@ -1,8 +1,11 @@
 package com.baomidou.mybatisplus.test.uuid;
 
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 @Tag("integration")
-public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityMapper> {
+public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityTest.UUIDLogicEntityMapper> {
 
     @Test
     void shouldCrudWithUuidPrimaryKeyAndLogicalDelete() {
@@ -105,5 +108,27 @@ public class UUIDLogicEntityTest extends DbTestSupport<UUIDLogicEntityMapper> {
                 "CREATE TABLE IF NOT EXISTS entity (\n" + "id VARCHAR(50) NOT NULL,\n"
                         + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "delete_by VARCHAR(30) NULL DEFAULT NULL,"
                         + "deleted BOOLEAN NOT NULL DEFAULT false," + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface UUIDLogicEntityMapper extends BaseMapper<UUIDLogicEntity> {
+
+    }
+
+    @Data
+    @TableName("entity")
+    public static class UUIDLogicEntity {
+
+        @TableId(value = "id", type = IdType.INPUT)
+        private UUID id;
+
+        private String name;
+
+        @TableField(fill = FieldFill.UPDATE)
+        private String deleteBy;
+
+        @TableField(fill = FieldFill.UPDATE)
+        @TableLogic(delval = "true", value = "false")
+        private Boolean deleted;
+
     }
 }

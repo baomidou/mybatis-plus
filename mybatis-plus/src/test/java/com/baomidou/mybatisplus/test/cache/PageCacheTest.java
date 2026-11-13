@@ -1,5 +1,6 @@
-package com.baomidou.mybatisplus.test.cache.page;
+package com.baomidou.mybatisplus.test.cache;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -7,12 +8,17 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.Data;
+import org.apache.ibatis.annotations.CacheNamespace;
+import org.apache.ibatis.annotations.ResultType;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.result.DefaultResultHandler;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.ResultHandler;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-class PageCacheTest extends DbTestSupport<PageCacheMapper> {
+class PageCacheTest extends DbTestSupport<PageCacheTest.PageCacheMapper> {
 
     @Test
     void page() {
@@ -124,5 +130,26 @@ class PageCacheTest extends DbTestSupport<PageCacheMapper> {
     public static class Tj {
 
         private boolean name = true;
+    }
+
+    @CacheNamespace
+    public interface PageCacheMapper extends BaseMapper<PageCache> {
+
+        @Select("<script>select * from page_cache where <if test=\"tj.name\">name is not null</if></script>")
+        Page<PageCache> otherPage(Page<?> page, PageCacheTest.Tj tj);
+
+        @ResultType(PageCache.class)
+        @Select("<script>select * from page_cache where <if test=\"tj.name\">name is not null</if></script>")
+        void otherPageHandler(Page<?> page, PageCacheTest.Tj tj, ResultHandler handler);
+
+        @Select("<script>select count(0) from page_cache where <if test=\"tj.name\">name is not null</if></script>")
+        Long otherCount(PageCacheTest.Tj tj);
+    }
+
+    @Data
+    public static class PageCache implements Serializable {
+
+        private Long id;
+        private String name;
     }
 }

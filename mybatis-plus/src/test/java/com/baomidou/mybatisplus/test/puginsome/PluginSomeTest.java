@@ -1,8 +1,11 @@
 package com.baomidou.mybatisplus.test.puginsome;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.InnerInterceptor;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -29,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-24
  */
 @Tag("integration")
-public class PluginSomeTest extends DbTestSupport<AMapper> {
+public class PluginSomeTest extends DbTestSupport<PluginSomeTest.AMapper> {
 
     /** 每个钩子被调用的次数；父类构造里建的拦截器持有本实例，钩子执行时字段已初始化。 */
     private final Map<String, AtomicInteger> calls = new ConcurrentHashMap<>();
@@ -113,5 +116,31 @@ public class PluginSomeTest extends DbTestSupport<AMapper> {
                 "drop table if exists b",
                 "CREATE TABLE IF NOT EXISTS b (\n" + "id integer NOT NULL,\n" + "a_id integer NOT NULL,\n"
                         + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface AMapper extends BaseMapper<A> {
+
+        List<A> list();
+    }
+
+    public interface BMapper extends BaseMapper<B> {
+    }
+
+    @Data
+    public static class A {
+
+        private int id;
+        private String name;
+
+        @TableField(exist = false)
+        private B b;
+    }
+
+    @Data
+    public static class B {
+
+        private int id;
+        private int aId;
+        private String name;
     }
 }

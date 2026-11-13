@@ -1,6 +1,13 @@
 package com.baomidou.mybatisplus.test.enums;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.junit.jupiter.api.Tag;
@@ -17,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-class EnumTest extends DbTestSupport<EntityMapper> {
+class EnumTest extends DbTestSupport<EnumTest.EntityMapper> {
 
     @Test
     void shouldHandleMultipleEnumTypes() {
@@ -60,5 +67,54 @@ class EnumTest extends DbTestSupport<EntityMapper> {
                 "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
                         + "enum_int integer NULL DEFAULT NULL,\n" + "enum_str VARCHAR(30) NULL DEFAULT NULL,\n"
                         + "enum_ordinal integer NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+
+        Entity findById(Long id);
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @TableName(autoResultMap = true)
+    public static class Entity {
+
+        private Long id;
+
+        private EnumStr enumStr;
+
+        private EnumInt enumInt;
+        /**
+         * 使用 EnumOrdinalTypeHandler
+         */
+        private EnumOrdinal enumOrdinal;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum EnumInt {
+
+        ONE(1),
+        TWO(2);
+
+        @EnumValue
+        private final int value;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum EnumStr {
+
+        ONE("1"),
+        TWO("2");
+
+        @EnumValue
+        private final String value;
+    }
+
+    @Getter
+    public enum EnumOrdinal {
+        ONE,
+        TWO,
     }
 }

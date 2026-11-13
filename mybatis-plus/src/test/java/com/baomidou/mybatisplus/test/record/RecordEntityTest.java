@@ -1,5 +1,8 @@
 package com.baomidou.mybatisplus.test.record;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiurong 2023年9月14日
  */
 @Tag("integration")
-public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
+public class RecordEntityTest extends DbTestSupport<RecordEntityTest.RecordEntityMapper> {
 
     @Test
     void shouldInsertRecord() {
@@ -62,4 +65,12 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
                         + "tel VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
     }
 
+    public interface RecordEntityMapper extends BaseMapper<RecordEntity> {
+
+    }
+
+    @TableName(value = "t_record")
+    public record RecordEntity(Long id, String name, @TableField(value = "tel") String phone) {
+
+    }
 }

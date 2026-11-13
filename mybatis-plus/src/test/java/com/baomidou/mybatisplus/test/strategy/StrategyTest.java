@@ -1,6 +1,10 @@
 package com.baomidou.mybatisplus.test.strategy;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2021-01-27
  */
 @Tag("integration")
-public class StrategyTest extends DbTestSupport<EntityMapper> {
+public class StrategyTest extends DbTestSupport<StrategyTest.EntityMapper> {
 
     @Test
     void shouldApplyFieldStrategyOnInsertAndUpdate() {
@@ -54,5 +58,22 @@ public class StrategyTest extends DbTestSupport<EntityMapper> {
                 "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
                         + "insert_str VARCHAR(30) NULL DEFAULT NULL," + "update_str VARCHAR(30) NULL DEFAULT NULL,"
                         + "PRIMARY KEY (id))");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        @TableField(insertStrategy = FieldStrategy.NOT_EMPTY)
+        private String insertStr;
+
+        @TableField(updateStrategy = FieldStrategy.NOT_EMPTY)
+        private String updateStr;
     }
 }

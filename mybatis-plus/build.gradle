@@ -10,6 +10,12 @@ compileTestKotlin {
     }
 }
 
+tasks.named('processTestResources') {
+    from('src/test/java') {
+        include '**/*.xml'
+    }
+}
+
 configurations {
     testImplementation.exclude module: 'mybatis-plus-jsqlparser-4.9'
 }

@@ -1,8 +1,12 @@
 package com.baomidou.mybatisplus.test.replaceplaceholder;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.ReplacePlaceholderInnerInterceptor;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class ReplacePlaceholderTest extends DbTestSupport<EntityMapper> {
+public class ReplacePlaceholderTest extends DbTestSupport<ReplacePlaceholderTest.EntityMapper> {
 
     @Test
     void replace() {
@@ -67,5 +71,38 @@ public class ReplacePlaceholderTest extends DbTestSupport<EntityMapper> {
     @Override
     protected List<Class<?>> otherMapper() {
         return List.of(EntitySubMapper.class);
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+
+        @Select("select {@entity-name,id} from entity")
+        List<Entity> selectAll();
+
+        @Select("select {@entity:e},{@entity_sub-id:es:es} from entity e left join entity_sub es on e.id = es.id")
+        List<Entity> selectAll2();
+    }
+
+    public interface EntitySubMapper extends BaseMapper<Entity.EntitySub> {
+    }
+
+    @Data
+    public static class Entity {
+
+        private Long id;
+
+        @TableField("`name`")
+        private String name;
+
+        private Integer age;
+
+        @TableField(exist = false)
+        private EntitySub es;
+
+        @Data
+        public static class EntitySub {
+
+            private Long id;
+            private String name;
+        }
     }
 }

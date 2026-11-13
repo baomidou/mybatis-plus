@@ -11,7 +11,6 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,7 @@ public class TenantManyTest extends DbTestSupport<TenantManyTest.OrderMapper> {
 
     @Getter
     @Setter
-    public static class Order implements Serializable {
+    public static class Order {
 
         private Long id;
         private String name;
@@ -44,7 +43,7 @@ public class TenantManyTest extends DbTestSupport<TenantManyTest.OrderMapper> {
 
     @Getter
     @Setter
-    public static class OrderItem implements Serializable {
+    public static class OrderItem {
 
         private Long id;
         private Long orderId;

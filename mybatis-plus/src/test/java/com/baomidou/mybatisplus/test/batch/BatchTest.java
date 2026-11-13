@@ -1,6 +1,9 @@
 package com.baomidou.mybatisplus.test.batch;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.session.ExecutorType;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2021-01-06
  */
 @Tag("integration")
-class BatchTest extends DbTestSupport<EntityMapper> {
+class BatchTest extends DbTestSupport<BatchTest.EntityMapper> {
 
     @Test
     void save() {
@@ -37,5 +40,21 @@ class BatchTest extends DbTestSupport<EntityMapper> {
         return Arrays.asList(
                 "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
                         + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        public Entity(String name) {
+            this.name = name;
+        }
     }
 }

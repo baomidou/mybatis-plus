@@ -1,8 +1,14 @@
 package com.baomidou.mybatisplus.test.logicdel;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * runtime.
  */
 @Tag("integration")
-public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillMapper> {
+public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillTest.LogicDelWithFillMapper> {
 
     /**
      * Sentinel timestamp used by the fill handler – deliberately far in the future so <br>
@@ -179,5 +185,34 @@ public class LogicDelWithFillTest extends DbTestSupport<LogicDelWithFillMapper> 
                 "CREATE TABLE logic_del_fill_entity (" + "id      BIGINT       NOT NULL,"
                         + "name    VARCHAR(30)  NULL DEFAULT NULL," + "deleted_at TIMESTAMP NULL DEFAULT NULL,"
                         + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface LogicDelWithFillMapper extends BaseMapper<LogicDelWithFillEntity> {
+    }
+
+    @Data
+    @TableName("logic_del_fill_entity")
+    public static class LogicDelWithFillEntity {
+
+        private Long id;
+
+        private String name;
+
+        /**
+         * Logic-delete timestamp.
+         * <ul>
+         * <li>NULL → record is <em>not</em> deleted ({@code logicNotDeleteValue = "null"})</li>
+         * <li>non-NULL → record is logically deleted</li>
+         * </ul>
+         * <p>
+         * {@link FieldFill#UPDATE} causes the fill handler to provide the actual timestamp <br>
+         * (e.g., {@code LocalDateTime.now(ZoneId.of("Asia/Shanghai"))}) instead of relying <br>
+         * on the database-side {@code NOW()} function, enabling proper i18n support. <br>
+         * When no entity is available (e.g., {@code deleteById(id)}), the global <br>
+         * {@code logicDeleteValue} (default: {@code "NOW()"}) is used as a fallback.
+         */
+        @TableField(fill = FieldFill.UPDATE)
+        @TableLogic(value = "null")
+        private LocalDateTime deletedAt;
     }
 }

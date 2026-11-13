@@ -1,13 +1,21 @@
 package com.baomidou.mybatisplus.test.logicdel;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class LogicDelTest extends DbTestSupport<EntityMapper> {
+public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
 
     @Test
     void logicDel() {
@@ -138,5 +146,28 @@ public class LogicDelTest extends DbTestSupport<EntityMapper> {
             }
         });
         return globalConfig;
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+
+        @Select("select * from entity where id = #{id}")
+        Entity byId(Long id);
+
+        int testDeleteBatch(@Param(Constants.COLL) List<Entity> entityList);
+
+    }
+
+    @Data
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        @TableField(fill = FieldFill.UPDATE)
+        private String deleteBy;
+
+        @TableLogic(delval = "true", value = "false")
+        private Boolean deleted;
     }
 }

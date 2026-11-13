@@ -1,9 +1,13 @@
 package com.baomidou.mybatisplus.test.version;
 
+import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Tag;
@@ -22,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Slf4j
 @Tag("integration")
-public class VersionTest extends DbTestSupport<EntityMapper> {
+public class VersionTest extends DbTestSupport<VersionTest.EntityMapper> {
 
     @Test
     void shouldUpdateVersionViaWrapper() {
@@ -104,5 +108,20 @@ public class VersionTest extends DbTestSupport<EntityMapper> {
                 "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
                         + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer NOT NULL DEFAULT 0,\n"
                         + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    @Accessors(chain = true)
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        @Version
+        private Integer version;
     }
 }

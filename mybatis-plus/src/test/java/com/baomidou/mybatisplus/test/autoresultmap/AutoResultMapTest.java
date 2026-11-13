@@ -1,7 +1,15 @@
 package com.baomidou.mybatisplus.test.autoresultmap;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class AutoResultMapTest extends DbTestSupport<EntityMapper> {
+public class AutoResultMapTest extends DbTestSupport<AutoResultMapTest.EntityMapper> {
 
     @Test
     void shouldAutoMapResultWithTypeHandler() {
@@ -39,5 +47,30 @@ public class AutoResultMapTest extends DbTestSupport<EntityMapper> {
                 "drop table if exists entity",
                 "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n" + "x_name VARCHAR(20) NOT NULL,\n"
                         + "gg VARCHAR(255) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @TableName(autoResultMap = true)
+    public static class Entity {
+
+        private Long id;
+
+        @TableField("x_name")
+        private String name;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private Gg gg;
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Gg {
+
+            private String name;
+        }
     }
 }

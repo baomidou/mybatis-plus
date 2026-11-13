@@ -1,8 +1,11 @@
 package com.baomidou.mybatisplus.test.uuid;
 
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
 import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 @Tag("integration")
-public class UUIDEntityTest extends DbTestSupport<UUIDEntityMapper> {
+public class UUIDEntityTest extends DbTestSupport<UUIDEntityTest.UUIDEntityMapper> {
 
     @Test
     void shouldCrudWithUuidPrimaryKey() {
@@ -93,5 +96,19 @@ public class UUIDEntityTest extends DbTestSupport<UUIDEntityMapper> {
     @Override
     protected GlobalConfig globalConfig() {
         return super.globalConfig().setEnableSqlRunner(true);
+    }
+
+    public interface UUIDEntityMapper extends BaseMapper<UUIDEntity> {
+
+    }
+
+    @Data
+    @TableName("entity")
+    public static class UUIDEntity {
+
+        @TableId(value = "id", type = IdType.INPUT)
+        private UUID id;
+
+        private String name;
     }
 }

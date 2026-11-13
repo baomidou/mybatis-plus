@@ -75,8 +75,7 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
         configuration.setLogImpl(Slf4jImpl.class);
         if (StringUtils.isNotBlank(mapperXml)) {
-            try {
-                InputStream inputStream = Resources.getResourceAsStream(mapperXml);
+            try (InputStream inputStream = Resources.getResourceAsStream(mapperXml)) {
                 MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(inputStream, configuration,
                         mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
@@ -152,7 +151,8 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
     }
 
     protected String mapperXml() {
-        return null;
+        String path = getClass().getName().replace('.', '/') + ".xml";
+        return getClass().getResource("/" + path) != null ? path : null;
     }
 
     protected TransactionFactory transactionFactory() {

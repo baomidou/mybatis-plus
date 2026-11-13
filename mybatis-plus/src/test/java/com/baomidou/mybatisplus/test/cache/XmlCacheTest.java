@@ -1,10 +1,14 @@
-package com.baomidou.mybatisplus.test.cache.xml;
+package com.baomidou.mybatisplus.test.cache;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import org.apache.ibatis.annotations.CacheNamespaceRef;
 import org.apache.ibatis.cache.Cache;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-class XmlCacheTest extends DbTestSupport<XmlCacheMapper> {
+class XmlCacheTest extends DbTestSupport<XmlCacheTest.XmlCacheMapper> {
 
     @Test
     void page() {
@@ -40,5 +44,16 @@ class XmlCacheTest extends DbTestSupport<XmlCacheMapper> {
         return Arrays.asList(
                 "drop table if exists xml_cache", "CREATE TABLE IF NOT EXISTS xml_cache (" + "id BIGINT NOT NULL,"
                         + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+    }
+
+    @CacheNamespaceRef(XmlCacheMapper.class)
+    public interface XmlCacheMapper extends BaseMapper<XmlCache> {
+    }
+
+    @Data
+    public static class XmlCache implements Serializable {
+
+        private Long id;
+        private String name;
     }
 }
