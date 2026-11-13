@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import javax.sql.DataSource;
  */
 public class ShardingDatasource implements DataSource {
 
+    private final Map<Connection, String> connectionRoutes = Collections.synchronizedMap(new WeakHashMap<>());
     private final IDataSourceProvider provider;
     private final Map<String, DataSource> dataSources;
     private final Map<String, DataSourceProperty> properties;
@@ -114,12 +116,29 @@ public class ShardingDatasource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return determineDataSource().getConnection();
+        String key = ShardingContext.stripWriteFlag(ShardingContext.currentOrPrimary());
+        Connection connection = determineDataSource().getConnection();
+        connectionRoutes.put(connection, key);
+        return connection;
     }
 
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return determineDataSource().getConnection(username, password);
+        String key = ShardingContext.stripWriteFlag(ShardingContext.currentOrPrimary());
+        Connection connection = determineDataSource().getConnection(username, password);
+        connectionRoutes.put(connection, key);
+        return connection;
+    }
+
+    /**
+     * Returns the route used when this datasource acquired the connection. Weak keys do not retain connections after
+     * their owners release them.
+     *
+     * @param connection connection acquired from this datasource
+     * @return normalized database key, or null for an unknown connection
+     */
+    public String getDatabaseKey(Connection connection) {
+        return connectionRoutes.get(connection);
     }
 
     @Override
