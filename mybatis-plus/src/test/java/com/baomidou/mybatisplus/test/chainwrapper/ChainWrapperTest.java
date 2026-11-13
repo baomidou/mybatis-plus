@@ -46,6 +46,24 @@ public class ChainWrapperTest extends DbTestSupport<EntityMapper> {
         });
     }
 
+    /**
+     * 静态入口 {@code ChainWrappers.queryChain(entityClass)} 走的也是同一套链式装配，差别只在 Mapper 由实体类反查。 自
+     * {@code test.chainwrapper.ChainWrappersTest} 并入，并把原来只调用不断言的拼装补成上面同一条 SQL 断言。
+     */
+    @Test
+    void shouldBuildSameChainThroughStaticChainWrappersEntry() {
+        final String id = "id";
+        Entity entity = new Entity();
+        var chain = ChainWrappers.queryChain(entity.getClass()).func(j -> j.isNotNull(id))
+                .func(entity.getId() != null, j -> j.eq("id", entity.getId())).and(j -> j.isNotNull(id))
+                .or(j -> j.isNotNull(id)).nested(j -> j.isNotNull(id)).not(j -> j.isNull(id));
+        assertThat(chain.getWrapper().getTargetSql()).isEqualTo(
+                "(id IS NOT NULL AND (id IS NOT NULL)"
+                        + " OR (id IS NOT NULL) AND (id IS NOT NULL) AND NOT (id IS NULL))");
+        assertThat(chain.getWrapper().getParamNameValuePairs()).isEmpty();
+        assertThat(chain.list()).hasSize(2);
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void oneWithNoResults(boolean throwEx) {

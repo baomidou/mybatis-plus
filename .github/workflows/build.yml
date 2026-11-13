@@ -51,3 +51,6 @@ jobs:
     
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x :mybatis-plus-up:build -x :mybatis-plus-up:test
+    
+    - name: Verify published pom contracts
+      run: ./gradlew testBuildMetadata -x :mybatis-plus-up:testBuildMetadata

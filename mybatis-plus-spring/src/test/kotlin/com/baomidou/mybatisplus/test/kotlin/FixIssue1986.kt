@@ -2,7 +2,9 @@ package com.baomidou.mybatisplus.test.kotlin
 
 import com.baomidou.mybatisplus.extension.kotlin.KtQueryWrapper
 import com.baomidou.mybatisplus.test.initTableInfo
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 /**
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Test
  * @author hcl
  * Create at 2019/12/24
  */
+@Tag("unit")
 class FixIssue1986 {
 
     @BeforeEach
@@ -24,8 +27,10 @@ class FixIssue1986 {
     @Test
     fun test1986() {
         val wrapper = fillQueryWrapper(OpportunityWebPageQuery())
-        print(wrapper.targetSql)
-        // (valid = ? AND district_id = ? AND name LIKE ? OR phone LIKE ? AND (valid = ? AND district_id = ?))
+        assertThat(wrapper.targetSql)
+            .startsWith("(valid = ?")
+            .contains("district_id = ?", "city_id = ?", "province_id = ?", "(name LIKE ? OR phone LIKE ?)")
+            .doesNotContain("type =")
     }
 
 }

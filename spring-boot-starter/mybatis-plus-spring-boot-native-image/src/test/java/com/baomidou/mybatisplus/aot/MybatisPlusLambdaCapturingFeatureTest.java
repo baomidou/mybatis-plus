@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.aot;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author xiaochen
  * @since 2026-11-04
  */
+@Tag("unit")
 class MybatisPlusLambdaCapturingFeatureTest {
 
     private static final String PACKAGE_PATH = "com/baomidou/mybatisplus/aot/";

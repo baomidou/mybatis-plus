@@ -18,17 +18,19 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-// 引入共享测试源
+// 引入共享测试源；test-shared-fury 仅进有 fury-core 的两个版本模块
 sourceSets {
     test {
         java {
             srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared-fury/java"
         }
     }
 }
 
 // FST inspects JDK fields reflectively when FstFactory is constructed.
-test {
+// 用 withType(Test) 而不是 test {}，分层任务 testUnit/testIntegration 才拿得到这些 jvmArgs。
+tasks.withType(Test).configureEach {
     doFirst {
         if (javaLauncher.get().metadata.languageVersion.asInt() >= 9) {
             jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',

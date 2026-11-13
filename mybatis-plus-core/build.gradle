@@ -11,9 +11,20 @@ dependencies {
     testImplementation "${lib.'spring-jdbc'}"
 }
 
+// 共享测试源：GeneratedPom 这份 pom 解析夹具同时给 extension、聚合模块和三个 starter 的 pom 契约测试用
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test-shared/java'
+        }
+    }
+}
+
 // cglib 3.3.0 生成 BeanMap 时要反射 ClassLoader.defineClass，测试还直接读取 HashMap 内部字段，
 // JDK 9+ 强封装下不开这些包会直接 InaccessibleObjectException（与 jsqlparser 各模块的 FST 处理同构）。
-test {
+// 写成 withType(Test) 而不是 test {}：分层任务是根 build.gradle 另注册的 Test，不看模块里的 test 块，
+// 只挂 test 的话 testUnit 在 JDK 21 下会因缺 --add-opens 直接红。
+tasks.withType(Test).configureEach {
     doFirst {
         if (javaLauncher.get().metadata.languageVersion.asInt() >= 9) {
             jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',

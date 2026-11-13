@@ -27,3 +27,12 @@ dependencies {
     testImplementation lib.dm as ConfigurableFileTree
     testImplementation "${lib.'logback-classic'}"
 }
+
+// 引入 core 的共享测试源：pom 契约测试用的 GeneratedPom 夹具
+sourceSets {
+    test {
+        java {
+            srcDir "${project(':mybatis-plus-core').projectDir}/src/test-shared/java"
+        }
+    }
+}

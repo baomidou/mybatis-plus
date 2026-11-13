@@ -49,4 +49,27 @@ class StringUtilsTest {
         assertThat(StringUtils.equals("abc", "abc")).isTrue();
         assertThat(StringUtils.equals("abc", "ABC")).isFalse();
     }
+
+    /**
+     * 以下三例自聚合模块 {@code test.toolkit.StringUtilsTest} 并入：同一个 StringUtils 不该有两处测试。 原副本用 {@code Assert.isTrue}
+     * 当断言，等于拿另一个待测工具类验证结果，这里换成 AssertJ 直接比对。
+     */
+    @Test
+    void shouldTreatNullEmptyAndWhitespaceAsBlank() {
+        assertThat(StringUtils.isBlank("")).isTrue();
+        assertThat(StringUtils.isBlank(null)).isTrue();
+        assertThat(StringUtils.isBlank("   ")).isTrue();
+    }
+
+    @Test
+    void shouldStripInjectionPayload() {
+        String originalStr = "(select*from(select sleep(if(length(database())=13,3,0))union/**/select+1)a)";
+        assertThat(StringUtils.sqlInjectionReplaceBlank(originalStr))
+                .isEqualTo("(selectfrom(selectsleep(if(length(database())13,3,0))union//select1)a)");
+    }
+
+    @Test
+    void shouldStripEveryInjectionCharacter() {
+        assertThat(StringUtils.sqlInjectionReplaceBlank("'\"<>&*+=#-;    \n\t")).isEmpty();
+    }
 }
