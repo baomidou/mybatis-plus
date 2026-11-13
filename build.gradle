@@ -73,7 +73,7 @@ buildscript {
             "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
             "freemarker"          : "org.freemarker:freemarker:2.3.34",
             "beetl"               : "com.ibeetl:beetl:3.21.2.RELEASE",
-            "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
+            "swagger-annotations" : "io.swagger:swagger-annotations:1.6.16",
             "enjoy"               : "com.jfinal:enjoy:5.2.2",
             "logback-classic"     : "ch.qos.logback:logback-classic:1.5.15",
         ]
