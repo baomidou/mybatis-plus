@@ -51,3 +51,8 @@ jobs:
     
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x :mybatis-plus-up:build -x :mybatis-plus-up:test
+
+    # 默认 test 排除 build-metadata 层，这一步是这 6 个 pom 契约测试在 CI 里唯一的执行入口。
+    # 排除 mybatis-plus-up 与上方 build 一致：该模块测试编译目标 --release 21，而矩阵含 JDK 17，且它没有这一层的用例。
+    - name: Verify published pom contracts
+      run: ./gradlew testBuildMetadata -x :mybatis-plus-up:testBuildMetadata
