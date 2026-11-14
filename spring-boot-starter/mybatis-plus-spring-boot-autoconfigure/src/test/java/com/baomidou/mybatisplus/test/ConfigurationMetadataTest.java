@@ -19,12 +19,13 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 检查元数据生成
+ * 检查注解处理器生成的 {@code spring-configuration-metadata.json}。 校验对象是构建产物，没有同名被测类，所以按产物名命名——starter 那边的 {@code MetadataTest}
+ * 查的是另一个产物 {@code spring-autoconfigure-metadata.properties}，两者早前同名，已各自改名消歧。
  *
  * @author nieqiurong 2019/2/9.
  */
 @Tag("integration")
-class MetadataTest {
+class ConfigurationMetadataTest {
 
     @Data
     @AllArgsConstructor

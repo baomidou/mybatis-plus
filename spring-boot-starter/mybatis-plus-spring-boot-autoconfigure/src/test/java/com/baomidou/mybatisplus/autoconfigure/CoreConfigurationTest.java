@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
+ * {@code MybatisPlusProperties.CoreConfiguration} 往 {@code MybatisConfiguration} 上落值的两条线：设了就覆盖， 没设就保持原样。test-shared
+ * 里另有一份三份 starter 共用的 {@code MybatisPlusPropertiesTest}， 测的是 {@code resolveMapperLocations}，对象不同，所以本类改名让开同名。
+ *
  * @author nieqiurong
  */
 @Tag("unit")
-public class MybatisPlusPropertiesTest {
+public class CoreConfigurationTest {
 
     @Test
     void shouldApplyCoreConfigurationValues() {
