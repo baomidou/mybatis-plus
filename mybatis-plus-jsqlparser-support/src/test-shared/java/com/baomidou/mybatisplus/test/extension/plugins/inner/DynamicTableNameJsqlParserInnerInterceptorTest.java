@@ -291,13 +291,13 @@ class DynamicTableNameJsqlParserInnerInterceptorTest {
     }
 
     @Test
-    public void shouldReplaceTableNameInDropView() {
+    public void shouldKeepViewNameInDropView() {
         var sql = "DROP view viewName";
         assertThat(interceptor.changeTable(sql)).isEqualTo(sql);
     }
 
     @Test
-    public void shouldReplaceTableNameInDropIndex() {
+    public void shouldKeepIndexNameInDropIndex() {
         var sql = "DROP INDEX indexName";
         assertThat(interceptor.changeTable(sql)).isEqualTo(sql);
     }

@@ -18,33 +18,23 @@ package com.baomidou.mybatisplus.extension;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.handler.TableNameHandler;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.create.index.CreateIndex;
-import net.sf.jsqlparser.statement.create.view.CreateView;
-import net.sf.jsqlparser.statement.drop.Drop;
-import net.sf.jsqlparser.util.TablesNamesFinder;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 动态表名解析处理
- * <p>
- * 1.无法保留sql注释(例如 select * from test; --这是个查询 处理完会变成 select * from test)
- * </p>
- * <p>
- * 2.无法保留语句分隔符;(例如 select * from test; 处理完会变成 select * from test )
- * </p>
- * <p>
- * 3.如果使用转义符包裹了表名需要自行处理
- * </p>
- * <p>
- * 4.select * from dual (不处理这个,自行忽略)
- * </p>
+ * 遍历 SQL 语法树，将原始 SQL 和表名交给 {@link TableNameHandler}。 回调返回非空白表名时，用返回值替换节点中的表名。
+ * <ul>
+ * <li>从语法树重新生成 SQL 时，普通注释和语句末尾的分号会被去掉。 例如，表名保持原样时，{@code SELECT * FROM orders; -- 查询订单} 会输出为
+ * {@code SELECT * FROM orders}。</li>
+ * <li>回调负责保留所需的表名定界符。例如，将 {@code `orders`} 改为 {@code `orders_01`} 时， 返回值需要带上两侧的反引号。</li>
+ * <li>{@code select * from dual}（不做特殊处理，自行忽略）。</li>
+ * </ul>
  *
  * @author nieqiurong
  * @since 3.5.11
  */
-public class DynamicTableNameHandler extends TablesNamesFinder<Void> {
+public class DynamicTableNameHandler extends DynamicTableNameVisitor {
 
     private final String originSql;
 
@@ -56,27 +46,6 @@ public class DynamicTableNameHandler extends TablesNamesFinder<Void> {
         this.originSql = originSql;
         this.tableNameHandler = tableNameHandler;
         init(false);
-    }
-
-    @Override
-    public <S> Void visit(CreateIndex createIndex, S context) {
-        return this.visit(createIndex.getTable(), context);
-    }
-
-    @Override
-    public <S> Void visit(Drop drop, S context) {
-        if (StringUtils.isNotBlank(drop.getType())) {
-            String type = drop.getType().toUpperCase();
-            if ("TABLE".equals(type)) {
-                return super.visit(drop, context);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public <S> Void visit(CreateView createView, S context) {
-        return super.visit(createView.getSelect(), context);
     }
 
     @Override
