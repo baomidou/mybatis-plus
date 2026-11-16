@@ -722,13 +722,20 @@ class TestConventionTest {
     private static Map<String, Map<String, Set<String>>> scanMainPackages() {
         Map<String, Map<String, Set<String>>> byModule = new TreeMap<>();
         for (Path module : modules()) {
+            List<Path> mainSources = new ArrayList<>();
             Path main = module.resolve("src").resolve("main");
-            if (!Files.isDirectory(main)) {
-                continue;
+            if (Files.isDirectory(main)) {
+                mainSources.addAll(sources(main));
+            }
+            // 与四个 JSqlParser 版本模块的 main 源集保持一致，共享类仍属于各消费模块。
+            if (Set.of(
+                    "mybatis-plus-jsqlparser", "mybatis-plus-jsqlparser-4.9", "mybatis-plus-jsqlparser-5.0",
+                    "mybatis-plus-jsqlparser-5.2").contains(lastName(module))) {
+                mainSources.addAll(sources(module.getParent().resolve("src/main-shared/java")));
             }
             String moduleName = ROOT.relativize(module).toString().replace('\\', '/');
             Map<String, Set<String>> byClass = byModule.computeIfAbsent(moduleName, key -> new TreeMap<>());
-            for (Path file : sources(main)) {
+            for (Path file : mainSources) {
                 String name = file.getFileName().toString();
                 String simpleName = name.substring(0, name.lastIndexOf('.'));
                 byClass.computeIfAbsent(simpleName, key -> new LinkedHashSet<>())

@@ -18,8 +18,13 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-// 引入共享测试源
+// 各版本独立编译共享源码和测试，保留各自的 JSqlParser 依赖
 sourceSets {
+    main {
+        java {
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/main-shared/java"
+        }
+    }
     test {
         java {
             srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"

@@ -120,7 +120,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author yuxiaobin
  * @deprecated 3.5.10 问题太多,计划移除
- * @date 2022-8-21
+ * @since 2022-8-21
  */
 @Deprecated
 public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
