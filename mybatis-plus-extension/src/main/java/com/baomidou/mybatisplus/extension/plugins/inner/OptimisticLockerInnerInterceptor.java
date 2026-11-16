@@ -119,7 +119,11 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
     private static final String UPDATED_VERSION_VAL_KEY = "#updatedVersionVal#";
 
     /**
-     * Support wrapper mode (update(LambdaUpdateWrapper) or update(UpdateWrapper))
+     * 是否启用 Wrapper 更新模式，默认关闭。
+     * <p>
+     * 当更新参数中没有实体对象时，该模式支持通过 {@code UpdateWrapper} 或 {@code LambdaUpdateWrapper} 使用乐观锁：从 {@link Version} 字段的 {@code eq}
+     * 条件中 获取非空的旧版本值，计算新版本值并追加到 {@code SET} 子句。
+     * </p>
      */
     private final boolean wrapperMode;
 
