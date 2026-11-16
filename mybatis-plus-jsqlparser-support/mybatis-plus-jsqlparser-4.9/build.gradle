@@ -1,16 +1,5 @@
 dependencies {
     api "com.github.jsqlparser:jsqlparser:4.9"
-    api project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common")
-    implementation "${lib."slf4j-api"}"
-    implementation "de.ruedigermoeller:fst:3.0.3"
-    implementation "org.apache.fury:fury-core:0.10.3"
-    implementation "org.apache.fory:fory-core:1.7.7"
-    implementation "${lib.caffeine}"
-    testImplementation "io.github.classgraph:classgraph:4.8.184"
-    testImplementation "${lib."spring-context-support"}"
-    testImplementation "${lib.h2}"
-    testImplementation group: 'com.google.guava', name: 'guava', version: '33.7.2-jre'
-
 }
 
 compileJava.dependsOn(processResources)
@@ -24,7 +13,7 @@ sourceSets {
     }
     test {
         java {
-            srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/test-shared/java"
         }
     }
 }

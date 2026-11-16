@@ -4,7 +4,7 @@
 
 - `src/main-shared/java`：四个版本共用的生产源码，由各版本模块的 `main` 源集引用，不单独编译或发布。
 - 各版本模块的 `src/main/java`：与 JSqlParser 版本相关的实现。
-- `mybatis-plus-jsqlparser-common`：继续承载不依赖特定 JSqlParser 版本的公共模块。
+- `src/test-shared/java`：四个版本共用的测试源码，由各版本模块的 `test` 源集引用，不单独编译或发布。
 
 共享类保持原 Java 包名；同一个类不能同时存在于共享目录和消费模块的源码目录。
 修改共享源码后，需运行四个版本模块的测试，并保持 4.9 的 Java 8、5.x 的 Java 11 编译目标。
