@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserAdapter;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.DoubleValue;
@@ -93,7 +94,6 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             return Boolean.TRUE;
         }
         if (StringUtils.isNotBlank(logicField)) {
-
             if (where instanceof BinaryExpression) {
                 BinaryExpression binaryExpression = (BinaryExpression) where;
                 if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)
@@ -101,7 +101,6 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
                     return Boolean.TRUE;
                 }
             }
-
             if (where instanceof IsNullExpression) {
                 IsNullExpression binaryExpression = (IsNullExpression) where;
                 if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)) {
@@ -132,7 +131,6 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             Boolean result = fullMatch(((NotExpression) where).getExpression(), logicField);
             return result == null ? null : !result;
         } else if (where instanceof OrExpression) {
-
             OrExpression orExpression = (OrExpression) where;
             Boolean left = fullMatch(orExpression.getLeftExpression(), logicField);
             if (Boolean.TRUE.equals(left)) {
@@ -149,7 +147,6 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             Boolean right = fullMatch(((XorExpression) where).getRightExpression(), logicField);
             return left == null || right == null ? null : left ^ right;
         } else if (where instanceof AndExpression) {
-
             AndExpression andExpression = (AndExpression) where;
             Boolean left = fullMatch(andExpression.getLeftExpression(), logicField);
             if (Boolean.FALSE.equals(left)) {
@@ -160,12 +157,13 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
                 return Boolean.FALSE;
             }
             return left == null || right == null ? null : Boolean.TRUE;
-        } else if (where instanceof ParenthesedExpressionList) {
+        } else if (JsqlParserAdapter.isParenthesized(where)) {
             // example: (1 = 1)
-            ParenthesedExpressionList<Expression> parenthesis = (ParenthesedExpressionList<Expression>) where;
-            return parenthesis.size() == 1 ? fullMatch(parenthesis.get(0), logicField) : null;
+            if (where instanceof ParenthesedExpressionList && ((ParenthesedExpressionList<?>) where).size() != 1) {
+                return null;
+            }
+            return fullMatch(JsqlParserAdapter.unwrap(where), logicField);
         }
-
         // 条件本身是数值常量时按真值语义判断,例如 where 1
         return toBoolean(where);
     }

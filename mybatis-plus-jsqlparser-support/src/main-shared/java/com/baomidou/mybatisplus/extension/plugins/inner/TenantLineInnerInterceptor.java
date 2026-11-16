@@ -17,10 +17,12 @@ package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserAdapter;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import lombok.*;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.RowConstructor;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
@@ -39,6 +41,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -59,7 +62,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
 
     @Override
     public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
-            ResultHandler resultHandler, BoundSql boundSql) {
+            ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         if (InterceptorIgnoreHelper.willIgnoreTenantLine(ms.getId())) {
             return;
         }
@@ -86,10 +89,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
     protected void processSelect(Select select, int index, String sql, Object obj) {
         final String whereSegment = (String) obj;
         processSelectBody(select, whereSegment);
-        List<WithItem> withItemsList = select.getWithItemsList();
-        if (!CollectionUtils.isEmpty(withItemsList)) {
-            withItemsList.forEach(withItem -> processSelectBody(withItem, whereSegment));
-        }
+        JsqlParserAdapter.processWithItems(select, withItem -> processSelectBody(withItem, whereSegment));
     }
 
     @Override
@@ -115,7 +115,6 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         if (CollectionUtils.isNotEmpty(duplicateUpdateColumns)) {
             duplicateUpdateColumns.add(new UpdateSet(new Column(tenantIdColumn), tenantId));
         }
-
         Select select = insert.getSelect();
         if (select instanceof PlainSelect) { //fix github issue 4998  修复升级到4.5版本的问题
             this.processInsertSelect(select, (String) obj);
@@ -132,6 +131,11 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
                         Expression expression = expressions.get(i);
                         if (expression instanceof ParenthesedExpressionList) {
                             ((ParenthesedExpressionList<Expression>) expression).addExpression(tenantId);
+                        } else if (JsqlParserAdapter.isParenthesized(expression)) {
+                            // JSqlParser 4.9 会把批量 VALUES 中的单列行解析为 Parenthesis。
+                            expressions.set(
+                                    i, new RowConstructor<>(null,
+                                            new ExpressionList<>(JsqlParserAdapter.unwrap(expression), tenantId)));
                         } else {
                             expressions.add(tenantId);
                         }
@@ -202,7 +206,6 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         } else if (selectBody instanceof ParenthesedSelect) {
             ParenthesedSelect parenthesedSelect = (ParenthesedSelect) selectBody;
             processInsertSelect(parenthesedSelect.getSelect(), whereSegment);
-
         }
     }
 

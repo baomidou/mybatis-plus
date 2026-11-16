@@ -189,6 +189,33 @@ class BlockAttackInnerInterceptorTautologyTest {
         }
     }
 
+    @Test
+    void schemaQualifiedLogicDelete() {
+        TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), SchemaLogicRecord.class);
+        try {
+            String update = "update block_attack_schema.logic_record set del_flag = 1";
+            String delete = "delete from block_attack_schema.logic_record";
+            assertThatThrownBy(() -> interceptor.parserSingle(update + " where del_flag = 0", null))
+                    .isInstanceOf(MybatisPlusException.class).hasMessage("Prohibition of table update operation");
+            assertThatThrownBy(() -> interceptor.parserSingle(delete + " where del_flag = 0", null))
+                    .isInstanceOf(MybatisPlusException.class).hasMessage("Prohibition of full table deletion");
+            checkNotEx(update + " where id = ? and del_flag = 0");
+            checkNotEx(delete + " where id = ? and del_flag = 0");
+        } finally {
+            TableInfoHelper.remove(SchemaLogicRecord.class);
+        }
+    }
+
+    @TableName(value = "logic_record", schema = "block_attack_schema")
+    private static class SchemaLogicRecord {
+
+        @TableId
+        private Long id;
+        @TableLogic
+        private Integer delFlag;
+    }
+
     @TableName("block_attack_or_logic")
     private static class LogicRecord {
 
