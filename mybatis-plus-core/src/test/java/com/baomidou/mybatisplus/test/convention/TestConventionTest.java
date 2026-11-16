@@ -190,10 +190,9 @@ class TestConventionTest {
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
             "DataPermissionInterceptorTest", "DbTest", "DynamicTableNameJsqlParserInnerInterceptorTest",
-            "ForyFactoryTest", "FstFactoryTest", "FuryFactoryTest", "GeneratePomTest", "IllegalSQLInnerInterceptorTest",
-            "JSqlParserTest", "JsqlParserSimpleSerialTest", "MetaObjectHandlerTest", "MetadataTest",
-            "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest", "SelectBodyToPlainSelectTest",
-            "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
+            "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "MetaObjectHandlerTest",
+            "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
+            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

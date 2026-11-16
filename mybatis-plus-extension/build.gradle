@@ -25,5 +25,4 @@ dependencies {
     testImplementation "${lib.oracle}"
     testImplementation "${lib.sqlite}"
     testImplementation lib.dm as ConfigurableFileTree
-    testImplementation "${lib.'logback-classic'}"
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<!-- 全仓测试共享的 logback 配置，由根 build.gradle 通过 logback.configurationFile 注入各模块 Test 任务 -->
+<configuration scan="false" debug="false">
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoder 默认配置为PatternLayoutEncoder -->
         <encoder>
@@ -7,11 +8,11 @@
         </encoder>
     </appender>
 
-    <logger name="com.baomidou.mybatisplus" level="debug" additivity="false">
+    <logger name="com.baomidou.mybatisplus.test" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -129,6 +129,14 @@ def skipPublishingProjects = [
     ':spring-boot-starter'
 ] as Set
 
+// Boot 2.7 仍基于 slf4j 1.7：注入 logback 1.5（依赖 slf4j 2.x）会让 LogbackLoggingSystem
+// 找不到 org.slf4j.impl.StaticLoggerBinder，这三个模块的测试日志绑定交由 spring-boot-starter-test 自带版本管理
+def slf4j17Projects = [
+    ':spring-boot-starter:mybatis-plus-boot-starter',
+    ':spring-boot-starter:mybatis-plus-boot-starter-test',
+    ':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure'
+] as Set
+
 subprojects {
     apply plugin: 'java-library'
     if (!skipPublishingProjects.contains(project.path)) {
@@ -169,6 +177,9 @@ subprojects {
         testImplementation("org.junit.platform:junit-platform-engine:${junitVersion}")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
         testImplementation("org.junit.platform:junit-platform-launcher:${junitVersion}")
+        if (!slf4j17Projects.contains(project.path)) {
+            testImplementation "${lib."logback-classic"}"
+        }
     }
 
 
@@ -184,6 +195,15 @@ subprojects {
             }
         }
         systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    }
+
+    // 全仓测试统一使用根目录 logback.xml（root info + com.baomidou.mybatisplus.test DEBUG），不再依赖模块内配置。
+    // Boot 2.7 三模块排除：其 LogbackLoggingSystem 会忽略该属性并要求改用 logging.config，
+    // 且 classpath 被 thymeleaf 抬到 slf4j-api 2.x、与 Boot 管理的 logback 1.2 无法绑定，日志实际为 NOP。
+    tasks.withType(Test).configureEach {
+        if (!slf4j17Projects.contains(project.path)) {
+            systemProperty 'logback.configurationFile', new File(rootDir, 'logback.xml').absolutePath
+        }
     }
 
     def layerTags = [

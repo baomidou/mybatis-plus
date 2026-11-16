@@ -25,3 +25,23 @@
 FST、Fury 和 Fory 的工厂及 Caffeine 缓存实现由四个版本共享。每个版本的
 `JsqlParserCacheTypes` 维护有序的 AST 注册清单，FST 只注册其中标为共享的类型，
 Fury 和 Fory 注册全部类型。修改清单时需保留已有类型的注册顺序，以免改变缓存格式。
+
+### 耗时观测
+
+`JsqlParserSerialPerfTest`（test-shared，四版本共享）是序列化耗时冒烟测试，
+对比 jdk、FST、Fury、Fory 四种序列化，noSerial 段为纯解析基线。
+每段耗时以 INFO 日志输出（全仓测试日志统一走根目录 `logback.xml`）。
+单次运行、JIT 未充分预热，数值仅供量级参考。
+
+想要耗时对比表：把下面提示词发给有本仓库访问能力的 AI，它会自行运行测试、提取输出并直接给出表格：
+
+```text
+汇总 mybatis-plus 四个 JSqlParser 版本模块（mybatis-plus-jsqlparser-4.9 / -5.0 / -5.2 / -5.4，位于
+mybatis-plus-jsqlparser-support 下）的 JsqlParserSerialPerfTest 耗时：
+对每个模块运行该测试，从各模块 build/test-results/test/TEST-*JsqlParserSerialPerfTest.xml 的 system-out
+提取 logger 为 com.baomidou.mybatisplus.test.extension.parser.JsqlParserSerialPerfTest 的 INFO 行，
+行格式为 "框架 serialize N ms / deserialize N ms"，其中 noSerial 行是解析基线。
+汇总成一张 Markdown 表格：行按 4.9、5.0、5.2、5.4 顺序排列，
+列为 parse 基线耗时，以及 jdk、fst、fury、fory 各框架的序列化/反序列化耗时（单位 ms）。
+表格之后用不超过 3 行总结：哪个框架整体最快最稳、哪些框架在哪个方向明显偏慢、单次运行观测的局限。
+```

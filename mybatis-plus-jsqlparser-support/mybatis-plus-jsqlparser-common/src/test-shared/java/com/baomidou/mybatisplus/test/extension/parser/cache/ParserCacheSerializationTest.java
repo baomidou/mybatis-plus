@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.extension.parser.cache;
 
 import com.baomidou.mybatisplus.extension.parser.cache.ForySerialCaffeineJsqlParseCache;
+import com.baomidou.mybatisplus.extension.parser.cache.FstSerialCaffeineJsqlParseCache;
 import com.baomidou.mybatisplus.extension.parser.cache.FurySerialCaffeineJsqlParseCache;
 import com.baomidou.mybatisplus.extension.parser.cache.JsqlParseCache;
 import net.sf.jsqlparser.JSQLParserException;
@@ -17,6 +18,12 @@ class ParserCacheSerializationTest {
     @Test
     void roundTripsStatementWithFory() throws JSQLParserException {
         assertRoundTrip(new ForySerialCaffeineJsqlParseCache(builder -> {
+        }));
+    }
+
+    @Test
+    void roundTripsStatementWithFst() throws JSQLParserException {
+        assertRoundTrip(new FstSerialCaffeineJsqlParseCache(builder -> {
         }));
     }
 
