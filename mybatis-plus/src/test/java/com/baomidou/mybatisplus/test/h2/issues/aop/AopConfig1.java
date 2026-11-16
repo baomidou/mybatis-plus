@@ -1,11 +1,10 @@
 package com.baomidou.mybatisplus.test.h2.issues.aop;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
@@ -13,9 +12,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  */
 @Aspect
 @EnableAspectJAutoProxy
+@Slf4j
 public class AopConfig1 {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AopConfig1.class);
 
     @Pointcut("execution(* com.baomidou.mybatisplus.test.h2.issues.aop.mapper..*.*(..))")
     public void point() {
@@ -23,12 +21,12 @@ public class AopConfig1 {
 
     @Before("point()")
     public void before() {
-        LOGGER.info("before ...");
+        log.info("before ...");
     }
 
     @After("point()")
     public void after() {
-        LOGGER.info("After ...");
+        log.info("After ...");
     }
 
 }

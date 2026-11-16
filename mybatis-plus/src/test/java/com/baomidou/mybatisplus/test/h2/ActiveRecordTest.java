@@ -7,13 +7,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,9 +32,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 @Tag("integration")
+@Slf4j
 class ActiveRecordTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActiveRecordTest.class);
 
     @Autowired
     private IH2StudentService h2StudentService;
@@ -89,7 +87,7 @@ class ActiveRecordTest {
     void shouldSelectListWithActiveRecord() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectList(new QueryWrapper<>(student));
-        students.forEach($this -> LOGGER.info("用户信息:{}", $this));
+        students.forEach($this -> log.info("用户信息:{}", $this));
         assertThat(students.size() > 1).isTrue();
     }
 
@@ -99,8 +97,8 @@ class ActiveRecordTest {
         H2Student student = new H2Student();
         page = student.selectPage(page, new QueryWrapper<>(student));
         List<H2Student> records = page.getRecords();
-        LOGGER.info("总数:{}", page.getTotal());
-        records.forEach($this -> LOGGER.info("用户信息:{}", $this));
+        log.info("总数:{}", page.getTotal());
+        records.forEach($this -> log.info("用户信息:{}", $this));
         assertThat(page.getTotal() > 1).isTrue();
     }
 
@@ -108,7 +106,7 @@ class ActiveRecordTest {
     void shouldSelectCountWithActiveRecord() {
         H2Student student = new H2Student();
         long count = new H2Student().selectCount(new QueryWrapper<>(student));
-        LOGGER.info("count:{}", count);
+        log.info("count:{}", count);
         assertThat(count > 1).isTrue();
     }
 
@@ -125,7 +123,7 @@ class ActiveRecordTest {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectAll();
         assertThat(students).isNotNull();
-        students.forEach($this -> LOGGER.info("用户信息:{}", $this));
+        students.forEach($this -> log.info("用户信息:{}", $this));
     }
 
     @Test

@@ -72,9 +72,13 @@ public class DataPermissionInterceptorTest {
 
     @Test
     void test2() {
-        assertSql(
-                TEST_2, "select u.username from sys_user u join sys_user_role r on u.id=r.user_id where r.role_id=3",
-                "SELECT u.username FROM sys_user u JOIN sys_user_role r ON u.id = r.user_id WHERE r.role_id = 3 AND u.state = 1 AND u.amount > 1000");
+        assertSql(TEST_2, """
+                select u.username from sys_user u \
+                join sys_user_role r on u.id=r.user_id \
+                where r.role_id=3""", """
+                SELECT u.username FROM sys_user u \
+                JOIN sys_user_role r ON u.id = r.user_id \
+                WHERE r.role_id = 3 AND u.state = 1 AND u.amount > 1000""");
     }
 
     @Test
@@ -86,9 +90,11 @@ public class DataPermissionInterceptorTest {
 
     @Test
     void test3unionAll() {
-        assertSql(
-                TEST_3, "select * from sys_role where company_id=6 union all select * from sys_role where company_id=7",
-                "SELECT * FROM sys_role WHERE company_id = 6 AND companyId IN (1, 2, 3) UNION ALL SELECT * FROM sys_role WHERE company_id = 7 AND companyId IN (1, 2, 3)");
+        assertSql(TEST_3, """
+                select * from sys_role where company_id=6 \
+                UNION ALL select * from sys_role where company_id=7""", """
+                SELECT * FROM sys_role WHERE company_id = 6 AND companyId IN (1, 2, 3) \
+                UNION ALL SELECT * FROM sys_role WHERE company_id = 7 AND companyId IN (1, 2, 3)""");
     }
 
     @Test

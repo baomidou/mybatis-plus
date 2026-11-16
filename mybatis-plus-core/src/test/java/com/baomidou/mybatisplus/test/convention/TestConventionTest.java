@@ -163,10 +163,11 @@ class TestConventionTest {
      * autoconfigure 的 {@code MybatisPlusPropertiesTest} 各 1 个（39 → 37）；core 的 3 个 wrapper 测试进
      * {@code conditions.query}/{@code conditions.update}，为此把 {@code WrapperTestSupport} 放开成 public（37 → 34）。<br>
      * spring-boot-starter 的 {@code MybatisPlusPropertiesTest} 迁入 test-shared 后不再被扫描，去掉 3 处（34 → 31）。<br>
-     * 剩下的 31 处全部落在 4 个 JSqlParser 版本模块，是同一批整文件复制，该由 S6 的 C-c1 用 {@code sourceSets}
-     * 复用一份源头的办法一次解决，单独搬文件只会把副本再搬一遍；core、extension、spring、generator、autoconfigure、starter 已经零缺口。
+     * JSqlParser 的 {@code DataPermissionInterceptorTest} 迁入 test-shared，去掉 4 处（31 → 27）。<br>
+     * {@code DynamicTableNameJsqlParserInnerInterceptorTest} 迁入 test-shared，再去掉 4 处（27 → 23）。<br>
+     * 剩下的 23 处均在 JSqlParser 版本模块，可通过 {@code sourceSets} 共享测试源码继续收窄。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 31;
+    private static final int MAX_PACKAGE_MISMATCHES = 23;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
@@ -184,15 +185,11 @@ class TestConventionTest {
             .of("entity", "h2user", "key_generator_model", "t_simple", "xxx");
 
     /**
-     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。 JSqlParser 8
-     * 个共享测试已落地（BlockAttack/DataChange/Dynamic/MultiTable/MybatisPlus/Pagination/TenantLine）， spring-boot-starter 的
-     * MybatisPlusPropertiesTest 与 MybatisPlusSampleTest 已迁入 test-shared， 剩余同名仍是版本模块或 starter 的整文件复制。
+     * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。测试迁入 test-shared 后， 从此清单移除相应的类名。
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "DataPermissionInterceptorTest", "DbTest", "DynamicTableNameJsqlParserInnerInterceptorTest",
-            "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "MetaObjectHandlerTest",
-            "MetadataTest", "MultiDataPermissionInterceptorTest", "MybatisEnumTypeHandlerTest",
-            "SelectBodyToPlainSelectTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
+            "DbTest", "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "MetaObjectHandlerTest",
+            "MetadataTest", "MybatisEnumTypeHandlerTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import com.huawei.gaussdb.jdbc.Driver;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.jdbc.SqlRunner;
 import org.apache.ibatis.session.SqlSession;
@@ -16,8 +17,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,9 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 3.5.13
  */
 @Tag("external-db")
+@Slf4j
 public class GaussdbTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GaussdbTest.class);
 
     private static final String CREATE_TABLE = """
 
@@ -109,25 +107,25 @@ public class GaussdbTest {
         new SqlRunner(dataSource.getConnection()).run(CREATE_TABLE);
         try (SqlSession sqlSession = sqlSessionFactory(dataSource).openSession(true)) {
             DemoMapper demoMapper = sqlSession.getMapper(DemoMapper.class);
-            LOGGER.info("delete all data:{}", demoMapper.delete(Wrappers.emptyWrapper()));
+            log.info("delete all data:{}", demoMapper.delete(Wrappers.emptyWrapper()));
 
             Demo demo = new Demo();
             demo.setAge(12);
             demo.setName("12岁的用户");
             demo.setBirthday(LocalDate.of(2013, 1, 1));
             demo.setCreateTime(LocalDateTime.now());
-            LOGGER.info("insert data:{}", demoMapper.insert(demo));
+            log.info("insert data:{}", demoMapper.insert(demo));
 
             Demo selectDemo = demoMapper.selectById(demo.getId());
             assertThat(selectDemo).isNotNull();
-            LOGGER.info("select data:{}", selectDemo);
+            log.info("select data:{}", selectDemo);
 
             Demo updateDemo = new Demo();
             updateDemo.setAge(23);
             updateDemo.setId(selectDemo.getId());
             assertThat(demoMapper.updateById(updateDemo)).isEqualTo(1);
 
-            LOGGER.info("delete by id:{}", demoMapper.deleteById(demo));
+            log.info("delete by id:{}", demoMapper.deleteById(demo));
 
             List<Demo> demoList = new ArrayList<>();
             for (int i = 0; i < 50; i++) {
@@ -138,24 +136,24 @@ public class GaussdbTest {
                 demo.setCreateTime(LocalDateTime.now());
                 demoList.add(demo);
             }
-            LOGGER.info("insert data on batch:{}", demoMapper.insert(demoList));
+            log.info("insert data on batch:{}", demoMapper.insert(demoList));
 
             Long count = demoMapper.selectCount(Wrappers.emptyWrapper());
-            LOGGER.info("select count:{}", count);
+            log.info("select count:{}", count);
             assertThat(count).isEqualTo(50L);
 
             Page<Demo> page = demoMapper.selectPage(new Page<>(1, 10), Wrappers.emptyWrapper());
             assertThat(page.getTotal()).isEqualTo(50);
             assertThat(page.getSize()).isEqualTo(10);
             for (Demo record : page.getRecords()) {
-                LOGGER.info("record:{}", record);
+                log.info("record:{}", record);
             }
-            LOGGER.info("next page .");
+            log.info("next page .");
             page = demoMapper.selectPage(new Page<>(2, 10), Wrappers.emptyWrapper());
             assertThat(page.getTotal()).isEqualTo(50);
             assertThat(page.getSize()).isEqualTo(10);
             for (Demo record : page.getRecords()) {
-                LOGGER.info("record:{}", record);
+                log.info("record:{}", record);
             }
         }
     }

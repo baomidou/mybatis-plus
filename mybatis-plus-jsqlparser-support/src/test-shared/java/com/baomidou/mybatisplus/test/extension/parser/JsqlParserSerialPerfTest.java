@@ -3,13 +3,12 @@ package com.baomidou.mybatisplus.test.extension.parser;
 import com.baomidou.mybatisplus.extension.parser.cache.ForyFactory;
 import com.baomidou.mybatisplus.extension.parser.cache.FstFactory;
 import com.baomidou.mybatisplus.extension.parser.cache.FuryFactory;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.SerializationUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,9 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2023-08-03
  */
 @Tag("unit")
+@Slf4j
 class JsqlParserSerialPerfTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(JsqlParserSerialPerfTest.class);
 
     private final static int len = 1000;
     private final static String sql = """
@@ -51,7 +49,7 @@ class JsqlParserSerialPerfTest {
         long endTime = System.currentTimeMillis();
         long e1 = endTime - startTime;
         assertThat(e1).isPositive();
-        logger.info("noSerial  parse            {} ms", e1);
+        log.info("noSerial  parse            {} ms", e1);
     }
 
     void jdkSerial() throws JSQLParserException {
@@ -74,7 +72,7 @@ class JsqlParserSerialPerfTest {
         long deserialTime = endTime - startTime;
         assertThat(statement).isNotNull();
         assertThat(statement.toString()).isEqualTo(target);
-        logger.info("jdk       serialize {} ms / deserialize {} ms", serialTime, deserialTime);
+        log.info("jdk       serialize {} ms / deserialize {} ms", serialTime, deserialTime);
     }
 
     void fstSerial() throws JSQLParserException {
@@ -98,7 +96,7 @@ class JsqlParserSerialPerfTest {
         long deserialTime = endTime - startTime;
         assertThat(statement).isNotNull();
         assertThat(statement.toString()).isEqualTo(target);
-        logger.info("fst       serialize {} ms / deserialize {} ms", serialTime, deserialTime);
+        log.info("fst       serialize {} ms / deserialize {} ms", serialTime, deserialTime);
     }
 
     @SuppressWarnings("deprecation")
@@ -124,7 +122,7 @@ class JsqlParserSerialPerfTest {
         long deserialTime = endTime - startTime;
         assertThat(statement).isNotNull();
         assertThat(statement.toString()).isEqualTo(target);
-        logger.info("fury      serialize {} ms / deserialize {} ms", serialTime, deserialTime);
+        log.info("fury      serialize {} ms / deserialize {} ms", serialTime, deserialTime);
     }
 
     void forySerial() throws JSQLParserException {
@@ -148,6 +146,6 @@ class JsqlParserSerialPerfTest {
         long deserialTime = endTime - startTime;
         assertThat(statement).isNotNull();
         assertThat(statement.toString()).isEqualTo(target);
-        logger.info("fory      serialize {} ms / deserialize {} ms", serialTime, deserialTime);
+        log.info("fory      serialize {} ms / deserialize {} ms", serialTime, deserialTime);
     }
 }
