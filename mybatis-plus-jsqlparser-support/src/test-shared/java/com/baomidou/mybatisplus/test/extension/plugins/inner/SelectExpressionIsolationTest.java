@@ -80,6 +80,50 @@ class SelectExpressionIsolationTest {
         assertThat(rows(rewritten)).containsExactly(10);
     }
 
+    static Stream<Arguments> predicates() {
+        String maximum = "(SELECT MAX(secret) FROM zz_expression_secret)";
+        String restricted = "(SELECT secret FROM zz_expression_secret WHERE secret > 50)";
+        return Stream
+                .of(
+                        "COALESCE(" + maximum + ", 0) > 50", "CAST(" + maximum + " AS INTEGER) > 50",
+                        "CASE WHEN " + maximum + " > 50 THEN 1 ELSE 0 END = 1", restricted + " IS NOT NULL",
+                        maximum + " BETWEEN 50 AND 1000", "50 BETWEEN 0 AND " + maximum, maximum + " IN (900, 901)",
+                        "900 IN (" + maximum + ", 901)",
+                        "CASE WHEN EXISTS(SELECT 1 FROM zz_expression_secret WHERE secret > 50) THEN 1 ELSE 0 END = 1",
+                        "EXISTS(SELECT 1 FROM zz_expression_secret WHERE secret > 50)",
+                        "id IN (SELECT tenant_id FROM zz_expression_secret WHERE secret > 50)", maximum + " > 50")
+                .flatMap(predicate -> Stream.of(Arguments.of(predicate, false), Arguments.of(predicate, true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("predicates")
+    void nestedPredicatesOnlyReadAllowedRows(String predicate, boolean permission) throws Exception {
+        BaseMultiTableInnerInterceptor interceptor = permission ? permission() : tenant();
+        String rewritten = interceptor
+                .parserSingle("SELECT id FROM zz_expression_anchor WHERE " + predicate, "projectionMapper");
+        assertThat(rows(rewritten)).as(rewritten).isEmpty();
+    }
+
+    @Test
+    void predicateSubqueriesAreVisitedOnceAndIgnoredTablesStayIgnored() {
+        List<String> visited = new ArrayList<>();
+        DataPermissionInterceptor interceptor = new DataPermissionInterceptor(
+                (MultiDataPermissionHandler) (table, where, id) -> {
+                    assertThat(id).isEqualTo("predicateMapper");
+                    visited.add(table.getName());
+                    return "public_limits".equals(table.getName())
+                            ? null
+                            : new EqualsTo(new Column(table.getAlias().getName() + ".allowed"), new LongValue(1));
+                });
+        String sql = "SELECT a.id FROM accounts a WHERE COALESCE((SELECT MAX(s.amount) FROM secrets s "
+                + "WHERE s.id = :first), 0) > :second AND EXISTS (SELECT 1 FROM public_limits p WHERE p.id = a.id)";
+        assertThat(interceptor.parserSingle(sql, "predicateMapper")).isEqualTo(
+                "SELECT a.id FROM accounts a WHERE COALESCE((SELECT MAX(s.amount) FROM secrets s "
+                        + "WHERE s.id = :first AND s.allowed = 1), 0) > :second "
+                        + "AND EXISTS (SELECT 1 FROM public_limits p WHERE p.id = a.id) AND a.allowed = 1");
+        assertThat(visited).containsExactly("secrets", "public_limits", "accounts");
+    }
+
     @Test
     void mapperExecutionFiltersWrappedSubquery() {
         MybatisConfiguration configuration = new MybatisConfiguration();

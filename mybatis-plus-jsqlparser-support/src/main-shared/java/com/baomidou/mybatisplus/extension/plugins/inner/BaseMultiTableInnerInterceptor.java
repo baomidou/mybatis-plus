@@ -27,9 +27,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
-import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -147,61 +145,13 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     }
 
     /**
-     * 处理where条件内的子查询
-     * <p>
-     * 支持如下:
-     * <ol>
-     * <li>in</li>
-     * <li>=</li>
-     * <li>&gt;</li>
-     * <li>&lt;</li>
-     * <li>&gt;=</li>
-     * <li>&lt;=</li>
-     * <li>&lt;&gt;</li>
-     * <li>EXISTS</li>
-     * <li>NOT EXISTS</li>
-     * </ol>
-     * <p>
-     * 前提条件: <br>
-     * 1. 子查询必须放在小括号中 <br>
-     * 2. 子查询一般放在比较操作符的右边
+     * 处理 WHERE 表达式内的子查询，包括函数、CASE、BETWEEN 和 IN 两侧的嵌套表达式。
      *
-     * @param where where 条件
+     * @param where WHERE 条件
+     * @param whereSegment 所属 Mapper 对象全路径
      */
     protected void processWhereSubSelect(Expression where, final String whereSegment) {
-        if (where == null) {
-            return;
-        }
-        if (where instanceof FromItem) {
-            processOtherFromItem((FromItem) where, whereSegment);
-            return;
-        }
-        if (where.toString().indexOf("SELECT") > 0) {
-            // 有子查询
-            if (where instanceof BinaryExpression) {
-                // 比较符号 , and , or , 等等
-                BinaryExpression expression = (BinaryExpression) where;
-                processWhereSubSelect(expression.getLeftExpression(), whereSegment);
-                processWhereSubSelect(expression.getRightExpression(), whereSegment);
-            } else if (where instanceof InExpression) {
-                // in
-                InExpression expression = (InExpression) where;
-                Expression inExpression = expression.getRightExpression();
-                if (inExpression instanceof Select) {
-                    processSelectBody(((Select) inExpression), whereSegment);
-                }
-            } else if (where instanceof ExistsExpression) {
-                // exists
-                ExistsExpression expression = (ExistsExpression) where;
-                processWhereSubSelect(expression.getRightExpression(), whereSegment);
-            } else if (where instanceof NotExpression) {
-                // not exists
-                NotExpression expression = (NotExpression) where;
-                processWhereSubSelect(expression.getExpression(), whereSegment);
-            } else if (JsqlParserAdapter.isParenthesized(where)) {
-                processWhereSubSelect(JsqlParserAdapter.unwrap(where), whereSegment);
-            }
-        }
+        processSelectExpression(where, whereSegment);
     }
 
     protected void processSelectItem(SelectItem selectItem, final String whereSegment) {
