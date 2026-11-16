@@ -135,6 +135,13 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
      */
     @Override
     protected void processUpdate(Update update, int index, String sql, Object obj) {
+        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
+            if (update.getUpdateSets() != null) {
+                update.getUpdateSets()
+                        .forEach(set -> set.getValues().forEach(value -> processSelectExpression(value, (String) obj)));
+            }
+            processSelectExpression(update.getWhere(), (String) obj);
+        }
         final Expression sqlSegment = getUpdateOrDeleteExpression(update.getTable(), update.getWhere(), (String) obj);
         if (null != sqlSegment) {
             update.setWhere(sqlSegment);
@@ -146,6 +153,9 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
      */
     @Override
     protected void processDelete(Delete delete, int index, String sql, Object obj) {
+        if (dataPermissionHandler instanceof MultiDataPermissionHandler) {
+            processSelectExpression(delete.getWhere(), (String) obj);
+        }
         final Expression sqlSegment = getUpdateOrDeleteExpression(delete.getTable(), delete.getWhere(), (String) obj);
         if (null != sqlSegment) {
             delete.setWhere(sqlSegment);

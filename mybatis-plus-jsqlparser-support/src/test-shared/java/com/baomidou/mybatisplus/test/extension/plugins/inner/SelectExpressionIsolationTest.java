@@ -122,6 +122,29 @@ class SelectExpressionIsolationTest {
         assertThat(rows(interceptor.parserSingle(sql, null))).containsExactly(900);
     }
 
+    @Test
+    void permissionUpdateCannotCopyHiddenValuesIntoAnAllowedRow() throws Exception {
+        try (Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE zz_expression_anchor ADD balance INT");
+            String sql = permission().parserMulti(
+                    "UPDATE zz_expression_anchor SET balance = COALESCE((SELECT MAX(secret) FROM zz_expression_secret), 0) WHERE id = 1",
+                    "projectionMapper");
+            assertThat(statement.executeUpdate(sql)).isEqualTo(1);
+        }
+        assertThat(rows("SELECT balance FROM zz_expression_anchor WHERE id = 1")).containsExactly(10);
+    }
+
+    @Test
+    void permissionDeleteCannotUseHiddenRowsToMatchAllowedRecords() throws Exception {
+        String sql = permission().parserMulti(
+                "DELETE FROM zz_expression_anchor WHERE EXISTS (SELECT 1 FROM zz_expression_secret WHERE secret > 50)",
+                "projectionMapper");
+        try (Statement statement = connection.createStatement()) {
+            assertThat(statement.executeUpdate(sql)).isZero();
+        }
+        assertThat(rows("SELECT id FROM zz_expression_anchor ORDER BY id")).containsExactly(1, 2);
+    }
+
     private static TenantLineInnerInterceptor tenant() {
         return new TenantLineInnerInterceptor(new TenantLineHandler() {
 
