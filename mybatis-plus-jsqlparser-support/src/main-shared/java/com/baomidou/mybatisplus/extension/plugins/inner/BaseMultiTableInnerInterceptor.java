@@ -29,7 +29,6 @@ import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
-import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
 
@@ -85,7 +84,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         }
         if (where != null) {
             if (isLowPrecedence(where)) {
-                return appendExpression(new ParenthesedExpressionList<>(where), expression);
+                return appendExpression(JsqlParserAdapter.wrap(where), expression);
             } else {
                 return appendExpression(where, expression);
             }
@@ -198,9 +197,8 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
                 // not exists
                 NotExpression expression = (NotExpression) where;
                 processWhereSubSelect(expression.getExpression(), whereSegment);
-            } else if (where instanceof ParenthesedExpressionList) {
-                ParenthesedExpressionList<Expression> expression = (ParenthesedExpressionList) where;
-                processWhereSubSelect(expression.get(0), whereSegment);
+            } else if (JsqlParserAdapter.isParenthesized(where)) {
+                processWhereSubSelect(JsqlParserAdapter.unwrap(where), whereSegment);
             }
         }
     }
@@ -216,26 +214,9 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         if (expression == null) {
             return;
         }
-        expression.accept(new ExpressionVisitorAdapter<Void>() {
-
-            @Override
-            public <S> Void visit(ParenthesedSelect select, S context) {
-                processSelectBody(select, whereSegment);
-                return null;
-            }
-
-            @Override
-            public <S> Void visit(Select select, S context) {
-                processSelectBody(select, whereSegment);
-                return null;
-            }
-
-            @Override
-            public <S> Void visit(Function function, S context) {
-                processFunction(function, whereSegment);
-                return null;
-            }
-        }, null);
+        JsqlParserAdapter.visitExpression(
+                expression, select -> processSelectBody(select, whereSegment),
+                function -> processFunction(function, whereSegment));
     }
 
     /**
@@ -312,7 +293,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
         Deque<List<Table>> onTableDeque = new LinkedList<>();
         for (Join join : joins) {
             // 处理 on 表达式
-            FromItem joinItem = join.getFromItem();
+            FromItem joinItem = JsqlParserAdapter.getJoinFromItem(join);
 
             // 获取当前 join 的表，subJoint 可以看作是一张表
             List<Table> joinTables = null;
@@ -433,7 +414,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
             return injectExpression;
         }
         if (isLowPrecedence(currentExpression)) {
-            return appendExpression(new ParenthesedExpressionList<>(currentExpression), injectExpression);
+            return appendExpression(JsqlParserAdapter.wrap(currentExpression), injectExpression);
         } else {
             return appendExpression(currentExpression, injectExpression);
         }
@@ -471,7 +452,7 @@ public abstract class BaseMultiTableInnerInterceptor extends JsqlParserSupport i
     }
 
     private Expression groupForAnd(Expression expression) {
-        return isLowPrecedence(expression) ? new ParenthesedExpressionList<>(expression) : expression;
+        return isLowPrecedence(expression) ? JsqlParserAdapter.wrap(expression) : expression;
     }
 
     /**

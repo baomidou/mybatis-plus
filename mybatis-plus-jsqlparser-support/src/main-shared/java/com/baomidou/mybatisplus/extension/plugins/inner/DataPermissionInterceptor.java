@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.baomidou.mybatisplus.extension.plugins.handler.MultiDataPermissionHandler;
@@ -32,7 +31,6 @@ import net.sf.jsqlparser.statement.select.ParenthesedSelect;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SetOperationList;
-import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -44,7 +42,6 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * 数据权限处理器
@@ -96,10 +93,7 @@ public class DataPermissionInterceptor extends BaseMultiTableInnerInterceptor im
             // 参照 com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor.processSelect 做的修改
             final String whereSegment = (String) obj;
             processSelectBody(select, whereSegment);
-            List<WithItem> withItemsList = select.getWithItemsList();
-            if (!CollectionUtils.isEmpty(withItemsList)) {
-                withItemsList.forEach(withItem -> processSelectBody(withItem, whereSegment));
-            }
+            JsqlParserAdapter.processWithItems(select, withItem -> processSelectBody(withItem, whereSegment));
         } else {
             // Keep the legacy handler's per-query contract and setWhere extension hook.
             processLegacySelect(select, (String) obj);

@@ -320,7 +320,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                             canRemoveJoin = false;
                             break;
                         }
-                        FromItem rightItem = join.getFromItem();
+                        FromItem rightItem = JsqlParserAdapter.getJoinFromItem(join);
                         String str = "";
                         if (rightItem instanceof Table) {
                             Table table = (Table) rightItem;
