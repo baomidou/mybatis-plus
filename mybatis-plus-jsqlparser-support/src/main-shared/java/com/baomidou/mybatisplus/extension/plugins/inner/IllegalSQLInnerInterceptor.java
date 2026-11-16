@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserAdapter;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
@@ -31,7 +32,6 @@ import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -201,9 +201,8 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * @param expression ignore
      */
     private void validExpression(Expression expression) {
-        while (expression instanceof ParenthesedExpressionList) {
-            ParenthesedExpressionList<Expression> parenthesis = (ParenthesedExpressionList) expression;
-            expression = parenthesis.get(0);
+        while (JsqlParserAdapter.isParenthesized(expression)) {
+            expression = JsqlParserAdapter.unwrap(expression);
         }
         //where条件使用了 or 关键字
         if (expression instanceof OrExpression) {
@@ -247,7 +246,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
         //允许执行join，验证jion是否使用索引等等
         if (joins != null) {
             for (Join join : joins) {
-                Table rightTable = (Table) join.getRightItem();
+                Table rightTable = (Table) JsqlParserAdapter.getJoinFromItem(join);
                 Collection<Expression> onExpressions = join.getOnExpressions();
                 for (Expression expression : onExpressions) {
                     validWhere(expression, table, rightTable, connection);
@@ -270,9 +269,11 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
             //表存在的索引
             String dbName = table.getSchemaName();
             String tableName = table.getName();
-            String catalogName = table.getCatalogName();
+            // JSqlParser 按 table、schema、catalog 的顺序保存表名各段。
+            List<String> nameParts = table.getNameParts();
+            String catalogName = nameParts.size() > 2 ? nameParts.get(2) : null;
             columnName = SqlParserUtils.removeWrapperSymbol(columnName);
-            List<IndexInfo> indexInfos = getIndexInfos(catalogName, dbName, tableName, connection);
+            List<IndexInfo> indexInfos = getIndexInfos(null, catalogName, dbName, tableName, connection);
             for (IndexInfo indexInfo : indexInfos) {
                 if (indexInfo.getColumnName().equalsIgnoreCase(columnName)) {
                     useIndexFlag = true;
@@ -343,6 +344,21 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
     /**
      * 得到表的索引信息
      *
+     * @param dbName 数据库名
+     * @param tableName 表名
+     * @param conn 数据库连接
+     * @return 索引信息
+     * @see #getIndexInfos(String, String, String, String, Connection)
+     * @deprecated 3.5.11
+     */
+    @Deprecated
+    public List<IndexInfo> getIndexInfos(String dbName, String tableName, Connection conn) {
+        return getIndexInfos(null, dbName, tableName, conn);
+    }
+
+    /**
+     * 得到表的索引信息
+     *
      * @param key 缓存key
      * @param dbName 数据库名
      * @param tableName 表名
@@ -360,7 +376,7 @@ public class IllegalSQLInnerInterceptor extends JsqlParserSupport implements Inn
      * 得到表的索引信息
      *
      * @param key 缓存key
-     * @param catalogName catalogName
+     * @param catalogName catalog 名，缺省时使用连接的 catalog
      * @param dbName 数据库名
      * @param tableName 表名
      * @param conn 数据库连接
