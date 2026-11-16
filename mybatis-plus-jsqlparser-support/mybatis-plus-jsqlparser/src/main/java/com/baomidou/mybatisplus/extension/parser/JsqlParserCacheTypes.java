@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.parser.cache;
+package com.baomidou.mybatisplus.extension.parser;
 
 import java.util.function.Consumer;
 
 /**
  * 本版本的 AST 类型注册清单，注册顺序影响序列化类型 ID。
  */
-final class JsqlParserCacheTypes {
+public final class JsqlParserCacheTypes {
 
     private JsqlParserCacheTypes() {
     }
 
-    static void registerFst(Consumer<Class<?>> registrar) {
+    public static void registerFst(Consumer<Class<?>> registrar) {
         register(registrar, type -> {
         });
     }
 
-    static void registerFuryAndFory(Consumer<Class<?>> registrar) {
+    public static void registerFuryAndFory(Consumer<Class<?>> registrar) {
         register(registrar, registrar);
     }
 

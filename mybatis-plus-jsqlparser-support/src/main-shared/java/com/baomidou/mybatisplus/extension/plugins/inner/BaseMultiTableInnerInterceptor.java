@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserAdapter;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.jsqlparser.enums.ExpressionAppendMode;
 import lombok.Data;

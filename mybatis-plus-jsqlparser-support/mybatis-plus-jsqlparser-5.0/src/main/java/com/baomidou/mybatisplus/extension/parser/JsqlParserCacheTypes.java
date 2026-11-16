@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.parser.cache;
+package com.baomidou.mybatisplus.extension.parser;
 
 import java.util.function.Consumer;
 
 /**
  * 本版本的 AST 类型注册清单，注册顺序影响序列化类型 ID。
  */
-final class JsqlParserCacheTypes {
+public final class JsqlParserCacheTypes {
 
     private JsqlParserCacheTypes() {
     }
 
-    static void registerFst(Consumer<Class<?>> registrar) {
+    public static void registerFst(Consumer<Class<?>> registrar) {
         register(registrar, type -> {
         });
     }
 
-    static void registerFuryAndFory(Consumer<Class<?>> registrar) {
+    public static void registerFuryAndFory(Consumer<Class<?>> registrar) {
         register(registrar, registrar);
     }
 
@@ -52,6 +52,7 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.expression.ExtractExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.FilterOverImpl.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.Function.class);
+        sharedTypes.accept(net.sf.jsqlparser.expression.Function.HavingClause.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.HexValue.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.IntervalExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.JdbcNamedParameter.class);
@@ -62,6 +63,7 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.expression.JsonFunctionExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.JsonKeyValuePair.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.KeepExpression.class);
+        sharedTypes.accept(net.sf.jsqlparser.expression.LambdaExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.LongValue.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.MySQLGroupConcat.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.MySQLIndexHint.class);
@@ -82,6 +84,7 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.expression.SQLServerHints.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.SignedExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.StringValue.class);
+        sharedTypes.accept(net.sf.jsqlparser.expression.StructType.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.TimeKeyExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.TimeValue.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.TimestampValue.class);
@@ -116,6 +119,7 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.Contains.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.DoubleAnd.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.EqualsTo.class);
+        sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.ExcludesExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.ExistsExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.ExpressionList.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.FullTextSearch.class);
@@ -123,6 +127,7 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.GreaterThan.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.InExpression.class);
+        sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.IncludesExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.IsBooleanExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.IsDistinctExpression.class);
         sharedTypes.accept(net.sf.jsqlparser.expression.operators.relational.IsNullExpression.class);
@@ -259,11 +264,14 @@ final class JsqlParserCacheTypes {
         sharedTypes.accept(net.sf.jsqlparser.util.cnfexpression.MultipleExpression.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.AnalyticType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.AnyType.class);
+        furyAndForyOnly.accept(net.sf.jsqlparser.expression.CastExpression.DataType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.DateTimeLiteralExpression.DateTime.class);
+        furyAndForyOnly.accept(net.sf.jsqlparser.expression.Function.NullHandling.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.JsonAggregateOnNullType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.JsonAggregateUniqueKeysType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.JsonFunctionType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.SpannerInterleaveIn.OnDelete.class);
+        furyAndForyOnly.accept(net.sf.jsqlparser.expression.StructType.Dialect.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.TrimFunction.TrimSpecification.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.WindowElement.Type.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.expression.WindowOffset.Type.class);
@@ -276,6 +284,7 @@ final class JsqlParserCacheTypes {
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.PurgeObjectType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.ReferentialAction.Action.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.ReferentialAction.Type.class);
+        furyAndForyOnly.accept(net.sf.jsqlparser.statement.ReturningClause.Keyword.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.alter.AlterOperation.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.alter.AlterSessionOperation.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.alter.AlterSystemOperation.class);
@@ -295,6 +304,7 @@ final class JsqlParserCacheTypes {
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.KSQLWindow.WindowType.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.MySqlSqlCacheFlags.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.OrderByElement.NullOrdering.class);
+        furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.PlainSelect.BigQuerySelectQualifier.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.SampleClause.SampleKeyword.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.SampleClause.SampleMethod.class);
         furyAndForyOnly.accept(net.sf.jsqlparser.statement.select.SetOperationList.SetOperationType.class);

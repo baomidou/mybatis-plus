@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.parser.cache;
 
+import com.baomidou.mybatisplus.extension.parser.JsqlParserCacheTypes;
+
 import org.apache.fury.Fury;
 import org.apache.fury.ThreadSafeFury;
 

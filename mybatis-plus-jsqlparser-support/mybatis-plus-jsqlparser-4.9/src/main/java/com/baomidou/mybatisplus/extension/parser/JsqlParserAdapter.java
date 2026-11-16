@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.inner;
+package com.baomidou.mybatisplus.extension.parser;
 
 import net.sf.jsqlparser.expression.*;
-import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.statement.select.*;
 
 import java.util.function.Consumer;
@@ -24,54 +23,51 @@ import java.util.function.Consumer;
 /**
  * 编译期 AST 适配：保留本模块 JSqlParser 版本的节点和访问器语义。
  */
-final class JsqlParserAdapter {
+public final class JsqlParserAdapter {
 
     private JsqlParserAdapter() {
     }
 
-    static Expression wrap(Expression expression) {
-        return new ParenthesedExpressionList<>(expression);
+    public static Expression wrap(Expression expression) {
+        return new Parenthesis(expression);
     }
 
-    static boolean isParenthesized(Expression expression) {
-        return expression instanceof ParenthesedExpressionList;
+    public static boolean isParenthesized(Expression expression) {
+        return expression instanceof Parenthesis;
     }
 
-    static Expression unwrap(Expression expression) {
-        return ((ParenthesedExpressionList<?>) expression).get(0);
+    public static Expression unwrap(Expression expression) {
+        return ((Parenthesis) expression).getExpression();
     }
 
-    static FromItem getJoinFromItem(Join join) {
+    public static FromItem getJoinFromItem(Join join) {
         return join.getRightItem();
     }
 
-    static void processWithItems(Select select, Consumer<Select> consumer) {
+    public static void processWithItems(Select select, Consumer<Select> consumer) {
         if (select.getWithItemsList() != null) {
-            select.getWithItemsList().forEach(withItem -> consumer.accept(withItem.getSelect()));
+            select.getWithItemsList().forEach(withItem -> consumer.accept(withItem));
         }
     }
 
-    static void visitExpression(Expression expression, Consumer<Select> selectConsumer,
+    public static void visitExpression(Expression expression, Consumer<Select> selectConsumer,
             Consumer<Function> functionConsumer) {
-        expression.accept(new ExpressionVisitorAdapter<Void>() {
+        expression.accept(new ExpressionVisitorAdapter() {
 
             @Override
-            public <S> Void visit(ParenthesedSelect select, S context) {
+            public void visit(ParenthesedSelect select) {
                 selectConsumer.accept(select);
-                return null;
             }
 
             @Override
-            public <S> Void visit(Select select, S context) {
+            public void visit(Select select) {
                 selectConsumer.accept(select);
-                return null;
             }
 
             @Override
-            public <S> Void visit(Function function, S context) {
+            public void visit(Function function) {
                 functionConsumer.accept(function);
-                return null;
             }
-        }, null);
+        });
     }
 }

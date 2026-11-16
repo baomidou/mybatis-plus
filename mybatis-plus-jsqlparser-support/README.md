@@ -14,7 +14,7 @@
 ## AST 版本适配
 
 `BaseMultiTableInnerInterceptor`、`DataPermissionInterceptor` 和 `PaginationInnerInterceptor` 的主体在共享目录维护。
-各版本在 `extension.plugins.inner` 包中提供包私有的 `JsqlParserAdapter`，由编译期选择对应实现，不使用反射或运行时版本判断。
+各版本在 `extension.parser` 包中提供 `JsqlParserAdapter`，由编译期选择对应实现，不使用反射或运行时版本判断。
 适配范围包括括号表达式、JOIN 右侧节点、CTE 查询节点和表达式 Visitor 签名。
 
 适配方法必须保留原版本的遍历顺序和节点语义。例如，5.x 的括号提取沿用第一个元素的处理方式，不能顺带扩展为列表遍历。
