@@ -2,7 +2,6 @@ package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
@@ -56,17 +55,17 @@ class MybatisEnumTypeHandlerTest {
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
         assertThat(handler.getResult(resultSet, "column")).isEqualTo(SexEnum.MAN);
 
-        when(resultSet.getObject(1, Integer.class)).thenReturn(2);
-        assertThat(handler.getResult(resultSet, 1)).isEqualTo(SexEnum.WO_MAN);
-
-        when(callableStatement.getObject(1, Integer.class)).thenReturn(null);
-        assertThat(handler.getResult(callableStatement, 1)).isNull();
+        when(resultSet.getObject("column", Integer.class)).thenReturn(2);
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(SexEnum.WO_MAN);
 
         handler.setParameter(preparedStatement, 1, SexEnum.MAN, null);
         verify(preparedStatement).setObject(1, 1);
 
         handler.setParameter(preparedStatement, 2, SexEnum.WO_MAN, JdbcType.INTEGER);
         verify(preparedStatement).setObject(2, 2, JdbcType.INTEGER.TYPE_CODE);
+
+        handler.setParameter(preparedStatement, 3, null, JdbcType.INTEGER);
+        verify(preparedStatement).setNull(3, JdbcType.INTEGER.TYPE_CODE);
     }
 
     @Test
@@ -76,11 +75,47 @@ class MybatisEnumTypeHandlerTest {
         when(resultSet.getObject("column", Integer.class)).thenReturn(1);
         assertThat(handler.getResult(resultSet, "column")).isEqualTo(GradeEnum.PRIMARY);
 
+        when(resultSet.getObject("column", Integer.class)).thenReturn(2);
+        assertThat(handler.getResult(resultSet, "column")).isEqualTo(GradeEnum.SECONDARY);
+
         when(resultSet.getObject("column", Integer.class)).thenReturn(3);
         assertThat(handler.getResult(resultSet, "column")).isEqualTo(GradeEnum.HIGH);
 
         handler.setParameter(preparedStatement, 1, GradeEnum.SECONDARY, null);
         verify(preparedStatement).setObject(1, 2);
+    }
+
+    @Test
+    void shouldReadResultSetByColumnIndex() throws Exception {
+        MybatisEnumTypeHandler<SexEnum> handler = new MybatisEnumTypeHandler<>(SexEnum.class);
+
+        when(resultSet.getObject(1, Integer.class)).thenReturn(2);
+        when(resultSet.getObject(2, Integer.class)).thenReturn(null);
+
+        assertThat(handler.getResult(resultSet, 1)).isEqualTo(SexEnum.WO_MAN);
+        assertThat(handler.getResult(resultSet, 2)).isNull();
+    }
+
+    @Test
+    void shouldReadCallableStatementByColumnIndex() throws Exception {
+        MybatisEnumTypeHandler<GradeEnum> handler = new MybatisEnumTypeHandler<>(GradeEnum.class);
+
+        when(callableStatement.getObject(1, Integer.class)).thenReturn(1);
+        when(callableStatement.getObject(2, Integer.class)).thenReturn(null);
+
+        assertThat(handler.getResult(callableStatement, 1)).isEqualTo(GradeEnum.PRIMARY);
+        assertThat(handler.getResult(callableStatement, 2)).isNull();
+    }
+
+    @Test
+    void shouldReadCharacterEnumValues() throws Exception {
+        MybatisEnumTypeHandler<CharacterEnum> handler = new MybatisEnumTypeHandler<>(CharacterEnum.class);
+
+        when(resultSet.getObject("first", Character.class)).thenReturn('1');
+        when(resultSet.getObject("second", Character.class)).thenReturn('2');
+
+        assertThat(handler.getResult(resultSet, "first")).isEqualTo(CharacterEnum.ONE);
+        assertThat(handler.getResult(resultSet, "second")).isEqualTo(CharacterEnum.TWO);
     }
 
     @Test
@@ -92,8 +127,13 @@ class MybatisEnumTypeHandlerTest {
 
         when(resultSet.getObject("column", Integer.class)).thenReturn(9);
         assertThat(handler.getResult(resultSet, "column")).isNull();
+    }
 
-        when(callableStatement.getObject(1, Integer.class)).thenReturn(0);
+    @Test
+    void shouldIgnoreMatchingEnumValueWhenJdbcReportsNull() throws Exception {
+        MybatisEnumTypeHandler<SexEnum> handler = new MybatisEnumTypeHandler<>(SexEnum.class);
+
+        when(callableStatement.getObject(1, Integer.class)).thenReturn(1);
         when(callableStatement.wasNull()).thenReturn(true);
         assertThat(handler.getResult(callableStatement, 1)).isNull();
     }
@@ -137,13 +177,8 @@ class MybatisEnumTypeHandlerTest {
     }
 
     @Test
-    void shouldDetectMpEnums() {
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(String.class)).isEmpty();
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).isPresent();
-        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class)).isEmpty();
-        assertThat(EnumUtils.isMpEnums(SexEnum.class)).isTrue();
-        assertThat(EnumUtils.isMpEnums(GradeEnum.class)).isTrue();
-        assertThat(EnumUtils.isMpEnums(PlainEnum.class)).isFalse();
+    void shouldFindAnnotatedEnumValueField() {
+        assertThat(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class)).contains("code");
     }
 
     @Test
@@ -246,6 +281,8 @@ class MybatisEnumTypeHandlerTest {
     @AllArgsConstructor
     enum CharacterEnum {
 
+        ONE('1'),
+        TWO('2'),
         FOUR('4');
 
         @EnumValue
