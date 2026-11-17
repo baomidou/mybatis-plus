@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -127,16 +128,13 @@ class IllegalSQLInnerInterceptorTest {
                         dataSource.getConnection()))
                 .isInstanceOf(MybatisPlusException.class);
 
-        assertThatCode(
-                () -> interceptor.parserSingle(
-                        "SELECT * FROM PUBLIC.`T_DEMO` a INNER JOIN `T_TEST` b ON a.a = b.a WHERE a.a = 1",
-                        dataSource.getConnection()))
-                .doesNotThrowAnyException();
-        assertThatThrownBy(
-                () -> interceptor.parserSingle(
-                        "SELECT * FROM PUBLIC.`T_DEMO` a INNER JOIN `T_TEST` b ON a.a = b.a WHERE a.b = 1",
-                        dataSource.getConnection()))
-                .isInstanceOf(MybatisPlusException.class);
+        for (String rightTable : List.of("PUBLIC.`T_TEST`", "`T_TEST`")) {
+            String joinSql = "SELECT * FROM PUBLIC.`T_DEMO` a INNER JOIN " + rightTable + " b ON a.a = b.a WHERE ";
+            assertThatCode(() -> interceptor.parserSingle(joinSql + "a.a = 1", dataSource.getConnection()))
+                    .doesNotThrowAnyException();
+            assertThatThrownBy(() -> interceptor.parserSingle(joinSql + "a.b = 1", dataSource.getConnection()))
+                    .isInstanceOf(MybatisPlusException.class);
+        }
 
         assertThatCode(
                 () -> interceptor.parserSingle(

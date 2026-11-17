@@ -9,6 +9,13 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,16 +75,29 @@ class JSqlParserTest {
         assertThat(delete.getWhere()).isNull();
     }
 
-    @Test
-    void shouldParseSelectForUpdate() throws Exception {
-        assertThat(CCJSqlParserUtil.parse("select * from t_demo where a = 1 for update").toString())
-                .isEqualTo("SELECT * FROM t_demo WHERE a = 1 FOR UPDATE");
-        assertThat(
-                CCJSqlParserUtil.parse(
-                        "select * from sys_sms_send_record where check_status = 0 for update order by submit_time asc limit 10")
-                        .toString())
-                .isEqualTo(
-                        "SELECT * FROM sys_sms_send_record WHERE check_status = 0 ORDER BY submit_time ASC LIMIT 10 FOR UPDATE");
+    @ParameterizedTest
+    @MethodSource("selectForUpdateCases")
+    void shouldParseSelectForUpdate(String sql, String expectedSql) throws JSQLParserException {
+        assertThat(CCJSqlParserUtil.parse(sql).toString()).isEqualTo(expectedSql);
+    }
+
+    private static Stream<Arguments> selectForUpdateCases() throws IOException {
+        Properties parser = new Properties();
+        try (var metadata = CCJSqlParserUtil.class
+                .getResourceAsStream("/META-INF/maven/com.github.jsqlparser/jsqlparser/pom.properties")) {
+            parser.load(metadata);
+        }
+        String version = parser.getProperty("version");
+        String earlyLock = " FOR UPDATE ORDER BY submit_time ASC LIMIT 10";
+        String lateLock = " ORDER BY submit_time ASC LIMIT 10 FOR UPDATE";
+        String select = "SELECT * FROM sys_sms_send_record WHERE check_status = 0";
+        // 5.0 和 5.2 覆盖旧写法，4.9 将锁子句输出在 ORDER BY 之前。
+        String input = "5.0".equals(version) || "5.2".equals(version) ? earlyLock : lateLock;
+        String expected = "4.9".equals(version) ? earlyLock : lateLock;
+        return Stream.of(
+                Arguments.of(
+                        "select * from t_demo where a = 1 for update", "SELECT * FROM t_demo WHERE a = 1 FOR UPDATE"),
+                Arguments.of(select + input, select + expected));
     }
 
 }

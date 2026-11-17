@@ -165,9 +165,9 @@ class TestConventionTest {
      * spring-boot-starter 的 {@code MybatisPlusPropertiesTest} 迁入 test-shared 后不再被扫描，去掉 3 处（34 → 31）。<br>
      * JSqlParser 的 {@code DataPermissionInterceptorTest} 迁入 test-shared，去掉 4 处（31 → 27）。<br>
      * {@code DynamicTableNameJsqlParserInnerInterceptorTest} 迁入 test-shared，再去掉 4 处（27 → 23）。<br>
-     * 剩下的 23 处均在 JSqlParser 版本模块，可通过 {@code sourceSets} 共享测试源码继续收窄。
+     * JSqlParser 版本模块的测试已迁入 test-shared。
      */
-    private static final int MAX_PACKAGE_MISMATCHES = 23;
+    private static final int MAX_PACKAGE_MISMATCHES = 0;
 
     /**
      * T4 仍在调用可转换 JUnit 断言的测试文件数。2026-10-21 逐模块清完 core、extension、spring、
@@ -188,8 +188,8 @@ class TestConventionTest {
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。测试迁入 test-shared 后， 从此清单移除相应的类名。
      */
     private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "DbTest", "GeneratePomTest", "IllegalSQLInnerInterceptorTest", "JSqlParserTest", "MetaObjectHandlerTest",
-            "MetadataTest", "MybatisEnumTypeHandlerTest", "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
+            "DbTest", "GeneratePomTest", "MetaObjectHandlerTest", "MetadataTest", "MybatisEnumTypeHandlerTest",
+            "SqlRunnerTest", "StringUtilsTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。
