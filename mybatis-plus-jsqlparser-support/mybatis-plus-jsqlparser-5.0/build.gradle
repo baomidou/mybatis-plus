@@ -13,6 +13,7 @@ sourceSets {
     main {
         java {
             srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/main-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/main-shared-5x/java"
         }
     }
     test {

@@ -729,6 +729,10 @@ class TestConventionTest {
                     "mybatis-plus-jsqlparser-5.2").contains(lastName(module))) {
                 mainSources.addAll(sources(module.getParent().resolve("src/main-shared/java")));
             }
+            if (Set.of("mybatis-plus-jsqlparser", "mybatis-plus-jsqlparser-5.0", "mybatis-plus-jsqlparser-5.2")
+                    .contains(lastName(module))) {
+                mainSources.addAll(sources(module.getParent().resolve("src/main-shared-5x/java")));
+            }
             String moduleName = ROOT.relativize(module).toString().replace('\\', '/');
             Map<String, Set<String>> byClass = byModule.computeIfAbsent(moduleName, key -> new TreeMap<>());
             for (Path file : mainSources) {

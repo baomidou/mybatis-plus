@@ -3,6 +3,7 @@
 四个版本模块保留各自的 JSqlParser 依赖和发布坐标，分别编译、测试和发布。
 
 - `src/main-shared/java`：四个版本共用的生产源码，由各版本模块的 `main` 源集引用，不单独编译或发布。
+- `src/main-shared-5x/java`：仅 5.0、5.2、5.4 的 `main` 源集引用，存放 5.x 共用的生产源码，例如 `DynamicTableNameVisitor`。
 - 各版本模块的 `src/main/java`：与 JSqlParser 版本相关的实现。
 - `src/test-shared/java`：四个版本共用的测试源码，由各版本模块的 `test` 源集引用，不单独编译或发布。
 

@@ -41,7 +41,7 @@ public final class JsqlParserAdapter {
     }
 
     public static FromItem getJoinFromItem(Join join) {
-        return join.getRightItem();
+        return join.getFromItem();
     }
 
     public static void processWithItems(Select select, Consumer<Select> consumer) {
