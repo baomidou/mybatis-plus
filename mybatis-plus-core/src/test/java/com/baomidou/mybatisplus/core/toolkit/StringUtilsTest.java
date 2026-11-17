@@ -49,4 +49,23 @@ class StringUtilsTest {
         assertThat(StringUtils.equals("abc", "abc")).isTrue();
         assertThat(StringUtils.equals("abc", "ABC")).isFalse();
     }
+
+    @Test
+    void isBlankTest() {
+        assertThat(StringUtils.isBlank("")).isTrue();
+        assertThat(StringUtils.isBlank(null)).isTrue();
+        assertThat(StringUtils.isBlank("   ")).isTrue();
+    }
+
+    @Test
+    void sqlInjectionBlackTest() {
+        String originalStr = "(select*from(select sleep(if(length(database())=13,3,0))union/**/select+1)a)";
+        assertThat(StringUtils.sqlInjectionReplaceBlank(originalStr))
+                .isEqualTo("(selectfrom(selectsleep(if(length(database())13,3,0))union//select1)a)");
+    }
+
+    @Test
+    void sqlInjectionBlackCharTest() {
+        assertThat(StringUtils.sqlInjectionReplaceBlank("'\"<>&*+=#-;    \n\t")).isEmpty();
+    }
 }

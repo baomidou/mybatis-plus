@@ -187,9 +187,8 @@ class TestConventionTest {
     /**
      * T2 历史遗留的同名测试类（复制出来的版本矩阵与 starter 副本），去重前不允许新增。测试迁入 test-shared 后， 从此清单移除相应的类名。
      */
-    private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set.of(
-            "DbTest", "GeneratePomTest", "MetaObjectHandlerTest", "MetadataTest", "SqlRunnerTest", "StringUtilsTest",
-            "TableInfoTest");
+    private static final Set<String> REGISTERED_DUPLICATE_NAMES = Set
+            .of("DbTest", "GeneratePomTest", "SqlRunnerTest", "TableInfoTest");
 
     /**
      * T5 用 Thread.sleep 当同步的文件。

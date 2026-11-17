@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,6 +32,49 @@ class MetaObjectHandlerTest {
     @BeforeAll
     static void initXt() {
         TableInfoHelper.initTableInfo(assistant, Xt.class);
+        TableInfoHelper.initTableInfo(assistant, FillDemo.class);
+    }
+
+    @Test
+    void strictInsertFillOnlyAcceptsBoxedClass() {
+        assertThat(Long.TYPE).as("原始 long.class 和实体属性的 java.lang.Long 是两个不同的 Class").isNotEqualTo(Long.class);
+        FillDemo demo = new FillDemo();
+        fillHandler().insertFill(configuration.newMetaObject(demo));
+        assertThat(demo.getTestLong()).as("按原始类型 Class 匹配不到属性，既不报错也不填").isNull();
+        assertThat(demo.getTestInt()).as("换成包装类型就填得上").isEqualTo(123);
+    }
+
+    @Test
+    void strictInsertFillWritesEveryAnnotatedField() {
+        FillDemo demo = new FillDemo();
+        demo.setTestString("原有值");
+        fillHandler().insertFill(configuration.newMetaObject(demo));
+        assertThat(demo.getTestString()).as("有值不覆盖").isEqualTo("原有值");
+        assertThat(demo.getTestDate()).isNotNull();
+        assertThat(demo.getTestLocalDateTime()).isNotNull();
+        assertThat(demo.getTestLocalDate()).isNotNull();
+        assertThat(demo.getTestBoolean()).isFalse();
+    }
+
+    private MetaObjectHandler fillHandler() {
+        return new MetaObjectHandler() {
+
+            @Override
+            public void insertFill(MetaObject metaObject) {
+                strictInsertFill(metaObject, "testString", String.class, "123");
+                strictInsertFill(metaObject, "testInt", Integer.class, 123);
+                strictInsertFill(metaObject, "testLocalDateTime", LocalDateTime.class, LocalDateTime.now());
+                strictInsertFill(metaObject, "testBoolean", Boolean.class, false);
+                strictInsertFill(metaObject, "testDate", Date.class, new Date());
+                strictInsertFill(metaObject, "testLocalDate", LocalDate.class, LocalDate.now());
+                // 故意用原始类型 long.class，用例要靠它演示填充被静默跳过
+                strictInsertFill(metaObject, "testLong", Long.TYPE, 123456L);
+            }
+
+            @Override
+            public void updateFill(MetaObject metaObject) {
+            }
+        };
     }
 
     @Test
@@ -140,6 +184,31 @@ class MetaObjectHandlerTest {
         assertThat(xt.getBirthday()).isNotNull();
         assertThat(xt.getDateTime()).isNotNull();
         assertThat(xt.getOjbk()).isNotNull();
+    }
+
+    @Data
+    static class FillDemo {
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private String testString;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private Integer testInt;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private Long testLong;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private Date testDate;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private LocalDateTime testLocalDateTime;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private Boolean testBoolean;
+
+        @TableField(fill = FieldFill.INSERT_UPDATE)
+        private LocalDate testLocalDate;
     }
 
     @Data
