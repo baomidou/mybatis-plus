@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.Data;
@@ -61,10 +62,31 @@ class LambdaAutoMappingTest {
                 + (mapping ? ",typeHandler=" + StringTypeHandler.class.getName() : "") + "}";
     }
 
+    @Test
+    void setUsesFieldMappingOnlyWhenEnabled() {
+        LambdaUpdateWrapper<Entity> defaults = Wrappers.<Entity>lambdaUpdate().set(Entity::getName, "first");
+        assertThat(defaults.getSqlSet()).isEqualTo("name=" + param(1, false));
+
+        LambdaUpdateWrapper<Entity> wrapper = Wrappers.<Entity>lambdaUpdate().enableAutoMapping()
+                .set(false, Entity::getName, "skipped").set(Entity::getName, null).set(Entity::getCode, "plain");
+        assertThat(wrapper.getSqlSet()).isEqualTo("name=" + param(1, true) + ",code=" + param(2, false));
+        assertThat(wrapper.getParamNameValuePairs()).hasSize(2).containsEntry("MPGENVAL1", null)
+                .containsEntry("MPGENVAL2", "plain");
+    }
+
+    @Test
+    void explicitSetMappingTakesPrecedence() {
+        LambdaUpdateWrapper<Entity> wrapper = Wrappers.<Entity>lambdaUpdate().enableAutoMapping()
+                .set(Entity::getName, "value", "jdbcType=VARCHAR");
+        assertThat(wrapper.getSqlSet()).isEqualTo("name=#{ew.paramNameValuePairs.MPGENVAL1,jdbcType=VARCHAR}");
+    }
+
     @Data
     private static class Entity {
 
         @TableField(typeHandler = StringTypeHandler.class)
         private String name;
+
+        private String code;
     }
 }
