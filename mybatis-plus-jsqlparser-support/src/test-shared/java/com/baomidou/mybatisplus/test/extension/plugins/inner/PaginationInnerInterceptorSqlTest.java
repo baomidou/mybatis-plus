@@ -131,6 +131,13 @@ class PaginationInnerInterceptorSqlTest {
                 HAVING SUM(p.amount) > ?) TOTAL""");
     }
 
+    @Test
+    void preservesWindowAliasAndJoinedTableUsedByQualify() {
+        String ranked = "SELECT a.id, ROW_NUMBER() OVER (ORDER BY p.amount DESC) AS rn FROM account a "
+                + "LEFT JOIN payment p ON a.id = p.account_id WHERE a.active = ? QUALIFY rn <= ?";
+        assertCountSql(ranked + " ORDER BY a.id", "SELECT COUNT(*) FROM (" + ranked + ") TOTAL");
+    }
+
     // 普通列排序不影响计数，生成 COUNT SQL 时可以移除。
     @Test
     void removesUnparameterizedOrderByFromCount() {
