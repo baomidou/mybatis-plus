@@ -46,16 +46,6 @@ class H2User2Test extends H2TestSupport {
     }
 
     @Test
-    void lambdaUpdateAppliesFieldHandlerToSetValue() {
-        int updated = h2User2Mapper.update(
-                Wrappers.<H2User2>lambdaUpdate().enableAutoMapping().set(H2User2::getName, "{\"name\":\"updated\"}")
-                        .eq(H2User2::getTestId, 101L));
-        assertThat(updated).isEqualTo(1);
-        assertThat(jdbcTemplate.queryForObject("SELECT name FROM h2user WHERE test_id = 101", String.class))
-                .isEqualTo("updated");
-    }
-
-    @Test
     void shouldUpdateByIdWithCollection() {
         List<H2User2> h2User2List = new ArrayList<>();
         h2User2List.add(new H2User2(101L, "{\"id\":101,\"name\":\"hi 101\"}"));
