@@ -50,7 +50,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     protected boolean autoMapping = false;
 
     /**
-     * 开启字段参数自动映射，请在添加条件前调用。
+     * 开启字段参数自动映射，请在添加条件或 SET 赋值前调用。Lambda 更新的 SET 优先使用显式指定的 mapping。
      *
      * @return this
      */
