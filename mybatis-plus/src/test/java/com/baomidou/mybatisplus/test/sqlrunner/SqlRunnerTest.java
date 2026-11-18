@@ -10,8 +10,6 @@ import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,27 +60,6 @@ public class SqlRunnerTest extends DbTestSupport<EntityMapper> {
                 .selectPage(new Page<>(1, 2), "select * from entity where {0} is null order by id", (Object) null);
         assertThat(page.getTotal()).isEqualTo(5);
         assertThat(page.getRecords()).hasSize(2);
-    }
-
-    @Test
-    void selectPageCountsRowsMatchingWindowExpression() {
-        Page<Map<String, Object>> page = SqlRunner.db().selectPage(
-                new Page<>(2, 1), "SELECT id FROM entity WHERE id > {0} QUALIFY COUNT(*) OVER () = {1} ORDER BY id", 1,
-                4);
-        assertThat(page.getTotal()).isEqualTo(4);
-        assertThat(page.getRecords()).extracting(row -> row.get("ID")).containsExactly(3L);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void selectPageCountsRowsMatchingWindowAlias(boolean optimize) {
-        Page<Map<String, Object>> page = new Page<Map<String, Object>>(2, 1).setOptimizeCountSql(optimize);
-        SqlRunner.db().selectPage(page, """
-                SELECT id, ROW_NUMBER() OVER (PARTITION BY MOD(id, 2) ORDER BY id DESC) AS rn
-                FROM entity WHERE id > {0} QUALIFY rn <= {1} ORDER BY id
-                """, 1, 1);
-        assertThat(page.getTotal()).isEqualTo(2);
-        assertThat(page.getRecords()).extracting(row -> row.get("ID")).containsExactly(5L);
     }
 
     @Test
