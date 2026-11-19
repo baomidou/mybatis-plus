@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -921,6 +922,17 @@ class TenantLineInnerInterceptorTest {
         assertSql("insert into entity (id,name) select id,name from (select id,name from entity3 e3) t", appendMode);
         assertSql("insert into entity (id,name) select * from (select id,name from entity3 e3) t", appendMode);
         assertSql("insert into entity (id,name) select t.* from (select id,name from entity3 e3) t", appendMode);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void insertSelectUnion(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String sql = interceptor
+                .parserSingle("insert into entity (id) select id from entity2 union all select id from entity3", null);
+        assertThat(sql.toUpperCase(Locale.ROOT)).isEqualTo(
+                "INSERT INTO ENTITY (ID, TENANT_ID) SELECT ID, TENANT_ID FROM ENTITY2 WHERE TENANT_ID = 1 "
+                        + "UNION ALL SELECT ID, TENANT_ID FROM ENTITY3 WHERE TENANT_ID = 1");
     }
 
     @ParameterizedTest
