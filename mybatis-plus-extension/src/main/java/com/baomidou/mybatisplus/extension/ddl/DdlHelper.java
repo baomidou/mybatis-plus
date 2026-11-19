@@ -124,13 +124,15 @@ public class DdlHelper {
         // 执行 SQL 脚本
         for (String sqlFile : sqlFiles) {
             try {
+                String[] sqlFileArr = sqlFile.split(StringPool.HASH);
+                // History records the script path without the optional delimiter suffix.
+                String scriptPath = sqlFileArr.length == 2 ? sqlFileArr[0] : sqlFile;
                 List<Map<String, Object>> objectMap = sqlRunner
-                        .selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
+                        .selectAll(ddlGenerator.selectDdlHistory(scriptPath, StringPool.SQL));
                 if (null == objectMap || objectMap.isEmpty()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Run script file: " + sqlFile);
                     }
-                    String[] sqlFileArr = sqlFile.split(StringPool.HASH);
                     if (Objects.equals(2, sqlFileArr.length)) {
                         // 命令间的分隔符
                         scriptRunner.setDelimiter(sqlFileArr[1]);

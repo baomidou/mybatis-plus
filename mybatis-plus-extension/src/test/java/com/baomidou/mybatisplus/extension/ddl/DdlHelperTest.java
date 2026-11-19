@@ -10,7 +10,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -28,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong
  */
-@Tag("unit")
+@Tag("integration")
 public class DdlHelperTest {
 
     private static final List<String> SCRIPTS = List.of("ddl/test.sql");
@@ -203,8 +206,36 @@ public class DdlHelperTest {
     @Test
     void shouldHandleCustomDelimiterInScriptName() throws SQLException {
         var dataSource = h2DataSource("ddl_h2_delimiter", "MODE=MySQL;DATABASE_TO_LOWER=TRUE");
+        DdlHelper.runScript(new MysqlDdlGenerator(), dataSource, SCRIPTS, true, THROWS);
         DdlHelper.runScript(new MysqlDdlGenerator(), dataSource, List.of("ddl/test.sql#;"), true, THROWS);
         assertRecorded(dataSource);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"$", "//"})
+    void delimiterSuffixDoesNotReplayCompletedMigrations(String delimiter) throws Exception {
+        var dataSource = h2DataSource("ddl_h2_replay_" + delimiter.length(), "MODE=MySQL;DATABASE_TO_LOWER=TRUE");
+        Path customScript = tempDir.resolve("custom.sql");
+        Path regularScript = tempDir.resolve("regular.sql");
+        Files.writeString(customScript, "UPDATE zz_ddl_once SET applied = applied + 1" + delimiter + "\n");
+        Files.writeString(regularScript, "UPDATE zz_ddl_once SET applied = applied + 10;\n");
+        try (Connection connection = dataSource.getConnection(); var statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE zz_ddl_once (applied INT)");
+            statement.execute("INSERT INTO zz_ddl_once VALUES (0)");
+        }
+        List<String> scripts = List.of(customScript + "#" + delimiter, regularScript.toString());
+        List<Exception> errors = new ArrayList<>();
+        DdlHelper.runScript(new MysqlDdlGenerator(), dataSource, scripts, true, (path, error) -> errors.add(error));
+        DdlHelper.runScript(new MysqlDdlGenerator(), dataSource, scripts, true, (path, error) -> errors.add(error));
+        try (Connection connection = dataSource.getConnection();
+                var statement = connection.createStatement();
+                ResultSet result = statement.executeQuery("SELECT applied FROM zz_ddl_once")) {
+            assertThat(result.next()).isTrue();
+            assertThat(result.getInt(1)).isEqualTo(11);
+            assertThat(historyRows(connection, ddlHistoryTable(connection)))
+                    .containsExactlyInAnyOrder(customScript + "|sql", regularScript + "|sql");
+        }
+        assertThat(errors).isEmpty();
     }
 
     @Test
