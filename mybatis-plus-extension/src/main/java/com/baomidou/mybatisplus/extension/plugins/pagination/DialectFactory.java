@@ -62,8 +62,7 @@ public class DialectFactory {
                 dialect = new SybaseDialect();
             } else if (dbType == DbType.XCloud) {
                 dialect = new XCloudDialect();
-            } else if (dbType == DbType.GBASE_8S || dbType == DbType.GBASEDBT || dbType == DbType.GBASE_INFORMIX
-                    || dbType == DbType.SINODB) {
+            } else if (dbType == DbType.GBASE_8S || dbType == DbType.SINODB) {
                 dialect = new GBase8sDialect();
             } else if (dbType == DbType.INFORMIX) {
                 dialect = new InformixDialect();

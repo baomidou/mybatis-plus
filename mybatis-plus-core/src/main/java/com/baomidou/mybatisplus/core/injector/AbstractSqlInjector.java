@@ -52,11 +52,8 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(modelClass);
                 Assert.notNull(
                         tableInfo, "TableInfo must be initialized before SQL injection: %s", modelClass.getName());
-                List<AbstractMethod> methodList = this.getMethodList(mapperClass, tableInfo);
-                // 兼容旧代码
-                if (CollectionUtils.isEmpty(methodList)) {
-                    methodList = this.getMethodList(builderAssistant.getConfiguration(), mapperClass, tableInfo);
-                }
+                List<AbstractMethod> methodList = this
+                        .getMethodList(builderAssistant.getConfiguration(), mapperClass, tableInfo);
                 if (CollectionUtils.isNotEmpty(methodList)) {
                     // 循环注入自定义方法
                     methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
@@ -66,22 +63,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 mapperRegistryCache.add(className);
             }
         }
-    }
-
-    /**
-     * <p>
-     * 获取 注入的方法
-     * </p>
-     *
-     * @param mapperClass 当前mapper
-     * @param tableInfo 表信息
-     * @return 注入的方法集合
-     * @since 3.1.2 add mapperClass
-     * @deprecated 3.5.6 {@link #getMethodList(Configuration, Class, TableInfo)}
-     */
-    @Deprecated
-    public List<AbstractMethod> getMethodList(Class<?> mapperClass, TableInfo tableInfo) {
-        return getMethodList(tableInfo.getConfiguration(), mapperClass, tableInfo);
     }
 
     /**
@@ -96,5 +77,4 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
     public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass, TableInfo tableInfo) {
         return new ArrayList<>();
     }
-
 }

@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
-import com.baomidou.mybatisplus.generator.config.builder.Service;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
 import lombok.Getter;
@@ -362,15 +361,5 @@ public class TableInfo {
     @NotNull
     public List<TableField> getCommonFields() {
         return commonFields;
-    }
-
-    /**
-     * 获取是否生成service接口
-     * 
-     * @deprecated {@link Service.Builder#disableService()}
-     */
-    @Deprecated
-    public boolean isServiceInterface() {
-        return globalConfig.isServiceInterface();
     }
 }

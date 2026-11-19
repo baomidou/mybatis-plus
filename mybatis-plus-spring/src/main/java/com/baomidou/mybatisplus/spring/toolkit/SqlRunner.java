@@ -281,12 +281,4 @@ public class SqlRunner extends AbstractSqlRunner {
         return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(SqlHelper.FACTORY);
     }
 
-    /**
-     * @deprecated 3.5.3.2
-     */
-    @Deprecated
-    public void close() {
-
-    }
-
 }

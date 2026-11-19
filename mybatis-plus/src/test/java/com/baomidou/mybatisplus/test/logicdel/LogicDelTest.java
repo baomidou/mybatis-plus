@@ -5,19 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.Data;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -88,22 +81,6 @@ public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
             });
         });
 
-        doTest(mapper -> {
-            Entity entity1 = new Entity();
-            entity1.setName("测试自定义方法根据实体批量删除");
-            mapper.insert(entity1);
-            Entity entity2 = new Entity();
-            entity2.setName("测试自定义方法根据实体批量删除");
-            mapper.insert(entity2);
-            List<Entity> entityList = new ArrayList<>();
-            entityList.add(entity1);
-            entityList.add(entity2);
-            assertThat(mapper.testDeleteBatch(entityList)).isEqualTo(2);
-            entityList.forEach(entity -> {
-                assertThat(entity.getDeleteBy()).isEqualTo("聂秋秋");
-            });
-        });
-
     }
 
     @Override
@@ -142,16 +119,6 @@ public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
                 strictUpdateFill(metaObject, "deleteBy", String.class, "聂秋秋");
             }
         });
-        globalConfig.setSqlInjector(new DefaultSqlInjector() {
-
-            @Override
-            public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass,
-                    TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
-                methodList.add(new LogicDeleteBatchByIds("testDeleteBatch"));
-                return methodList;
-            }
-        });
         return globalConfig;
     }
 
@@ -159,8 +126,6 @@ public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
 
         @Select("select * from entity where id = #{id}")
         Entity byId(Long id);
-
-        int testDeleteBatch(@Param(Constants.COLL) List<Entity> entityList);
 
     }
 

@@ -172,17 +172,6 @@ public interface BaseMapper<T> extends Mapper<T> {
      * 删除（根据ID或实体 批量删除）
      *
      * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
-     * @deprecated 3.5.7 {@link #deleteByIds(Collection)}
-     */
-    @Deprecated
-    default int deleteBatchIds(@Param(Constants.COLL) Collection<?> idList) {
-        return deleteByIds(idList);
-    }
-
-    /**
-     * 删除（根据ID或实体 批量删除）
-     *
-     * @param idList 主键ID列表或实体列表(不能为 null 以及 empty)
      * @since 3.5.7
      */
     default int deleteByIds(@Param(Constants.COLL) Collection<?> idList) {
@@ -276,8 +265,9 @@ public interface BaseMapper<T> extends Mapper<T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      * @return 数据列表
-     * @deprecated 3.5.8
+     * @deprecated 3.5.19 {@link #selectByIds(Collection)}
      */
+    @Deprecated
     default List<T> selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList) {
         return selectByIds(idList);
     }
@@ -290,18 +280,6 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @since 3.5.8
      */
     void selectByIds(@Param(Constants.COLL) Collection<? extends Serializable> idList, ResultHandler<T> resultHandler);
-
-    /**
-     * @param idList idList 主键ID列表(不能为 null 以及 empty)
-     * @param resultHandler resultHandler 结果处理器 {@link ResultHandler}
-     * @since 3.5.4
-     * @deprecated 3.5.8
-     */
-    @Deprecated
-    default void selectBatchIds(@Param(Constants.COLL) Collection<? extends Serializable> idList,
-            ResultHandler<T> resultHandler) {
-        selectByIds(idList, resultHandler);
-    }
 
     /**
      * 查询（根据 columnMap 条件）

@@ -35,7 +35,7 @@ public class JsqlParserGlobal {
      * 默认线程数大小
      *
      * @since 3.5.6
-     * @deprecated {@link JsqlParserThreadPool#DEFAULT_THREAD_SIZE}
+     * @deprecated 3.5.11 {@link JsqlParserThreadPool#DEFAULT_THREAD_SIZE}
      */
     @Deprecated
     public static final int DEFAULT_THREAD_SIZE = (Runtime.getRuntime().availableProcessors() + 1) / 2;

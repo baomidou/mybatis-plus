@@ -222,25 +222,6 @@ public abstract class AbstractTemplateEngine {
     }
 
     /**
-     * 获取模板路径
-     *
-     * @param function function
-     * @return 模板路径
-     * @since 3.5.0
-     * @deprecated 3.5.6
-     */
-    @NotNull
-    @Deprecated
-    protected Optional<String> getTemplateFilePath(@NotNull Function<TemplateConfig, String> function) {
-        TemplateConfig templateConfig = getConfigBuilder().getTemplateConfig();
-        String filePath = function.apply(templateConfig);
-        if (StringUtils.isNotBlank(filePath)) {
-            return Optional.of(templateFilePath(filePath));
-        }
-        return Optional.empty();
-    }
-
-    /**
      * 获取路径信息
      *
      * @param outputFile 输出文件

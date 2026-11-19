@@ -85,7 +85,7 @@ public final class ChainWrappers {
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaQueryChain(BaseMapper, Class)}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaQueryChain(BaseMapper, Class)}。
      */
     @Deprecated
     public static <T> KtQueryChainWrapper<T> ktQueryChain(BaseMapper<T> mapper, Class<T> entityClass) {
@@ -97,7 +97,7 @@ public final class ChainWrappers {
      * 仅支持 Kotlin
      *
      * @return KtQueryWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaQueryChain(BaseMapper, Object)}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaQueryChain(BaseMapper, Object)}。
      */
     @Deprecated
     public static <T> KtQueryChainWrapper<T> ktQueryChain(BaseMapper<T> mapper, T entity) {
@@ -110,7 +110,7 @@ public final class ChainWrappers {
      * 仅传 entityClass 实体类
      *
      * @return KtQueryWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaQueryChain(Class)}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaQueryChain(Class)}。
      */
     @Deprecated
     public static <T> KtQueryChainWrapper<T> ktQueryChain(Class<T> entityClass) {
@@ -148,7 +148,7 @@ public final class ChainWrappers {
      * 仅支持 Kotlin
      *
      * @return KtUpdateWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link LambdaUpdateChainWrapper}，通过 LambdaUpdateWrapper 传入实体类。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link LambdaUpdateChainWrapper}，通过 LambdaUpdateWrapper 传入实体类。
      */
     @Deprecated
     public static <T> KtUpdateChainWrapper<T> ktUpdateChain(BaseMapper<T> mapper, Class<T> entityClass) {
@@ -161,7 +161,7 @@ public final class ChainWrappers {
      * 仅传 entityClass 实体类
      *
      * @return KtUpdateWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaUpdateChain(Class)}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaUpdateChain(Class)}。
      */
     @Deprecated
     public static <T> KtUpdateChainWrapper<T> ktUpdateChain(Class<T> entityClass) {
@@ -173,7 +173,7 @@ public final class ChainWrappers {
      * 仅支持 Kotlin
      *
      * @return KtUpdateWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link LambdaUpdateChainWrapper}，通过 LambdaUpdateWrapper 传入实体。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link LambdaUpdateChainWrapper}，通过 LambdaUpdateWrapper 传入实体。
      */
     @Deprecated
     public static <T> KtUpdateChainWrapper<T> ktUpdateChain(BaseMapper<T> mapper, T entity) {

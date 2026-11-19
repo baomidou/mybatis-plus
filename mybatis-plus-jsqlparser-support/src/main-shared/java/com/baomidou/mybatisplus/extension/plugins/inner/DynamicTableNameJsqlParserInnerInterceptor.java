@@ -48,6 +48,9 @@ public class DynamicTableNameJsqlParserInnerInterceptor extends DynamicTableName
      */
     private boolean shouldFallback = true;
 
+    /**
+     * @deprecated 3.5.11
+     */
     @Deprecated
     public DynamicTableNameJsqlParserInnerInterceptor() {
     }

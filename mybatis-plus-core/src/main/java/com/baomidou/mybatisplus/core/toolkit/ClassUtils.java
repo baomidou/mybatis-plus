@@ -210,46 +210,6 @@ public final class ClassUtils {
         return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : StringPool.EMPTY);
     }
 
-    /**
-     * Return the default ClassLoader to use: typically the thread context <br>
-     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils <br>
-     * class will be used as fallback.
-     * <p>
-     * Call this method if you intend to use the thread context ClassLoader <br>
-     * in a scenario where you clearly prefer a non-null ClassLoader reference: <br>
-     * for example, for class path resource loading (but not necessarily for <br>
-     * {@code Class.forName}, which accepts a {@code null} ClassLoader <br>
-     * reference as well).
-     *
-     * @return the default ClassLoader (only {@code null} if even the system <br>
-     *         ClassLoader isn't accessible)
-     * @see Thread#getContextClassLoader()
-     * @see ClassLoader#getSystemClassLoader()
-     * @since 3.3.2
-     */
-    @Deprecated
-    public static ClassLoader getDefaultClassLoader() {
-        ClassLoader cl = null;
-        try {
-            cl = Thread.currentThread().getContextClassLoader();
-        } catch (Throwable ex) {
-            // Cannot access thread context ClassLoader - falling back...
-        }
-        if (cl == null) {
-            // No thread context class loader -> use class loader of this class.
-            cl = ClassUtils.class.getClassLoader();
-            if (cl == null) {
-                // getClassLoader() returning null indicates the bootstrap ClassLoader
-                try {
-                    cl = ClassLoader.getSystemClassLoader();
-                } catch (Throwable ex) {
-                    // Cannot access system ClassLoader - oh well, maybe the caller can live with null...
-                }
-            }
-        }
-        return cl;
-    }
-
     private static ClassLoader[] getClassLoaders(ClassLoader classLoader) {
         return new ClassLoader[]{classLoader, Resources.getDefaultClassLoader(),
                 Thread.currentThread().getContextClassLoader(), ClassUtils.class.getClassLoader(), systemClassLoader};

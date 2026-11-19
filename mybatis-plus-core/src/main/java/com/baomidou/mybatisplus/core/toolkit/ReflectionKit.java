@@ -45,6 +45,9 @@ public final class ReflectionKit {
      */
     private static final Map<Class<?>, List<Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * @deprecated 3.5.1
+     */
     @Deprecated
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
 
@@ -178,6 +181,7 @@ public final class ReflectionKit {
      *
      * @param clazz class
      * @return 是否基本类型或基本包装类型
+     * @deprecated 3.5.1
      */
     @Deprecated
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {

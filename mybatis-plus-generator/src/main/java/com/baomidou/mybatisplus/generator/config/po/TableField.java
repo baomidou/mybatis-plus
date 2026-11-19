@@ -74,6 +74,8 @@ public class TableField {
 
     /**
      * 字段类型（已弃用，使用 {@link #columnType} 代替）
+     *
+     * @deprecated 3.5.3
      */
     @Getter
     @Deprecated

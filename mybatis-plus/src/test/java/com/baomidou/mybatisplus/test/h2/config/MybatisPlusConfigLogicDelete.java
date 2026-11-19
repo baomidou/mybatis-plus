@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
-import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
@@ -69,7 +68,6 @@ public class MybatisPlusConfigLogicDelete {
             public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration,
                     Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
-                methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(
                         new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE || t.isLogicDelete()

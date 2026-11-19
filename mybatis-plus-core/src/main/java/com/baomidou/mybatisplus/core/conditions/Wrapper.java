@@ -106,6 +106,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return !isEmptyOfWhere();
     }
 
+    /**
+     * @deprecated 3.5.3.2
+     */
     @Deprecated
     public boolean nonEmptyOfWhere() {
         return isNonEmptyOfWhere();
@@ -125,6 +128,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return !isEmptyOfNormal();
     }
 
+    /**
+     * @deprecated 3.5.3.2
+     */
     @Deprecated
     public boolean nonEmptyOfNormal() {
         return isNonEmptyOfNormal();
@@ -152,6 +158,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
                 : false;
     }
 
+    /**
+     * @deprecated 3.5.3.2
+     */
     @Deprecated
     public boolean nonEmptyOfEntity() {
         return isNonEmptyOfEntity();

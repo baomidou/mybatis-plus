@@ -190,17 +190,6 @@ public class Controller implements ITemplate {
         }
 
         /**
-         * 覆盖已有文件（该方法后续会删除，替代方法为enableFileOverride方法）
-         *
-         * @see #enableFileOverride()
-         */
-        @Deprecated
-        public Builder fileOverride() {
-            this.controller.fileOverride = true;
-            return this;
-        }
-
-        /**
          * 覆盖已有文件
          *
          * @since 3.5.3

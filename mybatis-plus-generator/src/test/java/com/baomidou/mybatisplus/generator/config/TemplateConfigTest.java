@@ -51,18 +51,10 @@ public class TemplateConfigTest {
     void entityTest() {
         assertThat(GeneratorBuilder.templateConfig().getEntity(true)).isEqualTo("/templates/entity.kt");
         assertThat(GeneratorBuilder.templateConfig().getEntity(false)).isEqualTo("/templates/entity.java");
-        assertThat(GeneratorBuilder.templateConfigBuilder().entityKt("/tm/entity.kt").build().getEntity(true))
-                .isEqualTo("/tm/entity.kt");
-        assertThat(GeneratorBuilder.templateConfigBuilder().entity("/tm/entity.java").build().getEntity(false))
-                .isEqualTo("/tm/entity.java");
-        assertThat(new TemplateConfig.Builder().entityKt("/tm/entity.kt").build().getEntity(true))
-                .isEqualTo("/tm/entity.kt");
         assertThat(new TemplateConfig.Builder().entity("/tm/entity.java").build().getEntity(false))
                 .isEqualTo("/tm/entity.java");
         assertThat(new TemplateConfig.Builder().entity("myEntity.java.vm").build().getEntity(false))
                 .isEqualTo("myEntity.java.vm");
-        assertThat(new TemplateConfig.Builder().entityKt("myEntity.kt.vm").build().getEntity(true))
-                .isEqualTo("myEntity.kt.vm");
     }
 
     @Test
@@ -74,13 +66,11 @@ public class TemplateConfigTest {
         assertThat(templateConfig.getService()).isNotNull();
         assertThat(templateConfig.getServiceImpl()).isNotNull();
 
-        templateConfig = new TemplateConfig.Builder().entity("/tmp/entity.java").entityKt("/tmp/entity.kt")
-                .service("/tmp/service.java").serviceImpl("/tmp/serviceImpl.java").build();
+        templateConfig = new TemplateConfig.Builder().entity("/tmp/entity.java").service("/tmp/service.java")
+                .serviceImpl("/tmp/serviceImpl.java").build();
         assertThat(templateConfig.getEntity(true)).isNotNull();
         assertThat(templateConfig.getEntity(false)).isNotNull();
-        assertThat(templateConfig.getService()).isNotNull();
         assertThat(templateConfig.getServiceImpl()).isNotNull();
-        assertThat(templateConfig.getEntity(true)).isEqualTo("/tmp/entity.kt");
         assertThat(templateConfig.getEntity(false)).isEqualTo("/tmp/entity.java");
         assertThat(templateConfig.getService()).isEqualTo("/tmp/service.java");
         assertThat(templateConfig.getServiceImpl()).isEqualTo("/tmp/serviceImpl.java");

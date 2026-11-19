@@ -567,11 +567,6 @@ public class TableInfo implements Constants {
         return this.orderByFields;
     }
 
-    @Deprecated
-    public boolean isLogicDelete() {
-        return withLogicDelete;
-    }
-
     /**
      * 获取对象属性值
      *

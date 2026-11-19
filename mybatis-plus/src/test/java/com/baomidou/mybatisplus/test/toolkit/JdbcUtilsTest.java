@@ -30,12 +30,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class JdbcUtilsTest {
 
     /**
-     * 连接地址识别不出来的 DbType：ORACLE_12C 只用于方言选择，GBASEDBT 与 GBASE_INFORMIX 在 if 链里没有对应分支。
+     * 连接地址识别不出来的 DbType：ORACLE_12C 只用于方言选择，在 if 链里没有对应分支。
      * <p>
      * JdbcUtils 补上对应分支时，这里与 {@link #earlierBranchWinsOverLaterOne()} 必须同步调整。
      */
-    private static final EnumSet<DbType> unreachableDbTypes = EnumSet
-            .of(DbType.ORACLE_12C, DbType.GBASEDBT, DbType.GBASE_INFORMIX);
+    private static final EnumSet<DbType> unreachableDbTypes = EnumSet.of(DbType.ORACLE_12C);
 
     @Test
     public void shouldMatchJdbcUrlPattern() {
@@ -134,7 +133,7 @@ public class JdbcUtilsTest {
         // informix 官方地址是 jdbc:informix-sqli://，被 gbase 8s 分支截走，识别不到 INFORMIX
         assertThat(JdbcUtils.getDbType("jdbc:informix-sqli://127.0.0.1:1526/test:INFORMIXSERVER=ol_informix"))
                 .isEqualTo(DbType.GBASE_8S);
-        // 同理 gbasedbt 官方地址归到 GBASE_8S，识别不到 GBASEDBT
+        // 同理 gbasedbt 官方地址归到 GBASE_8S
         assertThat(JdbcUtils.getDbType("jdbc:gbasedbt-sqli://127.0.0.1:9088/test")).isEqualTo(DbType.GBASE_8S);
         // 地址里带 oracle 段时归 ORACLE，识别不到 ORACLE_12C，12c 只能靠显式配置 DbType
         assertThat(JdbcUtils.getDbType("jdbc:oracle:thin:@//127.0.0.1:1521/ORCLCDB")).isEqualTo(DbType.ORACLE);

@@ -175,6 +175,7 @@ public final class SqlHelper {
      * @param execFunc 执行函数
      * @return 操作结果
      * @since 3.4.0
+     * @deprecated 3.5.3.2
      */
     @Deprecated
     public static boolean executeBatch(Class<?> entityClass, Log log, Function<SqlSession, Integer> execFunc) {
@@ -197,7 +198,7 @@ public final class SqlHelper {
      * @param <E> T
      * @return 操作结果
      * @since 3.4.0
-     * @deprecated {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
+     * @deprecated 3.5.3.2 {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
      */
     @Deprecated
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize,

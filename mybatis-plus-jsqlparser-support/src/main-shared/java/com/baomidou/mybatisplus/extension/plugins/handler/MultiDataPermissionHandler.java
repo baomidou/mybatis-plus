@@ -32,7 +32,7 @@ public interface MultiDataPermissionHandler extends DataPermissionHandler {
      * @param where 待执行 SQL Where 条件表达式
      * @param mappedStatementId Mybatis MappedStatement Id 根据该参数可以判断具体执行方法
      * @return JSqlParser 条件表达式
-     * @deprecated 新的多表数据权限处理不会调用此方法，因此标记过时
+     * @deprecated 3.5.3 新的多表数据权限处理不会调用此方法，因此标记过时
      */
     @Deprecated
     @Override

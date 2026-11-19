@@ -522,7 +522,7 @@ public interface IRepository<T> {
      * kotlin 使用
      *
      * @return KtQueryWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaQuery()}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaQuery()}。
      */
     @Deprecated
     default KtQueryChainWrapper<T> ktQuery() {
@@ -534,7 +534,7 @@ public interface IRepository<T> {
      * kotlin 使用
      *
      * @return KtUpdateWrapper 的包装类
-     * @deprecated 将在未来版本中移除，请改用 {@link #lambdaUpdate()}。
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaUpdate()}。
      */
     @Deprecated
     default KtUpdateChainWrapper<T> ktUpdate() {

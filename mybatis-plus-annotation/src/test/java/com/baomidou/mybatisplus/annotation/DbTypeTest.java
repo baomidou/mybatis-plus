@@ -26,10 +26,10 @@ class DbTypeTest {
     private static final List<String> ALL_NAMES = List.of(
             "MYSQL", "MARIADB", "ORACLE", "POLARDB", "ORACLE_12C", "DB2", "H2", "HSQL", "SQLITE", "POSTGRE_SQL",
             "SQL_SERVER2005", "SQL_SERVER", "DM", "XU_GU", "KINGBASE_ES", "PHOENIX", "GAUSS", "GAUSS_DB", "CLICK_HOUSE",
-            "GBASE", "GBASE_8S", "GBASEDBT", "GBASE_INFORMIX", "GBASE8S_PG", "GBASE_8C", "SINODB", "OSCAR", "SYBASE",
-            "OCEAN_BASE", "FIREBIRD", "HIGH_GO", "CUBRID", "SUNDB", "SAP_HANA", "IMPALA", "VERTICA", "XCloud",
-            "REDSHIFT", "OPENGAUSS", "TDENGINE", "INFORMIX", "UXDB", "LEALONE", "TRINO", "PRESTO", "DERBY", "VASTBASE",
-            "GOLDENDB", "DUCKDB", "YASDB", "HIVE2", "OTHER");
+            "GBASE", "GBASE_8S", "GBASE8S_PG", "GBASE_8C", "SINODB", "OSCAR", "SYBASE", "OCEAN_BASE", "FIREBIRD",
+            "HIGH_GO", "CUBRID", "SUNDB", "SAP_HANA", "IMPALA", "VERTICA", "XCloud", "REDSHIFT", "OPENGAUSS",
+            "TDENGINE", "INFORMIX", "UXDB", "LEALONE", "TRINO", "PRESTO", "DERBY", "VASTBASE", "GOLDENDB", "DUCKDB",
+            "YASDB", "HIVE2", "OTHER");
 
     private static final Set<DbType> MYSQL_FAMILY = EnumSet.of(
             DbType.MYSQL, DbType.MARIADB, DbType.GBASE, DbType.OSCAR, DbType.XU_GU, DbType.CLICK_HOUSE,
@@ -82,16 +82,6 @@ class DbTypeTest {
         assertThat(family(DbType::mysqlSameType)).containsExactlyInAnyOrderElementsOf(MYSQL_FAMILY);
         assertThat(family(DbType::oracleSameType)).containsExactlyInAnyOrderElementsOf(ORACLE_FAMILY);
         assertThat(family(DbType::postgresqlSameType)).containsExactlyInAnyOrderElementsOf(POSTGRESQL_FAMILY);
-    }
-
-    /**
-     * GBASE_8S 与 GBASE_INFORMIX 是同一个产品的两个枚举，db 字符串只靠 "-" 与 " " 区分： 写 "gbase-8s" 和 "gbase 8s" 会得到不同枚举，而两者的 desc 完全一样。
-     */
-    @Test
-    void gbase8sHasTwoSpellingsThatResolveToDifferentConstants() {
-        assertThat(DbType.getDbType("gbase-8s")).isSameAs(DbType.GBASE_8S);
-        assertThat(DbType.getDbType("gbase 8s")).isSameAs(DbType.GBASE_INFORMIX);
-        assertThat(DbType.GBASE_8S.getDesc()).isEqualTo(DbType.GBASE_INFORMIX.getDesc());
     }
 
     @Test
