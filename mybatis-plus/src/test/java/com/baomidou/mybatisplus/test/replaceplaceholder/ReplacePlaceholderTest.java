@@ -37,6 +37,11 @@ public class ReplacePlaceholderTest extends DbTestSupport<ReplacePlaceholderTest
         });
     }
 
+    @Test
+    void excludesAllOrdinaryFieldsAndSelectsOnlyPrimaryKeys() {
+        doTest(mapper -> assertThat(mapper.selectOnlyIds()).containsExactly(1L, 2L));
+    }
+
     @Override
     protected List<Interceptor> interceptors() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
@@ -86,6 +91,9 @@ public class ReplacePlaceholderTest extends DbTestSupport<ReplacePlaceholderTest
     }
 
     public interface EntityMapper extends BaseMapper<Entity> {
+
+        @Select("select {@entity-name,age} from entity order by id")
+        List<Long> selectOnlyIds();
 
         @Select("select {@entity-name,id} from entity")
         List<Entity> selectAll();
