@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * Tests the executor hooks used by {@link ShardingInnerInterceptor}.
@@ -64,7 +65,8 @@ class ShardingInnerInterceptorTest {
         assertThat(capturedStatement).hasValue(mappedStatement);
         assertThat(capturedParameter).hasValue("parameter");
         assertThat(capturedDatasourceKey).hasValue("orders#reader");
-        verifyNoInteractions(executor);
+        verify(executor).getTransaction();
+        verifyNoMoreInteractions(executor);
     }
 
     @Test
@@ -83,7 +85,8 @@ class ShardingInnerInterceptorTest {
 
         assertThat(capturedStatement).hasValue(statement);
         assertThat(capturedParameter).hasValue("parameter");
-        verifyNoInteractions(executor);
+        verify(executor).getTransaction();
+        verifyNoMoreInteractions(executor);
     }
 
     @Test
