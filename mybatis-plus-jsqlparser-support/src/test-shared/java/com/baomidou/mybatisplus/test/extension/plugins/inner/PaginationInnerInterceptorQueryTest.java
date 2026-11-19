@@ -13,6 +13,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -156,6 +157,33 @@ class PaginationInnerInterceptorQueryTest {
         }
         assertThat(dataSql.getAdditionalParameter(LIMIT_PARAMETER)).isEqualTo(2L);
         assertThat(page.getTotal()).isEqualTo(searchCount ? 4 : 0);
+    }
+
+    // SQL 末尾的锁定子句(FOR UPDATE 等)必须被移到分页子句之后,否则生成 "… FOR UPDATE LIMIT ? OFFSET ?"
+    // 这类非法 SQL(MySQL/PostgreSQL 语法要求锁定子句位于 LIMIT 之后),见 issue#4536。
+    @ParameterizedTest
+    @ValueSource(strings = {"FOR UPDATE", "FOR UPDATE SKIP LOCKED", "FOR SHARE", "LOCK IN SHARE MODE"})
+    void reappendsTrailingLockingClauseAfterPagination(String lockingClause) throws SQLException {
+        Page<Integer> page = new Page<>(2, 10);
+
+        stubCount(20);
+        query("lockingClause", BASE_SQL + " " + lockingClause, page);
+
+        List<BoundSql> queries = capturedQueries(2);
+        assertSql(queries.get(1), BASE_SQL + " LIMIT ? OFFSET ? " + lockingClause, LIMIT_PARAMETER, OFFSET_PARAMETER);
+    }
+
+    // 锁定子句不在 SQL 末尾(位于子查询内部)时不移动,外层直接追加分页子句即为合法 SQL。
+    @Test
+    void keepsLockingClauseInsideSubqueryUntouched() throws SQLException {
+        String sql = "SELECT id FROM product WHERE id IN (SELECT id FROM stock WHERE n = ? FOR UPDATE) ORDER BY id";
+        Page<Integer> page = new Page<>(1, 10);
+
+        stubCount(20);
+        query("subqueryLocking", sql, page);
+
+        List<BoundSql> queries = capturedQueries(2);
+        assertSql(queries.get(1), sql + " LIMIT ?", LIMIT_PARAMETER);
     }
 
     private void query(String id, String sql, Object parameter, String... parameterNames) throws SQLException {
