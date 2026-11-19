@@ -286,7 +286,9 @@ public class TableInfo implements Constants {
         if (!havePK() || noSelectProperty.contains(keyProperty)) {
             return fieldsSqlSelect;
         } else {
-            return getKeySqlSelect() + COMMA + fieldsSqlSelect;
+            return StringUtils.isNotBlank(fieldsSqlSelect)
+                    ? getKeySqlSelect() + COMMA + fieldsSqlSelect
+                    : getKeySqlSelect();
         }
     }
 
