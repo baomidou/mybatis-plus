@@ -1,20 +1,28 @@
 package com.baomidou.mybatisplus.test.h2;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.spring.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
+import com.baomidou.mybatisplus.test.sqlrunner.Entity;
+import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
+import org.apache.ibatis.mapping.Environment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,6 +30,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +95,28 @@ class SqlRunnerTest {
                 SqlRunner.db(H2Student.class)
                         .insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )", "测试学生2", 3))
                 .isTrue();
+    }
+
+    @Test
+    void standaloneWritesCommitWithJdbcAutoCommitDisabled() throws SQLException {
+        UnpooledDataSource ds = new UnpooledDataSource("org.h2.Driver", "jdbc:h2:mem:sqlrunner_manual_commit", "sa",
+                "");
+        ds.setAutoCommit(false);
+        MybatisConfiguration config = new MybatisConfiguration(
+                new Environment("test", new SpringManagedTransactionFactory(), ds));
+        GlobalConfigUtils.getGlobalConfig(config).setEnableSqlRunner(true);
+        config.addMapper(EntityMapper.class);
+        new MybatisSqlSessionFactoryBuilder().build(config);
+        SqlRunner runner = SqlRunner.db(Entity.class);
+        try (Connection connection = ds.getConnection(); Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE notes (id INT PRIMARY KEY, note VARCHAR(20))");
+            assertThat(runner.insert("INSERT INTO notes VALUES (1, {0})", "first")).isTrue();
+            assertThat(runner.selectCount("SELECT COUNT(*) FROM notes WHERE note = {0}", "first")).isOne();
+            assertThat(runner.update("UPDATE notes SET note = {0} WHERE id = 1", "second")).isTrue();
+            assertThat(runner.selectCount("SELECT COUNT(*) FROM notes WHERE note = {0}", "second")).isOne();
+            assertThat(runner.delete("DELETE FROM notes WHERE id = 1")).isTrue();
+            assertThat(runner.selectCount("SELECT COUNT(*) FROM notes")).isZero();
+        }
     }
 
     @Test
