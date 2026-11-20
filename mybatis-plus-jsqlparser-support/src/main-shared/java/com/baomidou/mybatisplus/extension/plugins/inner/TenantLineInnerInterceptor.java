@@ -116,7 +116,7 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             duplicateUpdateColumns.add(new UpdateSet(new Column(tenantIdColumn), tenantId));
         }
         Select select = insert.getSelect();
-        if (select instanceof PlainSelect) { //fix github issue 4998  修复升级到4.5版本的问题
+        if (select != null && !(select instanceof Values)) { //fix github issue 4998  修复升级到4.5版本的问题
             this.processInsertSelect(select, (String) obj);
         } else if (insert.getValues() != null) {
             // fixed github pull/295
@@ -206,6 +206,12 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         } else if (selectBody instanceof ParenthesedSelect) {
             ParenthesedSelect parenthesedSelect = (ParenthesedSelect) selectBody;
             processInsertSelect(parenthesedSelect.getSelect(), whereSegment);
+        } else if (selectBody instanceof SetOperationList) {
+            SetOperationList setOperationList = (SetOperationList) selectBody;
+            List<Select> selects = setOperationList.getSelects();
+            if (CollectionUtils.isNotEmpty(selects)) {
+                selects.forEach(select -> processInsertSelect(select, whereSegment));
+            }
         }
     }
 
