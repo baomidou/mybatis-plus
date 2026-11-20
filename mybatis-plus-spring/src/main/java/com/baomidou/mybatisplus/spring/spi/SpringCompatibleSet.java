@@ -29,6 +29,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionHolder;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -51,6 +52,14 @@ public class SpringCompatibleSet implements CompatibleSet {
     @Override
     public SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
         return SqlSessionUtils.getSqlSession(sessionFactory);
+    }
+
+    @Override
+    public void commitSqlSession(SqlSession session, SqlSessionFactory sessionFactory) {
+        if (!(session instanceof SqlSessionTemplate)
+                && !SqlSessionUtils.isSqlSessionTransactional(session, sessionFactory)) {
+            session.commit();
+        }
     }
 
     @Override
