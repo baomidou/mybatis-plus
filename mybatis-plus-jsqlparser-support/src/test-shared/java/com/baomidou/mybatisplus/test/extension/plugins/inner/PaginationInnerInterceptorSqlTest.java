@@ -144,6 +144,15 @@ class PaginationInnerInterceptorSqlTest {
         assertCountSql("SELECT * FROM comment ORDER BY name", "SELECT COUNT(*) AS total FROM comment");
     }
 
+    @Test
+    void retainsDialectSpecificRowLimitsInCount() {
+        for (String sql : Arrays.asList(
+                "SELECT FIRST 2 id FROM product ORDER BY id", "SELECT SKIP 1 id FROM product ORDER BY id",
+                "SELECT id FROM product ORDER BY id LIMIT 1 BY category")) {
+            assertCountSql(sql, "SELECT COUNT(*) FROM (" + sql + ") TOTAL");
+        }
+    }
+
     // 带绑定参数的排序表达式留在 COUNT 子查询中，保留原有占位符。
     @Test
     void retainsParameterizedOrderByInCount() {
@@ -173,6 +182,13 @@ class PaginationInnerInterceptorSqlTest {
         assertCountSql(
                 "with A as (select * from class) select * from A",
                 "WITH A AS (SELECT * FROM class) SELECT COUNT(*) AS total FROM A");
+    }
+
+    @Test
+    void keepsCtesOutsideBoundedCountForSqlServer() {
+        String ctes = "WITH a AS (SELECT id FROM product WHERE id > ?), b AS (SELECT id FROM a) ";
+        String bounded = "SELECT TOP 2 id FROM b WHERE id < ? ORDER BY id";
+        assertCountSql(ctes + bounded, ctes + "SELECT COUNT(*) FROM (" + bounded + ") TOTAL");
     }
 
     // 分页排序追加到 CTE 外层查询。
