@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -185,7 +185,8 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
         } else if (parameterObject instanceof Map) {
             Collection<Object> parameters = new ArrayList<>();
             Map<String, Object> parameterMap = (Map) parameterObject;
-            Set<Object> objectSet = new HashSet<>();
+            // @Param 名称和 paramN 可能引用同一个参数，值相等的不同实体仍需分别填充。
+            Set<Object> objectSet = Collections.newSetFromMap(new IdentityHashMap<>());
             parameterMap.forEach((k, v) -> {
                 if (objectSet.add(v)) {
                     Collection<Object> collection = toCollection(v);

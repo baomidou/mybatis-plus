@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.MybatisBatchUtils;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import lombok.Data;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.Tag;
@@ -34,6 +35,22 @@ public class FillTest extends DbTestSupport<FillTest.FillMapper> {
             mapper.insert(entity);
             assertEntity(entity, "insertAdmin", 1);
         });
+    }
+
+    @Test
+    void fillsEqualButDistinctMapperArgumentsOnceEach() {
+        var first = new FillEntity();
+        var second = new FillEntity();
+        assertThat(first).isEqualTo(second).isNotSameAs(second);
+
+        doTestAutoCommit(mapper -> assertThat(mapper.insertPair(first, second)).isEqualTo(2));
+
+        assertEntity(first, "insertAdmin", 1);
+        assertEntity(second, "insertAdmin", 1);
+        assertThat(first.getId()).isNotNull().isNotEqualTo(second.getId());
+        doTest(
+                mapper -> assertThat(mapper.selectByIds(Arrays.asList(first.getId(), second.getId())))
+                        .extracting(FillEntity::getName).containsExactly("insertAdmin", "insertAdmin"));
     }
 
     @Test
@@ -130,6 +147,9 @@ public class FillTest extends DbTestSupport<FillTest.FillMapper> {
     }
 
     public interface FillMapper extends BaseMapper<FillEntity> {
+
+        @Insert("INSERT INTO t_fill(id, name) VALUES (#{first.id}, #{first.name}), (#{second.id}, #{second.name})")
+        int insertPair(@Param("first") FillEntity first, @Param("second") FillEntity second);
 
         void insertBatch1(List<FillEntity> entityList);
 
