@@ -53,12 +53,9 @@ public class SqlServerTypeConvert implements ITypeConvert {
      */
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
-        // SQL Server 的 timestamp 是 rowversion 的同义词，二者都是 8 字节的行版本值。
-        if ("timestamp".equalsIgnoreCase(fieldType) || "rowversion".equalsIgnoreCase(fieldType)) {
-            return BYTE_ARRAY;
-        }
         return TypeConverts.use(fieldType).test(containsAny("char", "xml", "text").then(STRING))
                 .test(contains("bigint").then(LONG)).test(contains("int").then(INTEGER))
+                .test(contains("timestamp").then(BYTE_ARRAY))
                 .test(containsAny("date", "time").then(t -> toDateType(config, t))).test(contains("bit").then(BOOLEAN))
                 .test(containsAny("decimal", "numeric").then(DOUBLE)).test(contains("money").then(BIG_DECIMAL))
                 .test(containsAny("binary", "image").then(BYTE_ARRAY)).test(containsAny("float", "real").then(FLOAT))

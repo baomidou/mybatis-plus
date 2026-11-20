@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,25 +38,19 @@ public class SqlServerTypeConvertTest {
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.SQL_PACK).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE_SQL);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(TIME);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(TIMESTAMP);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.TIME_PACK).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(LOCAL_DATE);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(LOCAL_TIME);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(LOCAL_DATE_TIME);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.ONLY_DATE).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(DATE);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(DATE);
-    }
-
-    @ParameterizedTest
-    @EnumSource(DateType.class)
-    void rowVersionIsBinaryForEveryDateStrategy(DateType dateType) {
-        GlobalConfig config = GeneratorBuilder.globalConfigBuilder().dateType(dateType).build();
-        SqlServerTypeConvert convert = SqlServerTypeConvert.INSTANCE;
-        assertThat(convert.processTypeConvert(config, "rowversion")).isEqualTo(BYTE_ARRAY);
-        assertThat(convert.processTypeConvert(config, "TIMESTAMP")).isEqualTo(BYTE_ARRAY);
     }
 }
