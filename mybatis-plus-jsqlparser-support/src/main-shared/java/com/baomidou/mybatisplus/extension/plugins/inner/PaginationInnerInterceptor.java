@@ -275,6 +275,18 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
                 return lowLevelCountSql(sql);
             }
             PlainSelect plainSelect = (PlainSelect) select;
+            // 先保留原查询的行数限制和排序，WITH TIES 需要根据排序判断边界行。
+            if (plainSelect.getLimit() != null || plainSelect.getOffset() != null || plainSelect.getFetch() != null
+                    || plainSelect.getTop() != null || plainSelect.getFirst() != null || plainSelect.getSkip() != null
+                    || plainSelect.getLimitBy() != null) {
+                List<?> withItems = plainSelect.getWithItemsList();
+                if (CollectionUtils.isNotEmpty(withItems)) {
+                    // SQL Server 的 CTE 需要留在最外层。
+                    plainSelect.setWithItemsList(null);
+                    return "WITH " + Select.getStringList(withItems) + " " + lowLevelCountSql(plainSelect.toString());
+                }
+                return lowLevelCountSql(sql);
+            }
 
             // 优化 order by 在非分组情况下
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
