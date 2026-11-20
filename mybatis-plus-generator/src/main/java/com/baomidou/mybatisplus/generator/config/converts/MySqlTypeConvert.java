@@ -26,7 +26,6 @@ import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.co
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BLOB;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BOOLEAN;
-import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BYTE_ARRAY;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.CLOB;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.DOUBLE;
@@ -37,7 +36,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRIN
 
 /**
  * MYSQL 数据库字段类型转换 <br>
- * bit类型数据转换 bit(1) -> Boolean类型 bit(2->64) -> Byte类型
+ * BIT 或 BIT(1) 对应 Boolean，BIT(2) 至 BIT(64) 对应 byte[]。
  *
  * @author hubin, hanchunlin, xiaoliang
  * @since 2017-01-20
@@ -51,13 +50,18 @@ public class MySqlTypeConvert implements ITypeConvert {
      */
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
+        if ("bit".equalsIgnoreCase(fieldType) || "bit(1)".equalsIgnoreCase(fieldType)) {
+            return BOOLEAN;
+        }
+        if (fieldType.regionMatches(true, 0, "bit(", 0, 4)) {
+            return BYTE_ARRAY;
+        }
         return TypeConverts.use(fieldType).test(contains("point").then(BYTE_ARRAY))
                 .test(containsAny("char", "text", "json", "enum").then(STRING)).test(contains("bigint").then(LONG))
-                .test(containsAny("tinyint(1)", "bit(1)").then(BOOLEAN)).test(contains("bit").then(BYTE))
-                .test(contains("int").then(INTEGER)).test(contains("decimal").then(BIG_DECIMAL))
-                .test(contains("clob").then(CLOB)).test(contains("blob").then(BLOB))
-                .test(contains("binary").then(BYTE_ARRAY)).test(contains("float").then(FLOAT))
-                .test(contains("double").then(DOUBLE))
+                .test(contains("tinyint(1)").then(BOOLEAN)).test(contains("int").then(INTEGER))
+                .test(contains("decimal").then(BIG_DECIMAL)).test(contains("clob").then(CLOB))
+                .test(contains("blob").then(BLOB)).test(contains("binary").then(BYTE_ARRAY))
+                .test(contains("float").then(FLOAT)).test(contains("double").then(DOUBLE))
                 .test(containsAny("date", "time", "year").then(t -> toDateType(config, t))).or(STRING);
     }
 
