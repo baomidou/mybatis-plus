@@ -133,8 +133,11 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     protected UpdateWrapper<T> instance() {
-        return new UpdateWrapper<>(getEntity(), null, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-                paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+        UpdateWrapper<T> instance = new UpdateWrapper<>(getEntity(), null, paramNameSeq, paramNameValuePairs,
+                new MergeSegments(), paramAlias, SharedString.emptyString(), SharedString.emptyString(),
+                SharedString.emptyString());
+        instance.checkSqlInjection = checkSqlInjection;
+        return instance;
     }
 
     @Override

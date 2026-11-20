@@ -140,8 +140,11 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     @Override
     protected QueryWrapper<T> instance() {
-        return new QueryWrapper<>(getEntity(), getEntityClass(), paramNameSeq, paramNameValuePairs, new MergeSegments(),
-                paramAlias, SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+        QueryWrapper<T> instance = new QueryWrapper<>(getEntity(), getEntityClass(), paramNameSeq, paramNameValuePairs,
+                new MergeSegments(), paramAlias, SharedString.emptyString(), SharedString.emptyString(),
+                SharedString.emptyString());
+        instance.checkSqlInjection = checkSqlInjection;
+        return instance;
     }
 
     @Override
