@@ -539,7 +539,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
                     sqlStr = sqlStr.replace(target, formatParam(null, params[i]));
                     found = true;
                 }
-                Matcher matcher = Pattern.compile("[{]" + i + ",[a-zA-Z0-9.,=]+}").matcher(sqlStr);
+                Matcher matcher = Pattern.compile("[{]" + i + ",[\\p{javaJavaIdentifierPart}.,=]+}").matcher(sqlStr);
                 while (matcher.find()) {
                     String group = matcher.group();
                     if (sqlStr.contains(group)) {
