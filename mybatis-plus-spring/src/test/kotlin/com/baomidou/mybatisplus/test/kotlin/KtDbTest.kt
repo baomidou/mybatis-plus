@@ -10,8 +10,12 @@ import org.junit.jupiter.api.Test
 import java.util.*
 
 
+/**
+ * `Db.ktQuery`/`ktUpdate` 的 Kotlin 语法面：属性引用做条件、`wrapper` 取回包装器交给 `Db.remove`。
+ * 聚合模块的 `toolkit/DbTest` 测的是 Java 侧静态 `Db.*` 的整套 CRUD/分页/聚合重载，两份互补，不合并。
+ */
 @Tag("unit")
-class DbTest : DbTestSupport<UserMapper>() {
+class KtDbTest : DbTestSupport<UserMapper>() {
 
     @Test
     fun testQuery() {

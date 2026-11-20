@@ -12,8 +12,13 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Test
 import java.util.*
 
+/**
+ * `ChainWrappers.ktQueryChain`/`ktUpdateChain` 的 Kotlin 语法面：属性引用（`User::id`）做条件、
+ * `select { }` 谓词选列。聚合模块的 `chainwrapper/ChainWrapperTest` 测的是同一批链式包装的 Java 写法
+ * （字符串列名 + func/and/or 嵌套），两份互补，不合并。
+ */
 @Tag("unit")
-class ChainWrappersTest : DbTestSupport<UserMapper>() {
+class KtChainWrappersTest : DbTestSupport<UserMapper>() {
 
     @Test
     fun testQueryChain() {
