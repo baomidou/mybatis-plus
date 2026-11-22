@@ -111,11 +111,18 @@ class MybatisEnumTypeHandlerTest {
     void shouldReadCharacterEnumValues() throws Exception {
         MybatisEnumTypeHandler<CharacterEnum> handler = new MybatisEnumTypeHandler<>(CharacterEnum.class);
 
-        when(resultSet.getObject("first", Character.class)).thenReturn('1');
-        when(resultSet.getObject("second", Character.class)).thenReturn('2');
+        when(resultSet.getObject("first", String.class)).thenReturn("1");
+        when(resultSet.getObject(2, String.class)).thenReturn("2");
+        when(callableStatement.getObject(3, String.class)).thenReturn("4");
 
         assertThat(handler.getResult(resultSet, "first")).isEqualTo(CharacterEnum.ONE);
-        assertThat(handler.getResult(resultSet, "second")).isEqualTo(CharacterEnum.TWO);
+        assertThat(handler.getResult(resultSet, 2)).isEqualTo(CharacterEnum.TWO);
+        assertThat(handler.getResult(callableStatement, 3)).isEqualTo(CharacterEnum.FOUR);
+
+        handler.setParameter(preparedStatement, 1, CharacterEnum.ONE, null);
+        handler.setParameter(preparedStatement, 2, CharacterEnum.TWO, JdbcType.CHAR);
+        verify(preparedStatement).setObject(1, "1");
+        verify(preparedStatement).setObject(2, "2", JdbcType.CHAR.TYPE_CODE);
     }
 
     @Test
@@ -154,8 +161,7 @@ class MybatisEnumTypeHandlerTest {
         assertThat(stringHandler.getResult(resultSet, "stringColumn")).isEqualTo(StringEnum.THREE);
 
         MybatisEnumTypeHandler<CharacterEnum> characterHandler = new MybatisEnumTypeHandler<>(CharacterEnum.class);
-        when(resultSet.getObject(eq("characterColumn"), eq(Character.class)))
-                .thenAnswer(invocation -> Integer.valueOf(4));
+        when(resultSet.getObject(eq("characterColumn"), eq(String.class))).thenAnswer(invocation -> Integer.valueOf(4));
         assertThat(characterHandler.getResult(resultSet, "characterColumn")).isEqualTo(CharacterEnum.FOUR);
     }
 

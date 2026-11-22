@@ -35,6 +35,7 @@ import java.util.Optional;
 public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
     private final EnumMetadata metadata;
+    private final Class<?> jdbcJavaType;
 
     /**
      * 创建枚举类型处理器。
@@ -46,6 +47,8 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
             throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.metadata = EnumUtils.metadata(enumClassType);
+        Class<?> propertyType = metadata.getPropertyType();
+        this.jdbcJavaType = propertyType == Character.class ? String.class : propertyType;
     }
 
     /**
@@ -63,6 +66,9 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
         Object value = metadata.getValue(parameter);
+        if (value instanceof Character) {
+            value = value.toString();
+        }
         if (jdbcType == null) {
             ps.setObject(i, value);
         } else {
@@ -73,7 +79,7 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
 
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        Object value = rs.getObject(columnName, metadata.getPropertyType());
+        Object value = rs.getObject(columnName, jdbcJavaType);
         if (null == value || rs.wasNull()) {
             return null;
         }
@@ -82,7 +88,7 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
 
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        Object value = rs.getObject(columnIndex, metadata.getPropertyType());
+        Object value = rs.getObject(columnIndex, jdbcJavaType);
         if (null == value || rs.wasNull()) {
             return null;
         }
@@ -91,7 +97,7 @@ public final class MybatisEnumTypeHandler<E extends Enum<E>> extends BaseTypeHan
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        Object value = cs.getObject(columnIndex, metadata.getPropertyType());
+        Object value = cs.getObject(columnIndex, jdbcJavaType);
         if (null == value || cs.wasNull()) {
             return null;
         }
