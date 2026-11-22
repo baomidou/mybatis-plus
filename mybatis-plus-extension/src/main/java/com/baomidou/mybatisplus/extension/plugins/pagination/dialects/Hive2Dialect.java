@@ -27,10 +27,11 @@ public class Hive2Dialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        long firstParam = offset + 1;
-        String sql = "SELECT a.* FROM (SELECT TMP_PAGE.*,ROW_NUMBER() OVER() AS ROW_ID FROM ( " + originalSql
-                + " ) TMP_PAGE) a OFFSET " + firstParam + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
-        return new DialectModel(sql);
+        StringBuilder sql = new StringBuilder(originalSql).append(" LIMIT ");
+        if (offset != 0L) {
+            sql.append(offset).append(',');
+        }
+        return new DialectModel(sql.append(limit).toString());
     }
 
 }
