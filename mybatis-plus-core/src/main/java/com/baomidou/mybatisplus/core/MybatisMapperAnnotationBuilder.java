@@ -425,13 +425,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                         returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
                     }
                 }
-            } else if (Optional.class.equals(rawType)) {
-                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-                Type returnTypeParameter = actualTypeArguments[0];
-                if (returnTypeParameter instanceof Class<?>) {
-                    returnType = (Class<?>) returnTypeParameter;
-                }
-            } else if (IPage.class.isAssignableFrom(rawType)) {
+            } else if (Optional.class.equals(rawType) || IPage.class.isAssignableFrom(rawType)) {
                 Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
                 Type returnTypeParameter = actualTypeArguments[0];
                 if (returnTypeParameter instanceof Class<?>) {

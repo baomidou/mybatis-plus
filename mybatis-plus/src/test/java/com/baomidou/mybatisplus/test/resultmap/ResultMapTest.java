@@ -9,12 +9,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.annotations.Select;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,7 +75,18 @@ public class ResultMapTest extends DbTestSupport<ResultMapTest.EntityMapper> {
                 """);
     }
 
+    @Test
+    void mapsOptionalRowsBeforeWrappingThem() {
+        doTest(mapper -> {
+            assertThat(mapper.findOptionalRow(1)).hasValue(Map.of("id", 1, "label", "first"));
+            assertThat(mapper.findOptionalRow(2)).isEmpty();
+        });
+    }
+
     public interface EntityMapper extends BaseMapper<Entity> {
+
+        @Select("SELECT 1 AS \"id\", 'first' AS \"label\" WHERE #{id} = 1")
+        Optional<Map<String, Object>> findOptionalRow(int id);
     }
 
     @Data
