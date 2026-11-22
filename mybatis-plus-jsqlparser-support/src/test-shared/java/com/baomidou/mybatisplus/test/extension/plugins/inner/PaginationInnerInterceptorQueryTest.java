@@ -158,6 +158,34 @@ class PaginationInnerInterceptorQueryTest {
         assertThat(page.getTotal()).isEqualTo(searchCount ? 4 : 0);
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void scopesCountsToMapperConfiguration(boolean customCount) throws SQLException {
+        Configuration second = new Configuration();
+        for (Configuration config : List.of(configuration, second)) {
+            String table = config == configuration ? "products" : "inventory";
+            String sql = "SELECT id FROM " + table;
+            MappedStatement data = new MappedStatement.Builder(config, "mapper.page", new StaticSqlSource(config, sql),
+                    SqlCommandType.SELECT).build();
+            Page<Integer> page = new Page<>(1, 10);
+            if (customCount) {
+                config.addMappedStatement(
+                        new MappedStatement.Builder(config, "mapper.total",
+                                new StaticSqlSource(config, "SELECT COUNT(*) FROM " + table), SqlCommandType.SELECT)
+                                .build());
+                page.setCountId("total");
+            }
+            pagination.willDoQuery(
+                    executor, data, page, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, data.getBoundSql(page));
+        }
+        ArgumentCaptor<MappedStatement> statements = ArgumentCaptor.forClass(MappedStatement.class);
+        ArgumentCaptor<BoundSql> queries = ArgumentCaptor.forClass(BoundSql.class);
+        verify(executor, times(2)).query(statements.capture(), any(), any(), any(), any(), queries.capture());
+        assertThat(statements.getAllValues()).extracting(MappedStatement::getConfiguration)
+                .containsExactly(configuration, second);
+        assertThat(queries.getValue().getSql()).endsWith("FROM inventory");
+    }
+
     private void query(String id, String sql, Object parameter, String... parameterNames) throws SQLException {
         List<ParameterMapping> mappings = Arrays.stream(parameterNames)
                 .map(name -> new ParameterMapping.Builder(configuration, name, Integer.class).build()).toList();

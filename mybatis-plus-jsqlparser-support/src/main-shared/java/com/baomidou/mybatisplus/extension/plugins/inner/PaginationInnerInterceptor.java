@@ -27,7 +27,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
@@ -50,6 +52,7 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +74,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections
             .singletonList(new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total")));
     protected final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
+    @Getter(AccessLevel.NONE)
+    private final Map<Configuration, Map<String, MappedStatement>> additionalCountMsCaches = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
@@ -219,8 +224,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             final Configuration configuration = ms.getConfiguration();
             try {
-                return CollectionUtils
-                        .computeIfAbsent(countMsCache, countId, key -> configuration.getMappedStatement(key, false));
+                return cachedCountStatement(
+                        configuration, countId, key -> configuration.getMappedStatement(key, false));
             } catch (Exception e) {
                 logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
             }
@@ -237,7 +242,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
     protected MappedStatement buildAutoCountMappedStatement(MappedStatement ms) {
         final String countId = ms.getId() + "_mpCount";
         final Configuration configuration = ms.getConfiguration();
-        return CollectionUtils.computeIfAbsent(countMsCache, countId, key -> {
+        return cachedCountStatement(configuration, countId, key -> {
             MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(),
                     ms.getSqlCommandType());
             builder.resource(ms.getResource());
@@ -255,6 +260,18 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             builder.useCache(ms.isUseCache());
             return builder.build();
         });
+    }
+
+    private MappedStatement cachedCountStatement(Configuration configuration, String countId,
+            Function<String, MappedStatement> factory) {
+        MappedStatement statement = CollectionUtils.computeIfAbsent(countMsCache, countId, factory);
+        if (statement.getConfiguration() == configuration) {
+            return statement;
+        }
+        // 不同 SqlSessionFactory 注册了同名语句时，分别缓存各自的计数语句。
+        Map<String, MappedStatement> cache = CollectionUtils
+                .computeIfAbsent(additionalCountMsCaches, configuration, key -> new ConcurrentHashMap<>());
+        return CollectionUtils.computeIfAbsent(cache, countId, factory);
     }
 
     /**
