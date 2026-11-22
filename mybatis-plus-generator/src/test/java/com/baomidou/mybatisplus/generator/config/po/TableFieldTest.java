@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.GeneratorBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
@@ -12,12 +13,28 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author nieqiurong 2020/10/8.
  */
 @Tag("unit")
 public class TableFieldTest {
+
+    @Test
+    void kotlinPropertyTypePreservesCustomImports() {
+        ConfigBuilder config = new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig,
+                GeneratorBuilder.strategyConfig(), null, GeneratorBuilder.globalConfig(), null);
+        TableField field = new TableField(config, "value");
+        IColumnType custom = mock(IColumnType.class);
+        when(custom.getType()).thenReturn("Integer");
+        when(custom.getPkg()).thenReturn("example.Integer");
+        assertThat(field.setColumnType(custom).getKotlinPropertyType()).isEqualTo("Integer");
+        assertThat(field.setColumnType(DbColumnType.INTEGER).getKotlinPropertyType()).isEqualTo("Int");
+        assertThat(field.setColumnType(DbColumnType.BASE_SHORT).getKotlinPropertyType()).isEqualTo("Short");
+        assertThat(field.setColumnType(DbColumnType.BASE_BYTE).getKotlinPropertyType()).isEqualTo("Byte");
+    }
 
     @Test
     void convertTest() {

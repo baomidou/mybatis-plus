@@ -46,11 +46,7 @@ class ${entity} {
     <% for(an in field.annotationAttributesList){ %>
     ${an.displayName}
     <% } %>
-    <% if(field.propertyType == 'Integer'){ %>
-    var ${field.propertyName}: Int? = null
-    <% }else{ %>
-    var ${field.propertyName}: ${field.propertyType}? = null
-    <% } %>
+    var ${field.propertyName}: ${field.kotlinPropertyType}? = null
 
 <% } %>
 <% /** -----------END 字段循环遍历----------- **/ %>
