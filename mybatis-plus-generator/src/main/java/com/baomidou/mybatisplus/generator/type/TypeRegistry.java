@@ -88,7 +88,7 @@ public class TypeRegistry {
             case Types.SMALLINT :
             case Types.INTEGER :
             case Types.BIGINT :
-                DbColumnType unsignedType = MySqlTypeConvert.getUnsignedIntegerType(metaInfo.getTypeName());
+                IColumnType unsignedType = MySqlTypeConvert.getUnsignedIntegerType(metaInfo.getTypeName());
                 return unsignedType != null ? unsignedType : typeMap.get(typeCode);
             case Types.BIT :
                 return getBitType(metaInfo);
