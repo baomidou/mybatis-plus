@@ -35,18 +35,16 @@ public class PostgreSqlQuery extends AbstractDbQuery {
 
     @Override
     public String tableFieldsSql() {
-        return "SELECT\n"
-                + "   A.attname AS name,format_type (A.atttypid,A.atttypmod) AS type,col_description (A.attrelid,A.attnum) AS comment,\n"
-                + "\t D.column_default,\n" + "   CASE WHEN length(B.attname) > 0 THEN 'PRI' ELSE '' END AS key\n"
-                + "FROM\n" + "   pg_attribute A\n" + "LEFT JOIN (\n" + "    SELECT\n" + "        pg_attribute.attname\n"
-                + "    FROM\n" + "        pg_index,\n" + "        pg_class,\n" + "        pg_attribute\n"
-                + "    WHERE\n" + "        pg_class.oid ='%s' :: regclass\n"
-                + "    AND pg_index.indrelid = pg_class.oid\n" + "    AND pg_attribute.attrelid = pg_class.oid\n"
-                + "    AND pg_attribute.attnum = ANY (pg_index.indkey)\n" + ") B ON A.attname = b.attname\n"
-                + "INNER JOIN pg_class C on A.attrelid = C.oid\n"
-                + "INNER JOIN information_schema.columns D on A.attname = D.column_name\n"
-                + "WHERE A.attrelid ='%s' :: regclass AND A.attnum> 0 AND NOT A.attisdropped AND D.table_name = '%s'\n"
-                + " and table_schema='%s'\n" + "ORDER BY A.attnum;";
+        return "SELECT a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type,"
+                + " col_description(a.attrelid, a.attnum) AS comment, d.column_default,"
+                + " CASE WHEN a.attnum = ANY(pk.conkey) THEN 'PRI' ELSE '' END AS key"
+                + " FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace"
+                + " JOIN pg_attribute a ON a.attrelid = c.oid"
+                + " JOIN information_schema.columns d ON d.table_schema = n.nspname"
+                + " AND d.table_name = c.relname AND d.column_name = a.attname"
+                + " LEFT JOIN pg_constraint pk ON pk.conrelid = c.oid AND pk.contype = 'p'"
+                + " WHERE c.relname = '%1$s' AND n.nspname = '%4$s' AND a.attnum > 0 AND NOT a.attisdropped"
+                + " ORDER BY a.attnum";
     }
 
     @Override
