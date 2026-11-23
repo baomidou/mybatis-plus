@@ -18,17 +18,17 @@ public final class JSqlParserRenderings {
 
     private record Profile(String unionAll, boolean forUpdateBeforeOrderBy, boolean supportsDropProcedure,
             boolean supportsOracleHintedUpdate, boolean supportsFulltextIndexDdl,
-            boolean parsesTextWithTrailingStatements) {
+            boolean parsesTextWithTrailingStatements, boolean supportsDataModifyingCte) {
     }
 
     /**
      * 版本 → 该版本下所有断言的期望分支。新增版本必须同时补这里和 {@code JSqlParserRenderingsTest} 的探针语句。
      */
     private static final Map<String, Profile> PROFILES = Map.of(
-            "4.9", new Profile("UNION ALL", true, false, false, false, false), "5.0",
-            new Profile("UNION ALL", false, false, false, false, true), "5.2",
-            new Profile("UNION ALL", false, false, false, true, true), "5.4",
-            new Profile("UNION all", false, true, true, true, true));
+            "4.9", new Profile("UNION ALL", true, false, false, false, false, false), "5.0",
+            new Profile("UNION ALL", false, false, false, false, true, false), "5.2",
+            new Profile("UNION ALL", false, false, false, true, true, true), "5.4",
+            new Profile("UNION all", false, true, true, true, true, true));
 
     private static final Pattern JAR_VERSION = Pattern.compile("jsqlparser-(\\d+\\.\\d+)");
 
@@ -72,6 +72,11 @@ public final class JSqlParserRenderings {
      * 5.0 起能解析分号续接第二条语句的文本（只取第一条渲染），4.9 解析失败走原文替换。
      */
     public static final boolean PARSES_TEXT_WITH_TRAILING_STATEMENTS = CURRENT.parsesTextWithTrailingStatements();
+
+    /**
+     * 5.2 起 WITH 定义可以承载修改数据的语句，不再仅限 SELECT。
+     */
+    public static final boolean SUPPORTS_DATA_MODIFYING_CTE = CURRENT.supportsDataModifyingCte();
 
     static String currentVersion() {
         return CURRENT_VERSION;

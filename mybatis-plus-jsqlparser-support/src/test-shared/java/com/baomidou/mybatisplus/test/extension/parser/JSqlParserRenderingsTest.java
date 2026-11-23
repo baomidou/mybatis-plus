@@ -36,6 +36,10 @@ class JSqlParserRenderingsTest {
         assertParsing(
                 "ALTER TABLE table1 ADD FULLTEXT INDEX `a`(`a`)", JSqlParserRenderings.SUPPORTS_FULLTEXT_INDEX_DDL);
         assertParsing(
+                "WITH changed AS (DELETE FROM entity2 WHERE id = ? RETURNING id) "
+                        + "UPDATE entity SET name = ? WHERE id IN (SELECT id FROM changed)",
+                JSqlParserRenderings.SUPPORTS_DATA_MODIFYING_CTE);
+        assertParsing(
                 "SELECT COUNT(*) AS 订单总数, SUM(o.order_total) AS 总销售额 FROM orders o JOIN customers c "
                         + "ON o.customer_id = c.customer_id WHERE c.region = 'North America' GROUP BY o.customer_id "
                         + "HAVING COUNT(*) > 10;\nORDER BY total_sales DESC;\n",

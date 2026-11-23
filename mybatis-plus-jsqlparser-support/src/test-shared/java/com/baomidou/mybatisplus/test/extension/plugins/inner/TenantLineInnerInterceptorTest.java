@@ -1,8 +1,10 @@
 package com.baomidou.mybatisplus.test.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.plugins.handler.TenantLineHandler;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.baomidou.mybatisplus.jsqlparser.enums.ExpressionAppendMode;
+import com.baomidou.mybatisplus.test.extension.parser.JSqlParserRenderings;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author miemie
@@ -1226,6 +1229,142 @@ class TenantLineInnerInterceptorTest {
         assertSql(
                 "INSERT INTO entity (name,age) VALUES ('秋秋',18),('秋秋','22') ON DUPLICATE KEY UPDATE age=18",
                 appendMode);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void updateWithQueryUsedInSet(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String sourceWhere = appendMode == ExpressionAppendMode.FIRST
+                ? "s.tenant_id = 1 AND s.secret > ?"
+                : "s.secret > ? AND s.tenant_id = 1";
+        String targetWhere = appendMode == ExpressionAppendMode.FIRST
+                ? "tenant_id = 1 AND id = ?"
+                : "id = ? AND tenant_id = 1";
+        assertThat(
+                interceptor.parserMulti(
+                        "WITH with_as_amount AS (SELECT MAX(s.secret) AS amount FROM secrets s WHERE s.secret > ?) "
+                                + "UPDATE accounts SET balance = (SELECT w.amount FROM with_as_amount w) WHERE id = ?",
+                        null))
+                .isEqualTo(
+                        "WITH with_as_amount AS (SELECT MAX(s.secret) AS amount FROM secrets s WHERE " + sourceWhere
+                                + ") UPDATE accounts SET balance = (SELECT w.amount FROM with_as_amount w) WHERE "
+                                + targetWhere);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void updateWithQueryUsedInWhere(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String where = appendMode == ExpressionAppendMode.FIRST
+                ? "a.tenant_id = 1 AND a.id IN (SELECT w.account_id FROM with_as_ids w)"
+                : "a.id IN (SELECT w.account_id FROM with_as_ids w) AND a.tenant_id = 1";
+        assertThat(
+                interceptor.parserMulti(
+                        "WITH with_as_ids AS (SELECT s.account_id FROM secrets s) "
+                                + "UPDATE accounts a SET balance = ? WHERE a.id IN (SELECT w.account_id FROM with_as_ids w)",
+                        null))
+                .isEqualTo(
+                        "WITH with_as_ids AS (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1) "
+                                + "UPDATE accounts a SET balance = ? WHERE " + where);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void deleteWithQueryUsedInWhere(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String sourceWhere = appendMode == ExpressionAppendMode.FIRST
+                ? "s.tenant_id = 1 AND s.secret > ?"
+                : "s.secret > ? AND s.tenant_id = 1";
+        String targetWhere = appendMode == ExpressionAppendMode.FIRST
+                ? "a.tenant_id = 1 AND EXISTS (SELECT 1 FROM with_as_ids w WHERE w.account_id = a.id)"
+                : "EXISTS (SELECT 1 FROM with_as_ids w WHERE w.account_id = a.id) AND a.tenant_id = 1";
+        assertThat(
+                interceptor.parserMulti(
+                        "WITH with_as_ids AS (SELECT s.account_id FROM secrets s WHERE s.secret > ?) "
+                                + "DELETE FROM accounts a WHERE EXISTS (SELECT 1 FROM with_as_ids w WHERE w.account_id = a.id)",
+                        null))
+                .isEqualTo(
+                        "WITH with_as_ids AS (SELECT s.account_id FROM secrets s WHERE " + sourceWhere + ") "
+                                + "DELETE FROM accounts a WHERE " + targetWhere);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void dmlWithMultipleQueriesAndUnion(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String with = "WITH with_as_ids AS (SELECT s.account_id FROM secrets s UNION ALL "
+                + "SELECT s2.account_id FROM secrets2 s2), "
+                + "with_as_filtered AS (SELECT w.account_id FROM with_as_ids w) ";
+        String expectedWith = "WITH with_as_ids AS (SELECT s.account_id FROM secrets s WHERE s.tenant_id = 1 UNION ALL "
+                + "SELECT s2.account_id FROM secrets2 s2 WHERE s2.tenant_id = 1), "
+                + "with_as_filtered AS (SELECT w.account_id FROM with_as_ids w) ";
+        assertThat(interceptor.parserMulti(with + "UPDATE accounts SET balance = ?", null))
+                .isEqualTo(expectedWith + "UPDATE accounts SET balance = ? WHERE tenant_id = 1");
+        assertThat(interceptor.parserMulti(with + "DELETE FROM accounts", null))
+                .isEqualTo(expectedWith + "DELETE FROM accounts WHERE tenant_id = 1");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void dmlWithQueriesHonorsIgnoredTables(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String with = "WITH with_as_ids AS (SELECT s.account_id FROM secrets s) ";
+        assertThat(interceptor.parserMulti(with + "UPDATE with_as_accounts SET balance = ?", null))
+                .isEqualTo(with + "UPDATE with_as_accounts SET balance = ?");
+        assertThat(interceptor.parserMulti(with + "DELETE FROM with_as_accounts", null))
+                .isEqualTo(with + "DELETE FROM with_as_accounts");
+        String ignoredSource = "WITH with_as_ids AS (SELECT s.account_id FROM with_as_secrets s) ";
+        assertThat(interceptor.parserMulti(ignoredSource + "UPDATE accounts SET balance = ?", null))
+                .isEqualTo(ignoredSource + "UPDATE accounts SET balance = ? WHERE tenant_id = 1");
+        assertThat(interceptor.parserMulti(ignoredSource + "DELETE FROM accounts", null))
+                .isEqualTo(ignoredSource + "DELETE FROM accounts WHERE tenant_id = 1");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void dmlWithQueriesVisitsSourcesOnce(ExpressionAppendMode appendMode) {
+        Map<String, Integer> visits = new HashMap<>();
+        TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(new TenantLineHandler() {
+
+            @Override
+            public Expression getTenantId() {
+                return new LongValue(1);
+            }
+
+            @Override
+            public boolean ignoreTable(String tableName) {
+                visits.merge(tableName, 1, Integer::sum);
+                return tableName.startsWith("with_as");
+            }
+        });
+        interceptor.setExpressionAppendMode(appendMode);
+        String with = "WITH with_as_ids AS (SELECT s.account_id FROM secrets s) ";
+        assertThat(interceptor.parserMulti(with + "UPDATE accounts SET balance = ?", null))
+                .contains("FROM secrets s WHERE s.tenant_id = 1");
+        assertThat(visits).containsEntry("secrets", 1);
+        visits.clear();
+        assertThat(interceptor.parserMulti(with + "DELETE FROM accounts", null))
+                .contains("FROM secrets s WHERE s.tenant_id = 1");
+        assertThat(visits).containsEntry("secrets", 1);
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void dmlWithNonSelectQueryRetainsExistingBoundary(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        String with = "WITH with_as_changed AS (DELETE FROM secrets WHERE secret = ? RETURNING account_id) ";
+        if (JSqlParserRenderings.SUPPORTS_DATA_MODIFYING_CTE) {
+            assertThat(interceptor.parserMulti(with + "UPDATE accounts SET balance = ?", null))
+                    .isEqualTo(with + "UPDATE accounts SET balance = ? WHERE tenant_id = 1");
+            assertThat(interceptor.parserMulti(with + "DELETE FROM accounts", null))
+                    .isEqualTo(with + "DELETE FROM accounts WHERE tenant_id = 1");
+        } else {
+            assertThatThrownBy(() -> interceptor.parserMulti(with + "UPDATE accounts SET balance = ?", null))
+                    .isInstanceOf(MybatisPlusException.class).hasMessageContaining("Failed to process");
+            assertThatThrownBy(() -> interceptor.parserMulti(with + "DELETE FROM accounts", null))
+                    .isInstanceOf(MybatisPlusException.class).hasMessageContaining("Failed to process");
+        }
     }
 
     void assertSql(String sql, ExpressionAppendMode appendMode) {
