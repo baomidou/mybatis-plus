@@ -138,6 +138,18 @@ class PaginationInnerInterceptorSqlTest {
         assertCountSql(ranked + " ORDER BY a.id", "SELECT COUNT(*) FROM (" + ranked + ") TOTAL");
     }
 
+    @Test
+    void countsUngroupedAggregatesAsResultRows() {
+        for (String projection : Arrays
+                .asList("COUNT(*)", "SUM(amount)", "COALESCE(MAX(amount), 0) + MIN(amount)", "AVG(amount)")) {
+            String sql = "SELECT " + projection + " FROM payment WHERE amount > ?";
+            assertCountSql(sql, "SELECT COUNT(*) FROM (" + sql + ") TOTAL");
+        }
+        assertCountSql("SELECT UPPER(name) FROM customer", "SELECT COUNT(*) AS total FROM customer");
+        assertCountSql("SELECT (SELECT COUNT(*) FROM payment) FROM customer", "SELECT COUNT(*) AS total FROM customer");
+        assertCountSql("SELECT SUM(amount) OVER () FROM payment", "SELECT COUNT(*) AS total FROM payment");
+    }
+
     // 普通列排序不影响计数，生成 COUNT SQL 时可以移除。
     @Test
     void removesUnparameterizedOrderByFromCount() {

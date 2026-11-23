@@ -32,6 +32,7 @@ import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.*;
@@ -70,6 +71,8 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      */
     protected static final List<SelectItem<?>> COUNT_SELECT_ITEM = Collections
             .singletonList(new SelectItem<>(new Column().withColumnName("COUNT(*)")).withAlias(new Alias("total")));
+    private static final Set<String> STANDARD_AGGREGATES = new HashSet<>(
+            Arrays.asList("COUNT", "SUM", "AVG", "MIN", "MAX"));
     protected final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
     protected final Log logger = LogFactory.getLog(this.getClass());
 
@@ -303,7 +306,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
-                if (item.toString().contains(StringPool.QUESTION_MARK)) {
+                if (item.toString().contains(StringPool.QUESTION_MARK) || containsAggregate(item.getExpression())) {
                     return lowLevelCountSql(select.toString());
                 }
             }
@@ -372,6 +375,23 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
             logger.warn("optimize this sql to a count sql has error, sql:\"" + sql + "\", exception:\n" + e);
         }
         return lowLevelCountSql(sql);
+    }
+
+    private boolean containsAggregate(Expression projection) {
+        if (projection instanceof Column || projection instanceof AllColumns) {
+            return false;
+        }
+        List<Function> functions = new ArrayList<>();
+        // 子查询拥有自己的聚合范围，不影响外层行数。
+        JsqlParserAdapter.visitExpression(projection, select -> {
+        }, functions::add);
+        for (Function function : functions) {
+            if (STANDARD_AGGREGATES.contains(function.getName().toUpperCase(Locale.ROOT))
+                    || (function.getParameters() != null && containsAggregate(function.getParameters()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

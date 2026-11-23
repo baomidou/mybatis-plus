@@ -257,6 +257,14 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
+    void returnsTheAggregateRowForAnEmptyInputPage() {
+        var query = Wrappers.query(Entity.class).select("COUNT(*) AS matches").gt("id", 10);
+        var page = Db.pageMaps(new Page<>(1, 10), query);
+        assertThat(page.getTotal()).isOne();
+        assertThat(page.getRecords()).singleElement().satisfies(row -> assertThat(row.values()).containsExactly(0L));
+    }
+
+    @Test
     void shouldPageEntities() {
         IPage<Entity> page = Db.page(new Page<>(1, 1), Entity.class);
         assertThat(page.getTotal()).isEqualTo(2);
