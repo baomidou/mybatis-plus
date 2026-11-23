@@ -38,19 +38,19 @@ public class SqlServerTypeConvertTest {
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.SQL_PACK).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE_SQL);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(TIME);
-        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(TIMESTAMP);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(TIMESTAMP);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.TIME_PACK).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(LOCAL_DATE);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(LOCAL_TIME);
-        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(LOCAL_DATE_TIME);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(LOCAL_DATE_TIME);
 
         globalConfig = GeneratorBuilder.globalConfigBuilder().dateType(DateType.ONLY_DATE).build();
         assertThat(convert.processTypeConvert(globalConfig, "date")).isEqualTo(DATE);
         assertThat(convert.processTypeConvert(globalConfig, "time")).isEqualTo(DATE);
-        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(DATE);
+        assertThat(convert.processTypeConvert(globalConfig, "timestamp")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "datetime")).isEqualTo(DATE);
     }
 }
