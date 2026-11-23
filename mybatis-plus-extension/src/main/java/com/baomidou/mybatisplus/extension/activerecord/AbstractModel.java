@@ -26,6 +26,8 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +48,12 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
 
     private static final long serialVersionUID = 1L;
 
-    protected final transient Class<?> entityClass = this.getClass();
+    protected transient Class<?> entityClass = this.getClass();
+
+    private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        input.defaultReadObject();
+        entityClass = getClass();
+    }
 
     /**
      * 插入（字段选择插入）

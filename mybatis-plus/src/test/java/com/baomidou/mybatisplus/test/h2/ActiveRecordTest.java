@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.cache.decorators.SerializedCache;
+import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -81,6 +83,16 @@ class ActiveRecordTest {
         student.setId(1L);
         assertThat(student.selectById()).isNotNull();
         assertThat(student.selectById(1L)).isNotNull();
+    }
+
+    @Test
+    void shouldSelectByIdAfterCacheRoundTrip() {
+        SerializedCache cache = new SerializedCache(new PerpetualCache("student"));
+        cache.putObject(1L, new H2Student().selectById(1L));
+
+        H2Student cached = (H2Student) cache.getObject(1L);
+        assertThat(cached.pkVal()).isEqualTo(1L);
+        assertThat(cached.selectById().getName()).isEqualTo("Tom");
     }
 
     @Test
