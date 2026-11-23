@@ -33,7 +33,7 @@ class DbTypeTest {
 
     private static final Set<DbType> MYSQL_FAMILY = EnumSet.of(
             DbType.MYSQL, DbType.MARIADB, DbType.GBASE, DbType.OSCAR, DbType.XU_GU, DbType.CLICK_HOUSE,
-            DbType.OCEAN_BASE, DbType.CUBRID, DbType.SUNDB, DbType.GOLDENDB, DbType.YASDB);
+            DbType.OCEAN_BASE, DbType.CUBRID, DbType.SUNDB, DbType.GOLDENDB, DbType.YASDB, DbType.HIVE2);
 
     private static final Set<DbType> ORACLE_FAMILY = EnumSet.of(DbType.ORACLE, DbType.POLARDB, DbType.DM, DbType.GAUSS);
 

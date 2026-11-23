@@ -68,8 +68,6 @@ public class DialectFactory {
                 dialect = new InformixDialect();
             } else if (dbType == DbType.TRINO || dbType == DbType.PRESTO) {
                 dialect = new TrinoDialect();
-            } else if (dbType == DbType.HIVE2) {
-                dialect = new Hive2Dialect();
             } else if (dbType == DbType.GAUSS_DB) {
                 dialect = new GaussDBDialect();
             }

@@ -262,6 +262,9 @@ public enum DbType {
         return OTHER;
     }
 
+    /**
+     * 判断是否属于使用 MySQL 分页语法的数据库分组。
+     */
     public boolean mysqlSameType() {
         return this == DbType.MYSQL //
                 || this == DbType.MARIADB //
@@ -273,7 +276,8 @@ public enum DbType {
                 || this == DbType.CUBRID //
                 || this == DbType.SUNDB //
                 || this == DbType.GOLDENDB //
-                || this == DbType.YASDB;
+                || this == DbType.YASDB //
+                || this == DbType.HIVE2;
     }
 
     public boolean oracleSameType() {
