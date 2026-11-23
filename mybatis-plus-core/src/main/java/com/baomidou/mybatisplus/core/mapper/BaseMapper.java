@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.MapperProxyMetadata;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.cursor.Cursor;
@@ -323,7 +324,7 @@ public interface BaseMapper<T> extends Mapper<T> {
      * @param throwEx boolean 参数，为true如果存在多个结果直接抛出异常
      */
     default T selectOne(Wrapper<T> queryWrapper, boolean throwEx) {
-        List<T> results = this.selectList(queryWrapper, new RowBounds(0, 2));
+        List<T> results = this.selectList(queryWrapper, MybatisMapperMethod.SELECT_ONE_BOUNDS);
         int size = results.size();
         if (size == 1) {
             return results.get(0);

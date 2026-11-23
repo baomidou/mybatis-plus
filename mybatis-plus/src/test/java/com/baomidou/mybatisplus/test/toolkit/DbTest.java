@@ -1,7 +1,11 @@
 package com.baomidou.mybatisplus.test.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import com.baomidou.mybatisplus.core.spi.CompatibleSet;
@@ -17,8 +21,15 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import com.baomidou.mybatisplus.test.sqlrunner.Entity;
 import com.baomidou.mybatisplus.test.sqlrunner.EntityMapper;
+import org.apache.ibatis.annotations.Many;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
+import org.apache.ibatis.session.RowBounds;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -167,6 +178,57 @@ class DbTest extends DbTestSupport<EntityMapper> {
         entity.setId(1L);
         one = Db.getOne(entity);
         assertThat(one).isNotNull();
+    }
+
+    @Test
+    void getOneWithoutDuplicateExceptionBoundsEntityMapping() {
+        jdbcTemplate.update("INSERT INTO entity (id, name) SELECT x, 'extra' FROM SYSTEM_RANGE(3, 200)");
+        var factory = Mockito.spy(new DefaultObjectFactory());
+        sqlSessionFactory.getConfiguration().setObjectFactory(factory);
+
+        Entity first = Db.getOne(Wrappers.lambdaQuery(Entity.class).orderByAsc(Entity::getId), false);
+
+        assertThat(first.getId()).isEqualTo(1L);
+        Mockito.verify(factory, Mockito.atMost(2)).create(Entity.class);
+        assertThat(Db.getOne(Wrappers.lambdaQuery(Entity.class).gt(Entity::getId, 200L), false)).isNull();
+    }
+
+    @Test
+    void getOneKeepsChildrenAcrossInterleavedJoinRows() {
+        sqlSessionFactory.getConfiguration().addMapper(FamilyMapper.class);
+        try (var session = sqlSessionFactory.openSession()) {
+            var mapper = session.getMapper(FamilyMapper.class);
+            var query = Wrappers.query(Family.class);
+            Family first = mapper.selectOne(query, false);
+            assertThat(first.id).isEqualTo(1L);
+            assertThat(first.members).extracting(Entity::getId).containsExactly(1L, 2L);
+            assertThat(Db.getOne(query, false).members).extracting(Entity::getId).containsExactly(1L, 2L);
+            sqlSessionFactory.getConfiguration().setSafeRowBoundsEnabled(true);
+            assertThatThrownBy(() -> mapper.selectOne(query)).isInstanceOf(TooManyResultsException.class);
+            assertThatThrownBy(() -> mapper.selectList(query, new RowBounds(0, 2)))
+                    .hasMessageContaining("nested result mappings");
+        }
+    }
+
+    @TableName("entity")
+    public static class Family {
+
+        public Long id;
+        @TableField(exist = false)
+        public List<Entity> members;
+    }
+
+    public interface FamilyMapper extends BaseMapper<Family> {
+
+        @Select("SELECT id AS child_id FROM entity WHERE id = #{id}")
+        @Results(id = "member", value = @Result(id = true, property = "id", column = "child_id"))
+        Entity member(@Param("id") long id);
+
+        @Override
+        @Select("SELECT p.id, c.id AS child_id FROM entity p CROSS JOIN entity c ORDER BY c.id, p.id")
+        @Results({@Result(id = true, property = "id", column = "id"),
+                @Result(property = "members", many = @Many(resultMap = "member"))})
+        List<Family> selectList(Wrapper<Family> wrapper);
     }
 
     @Test

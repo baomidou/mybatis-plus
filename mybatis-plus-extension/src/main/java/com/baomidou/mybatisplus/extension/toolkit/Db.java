@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.override.MybatisMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -292,8 +293,13 @@ public class Db {
         if (throwEx) {
             return SqlHelper.execute(entityClass, baseMapper -> baseMapper.selectOne(queryWrapper));
         }
-        return SqlHelper
-                .execute(entityClass, baseMapper -> SqlHelper.getObject(log, baseMapper.selectList(queryWrapper)));
+        return SqlHelper.execute(entityClass, baseMapper -> {
+            List<T> results = baseMapper.selectList(queryWrapper, MybatisMapperMethod.SELECT_ONE_BOUNDS);
+            if (results.size() > 1) {
+                log.warn("Db.getOne returned multiple results, using the first row.");
+            }
+            return results.isEmpty() ? null : results.get(0);
+        });
     }
 
     /**

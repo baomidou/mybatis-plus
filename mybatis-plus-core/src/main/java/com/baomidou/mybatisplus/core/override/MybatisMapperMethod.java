@@ -26,6 +26,7 @@ import org.apache.ibatis.binding.MapperMethod.MethodSignature;
 import org.apache.ibatis.binding.MapperMethod.SqlCommand;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
@@ -47,6 +48,9 @@ import java.util.*;
  * @since 2018-06-09
  */
 public class MybatisMapperMethod {
+
+    /** 单条查询只需辨别是否有第二条结果，嵌套映射要等关联行组装完毕。 */
+    public static final RowBounds SELECT_ONE_BOUNDS = new RowBounds(0, 2);
 
     private final SqlCommand command;
     private final MethodSignature method;
@@ -205,6 +209,11 @@ public class MybatisMapperMethod {
         Object param = this.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {
             RowBounds rowBounds = method.extractRowBounds(args);
+            if (rowBounds == SELECT_ONE_BOUNDS
+                    && sqlSession.getConfiguration().getMappedStatement(command.getName(), false).getResultMaps()
+                            .stream().anyMatch(ResultMap::hasNestedResultMaps)) {
+                rowBounds = RowBounds.DEFAULT;
+            }
             result = sqlSession.selectList(command.getName(), param, rowBounds);
         } else {
             result = sqlSession.selectList(command.getName(), param);
