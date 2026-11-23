@@ -17,9 +17,14 @@ package com.baomidou.mybatisplus.generator.config.converts;
 
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.select.Branch;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
@@ -44,6 +49,10 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRIN
  */
 public class MySqlTypeConvert implements ITypeConvert {
 
+    private static final Pattern UNSIGNED_INTEGER = Pattern.compile(
+            "(?:tinyint|smallint|mediumint|int|integer|bigint)(?:\\(\\d+\\))?\\s+unsigned(?:\\s+zerofill)?",
+            Pattern.CASE_INSENSITIVE);
+
     public static final MySqlTypeConvert INSTANCE = new MySqlTypeConvert();
 
     /**
@@ -52,6 +61,7 @@ public class MySqlTypeConvert implements ITypeConvert {
     @Override
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType).test(contains("point").then(BYTE_ARRAY))
+                .test(Branch.of(MySqlTypeConvert::isUnsignedInteger, MySqlTypeConvert::unsignedIntegerColumnType))
                 .test(containsAny("char", "text", "json", "enum").then(STRING)).test(contains("bigint").then(LONG))
                 .test(containsAny("tinyint(1)", "bit(1)").then(BOOLEAN)).test(contains("bit").then(BYTE))
                 .test(contains("int").then(INTEGER)).test(contains("decimal").then(BIG_DECIMAL))
@@ -59,6 +69,28 @@ public class MySqlTypeConvert implements ITypeConvert {
                 .test(contains("binary").then(BYTE_ARRAY)).test(contains("float").then(FLOAT))
                 .test(contains("double").then(DOUBLE))
                 .test(containsAny("date", "time", "year").then(t -> toDateType(config, t))).or(STRING);
+    }
+
+    /**
+     * 匹配 JDBC 元数据或 SHOW FULL COLUMNS 返回的 MySQL 无符号整数类型。
+     *
+     * @return 能容纳整列取值范围的 Java 类型，其他列返回 null
+     */
+    @Nullable
+    public static DbColumnType getUnsignedIntegerType(@Nullable String fieldType) {
+        return isUnsignedInteger(fieldType) ? unsignedIntegerColumnType(fieldType) : null;
+    }
+
+    private static boolean isUnsignedInteger(String fieldType) {
+        return fieldType != null && UNSIGNED_INTEGER.matcher(fieldType).matches();
+    }
+
+    private static DbColumnType unsignedIntegerColumnType(String fieldType) {
+        String name = fieldType.toLowerCase(Locale.ROOT);
+        if (name.startsWith("bigint")) {
+            return DbColumnType.BIG_INTEGER;
+        }
+        return name.startsWith("int") ? DbColumnType.LONG : DbColumnType.INTEGER;
     }
 
     /**
