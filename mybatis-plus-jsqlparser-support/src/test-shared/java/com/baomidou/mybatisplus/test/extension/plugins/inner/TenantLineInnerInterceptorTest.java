@@ -937,6 +937,62 @@ class TenantLineInnerInterceptorTest {
 
     @ParameterizedTest
     @EnumSource(ExpressionAppendMode.class)
+    void insertSelectWithoutFrom(ExpressionAppendMode appendMode) {
+        TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(() -> new LongValue(1));
+        interceptor.setExpressionAppendMode(appendMode);
+        assertThat(interceptor.parserSingle("INSERT INTO entity (id) SELECT 3", null))
+                .isEqualTo("INSERT INTO entity (id, tenant_id) SELECT 3, 1");
+        assertThat(interceptor.parserSingle("INSERT INTO entity (id, name) SELECT ?, ?", null))
+                .isEqualTo("INSERT INTO entity (id, name, tenant_id) SELECT ?, ?, 1");
+        assertThat(interceptor.parserSingle("INSERT INTO entity (id) SELECT ? WHERE ? = ?", null))
+                .isEqualTo("INSERT INTO entity (id, tenant_id) SELECT ?, 1 WHERE ? = ?");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void insertSelectWithoutFromFiltersScalarSubquery(ExpressionAppendMode appendMode) {
+        TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(() -> new LongValue(1));
+        interceptor.setExpressionAppendMode(appendMode);
+        String where = appendMode == ExpressionAppendMode.FIRST
+                ? "e2.tenant_id = 1 AND e2.name = ?"
+                : "e2.name = ? AND e2.tenant_id = 1";
+        assertThat(
+                interceptor.parserSingle(
+                        "INSERT INTO entity (id) SELECT (SELECT MAX(e2.id) FROM entity2 e2 WHERE e2.name = ?)", null))
+                .isEqualTo(
+                        "INSERT INTO entity (id, tenant_id) SELECT (SELECT MAX(e2.id) FROM entity2 e2 WHERE " + where
+                                + "), 1");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void insertSelectWithoutFromInUnion(ExpressionAppendMode appendMode) {
+        TenantLineInnerInterceptor interceptor = new TenantLineInnerInterceptor(() -> new LongValue(1));
+        interceptor.setExpressionAppendMode(appendMode);
+        assertThat(interceptor.parserSingle("INSERT INTO entity (id) SELECT 3 UNION ALL SELECT 4", null))
+                .isEqualTo("INSERT INTO entity (id, tenant_id) SELECT 3, 1 UNION ALL SELECT 4, 1");
+        assertThat(
+                interceptor
+                        .parserSingle("INSERT INTO entity (id) SELECT ? UNION ALL SELECT e2.id FROM entity2 e2", null))
+                .isEqualTo(
+                        "INSERT INTO entity (id, tenant_id) SELECT ?, 1 "
+                                + "UNION ALL SELECT e2.id, tenant_id FROM entity2 e2 WHERE e2.tenant_id = 1");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
+    void insertSelectWithoutFromPreservesInsertExclusions(ExpressionAppendMode appendMode) {
+        interceptor.setExpressionAppendMode(appendMode);
+        assertThat(interceptor.parserSingle("INSERT INTO with_as_entity (id) SELECT ?", null))
+                .isEqualTo("INSERT INTO with_as_entity (id) SELECT ?");
+        assertThat(interceptor.parserSingle("INSERT INTO entity SELECT ?, ?", null))
+                .isEqualTo("INSERT INTO entity SELECT ?, ?");
+        assertThat(interceptor.parserSingle("INSERT INTO entity (id, tenant_id) SELECT ?, ?", null))
+                .isEqualTo("INSERT INTO entity (id, tenant_id) SELECT ?, ?");
+    }
+
+    @ParameterizedTest
+    @EnumSource(ExpressionAppendMode.class)
     void delete(ExpressionAppendMode appendMode) {
         assertSql("delete from entity where id = ?", appendMode);
     }

@@ -199,6 +199,36 @@ class SelectExpressionIsolationTest {
         });
     }
 
+    @Test
+    void insertSelectWithoutFromAddsTenantAndPreservesParameter() throws Exception {
+        String sql = tenant().parserMulti("INSERT INTO zz_expression_anchor (id) SELECT ?", null);
+        try (var statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, 3);
+            assertThat(statement.executeUpdate()).isEqualTo(1);
+        }
+        assertThat(rows("SELECT tenant_id FROM zz_expression_anchor WHERE id = 3")).containsExactly(1);
+    }
+
+    @Test
+    void insertSelectWithoutFromStillFiltersScalarSubquery() throws Exception {
+        String sql = tenant().parserMulti(
+                "INSERT INTO zz_expression_anchor (id) SELECT (SELECT MAX(secret) FROM zz_expression_secret)", null);
+        try (Statement statement = connection.createStatement()) {
+            assertThat(statement.executeUpdate(sql)).as(sql).isEqualTo(1);
+        }
+        assertThat(rows("SELECT id FROM zz_expression_anchor WHERE id > 2")).as(sql).containsExactly(10);
+        assertThat(rows("SELECT tenant_id FROM zz_expression_anchor WHERE id = 10")).containsExactly(1);
+    }
+
+    @Test
+    void insertSelectWithoutFromUnionAddsTenantToEveryBranch() throws Exception {
+        String sql = tenant().parserMulti("INSERT INTO zz_expression_anchor (id) SELECT 3 UNION ALL SELECT 4", null);
+        try (Statement statement = connection.createStatement()) {
+            assertThat(statement.executeUpdate(sql)).as(sql).isEqualTo(2);
+        }
+        assertThat(rows("SELECT tenant_id FROM zz_expression_anchor WHERE id > 2 ORDER BY id")).containsExactly(1, 1);
+    }
+
     private static DataPermissionInterceptor permission() {
         return new DataPermissionInterceptor((MultiDataPermissionHandler) (table, where, id) -> {
             assertThat(id).isEqualTo("projectionMapper");

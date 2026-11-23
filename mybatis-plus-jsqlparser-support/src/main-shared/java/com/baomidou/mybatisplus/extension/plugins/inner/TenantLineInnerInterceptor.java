@@ -194,7 +194,10 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
         if (selectBody instanceof PlainSelect) {
             PlainSelect plainSelect = (PlainSelect) selectBody;
             FromItem fromItem = plainSelect.getFromItem();
-            if (fromItem instanceof Table) {
+            if (fromItem == null) {
+                processPlainSelect(plainSelect, whereSegment);
+                plainSelect.getSelectItems().add(new SelectItem<>(tenantLineHandler.getTenantId()));
+            } else if (fromItem instanceof Table) {
                 // fixed gitee pulls/141 duplicate update
                 processPlainSelect(plainSelect, whereSegment);
                 appendSelectItem(plainSelect.getSelectItems());
