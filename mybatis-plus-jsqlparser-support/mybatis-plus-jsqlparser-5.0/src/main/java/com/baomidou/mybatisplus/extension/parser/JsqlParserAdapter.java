@@ -19,6 +19,7 @@ import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.statement.select.*;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -48,6 +49,15 @@ public final class JsqlParserAdapter {
     public static void processWithItems(Select select, Consumer<Select> consumer) {
         if (select.getWithItemsList() != null) {
             select.getWithItemsList().forEach(withItem -> consumer.accept(withItem));
+        }
+    }
+
+    /**
+     * 遍历 WITH 列表中的 SELECT 定义。
+     */
+    public static void processWithItemsList(List<WithItem> withItems, Consumer<Select> consumer) {
+        if (withItems != null) {
+            withItems.forEach(consumer);
         }
     }
 

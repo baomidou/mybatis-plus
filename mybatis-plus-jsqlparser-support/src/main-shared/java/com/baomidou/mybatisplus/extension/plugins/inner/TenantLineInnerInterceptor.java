@@ -160,6 +160,8 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             // 过滤退出执行
             return;
         }
+        JsqlParserAdapter
+                .processWithItemsList(update.getWithItemsList(), withItem -> processSelectBody(withItem, (String) obj));
         List<UpdateSet> sets = update.getUpdateSets();
         if (!CollectionUtils.isEmpty(sets)) {
             sets.forEach(us -> us.getValues().forEach(ex -> {
@@ -179,6 +181,8 @@ public class TenantLineInnerInterceptor extends BaseMultiTableInnerInterceptor i
             // 过滤退出执行
             return;
         }
+        JsqlParserAdapter
+                .processWithItemsList(delete.getWithItemsList(), withItem -> processSelectBody(withItem, (String) obj));
         processSelectExpression(delete.getWhere(), (String) obj);
         delete.setWhere(this.andExpression(delete.getTable(), delete.getWhere(), (String) obj));
     }
