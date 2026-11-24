@@ -29,20 +29,19 @@ import java.util.Map;
  */
 public class KotlinTypeUtils {
 
-    private static final Map<String, String> JAVA_TO_KOTLIN_TYPE = new HashMap<>();
+    private static final Map<IColumnType, String> JAVA_TO_KOTLIN_TYPE = new HashMap<>();
 
     static {
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BYTE_ARRAY.getType(), "ByteArray");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_BYTE.getType(), "Byte");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_SHORT.getType(), "Short");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_INT.getType(), "Int");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.INTEGER.getType(), "Int");
-        JAVA_TO_KOTLIN_TYPE.put(Integer.class.getName(), "Int");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_DOUBLE.getType(), "Double");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_FLOAT.getType(), "Float");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_LONG.getType(), "Long");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_BOOLEAN.getType(), "Boolean");
-        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_CHAR.getType(), "Char");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BYTE_ARRAY, "ByteArray");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_BYTE, "Byte");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_SHORT, "Short");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_INT, "Int");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.INTEGER, "Int");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_DOUBLE, "Double");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_FLOAT, "Float");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_LONG, "Long");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_BOOLEAN, "Boolean");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_CHAR, "Char");
     }
 
     /**
@@ -52,9 +51,7 @@ public class KotlinTypeUtils {
      * @return Kotlin类型
      */
     public static String getStringType(IColumnType columnType) {
-        String type = columnType.getType();
-        String qualifiedType = columnType.getPkg();
-        return JAVA_TO_KOTLIN_TYPE.getOrDefault(qualifiedType == null ? type : qualifiedType, type);
+        return JAVA_TO_KOTLIN_TYPE.getOrDefault(columnType, columnType.getType());
     }
 
 }
