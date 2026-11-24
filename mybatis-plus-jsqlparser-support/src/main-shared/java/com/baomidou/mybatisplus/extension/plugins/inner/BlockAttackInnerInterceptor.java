@@ -15,20 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.inner;
 
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserAdapter;
 import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.NotExpression;
+import net.sf.jsqlparser.expression.NullValue;
+import net.sf.jsqlparser.expression.SignedExpression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
@@ -36,8 +37,8 @@ import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
 import net.sf.jsqlparser.expression.operators.relational.ComparisonOperator;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
-import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.update.Update;
@@ -46,7 +47,9 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.function.Predicate;
 
 /**
  * 攻击 SQL 阻断解析器,防止全表更新与删除
@@ -80,79 +83,60 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         this.checkWhere(update.getTable(), update.getWhere(), "Prohibition of table update operation");
     }
 
+    /**
+     * 检查 UPDATE 或 DELETE 的条件，使用目标表的别名识别逻辑删除过滤.
+     */
     protected void checkWhere(Table table, Expression where, String ex) {
-        // fixed https://github.com/baomidou/mybatis-plus/issues/7081
-        this.checkWhere(getSchemaNameDotName(table), where, ex);
+        Predicate<Expression> logicDeleteFilter = resolveLogicDeleteFilter(table);
+        Assert.isFalse(Boolean.TRUE.equals(fullMatch(where, logicDeleteFilter)), ex);
     }
 
-    protected void checkWhere(String tableName, Expression where, String ex) {
-        Assert.isFalse(Boolean.TRUE.equals(this.fullMatch(where, this.getTableLogicField(tableName))), ex);
-    }
-
-    private Boolean fullMatch(Expression where, String logicField) {
-        if (where == null) {
+    /**
+     * 判断 WHERE 是否恒真. 例如 {@code id = ? OR 1 = 1} 恒真，{@code id = ? AND 1 = 1} 仍取决于行数据. 返回 {@code null} 表示静态无法判定.
+     */
+    private Boolean fullMatch(Expression where, Predicate<Expression> logicDeleteFilter) {
+        if (where == null || (logicDeleteFilter != null && logicDeleteFilter.test(where))) {
             return Boolean.TRUE;
-        }
-        if (StringUtils.isNotBlank(logicField)) {
-            if (where instanceof BinaryExpression) {
-                BinaryExpression binaryExpression = (BinaryExpression) where;
-                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)
-                        || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
-                    return Boolean.TRUE;
-                }
-            }
-            if (where instanceof IsNullExpression) {
-                IsNullExpression binaryExpression = (IsNullExpression) where;
-                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)) {
-                    return Boolean.TRUE;
-                }
-            }
         }
 
         if (where instanceof ComparisonOperator) {
-            // 直接比较两个常量,提前按数据库语义求出结果,避免常量恒等式换一种写法绕过校验
-            Boolean result = matchConstantComparison((ComparisonOperator) where);
-            if (result != null) {
-                return result;
+            return matchConstantComparison((ComparisonOperator) where);
+        } else if (where instanceof IsNullExpression) {
+            IsNullExpression isNull = (IsNullExpression) where;
+            boolean negated = isNull.isNot() || isNull.isUseNotNull();
+            Expression operand = isNull.getLeftExpression();
+            // NULL IS NULL 恒真，数字和布尔字面量的 IS NOT NULL 也恒真
+            if (operand instanceof NullValue) {
+                return !negated;
             }
-            if (where instanceof EqualsTo) {
-                // example: 1=1
-                EqualsTo equalsTo = (EqualsTo) where;
-                return StringUtils
-                        .equals(equalsTo.getLeftExpression().toString(), equalsTo.getRightExpression().toString());
-            } else if (where instanceof NotEqualsTo) {
-                // example: 1 != 2
-                NotEqualsTo notEqualsTo = (NotEqualsTo) where;
-                return !StringUtils.equals(
-                        notEqualsTo.getLeftExpression().toString(), notEqualsTo.getRightExpression().toString());
-            }
+            return toBoolean(operand) == null ? null : negated;
         } else if (where instanceof NotExpression) {
-            // example: not 1 = 2
-            Boolean result = fullMatch(((NotExpression) where).getExpression(), logicField);
+            // NOT (1 = 2) 恒真，NOT (id = ?) 仍无法静态判定
+            Boolean result = fullMatch(((NotExpression) where).getExpression(), logicDeleteFilter);
             return result == null ? null : !result;
         } else if (where instanceof OrExpression) {
             OrExpression orExpression = (OrExpression) where;
-            Boolean left = fullMatch(orExpression.getLeftExpression(), logicField);
+            Boolean left = fullMatch(orExpression.getLeftExpression(), logicDeleteFilter);
             if (Boolean.TRUE.equals(left)) {
                 return Boolean.TRUE;
             }
-            Boolean right = fullMatch(orExpression.getRightExpression(), logicField);
+            Boolean right = fullMatch(orExpression.getRightExpression(), logicDeleteFilter);
             if (Boolean.TRUE.equals(right)) {
                 return Boolean.TRUE;
             }
             return left == null || right == null ? null : Boolean.FALSE;
         } else if (where instanceof XorExpression) {
             // example: 1 xor 0,操作数按数据库真值语义解释,不能只看比较运算符
-            Boolean left = fullMatch(((XorExpression) where).getLeftExpression(), logicField);
-            Boolean right = fullMatch(((XorExpression) where).getRightExpression(), logicField);
+            Boolean left = fullMatch(((XorExpression) where).getLeftExpression(), logicDeleteFilter);
+            Boolean right = fullMatch(((XorExpression) where).getRightExpression(), logicDeleteFilter);
             return left == null || right == null ? null : left ^ right;
         } else if (where instanceof AndExpression) {
             AndExpression andExpression = (AndExpression) where;
-            Boolean left = fullMatch(andExpression.getLeftExpression(), logicField);
+            Boolean left = fullMatch(andExpression.getLeftExpression(), logicDeleteFilter);
             if (Boolean.FALSE.equals(left)) {
                 return Boolean.FALSE;
             }
-            Boolean right = fullMatch(andExpression.getRightExpression(), logicField);
+            Boolean right = fullMatch(andExpression.getRightExpression(), logicDeleteFilter);
             if (Boolean.FALSE.equals(right)) {
                 return Boolean.FALSE;
             }
@@ -162,9 +146,9 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
             if (where instanceof ParenthesedExpressionList && ((ParenthesedExpressionList<?>) where).size() != 1) {
                 return null;
             }
-            return fullMatch(JsqlParserAdapter.unwrap(where), logicField);
+            return fullMatch(JsqlParserAdapter.unwrap(where), logicDeleteFilter);
         }
-        // 条件本身是数值常量时按真值语义判断,例如 where 1
+        // 直接求值单独的常量条件，例如 WHERE 1 或 WHERE TRUE
         return toBoolean(where);
     }
 
@@ -172,65 +156,77 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
      * 提取常量的真值
      *
      * @param expression 表达式
-     * @return 非零常量为 {@code true},零常量为 {@code false},不是常量返回 {@code null}
+     * @return 布尔或数值常量的真值，无法判定时返回 {@code null}
      */
     private Boolean toBoolean(Expression expression) {
-        if (expression instanceof LongValue) {
-            return ((LongValue) expression).getValue() != 0;
+        BigDecimal number = toExactNumber(expression);
+        if (number == null) {
+            return toBooleanLiteral(expression);
         }
-        if (expression instanceof DoubleValue) {
-            return ((DoubleValue) expression).getValue() != 0;
+        boolean nonZero = number.signum() != 0;
+        double approximate = number.doubleValue();
+        return Double.isFinite(approximate) && nonZero == (approximate != 0) ? nonZero : null;
+    }
+
+    private Boolean toBooleanLiteral(Expression expression) {
+        // 4.9 和 5.0 把 TRUE/FALSE 解析成 Column，5.2 和 5.4 使用 BooleanValue
+        String literal = expression.toString();
+        if ("true".equalsIgnoreCase(literal)) {
+            return Boolean.TRUE;
+        }
+        if ("false".equalsIgnoreCase(literal)) {
+            return Boolean.FALSE;
         }
         return null;
     }
 
     /**
-     * 按数据库的真值语义计算两个常量之间的比较结果
-     * <p>
-     * 常量恒等式的写法不止 {@code 1=1} 一种,{@code 1<=1}、{@code 1<>2}、{@code 2>1}、{@code 'a'='a'} 同样匹配全部数据. 无法求值时返回
-     * {@code null},交由调用方继续按原有语法规则判断.
+     * 比较精确数值、布尔字面量或相同的非空字符串字面量. 例如 {@code 1 <> 2} 和 {@code TRUE = TRUE} 恒真，{@code id <> ?} 和 {@code ? = ?} 需要运行时数据.
      *
      * @param comparison 比较表达式
      * @return 比较结果为真返回 {@code true},为假返回 {@code false},无法确定返回 {@code null}
      */
     private Boolean matchConstantComparison(ComparisonOperator comparison) {
         String operator = comparison.getStringExpression();
-        if (StringUtils.isBlank(operator) || comparison.getLeftExpression() == null
-                || comparison.getRightExpression() == null) {
+        if (StringUtils.isBlank(operator)) {
             return null;
         }
-        Number left = toNumber(comparison.getLeftExpression());
-        Number right = toNumber(comparison.getRightExpression());
-        if (left == null || right == null) {
-            String leftText = toText(comparison.getLeftExpression());
-            String rightText = toText(comparison.getRightExpression());
-            if (leftText == null || rightText == null) {
-                return null;
-            }
-            return compareConstant(operator, leftText, rightText);
+        Expression leftExpression = comparison.getLeftExpression();
+        Expression rightExpression = comparison.getRightExpression();
+        BigDecimal left = toExactNumber(leftExpression);
+        BigDecimal right = toExactNumber(rightExpression);
+        if (left != null && right != null) {
+            Boolean result = compareConstant(operator, left.compareTo(right));
+            BigDecimal sqliteLeft = toSqliteNumber(leftExpression, left);
+            BigDecimal sqliteRight = toSqliteNumber(rightExpression, right);
+            // 例如 0.10000000000000001 = 0.1 在精确十进制与浮点比较下可能得到不同结果
+            return result != null && sqliteLeft != null && sqliteRight != null
+                    && result.equals(compareConstant(operator, sqliteLeft.compareTo(sqliteRight))) ? result : null;
         }
-        return compareConstant(operator, left, right);
+        // 'A' = 'a' 取决于排序规则，'' = '' 在将空字符串视为 NULL 的数据库中也无法判为恒真
+        if (leftExpression instanceof StringValue && rightExpression instanceof StringValue
+                && !((StringValue) leftExpression).getValue().isEmpty()
+                && leftExpression.toString().equals(rightExpression.toString())) {
+            return compareConstant(operator, 0);
+        }
+        if ("=".equals(operator) || "<>".equals(operator) || "!=".equals(operator)) {
+            Boolean leftBoolean = toBooleanLiteral(leftExpression);
+            Boolean rightBoolean = toBooleanLiteral(rightExpression);
+            if (leftBoolean != null && rightBoolean != null) {
+                return compareConstant(operator, Boolean.compare(leftBoolean, rightBoolean));
+            }
+        }
+        return null;
     }
 
     /**
      * 比较两个常量,运算符或常量类型不受支持时返回 {@code null}
      *
      * @param operator 运算符
-     * @param left 左常量
-     * @param right 右常量
+     * @param result 两个常量的比较结果
      * @return 比较结果,无法判断返回 {@code null}
      */
-    private Boolean compareConstant(String operator, Object left, Object right) {
-        int result;
-        if (left instanceof Long && right instanceof Long) {
-            result = Long.compare((Long) left, (Long) right);
-        } else if (left instanceof Number && right instanceof Number) {
-            result = Double.compare(((Number) left).doubleValue(), ((Number) right).doubleValue());
-        } else if (left instanceof String && right instanceof String) {
-            result = ((String) left).compareTo((String) right);
-        } else {
-            return null;
-        }
+    private Boolean compareConstant(String operator, int result) {
         switch (operator) {
             case "=" :
                 return result == 0;
@@ -251,49 +247,145 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     }
 
     /**
-     * 提取表达式的数值常量
+     * 从字面量原文提取整数或定点小数,避免经过 {@code long} 或 {@code double} 转换.
      *
      * @param expression 表达式
-     * @return 数值常量,不是数值常量返回 {@code null}
+     * @return 精确数值常量,依赖方言或无法求值时返回 {@code null}
      */
-    private Number toNumber(Expression expression) {
-        if (expression instanceof LongValue) {
-            return ((LongValue) expression).getValue();
+    private BigDecimal toExactNumber(Expression expression) {
+        if (expression instanceof SignedExpression) {
+            SignedExpression signed = (SignedExpression) expression;
+            BigDecimal number = toExactNumber(signed.getExpression());
+            if (number == null || (signed.getSign() != '+' && signed.getSign() != '-')) {
+                return null;
+            }
+            return signed.getSign() == '-' ? number.negate() : number;
         }
-        if (expression instanceof DoubleValue) {
-            return ((DoubleValue) expression).getValue();
+        if (!(expression instanceof LongValue) && !(expression instanceof DoubleValue)) {
+            return null;
         }
-        return null;
+        String literal = expression.toString();
+        // 科学计数法在部分方言中是近似值,无法按定点小数求值
+        if (literal.indexOf('e') >= 0 || literal.indexOf('E') >= 0) {
+            return null;
+        }
+        try {
+            return new BigDecimal(literal);
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 
-    /**
-     * 提取表达式的字符串常量
-     *
-     * @param expression 表达式
-     * @return 字符串常量,不是字符串常量返回 {@code null}
-     */
-    private String toText(Expression expression) {
-        if (expression instanceof StringValue) {
-            return ((StringValue) expression).getValue();
+    private BigDecimal toSqliteNumber(Expression expression, BigDecimal number) {
+        while (expression instanceof SignedExpression) {
+            expression = ((SignedExpression) expression).getExpression();
         }
-        return null;
+        if (expression instanceof LongValue && number.unscaledValue().bitLength() < Long.SIZE) {
+            return number;
+        }
+        double approximate = number.doubleValue();
+        // 精确保留二进制浮点数的值,以便与未舍入的整数比较.
+        return Double.isFinite(approximate) ? new BigDecimal(approximate) : null;
     }
 
-    /**
-     * 获取表名中的逻辑删除字段
-     *
-     * @param tableName 表名
-     * @return 逻辑删除字段
-     */
-    private String getTableLogicField(String tableName) {
-        if (StringUtils.isBlank(tableName)) {
-            return StringPool.EMPTY;
-        }
-
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
+    private Predicate<Expression> resolveLogicDeleteFilter(Table table) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getSchemaNameDotName(table));
         if (tableInfo == null || !tableInfo.isWithLogicDelete() || tableInfo.getLogicDeleteFieldInfo() == null) {
-            return StringPool.EMPTY;
+            return null;
         }
-        return tableInfo.getLogicDeleteFieldInfo().getColumn();
+        TableFieldInfo field = tableInfo.getLogicDeleteFieldInfo();
+        // 未删除值为 0 时，仅有 del_flag = 0 会拦截，追加 AND id = ? 后仍有业务过滤
+        return expression -> isLogicDeleteFilter(expression, table, field);
+    }
+
+    private boolean isLogicDeleteFilter(Expression expression, Table table, TableFieldInfo field) {
+        String value = field.getLogicNotDeleteValue();
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        if ("null".equalsIgnoreCase(value)) {
+            // 配置未删除值为 NULL 时，识别 del_flag IS NULL
+            if (!(expression instanceof IsNullExpression)) {
+                return false;
+            }
+            IsNullExpression isNull = (IsNullExpression) expression;
+            return !isNull.isNot() && !isNull.isUseNotNull()
+                    && isLogicDeleteColumn(isNull.getLeftExpression(), table, field.getColumn());
+        }
+        if (!(expression instanceof EqualsTo)) {
+            return false;
+        }
+        EqualsTo equals = (EqualsTo) expression;
+        Expression left = equals.getLeftExpression();
+        Expression right = equals.getRightExpression();
+        // 识别 del_flag = 0 和 0 = del_flag，del_flag = id 仍属于业务比较
+        return (isLogicDeleteColumn(left, table, field.getColumn()) && isLogicNotDeletedValue(right, field))
+                || (isLogicDeleteColumn(right, table, field.getColumn()) && isLogicNotDeletedValue(left, field));
+    }
+
+    private boolean isLogicNotDeletedValue(Expression expression, TableFieldInfo field) {
+        String value = field.getLogicNotDeleteValue();
+        if (expression instanceof StringValue) {
+            StringValue literal = (StringValue) expression;
+            return StringUtils.isBlank(literal.getPrefix()) && value.equals(literal.getValue());
+        }
+        Class<?> fieldType = field.getPropertyType();
+        if ((fieldType == Boolean.class || fieldType == boolean.class)
+                && ("false".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value))) {
+            // JSqlParser 4.9 和 5.0 将布尔字面量解析为 Column
+            return value.equalsIgnoreCase(expression.toString());
+        }
+        BigDecimal number = toExactNumber(expression);
+        if (number == null || field.isCharSequence() || value.indexOf('e') >= 0 || value.indexOf('E') >= 0) {
+            return false;
+        }
+        try {
+            return number.compareTo(new BigDecimal(value)) == 0;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
+    }
+
+    private boolean isLogicDeleteColumn(Expression expression, Table table, String name) {
+        if (!(expression instanceof Column)) {
+            return false;
+        }
+        Column column = (Column) expression;
+        if (!sameIdentifier(name, column.getColumnName())) {
+            return false;
+        }
+        Table qualifier = column.getTable();
+        if (qualifier == null || qualifier.getName() == null) {
+            return true;
+        }
+        if (table.getAlias() != null) {
+            // UPDATE records r ... WHERE r.del_flag = 0 中的 r 必须是目标表别名
+            return qualifier.getSchemaName() == null && sameIdentifier(table.getAlias().getName(), qualifier.getName());
+        }
+        return sameIdentifier(table.getName(), qualifier.getName()) && (qualifier.getSchemaName() == null
+                || sameIdentifier(table.getSchemaName(), qualifier.getSchemaName()));
+    }
+
+    private boolean sameIdentifier(String left, String right) {
+        if (left == null || right == null) {
+            return false;
+        }
+        String leftName = unquoteIdentifier(left);
+        String rightName = unquoteIdentifier(right);
+        return leftName.length() == left.length() && rightName.length() == right.length()
+                ? leftName.equalsIgnoreCase(rightName)
+                : leftName.equals(rightName);
+    }
+
+    private String unquoteIdentifier(String name) {
+        if (name.length() < 2) {
+            return name;
+        }
+        char first = name.charAt(0);
+        char last = name.charAt(name.length() - 1);
+        if ((first == '"' && last == '"') || (first == '`' && last == '`') || (first == '[' && last == ']')) {
+            return name.substring(1, name.length() - 1);
+        }
+        return name;
     }
 }
