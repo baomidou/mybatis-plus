@@ -21,14 +21,12 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import org.apache.ibatis.builder.IncompleteElementException;
-import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.parsing.XNode;
-import org.apache.ibatis.parsing.XPathParser;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.scripting.xmltags.DynamicSqlSource;
@@ -74,9 +72,13 @@ public class MybatisXMLLanguageDriver implements LanguageDriver {
         }
         // issue #3
         if (script.startsWith("<script>")) {
-            XPathParser parser = new XPathParser(script, false, configuration.getVariables(),
-                    new XMLMapperEntityResolver());
-            return createSqlSource(configuration, parser.evalNode("/script"), parameterType);
+            /*
+             * issue #7187: 注入的 CRUD 语句都是 <script> 脚本，XPathParser 每条都要新建 JAXP 工厂、
+             * 初始化 XPath 引擎，再对根节点做一次 XPath 求值。启动期成百上千条语句下这部分开销可观，
+             * 这里直接解析文档根节点，解析配置与 XPathParser 保持一致。
+             */
+            XNode scriptNode = MybatisScriptParser.parse(script, configuration.getVariables());
+            return createSqlSource(configuration, scriptNode, parameterType);
         }
         // issue #127
         script = PropertyParser.parse(script, configuration.getVariables());

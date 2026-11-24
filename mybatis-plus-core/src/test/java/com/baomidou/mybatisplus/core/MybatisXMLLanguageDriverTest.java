@@ -1,8 +1,10 @@
 package com.baomidou.mybatisplus.core;
 
+import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * {@link MybatisXMLLanguageDriver} 与 {@link MybatisXMLScriptBuilder} 的动态 SQL 行为测试。<br>
@@ -254,7 +257,15 @@ class MybatisXMLLanguageDriverTest {
                                         </where>
                                         and 1=1
                                     </script>
-                        """, "select * from `user` WHERE name like concat(?,'%') and 1=1"));
+                        """, "select * from `user` WHERE name like concat(?,'%') and 1=1"),
+
+                new Script("cdataAndNumericEntitiesKeepRawOperators", """
+                        <script>
+                                        select * from `user` where age &lt; #{age}
+                                        <![CDATA[ and name <> #{name} ]]>
+                                        <if test="true"> and 1 = 1</if>
+                                    </script>
+                        """, "select * from `user` where age < ? and name <> ? and 1 = 1"));
     }
 
     @ParameterizedTest(name = "{0}")
@@ -271,6 +282,48 @@ class MybatisXMLLanguageDriverTest {
     @MethodSource("scripts")
     void plusBuilderMatchesUpstreamBehaviour(Script script) {
         assertThat(boundSql(MYBATIS_PLUS, script)).isEqualTo(boundSql(MYBATIS, script));
+    }
+
+    /**
+     * 解析器按线程复用 {@link javax.xml.parsers.DocumentBuilder}，但脚本里的占位符仍要按当前
+     * {@link org.apache.ibatis.session.Configuration#getVariables()} 展开，否则 {@code <if test="${flag}">} 会被当成 OGNL
+     * 表达式在运行期报错。
+     */
+    @Test
+    void scriptExpandsConfigurationVariables() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        configuration.getVariables().setProperty("flag", "true");
+        String script = "<script>select * from `user` <if test=\"${flag}\">where id = 1</if></script>";
+        assertThat(
+                collapse(MYBATIS_PLUS.createSqlSource(configuration, script, Object.class).getBoundSql(null).getSql()))
+                .isEqualTo("select * from `user` where id = 1");
+    }
+
+    /**
+     * 非法脚本的异常类型与消息要和上游 {@link XMLLanguageDriver} 一致，避免调用方按 {@code MyBatisSystemException} 处理时行为漂移。
+     */
+    @Test
+    void malformedScriptFailsLikeUpstream() {
+        String script = "<script>select * from `user` <if test=\"true\">where id = 1</script>";
+        assertThatThrownBy(() -> MYBATIS_PLUS.createSqlSource(new MybatisConfiguration(), script, Object.class))
+                .isInstanceOf(BuilderException.class).hasMessageContaining("Error creating document instance");
+        assertThatThrownBy(() -> MYBATIS.createSqlSource(new MybatisConfiguration(), script, Object.class))
+                .isInstanceOf(BuilderException.class).hasMessageContaining("Error creating document instance");
+    }
+
+    /**
+     * 解析失败后复用同一个 {@link javax.xml.parsers.DocumentBuilder}，下一次解析必须从干净状态开始。
+     */
+    @Test
+    void failedParseDoesNotPoisonTheThreadLocalBuilder() {
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        assertThatThrownBy(
+                () -> MYBATIS_PLUS.createSqlSource(configuration, "<script><if test=\"true\">x</if>", Object.class))
+                .isInstanceOf(BuilderException.class);
+        assertThat(
+                MYBATIS_PLUS.createSqlSource(configuration, "<script>select 1</script>", Object.class).getBoundSql(null)
+                        .getSql())
+                .isEqualTo("select 1");
     }
 
     private static String boundSql(LanguageDriver driver, Script script) {
