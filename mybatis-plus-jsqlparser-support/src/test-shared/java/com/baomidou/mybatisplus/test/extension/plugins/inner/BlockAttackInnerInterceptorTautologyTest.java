@@ -207,6 +207,20 @@ class BlockAttackInnerInterceptorTautologyTest {
         }
     }
 
+    @Test
+    void logicDeleteConstantPredicates() {
+        // 逻辑删除字段的 IN / BETWEEN 条件与 = 一样按原有规则识别
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), LogicRecord.class);
+        try {
+            checkEx("update block_attack_or_logic set rfid = ? where del_flag in ('0')");
+            checkEx("delete from block_attack_or_logic where del_flag between '0' and '0'");
+            checkNotEx("update block_attack_or_logic set rfid = ? where id > ? and del_flag in ('0')");
+            checkNotEx("delete from block_attack_or_logic where id > ? and del_flag between '0' and '0'");
+        } finally {
+            TableInfoHelper.remove(LogicRecord.class);
+        }
+    }
+
     @TableName(value = "logic_record", schema = "block_attack_schema")
     private static class SchemaLogicRecord {
 
