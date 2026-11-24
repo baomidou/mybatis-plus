@@ -44,11 +44,7 @@ class ${entity} {
 #foreach($an in ${field.annotationAttributesList})
     ${an.displayName}
 #end
-    #if(${field.propertyType} == "Integer")
-    var ${field.propertyName}: Int? = null
-    #else
-    var ${field.propertyName}: ${field.propertyType}? = null
-    #end
+    var ${field.propertyName}: ${field.kotlinPropertyType}? = null
 
 #end
 ## ----------  END 字段循环遍历  ----------

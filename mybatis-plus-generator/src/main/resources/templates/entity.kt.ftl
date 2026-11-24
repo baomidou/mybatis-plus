@@ -44,11 +44,7 @@ class ${entity} {
 <#list field.annotationAttributesList as an>
     ${an.displayName}
 </#list>
-    <#if field.propertyType == "Integer">
-    var ${field.propertyName}: Int? = null
-    <#else>
-    var ${field.propertyName}: ${field.propertyType}? = null
-    </#if>
+    var ${field.propertyName}: ${field.kotlinPropertyType}? = null
 
 </#list>
 <#-- ----------  END 字段循环遍历  ---------->

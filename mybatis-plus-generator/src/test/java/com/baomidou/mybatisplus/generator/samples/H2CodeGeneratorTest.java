@@ -33,7 +33,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -137,6 +139,21 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
         assertGenerated("ITSimpleService.java");
         assertGenerated("TSimpleServiceImpl.java");
         assertGenerated("TSimpleController.java");
+    }
+
+    @ParameterizedTest
+    @MethodSource("shouldGenerateCodeWithEachTemplateEngine")
+    void shouldGenerateKotlinBinaryProperties(String engine, AbstractTemplateEngine templateEngine)
+            throws SQLException, IOException {
+        DataSourceConfig source = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:binary_" + engine + ";DATABASE_TO_LOWER=TRUE", "sa", "").build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE attachment (id INT PRIMARY KEY, payload VARBINARY(16))");
+            AutoGenerator generator = new AutoGenerator(source);
+            generator.global(tempGlobalConfig().enableKotlin().build());
+            generator.execute(templateEngine);
+        }
+        assertThat(contentOf("Attachment.kt")).contains("var id: Int? = null", "var payload: ByteArray? = null");
     }
 
     static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {
