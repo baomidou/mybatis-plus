@@ -29,13 +29,18 @@ import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.NotExpression;
+import net.sf.jsqlparser.expression.SignedExpression;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.conditional.XorExpression;
+import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.ComparisonOperator;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
 import net.sf.jsqlparser.schema.Table;
@@ -93,19 +98,17 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
         if (where == null) {
             return Boolean.TRUE;
         }
-        if (StringUtils.isNotBlank(logicField)) {
-            if (where instanceof BinaryExpression) {
-                BinaryExpression binaryExpression = (BinaryExpression) where;
-                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)
-                        || StringUtils.equals(binaryExpression.getRightExpression().toString(), logicField)) {
-                    return Boolean.TRUE;
-                }
+        if (where instanceof BinaryExpression) {
+            BinaryExpression binaryExpression = (BinaryExpression) where;
+            if (isLogicField(logicField, binaryExpression.getLeftExpression())
+                    || isLogicField(logicField, binaryExpression.getRightExpression())) {
+                return Boolean.TRUE;
             }
-            if (where instanceof IsNullExpression) {
-                IsNullExpression binaryExpression = (IsNullExpression) where;
-                if (StringUtils.equals(binaryExpression.getLeftExpression().toString(), logicField)) {
-                    return Boolean.TRUE;
-                }
+        }
+        if (where instanceof IsNullExpression) {
+            IsNullExpression isNullExpression = (IsNullExpression) where;
+            if (isLogicField(logicField, isNullExpression.getLeftExpression())) {
+                return Boolean.TRUE;
             }
         }
 
@@ -126,6 +129,15 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
                 return !StringUtils.equals(
                         notEqualsTo.getLeftExpression().toString(), notEqualsTo.getRightExpression().toString());
             }
+        } else if (where instanceof Between) {
+            // example: 1 between 1 and 2
+            return matchConstantBetween((Between) where, logicField);
+        } else if (where instanceof InExpression) {
+            // example: 1 in (1, 2)
+            return matchConstantIn((InExpression) where, logicField);
+        } else if (where instanceof LikeExpression) {
+            // example: 'a' like '%'
+            return matchConstantLike((LikeExpression) where);
         } else if (where instanceof NotExpression) {
             // example: not 1 = 2
             Boolean result = fullMatch(((NotExpression) where).getExpression(), logicField);
@@ -275,6 +287,97 @@ public class BlockAttackInnerInterceptor extends JsqlParserSupport implements In
     private String toText(Expression expression) {
         if (expression instanceof StringValue) {
             return ((StringValue) expression).getValue();
+        }
+        return null;
+    }
+
+    /**
+     * 判断表达式是否只由字面量构成
+     * <p>
+     * 只识别数值和字符串字面量,以及字面量前的正负号. 引用字段、参数或函数的表达式都不算字面量.
+     *
+     * @param expression 表达式
+     * @return 只由字面量构成返回 {@code true}
+     */
+    private boolean isConstant(Expression expression) {
+        if (expression instanceof LongValue || expression instanceof DoubleValue || expression instanceof StringValue) {
+            return true;
+        }
+        if (expression instanceof SignedExpression) {
+            Expression value = ((SignedExpression) expression).getExpression();
+            return value instanceof LongValue || value instanceof DoubleValue;
+        }
+        return false;
+    }
+
+    /**
+     * 判断表达式是否引用了逻辑删除字段
+     *
+     * @param logicField 逻辑删除字段
+     * @param expression 表达式
+     * @return 引用了逻辑删除字段返回 {@code true}
+     */
+    private boolean isLogicField(String logicField, Expression expression) {
+        return StringUtils.isNotBlank(logicField) && expression != null
+                && StringUtils.equals(expression.toString(), logicField);
+    }
+
+    /**
+     * 判断常量 BETWEEN 条件是否匹配全部数据
+     * <p>
+     * 左值和两个边界都是字面量时,条件只由常量构成,不可能过滤出部分数据,直接按全表条件处理. 涉及字段、参数或其他表达式时返回 {@code null},交由调用方继续按原有语法规则判断.
+     *
+     * @param between 区间表达式
+     * @param logicField 逻辑删除字段
+     * @return 条件匹配全部数据返回 {@code true},无法判断返回 {@code null}
+     */
+    private Boolean matchConstantBetween(Between between, String logicField) {
+        if (isLogicField(logicField, between.getLeftExpression())) {
+            return Boolean.TRUE;
+        }
+        if (isConstant(between.getLeftExpression()) && isConstant(between.getBetweenExpressionStart())
+                && isConstant(between.getBetweenExpressionEnd())) {
+            return Boolean.TRUE;
+        }
+        return null;
+    }
+
+    /**
+     * 判断常量 IN 条件是否匹配全部数据
+     * <p>
+     * 左值和列表中的每一项都是字面量时,条件只由常量构成,不可能过滤出部分数据,直接按全表条件处理. 涉及字段、参数或其他表达式时返回 {@code null},交由调用方继续按原有语法规则判断.
+     *
+     * @param inExpression IN 表达式
+     * @param logicField 逻辑删除字段
+     * @return 条件匹配全部数据返回 {@code true},无法判断返回 {@code null}
+     */
+    private Boolean matchConstantIn(InExpression inExpression, String logicField) {
+        if (isLogicField(logicField, inExpression.getLeftExpression())) {
+            return Boolean.TRUE;
+        }
+        if (!isConstant(inExpression.getLeftExpression())
+                || !(inExpression.getRightExpression() instanceof ExpressionList)) {
+            return null;
+        }
+        for (Object item : (ExpressionList<?>) inExpression.getRightExpression()) {
+            if (!(item instanceof Expression) || !isConstant((Expression) item)) {
+                return null;
+            }
+        }
+        return Boolean.TRUE;
+    }
+
+    /**
+     * 判断常量 LIKE 条件是否匹配全部数据
+     * <p>
+     * 匹配值和模式都是字面量时,条件只由常量构成,不可能过滤出部分数据,直接按全表条件处理. 涉及字段、参数或其他表达式时返回 {@code null},交由调用方继续按原有语法规则判断.
+     *
+     * @param likeExpression LIKE 表达式
+     * @return 条件匹配全部数据返回 {@code true},无法判断返回 {@code null}
+     */
+    private Boolean matchConstantLike(LikeExpression likeExpression) {
+        if (isConstant(likeExpression.getLeftExpression()) && isConstant(likeExpression.getRightExpression())) {
+            return Boolean.TRUE;
         }
         return null;
     }
