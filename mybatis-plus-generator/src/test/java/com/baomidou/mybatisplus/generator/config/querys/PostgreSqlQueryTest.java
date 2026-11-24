@@ -19,6 +19,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PostgreSqlQueryTest {
 
     @Test
+    void listsOnlyTheRequestedSchemasTableAfterARewrite() throws SQLException {
+        try (Connection first = DriverManager.getConnection(System.getenv("MP_POSTGRES_TEST_URL"));
+                Connection second = DriverManager.getConnection(System.getenv("MP_POSTGRES_TEST_URL"));
+                Statement statement = first.createStatement();
+                Statement other = second.createStatement()) {
+            statement.execute("CREATE TEMP TABLE catalog_item (id int)");
+            other.execute("CREATE TEMP TABLE catalog_item (id int)");
+            statement.execute("COMMENT ON TABLE catalog_item IS 'first schema'");
+            other.execute("COMMENT ON TABLE catalog_item IS 'other schema'");
+            statement.execute("TRUNCATE catalog_item");
+            String schema;
+            try (ResultSet rows = statement.executeQuery("SELECT pg_my_temp_schema()::regnamespace::text")) {
+                rows.next();
+                schema = rows.getString(1);
+            }
+            PostgreSqlQuery query = new PostgreSqlQuery();
+            String sql = String.format(query.tablesSql(), schema) + " AND tablename IN ('catalog_item')";
+            try (ResultSet rows = statement.executeQuery(sql)) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getString(query.tableName())).isEqualTo("catalog_item");
+                assertThat(rows.getString(query.tableComment())).isEqualTo("first schema");
+                assertThat(rows.next()).isFalse();
+            }
+        }
+    }
+
+    @Test
     void onlyMarksPrimaryKeyColumns() throws SQLException {
         try (Connection connection = DriverManager.getConnection(System.getenv("MP_POSTGRES_TEST_URL"));
                 Statement statement = connection.createStatement()) {

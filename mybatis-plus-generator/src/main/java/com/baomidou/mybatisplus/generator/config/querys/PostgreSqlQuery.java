@@ -30,7 +30,10 @@ public class PostgreSqlQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='%s' AND A.tablename = B.relname";
+        return "SELECT t.tablename, obj_description(c.oid, 'pg_class') AS comments"
+                + " FROM pg_catalog.pg_tables t JOIN pg_catalog.pg_namespace n ON n.nspname = t.schemaname"
+                + " JOIN pg_catalog.pg_class c ON c.relnamespace = n.oid AND c.relname = t.tablename"
+                + " WHERE t.schemaname = '%s'";
     }
 
     @Override
