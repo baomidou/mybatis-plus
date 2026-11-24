@@ -22,6 +22,44 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class QueryWrapperTest extends WrapperTestSupport {
 
     @Test
+    void sqlInjectionCheckReachesNestedConditions() {
+        java.util.List<QueryWrapper<Object>> wrappers = java.util.Arrays.asList(
+                new QueryWrapper<>().checkSqlInjection().and(n -> n.eq("id = 1 or name", "x")),
+                new QueryWrapper<>().checkSqlInjection().or(n -> n.eq("id = 1 or name", "x")),
+                new QueryWrapper<>().checkSqlInjection().nested(n -> n.eq("id = 1 or name", "x")),
+                new QueryWrapper<>().checkSqlInjection().not(n -> n.eq("id = 1 or name", "x")),
+                new QueryWrapper<>().checkSqlInjection().nested(n -> n.and(inner -> inner.eq("id = 1 or name", "x"))));
+        for (QueryWrapper<Object> wrapper : wrappers) {
+            assertThatThrownBy(wrapper::getSqlSegment).isInstanceOf(MybatisPlusException.class)
+                    .hasMessageContaining("Discovering SQL injection column");
+        }
+    }
+
+    @Test
+    void nestedConditionsKeepDefaultFieldHandling() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().nested(n -> n.eq("id = 1 or name", "x"));
+        assertThat(wrapper.getSqlSegment()).contains("id = 1 or name");
+    }
+
+    @Test
+    void nestedChecksDoNotInspectBoundValuesOrSkippedConditions() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().checkSqlInjection()
+                .nested(false, n -> n.eq("id = 1 or name", "x")).nested(n -> n.eq("name", "id = 1 or name"));
+        assertThat(wrapper.getSqlSegment()).isEqualTo("((name = #{ew.paramNameValuePairs.MPGENVAL1}))");
+        assertThat(wrapper.getParamNameValuePairs()).containsEntry("MPGENVAL1", "id = 1 or name");
+    }
+
+    @Test
+    void parameterAliasReachesNestedLambdaViews() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Entity.class);
+        QueryWrapper<Entity> wrapper = new QueryWrapper<>(Entity.class);
+        wrapper.and(nested -> nested.lambda().eq(Entity::getId, 1));
+        wrapper.setParamAlias("filter");
+
+        assertThat(wrapper.getSqlSegment()).isEqualTo("((id = #{filter.paramNameValuePairs.MPGENVAL1}))");
+    }
+
+    @Test
     void shouldCacheSqlSegmentAcrossMutations() {
         QueryWrapper<Entity> ew = new QueryWrapper<Entity>().eq("xxx", 123)
                 .and(i -> i.eq("andx", 65444).le("ande", 66666)).ne("xxx", 222);

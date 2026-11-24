@@ -241,6 +241,7 @@ public final class TableNameParser {
     /**
      * @deprecated 3.5.11 建议使用 {@link #hasMoreTokens(List, int)} 判断
      */
+    @Deprecated
     private static boolean hasIthToken(List<SqlToken> tokens, int currentIndex) {
         return hasMoreTokens(tokens, currentIndex) && tokens.size() > currentIndex + 3;
     }

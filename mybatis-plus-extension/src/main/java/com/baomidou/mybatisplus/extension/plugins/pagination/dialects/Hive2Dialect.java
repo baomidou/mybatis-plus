@@ -22,7 +22,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
  *
  * @author dongwei
  * @since 3.5.11
+ * @deprecated 3.5.19 请改用 {@link MySqlDialect}。
  */
+@Deprecated
 public class Hive2Dialect implements IDialect {
 
     @Override

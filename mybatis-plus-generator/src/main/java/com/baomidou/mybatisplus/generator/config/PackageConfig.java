@@ -179,6 +179,7 @@ public class PackageConfig {
      * @return 配置信息
      * @see #getPackageInfo(InjectionConfig, String)
      * @since 3.5.0
+     * @deprecated 3.5.10
      */
     @Deprecated
     public String getPackageInfo(String module) {

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBase8sDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GaussDBDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.Hive2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.InformixDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
@@ -48,7 +47,7 @@ public class DialectFactoryTest {
                 Arguments.of(DbType.XU_GU, MySqlDialect.class), Arguments.of(DbType.CLICK_HOUSE, MySqlDialect.class),
                 Arguments.of(DbType.OCEAN_BASE, MySqlDialect.class), Arguments.of(DbType.CUBRID, MySqlDialect.class),
                 Arguments.of(DbType.SUNDB, MySqlDialect.class), Arguments.of(DbType.GOLDENDB, MySqlDialect.class),
-                Arguments.of(DbType.YASDB, MySqlDialect.class),
+                Arguments.of(DbType.YASDB, MySqlDialect.class), Arguments.of(DbType.HIVE2, MySqlDialect.class),
                 // oracleSameType
                 Arguments.of(DbType.DM, OracleDialect.class), Arguments.of(DbType.ORACLE, OracleDialect.class),
                 Arguments.of(DbType.POLARDB, OracleDialect.class), Arguments.of(DbType.GAUSS, OracleDialect.class),
@@ -72,12 +71,9 @@ public class DialectFactoryTest {
                 Arguments.of(DbType.DERBY, Oracle12cDialect.class), Arguments.of(DbType.DB2, DB2Dialect.class),
                 Arguments.of(DbType.SQL_SERVER2005, SQLServer2005Dialect.class),
                 Arguments.of(DbType.SYBASE, SybaseDialect.class), Arguments.of(DbType.XCloud, XCloudDialect.class),
-                Arguments.of(DbType.GBASE_8S, GBase8sDialect.class),
-                Arguments.of(DbType.GBASEDBT, GBase8sDialect.class),
-                Arguments.of(DbType.GBASE_INFORMIX, GBase8sDialect.class),
-                Arguments.of(DbType.SINODB, GBase8sDialect.class), Arguments.of(DbType.INFORMIX, InformixDialect.class),
-                Arguments.of(DbType.TRINO, TrinoDialect.class), Arguments.of(DbType.PRESTO, TrinoDialect.class),
-                Arguments.of(DbType.HIVE2, Hive2Dialect.class));
+                Arguments.of(DbType.GBASE_8S, GBase8sDialect.class), Arguments.of(DbType.SINODB, GBase8sDialect.class),
+                Arguments.of(DbType.INFORMIX, InformixDialect.class), Arguments.of(DbType.TRINO, TrinoDialect.class),
+                Arguments.of(DbType.PRESTO, TrinoDialect.class));
     }
 
     @ParameterizedTest(name = "{0} -> {1}")

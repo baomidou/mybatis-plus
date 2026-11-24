@@ -1,6 +1,14 @@
 package com.baomidou.mybatisplus.test.resultmap;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class ResultMapTest extends DbTestSupport<EntityMapper> {
+public class ResultMapTest extends DbTestSupport<ResultMapTest.EntityMapper> {
 
     @Test
     void shouldMapNestedResultsWithTypeHandlers() {
@@ -52,16 +60,61 @@ public class ResultMapTest extends DbTestSupport<EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "gg1 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg2 VARCHAR(255) NULL DEFAULT NULL,\n"
-                        + "gg3 VARCHAR(255) NULL DEFAULT NULL,\n" + "gg4 VARCHAR(255) NULL DEFAULT NULL,\n"
-                        + "str VARCHAR(255) NULL DEFAULT NULL,\n" + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    gg1 VARCHAR(255) NULL DEFAULT NULL,
+                    gg2 VARCHAR(255) NULL DEFAULT NULL,
+                    gg3 VARCHAR(255) NULL DEFAULT NULL,
+                    gg4 VARCHAR(255) NULL DEFAULT NULL,
+                    str VARCHAR(255) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
-    @Override
-    protected String mapperXml() {
-        return "com/baomidou/mybatisplus/test/resultmap/EntityMapper.xml";
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    @Accessors(chain = true)
+    @TableName(resultMap = "resultMap")
+    public static class Entity {
+
+        private Long id;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private Gg gg1;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private Gg gg2;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private List<Gg> gg3;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private List<Gg4> gg4;
+
+        @TableField(typeHandler = GsonTypeHandler.class)
+        private String[] str;
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Gg {
+
+            private String name;
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Gg4 {
+
+            private String name;
+            private Gg gg;
+            private List<Gg> ggList;
+            private Map<String, Gg> ggMap;
+        }
     }
 }

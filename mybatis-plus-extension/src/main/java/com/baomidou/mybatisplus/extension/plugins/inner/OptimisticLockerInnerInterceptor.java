@@ -119,7 +119,11 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
     private static final String UPDATED_VERSION_VAL_KEY = "#updatedVersionVal#";
 
     /**
-     * Support wrapper mode (update(LambdaUpdateWrapper) or update(UpdateWrapper))
+     * 是否启用 Wrapper 更新模式，默认关闭。
+     * <p>
+     * 当更新参数中没有实体对象时，该模式支持通过 {@code UpdateWrapper} 或 {@code LambdaUpdateWrapper} 使用乐观锁：从 {@link Version} 字段的 {@code eq}
+     * 条件中 获取非空的旧版本值，计算新版本值并追加到 {@code SET} 子句。
+     * </p>
      */
     private final boolean wrapperMode;
 
@@ -174,6 +178,13 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
                         uw.eq(versionColumn, originalVersionVal);
                         map.put(Constants.WRAPPER, uw);
                     } else {
+                        NormalSegmentList normal = aw.getExpression().getNormal();
+                        if (!normal.isEmpty()) {
+                            // Apply the version check to the whole predicate, including every OR branch.
+                            String originalSql = normal.getSqlSegment();
+                            normal.clear();
+                            aw.apply(originalSql);
+                        }
                         aw.apply(versionColumn + " = {0}", originalVersionVal);
                     }
                 } else {
@@ -277,27 +288,31 @@ public class OptimisticLockerInnerInterceptor implements InnerInterceptor {
         }
 
         private boolean find(Wrapper<?> wrapper) {
-            Matcher matcher;
             final NormalSegmentList segments = wrapper.getExpression().getNormal();
             for (ISqlSegment segment : segments) {
-                // 如果字段已找到并且当前segment为EQ
-                if (state == State.FIELD_FOUND && segment == SqlKeyword.EQ) {
-                    this.state = State.EQ_FOUND;
-                    // 如果EQ找到并且value已找到
-                } else if (state == State.EQ_FOUND
-                        && (matcher = PARAM_PAIRS_RE.matcher(segment.getSqlSegment())).matches()) {
-                    this.valueKey = matcher.group(1);
-                    this.state = State.VERSION_VALUE_PRESENT;
-                    return true;
-                    // 处理嵌套
-                } else if (segment instanceof Wrapper) {
+                if (segment instanceof Wrapper) {
+                    // A predicate cannot span the boundary of a nested wrapper.
+                    this.state = State.INIT;
                     if (find((Wrapper<?>) segment)) {
                         return true;
                     }
-                    // 判断字段是否是要查找字段
-                } else if (segment.getSqlSegment().equals(this.fieldName)) {
-                    this.state = State.FIELD_FOUND;
+                    this.state = State.INIT;
+                    continue;
                 }
+                if (state == State.FIELD_FOUND && segment == SqlKeyword.EQ) {
+                    this.state = State.EQ_FOUND;
+                    continue;
+                }
+                String sqlSegment = segment.getSqlSegment();
+                if (state == State.EQ_FOUND) {
+                    Matcher matcher = PARAM_PAIRS_RE.matcher(sqlSegment);
+                    if (matcher.matches()) {
+                        this.valueKey = matcher.group(1);
+                        this.state = State.VERSION_VALUE_PRESENT;
+                        return true;
+                    }
+                }
+                this.state = sqlSegment.equals(this.fieldName) ? State.FIELD_FOUND : State.INIT;
             }
             return false;
         }

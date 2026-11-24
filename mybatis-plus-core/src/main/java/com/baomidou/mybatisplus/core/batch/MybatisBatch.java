@@ -186,20 +186,22 @@ public class MybatisBatch<T> {
      */
     public List<BatchResult> saveOrUpdate(boolean autoCommit, BatchMethod<T> insertMethod,
             BiPredicate<BatchSqlSession, T> insertPredicate, BatchMethod<T> updateMethod) {
-        List<BatchResult> resultList = new ArrayList<>();
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, autoCommit)) {
             BatchSqlSession session = new BatchSqlSession(sqlSession);
-            for (T data : dataList) {
-                if (insertPredicate.test(session, data)) {
-                    sqlSession.insert(
-                            insertMethod.getStatementId(), toParameter(insertMethod.getParameterConvert(), data));
-                } else {
-                    sqlSession.update(
-                            updateMethod.getStatementId(), toParameter(updateMethod.getParameterConvert(), data));
+            // Query-triggered flushes and batch boundaries must share the same ordered results.
+            List<BatchResult> resultList = session.getResultBatchList();
+            for (List<T> batch : CollectionUtils.split(dataList, batchSize)) {
+                for (T data : batch) {
+                    if (insertPredicate.test(session, data)) {
+                        sqlSession.insert(
+                                insertMethod.getStatementId(), toParameter(insertMethod.getParameterConvert(), data));
+                    } else {
+                        sqlSession.update(
+                                updateMethod.getStatementId(), toParameter(updateMethod.getParameterConvert(), data));
+                    }
                 }
+                resultList.addAll(sqlSession.flushStatements());
             }
-            resultList.addAll(sqlSession.flushStatements());
-            resultList.addAll(session.getResultBatchList());
             if (!autoCommit) {
                 sqlSession.commit();
             }

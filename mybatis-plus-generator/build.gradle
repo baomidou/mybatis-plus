@@ -27,7 +27,6 @@ dependencies {
     testImplementation "${lib.firebird}"
     testImplementation "${lib.gaussdb}"
     testImplementation "${lib.'swagger-annotations'}"
-    testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.'spring-web'}"
     testCompileOnly "org.jetbrains:annotations:24.1.0"
 }

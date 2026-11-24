@@ -1,11 +1,13 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.StringTypeHandler;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -90,12 +92,74 @@ class AbstractWrapperTest {
     }
 
     @Test
+    void applyBindsNestedTypeHandler() {
+        String handler = NestedStringHandler.class.getName();
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().apply("label={0,typeHandler=" + handler + "}", "active");
+        Configuration config = new Configuration();
+        Map<String, Object> params = Collections.singletonMap("ew", wrapper);
+        BoundSql sql = new XMLLanguageDriver().createSqlSource(
+                config, "<script>SELECT id FROM records WHERE " + wrapper.getSqlSegment() + "</script>", Map.class)
+                .getBoundSql(params);
+
+        assertThat(sql.getSql()).isEqualTo("SELECT id FROM records WHERE (label=?)");
+        assertThat(sql.getParameterMappings()).hasSize(1);
+        ParameterMapping label = sql.getParameterMappings().get(0);
+        assertThat(label.getTypeHandler()).isInstanceOf(NestedStringHandler.class);
+        assertThat(config.newMetaObject(params).getValue(label.getProperty())).isEqualTo("active");
+    }
+
+    @Test
+    void setSqlBindsJdbcTypeContainingUnderscoresAlongsidePlainParameter() {
+        UpdateWrapper<Object> wrapper = new UpdateWrapper<>()
+                .setSql("created_at={0,jdbcType=TIMESTAMP_WITH_TIMEZONE},updated_at={0}", (Object) null);
+        Configuration config = new Configuration();
+        BoundSql sql = new XMLLanguageDriver()
+                .createSqlSource(config, "<script>UPDATE records SET " + wrapper.getSqlSet() + "</script>", Map.class)
+                .getBoundSql(Collections.singletonMap("ew", wrapper));
+        assertThat(sql.getSql()).isEqualTo("UPDATE records SET created_at=?,updated_at=?");
+        assertThat(sql.getParameterMappings()).extracting(ParameterMapping::getJdbcType)
+                .containsExactly(JdbcType.TIMESTAMP_WITH_TIMEZONE, null);
+    }
+
+    public static class NestedStringHandler extends StringTypeHandler {
+    }
+
+    @Test
     void repeatedPlainParametersKeepTheSameBinding() {
         QueryWrapper<Object> wrapper = new QueryWrapper<>();
         String sql = wrapper.formatSqlMaybeWithParam("a={0} OR b={0}", 42);
 
         assertThat(sql).isEqualTo("a=#{ew.paramNameValuePairs.MPGENVAL1} OR b=#{ew.paramNameValuePairs.MPGENVAL1}");
         assertThat(wrapper.getParamNameValuePairs()).containsOnlyKeys("MPGENVAL1");
+    }
+
+    @Test
+    void changingParamAliasReachesUnrenderedNestedConditions() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().eq("status", 1)
+                .and(nested -> nested.eq("id", 2).or(deeper -> deeper.eq("id", 3)));
+        wrapper.setParamAlias("filter");
+
+        assertThat(wrapper.getSqlSegment()).isEqualTo(
+                "(status = #{filter.paramNameValuePairs.MPGENVAL1} AND (id = #{filter.paramNameValuePairs.MPGENVAL2} "
+                        + "OR (id = #{filter.paramNameValuePairs.MPGENVAL3})))");
+    }
+
+    @Test
+    void changingParamAliasSurvivesRenderingAndAppendingConditions() {
+        QueryWrapper<Object> wrapper = new QueryWrapper<>().setParamAlias("original")
+                .and(nested -> nested.eq("id", 1).or(deeper -> deeper.eq("id", 2)));
+        assertThat(wrapper.getSqlSegment()).contains("#{original.paramNameValuePairs.");
+        wrapper.setParamAlias("filter");
+        wrapper.eq("status", 3);
+
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{original.", "#{ew.")
+                .contains("#{filter.paramNameValuePairs.");
+        assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ?)");
+        wrapper.setParamAlias("second");
+        wrapper.eq("enabled", 4);
+        assertThat(wrapper.getSqlSegment()).doesNotContain("#{filter.", "#{original.", "#{ew.")
+                .contains("#{second.paramNameValuePairs.");
+        assertThat(wrapper.getTargetSql()).isEqualTo("((id = ? OR (id = ?)) AND status = ? AND enabled = ?)");
     }
 
 }

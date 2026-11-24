@@ -1,8 +1,8 @@
 diff --git a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
-index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9ab190d1f 100644
+index 5bab13db2339b55b324a17629ed6b1460b7d696f..8ac738f48fed10154e866e94cfb14e1950defecf 100644
 --- a/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
 +++ b/mybatis-plus-core/src/main/java/com/baomidou/mybatisplus/core/MybatisMapperAnnotationBuilder.java
-@@ -1,64 +1,40 @@
+@@ -1,64 +1,41 @@
  /*
 - *    Copyright 2009-2024 the original author or authors.
 + * Copyright (c) 2011-2025, baomidou (jobob@qq.com).
@@ -44,6 +44,7 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
 +package com.baomidou.mybatisplus.core;
 +
 +import com.baomidou.mybatisplus.core.metadata.IPage;
++import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 +import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
 +import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 +import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -87,7 +88,7 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
  import org.apache.ibatis.parsing.PropertyParser;
  import org.apache.ibatis.reflection.TypeParameterResolver;
  import org.apache.ibatis.scripting.LanguageDriver;
-@@ -72,53 +48,52 @@ import org.apache.ibatis.type.UnknownTypeHandler;
+@@ -72,53 +49,53 @@ import org.apache.ibatis.type.UnknownTypeHandler;
  import java.io.IOException;
  import java.io.InputStream;
  import java.lang.annotation.Annotation;
@@ -148,11 +149,12 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
      public void parse() {
          String resource = type.toString();
          if (!configuration.isResourceLoaded(resource)) {
++            String mapperName = type.getName();
++            assistant.setCurrentNamespace(mapperName);
++            TableInfoHelper.initMapperTableInfo(assistant, type);
              loadXmlResource();
              configuration.addLoadedResource(resource);
 -            assistant.setCurrentNamespace(type.getName());
-+            String mapperName = type.getName();
-+            assistant.setCurrentNamespace(mapperName);
              parseCache();
              parseCacheRef();
 +            IgnoreStrategy ignoreStrategy = InterceptorIgnoreHelper.initSqlParserInfoCache(type);
@@ -161,22 +163,22 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
                  if (!canHaveStatement(method)) {
                      continue;
                  }
-@@ -129,13 +104,25 @@ public class MapperAnnotationBuilder {
+@@ -129,13 +106,25 @@ public class MapperAnnotationBuilder {
                  try {
                      parseStatement(method);
                  } catch (IncompleteElementException e) {
 -                    configuration.addIncompleteMethod(new MethodResolver(this, method));
 +                    configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
-                 }
-             }
++                }
++            }
 +            try {
 +                // https://github.com/baomidou/mybatis-plus/issues/3038
 +                if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
 +                    parserInjector();
-+                }
+                 }
 +            } catch (IncompleteElementException e) {
 +                configuration.addIncompleteMethod(new InjectorResolver(this));
-+            }
+             }
          }
          configuration.parsePendingMethods(false);
      }
@@ -188,7 +190,7 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
      private static boolean canHaveStatement(Method method) {
          // issue #237
          return !method.isBridge() && !method.isDefault();
-@@ -158,8 +145,8 @@ public class MapperAnnotationBuilder {
+@@ -158,8 +147,8 @@ public class MapperAnnotationBuilder {
                  }
              }
              if (inputStream != null) {
@@ -199,7 +201,7 @@ index 5bab13db2339b55b324a17629ed6b1460b7d696f..493b3dfa3a41af703b168fa232f4c0a9
                  xmlParser.parse();
              }
          }
-@@ -442,6 +429,14 @@ public class MapperAnnotationBuilder {
+@@ -442,6 +431,14 @@ public class MapperAnnotationBuilder {
                  if (returnTypeParameter instanceof Class<?>) {
                      returnType = (Class<?>) returnTypeParameter;
                  }

@@ -1,6 +1,15 @@
 package com.baomidou.mybatisplus.test.json;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.extension.handlers.Fastjson2TypeHandler;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,17 +24,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiurong 2024年3月4日
  */
 @Tag("integration")
-public class Fastjson2Test extends DbTestSupport<FastJson2EntityMapper> {
+public class Fastjson2Test extends DbTestSupport<Fastjson2Test.FastJson2EntityMapper> {
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_fastjson2_entity",
-                "CREATE TABLE IF NOT EXISTS t_fastjson2_entity (" + "id VARCHAR(32) NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "card VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr VARCHAR(255) NULL DEFAULT NULL," + "attr2 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "attr3 VARCHAR(255) NULL DEFAULT NULL," + "attr4 VARCHAR(255) NULL DEFAULT NULL,"
-                        + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_fastjson2_entity", """
+                CREATE TABLE IF NOT EXISTS t_fastjson2_entity (
+                    id VARCHAR(32) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    card VARCHAR(255) NULL DEFAULT NULL,
+                    attr VARCHAR(255) NULL DEFAULT NULL,
+                    attr2 VARCHAR(255) NULL DEFAULT NULL,
+                    attr3 VARCHAR(255) NULL DEFAULT NULL,
+                    attr4 VARCHAR(255) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Test
@@ -51,4 +65,57 @@ public class Fastjson2Test extends DbTestSupport<FastJson2EntityMapper> {
 
     }
 
+    public interface FastJson2EntityMapper extends BaseMapper<FastJson2Entity> {
+
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @TableName(value = "t_fastjson2_entity", autoResultMap = true)
+    public static class FastJson2Entity {
+
+        @TableId(type = IdType.INPUT)
+        private String id;
+
+        private String name;
+
+        @TableField(typeHandler = Fastjson2TypeHandler.class)
+        private Card card;
+
+        @TableField(typeHandler = Fastjson2TypeHandler.class)
+        private List<Attr> attr;
+
+        @TableField(typeHandler = Fastjson2TypeHandler.class)
+        private Map<String, Attr> attr2;
+
+        @TableField(typeHandler = Fastjson2TypeHandler.class)
+        private Map<String, String> attr3;
+
+        @TableField(typeHandler = Fastjson2TypeHandler.class)
+        private Map<String, Object> attr4;
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Attr {
+
+            private String name;
+
+            private String value;
+
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Card {
+
+            private String id;
+
+            private String value;
+
+        }
+
+    }
 }

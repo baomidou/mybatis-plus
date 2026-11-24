@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
 import com.baomidou.mybatisplus.generator.model.AnnotationAttributes;
+import com.baomidou.mybatisplus.generator.util.KotlinTypeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.type.JdbcType;
@@ -74,6 +75,8 @@ public class TableField {
 
     /**
      * 字段类型（已弃用，使用 {@link #columnType} 代替）
+     *
+     * @deprecated 3.5.3
      */
     @Getter
     @Deprecated
@@ -239,6 +242,13 @@ public class TableField {
     public TableField setColumnType(@NotNull IColumnType columnType) {
         this.columnType = columnType;
         return this;
+    }
+
+    /**
+     * Kotlin 实体模板使用的属性类型。
+     */
+    public String getKotlinPropertyType() {
+        return columnType == null ? null : KotlinTypeUtils.getStringType(columnType);
     }
 
     public String getPropertyType() {

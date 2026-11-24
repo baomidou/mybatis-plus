@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * {@link MergeSegments} 是 wrapper 拼 WHERE 的装配台：条件按 {@code [列, 操作符, 占位符]} 三段进来， {@code NormalSegmentList} 负责补 AND、吃掉悬空的
  * and/or、把上一步 {@code not()} 落到下一个条件上； {@code MergeSegments.add} 再按首个关键字把 group by / having / order by 分流到各自的列表。
- * 这套规则此前只有 h2 集成测试间接经过，没有一条直接用例。下面钉的是现状行为， 包括 {@code having()} 单独使用时整条被丢掉这个坑（等 issue 立项后再把断言改成期望行为）。
+ * 覆盖条件拼接、独立 HAVING 子句以及 SQL 缓存失效。
  */
 @Tag("unit")
 class MergeSegmentsTest {
@@ -138,11 +138,12 @@ class MergeSegmentsTest {
     }
 
     @Test
-    void havingWithoutGroupByOrOrderByIsSilentlyDropped() {
+    void havingWithoutGroupByOrOrderByIsPreserved() {
         MergeSegments segments = new MergeSegments();
         segments.add(SqlKeyword.HAVING, seg("cnt"), SqlKeyword.GT, seg("1"));
         assertThat(segments.getHaving()).hasSize(3);
-        assertThat(segments.getSqlSegment()).isEmpty();
+        assertThat(segments.getSqlSegment()).isEqualTo(" HAVING cnt > 1");
+        assertThat(segments.getSqlSegment()).isEqualTo(" HAVING cnt > 1");
         segments.add(SqlKeyword.GROUP_BY, seg("dept"));
         assertThat(segments.getSqlSegment()).isEqualTo(" GROUP BY dept HAVING cnt > 1");
     }

@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * DdlHelper 的脚本执行与 ddl_history 记账。<br>
@@ -28,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author nieqiurong
  */
-@Tag("unit")
+@Tag("integration")
 public class DdlHelperTest {
 
     private static final List<String> SCRIPTS = List.of("ddl/test.sql");
@@ -170,6 +173,51 @@ public class DdlHelperTest {
         runAndRecord(new SQLiteDdlGenerator(), dataSource);
         assertRecorded(dataSource);
         assertSkipAlreadyExecuted(new SQLiteDdlGenerator(), dataSource);
+    }
+
+    @Test
+    void manualCommitRecordsTheLastScriptBeforeClosingTheConnection() throws SQLException, IOException {
+        var ds = h2DataSource("ddl_commit_history", "DATABASE_TO_LOWER=TRUE");
+        var script = Files.writeString(tempDir.resolve("apply.sql"), "UPDATE applied SET runs = runs + 1;");
+        try (var connection = ds.getConnection(); var statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE applied (runs INT)");
+            statement.executeUpdate("INSERT INTO applied VALUES (0)");
+            for (int i = 0; i < 2; i++) {
+                DdlHelper.runScript(null, ds, List.of(script.toString()), false, THROWS);
+            }
+            try (ResultSet rows = statement.executeQuery("SELECT runs FROM applied")) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getInt(1)).isOne();
+            }
+            assertThat(historyRows(connection, "ddl_history")).containsExactly(script + "|sql");
+        }
+    }
+
+    @Test
+    void failureInTheNextScriptKeepsTheCompletedHistory() throws SQLException, IOException {
+        var ds = h2DataSource("ddl_commit_before_failure", "DATABASE_TO_LOWER=TRUE");
+        var broken = Files.writeString(tempDir.resolve("broken.sql"), "INSERT INTO missing_table VALUES (1);");
+        assertThatThrownBy(
+                () -> DdlHelper.runScript(null, ds, List.of(SCRIPTS.get(0), broken.toString()), false, THROWS))
+                .isInstanceOf(SQLException.class);
+        assertRecorded(ds);
+    }
+
+    @Test
+    void initializesHistoryInTheRequestedSchema() throws SQLException, IOException {
+        var ds = h2DataSource("ddl_exact_schema", "DATABASE_TO_LOWER=TRUE");
+        var script = Files.writeString(tempDir.resolve("applied.sql"), "CREATE TABLE applied (id INT);");
+        try (var connection = ds.getConnection(); var statement = connection.createStatement()) {
+            statement.execute("CREATE SCHEMA app_1");
+            statement.execute("CREATE SCHEMA app01");
+            statement.execute("CREATE TABLE app01.ddl_history (id INT)");
+            statement.execute("CREATE TABLE app_1.ddlxhistory (id INT)");
+            connection.setSchema("app_1");
+            var generator = PostgreDdlGenerator.newInstanceWithAutoSchema();
+            DdlHelper.runScript(generator, connection, List.of(script.toString()), false, THROWS);
+            assertThat(historyRows(connection, "ddl_history")).containsExactly(script + "|sql");
+            assertThat(PostgreDdlGenerator.newInstanceWithSchema("app_1").existTable(connection)).isTrue();
+        }
     }
 
     @Test

@@ -1,0 +1,58 @@
+name: Native Image Smoke
+
+on:
+  push:
+    branches: [ "3.0" ]
+  pull_request:
+    branches: [ "3.0" ]
+  workflow_dispatch:
+
+jobs:
+  native:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Boot 3
+            boot-version: '3.5.9'
+            starter: mybatis-plus-spring-boot3-starter
+          - name: Boot 4
+            boot-version: '4.1.0'
+            starter: mybatis-plus-spring-boot4-starter
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up GraalVM Community
+        uses: graalvm/setup-graalvm@v1
+        with:
+          # Latest JDK 25 innovation release; update the major version when moving to a newer JDK.
+          version: '25i-latest'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show GraalVM version
+        run: |
+          java --version
+          native-image --version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5.0.2
+
+      - name: Publish modules to mavenLocal
+        run: ./gradlew publishToMavenLocal -PskipSigning -x javadoc
+
+      - name: Build native image
+        run: |
+          MP_VERSION=$(grep '^APP_VERSION=' gradle.properties | cut -d= -f2)
+          ./gradlew -p native-smoke -PbootVersion=${{ matrix.boot-version }} -Pstarter=${{ matrix.starter }} -PmpVersion=$MP_VERSION nativeCompile
+
+      - name: Run native image
+        run: |
+          set -o pipefail
+          ./native-smoke/build/native/nativeCompile/native-smoke | tee smoke.log
+          grep -q '^SMOKE OK' smoke.log

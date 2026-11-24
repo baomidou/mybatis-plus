@@ -286,7 +286,9 @@ public class TableInfo implements Constants {
         if (!havePK() || noSelectProperty.contains(keyProperty)) {
             return fieldsSqlSelect;
         } else {
-            return getKeySqlSelect() + COMMA + fieldsSqlSelect;
+            return StringUtils.isNotBlank(fieldsSqlSelect)
+                    ? getKeySqlSelect() + COMMA + fieldsSqlSelect
+                    : getKeySqlSelect();
         }
     }
 
@@ -563,11 +565,6 @@ public class TableInfo implements Constants {
             this.orderByFields = new LinkedList<>();
         }
         return this.orderByFields;
-    }
-
-    @Deprecated
-    public boolean isLogicDelete() {
-        return withLogicDelete;
     }
 
     /**

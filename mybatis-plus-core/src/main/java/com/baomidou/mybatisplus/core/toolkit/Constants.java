@@ -124,23 +124,9 @@ public interface Constants extends StringPool, Serializable {
      */
     String Q_WRAPPER_SQL_FIRST = WRAPPER_DOT + "sqlFirst";
     /**
-     * columnMap
-     */
-    @Deprecated
-    String COLUMN_MAP = "cm";
-    /**
      * columnMap.isEmpty
      */
-    String COLUMN_MAP_IS_EMPTY = COLUMN_MAP + DOT + "isEmpty";
-    /**
-     * collection
-     *
-     * @see #COLL
-     * @deprecated 3.5.2 后面修改成collection
-     */
-    @Deprecated
-    String COLLECTION = "coll";
-
+    String COLUMN_MAP_IS_EMPTY = "cm" + DOT + "isEmpty";
     /**
      * @since 3.5.2
      */

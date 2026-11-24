@@ -327,7 +327,7 @@ public abstract class InterceptorIgnoreHelper {
         keys.addAll(methodKeys);
         keys.addAll(mapperKeys);
         Map<String, Boolean> map = CollectionUtils.newHashMapWithExpectedSize(keys.size());
-        methodKeys.forEach(k -> map.put(k, chooseBoolean(mapper.get(k), method.get(k))));
+        keys.forEach(k -> map.put(k, chooseBoolean(mapper.get(k), method.get(k))));
         return map;
     }
 }

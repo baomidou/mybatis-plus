@@ -26,10 +26,13 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.ToIntFunction;
 
 /**
  * ActiveRecord 模式 CRUD
@@ -46,18 +49,18 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
 
     private static final long serialVersionUID = 1L;
 
-    protected final transient Class<?> entityClass = this.getClass();
+    protected transient Class<?> entityClass = this.getClass();
+
+    private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        input.defaultReadObject();
+        entityClass = getClass();
+    }
 
     /**
      * 插入（字段选择插入）
      */
     public boolean insert() {
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
     }
 
     /**
@@ -73,12 +76,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      * @param id 主键ID
      */
     public boolean deleteById(Serializable id) {
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
     }
 
     /**
@@ -86,12 +84,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      */
     public boolean deleteById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), this));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), this));
     }
 
     /**
@@ -102,12 +95,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     public boolean delete(Wrapper<T> queryWrapper) {
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.WRAPPER, queryWrapper);
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.delete(sqlStatement(SqlMethod.DELETE), map));
     }
 
     /**
@@ -117,12 +105,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(1);
         map.put(Constants.ENTITY, this);
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
 
     /**
@@ -134,12 +117,7 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
         Map<String, Object> map = CollectionUtils.newHashMapWithExpectedSize(2);
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, updateWrapper);
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE), map));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.update(sqlStatement(SqlMethod.UPDATE), map));
     }
 
     /**
@@ -233,6 +211,26 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
             return SqlHelper.retCount(sqlSession.<Long>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
         } finally {
             closeSqlSession(sqlSession);
+        }
+    }
+
+    private boolean executeWrite(ToIntFunction<SqlSession> operation) {
+        SqlSession session = sqlSession();
+        try {
+            int affected = operation.applyAsInt(session);
+            commitSqlSession(session);
+            return SqlHelper.retBool(affected);
+        } finally {
+            closeSqlSession(session);
+        }
+    }
+
+    /**
+     * 成功写入后提交独立会话。自行管理会话的子类可定制提交方式。
+     */
+    protected void commitSqlSession(SqlSession session) {
+        if (CompatibleHelper.hasCompatibleSet()) {
+            CompatibleHelper.getCompatibleSet().commitSqlSession(session, MybatisUtils.getSqlSessionFactory(session));
         }
     }
 

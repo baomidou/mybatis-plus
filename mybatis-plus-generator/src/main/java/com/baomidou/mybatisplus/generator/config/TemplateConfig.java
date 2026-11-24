@@ -239,7 +239,7 @@ public class TemplateConfig {
          *
          * @param entityTemplate 实体模板
          * @return this
-         * @deprecated {@link Entity.Builder#javaTemplate}
+         * @deprecated 3.5.6 {@link Entity.Builder#javaTemplate}
          */
         @Deprecated
         public Builder entity(@NotNull String entityTemplate) {
@@ -249,25 +249,11 @@ public class TemplateConfig {
         }
 
         /**
-         * 设置实体模板路径(kotlin)
-         *
-         * @param entityKtTemplate 实体模板
-         * @return this
-         * @deprecated {@link Entity.Builder#javaTemplate}
-         */
-        @Deprecated
-        public Builder entityKt(@NotNull String entityKtTemplate) {
-            this.templateConfig.disableEntity = false;
-            this.templateConfig.entityKt = entityKtTemplate;
-            return this;
-        }
-
-        /**
          * 设置service模板路径
          *
          * @param serviceTemplate service接口模板路径
          * @return this
-         * @deprecated {@link Service.Builder#serviceTemplate(String)}
+         * @deprecated 3.5.6 {@link Service.Builder#serviceTemplate(String)}
          */
         @Deprecated
         public Builder service(@NotNull String serviceTemplate) {
@@ -280,7 +266,7 @@ public class TemplateConfig {
          *
          * @param serviceImplTemplate service实现类模板路径
          * @return this
-         * @deprecated {@link Service.Builder#serviceImplTemplate(String)}
+         * @deprecated 3.5.6 {@link Service.Builder#serviceImplTemplate(String)}
          */
         @Deprecated
         public Builder serviceImpl(@NotNull String serviceImplTemplate) {
@@ -293,7 +279,7 @@ public class TemplateConfig {
          *
          * @param mapperTemplate mapper模板路径
          * @return this
-         * @deprecated {@link Mapper.Builder#mapperTemplate(String)}
+         * @deprecated 3.5.6 {@link Mapper.Builder#mapperTemplate(String)}
          */
         @Deprecated
         public Builder mapper(@NotNull String mapperTemplate) {
@@ -306,7 +292,7 @@ public class TemplateConfig {
          *
          * @param xmlTemplate xml模板路径
          * @return this
-         * @deprecated {@link Mapper.Builder#mapperXmlTemplate(String)}
+         * @deprecated 3.5.6 {@link Mapper.Builder#mapperXmlTemplate(String)}
          */
         @Deprecated
         public Builder xml(@NotNull String xmlTemplate) {
@@ -319,7 +305,7 @@ public class TemplateConfig {
          *
          * @param controllerTemplate 控制器模板路径
          * @return this
-         * @deprecated {@link Controller.Builder#template(String)}
+         * @deprecated 3.5.6 {@link Controller.Builder#template(String)}
          */
         @Deprecated
         public Builder controller(@NotNull String controllerTemplate) {

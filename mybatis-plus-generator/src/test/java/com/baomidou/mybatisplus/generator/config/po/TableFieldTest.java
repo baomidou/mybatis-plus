@@ -20,6 +20,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TableFieldTest {
 
     @Test
+    void shouldConvertBuiltInKotlinPropertyTypes() {
+        ConfigBuilder config = new ConfigBuilder(GeneratorBuilder.packageConfig(), TableInfoTest.dataSourceConfig,
+                GeneratorBuilder.strategyConfig(), null, GeneratorBuilder.globalConfig(), null);
+        TableField field = new TableField(config, "value");
+        assertThat(field.setColumnType(DbColumnType.INTEGER).getKotlinPropertyType()).isEqualTo("Int");
+        assertThat(field.setColumnType(DbColumnType.BASE_SHORT).getKotlinPropertyType()).isEqualTo("Short");
+        assertThat(field.setColumnType(DbColumnType.BASE_BYTE).getKotlinPropertyType()).isEqualTo("Byte");
+    }
+
+    @Test
     void convertTest() {
         ConfigBuilder configBuilder;
         TableField tableField;

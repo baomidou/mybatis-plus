@@ -146,6 +146,10 @@ public class DdlHelper {
                         scriptRunner.runScript(new InputStreamReader(getInputStream(sqlFile)));
                     }
                     sqlRunner.insert(ddlGenerator.insertDdlHistory(sqlFile, StringPool.SQL, getNowTime()));
+                    // ScriptRunner 已提交本文件，随后写入的历史也要在处理下一个文件前提交。
+                    if (!connection.getAutoCommit()) {
+                        connection.commit();
+                    }
                 }
             } catch (Exception e) {
                 if (ddlScriptErrorHandler != null) {

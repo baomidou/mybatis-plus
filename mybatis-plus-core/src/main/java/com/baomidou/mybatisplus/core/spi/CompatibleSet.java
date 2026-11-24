@@ -29,6 +29,15 @@ public interface CompatibleSet {
 
     SqlSession getSqlSession(SqlSessionFactory sessionFactory);
 
+    /**
+     * 在框架管理的操作成功后提交独立会话。事务内的会话由事务管理器负责。 默认沿用兼容实现已有的提交方式。
+     *
+     * @param session 本次操作使用的会话
+     * @param sessionFactory 会话所属的工厂
+     */
+    default void commitSqlSession(SqlSession session, SqlSessionFactory sessionFactory) {
+    }
+
     void closeSqlSession(SqlSession session, SqlSessionFactory sessionFactory);
 
     boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc);

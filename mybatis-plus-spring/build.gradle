@@ -23,5 +23,4 @@ dependencies {
     implementation "${lib."slf4j-api"}"
     testImplementation "${lib.h2}"
     testImplementation "${lib.mysql}"
-    testImplementation "${lib.'logback-classic'}"
 }

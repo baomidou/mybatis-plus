@@ -16,6 +16,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.TypeReference;
 import org.h2.Driver;
@@ -66,7 +67,7 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
             jdbcTemplate.execute(tableDataSql);
         }
         MybatisSqlSessionFactoryBuilder builder = new MybatisSqlSessionFactoryBuilder();
-        Environment environment = new Environment("test", new ManagedTransactionFactory(), ds);
+        Environment environment = new Environment("test", transactionFactory(), ds);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
         if (consumer != null) {
             consumer.accept(configuration);
@@ -74,8 +75,7 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
         configuration.setLogImpl(Slf4jImpl.class);
         if (StringUtils.isNotBlank(mapperXml)) {
-            try {
-                InputStream inputStream = Resources.getResourceAsStream(mapperXml);
+            try (InputStream inputStream = Resources.getResourceAsStream(mapperXml)) {
                 MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(inputStream, configuration,
                         mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
@@ -112,7 +112,14 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
     }
 
     protected void doTestAutoCommit(Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSession(null)) {
+        doTestAutoCommitWithExecutor(null, consumer);
+    }
+
+    /**
+     * 使用指定执行器运行 Mapper 操作，成功后提交，并关闭会话。
+     */
+    protected void doTestAutoCommitWithExecutor(ExecutorType type, Consumer<T> consumer) {
+        try (SqlSession sqlSession = sqlSession(type)) {
             doTestAutoCommit(sqlSession, consumer);
         }
     }
@@ -144,7 +151,12 @@ public abstract class DbTestSupport<T> extends TypeReference<T> {
     }
 
     protected String mapperXml() {
-        return null;
+        String path = getClass().getName().replace('.', '/') + ".xml";
+        return getClass().getResource("/" + path) != null ? path : null;
+    }
+
+    protected TransactionFactory transactionFactory() {
+        return new ManagedTransactionFactory();
     }
 
     protected List<Interceptor> interceptors() {

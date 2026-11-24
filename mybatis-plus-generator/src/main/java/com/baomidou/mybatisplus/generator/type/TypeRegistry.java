@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.type;
 
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
@@ -83,6 +84,12 @@ public class TypeRegistry {
         int typeCode = metaInfo.getJdbcType().TYPE_CODE;
         switch (typeCode) {
             // TODO 需要增加类型处理，尚未补充完整
+            case Types.TINYINT :
+            case Types.SMALLINT :
+            case Types.INTEGER :
+            case Types.BIGINT :
+                IColumnType unsignedType = MySqlTypeConvert.getUnsignedIntegerType(metaInfo.getTypeName());
+                return unsignedType != null ? unsignedType : typeMap.get(typeCode);
             case Types.BIT :
                 return getBitType(metaInfo);
             case Types.DATE :
@@ -111,7 +118,7 @@ public class TypeRegistry {
     }
 
     private IColumnType getNumber(TableField.MetaInfo metaInfo) {
-        if (metaInfo.getScale() > 0 || metaInfo.getLength() > 18) {
+        if (metaInfo.getScale() != 0 || metaInfo.getLength() <= 0 || metaInfo.getLength() > 18) {
             return typeMap.get(metaInfo.getJdbcType().TYPE_CODE);
         } else if (metaInfo.getLength() > 9) {
             return DbColumnType.LONG;

@@ -26,12 +26,12 @@ buildscript {
             springBoot3Version = '3.5.9',
             springBoot4Version = '4.1.0',
             springCloudVersion = '3.1.8',
-            junitVersion = '6.1.1',
+            junitVersion = '6.1.3',
         ]
 
         lib = [
-            "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.4.0",
-            "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.0",
+            "kotlin-reflect"             : "org.jetbrains.kotlin:kotlin-reflect:2.4.21",
+            "kotlin-stdlib-jdk8"         : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.4.21",
             "mybatis"                    : "org.mybatis:mybatis:${mybatisVersion}",
             "mybatis-spring"             : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
             "mybatis-thymeleaf"          : "org.mybatis.scripting:mybatis-thymeleaf:1.2.0",
@@ -51,9 +51,9 @@ buildscript {
             "spring-test"                : "org.springframework:spring-test:${springVersion}",
             "assertj-core"               : "org.assertj:assertj-core:3.27.7",
             "junit-jupiter"              : "org.junit.jupiter:junit-jupiter:${junitVersion}",
-            "fastjson"                   : "com.alibaba:fastjson:2.0.62",
-            "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.20.1",
-            "jackson3"                   : "tools.jackson.core:jackson-databind:3.0.3",
+            "fastjson"                   : "com.alibaba:fastjson:2.0.66",
+            "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.22.4",
+            "jackson3"                   : "tools.jackson.core:jackson-databind:3.2.4",
             "gson"                       : "com.google.code.gson:gson:2.13.2",
             "lagarto"                    : "org.jodd:jodd-lagarto:6.0.6",
             // 2.x support jdk8+
@@ -66,14 +66,14 @@ buildscript {
             "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
             "h2"                         : "com.h2database:h2:2.4.240",
             "mysql"                      : "com.mysql:mysql-connector-j:9.5.0",
-            "sqlite"                     : "org.xerial:sqlite-jdbc:3.53.2.0",
-            "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.10.java8",
+            "sqlite"                     : "org.xerial:sqlite-jdbc:3.54.1.0",
+            "firebird"                   : "org.firebirdsql.jdbc:jaybird:5.0.13.java8",
             "gaussdb"                    : "com.huaweicloud.gaussdb:gaussdbjdbc:506.0.0.b058",
             //code generator
             "velocity"            : "org.apache.velocity:velocity-engine-core:2.4.1",
             "freemarker"          : "org.freemarker:freemarker:2.3.35",
-            "beetl"               : "com.ibeetl:beetl:3.17.0.RELEASE",
-            "swagger-annotations" : "io.swagger:swagger-annotations:1.6.14",
+            "beetl"               : "com.ibeetl:beetl:3.21.2.RELEASE",
+            "swagger-annotations" : "io.swagger:swagger-annotations:1.6.16",
             "enjoy"               : "com.jfinal:enjoy:5.2.2",
             "logback-classic"     : "ch.qos.logback:logback-classic:1.5.15",
         ]
@@ -91,9 +91,9 @@ buildscript {
 
     dependencies {
         classpath("com.vanniktech:gradle-maven-publish-plugin:0.37.0")
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.0"
-        classpath "io.freefair.gradle:lombok-plugin:8.10"
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.3"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21"
+        classpath "io.freefair.gradle:lombok-plugin:9.8.3"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:8.10.4"
         classpath "com.github.jakemarsden.git-hooks:com.github.jakemarsden.git-hooks.gradle.plugin:0.0.2"
     }
 }
@@ -101,11 +101,15 @@ buildscript {
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
 apply plugin: 'com.diffplug.spotless'
-apply plugin: 'com.github.jakemarsden.git-hooks'
 
-gitHooks {
-    gradleCommand = 'bash ./gradlew'
-    hooks = ['pre-commit': 'spotlessCheck || { bash ./gradlew spotlessApply; echo "Review formatting changes, stage them, and commit again."; exit 1; }']
+// git worktree 下 .git 是文件而非目录，装不了 hook；worktree 提交时 git 自会取主仓库的 hooks
+if (rootProject.file('.git').isDirectory()) {
+    apply plugin: 'com.github.jakemarsden.git-hooks'
+
+    gitHooks {
+        gradleCommand = 'bash ./gradlew'
+        hooks = ['pre-commit': 'spotlessCheck || { bash ./gradlew spotlessApply; echo "Review formatting changes, stage them, and commit again."; exit 1; }']
+    }
 }
 
 repositories {
@@ -127,6 +131,14 @@ def skipPublishingProjects = [
     ':mybatis-plus-up',
     ':mybatis-plus-jsqlparser-support',
     ':spring-boot-starter'
+] as Set
+
+// Boot 2.7 仍基于 slf4j 1.7：注入 logback 1.5（依赖 slf4j 2.x）会让 LogbackLoggingSystem
+// 找不到 org.slf4j.impl.StaticLoggerBinder，这三个模块的测试日志绑定交由 spring-boot-starter-test 自带版本管理
+def slf4j17Projects = [
+    ':spring-boot-starter:mybatis-plus-boot-starter',
+    ':spring-boot-starter:mybatis-plus-boot-starter-test',
+    ':spring-boot-starter:mybatis-plus-spring-boot-autoconfigure'
 ] as Set
 
 subprojects {
@@ -164,11 +176,14 @@ subprojects {
     dependencies {
         testImplementation "${lib["assertj-core"]}"
         testImplementation "${lib["junit-jupiter"]}"
-        testImplementation "org.mockito:mockito-junit-jupiter:5.23.0"
+        testImplementation "org.mockito:mockito-junit-jupiter:5.24.0"
         testImplementation "${lib["lagarto"]}"
         testImplementation("org.junit.platform:junit-platform-engine:${junitVersion}")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
         testImplementation("org.junit.platform:junit-platform-launcher:${junitVersion}")
+        if (!slf4j17Projects.contains(project.path)) {
+            testImplementation "${lib."logback-classic"}"
+        }
     }
 
 
@@ -184,6 +199,15 @@ subprojects {
             }
         }
         systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+    }
+
+    // 全仓测试统一使用根目录 logback.xml（root info + com.baomidou.mybatisplus.test DEBUG），不再依赖模块内配置。
+    // Boot 2.7 三模块排除：其 LogbackLoggingSystem 会忽略该属性并要求改用 logging.config，
+    // 且 classpath 被 thymeleaf 抬到 slf4j-api 2.x、与 Boot 管理的 logback 1.2 无法绑定，日志实际为 NOP。
+    tasks.withType(Test).configureEach {
+        if (!slf4j17Projects.contains(project.path)) {
+            systemProperty 'logback.configurationFile', new File(rootDir, 'logback.xml').absolutePath
+        }
     }
 
     def layerTags = [
@@ -315,7 +339,9 @@ subprojects {
     if (!skipPublishingProjects.contains(project.path)) {
         mavenPublishing {
             publishToMavenCentral()
-            signAllPublications()
+            if (!project.hasProperty('skipSigning')) {
+                signAllPublications()
+            }
             coordinates(
                 project.group.toString(),
                 project.name,

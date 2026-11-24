@@ -37,16 +37,6 @@ import java.util.function.Supplier;
 public interface MetaObjectHandler {
 
     /**
-     * 是否开启了插入填充
-     *
-     * @deprecated 3.5.6 {@link #openInsertFill(MappedStatement)}
-     */
-    @Deprecated
-    default boolean openInsertFill() {
-        return true;
-    }
-
-    /**
      * 是否开启插入填充
      *
      * @param mappedStatement {@link MappedStatement}
@@ -54,16 +44,6 @@ public interface MetaObjectHandler {
      * @since 3.5.6
      */
     default boolean openInsertFill(MappedStatement mappedStatement) {
-        return true;
-    }
-
-    /**
-     * 是否开启了更新填充
-     *
-     * @deprecated 3.5.6 {@link #openUpdateFill(MappedStatement)}
-     */
-    @Deprecated
-    default boolean openUpdateFill() {
         return true;
     }
 

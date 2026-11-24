@@ -69,7 +69,6 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList(org.apache.ibatis.session.Configuration configuration,
                     Class<?> mapperClass, TableInfo tableInfo) {
                 List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
-                //                methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(
                         new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE || t.isLogicDelete()

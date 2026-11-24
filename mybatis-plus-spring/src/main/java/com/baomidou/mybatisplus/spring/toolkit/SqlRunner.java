@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.ToIntFunction;
 
 /**
  * SqlRunner 执行 SQL
@@ -107,12 +108,7 @@ public class SqlRunner extends AbstractSqlRunner {
     @Override
     @Transactional
     public boolean insert(String sql, Object... args) {
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.insert(INSERT, sqlMap(sql, args)));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.insert(INSERT, sqlMap(sql, args)));
     }
 
     /**
@@ -125,12 +121,7 @@ public class SqlRunner extends AbstractSqlRunner {
     @Override
     @Transactional
     public boolean delete(String sql, Object... args) {
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.delete(DELETE, sqlMap(sql, args)));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.delete(DELETE, sqlMap(sql, args)));
     }
 
     /**
@@ -143,12 +134,7 @@ public class SqlRunner extends AbstractSqlRunner {
     @Override
     @Transactional
     public boolean update(String sql, Object... args) {
-        SqlSession sqlSession = sqlSession();
-        try {
-            return SqlHelper.retBool(sqlSession.update(UPDATE, sqlMap(sql, args)));
-        } finally {
-            closeSqlSession(sqlSession);
-        }
+        return executeWrite(session -> session.update(UPDATE, sqlMap(sql, args)));
     }
 
     /**
@@ -258,6 +244,20 @@ public class SqlRunner extends AbstractSqlRunner {
         return page;
     }
 
+    private boolean executeWrite(ToIntFunction<SqlSession> operation) {
+        SqlSessionFactory factory = getSqlSessionFactory();
+        SqlSession session = SqlSessionUtils.getSqlSession(factory);
+        try {
+            int affected = operation.applyAsInt(session);
+            if (!SqlSessionUtils.isSqlSessionTransactional(session, factory)) {
+                session.commit(true);
+            }
+            return SqlHelper.retBool(affected);
+        } finally {
+            SqlSessionUtils.closeSqlSession(session, factory);
+        }
+    }
+
     /**
      * 获取Session 默认自动提交
      */
@@ -279,14 +279,6 @@ public class SqlRunner extends AbstractSqlRunner {
      */
     private SqlSessionFactory getSqlSessionFactory() {
         return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(SqlHelper.FACTORY);
-    }
-
-    /**
-     * @deprecated 3.5.3.2
-     */
-    @Deprecated
-    public void close() {
-
     }
 
 }

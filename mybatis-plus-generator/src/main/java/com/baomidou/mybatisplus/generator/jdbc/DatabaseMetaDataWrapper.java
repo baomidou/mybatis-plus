@@ -81,20 +81,25 @@ public class DatabaseMetaDataWrapper {
 
     public List<DatabaseMetaDataWrapper.Index> getIndex(String tableName) {
         List<DatabaseMetaDataWrapper.Index> indexList = new ArrayList<>();
+        Set<String> expressionIndexes = new HashSet<>();
         try (ResultSet resultSet = databaseMetaData.getIndexInfo(catalog, schema, tableName, false, false)) {
             // clickhouse v2驱动没实现返回了个null
             if (resultSet != null) {
                 while (resultSet.next()) {
                     Index index = new Index(resultSet);
-                    // skip function index
-                    if (StringUtils.isNotBlank(index.getColumnName())) {
+                    if (StringUtils.isBlank(index.getColumnName())) {
+                        expressionIndexes.add(index.getName());
+                    } else {
                         indexList.add(index);
                     }
                 }
             }
         } catch (SQLException e) {
             logger.error("reading index information for [{}]:", tableName, e);
+            indexList.clear();
         }
+        // 缺少表达式键时，其余列不能代表整个索引的唯一性。
+        indexList.removeIf(index -> expressionIndexes.contains(index.getName()));
         return indexList;
     }
 

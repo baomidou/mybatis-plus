@@ -58,16 +58,6 @@ public class Mapper implements ITemplate {
     private String superClass = ConstVal.SUPER_MAPPER_CLASS;
 
     /**
-     * 是否添加 @Mapper 注解（默认 false）
-     *
-     * @see #mapperAnnotationClass
-     * @since 3.5.1
-     * @deprecated 3.5.4
-     */
-    @Deprecated
-    private boolean mapperAnnotation;
-
-    /**
      * Mapper标记注解
      *
      * @since 3.5.3
@@ -156,11 +146,6 @@ public class Mapper implements ITemplate {
     @NotNull
     public String getSuperClass() {
         return superClass;
-    }
-
-    @Deprecated
-    public boolean isMapperAnnotation() {
-        return mapperAnnotationClass != null;
     }
 
     public Class<? extends Cache> getCache() {
@@ -270,22 +255,6 @@ public class Mapper implements ITemplate {
         }
 
         /**
-         * 开启 @Mapper 注解
-         *
-         * @return this
-         * @see #mapperAnnotation(Class)
-         * @since 3.5.1
-         * @deprecated 3.5.4
-         */
-        @Deprecated
-        public Builder enableMapperAnnotation() {
-            this.mapper.mapperAnnotation = true;
-            //TODO 因为现在mybatis-plus传递mybatis-spring依赖，这里是没问题的，但后面如果考虑脱离mybatis-spring的时候就需要把这里处理掉，建议使用mapperAnnotation方法来标记自己的注解。
-            this.mapper.mapperAnnotationClass = org.apache.ibatis.annotations.Mapper.class;
-            return this;
-        }
-
-        /**
          * 标记 Mapper 注解
          *
          * @param annotationClass 注解Class
@@ -375,17 +344,6 @@ public class Mapper implements ITemplate {
          */
         public Builder formatXmlFileName(@NotNull String format) {
             return convertXmlFileName((entityName) -> String.format(format, entityName));
-        }
-
-        /**
-         * 覆盖已有文件（该方法后续会删除，替代方法为enableFileOverride方法）
-         *
-         * @see #enableFileOverride()
-         */
-        @Deprecated
-        public Builder fileOverride() {
-            this.mapper.fileOverride = true;
-            return this;
         }
 
         /**

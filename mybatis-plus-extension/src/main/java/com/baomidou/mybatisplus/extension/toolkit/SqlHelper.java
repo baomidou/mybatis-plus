@@ -175,6 +175,7 @@ public final class SqlHelper {
      * @param execFunc 执行函数
      * @return 操作结果
      * @since 3.4.0
+     * @deprecated 3.5.3.2
      */
     @Deprecated
     public static boolean executeBatch(Class<?> entityClass, Log log, Function<SqlSession, Integer> execFunc) {
@@ -197,7 +198,7 @@ public final class SqlHelper {
      * @param <E> T
      * @return 操作结果
      * @since 3.4.0
-     * @deprecated {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
+     * @deprecated 3.5.3.2 {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
      */
     @Deprecated
     public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize,
@@ -339,12 +340,15 @@ public final class SqlHelper {
      * @return 返回lambda执行结果
      */
     public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
-        SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
+        SqlSessionFactory factory = GlobalConfigUtils.currentSessionFactory(entityClass);
+        CompatibleSet compatibleSet = CompatibleHelper.getCompatibleSet();
+        SqlSession sqlSession = compatibleSet.getSqlSession(factory);
         try {
-            return sFunction.apply(SqlHelper.getMapper(entityClass, sqlSession));
+            R result = sFunction.apply(SqlHelper.getMapper(entityClass, sqlSession));
+            compatibleSet.commitSqlSession(sqlSession, factory);
+            return result;
         } finally {
-            CompatibleHelper.getCompatibleSet()
-                    .closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
+            compatibleSet.closeSqlSession(sqlSession, factory);
         }
     }
 }

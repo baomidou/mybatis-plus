@@ -1,11 +1,15 @@
 package com.baomidou.mybatisplus.core.conditions.update;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.WrapperTestSupport;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.test.User;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
@@ -14,6 +18,50 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Tag("unit")
 class UpdateWrapperTest extends WrapperTestSupport {
+
+    @Test
+    void sqlInjectionCheckReachesNestedConditions() {
+        java.util.List<UpdateWrapper<Object>> wrappers = java.util.Arrays.asList(
+                new UpdateWrapper<>().checkSqlInjection().and(n -> n.eq("id = 1 or name", "x")),
+                new UpdateWrapper<>().checkSqlInjection().or(n -> n.eq("id = 1 or name", "x")),
+                new UpdateWrapper<>().checkSqlInjection().nested(n -> n.eq("id = 1 or name", "x")),
+                new UpdateWrapper<>().checkSqlInjection().not(n -> n.eq("id = 1 or name", "x")),
+                new UpdateWrapper<>().checkSqlInjection().nested(n -> n.and(inner -> inner.eq("id = 1 or name", "x"))));
+        for (UpdateWrapper<Object> wrapper : wrappers) {
+            assertThatThrownBy(wrapper::getSqlSegment).isInstanceOf(MybatisPlusException.class)
+                    .hasMessageContaining("Discovering SQL injection column");
+        }
+    }
+
+    @Test
+    void nestedConditionsKeepDefaultFieldHandling() {
+        UpdateWrapper<Object> wrapper = new UpdateWrapper<>().nested(n -> n.eq("id = 1 or name", "x"));
+        assertThat(wrapper.getSqlSegment()).contains("id = 1 or name");
+    }
+
+    @Test
+    void nestedChecksDoNotInspectBoundValuesOrSkippedConditions() {
+        UpdateWrapper<Object> wrapper = new UpdateWrapper<>().checkSqlInjection()
+                .nested(false, n -> n.eq("id = 1 or name", "x")).nested(n -> n.eq("name", "id = 1 or name"));
+        assertThat(wrapper.getSqlSegment()).isEqualTo("((name = #{ew.paramNameValuePairs.MPGENVAL1}))");
+        assertThat(wrapper.getParamNameValuePairs()).containsEntry("MPGENVAL1", "id = 1 or name");
+    }
+
+    @Test
+    void parameterAliasReachesSharedLambdaUpdateView() {
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
+        UpdateWrapper<User> wrapper = new UpdateWrapper<>();
+        LambdaUpdateWrapper<User> lambda = wrapper.lambda();
+        lambda.set(User::getName, "updated").and(nested -> nested.eq(User::getId, 1));
+        wrapper.setParamAlias("filter");
+
+        assertThat(lambda.getParamAlias()).isEqualTo("filter");
+        assertThat(wrapper.getSqlSet()).isEqualTo("username=#{filter.paramNameValuePairs.MPGENVAL1}");
+        assertThat(wrapper.getSqlSegment()).isEqualTo("((id = #{filter.paramNameValuePairs.MPGENVAL2}))");
+        lambda.eq(User::getRoleId, 2);
+        assertThat(wrapper.getSqlSegment()).isEqualTo(
+                "((id = #{filter.paramNameValuePairs.MPGENVAL2}) AND role_id = #{filter.paramNameValuePairs.MPGENVAL3})");
+    }
 
     @Test
     void test1() {

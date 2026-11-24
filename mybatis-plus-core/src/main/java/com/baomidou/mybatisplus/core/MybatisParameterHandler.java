@@ -51,15 +51,6 @@ import java.util.Set;
  */
 public class MybatisParameterHandler extends DefaultParameterHandler {
 
-    /**
-     * 填充的key值
-     *
-     * @since 3.5.3.2
-     * @deprecated 3.5.4
-     */
-    @Deprecated
-    public static final String[] COLLECTION_KEYS = new String[]{"collection", "coll", "list", "array"};
-
     private final Configuration configuration;
     private final SqlCommandType sqlCommandType;
     private final MappedStatement mappedStatement;
@@ -165,8 +156,7 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openInsertFill() && metaObjectHandler.openInsertFill(mappedStatement)
-                    && tableInfo.isWithInsertFill()) {
+            if (metaObjectHandler.openInsertFill(mappedStatement) && tableInfo.isWithInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
         });
@@ -174,46 +164,10 @@ public class MybatisParameterHandler extends DefaultParameterHandler {
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
-            if (metaObjectHandler.openUpdateFill() && metaObjectHandler.openUpdateFill(mappedStatement)
-                    && tableInfo.isWithUpdateFill()) {
+            if (metaObjectHandler.openUpdateFill(mappedStatement) && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
         });
-    }
-
-    /**
-     * 处理正常批量插入逻辑
-     * <p>
-     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法 wrapCollection 实现 StrictMap 封装逻辑
-     * </p>
-     *
-     * @return 集合参数
-     * @deprecated 3.5.3.2
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Deprecated
-    protected Collection<Object> getParameters(Object parameterObject) {
-        Collection<Object> parameters = null;
-        if (parameterObject instanceof Collection) {
-            parameters = (Collection) parameterObject;
-        } else if (ArrayUtils.isArray(parameterObject)) {
-            parameters = toCollection(parameterObject);
-        } else if (parameterObject instanceof Map) {
-            Map parameterMap = (Map) parameterObject;
-            // 约定 coll collection list array 这四个特殊key值处理批量.
-            // 尝试提取参数进行填充，如果是多参数时，在使用注解时，请注意使用collection，list，array进行声明
-            if (parameterMap.containsKey("collection")) {
-                return toCollection(parameterMap.get("collection"));
-            } else if (parameterMap.containsKey(Constants.COLL)) {
-                // 兼容逻辑删除对象填充，这里的集合字段后面重构的时候应该和原生保持一致，使用collection
-                parameters = toCollection(parameterMap.get(Constants.COLL));
-            } else if (parameterMap.containsKey(Constants.LIST)) {
-                parameters = toCollection(parameterMap.get(Constants.LIST));
-            } else if (parameterMap.containsKey(Constants.ARRAY)) {
-                parameters = toCollection(parameterMap.get(Constants.ARRAY));
-            }
-        }
-        return parameters;
     }
 
     /**

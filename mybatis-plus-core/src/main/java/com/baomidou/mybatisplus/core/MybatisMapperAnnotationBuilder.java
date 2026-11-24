@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
 import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -85,10 +86,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {
-            loadXmlResource();
-            configuration.addLoadedResource(resource);
             String mapperName = type.getName();
             assistant.setCurrentNamespace(mapperName);
+            TableInfoHelper.initMapperTableInfo(assistant, type);
+            loadXmlResource();
+            configuration.addLoadedResource(resource);
             parseCache();
             parseCacheRef();
             IgnoreStrategy ignoreStrategy = InterceptorIgnoreHelper.initSqlParserInfoCache(type);

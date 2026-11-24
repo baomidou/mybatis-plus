@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.handlers.AnnotationHandler;
 import com.baomidou.mybatisplus.core.handlers.PostInitTableInfoHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.StaticSqlSource;
@@ -150,6 +151,22 @@ public class TableInfoHelper {
      */
     public static void remove(Class<?> entityClass) {
         TABLE_INFO_CACHE.remove(entityClass);
+    }
+
+    /**
+     * 在解析 Mapper 的 XML 和 SQL 注解前初始化表信息及自动 resultMap。
+     *
+     * @param builderAssistant 已设置当前 namespace 的 mapper 信息
+     * @param mapperClass mapper 接口
+     * @return 表信息；不满足 SQL 注入条件或没有实体类型时返回 null
+     */
+    public static TableInfo initMapperTableInfo(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+        if (!mapperClass.isInterface()
+                || !GlobalConfigUtils.isSupperMapperChildren(builderAssistant.getConfiguration(), mapperClass)) {
+            return null;
+        }
+        Class<?> modelClass = ReflectionKit.getSuperClassGenericType(mapperClass, Mapper.class, 0);
+        return modelClass == null ? null : initTableInfo(builderAssistant, modelClass);
     }
 
     /**

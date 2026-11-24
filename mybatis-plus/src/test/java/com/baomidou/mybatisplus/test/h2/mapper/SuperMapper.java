@@ -18,7 +18,5 @@ public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.Bas
 
     int alwaysUpdateSomeColumnById(@Param("et") T entity);
 
-    int deleteByIdWithFill(T entity);
-
     int insertBatchSomeColumn(List<T> entityList);
 }

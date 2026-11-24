@@ -197,27 +197,6 @@ public abstract class AbstractMethod implements Constants {
                 SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), otherwise);
     }
 
-    /**
-     * SQL map 查询条件
-     */
-    @Deprecated
-    protected String sqlWhereByMap(TableInfo table) {
-        if (table.isWithLogicDelete()) {
-            // 逻辑删除
-            String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ", " ${k} = #{v} ");
-            sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
-            sqlScript = SqlScriptUtils
-                    .convertIf(sqlScript, COLUMN_MAP + " != null and !" + COLUMN_MAP + ".isEmpty", true);
-            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true));
-            return SqlScriptUtils.convertWhere(sqlScript);
-        } else {
-            String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ", " ${k} = #{v} ");
-            sqlScript = SqlScriptUtils.convertForeach(sqlScript, COLUMN_MAP, "k", "v", "AND");
-            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            return SqlScriptUtils.convertIf(sqlScript, COLUMN_MAP + " != null and !" + COLUMN_MAP_IS_EMPTY, true);
-        }
-    }
-
     private static final String BIND_SQL_SEGMENT = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
 
     private static final String AND_SQL_SEGMENT = SqlScriptUtils

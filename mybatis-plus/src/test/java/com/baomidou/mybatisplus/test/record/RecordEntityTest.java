@@ -1,5 +1,8 @@
 package com.baomidou.mybatisplus.test.record;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author nieqiurong 2023年9月14日
  */
 @Tag("integration")
-public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
+public class RecordEntityTest extends DbTestSupport<RecordEntityTest.RecordEntityMapper> {
 
     @Test
     void shouldInsertRecord() {
@@ -51,15 +54,30 @@ public class RecordEntityTest extends DbTestSupport<RecordEntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into t_record(id,name,tel) values(1,'demo1','13311111111'),(2,'demo2','13322222222'),(3,'demo3','13333333333');";
+        return """
+                insert into t_record(id,name,tel) values
+                    (1,'demo1','13311111111'), (2,'demo2','13322222222'), (3,'demo3','13333333333');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists t_record",
-                "CREATE TABLE IF NOT EXISTS t_record (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
-                        + "tel VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists t_record", """
+                CREATE TABLE IF NOT EXISTS t_record (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    tel VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
+    public interface RecordEntityMapper extends BaseMapper<RecordEntity> {
+
+    }
+
+    @TableName(value = "t_record")
+    public record RecordEntity(Long id, String name, @TableField(value = "tel") String phone) {
+
+    }
 }

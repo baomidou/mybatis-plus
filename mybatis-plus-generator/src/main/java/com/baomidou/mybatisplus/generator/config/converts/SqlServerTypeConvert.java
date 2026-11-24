@@ -55,6 +55,7 @@ public class SqlServerTypeConvert implements ITypeConvert {
     public IColumnType processTypeConvert(@NotNull GlobalConfig config, @NotNull String fieldType) {
         return TypeConverts.use(fieldType).test(containsAny("char", "xml", "text").then(STRING))
                 .test(contains("bigint").then(LONG)).test(contains("int").then(INTEGER))
+                .test(contains("timestamp").then(BYTE_ARRAY))
                 .test(containsAny("date", "time").then(t -> toDateType(config, t))).test(contains("bit").then(BOOLEAN))
                 .test(containsAny("decimal", "numeric").then(DOUBLE)).test(contains("money").then(BIG_DECIMAL))
                 .test(containsAny("binary", "image").then(BYTE_ARRAY)).test(containsAny("float", "real").then(FLOAT))

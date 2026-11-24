@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,15 +27,15 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,9 +55,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 3.5.3
  */
 @Tag("integration")
+@Slf4j
 public class H2CodeGeneratorTest extends BaseGeneratorSample {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(H2CodeGeneratorTest.class);
 
     /**
      * 已提交的模板引擎产物目录，键为用例里的引擎名。
@@ -141,6 +141,21 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
         assertGenerated("TSimpleController.java");
     }
 
+    @ParameterizedTest
+    @MethodSource("shouldGenerateCodeWithEachTemplateEngine")
+    void shouldGenerateKotlinBinaryProperties(String engine, AbstractTemplateEngine templateEngine)
+            throws SQLException, IOException {
+        DataSourceConfig source = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:binary_" + engine + ";DATABASE_TO_LOWER=TRUE", "sa", "").build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE attachment (id INT PRIMARY KEY, payload VARBINARY(16))");
+            AutoGenerator generator = new AutoGenerator(source);
+            generator.global(tempGlobalConfig().enableKotlin().build());
+            generator.execute(templateEngine);
+        }
+        assertThat(contentOf("Attachment.kt")).contains("var id: Int? = null", "var payload: ByteArray? = null");
+    }
+
     static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {
         return Stream.of(
                 Arguments.arguments("velocity", new VelocityTemplateEngine()),
@@ -154,7 +169,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
     public void shouldGenerateCodeWithEachTemplateEngine(String engine, AbstractTemplateEngine templateEngine)
             throws IOException {
         Path javaOutput = tempDir.resolve("java");
-        LOGGER.info("当前执行引擎:{}, 输出目录:{}", engine, javaOutput);
+        log.info("当前执行引擎:{}, 输出目录:{}", engine, javaOutput);
         AutoGenerator generator = new AutoGenerator(DATA_SOURCE_CONFIG);
         generator.strategy(
                 strategyConfig().addTablePrefix("t_").entityBuilder().enableFileOverride().mapperBuilder()
@@ -165,7 +180,7 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
         generator.execute(templateEngine);
 
         // -- 生成kotlin代码
-        LOGGER.info("当前执行引擎:{}, 执行生成Kotlin代码.", engine);
+        log.info("当前执行引擎:{}, 执行生成Kotlin代码.", engine);
         Path kotlinOutput = tempDir.resolve("kotlin");
         generator = new AutoGenerator(DATA_SOURCE_CONFIG);
 

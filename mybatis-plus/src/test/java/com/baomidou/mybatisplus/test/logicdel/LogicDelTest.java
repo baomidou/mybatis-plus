@@ -1,15 +1,16 @@
 package com.baomidou.mybatisplus.test.logicdel;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteBatchByIds;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.Configuration;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-23
  */
 @Tag("integration")
-public class LogicDelTest extends DbTestSupport<EntityMapper> {
+public class LogicDelTest extends DbTestSupport<LogicDelTest.EntityMapper> {
 
     @Test
     void logicDel() {
@@ -80,36 +81,27 @@ public class LogicDelTest extends DbTestSupport<EntityMapper> {
             });
         });
 
-        doTest(mapper -> {
-            Entity entity1 = new Entity();
-            entity1.setName("测试自定义方法根据实体批量删除");
-            mapper.insert(entity1);
-            Entity entity2 = new Entity();
-            entity2.setName("测试自定义方法根据实体批量删除");
-            mapper.insert(entity2);
-            List<Entity> entityList = new ArrayList<>();
-            entityList.add(entity1);
-            entityList.add(entity2);
-            assertThat(mapper.testDeleteBatch(entityList)).isEqualTo(2);
-            entityList.forEach(entity -> {
-                assertThat(entity.getDeleteBy()).isEqualTo("聂秋秋");
-            });
-        });
-
     }
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');";
+        return """
+                insert into entity(id,name) values
+                    (1,'1'), (2,'2');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL," + "name VARCHAR(30) NULL DEFAULT NULL,"
-                        + "delete_by VARCHAR(30) NULL DEFAULT NULL," + "deleted BOOLEAN NOT NULL DEFAULT false,"
-                        + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    delete_by VARCHAR(30) NULL DEFAULT NULL,
+                    deleted BOOLEAN NOT NULL DEFAULT false,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 
     @Override
@@ -127,16 +119,27 @@ public class LogicDelTest extends DbTestSupport<EntityMapper> {
                 strictUpdateFill(metaObject, "deleteBy", String.class, "聂秋秋");
             }
         });
-        globalConfig.setSqlInjector(new DefaultSqlInjector() {
-
-            @Override
-            public List<AbstractMethod> getMethodList(Configuration configuration, Class<?> mapperClass,
-                    TableInfo tableInfo) {
-                List<AbstractMethod> methodList = super.getMethodList(configuration, mapperClass, tableInfo);
-                methodList.add(new LogicDeleteBatchByIds("testDeleteBatch"));
-                return methodList;
-            }
-        });
         return globalConfig;
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+
+        @Select("select * from entity where id = #{id}")
+        Entity byId(Long id);
+
+    }
+
+    @Data
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        @TableField(fill = FieldFill.UPDATE)
+        private String deleteBy;
+
+        @TableLogic(delval = "true", value = "false")
+        private Boolean deleted;
     }
 }

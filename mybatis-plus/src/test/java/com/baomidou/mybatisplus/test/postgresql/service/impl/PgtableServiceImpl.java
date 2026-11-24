@@ -21,7 +21,7 @@ public class PgtableServiceImpl extends ServiceImpl<PgtableMappper, Pgtable> imp
                 this.updateById(Pgtable.builder().id(1L).compName("testTask01").age(11).build());
                 baseMapper.updateById(Pgtable.builder().id(1L).compName("testTask02").age(12).build());
             } catch (Exception exception) {
-                exception.getStackTrace();
+                throw new IllegalStateException("异步更新 Pgtable 失败", exception);
             } finally {
                 executorService.shutdown();
             }

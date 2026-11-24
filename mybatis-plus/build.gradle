@@ -10,6 +10,12 @@ compileTestKotlin {
     }
 }
 
+tasks.named('processTestResources') {
+    from('src/test/java') {
+        include '**/*.xml'
+    }
+}
+
 configurations {
     testImplementation.exclude module: 'mybatis-plus-jsqlparser-4.9'
 }
@@ -42,9 +48,17 @@ dependencies {
     testImplementation "${lib.'spring-context-support'}"
     testImplementation "${lib.'spring-jdbc'}"
     testImplementation "${lib.'slf4j-api'}"
-    testImplementation "${lib.'logback-classic'}"
     testImplementation "${lib.cglib}"
     testImplementation "${lib.gaussdb}"
     testImplementation project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser")
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
+}
+
+// 引入 core 的共享测试源：pom 契约测试用的 GeneratedPom 夹具
+sourceSets {
+    test {
+        java {
+            srcDir "${project(':mybatis-plus-core').projectDir}/src/test-shared/java"
+        }
+    }
 }

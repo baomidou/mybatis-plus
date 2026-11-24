@@ -32,6 +32,9 @@ public class KotlinTypeUtils {
     private static final Map<IColumnType, String> JAVA_TO_KOTLIN_TYPE = new HashMap<>();
 
     static {
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BYTE_ARRAY, "ByteArray");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_BYTE, "Byte");
+        JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_SHORT, "Short");
         JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_INT, "Int");
         JAVA_TO_KOTLIN_TYPE.put(DbColumnType.INTEGER, "Int");
         JAVA_TO_KOTLIN_TYPE.put(DbColumnType.BASE_DOUBLE, "Double");

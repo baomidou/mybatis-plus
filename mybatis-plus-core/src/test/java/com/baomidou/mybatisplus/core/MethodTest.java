@@ -33,7 +33,7 @@ public class MethodTest {
     @Test
     void shouldCreateAndCollectAbstractMethods() {
         Stream.Builder<AbstractMethod> builder = Stream.<AbstractMethod>builder().add(new Insert()).add(new Delete())
-                .add(new Update()).add(new SelectPage()).add(new TestMethod());
+                .add(new Update()).add(new SelectByIds()).add(new TestMethod());
         List<AbstractMethod> collect = builder.build().toList();
         Assert.isTrue(collect.size() == 5, "创建失败！");
     }

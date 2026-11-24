@@ -1,10 +1,14 @@
 package com.baomidou.mybatisplus.test.optimisticlocker;
 
+import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.DbTestSupport;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since 2020-06-24
  */
 @Tag("integration")
-public class OptimisticLockerTest extends DbTestSupport<EntityMapper> {
+public class OptimisticLockerTest extends DbTestSupport<OptimisticLockerTest.EntityMapper> {
 
     @Test
     void shouldApplyOptimisticLockingOnUpdate() {
@@ -77,15 +81,36 @@ public class OptimisticLockerTest extends DbTestSupport<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity (id,name) values (1,'1'),(2,'2'),(3,'3')";
+        return """
+                insert into entity (id,name) values
+                    (1,'1'), (2,'2'), (3,'3')
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity",
-                "CREATE TABLE IF NOT EXISTS entity (\n" + "id BIGINT(20) NOT NULL,\n"
-                        + "name VARCHAR(30) NULL DEFAULT NULL,\n" + "version integer not NULL default 0,\n"
-                        + "PRIMARY KEY (id)" + ")");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT(20) NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    version integer not NULL default 0,
+                    PRIMARY KEY (id)
+                )
+                """);
+    }
+
+    public interface EntityMapper extends BaseMapper<Entity> {
+    }
+
+    @Data
+    @Accessors(chain = true)
+    public static class Entity {
+
+        private Long id;
+
+        private String name;
+
+        @Version
+        private Integer version;
     }
 }

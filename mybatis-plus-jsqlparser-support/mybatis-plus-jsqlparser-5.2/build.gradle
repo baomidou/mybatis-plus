@@ -4,30 +4,28 @@ compileJava {
 
 dependencies {
     api "com.github.jsqlparser:jsqlparser:5.2"
-    api project(":mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common")
-    implementation "${lib."slf4j-api"}"
-    implementation "de.ruedigermoeller:fst:3.0.3"
-    implementation "org.apache.fury:fury-core:0.9.0"
-    implementation "${lib.caffeine}"
-    testImplementation "io.github.classgraph:classgraph:4.8.184"
-    testImplementation "${lib."spring-context-support"}"
-    testImplementation "${lib.h2}"
-    testImplementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
 }
 
 compileJava.dependsOn(processResources)
 
-// 引入共享测试源
+// 各版本独立编译共享源码和测试，保留各自的 JSqlParser 依赖
 sourceSets {
+    main {
+        java {
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/main-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/main-shared-5x/java"
+        }
+    }
     test {
         java {
-            srcDir "${project(':mybatis-plus-jsqlparser-support:mybatis-plus-jsqlparser-common').projectDir}/src/test-shared/java"
+            srcDir "${project(':mybatis-plus-jsqlparser-support').projectDir}/src/test-shared/java"
         }
     }
 }
 
 // FST inspects JDK fields reflectively when FstFactory is constructed.
-test {
+// 用 withType(Test) 而不是 test {}，分层任务 testUnit/testIntegration 才拿得到这些 jvmArgs。
+tasks.withType(Test).configureEach {
     doFirst {
         if (javaLauncher.get().metadata.languageVersion.asInt() >= 9) {
             jvmArgs '--add-opens=java.base/java.lang=ALL-UNNAMED',

@@ -26,13 +26,20 @@ public class RewriteTest extends DbTestSupport<EntityMapper> {
 
     @Override
     protected String tableDataSql() {
-        return "insert into entity(id,name) values(1,'1'),(2,'2');";
+        return """
+                insert into entity(id,name) values
+                    (1,'1'), (2,'2');
+                """;
     }
 
     @Override
     protected List<String> tableSql() {
-        return Arrays.asList(
-                "drop table if exists entity", "CREATE TABLE IF NOT EXISTS entity (" + "id BIGINT NOT NULL,"
-                        + "name VARCHAR(30) NULL DEFAULT NULL," + "PRIMARY KEY (id))");
+        return Arrays.asList("drop table if exists entity", """
+                CREATE TABLE IF NOT EXISTS entity (
+                    id BIGINT NOT NULL,
+                    name VARCHAR(30) NULL DEFAULT NULL,
+                    PRIMARY KEY (id)
+                )
+                """);
     }
 }
