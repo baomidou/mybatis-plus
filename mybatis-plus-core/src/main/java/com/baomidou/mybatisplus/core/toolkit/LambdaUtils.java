@@ -286,6 +286,15 @@ public final class LambdaUtils {
     }
 
     /**
+     * 清除指定实体类的 Lambda 列缓存
+     *
+     * @param entityClass 实体 Class
+     */
+    public static void removeCache(Class<?> entityClass) {
+        COLUMN_CACHE_MAP.remove(entityClass.getName());
+    }
+
+    /**
      * 缓存实体字段 MAP 信息
      *
      * @param info 表信息

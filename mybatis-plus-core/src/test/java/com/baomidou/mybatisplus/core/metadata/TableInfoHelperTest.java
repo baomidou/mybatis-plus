@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -353,18 +354,57 @@ class TableInfoHelperTest {
     }
 
     @Test
-    void removeEntityOnlyClearsClassCache() {
-        TableInfoHelper
+    void shouldClearEntityTableInfoAndLambdaColumns() {
+        TableInfo tableInfo = TableInfoHelper
                 .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), RemoveCacheEntity.class);
-        assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isNotNull();
-        assertThat(TableInfoHelper.getTableInfo("zz_remove_cache_entity")).isNotNull();
+        assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isSameAs(tableInfo);
+        assertThat(TableInfoHelper.getTableInfo(tableInfo.getTableName())).isSameAs(tableInfo);
+        assertThat(LambdaUtils.getColumnMap(RemoveCacheEntity.class)).containsKey("NAME");
 
         TableInfoHelper.remove(RemoveCacheEntity.class);
 
         assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isNull();
-        // 特征化断言：remove() 只清 class 缓存，表名缓存仍有残留（非期望行为）。
-        // 若 remove() 补上清理表名缓存，本行必须同步改为 isNull()。
-        assertThat(TableInfoHelper.getTableInfo("zz_remove_cache_entity")).isNotNull();
+        assertThat(TableInfoHelper.getTableInfo(tableInfo.getTableName())).isNull();
+        assertThat(LambdaUtils.getColumnMap(RemoveCacheEntity.class)).isNull();
+    }
+
+    @Test
+    void shouldKeepTableNameMappingOwnedByAnotherEntity() {
+        TableInfo original = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), RemoveCacheEntity.class);
+        MybatisConfiguration configuration = new MybatisConfiguration();
+        GlobalConfig config = GlobalConfigUtils.defaults();
+        config.getDbConfig().setTableFormat(original.getTableName());
+        GlobalConfigUtils.setGlobalConfig(configuration, config);
+        TableInfo other = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(configuration, ""), OtherRemoveCacheEntity.class);
+        try {
+            assertThat(other.getTableName()).isEqualTo(original.getTableName());
+
+            TableInfoHelper.remove(RemoveCacheEntity.class);
+
+            assertThat(TableInfoHelper.getTableInfo(other.getTableName())).isSameAs(other);
+            assertThat(LambdaUtils.getColumnMap(OtherRemoveCacheEntity.class)).containsKey("ID");
+        } finally {
+            TableInfoHelper.remove(OtherRemoveCacheEntity.class);
+        }
+    }
+
+    @Test
+    void shouldRemoveSharedTableNameMappingWhenRemovingChild() {
+        TableInfo parent = TableInfoHelper
+                .initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), RemoveCacheEntity.class);
+        try {
+            assertThat(TableInfoHelper.getTableInfo(RemoveCacheChild.class)).isSameAs(parent);
+            assertThat(TableInfoHelper.getTableInfo(parent.getTableName())).isSameAs(parent);
+
+            TableInfoHelper.remove(RemoveCacheChild.class);
+
+            assertThat(TableInfoHelper.getTableInfo(parent.getTableName())).isNull();
+            assertThat(TableInfoHelper.getTableInfo(RemoveCacheEntity.class)).isSameAs(parent);
+        } finally {
+            TableInfoHelper.remove(RemoveCacheEntity.class);
+        }
     }
 
     @Data
@@ -375,6 +415,15 @@ class TableInfoHelperTest {
         private Long id;
 
         private String name;
+    }
+
+    private static class OtherRemoveCacheEntity {
+
+        @TableId
+        private Long id;
+    }
+
+    private static class RemoveCacheChild extends RemoveCacheEntity {
     }
 
 }

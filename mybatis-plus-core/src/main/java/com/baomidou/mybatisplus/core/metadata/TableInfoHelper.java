@@ -145,12 +145,16 @@ public class TableInfoHelper {
     }
 
     /**
-     * 清空实体表映射缓存信息
+     * 清除指定实体类的表信息、该实体对应的表名索引及 Lambda 列缓存
      *
      * @param entityClass 实体 Class
      */
-    public static void remove(Class<?> entityClass) {
-        TABLE_INFO_CACHE.remove(entityClass);
+    public static synchronized void remove(Class<?> entityClass) {
+        TableInfo tableInfo = TABLE_INFO_CACHE.remove(entityClass);
+        if (tableInfo != null) {
+            TABLE_NAME_INFO_CACHE.remove(tableInfo.getTableName(), tableInfo);
+        }
+        LambdaUtils.removeCache(entityClass);
     }
 
     /**
