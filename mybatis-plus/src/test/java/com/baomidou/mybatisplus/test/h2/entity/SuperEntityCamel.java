@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.test.h2.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -10,6 +12,8 @@ import java.io.Serializable;
  * @author hubin
  * @since 2016-06-26
  */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class SuperEntityCamel extends SuSuperEntityCamel implements Serializable {
 
     /**
@@ -21,11 +25,4 @@ public class SuperEntityCamel extends SuSuperEntityCamel implements Serializable
     @TableId(value = "testId")
     private Long id;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
