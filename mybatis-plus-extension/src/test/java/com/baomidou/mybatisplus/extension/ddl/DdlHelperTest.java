@@ -204,6 +204,23 @@ public class DdlHelperTest {
     }
 
     @Test
+    void initializesHistoryInTheRequestedSchema() throws SQLException, IOException {
+        var ds = h2DataSource("ddl_exact_schema", "DATABASE_TO_LOWER=TRUE");
+        var script = Files.writeString(tempDir.resolve("applied.sql"), "CREATE TABLE applied (id INT);");
+        try (var connection = ds.getConnection(); var statement = connection.createStatement()) {
+            statement.execute("CREATE SCHEMA app_1");
+            statement.execute("CREATE SCHEMA app01");
+            statement.execute("CREATE TABLE app01.ddl_history (id INT)");
+            statement.execute("CREATE TABLE app_1.ddlxhistory (id INT)");
+            connection.setSchema("app_1");
+            var generator = PostgreDdlGenerator.newInstanceWithAutoSchema();
+            DdlHelper.runScript(generator, connection, List.of(script.toString()), false, THROWS);
+            assertThat(historyRows(connection, "ddl_history")).containsExactly(script + "|sql");
+            assertThat(PostgreDdlGenerator.newInstanceWithSchema("app_1").existTable(connection)).isTrue();
+        }
+    }
+
+    @Test
     void shouldRunDdlForH2WithAutoDetect() throws SQLException {
         var dataSource = h2DataSource("ddl_h2", "DATABASE_TO_LOWER=TRUE");
         // 生成器留空，由 jdbcUrl 推断出 PostgreDdlGenerator

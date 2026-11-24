@@ -111,11 +111,19 @@ public class PostgreDdlGenerator implements IDdlGenerator {
             tableName = tableName.substring(index + 1);
         }
         tableName = tableName.replace(StringPool.QUOTE, StringPool.EMPTY);
+        String schemaName = StringUtils.isBlank(getSchema()) ? connection.getSchema() : getSchema();
+        String escape = metaData.getSearchStringEscape();
         try (ResultSet resultSet = metaData.getTables(
-                connection.getCatalog(), StringUtils.isBlank(getSchema()) ? connection.getSchema() : getSchema(),
-                tableName, new String[]{"TABLE"})) {
+                connection.getCatalog(), escapePattern(schemaName, escape), escapePattern(tableName, escape),
+                new String[]{"TABLE"})) {
             return resultSet.next();
         }
+    }
+
+    private String escapePattern(String name, String escape) {
+        return name == null
+                ? null
+                : name.replace(escape, escape + escape).replace("_", escape + "_").replace("%", escape + "%");
     }
 
     @Override
