@@ -42,15 +42,13 @@ public class SqlInjectionUtils {
 
     /** 常见的数据库信息读取、延时及报错函数。 */
     private static final Pattern SQL_DANGEROUS_FUNCTION_PATTERN = Pattern.compile(
-            "\\b(?:pg_sleep|extractvalue|updatexml|load_file|current_setting)\\s*\\(",
-            Pattern.CASE_INSENSITIVE);
+            "\\b(?:pg_sleep|extractvalue|updatexml|load_file|current_setting)\\s*\\(", Pattern.CASE_INSENSITIVE);
 
     /** 无空格的逻辑运算，如 OR(1=1)。 */
-    private static final Pattern SQL_LOGICAL_PATTERN = Pattern.compile(
-            "\\b(?:and|or)\\s*\\(", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SQL_LOGICAL_PATTERN = Pattern
+            .compile("\\b(?:and|or)\\s*\\(", Pattern.CASE_INSENSITIVE);
     /**
-     * 检查参数是否存在 SQL 注入。此方法仅用于识别部分可疑语法，不能保证输入安全。
-     * 对不可信的值应使用参数绑定，对列名等 SQL 结构应使用白名单。
+     * 检查参数是否存在 SQL 注入。此方法仅用于识别部分可疑语法，不能保证输入安全。 对不可信的值应使用参数绑定，对列名等 SQL 结构应使用白名单。
      *
      * @param value 检查参数
      * @return true 存在可疑语法 false 未发现已知可疑语法
@@ -64,7 +62,7 @@ public class SqlInjectionUtils {
         return (value.indexOf('\'') >= 0 && SQL_COMMENT_PATTERN.matcher(value).find())
                 || SQL_SYNTAX_PATTERN.matcher(value).find()
                 || (value.indexOf('(') >= 0 && (SQL_DANGEROUS_FUNCTION_PATTERN.matcher(value).find()
-                || SQL_LOGICAL_PATTERN.matcher(value).find()));
+                        || SQL_LOGICAL_PATTERN.matcher(value).find()));
     }
 
     /**
@@ -77,8 +75,7 @@ public class SqlInjectionUtils {
         boolean simpleIdentifier = true;
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
-            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-                    || (c >= '0' && c <= '9') || c == '_')) {
+            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_')) {
                 simpleIdentifier = false;
             }
             if (quote != 0) {
@@ -94,8 +91,7 @@ public class SqlInjectionUtils {
             } else if (c == '\'' || c == '"' || c == '`') {
                 quote = c;
             } else if (c == ';' || c == '#' || (i + 1 < value.length()
-                    && ((c == '-' && value.charAt(i + 1) == '-')
-                    || (c == '/' && value.charAt(i + 1) == '*')))) {
+                    && ((c == '-' && value.charAt(i + 1) == '-') || (c == '/' && value.charAt(i + 1) == '*')))) {
                 return 1;
             }
         }
