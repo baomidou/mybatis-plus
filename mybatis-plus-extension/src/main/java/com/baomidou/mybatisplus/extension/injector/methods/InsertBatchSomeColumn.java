@@ -109,11 +109,10 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         String insertSqlColumn = tableInfo.getKeyInsertSqlColumn(true, null, false)
                 + this.filterTableFieldInfo(fieldList, predicate, TableFieldInfo::getInsertSqlColumn, EMPTY);
-        String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1) + RIGHT_BRACKET;
+        String columnScript = asTuple(insertSqlColumn);
         String insertSqlProperty = tableInfo.getKeyInsertSqlProperty(true, ENTITY_DOT, false)
                 + this.filterTableFieldInfo(fieldList, predicate, i -> i.getInsertSqlProperty(ENTITY_DOT), EMPTY);
-        insertSqlProperty = LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1)
-                + RIGHT_BRACKET;
+        insertSqlProperty = asTuple(insertSqlProperty);
         String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
         String keyProperty = null;
         String keyColumn = null;
@@ -137,6 +136,12 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         SqlSource sqlSource = super.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(
                 mapperClass, modelClass, methodName, sqlSource, keyGenerator, keyProperty, keyColumn);
+    }
+
+    private String asTuple(String items) {
+        // MySQL 使用空元组为列表中的每个实体插入一行默认值。
+        String values = items.isEmpty() ? EMPTY : items.substring(0, items.length() - 1);
+        return LEFT_BRACKET + values + RIGHT_BRACKET;
     }
 
 }
