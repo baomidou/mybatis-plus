@@ -541,9 +541,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        if (CompatibleHelper.hasCompatibleSet()) {
-            CompatibleHelper.getCompatibleSet().setContext(applicationContext);
-        }
+        CompatibleHelper.getCompatibleSet().setContext(applicationContext);
     }
 
     /**

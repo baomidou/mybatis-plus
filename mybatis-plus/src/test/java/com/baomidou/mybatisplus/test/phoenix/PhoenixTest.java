@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.test.phoenix.entity.PhoenixTestInfo;
 import com.baomidou.mybatisplus.test.phoenix.mapper.PhoenixTestInfoMapper;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,9 @@ public class PhoenixTest {
     @Autowired
     PhoenixTestInfoMapper mapper;
 
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+
     @Test
     void a00_upsertForeach() {
         int size = 10;
@@ -45,7 +50,7 @@ public class PhoenixTest {
     @Test
     void a01_upsertBatch() {
         int size = 10000;
-        try (SqlSession sqlSession = SqlHelper.sqlSessionBatch(PhoenixTestInfo.class)) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
             String sqlStatement = SqlHelper.table(PhoenixTestInfo.class).getSqlStatement(UPSERT_ONE.getMethod());
             for (int i = 0; i < size; i++) {
                 PhoenixTestInfo testInfo = new PhoenixTestInfo().setId(i).setName("upsertBatch");

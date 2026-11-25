@@ -229,16 +229,14 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      * 成功写入后提交独立会话。自行管理会话的子类可定制提交方式。
      */
     protected void commitSqlSession(SqlSession session) {
-        if (CompatibleHelper.hasCompatibleSet()) {
-            CompatibleHelper.getCompatibleSet().commitSqlSession(session, MybatisUtils.getSqlSessionFactory(session));
-        }
+        CompatibleHelper.getCompatibleSet().commitSqlSession(session, MybatisUtils.getSqlSessionFactory(session));
     }
 
     /**
      * 获取Session 默认自动提交
      */
     protected SqlSession sqlSession() {
-        return SqlHelper.sqlSession(this.entityClass);
+        return CompatibleHelper.getCompatibleSet().getSqlSession(this.entityClass);
     }
 
     /**
@@ -274,7 +272,6 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
      * @param sqlSession session
      */
     protected void closeSqlSession(SqlSession sqlSession) {
-        CompatibleHelper.getCompatibleSet()
-                .closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(this.entityClass));
+        CompatibleHelper.getCompatibleSet().closeSqlSession(sqlSession, MybatisUtils.getSqlSessionFactory(sqlSession));
     }
 }

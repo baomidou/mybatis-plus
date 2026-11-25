@@ -99,13 +99,10 @@ public class TableInfo implements Constants {
      */
     private String currentNamespace;
     /**
-     * MybatisConfiguration 标记 (Configuration内存地址值)
-     *
-     * @deprecated 3.5.3.2 初始化阶段可以使用一下,后期尽量避免在容器初始化完成之后再继续调用此方法
+     * 仅用于通过实体类获取当前表元数据关联的 Configuration。 同一实体类在多个 Configuration 中初始化时，后续初始化会覆盖该实体类的缓存条目。
      */
     @Getter
     @Setter(AccessLevel.NONE)
-    @Deprecated
     private Configuration configuration;
     /**
      * 是否开启下划线转驼峰
@@ -199,13 +196,11 @@ public class TableInfo implements Constants {
     }
 
     /**
-     * 获得注入的 SQL Statement
+     * 获得注入的 SQL Statement。多个 Mapper 共用同一实体时，此方法可能返回错误的命名空间。
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
      * @return SQL Statement
-     * @deprecated 3.4.0 如果存在的多mapper共用一个实体的情况，这里可能会出现获取命名空间错误的情况
      */
-    @Deprecated
     public String getSqlStatement(String sqlMethod) {
         return currentNamespace + DOT + sqlMethod;
     }

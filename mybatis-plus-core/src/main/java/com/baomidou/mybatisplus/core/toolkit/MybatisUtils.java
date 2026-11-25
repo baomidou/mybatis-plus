@@ -173,11 +173,9 @@ public class MybatisUtils {
             return mapper;
         }
         Object result = mapper;
-        if (CompatibleHelper.hasCompatibleSet()) {
-            Object proxyTargetObject = CompatibleHelper.getCompatibleSet().getProxyTargetObject(result);
-            if (proxyTargetObject != null) {
-                result = proxyTargetObject;
-            }
+        Object proxyTargetObject = CompatibleHelper.getCompatibleSet().getProxyTargetObject(result);
+        if (proxyTargetObject != null) {
+            result = proxyTargetObject;
         }
         if (result != null) {
             while (Proxy.isProxyClass(result.getClass())) {

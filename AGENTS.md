@@ -10,6 +10,7 @@
 - 日常使用 JDK 21 和 `./gradlew`。编译目标以各模块的 `compileJava.options.release` 和 Kotlin `jvmTarget` 为准。改动编译目标时运行 `verifyBytecodeVersion`。
 - 沿用模块现有风格，使用 `./gradlew spotlessApply` 修复 Java 格式。新增依赖前先核对现有依赖，版本沿用根构建脚本或 BOM 的管理方式。
 - 修改公共 API、配置或默认行为时，检查源码、二进制和行为兼容性，并同步相关 Javadoc 或使用文档。
+- 新增 `@Deprecated` 时，同步在 Javadoc 或 KDoc 的 `@deprecated` 标签中写明首次弃用的 MyBatis-Plus 发布版本和迁移方式。版本以该变更的目标发布版本为准，参考同一发布周期的弃用条目，保留既有条目的历史版本。Java 8 目标模块使用无参数的 `@Deprecated` 注解。
 - 修改 Mapper、Wrapper、SQL 注入或拦截器时，按影响检查生成的 SQL 和绑定参数，包括空条件、逻辑删除、插件顺序和数据库方言。数据值优先使用参数绑定，动态标识符和原生 SQL 片段须明确其来源及校验边界。
 - 修改共享解析逻辑时覆盖各 JSqlParser 适配模块。修改自动配置时检查受影响的 Boot 版本及注册资源，通用用例沿用共享测试源集。涉及 AOT 或反射提示时，参考 [Native Image CI](.github/workflows/native-image.yml)。
 

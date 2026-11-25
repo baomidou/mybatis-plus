@@ -46,12 +46,10 @@ public class GlobalConfigUtils {
     private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
     /**
-     * 获取当前的SqlSessionFactory
+     * 根据实体类当前缓存的表元数据，获取关联的 SqlSessionFactory。
      *
      * @param clazz 实体类
-     * @deprecated 3.5.3.2 尽量少用,后期取消此方法获取实例
      */
-    @Deprecated
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);

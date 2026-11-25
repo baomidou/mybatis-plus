@@ -15,7 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.spi;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -27,20 +34,66 @@ import java.util.function.Function;
  */
 public interface CompatibleSet {
 
-    SqlSession getSqlSession(SqlSessionFactory sessionFactory);
+    /**
+     * 获取实体类关联的配置中绑定的会话工厂。
+     *
+     * @param entity 实体类
+     * @return 已绑定的会话工厂，未绑定时返回 null
+     */
+    default SqlSessionFactory getSqlSessionFactory(Class<?> entity) {
+        return GlobalConfigUtils.getGlobalConfig(getConfiguration(entity)).getSqlSessionFactory();
+    }
 
     /**
-     * 在框架管理的操作成功后提交独立会话。事务内的会话由事务管理器负责。 默认沿用兼容实现已有的提交方式。
+     * 获取实体类当前缓存的表元数据所关联的配置。表元数据尚未初始化时抛出异常。
+     *
+     * @param entity 实体类
+     * @return 表元数据关联的配置
+     */
+    default Configuration getConfiguration(Class<?> entity) {
+        Assert.notNull(entity, "Class must not be null");
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entity);
+        Assert.notNull(tableInfo, ClassUtils.getUserClass(entity).getName() + " Not Found TableInfoCache.");
+        return tableInfo.getConfiguration();
+    }
+
+    /**
+     * 通过实体类关联的会话工厂获取会话，沿用兼容实现的会话管理方式。
+     *
+     * @param entity 实体类
+     * @return SQL 会话
+     */
+    default SqlSession getSqlSession(Class<?> entity) {
+        return getSqlSession(getSqlSessionFactory(entity));
+    }
+
+    default SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
+        return sessionFactory.openSession();
+    }
+
+    /**
+     * 在框架管理的操作成功后提交独立会话。由外部事务管理器管理的会话交给事务管理器提交。
      *
      * @param session 本次操作使用的会话
      * @param sessionFactory 会话所属的工厂
      */
     default void commitSqlSession(SqlSession session, SqlSessionFactory sessionFactory) {
+        session.commit();
     }
 
-    void closeSqlSession(SqlSession session, SqlSessionFactory sessionFactory);
+    default void closeSqlSession(SqlSession session, SqlSessionFactory sessionFactory) {
+        if (session != null) {
+            session.close();
+        }
+    }
 
-    boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc);
+    default boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Function<SqlSession, Integer> execFunc) {
+        try (SqlSession session = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+            Integer affected = execFunc.apply(session);
+            session.commit();
+            return affected != null && affected > 0;
+        }
+    }
 
     /**
      * @deprecated 3.5.12 无需实现
@@ -80,6 +133,13 @@ public interface CompatibleSet {
      */
     default void setContext(Object context) {
 
+    }
+
+    /**
+     * 返回值越大，SPI 实现的优先级越高。
+     */
+    default int order() {
+        return 0;
     }
 
 }

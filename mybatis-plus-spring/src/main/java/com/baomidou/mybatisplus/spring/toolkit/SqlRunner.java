@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.spring.toolkit;
 
 import com.baomidou.mybatisplus.core.assist.AbstractSqlRunner;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.spi.CompatibleHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
@@ -278,7 +278,9 @@ public class SqlRunner extends AbstractSqlRunner {
      * 获取SqlSessionFactory
      */
     private SqlSessionFactory getSqlSessionFactory() {
-        return Optional.ofNullable(clazz).map(GlobalConfigUtils::currentSessionFactory).orElse(SqlHelper.FACTORY);
+        return Optional.ofNullable(clazz)
+                .map(entity -> CompatibleHelper.getCompatibleSet().getSqlSessionFactory(entity))
+                .orElse(SqlHelper.FACTORY);
     }
 
 }

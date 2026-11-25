@@ -43,9 +43,7 @@ public class MybatisPlusApplicationContextAware implements ApplicationContextAwa
     public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
         LOGGER.info("Register ApplicationContext instances {}", applicationContext.getDisplayName());
         MybatisPlusApplicationContextAware.applicationContext = applicationContext;
-        if (CompatibleHelper.hasCompatibleSet()) {
-            CompatibleHelper.getCompatibleSet().setContext(applicationContext);
-        }
+        CompatibleHelper.getCompatibleSet().setContext(applicationContext);
     }
 
     public static boolean hasApplicationContext() {

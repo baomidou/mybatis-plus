@@ -68,11 +68,8 @@ public class GlobalConfig implements Serializable {
      */
     private Class<?> superMapperClass = Mapper.class;
     /**
-     * 仅用于缓存 SqlSessionFactory(外部勿进行set,set了也没用)
-     *
-     * @deprecated 3.5.3.2
+     * 缓存构建阶段绑定的 SqlSessionFactory，供通过 Configuration 反查工厂时使用。 由 MybatisSqlSessionFactoryBuilder 写入，外部调用方应避免设置。
      */
-    @Deprecated
     private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息

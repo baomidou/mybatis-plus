@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -48,44 +47,6 @@ public final class SqlHelper {
      * 主要用于 service 和 ar
      */
     public static SqlSessionFactory FACTORY;
-
-    /**
-     * 批量操作 SqlSession
-     *
-     * @param clazz 实体类
-     * @return SqlSession
-     * @deprecated 3.5.4
-     */
-    @Deprecated
-    public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        // TODO 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
-        return sqlSessionFactory(clazz).openSession(ExecutorType.BATCH);
-    }
-
-    /**
-     * 获取SqlSessionFactory
-     *
-     * @param clazz 实体类
-     * @return SqlSessionFactory
-     * @since 3.3.0
-     * @deprecated 3.5.3.2 尽量少用,后期取消此方法获取实例
-     */
-    @Deprecated
-    public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
-        return GlobalConfigUtils.currentSessionFactory(clazz);
-    }
-
-    /**
-     * 获取Session
-     *
-     * @param clazz 实体类
-     * @return SqlSession
-     * @deprecated 3.5.3.2 尽量少用,后期取消打开session方法
-     */
-    @Deprecated
-    public static SqlSession sqlSession(Class<?> clazz) {
-        return CompatibleHelper.getCompatibleSet().getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
-    }
 
     /**
      * 获取TableInfo
@@ -167,43 +128,9 @@ public final class SqlHelper {
         return null;
     }
 
-    /**
-     * 执行批量操作
-     *
-     * @param entityClass 实体
-     * @param log 日志对象
-     * @param execFunc 执行函数
-     * @return 操作结果
-     * @since 3.4.0
-     * @deprecated 3.5.3.2
-     */
-    @Deprecated
-    public static boolean executeBatch(Class<?> entityClass, Log log, Function<SqlSession, Integer> execFunc) {
-        return executeBatch(sqlSessionFactory(entityClass), log, execFunc);
-    }
-
     public static boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log,
             Function<SqlSession, Integer> execFunc) {
         return CompatibleHelper.getCompatibleSet().executeBatch(sqlSessionFactory, log, execFunc);
-    }
-
-    /**
-     * 执行批量操作
-     *
-     * @param entityClass 实体类
-     * @param log 日志对象
-     * @param list 数据集合
-     * @param batchSize 批次大小
-     * @param execBiFunc 执行函数
-     * @param <E> T
-     * @return 操作结果
-     * @since 3.4.0
-     * @deprecated 3.5.3.2 {@link #executeBatch(SqlSessionFactory, Log, Collection, int, BiFunction)}
-     */
-    @Deprecated
-    public static <E> boolean executeBatch(Class<?> entityClass, Log log, Collection<E> list, int batchSize,
-            BiFunction<SqlSession, E, Integer> execBiFunc) {
-        return executeBatch(sqlSessionFactory(entityClass), log, list, batchSize, execBiFunc);
     }
 
     public static <E> boolean executeBatch(SqlSessionFactory sqlSessionFactory, Log log, Collection<E> list,
@@ -243,27 +170,6 @@ public final class SqlHelper {
     /**
      * 批量更新或保存
      *
-     * @param entityClass 实体
-     * @param log 日志对象
-     * @param list 数据集合
-     * @param batchSize 批次大小
-     * @param predicate predicate(新增条件) notNull
-     * @param execBiFunc execBiFunc（更新处理）notNull
-     * @param <E> E
-     * @return 操作结果
-     * @since 3.4.0
-     * @deprecated 3.5.4
-     *             {@link #saveOrUpdateBatch(SqlSessionFactory, Class, Log, Collection, int, BiPredicate, BiFunction)}
-     */
-    @Deprecated
-    public static <E> boolean saveOrUpdateBatch(Class<?> entityClass, Class<?> mapper, Log log, Collection<E> list,
-            int batchSize, BiPredicate<SqlSession, E> predicate, BiFunction<SqlSession, E, Integer> execBiFunc) {
-        return saveOrUpdateBatch(sqlSessionFactory(entityClass), mapper, log, list, batchSize, predicate, execBiFunc);
-    }
-
-    /**
-     * 批量更新或保存
-     *
      * @param sqlSessionFactory SqlSessionFactory
      * @param log 日志对象
      * @param list 数据集合
@@ -298,15 +204,7 @@ public final class SqlHelper {
     }
 
     /**
-     * 通过entityClass获取Mapper，记得要释放连接 <br>
-     * 例： {@code
-     * SqlSession sqlSession = SqlHelper.sqlSession(entityClass);
-     * try {
-     * BaseMapper<User> userMapper = getMapper(User.class, sqlSession);
-     * } finally {
-     * sqlSession.close();
-     * }
-     * }
+     * 通过实体类和已有的 SqlSession 获取 Mapper。调用方负责管理会话生命周期， 也可以使用 {@link #execute(Class, SFunction)} 自动管理会话。
      *
      * @param entityClass 实体
      * @param <T> 实体类型
@@ -319,12 +217,9 @@ public final class SqlHelper {
         TableInfo tableInfo = Optional.ofNullable(TableInfoHelper.getTableInfo(entityClass)).orElseThrow(
                 () -> ExceptionUtils.mpe("Can not find TableInfo from Class: \"%s\".", entityClass.getName()));
         Class<?> mapperClass = ClassUtils.toClassConfident(tableInfo.getCurrentNamespace());
-        if (CompatibleHelper.hasCompatibleSet()) {
-            CompatibleSet compatibleSet = CompatibleHelper.getCompatibleSet();
-            Object bean = compatibleSet.getBean(mapperClass);
-            if (bean != null) {
-                return (M) bean;
-            }
+        Object bean = CompatibleHelper.getCompatibleSet().getBean(mapperClass);
+        if (bean != null) {
+            return (M) bean;
         }
         return (M) tableInfo.getConfiguration().getMapper(mapperClass, sqlSession);
     }
@@ -340,8 +235,8 @@ public final class SqlHelper {
      * @return 返回lambda执行结果
      */
     public static <T, R, M extends BaseMapper<T>> R execute(Class<T> entityClass, SFunction<M, R> sFunction) {
-        SqlSessionFactory factory = GlobalConfigUtils.currentSessionFactory(entityClass);
         CompatibleSet compatibleSet = CompatibleHelper.getCompatibleSet();
+        SqlSessionFactory factory = compatibleSet.getSqlSessionFactory(entityClass);
         SqlSession sqlSession = compatibleSet.getSqlSession(factory);
         try {
             R result = sFunction.apply(SqlHelper.getMapper(entityClass, sqlSession));
