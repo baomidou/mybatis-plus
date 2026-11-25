@@ -27,6 +27,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,6 +155,28 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
             generator.execute(templateEngine);
         }
         assertThat(contentOf("Attachment.kt")).contains("var id: Int? = null", "var payload: ByteArray? = null");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void keepsComputedFieldsReadableAndOutOfWrites(boolean explicitColumn) throws SQLException, IOException {
+        var source = new DataSourceConfig.Builder("jdbc:h2:mem:computed_fields;DATABASE_TO_LOWER=TRUE", "sa", "")
+                .build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute(
+                    "CREATE TABLE invoice (id INT PRIMARY KEY, quantity INT, total INT GENERATED ALWAYS AS (quantity * 2))");
+            AutoGenerator generator = new AutoGenerator(source);
+            if (explicitColumn) {
+                generator.strategy(new StrategyConfig.Builder().entityBuilder().enableTableFieldAnnotation().build());
+            }
+            generator.global(tempGlobalConfig().build());
+            generator.execute();
+        }
+        String column = explicitColumn ? "value = \"total\", " : "";
+        assertThat(contentOf("Invoice.java")).contains(
+                "import com.baomidou.mybatisplus.annotation.FieldStrategy;",
+                "@TableField(" + column + "insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)",
+                "private Integer total;");
     }
 
     static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {

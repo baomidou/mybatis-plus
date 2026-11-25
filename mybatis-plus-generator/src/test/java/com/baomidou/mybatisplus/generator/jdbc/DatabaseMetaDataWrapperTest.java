@@ -19,6 +19,24 @@ import static org.mockito.Mockito.when;
 public class DatabaseMetaDataWrapperTest {
 
     @Test
+    void distinguishesMySqlExpressionDefaultsFromComputedColumns() throws SQLException {
+        Connection connection = mock(Connection.class);
+        DatabaseMetaData metadata = mock(DatabaseMetaData.class);
+        ResultSet rows = mock(ResultSet.class);
+        when(connection.getMetaData()).thenReturn(metadata);
+        when(metadata.getDatabaseProductName()).thenReturn("MySQL");
+        when(metadata.getColumns(null, null, "invoice", "%")).thenReturn(rows);
+        when(rows.next()).thenReturn(true, true, false);
+        when(rows.getString("COLUMN_NAME")).thenReturn("created_at", "total");
+        when(rows.getString("IS_GENERATEDCOLUMN")).thenReturn("YES");
+        when(rows.getString("COLUMN_DEF")).thenReturn("CURRENT_TIMESTAMP", null);
+
+        var columns = new DatabaseMetaDataWrapper(connection, null).getColumnsInfo("invoice", false);
+        assertThat(columns.get("created_at").isGeneratedColumn()).isFalse();
+        assertThat(columns.get("total").isGeneratedColumn()).isTrue();
+    }
+
+    @Test
     void skipsTheWholeIndexIfAnyKeyPartIsAnExpression() throws SQLException {
         Connection connection = mock(Connection.class);
         DatabaseMetaData metadata = mock(DatabaseMetaData.class);

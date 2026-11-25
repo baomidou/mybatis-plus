@@ -144,7 +144,9 @@ public class DatabaseMetaDataWrapper {
                 column.remarks = formatComment(resultSet.getString("REMARKS"));
                 column.defaultValue = resultSet.getString("COLUMN_DEF");
                 column.nullable = resultSet.getInt("NULLABLE") == DatabaseMetaData.columnNullable;
-                column.generatedColumn = isGeneratedOrAutoIncrementColumn(resultSet, "IS_GENERATEDCOLUMN");
+                // Connector/J 也会把有 DEFAULT 表达式的普通列标为生成列。
+                column.generatedColumn = isGeneratedOrAutoIncrementColumn(resultSet, "IS_GENERATEDCOLUMN")
+                        && (column.defaultValue == null || !"MySQL".equals(databaseMetaData.getDatabaseProductName()));
                 column.autoIncrement = isGeneratedOrAutoIncrementColumn(resultSet, "IS_AUTOINCREMENT");
                 columnsInfoMap.put(name.toLowerCase(), column);
             }

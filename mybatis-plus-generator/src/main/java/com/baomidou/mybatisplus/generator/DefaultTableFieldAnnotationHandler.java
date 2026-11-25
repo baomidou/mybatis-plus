@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -74,7 +75,16 @@ public class DefaultTableFieldAnnotationHandler implements ITableFieldAnnotation
             }
         } else {
             String fill = tableField.getFill();
-            if (StringUtils.isNotBlank(fill)) {
+            if (tableField.getMetaInfo() != null && tableField.getMetaInfo().isGeneratedColumn()) {
+                String column = tableField.isConvert()
+                        ? String.format("value = \"%s\", ", tableField.getAnnotationColumnName())
+                        : "";
+                String displayName = "@TableField(" + column
+                        + "insertStrategy = FieldStrategy.NEVER, updateStrategy = FieldStrategy.NEVER)";
+                annotationAttributesList.add(
+                        new AnnotationAttributes(com.baomidou.mybatisplus.annotation.TableField.class, displayName,
+                                FieldStrategy.class.getName()));
+            } else if (StringUtils.isNotBlank(fill)) {
                 if (tableField.isConvert()) {
                     //@TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
                     String displayName = String.format(
