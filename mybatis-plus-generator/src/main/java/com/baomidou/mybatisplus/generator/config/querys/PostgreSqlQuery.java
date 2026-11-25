@@ -39,7 +39,7 @@ public class PostgreSqlQuery extends AbstractDbQuery {
     @Override
     public String tableFieldsSql() {
         return "SELECT a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type,"
-                + " col_description(a.attrelid, a.attnum) AS comment, d.column_default,"
+                + " col_description(a.attrelid, a.attnum) AS comment, d.column_default, d.is_identity,"
                 + " CASE WHEN a.attnum = ANY(pk.conkey) THEN 'PRI' ELSE '' END AS key"
                 + " FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace"
                 + " JOIN pg_attribute a ON a.attrelid = c.oid"
@@ -82,7 +82,8 @@ public class PostgreSqlQuery extends AbstractDbQuery {
 
     @Override
     public boolean isKeyIdentity(ResultSet results) throws SQLException {
-        return StringUtils.isNotBlank(results.getString("column_default"))
-                && results.getString("column_default").contains("nextval");
+        String defaultValue = results.getString("column_default");
+        return "YES".equals(results.getString("is_identity"))
+                || (StringUtils.isNotBlank(defaultValue) && defaultValue.contains("nextval"));
     }
 }
