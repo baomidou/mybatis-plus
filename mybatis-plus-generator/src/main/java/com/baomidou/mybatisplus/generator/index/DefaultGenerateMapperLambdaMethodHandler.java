@@ -103,6 +103,11 @@ public class DefaultGenerateMapperLambdaMethodHandler extends AbstractMapperMeth
                         || tableField.getPropertyName().equals(entity.getLogicDeletePropertyName())) {
                     continue;
                 }
+                if (!tableFieldList.isEmpty()) {
+                    baseWrapperBuilder.append(".");
+                    baseMethodNameBuilder.append("And");
+                    argsBuilder.append(", ");
+                }
                 tableFieldList.add(tableField);
                 baseMethodNameBuilder.append(tableField.getCapitalName());
                 if (indexSize > 1) {
@@ -128,11 +133,6 @@ public class DefaultGenerateMapperLambdaMethodHandler extends AbstractMapperMeth
                     baseWrapperBuilder.append(",").append(" ").append(tableField.getPropertyName()).append(")");
                     argsBuilder.append(tableField.getColumnType().getType()).append(" ")
                             .append(tableField.getPropertyName());
-                }
-                if (i < indexSize - 1) {
-                    baseWrapperBuilder.append(".");
-                    baseMethodNameBuilder.append("And");
-                    argsBuilder.append(", ");
                 }
             }
             String baseMethodName = baseMethodNameBuilder.toString();
