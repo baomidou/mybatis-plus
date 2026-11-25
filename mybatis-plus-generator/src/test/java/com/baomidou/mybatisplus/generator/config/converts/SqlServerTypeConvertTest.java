@@ -26,12 +26,12 @@ public class SqlServerTypeConvertTest {
         assertThat(convert.processTypeConvert(globalConfig, "bigint")).isEqualTo(LONG);
         assertThat(convert.processTypeConvert(globalConfig, "int")).isEqualTo(INTEGER);
         assertThat(convert.processTypeConvert(globalConfig, "bit")).isEqualTo(BOOLEAN);
-        assertThat(convert.processTypeConvert(globalConfig, "decimal")).isEqualTo(DOUBLE);
-        assertThat(convert.processTypeConvert(globalConfig, "numeric")).isEqualTo(DOUBLE);
+        assertThat(convert.processTypeConvert(globalConfig, "decimal")).isEqualTo(BIG_DECIMAL);
+        assertThat(convert.processTypeConvert(globalConfig, "numeric")).isEqualTo(BIG_DECIMAL);
         assertThat(convert.processTypeConvert(globalConfig, "money")).isEqualTo(BIG_DECIMAL);
         assertThat(convert.processTypeConvert(globalConfig, "binary")).isEqualTo(BYTE_ARRAY);
         assertThat(convert.processTypeConvert(globalConfig, "image")).isEqualTo(BYTE_ARRAY);
-        assertThat(convert.processTypeConvert(globalConfig, "float")).isEqualTo(FLOAT);
+        assertThat(convert.processTypeConvert(globalConfig, "float")).isEqualTo(DOUBLE);
         assertThat(convert.processTypeConvert(globalConfig, "real")).isEqualTo(FLOAT);
 
         // 日期格式
