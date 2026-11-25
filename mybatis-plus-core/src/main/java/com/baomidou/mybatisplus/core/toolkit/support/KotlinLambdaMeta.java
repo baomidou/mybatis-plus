@@ -38,7 +38,8 @@ import java.lang.reflect.Method;
  * 兼容性：属性引用（{@code Entity::prop}）在 Kotlin 1.2 至 2.4 全部可用；getter 方法引用（{@code JavaDO::getName}） <br>
  * 在 Kotlin 1.2–1.4 与 1.6+ 可用。<b>已知限制</b>：Kotlin 1.5.x 会把 getter 方法引用优化为直接实现函数式接口的单例类， <br>
  * 既无 KFunction 元数据也无 {@link SerializedLambda}（字段名仅存在于 {@code apply} 方法的字节码中），因此无法解析； <br>
- * 此时请改用属性引用（{@code Entity::prop}）或 Kotlin 原生的 KtQueryWrapper。
+ * 此时请改用属性引用（{@code Entity::prop}）或 Kotlin 原生可用的
+ * {@link com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper}。
  */
 public class KotlinLambdaMeta implements LambdaMeta {
 

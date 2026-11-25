@@ -593,7 +593,9 @@ public class Db {
      * kt链式查询
      *
      * @return KtQueryWrapper 的包装类
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaQuery(Class)}， 其中可直接使用 Kotlin 属性引用，如 {@code User::name}。
      */
+    @Deprecated
     public static <T> KtQueryChainWrapper<T> ktQuery(Class<T> entityClass) {
         return ChainWrappers.ktQueryChain(entityClass);
     }
@@ -601,7 +603,7 @@ public class Db {
     /**
      * 链式查询 lambda 式
      * <p>
-     * 注意：不支持 Kotlin
+     * 支持 Kotlin 属性引用，如 {@code User::name}
      * </p>
      *
      * @return LambdaQueryWrapper 的包装类
@@ -623,7 +625,9 @@ public class Db {
      * kt链式更改
      *
      * @return KtUpdateWrapper 的包装类
+     * @deprecated 3.5.19 将在未来版本中移除，请改用 {@link #lambdaUpdate(Class)}， 其中可直接使用 Kotlin 属性引用，如 {@code User::name}。
      */
+    @Deprecated
     public static <T> KtUpdateChainWrapper<T> ktUpdate(Class<T> entityClass) {
         return ChainWrappers.ktUpdateChain(entityClass);
     }
@@ -631,7 +635,7 @@ public class Db {
     /**
      * 链式更改 lambda 式
      * <p>
-     * 注意：不支持 Kotlin
+     * 支持 Kotlin 属性引用，如 {@code User::name}
      * </p>
      *
      * @return LambdaUpdateWrapper 的包装类
