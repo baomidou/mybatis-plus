@@ -102,9 +102,8 @@ public class SpringCompatibleSet implements CompatibleSet {
             }
             throw ExceptionUtils.mpe(unwrapped);
         } finally {
-            if (!transaction) {
-                sqlSession.close();
-            }
+            // 批量会话由本方法创建，Spring 管理的 JDBC 连接仍由外层事务释放。
+            sqlSession.close();
         }
     }
 
