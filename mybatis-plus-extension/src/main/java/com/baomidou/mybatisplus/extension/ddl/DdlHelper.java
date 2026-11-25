@@ -145,17 +145,35 @@ public class DdlHelper {
                     } else {
                         scriptRunner.runScript(new InputStreamReader(getInputStream(sqlFile)));
                     }
-                    sqlRunner.insert(ddlGenerator.insertDdlHistory(sqlFile, StringPool.SQL, getNowTime()));
-                    // ScriptRunner 已提交本文件，随后写入的历史也要在处理下一个文件前提交。
-                    if (!connection.getAutoCommit()) {
-                        connection.commit();
-                    }
+                    recordHistory(
+                            connection, sqlRunner,
+                            ddlGenerator.insertDdlHistory(sqlFile, StringPool.SQL, getNowTime()));
                 }
             } catch (Exception e) {
                 if (ddlScriptErrorHandler != null) {
                     ddlScriptErrorHandler.handle(sqlFile, e);
                 }
             }
+        }
+    }
+
+    private static void recordHistory(Connection connection, SqlRunner runner, String sql) throws SQLException {
+        boolean autoCommit = connection.getAutoCommit();
+        try {
+            runner.insert(sql);
+            if (!autoCommit) {
+                connection.commit();
+            }
+        } catch (SQLException failure) {
+            // ScriptRunner 已提交当前脚本，回滚本次记账才能继续使用连接。
+            if (!autoCommit) {
+                try {
+                    connection.rollback();
+                } catch (SQLException rollbackFailure) {
+                    failure.addSuppressed(rollbackFailure);
+                }
+            }
+            throw failure;
         }
     }
 

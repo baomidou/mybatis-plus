@@ -9,12 +9,14 @@ import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -190,6 +192,35 @@ public class DdlHelperTest {
                 assertThat(rows.getInt(1)).isOne();
             }
             assertThat(historyRows(connection, "ddl_history")).containsExactly(script + "|sql");
+        }
+    }
+
+    @Test
+    @Tag("external-db")
+    @EnabledIfEnvironmentVariable(named = "MP_POSTGRES_TEST_URL", matches = ".+")
+    void continuesAfterAFailedHistoryInsertOnPostgreSql() throws SQLException, IOException {
+        Path first = Files.writeString(tempDir.resolve("first.sql"), "INSERT INTO pg_temp.applied VALUES (1);");
+        Path second = Files.writeString(tempDir.resolve("second.sql"), "INSERT INTO pg_temp.applied VALUES (2);");
+        try (var connection = DriverManager.getConnection(System.getenv("MP_POSTGRES_TEST_URL"));
+                var statement = connection.createStatement()) {
+            statement.execute("CREATE TEMP TABLE applied (id int)");
+            statement.execute(
+                    "CREATE TEMP TABLE ddl_history (script text CHECK (script NOT LIKE '%first.sql'), type text, version text)");
+            IDdlGenerator generator = PostgreDdlGenerator.newInstanceWithSchema("pg_temp");
+            List<String> failed = new ArrayList<>();
+            DdlHelper.runScript(
+                    generator, connection, List.of(first.toString(), second.toString()), false,
+                    (file, error) -> failed.add(file));
+            assertThat(failed).containsExactly(first.toString());
+            try (var rows = statement.executeQuery("SELECT script FROM pg_temp.ddl_history")) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getString(1)).isEqualTo(second.toString());
+                assertThat(rows.next()).isFalse();
+            }
+            try (var rows = statement.executeQuery("SELECT count(*) FROM pg_temp.applied")) {
+                assertThat(rows.next()).isTrue();
+                assertThat(rows.getInt(1)).isEqualTo(2);
+            }
         }
     }
 
