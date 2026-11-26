@@ -90,12 +90,12 @@ public class DeleteByIds extends AbstractMethod {
             sqlSet += SqlScriptUtils.convertIf(
                     fieldInfos.stream().map(i -> i.getSqlSet(Constants.MP_FILL_ET + StringPool.DOT))
                             .collect(joining(EMPTY)),
-                    String.format("%s != null", Constants.MP_FILL_ET), true);
+                    Constants.MP_FILL_ET + " != null", true);
         }
         if (logicDeleteWithFill) {
             String fillSql = logicDeleteField.getSqlSet(true, Constants.MP_FILL_ET + StringPool.DOT);
             fillSql = fillSql.substring(0, fillSql.length() - COMMA.length());
-            String whenCondition = String.format("%s != null", Constants.MP_FILL_ET);
+            String whenCondition = Constants.MP_FILL_ET + " != null";
             sqlSet += SqlScriptUtils.convertChoose(whenCondition, fillSql, tableInfo.getLogicDeleteSql(false, false));
         } else {
             sqlSet += StringPool.EMPTY + tableInfo.getLogicDeleteSql(false, false);

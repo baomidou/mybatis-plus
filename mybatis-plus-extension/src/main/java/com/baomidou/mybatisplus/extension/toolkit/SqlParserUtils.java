@@ -32,7 +32,7 @@ public class SqlParserUtils {
      * @return ignore
      */
     public static String getOriginalCountSql(String originalSql) {
-        return String.format("SELECT COUNT(*) FROM (%s) TOTAL", originalSql);
+        return "SELECT COUNT(*) FROM (" + originalSql + ") TOTAL";
     }
 
     /**

@@ -123,10 +123,10 @@ public class Sequence {
     public Sequence(long workerId, long datacenterId) {
         Assert.isFalse(
                 workerId > maxWorkerId || workerId < 0,
-                String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+                "worker Id can't be greater than " + maxWorkerId + " or less than 0");
         Assert.isFalse(
                 datacenterId > maxDatacenterId || datacenterId < 0,
-                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+                "datacenter Id can't be greater than " + maxDatacenterId + " or less than 0");
         this.workerId = workerId;
         this.datacenterId = datacenterId;
         initLog();
@@ -229,15 +229,15 @@ public class Sequence {
                     Thread.sleep(offset << 1);
                     timestamp = timeGen();
                     if (timestamp < lastTimestamp) {
-                        throw new RuntimeException(String
-                                .format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                        throw new RuntimeException(
+                                "Clock moved backwards.  Refusing to generate id for " + offset + " milliseconds");
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             } else {
                 throw new RuntimeException(
-                        String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                        "Clock moved backwards.  Refusing to generate id for " + offset + " milliseconds");
             }
         }
 

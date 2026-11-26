@@ -625,6 +625,6 @@ public class TableFieldInfo implements Constants {
             return SqlScriptUtils
                     .convertIf(sqlScript, String.format("%s != null and %s != ''", property, property), false);
         }
-        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property), false);
+        return SqlScriptUtils.convertIf(sqlScript, property + " != null", false);
     }
 }
