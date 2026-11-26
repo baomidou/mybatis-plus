@@ -190,6 +190,11 @@ public class Mapper implements ITemplate {
         if (generateMapperMethodHandler != null) {
             methodList = generateMapperMethodHandler.getMethodList(tableInfo);
             importPackages.addAll(generateMapperMethodHandler.getImportPackages(tableInfo));
+            if (methodList != null) {
+                methodList.stream().flatMap(method -> method.getTableFieldList().stream())
+                        .map(field -> field.getColumnType().getPkg()).filter(StringUtils::isNotBlank)
+                        .forEach(importPackages::add);
+            }
         }
         if (StringUtils.isNotBlank(superClass)) {
             importPackages.add(superClass);
