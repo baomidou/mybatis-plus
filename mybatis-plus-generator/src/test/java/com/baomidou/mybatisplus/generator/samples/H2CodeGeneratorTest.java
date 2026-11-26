@@ -18,6 +18,8 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
+import com.baomidou.mybatisplus.generator.index.DefaultGenerateMapperLambdaMethodHandler;
+import com.baomidou.mybatisplus.generator.index.DefaultGenerateMapperMethodHandler;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -154,6 +157,29 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
             generator.execute(templateEngine);
         }
         assertThat(contentOf("Attachment.kt")).contains("var id: Int? = null", "var payload: ByteArray? = null");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void importsIndexMethodParameterTypes(boolean lambda) throws SQLException, IOException {
+        DataSourceConfig source = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:shipment_" + lambda + ";DATABASE_TO_LOWER=TRUE", "sa", "").build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute(
+                    "CREATE TABLE shipment (id INT PRIMARY KEY, ship_date DATE, price DECIMAL(10,2), notes CLOB)");
+            statement.execute("CREATE INDEX ix_ship_date ON shipment (ship_date)");
+            statement.execute("CREATE INDEX ix_price ON shipment (price)");
+            var strategy = new StrategyConfig.Builder().addInclude("shipment").mapperBuilder()
+                    .generateMapperMethodHandler(
+                            lambda
+                                    ? new DefaultGenerateMapperLambdaMethodHandler()
+                                    : new DefaultGenerateMapperMethodHandler());
+            new AutoGenerator(source).global(tempGlobalConfig().dateType(DateType.TIME_PACK).build())
+                    .strategy(strategy.build()).execute();
+        }
+        assertThat(contentOf("ShipmentMapper.java")).contains(
+                "selectByShipDate(LocalDate shipDate)", "selectByPrice(BigDecimal price)",
+                "import java.time.LocalDate;", "import java.math.BigDecimal;");
     }
 
     static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {
