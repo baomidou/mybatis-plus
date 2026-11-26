@@ -17,12 +17,28 @@ package com.baomidou.mybatisplus.generator.index;
 
 import com.baomidou.mybatisplus.generator.IGenerateMapperMethodHandler;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper.Index;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author nieqiurong
  * @since 3.5.10
  */
 public abstract class AbstractMapperMethodHandler implements IGenerateMapperMethodHandler {
+
+    protected Map<String, List<Index>> getMappedIndexes(TableInfo tableInfo) {
+        Map<String, List<Index>> indexes = tableInfo.getIndexList().stream()
+                .collect(Collectors.groupingBy(Index::getName));
+        // 复合索引必须保留全部键列，否则按部分条件生成的更新和删除方法会影响其他记录。
+        indexes.values().removeIf(
+                parts -> parts.stream()
+                        .anyMatch(part -> !tableInfo.getTableFieldMap().containsKey(part.getColumnName())));
+        return indexes;
+    }
 
     /**
      * 生成Java方法(default) <br>

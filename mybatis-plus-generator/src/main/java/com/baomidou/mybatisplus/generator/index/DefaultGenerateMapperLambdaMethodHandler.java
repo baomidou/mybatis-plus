@@ -34,7 +34,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 使用Lambda方式生成索引方法
@@ -68,8 +67,7 @@ public class DefaultGenerateMapperLambdaMethodHandler extends AbstractMapperMeth
 
     @Override
     public List<MapperMethod> getMethodList(TableInfo tableInfo) {
-        Map<String, List<DatabaseMetaDataWrapper.Index>> indexlistMap = tableInfo.getIndexList().stream()
-                .collect(Collectors.groupingBy(DatabaseMetaDataWrapper.Index::getName));
+        Map<String, List<DatabaseMetaDataWrapper.Index>> indexlistMap = getMappedIndexes(tableInfo);
         String entityName = tableInfo.getEntityName();
         GlobalConfig globalConfig = tableInfo.getGlobalConfig();
         StrategyConfig strategyConfig = tableInfo.getStrategyConfig();

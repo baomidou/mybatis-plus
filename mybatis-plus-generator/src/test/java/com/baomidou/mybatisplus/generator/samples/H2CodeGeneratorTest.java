@@ -18,6 +18,8 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
 import com.baomidou.mybatisplus.generator.fill.Property;
+import com.baomidou.mybatisplus.generator.index.DefaultGenerateMapperLambdaMethodHandler;
+import com.baomidou.mybatisplus.generator.index.DefaultGenerateMapperMethodHandler;
 import com.baomidou.mybatisplus.generator.query.DefaultQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,6 +115,29 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
         List<Path> files = generatedFilesNamed(fileName);
         assertThat(files).as("expected generated file " + fileName).isNotEmpty();
         return files.get(0);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void skipsIndexesThatUseAnIgnoredColumn(boolean lambda) throws SQLException, IOException {
+        DataSourceConfig source = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:account_indexes_" + lambda + ";DATABASE_TO_LOWER=TRUE", "sa", "").build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute(
+                    "CREATE TABLE account (id INT PRIMARY KEY, email VARCHAR(60), region INT, audit_code INT)");
+            statement.execute("CREATE INDEX ix_audit ON account (audit_code)");
+            statement.execute("CREATE UNIQUE INDEX ix_region_audit ON account (region, audit_code)");
+            statement.execute("CREATE INDEX ix_email ON account (email)");
+            var strategy = new StrategyConfig.Builder().addInclude("account");
+            strategy.entityBuilder().addIgnoreColumns("audit_code");
+            strategy.mapperBuilder().generateMapperMethodHandler(
+                    lambda
+                            ? new DefaultGenerateMapperLambdaMethodHandler(false)
+                            : new DefaultGenerateMapperMethodHandler(false));
+            new AutoGenerator(source).global(tempGlobalConfig().build()).strategy(strategy.build()).execute();
+        }
+        assertThat(contentOf("AccountMapper.java")).contains("selectByEmail", "updateByEmail", "deleteByEmail")
+                .doesNotContain("AuditCode", "ByRegion");
     }
 
     private void assertNotGenerated(String fileName) throws IOException {
