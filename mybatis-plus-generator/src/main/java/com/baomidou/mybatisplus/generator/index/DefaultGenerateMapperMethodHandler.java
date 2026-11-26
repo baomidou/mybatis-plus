@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 按字符串或者字符串常量方法生成查询条件
@@ -66,8 +65,7 @@ public class DefaultGenerateMapperMethodHandler extends AbstractMapperMethodHand
 
     @Override
     public List<MapperMethod> getMethodList(TableInfo tableInfo) {
-        Map<String, List<DatabaseMetaDataWrapper.Index>> indexlistMap = tableInfo.getIndexList().stream()
-                .collect(Collectors.groupingBy(DatabaseMetaDataWrapper.Index::getName));
+        Map<String, List<DatabaseMetaDataWrapper.Index>> indexlistMap = getMappedIndexes(tableInfo);
         String entityName = tableInfo.getEntityName();
         GlobalConfig globalConfig = tableInfo.getGlobalConfig();
         Entity entity = tableInfo.getStrategyConfig().entity();
