@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Pattern;
+
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.contains;
 import static com.baomidou.mybatisplus.generator.config.converts.TypeConverts.containsAny;
 import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.BIG_DECIMAL;
@@ -39,6 +41,8 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.STRIN
  * @since 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {
+
+    private static final Pattern LOCAL_TIME_TYPE = Pattern.compile("time(?:\\(\\d+\\))?(?: without time zone)?");
 
     public static final PostgreSqlTypeConvert INSTANCE = new PostgreSqlTypeConvert();
 
@@ -63,9 +67,11 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
      * @return 返回对应的列类型
      */
     public static IColumnType toDateType(GlobalConfig config, String type) {
+        // format_type 会把普通 TIME 展开为 time[(precision)] without time zone。
+        String dateType = LOCAL_TIME_TYPE.matcher(type).matches() ? "time" : type;
         switch (config.getDateType()) {
             case SQL_PACK :
-                switch (type) {
+                switch (dateType) {
                     case "date" :
                         return DbColumnType.DATE_SQL;
                     case "time" :
@@ -74,7 +80,7 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
                         return DbColumnType.TIMESTAMP;
                 }
             case TIME_PACK :
-                switch (type) {
+                switch (dateType) {
                     case "date" :
                         return DbColumnType.LOCAL_DATE;
                     case "time" :
