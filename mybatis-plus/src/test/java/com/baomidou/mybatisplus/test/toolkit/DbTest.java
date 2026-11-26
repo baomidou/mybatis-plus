@@ -107,6 +107,15 @@ class DbTest extends DbTestSupport<EntityMapper> {
     }
 
     @Test
+    void updatesWithTheEntityAndAnUntypedWrapper() {
+        Entity changes = new Entity();
+        changes.setName("updated");
+        assertThat(Db.update(changes, Wrappers.<Entity>lambdaUpdate().eq(Entity::getId, 1L))).isTrue();
+        assertThat(Db.getById(1L, Entity.class).getName()).isEqualTo("updated");
+        assertThat(Db.getById(2L, Entity.class).getName()).isNotEqualTo("updated");
+    }
+
+    @Test
     void shouldUpdateBatchById() {
         Entity sheep = new Entity();
         sheep.setId(1L);
