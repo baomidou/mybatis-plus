@@ -292,6 +292,10 @@ class DbTest extends DbTestSupport<EntityMapper> {
     void shouldGetObj() {
         String name = Db.getObj(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 1L), Entity::getName);
         assertThat(name).isEqualTo("ruben");
+        String missing = Db.getObj(Wrappers.lambdaQuery(Entity.class).eq(Entity::getId, 99L), Entity::getName);
+        assertThat(missing).isNull();
+        assertThatThrownBy(() -> Db.getObj(Wrappers.lambdaQuery(Entity.class), Entity::getName))
+                .isInstanceOf(TooManyResultsException.class);
     }
 
     @Test
