@@ -178,9 +178,11 @@ public class Db {
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     public static <T> boolean update(T entity, AbstractWrapper<T, ?, ?> updateWrapper) {
-        return SqlHelper.execute(
-                getEntityClass(updateWrapper),
-                baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
+        Class<T> entityClass = entity != null && updateWrapper.getEntityClass() == null
+                ? getEntityClass(entity)
+                : getEntityClass(updateWrapper);
+        return SqlHelper
+                .execute(entityClass, baseMapper -> SqlHelper.retBool(baseMapper.update(entity, updateWrapper)));
     }
 
     /**
