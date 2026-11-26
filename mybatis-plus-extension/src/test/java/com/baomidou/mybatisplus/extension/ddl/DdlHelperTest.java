@@ -287,6 +287,25 @@ public class DdlHelperTest {
     }
 
     @Test
+    void skipsPreviouslyExecutedScriptWithCustomDelimiter() throws Exception {
+        var source = h2DataSource("ddl_custom_restart", "MODE=MySQL;DATABASE_TO_LOWER=TRUE");
+        Path script = tempDir.resolve("initial_balance.sql");
+        Files.writeString(script, "CREATE TABLE balance (amount INT)$$\nINSERT INTO balance VALUES (10)$$\n");
+        var scripts = List.of(script + "#$$");
+        var generator = new MysqlDdlGenerator();
+        DdlHelper.runScript(generator, source, scripts, true, THROWS);
+        DdlHelper.runScript(generator, source, scripts, true, THROWS);
+        try (Connection connection = source.getConnection();
+                var statement = connection.createStatement();
+                var rows = statement.executeQuery("SELECT amount FROM balance")) {
+            assertThat(rows.next()).isTrue();
+            assertThat(rows.getInt(1)).isEqualTo(10);
+            assertThat(rows.next()).isFalse();
+            assertThat(historyRows(connection, ddlHistoryTable(connection))).containsExactly(script + "|sql");
+        }
+    }
+
+    @Test
     @Disabled("需要本地达梦: jdbc:dm://127.0.0.1:5236/DMSERVER，尚未进入 external-db 分层")
     void shouldRunDdlForDm() throws SQLException {
         var dataSource = new UnpooledDataSource(dm.jdbc.driver.DmDriver.class.getName(),

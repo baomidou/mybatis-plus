@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 import javax.sql.DataSource;
 
@@ -124,21 +123,19 @@ public class DdlHelper {
         // 执行 SQL 脚本
         for (String sqlFile : sqlFiles) {
             try {
+                String delimiter = StringPool.SEMICOLON;
+                String[] sqlFileArr = sqlFile.split(StringPool.HASH);
+                if (sqlFileArr.length == 2) {
+                    delimiter = sqlFileArr[1];
+                    sqlFile = sqlFileArr[0];
+                }
                 List<Map<String, Object>> objectMap = sqlRunner
                         .selectAll(ddlGenerator.selectDdlHistory(sqlFile, StringPool.SQL));
                 if (null == objectMap || objectMap.isEmpty()) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Run script file: " + sqlFile);
                     }
-                    String[] sqlFileArr = sqlFile.split(StringPool.HASH);
-                    if (Objects.equals(2, sqlFileArr.length)) {
-                        // 命令间的分隔符
-                        scriptRunner.setDelimiter(sqlFileArr[1]);
-                        // 原始文件路径
-                        sqlFile = sqlFileArr[0];
-                    } else {
-                        scriptRunner.setDelimiter(StringPool.SEMICOLON);
-                    }
+                    scriptRunner.setDelimiter(delimiter);
                     File file = new File(sqlFile);
                     if (file.exists()) {
                         scriptRunner.runScript(new FileReader(file));
