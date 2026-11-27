@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.spring.activerecord.Model;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mybatis.spring.SqlSessionUtils;
 import org.mybatis.spring.transaction.SpringManagedTransactionFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,6 +32,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -109,6 +114,37 @@ class StandaloneModelWriteTest {
             } finally {
                 SqlSessionUtils.closeSqlSession(session, factory);
             }
+            assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM standalone_note", Long.class)).isOne();
+            status.setRollbackOnly();
+        });
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM standalone_note", Long.class)).isZero();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void closesThePrivateBatchCursorWithoutCommittingTheOuterTransaction(boolean fail) {
+        var jdbc = new JdbcTemplate(dataSource);
+        var cursor = new AtomicReference<Cursor<Note>>();
+        new TransactionTemplate(new DataSourceTransactionManager(dataSource)).executeWithoutResult(status -> {
+            Runnable batch = () -> SqlHelper.executeBatch(factory, LogFactory.getLog(getClass()), session -> {
+                var mapper = session.getMapper(NoteMapper.class);
+                var note = new Note();
+                note.setId(1L);
+                mapper.insert(note);
+                session.flushStatements();
+                cursor.set(mapper.selectWithCursor(Wrappers.emptyWrapper()));
+                assertThat(cursor.get().iterator().hasNext()).isTrue();
+                if (fail) {
+                    throw new IllegalStateException("batch callback failed");
+                }
+                return 1;
+            });
+            if (fail) {
+                assertThatThrownBy(batch::run).hasRootCauseMessage("batch callback failed");
+            } else {
+                batch.run();
+            }
+            assertThat(cursor.get().isOpen()).isFalse();
             assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM standalone_note", Long.class)).isOne();
             status.setRollbackOnly();
         });
