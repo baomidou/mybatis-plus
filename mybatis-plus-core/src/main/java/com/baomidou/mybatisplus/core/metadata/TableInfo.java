@@ -27,6 +27,7 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.ognl.OgnlOps;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.session.Configuration;
 
@@ -606,6 +607,18 @@ public class TableInfo implements Constants {
     @SuppressWarnings("unchecked")
     public <T> T newInstance() {
         return (T) configuration.getObjectFactory().create(entityType);
+    }
+
+    /**
+     * 按主键逻辑删除时，为更新填充创建仅包含主键的实体。使用标量主键即可删除时返回 null。
+     */
+    public <T> T newEntityForDeleteFill(Object id) {
+        if (isWithLogicDelete() && isWithUpdateFill() && !getLogicDeleteFieldInfo().isWithUpdateFill()) {
+            T entity = newInstance();
+            setPropertyValue(entity, keyProperty, OgnlOps.convertValue(id, keyType));
+            return entity;
+        }
+        return null;
     }
 
 }

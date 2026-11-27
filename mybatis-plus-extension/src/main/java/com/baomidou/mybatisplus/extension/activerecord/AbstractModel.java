@@ -71,12 +71,16 @@ public abstract class AbstractModel<T extends AbstractModel<?>> implements Seria
     }
 
     /**
-     * 根据 ID 删除
+     * 根据 ID 删除。逻辑删除时按 Mapper 的规则执行更新填充。
      *
      * @param id 主键ID
      */
     public boolean deleteById(Serializable id) {
-        return executeWrite(session -> session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+        return executeWrite(session -> {
+            TableInfo table = SqlHelper.table(entityClass);
+            Object fillEntity = entityClass.isInstance(id) ? null : table.newEntityForDeleteFill(id);
+            return session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), fillEntity == null ? id : fillEntity);
+        });
     }
 
     /**

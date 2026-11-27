@@ -30,7 +30,6 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.ognl.OgnlOps;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -128,12 +127,9 @@ public interface BaseMapper<T> extends Mapper<T> {
         if (!entityClass.isAssignableFrom(obj.getClass()) && useFill) {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
             Assert.notNull(tableInfo, "Can not get TableInfo for entity " + entityClass);
-            String keyProperty = tableInfo.getKeyProperty();
-            Assert.notEmpty(keyProperty, "The current table has no primary key.");
-            if (tableInfo.isWithLogicDelete() && tableInfo.isWithUpdateFill()
-                    && !tableInfo.getLogicDeleteFieldInfo().isWithUpdateFill()) {
-                T instance = tableInfo.newInstance();
-                tableInfo.setPropertyValue(instance, keyProperty, OgnlOps.convertValue(obj, tableInfo.getKeyType()));
+            Assert.notEmpty(tableInfo.getKeyProperty(), "The current table has no primary key.");
+            T instance = tableInfo.newEntityForDeleteFill(obj);
+            if (instance != null) {
                 return this.deleteById(instance);
             }
         }
