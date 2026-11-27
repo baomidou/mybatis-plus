@@ -157,6 +157,7 @@ public class Mapper implements ITemplate {
      *
      * @since 3.5.10
      */
+    @Getter
     private IGenerateMapperMethodHandler generateMapperMethodHandler;
 
     /**
