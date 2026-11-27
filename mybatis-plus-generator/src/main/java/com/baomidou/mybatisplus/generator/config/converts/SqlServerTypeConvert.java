@@ -57,9 +57,9 @@ public class SqlServerTypeConvert implements ITypeConvert {
                 .test(contains("bigint").then(LONG)).test(contains("int").then(INTEGER))
                 .test(contains("timestamp").then(BYTE_ARRAY))
                 .test(containsAny("date", "time").then(t -> toDateType(config, t))).test(contains("bit").then(BOOLEAN))
-                .test(containsAny("decimal", "numeric").then(DOUBLE)).test(contains("money").then(BIG_DECIMAL))
-                .test(containsAny("binary", "image").then(BYTE_ARRAY)).test(containsAny("float", "real").then(FLOAT))
-                .or(STRING);
+                .test(containsAny("decimal", "numeric").then(BIG_DECIMAL)).test(contains("money").then(BIG_DECIMAL))
+                .test(containsAny("binary", "image").then(BYTE_ARRAY)).test(contains("float").then(DOUBLE))
+                .test(contains("real").then(FLOAT)).or(STRING);
     }
 
     /**
