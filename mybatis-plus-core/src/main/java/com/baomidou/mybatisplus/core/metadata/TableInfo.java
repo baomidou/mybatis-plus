@@ -309,7 +309,7 @@ public class TableInfo implements Constants {
                     // 批量插入必须返回空自增情况下
                     return EMPTY;
                 }
-                return SqlScriptUtils.convertIf(keyColumn, prefixKeyProperty + " != null", newLine);
+                return SqlScriptUtils.convertIf(keyColumn, SqlScriptUtils.ognlNotNull(prefixKeyProperty), newLine);
             }
             return keyColumn + (newLine ? NEWLINE : EMPTY);
         }
@@ -336,7 +336,8 @@ public class TableInfo implements Constants {
                     // 批量插入必须返回空自增情况下
                     return EMPTY;
                 }
-                return SqlScriptUtils.convertIf(keyColumn + COMMA, prefixKeyProperty + " != null", newLine);
+                return SqlScriptUtils
+                        .convertIf(keyColumn + COMMA, SqlScriptUtils.ognlNotNull(prefixKeyProperty), newLine);
             }
             return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
@@ -435,8 +436,8 @@ public class TableInfo implements Constants {
         }
         String newKeyProperty = newPrefix + keyProperty;
         String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils
-                .convertIf(fistAnd ? " AND " + keySqlScript : keySqlScript, newKeyProperty + " != null", false)
+        return SqlScriptUtils.convertIf(
+                fistAnd ? " AND " + keySqlScript : keySqlScript, SqlScriptUtils.ognlNotNull(newKeyProperty), false)
                 + NEWLINE + filedSqlScript;
     }
 

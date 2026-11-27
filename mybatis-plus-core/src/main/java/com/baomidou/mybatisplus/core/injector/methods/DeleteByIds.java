@@ -39,6 +39,9 @@ import static java.util.stream.Collectors.toList;
  */
 public class DeleteByIds extends AbstractMethod {
 
+    // mpFillEt != null
+    private static final String FILL_ENTITY_TEST = SqlScriptUtils.ognlNotNull(Constants.MP_FILL_ET);
+
     public DeleteByIds() {
         this(SqlMethod.DELETE_BY_IDS.getMethod());
     }
@@ -90,13 +93,13 @@ public class DeleteByIds extends AbstractMethod {
             sqlSet += SqlScriptUtils.convertIf(
                     fieldInfos.stream().map(i -> i.getSqlSet(Constants.MP_FILL_ET + StringPool.DOT))
                             .collect(joining(EMPTY)),
-                    Constants.MP_FILL_ET + " != null", true);
+                    FILL_ENTITY_TEST, true);
         }
         if (logicDeleteWithFill) {
             String fillSql = logicDeleteField.getSqlSet(true, Constants.MP_FILL_ET + StringPool.DOT);
             fillSql = fillSql.substring(0, fillSql.length() - COMMA.length());
-            String whenCondition = Constants.MP_FILL_ET + " != null";
-            sqlSet += SqlScriptUtils.convertChoose(whenCondition, fillSql, tableInfo.getLogicDeleteSql(false, false));
+            sqlSet += SqlScriptUtils
+                    .convertChoose(FILL_ENTITY_TEST, fillSql, tableInfo.getLogicDeleteSql(false, false));
         } else {
             sqlSet += StringPool.EMPTY + tableInfo.getLogicDeleteSql(false, false);
         }

@@ -31,6 +31,48 @@ import org.apache.ibatis.type.TypeHandler;
 public abstract class SqlScriptUtils implements Constants {
 
     /**
+     * 生成判断给定属性路径非 null 的 OGNL 表达式。
+     *
+     * @param property OGNL 属性路径
+     * @return 非 null 条件表达式
+     */
+    public static String ognlNotNull(final String property) {
+        return property + " != null";
+    }
+
+    /**
+     * 生成先判断对象非 null，再判断其属性非 null 的 OGNL 表达式。
+     *
+     * @param alias 对象别名，如 ew
+     * @param property 完整属性路径，如 ew.sqlSelect
+     * @return 可用于 if 或 when 标签的条件表达式
+     */
+    public static String ognlNotNull(final String alias, final String property) {
+        return alias + " != null and " + property + " != null";
+    }
+
+    /**
+     * 生成判断字符属性非 null 且非空串的 OGNL 表达式。
+     *
+     * @param property OGNL 属性路径
+     * @return 可用于 if 标签 test 属性的表达式
+     */
+    public static String ognlNotEmpty(final String property) {
+        return property + " != null and " + property + " != ''";
+    }
+
+    /**
+     * 生成将 OGNL 表达式的值绑定到指定变量的 bind 标签。
+     *
+     * @param name 绑定的变量名
+     * @param value 可直接写入 XML 属性的 OGNL 表达式
+     * @return bind 标签
+     */
+    public static String convertBind(final String name, final String value) {
+        return "<bind name=\"" + name + "\" value=\"" + value + "\"/>";
+    }
+
+    /**
      * <p>
      * 获取 带 if 标签的脚本
      * </p>

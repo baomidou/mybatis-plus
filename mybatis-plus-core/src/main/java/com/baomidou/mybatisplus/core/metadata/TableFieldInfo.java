@@ -562,7 +562,9 @@ public class TableFieldInfo implements Constants {
     public String getSqlWhere(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
-        String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
+        String sqlScript = SqlCondition.EQUAL.equals(condition)
+                ? " AND " + column + "=#{" + newPrefix + el + "}"
+                : " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
         return convertIf(sqlScript, convertIfProperty(newPrefix, property), whereStrategy);
     }
@@ -598,12 +600,10 @@ public class TableFieldInfo implements Constants {
     public String getVersionOli(final String alias, final String prefix) {
         final String oli = " AND " + column + EQUALS + SqlScriptUtils.safeParam(MP_OPTLOCK_VERSION_ORIGINAL);
         final String ognlStr = convertIfProperty(prefix, property);
-        if (isCharSequence) {
-            return SqlScriptUtils.convertIf(
-                    oli, String.format("%s != null and %s != null and %s != ''", alias, ognlStr, ognlStr), false);
-        } else {
-            return SqlScriptUtils.convertIf(oli, String.format("%s != null and %s != null", alias, ognlStr), false);
-        }
+        String test = isCharSequence
+                ? SqlScriptUtils.ognlNotNull(alias) + " and " + SqlScriptUtils.ognlNotEmpty(ognlStr)
+                : SqlScriptUtils.ognlNotNull(alias, ognlStr);
+        return SqlScriptUtils.convertIf(oli, test, false);
     }
 
     /**
@@ -622,9 +622,8 @@ public class TableFieldInfo implements Constants {
             return sqlScript;
         }
         if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
-            return SqlScriptUtils
-                    .convertIf(sqlScript, String.format("%s != null and %s != ''", property, property), false);
+            return SqlScriptUtils.convertIf(sqlScript, SqlScriptUtils.ognlNotEmpty(property), false);
         }
-        return SqlScriptUtils.convertIf(sqlScript, property + " != null", false);
+        return SqlScriptUtils.convertIf(sqlScript, SqlScriptUtils.ognlNotNull(property), false);
     }
 }

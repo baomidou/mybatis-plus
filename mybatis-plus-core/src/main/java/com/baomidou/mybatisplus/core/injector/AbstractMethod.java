@@ -122,7 +122,7 @@ public abstract class AbstractMethod implements Constants {
             final String prefix) {
         String sqlScript = table.getAllSqlSet(logic, prefix);
         if (judgeAliasNull) {
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, alias + " != null", true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, SqlScriptUtils.ognlNotNull(alias), true);
         }
         if (ew) {
             sqlScript = sqlScript + NEWLINE + convertIfEwParam(U_WRAPPER_SQL_SET, false);
@@ -150,7 +150,7 @@ public abstract class AbstractMethod implements Constants {
 
     protected String convertIfEwParam(final String param, final boolean newLine) {
         return SqlScriptUtils
-                .convertIf(SqlScriptUtils.unSafeParam(param), WRAPPER + " != null and " + param + " != null", newLine);
+                .convertIf(SqlScriptUtils.unSafeParam(param), SqlScriptUtils.ognlNotNull(WRAPPER, param), newLine);
     }
 
     /**
@@ -191,17 +191,33 @@ public abstract class AbstractMethod implements Constants {
         return convertChooseEwSelect(table.getAllSqlSelect());
     }
 
+    // ew != null
+    private static final String WRAPPER_TEST = SqlScriptUtils.ognlNotNull(WRAPPER);
+
+    // ew.entity != null
+    private static final String WRAPPER_ENTITY_TEST = SqlScriptUtils.ognlNotNull(WRAPPER_ENTITY);
+
+    // ew != null and ew.sqlSelect != null
+    private static final String WRAPPER_SQL_SELECT_TEST = SqlScriptUtils.ognlNotNull(WRAPPER, Q_WRAPPER_SQL_SELECT);
+
     protected String convertChooseEwSelect(final String otherwise) {
-        return SqlScriptUtils.convertChoose(
-                WRAPPER + " != null and " + Q_WRAPPER_SQL_SELECT + " != null",
-                SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), otherwise);
+        return SqlScriptUtils
+                .convertChoose(WRAPPER_SQL_SELECT_TEST, SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), otherwise);
     }
 
-    private static final String BIND_SQL_SEGMENT = "<bind name=\"_sgEs_\" value=\"ew.sqlSegment != null and ew.sqlSegment != ''\"/>";
+    // <bind name="_sgEs_" value="ew.sqlSegment != null and ew.sqlSegment != ''"/>
+    private static final String BIND_SQL_SEGMENT = SqlScriptUtils
+            .convertBind("_sgEs_", SqlScriptUtils.ognlNotEmpty(WRAPPER_SQLSEGMENT));
 
+    // <if test="_sgEs_ and ew.nonEmptyOfNormal">
+    //  AND ${ew.sqlSegment}
+    // </if>
     private static final String AND_SQL_SEGMENT = SqlScriptUtils
             .convertIf(" AND ${" + WRAPPER_SQLSEGMENT + "}", "_sgEs_ and " + WRAPPER_NONEMPTYOFNORMAL, true);
 
+    // <if test="_sgEs_ and ew.emptyOfNormal">
+    //  ${ew.sqlSegment}
+    // </if>
     private static final String LAST_SQL_SEGMENT = SqlScriptUtils
             .convertIf(" ${" + WRAPPER_SQLSEGMENT + "}", "_sgEs_ and " + WRAPPER_EMPTYOFNORMAL, true);
 
@@ -218,10 +234,10 @@ public abstract class AbstractMethod implements Constants {
          */
         if (table.isWithLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, true, WRAPPER_ENTITY_DOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY + " != null", true);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY_TEST, true);
             sqlScript = SqlScriptUtils.convertIf(
                     BIND_SQL_SEGMENT + NEWLINE + sqlScript + NEWLINE + AND_SQL_SEGMENT + NEWLINE + LAST_SQL_SEGMENT,
-                    WRAPPER + " != null", true);
+                    WRAPPER_TEST, true);
             sqlScript = SqlScriptUtils.convertWhere(table.getLogicDeleteSql(false, true) + NEWLINE + sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
@@ -229,9 +245,9 @@ public abstract class AbstractMethod implements Constants {
          * 普通 SQL 注入
          */
         String sqlScript = table.getAllSqlWhere(false, false, true, WRAPPER_ENTITY_DOT);
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY + " != null", true);
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, WRAPPER_ENTITY_TEST, true);
         sqlScript = SqlScriptUtils.convertWhere(sqlScript + NEWLINE + AND_SQL_SEGMENT) + NEWLINE + LAST_SQL_SEGMENT;
-        sqlScript = SqlScriptUtils.convertIf(BIND_SQL_SEGMENT + NEWLINE + sqlScript, WRAPPER + " != null", true);
+        sqlScript = SqlScriptUtils.convertIf(BIND_SQL_SEGMENT + NEWLINE + sqlScript, WRAPPER_TEST, true);
         return newLine ? NEWLINE + sqlScript : sqlScript;
     }
 
