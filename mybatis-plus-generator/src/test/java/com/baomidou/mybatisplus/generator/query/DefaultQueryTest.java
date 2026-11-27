@@ -90,7 +90,7 @@ class DefaultQueryTest {
                 .thenAnswer(invocation -> mock(ResultSet.class));
         when(metadata.getColumns(eq("test"), eq("public"), anyString(), eq("%")))
                 .thenAnswer(invocation -> mock(ResultSet.class));
-        when(metadata.getIndexInfo(eq("test"), eq("public"), anyString(), eq(false), eq(false)))
+        when(metadata.getIndexInfo(eq("test"), eq("public"), anyString(), eq(false), eq(true)))
                 .thenAnswer(invocation -> mock(ResultSet.class));
         DataSourceConfig config = new DataSourceConfig.Builder(dataSource).schema("public").build();
         ConfigBuilder builder = new ConfigBuilder(null, config, strategy.build(), null, null, null);
