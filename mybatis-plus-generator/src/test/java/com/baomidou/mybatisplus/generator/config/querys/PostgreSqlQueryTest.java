@@ -1,9 +1,20 @@
 package com.baomidou.mybatisplus.generator.config.querys;
 
+import com.baomidou.mybatisplus.generator.AutoGenerator;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.index.DefaultGenerateMapperLambdaMethodHandler;
+import com.baomidou.mybatisplus.generator.query.SQLQuery;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -17,6 +28,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Tag("external-db")
 @EnabledIfEnvironmentVariable(named = "MP_POSTGRES_TEST_URL", matches = ".+")
 class PostgreSqlQueryTest {
+
+    @Test
+    void generatesLookupMethodsFromIndexesInSqlQueryMode(@TempDir Path output) throws Exception {
+        var dataSource = new UnpooledDataSource();
+        dataSource.setDriver("org.postgresql.Driver");
+        dataSource.setUrl(System.getenv("MP_POSTGRES_TEST_URL"));
+        var builder = new DataSourceConfig.Builder(dataSource).databaseQueryClass(SQLQuery.class);
+        try (Connection connection = builder.build().getConn(); Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TEMP TABLE shipment (id int PRIMARY KEY, tracking_code varchar UNIQUE)");
+            try (ResultSet rows = statement.executeQuery("SELECT pg_my_temp_schema()::regnamespace::text")) {
+                rows.next();
+                builder.schema(rows.getString(1));
+            }
+            var strategy = new StrategyConfig.Builder().addInclude("shipment");
+            strategy.mapperBuilder().generateMapperMethodHandler(new DefaultGenerateMapperLambdaMethodHandler());
+            new AutoGenerator(builder.build())
+                    .global(new GlobalConfig.Builder().disableOpenDir().outputDir(output.toString()).build())
+                    .packageInfo(new PackageConfig.Builder().parent("example").build()).strategy(strategy.build())
+                    .execute();
+        }
+        assertThat(Files.readString(output.resolve("example/mapper/ShipmentMapper.java")))
+                .contains("selectByTrackingCode(String trackingCode)");
+    }
 
     @Test
     void distinguishesIdentityAndSerialFromAssignedKeys() throws SQLException {

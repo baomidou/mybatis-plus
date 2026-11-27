@@ -141,6 +141,9 @@ public class SQLQuery extends AbstractDatabaseQuery {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        if (strategyConfig.mapper().getGenerateMapperMethodHandler() != null) {
+            tableInfo.setIndexList(databaseMetaDataWrapper.getIndex(tableName));
+        }
         tableInfo.processTable();
     }
 }
