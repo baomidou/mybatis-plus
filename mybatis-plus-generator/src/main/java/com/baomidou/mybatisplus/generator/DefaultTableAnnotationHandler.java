@@ -34,14 +34,15 @@ import java.util.List;
  */
 public class DefaultTableAnnotationHandler implements ITableAnnotationHandler {
 
+    static String annotationDescription(String comment) {
+        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replace("\r", "\\r").replace("\n", "\\n");
+    }
+
     @Override
     public List<ClassAnnotationAttributes> handle(TableInfo tableInfo, Entity entity) {
         List<ClassAnnotationAttributes> annotationAttributesList = new ArrayList<>();
         GlobalConfig globalConfig = tableInfo.getGlobalConfig();
-        String comment = tableInfo.getComment();
-        if (StringUtils.isBlank(comment)) {
-            comment = StringPool.EMPTY;
-        }
+        String comment = annotationDescription(tableInfo.getComment());
         boolean kotlin = globalConfig.isKotlin();
         if (!kotlin) {
             // 原先kt模板没有处理这些,作为兼容项

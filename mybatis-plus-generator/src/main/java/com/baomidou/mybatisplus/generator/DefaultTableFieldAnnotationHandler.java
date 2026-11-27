@@ -42,7 +42,7 @@ public class DefaultTableFieldAnnotationHandler implements ITableFieldAnnotation
         List<AnnotationAttributes> annotationAttributesList = new ArrayList<>();
         GlobalConfig globalConfig = tableInfo.getGlobalConfig();
         Entity entity = tableField.getEntity();
-        String comment = tableField.getComment();
+        String comment = DefaultTableAnnotationHandler.annotationDescription(tableField.getComment());
         if (StringUtils.isNotBlank(comment)) {
             if (globalConfig.isSpringdoc()) {
                 //@Schema(description = "${field.comment}")

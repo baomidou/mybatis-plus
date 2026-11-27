@@ -205,6 +205,28 @@ public class H2CodeGeneratorTest extends BaseGeneratorSample {
                 "import java.time.LocalDate;", "import java.math.BigDecimal;");
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void generatesMultilineApiDescriptions(boolean springdoc) throws Exception {
+        var source = new DataSourceConfig.Builder(
+                "jdbc:h2:mem:api_description_" + springdoc + ";DATABASE_TO_LOWER=TRUE", "sa", "").build();
+        try (Connection connection = source.getConn(); Statement statement = connection.createStatement()) {
+            statement.execute("CREATE TABLE shipment_status (id INT PRIMARY KEY, status INT)");
+            statement.execute("COMMENT ON TABLE shipment_status IS 'Shipment status\nUsed by tracking'");
+            statement.execute("COMMENT ON COLUMN shipment_status.status IS '0 = pending\n1 = shipped'");
+            var global = tempGlobalConfig();
+            if (springdoc) {
+                global.enableSpringdoc();
+            } else {
+                global.enableSwagger();
+            }
+            new AutoGenerator(source).global(global.build())
+                    .strategy(new StrategyConfig.Builder().addInclude("shipment_status").build()).execute();
+        }
+        assertThat(contentOf("ShipmentStatus.java"))
+                .contains("description = \"Shipment status\\nUsed by tracking\"", "\"0 = pending\\n1 = shipped\"");
+    }
+
     static Stream<Arguments> shouldGenerateCodeWithEachTemplateEngine() {
         return Stream.of(
                 Arguments.arguments("velocity", new VelocityTemplateEngine()),
