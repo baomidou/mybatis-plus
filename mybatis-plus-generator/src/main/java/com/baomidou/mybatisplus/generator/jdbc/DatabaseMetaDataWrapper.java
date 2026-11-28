@@ -82,7 +82,8 @@ public class DatabaseMetaDataWrapper {
     public List<DatabaseMetaDataWrapper.Index> getIndex(String tableName) {
         List<DatabaseMetaDataWrapper.Index> indexList = new ArrayList<>();
         Set<String> expressionIndexes = new HashSet<>();
-        try (ResultSet resultSet = databaseMetaData.getIndexInfo(catalog, schema, tableName, false, false)) {
+        // 生成代码只依赖索引定义，请求精确统计可能触发 Oracle 驱动收集整表统计。
+        try (ResultSet resultSet = databaseMetaData.getIndexInfo(catalog, schema, tableName, false, true)) {
             // clickhouse v2驱动没实现返回了个null
             if (resultSet != null) {
                 while (resultSet.next()) {
@@ -275,6 +276,7 @@ public class DatabaseMetaDataWrapper {
          */
         private final String ascOrDesc;
 
+        /** 索引基数，可能是驱动返回的估算值。 */
         private final int cardinality;
 
         private final int ordinalPosition;
