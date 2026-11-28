@@ -542,18 +542,23 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
                             "batch delete limit exceed: count={}, BATCH_UPDATE_LIMIT={}", count, BATCH_UPDATE_LIMIT);
                     throw DataUpdateLimitationException.DEFAULT;
                 }
-                sb.append("{");
-                for (int i = 1; i <= columnCount; ++i) {
-                    sb.append("\"").append(metaData.getColumnName(i)).append("\":\"");
-                    Object res = resultSet.getObject(i);
-                    if (res instanceof Clob) {
-                        sb.append(DataColumnChangeResult.convertClob((Clob) res));
-                    } else {
-                        sb.append(res);
-                    }
-                    sb.append("\",");
+                if (count > 1) {
+                    sb.append(',');
                 }
-                sb.replace(sb.length() - 1, sb.length(), "}");
+                sb.append('{');
+                for (int i = 1; i <= columnCount; ++i) {
+                    if (i > 1) {
+                        sb.append(',');
+                    }
+                    appendJsonString(sb, metaData.getColumnName(i));
+                    sb.append(':');
+                    Object value = resultSet.getObject(i);
+                    if (value instanceof Clob) {
+                        value = DataColumnChangeResult.convertClob((Clob) value);
+                    }
+                    appendJsonString(sb, String.valueOf(value));
+                }
+                sb.append('}');
             }
             sb.append("]");
             resultSet.close();
@@ -565,6 +570,21 @@ public class DataChangeRecorderInnerInterceptor implements InnerInterceptor {
             logger.error("try to get record tobe deleted for selectStmt={}", selectStmt, e);
             return "failed to get original data";
         }
+    }
+
+    private static void appendJsonString(StringBuilder sb, String value) {
+        sb.append('"');
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if (ch == '"' || ch == '\\') {
+                sb.append('\\').append(ch);
+            } else if (ch < ' ') {
+                sb.append(String.format("\\u%04x", (int) ch));
+            } else {
+                sb.append(ch);
+            }
+        }
+        sb.append('"');
     }
 
     private OriginalDataObj buildOriginalObjectData(Map<String, Object> updatedColumnDatas, Select selectStmt,
